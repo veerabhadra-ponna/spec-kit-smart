@@ -26,10 +26,39 @@ Relies on common helper functions in common.ps1
 param(
     [Parameter(Position=0)]
     [ValidateSet('claude','gemini','copilot','cursor-agent','qwen','opencode','codex','windsurf','kilocode','auggie','roo','codebuddy','amp','q')]
-    [string]$AgentType
+    [string]$AgentType,
+    [switch]$Json,
+    [switch]$Quiet
 )
 
+Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+# Message recording helpers
+$script:OutputMode = if ($Json) { 'Json' } elseif ($Quiet) { 'Quiet' } else { 'Console' }
+$script:Messages = New-Object System.Collections.Generic.List[pscustomobject]
+$script:UpdatedFiles = New-Object System.Collections.Generic.List[string]
+
+function Record-Message {
+    param(
+        [Parameter(Mandatory=$true)][string]$Level,
+        [Parameter(Mandatory=$true)][string]$Message
+    )
+    $script:Messages.Add([pscustomobject]@{ level = $Level; message = $Message }) | Out-Null
+    if ($script:OutputMode -eq 'Console') {
+        switch ($Level) {
+            'success' { Write-Host "✓ $Message"; break }
+            'warning' { Write-Warning $Message; break }
+            'error'   { Write-Error $Message; break }
+            default   { Write-Host "INFO: $Message" }
+        }
+    }
+}
+
+function Log-IfVerbose {
+    param([string]$Message)
+    if ($script:OutputMode -eq 'Console') { Write-Host "INFO: $Message" }
+}
 
 # Import common helpers
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -55,8 +84,8 @@ $KILOCODE_FILE = Join-Path $REPO_ROOT '.kilocode/rules/specify-rules.md'
 $AUGGIE_FILE   = Join-Path $REPO_ROOT '.augment/rules/specify-rules.md'
 $ROO_FILE      = Join-Path $REPO_ROOT '.roo/rules/specify-rules.md'
 $CODEBUDDY_FILE = Join-Path $REPO_ROOT 'CODEBUDDY.md'
-$AMP_FILE      = Join-Path $REPO_ROOT 'AGENTS.md'
-$Q_FILE        = Join-Path $REPO_ROOT 'AGENTS.md'
+$AMP_FILE      = Join-Path $REPO_ROOT '.agents/commands/specify-rules.md'
+$Q_FILE        = Join-Path $REPO_ROOT '.amazonq/prompts/specify-rules.md'
 
 $TEMPLATE_FILE = Join-Path $REPO_ROOT '.specify/templates/agent-file-template.md'
 
@@ -66,55 +95,45 @@ $script:NEW_FRAMEWORK = ''
 $script:NEW_DB = ''
 $script:NEW_PROJECT_TYPE = ''
 
-function Write-Info { 
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$Message
-    )
-    Write-Host "INFO: $Message" 
+function Write-Info {
+    param([Parameter(Mandatory=$true)][string]$Message)
+    Record-Message -Level 'info' -Message $Message
 }
 
-function Write-Success { 
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$Message
-    )
-    Write-Host "$([char]0x2713) $Message" 
+function Write-Success {
+    param([Parameter(Mandatory=$true)][string]$Message)
+    Record-Message -Level 'success' -Message $Message
 }
 
-function Write-WarningMsg { 
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$Message
-    )
-    Write-Warning $Message 
+function Write-WarningMsg {
+    param([Parameter(Mandatory=$true)][string]$Message)
+    Record-Message -Level 'warning' -Message $Message
 }
 
-function Write-Err { 
-    param(
-        [Parameter(Mandatory=$true)]
-        [string]$Message
-    )
-    Write-Host "ERROR: $Message" -ForegroundColor Red 
+function Write-Err {
+    param([Parameter(Mandatory=$true)][string]$Message)
+    Record-Message -Level 'error' -Message $Message
 }
 
 function Validate-Environment {
+    $ok = $true
     if (-not $CURRENT_BRANCH) {
         Write-Err 'Unable to determine current feature'
         if ($HAS_GIT) { Write-Info "Make sure you're on a feature branch" } else { Write-Info 'Set SPECIFY_FEATURE environment variable or create a feature first' }
-        exit 1
+        $ok = $false
     }
     if (-not (Test-Path $NEW_PLAN)) {
         Write-Err "No plan.md found at $NEW_PLAN"
         Write-Info 'Ensure you are working on a feature with a corresponding spec directory'
         if (-not $HAS_GIT) { Write-Info 'Use: $env:SPECIFY_FEATURE=your-feature-name or create a new feature first' }
-        exit 1
+        $ok = $false
     }
     if (-not (Test-Path $TEMPLATE_FILE)) {
         Write-Err "Template file not found at $TEMPLATE_FILE"
         Write-Info 'Run specify init to scaffold .specify/templates, or add agent-file-template.md there.'
-        exit 1
+        $ok = $false
     }
+    return $ok
 }
 
 function Extract-PlanField {
@@ -125,14 +144,22 @@ function Extract-PlanField {
         [string]$PlanFile
     )
     if (-not (Test-Path $PlanFile)) { return '' }
-    # Lines like **Language/Version**: Python 3.12
-    $regex = "^\*\*$([Regex]::Escape($FieldPattern))\*\*: (.+)$"
-    Get-Content -LiteralPath $PlanFile -Encoding utf8 | ForEach-Object {
-        if ($_ -match $regex) { 
+    $content = Get-Content -LiteralPath $PlanFile -Encoding utf8
+    $legacyPattern = "^\*\*$([Regex]::Escape($FieldPattern))\*\*: (.+)$"
+    foreach ($line in $content) {
+        if ($line -match $legacyPattern) {
             $val = $Matches[1].Trim()
             if ($val -notin @('NEEDS CLARIFICATION','N/A')) { return $val }
         }
-    } | Select-Object -First 1
+        $tablePattern = "^\|\s*$([Regex]::Escape($FieldPattern))\s*\|\s*(.+?)\s*\|$"
+        if ($line -match $tablePattern) {
+            $val = $Matches[2].Trim()
+            if ($val -notmatch '^Decision$' -and $val -notin @('NEEDS CLARIFICATION','N/A')) {
+                return $val
+            }
+        }
+    }
+    return ''
 }
 
 function Parse-PlanData {
@@ -359,6 +386,7 @@ function Update-AgentFile {
             return $false
         }
     }
+    if (-not $script:UpdatedFiles.Contains($TargetFile)) { [void]$script:UpdatedFiles.Add($TargetFile) }
     return $true
 }
 
@@ -400,6 +428,7 @@ function Update-AllExistingAgents {
     if (Test-Path $AUGGIE_FILE)   { if (-not (Update-AgentFile -TargetFile $AUGGIE_FILE   -AgentName 'Auggie CLI')) { $ok = $false }; $found = $true }
     if (Test-Path $ROO_FILE)      { if (-not (Update-AgentFile -TargetFile $ROO_FILE      -AgentName 'Roo Code')) { $ok = $false }; $found = $true }
     if (Test-Path $CODEBUDDY_FILE) { if (-not (Update-AgentFile -TargetFile $CODEBUDDY_FILE -AgentName 'CodeBuddy CLI')) { $ok = $false }; $found = $true }
+    if (Test-Path $AMP_FILE)      { if (-not (Update-AgentFile -TargetFile $AMP_FILE      -AgentName 'Amp')) { $ok = $false }; $found = $true }
     if (Test-Path $Q_FILE)        { if (-not (Update-AgentFile -TargetFile $Q_FILE        -AgentName 'Amazon Q Developer CLI')) { $ok = $false }; $found = $true }
     if (-not $found) {
         Write-Info 'No existing agent files found, creating default Claude file...'
@@ -409,6 +438,7 @@ function Update-AllExistingAgents {
 }
 
 function Print-Summary {
+    if ($script:OutputMode -ne 'Console') { return }
     Write-Host ''
     Write-Info 'Summary of changes:'
     if ($NEW_LANG) { Write-Host "  - Added language: $NEW_LANG" }
@@ -419,20 +449,45 @@ function Print-Summary {
 }
 
 function Main {
-    Validate-Environment
+    $envOk = Validate-Environment
     Write-Info "=== Updating agent context files for feature $CURRENT_BRANCH ==="
-    if (-not (Parse-PlanData -PlanFile $NEW_PLAN)) { Write-Err 'Failed to parse plan data'; exit 1 }
-    $success = $true
-    if ($AgentType) {
-        Write-Info "Updating specific agent: $AgentType"
-        if (-not (Update-SpecificAgent -Type $AgentType)) { $success = $false }
+    $success = $envOk
+    if ($envOk -and -not (Parse-PlanData -PlanFile $NEW_PLAN)) {
+        Write-Err 'Failed to parse plan data'
+        $success = $false
     }
-    else {
-        Write-Info 'No agent specified, updating all existing agent files...'
-        if (-not (Update-AllExistingAgents)) { $success = $false }
+    if ($success -and $envOk) {
+        if ($AgentType) {
+            Write-Info "Updating specific agent: $AgentType"
+            if (-not (Update-SpecificAgent -Type $AgentType)) { $success = $false }
+        }
+        else {
+            Write-Info 'No agent specified, updating all existing agent files...'
+            if (-not (Update-AllExistingAgents)) { $success = $false }
+        }
     }
+
+    if ($Json) {
+        $payload = [ordered]@{
+            ok            = $success
+            version       = '1.0.0'
+            timestamp     = (Get-Date).ToString('o')
+            branch        = $CURRENT_BRANCH
+            updated_files = @($script:UpdatedFiles | Select-Object -Unique)
+            messages      = @($script:Messages)
+        }
+        $payload | ConvertTo-Json -Depth 6 -Compress
+        if ($success) { exit 0 } else { exit 1 }
+    }
+
     Print-Summary
-    if ($success) { Write-Success 'Agent context update completed successfully'; exit 0 } else { Write-Err 'Agent context update completed with errors'; exit 1 }
+    if ($success) {
+        Write-Success 'Agent context update completed successfully'
+        exit 0
+    } else {
+        Write-Err 'Agent context update completed with errors'
+        exit 1
+    }
 }
 
 Main

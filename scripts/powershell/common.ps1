@@ -70,18 +70,22 @@ function Test-HasGit {
 function Test-FeatureBranch {
     param(
         [string]$Branch,
-        [bool]$HasGit = $true
+        [bool]$HasGit = $true,
+        [switch]$Quiet
     )
-    
-    # For non-git repos, we can't enforce branch naming but still provide output
+
     if (-not $HasGit) {
-        Write-Warning "[specify] Warning: Git repository not detected; skipped branch validation"
+        if (-not $Quiet) {
+            Write-Warning "[specify] Warning: Git repository not detected; skipped branch validation"
+        }
         return $true
     }
-    
+
     if ($Branch -notmatch '^[0-9]{3}-') {
-        Write-Output "ERROR: Not on a feature branch. Current branch: $Branch"
-        Write-Output "Feature branches should be named like: 001-feature-name"
+        if (-not $Quiet) {
+            Write-Output "ERROR: Not on a feature branch. Current branch: $Branch"
+            Write-Output "Feature branches should be named like: 001-feature-name"
+        }
         return $false
     }
     return $true
@@ -114,24 +118,28 @@ function Get-FeaturePathsEnv {
 }
 
 function Test-FileExists {
-    param([string]$Path, [string]$Description)
-    if (Test-Path -Path $Path -PathType Leaf) {
-        Write-Output "  ✓ $Description"
-        return $true
-    } else {
-        Write-Output "  ✗ $Description"
-        return $false
+    param(
+        [string]$Path,
+        [string]$Description,
+        [switch]$Quiet
+    )
+    $exists = Test-Path -Path $Path -PathType Leaf
+    if (-not $Quiet) {
+        Write-Output ((if ($exists) { "  ✓ $Description" } else { "  ✗ $Description" }))
     }
+    return $exists
 }
 
 function Test-DirHasFiles {
-    param([string]$Path, [string]$Description)
-    if ((Test-Path -Path $Path -PathType Container) -and (Get-ChildItem -Path $Path -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object -First 1)) {
-        Write-Output "  ✓ $Description"
-        return $true
-    } else {
-        Write-Output "  ✗ $Description"
-        return $false
+    param(
+        [string]$Path,
+        [string]$Description,
+        [switch]$Quiet
+    )
+    $exists = (Test-Path -Path $Path -PathType Container) -and (Get-ChildItem -Path $Path -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object -First 1)
+    if (-not $Quiet) {
+        Write-Output ((if ($exists) { "  ✓ $Description" } else { "  ✗ $Description" }))
     }
+    return [bool]$exists
 }
 

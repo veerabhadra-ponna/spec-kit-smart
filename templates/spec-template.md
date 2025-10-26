@@ -1,115 +1,88 @@
-# Feature Specification: [FEATURE NAME]
-
-**Feature Branch**: `[###-feature-name]`  
-**Created**: [DATE]  
-**Status**: Draft  
-**Input**: User description: "$ARGUMENTS"
-
-## User Scenarios & Testing *(mandatory)*
-
-<!--
-  IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
-  Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
-  you should still have a viable MVP (Minimum Viable Product) that delivers value.
-  
-  Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
-  Think of each story as a standalone slice of functionality that can be:
-  - Developed independently
-  - Tested independently
-  - Deployed independently
-  - Demonstrated to users independently
--->
-
-### User Story 1 - [Brief Title] (Priority: P1)
-
-[Describe this user journey in plain language]
-
-**Why this priority**: [Explain the value and why it has this priority level]
-
-**Independent Test**: [Describe how this can be tested independently - e.g., "Can be fully tested by [specific action] and delivers [specific value]"]
-
-**Acceptance Scenarios**:
-
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
-2. **Given** [initial state], **When** [action], **Then** [expected outcome]
-
+---
+feature_id: 000-example-feature
+title: "[Replace with feature title]"
+status: Draft
+branch: 000-example-feature
+semver: 0.1.0
+created_at: 2024-01-01
+source_commit: HEAD
+generator: spec-kit
+constitution_version: 1.0.0
 ---
 
-### User Story 2 - [Brief Title] (Priority: P2)
+# Problem Statement
 
-[Describe this user journey in plain language]
+Describe the user problem and desired outcome in business language. Reference the personas and pain points driving this request.
 
-**Why this priority**: [Explain the value and why it has this priority level]
+## Assumptions
 
-**Independent Test**: [Describe how this can be tested independently]
+- List explicit assumptions that guided this specification. Remove any that are invalidated.
 
-**Acceptance Scenarios**:
+## Scope
 
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+### In Scope
+- Capabilities or journeys delivered in this feature release.
 
----
+### Out of Scope
+- Adjacent ideas intentionally deferred or owned by other workstreams.
 
-### User Story 3 - [Brief Title] (Priority: P3)
+## Prioritized User Journeys
 
-[Describe this user journey in plain language]
+Each journey must be independently testable and map back to a measurable outcome.
 
-**Why this priority**: [Explain the value and why it has this priority level]
+### US-01 – [Journey title] _(Priority: P1)_
+- **Narrative:** Describe the user flow end to end in plain language.
+- **Value:** Explain why this journey matters most right now.
+- **Independent Verification:** How to demonstrate this journey works in isolation.
+- **Acceptance Criteria:**
+  1. Given … When … Then …
+  2. Given … When … Then …
 
-**Independent Test**: [Describe how this can be tested independently]
+### US-02 – [Journey title] _(Priority: P2)_
+- Repeat the structure above. Add or remove journeys as needed; keep priorities unique.
 
-**Acceptance Scenarios**:
+## Functional Requirements
 
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+| ID | Description | Fit Criterion / Test Oracle |
+|----|-------------|------------------------------|
+| FR-001 | [Requirement statement] | [How to verify objectively] |
+| FR-002 | [Requirement statement] | [How to verify objectively] |
 
----
+Document any uncertainties inline using `[NEEDS CLARIFICATION: question]`.
 
-[Add more user stories as needed, each with an assigned priority]
+## Non-Functional Requirements
 
-### Edge Cases
+| Category | Requirement | Fit Criterion |
+|----------|-------------|---------------|
+| Performance | [e.g., 95th percentile response ≤ 400 ms] | [Measurement approach] |
+| Reliability | [e.g., Error budget ≤ 0.1%] | [Monitoring source] |
+| Security | [Policy or compliance expectation] | [Verification] |
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right edge cases.
--->
+## Risks & Mitigations
 
-- What happens when [boundary condition]?
-- How does system handle [error scenario]?
+| Risk | Impact | Likelihood | Mitigation / Owner |
+|------|--------|------------|---------------------|
+| [Describe risk] | High/Med/Low | High/Med/Low | [Action plan and owner] |
 
-## Requirements *(mandatory)*
+## Open Questions
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right functional requirements.
--->
+List outstanding items that require clarification. Use the format `[NEEDS CLARIFICATION: question]` and keep to the three highest-impact gaps.
 
-### Functional Requirements
+## Glossary & Domain Invariants
 
-- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
-- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
-- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
-- **FR-005**: System MUST [behavior, e.g., "log all security events"]
+Define important terminology, business rules, and invariants to keep future artifacts consistent.
 
-*Example of marking unclear requirements:*
+## Traceability Matrix
 
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+| User Journey | Functional Requirement(s) | NFR(s) | Planned Tests |
+|--------------|---------------------------|--------|---------------|
+| US-01 | FR-001 | Performance | [Link to task/test placeholder] |
+| US-02 | FR-00X | Security | [Link to task/test placeholder] |
 
-### Key Entities *(include if feature involves data)*
+## Clarifications Log
 
-- **[Entity 1]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
+Record resolved questions with date and outcome.
 
-## Success Criteria *(mandatory)*
-
-<!--
-  ACTION REQUIRED: Define measurable success criteria.
-  These must be technology-agnostic and measurable.
--->
-
-### Measurable Outcomes
-
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
-- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+| Date | Question | Decision | Impacted Sections |
+|------|----------|----------|--------------------|
+| 2024-01-01 | [What was asked] | [Resolution] | [Sections updated] |

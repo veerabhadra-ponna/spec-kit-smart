@@ -1,19 +1,5 @@
 #!/usr/bin/env pwsh
 
-# Consolidated prerequisite checking script (PowerShell)
-#
-# This script provides unified prerequisite checking for Spec-Driven Development workflow.
-# It replaces the functionality previously spread across multiple scripts.
-#
-# Usage: ./check-prerequisites.ps1 [OPTIONS]
-#
-# OPTIONS:
-#   -Json               Output in JSON format
-#   -RequireTasks       Require tasks.md to exist (for implementation phase)
-#   -IncludeTasks       Include tasks.md in AVAILABLE_DOCS list
-#   -PathsOnly          Only output path variables (no validation)
-#   -Help, -h           Show help message
-
 [CmdletBinding()]
 param(
     [switch]$Json,
@@ -23,57 +9,58 @@ param(
     [switch]$Help
 )
 
+Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-# Show help if requested
 if ($Help) {
-    Write-Output @"
-Usage: check-prerequisites.ps1 [OPTIONS]
+@" 
+Usage: ./check-prerequisites.ps1 [OPTIONS]
 
-Consolidated prerequisite checking for Spec-Driven Development workflow.
-
-OPTIONS:
-  -Json               Output in JSON format
-  -RequireTasks       Require tasks.md to exist (for implementation phase)
-  -IncludeTasks       Include tasks.md in AVAILABLE_DOCS list
-  -PathsOnly          Only output path variables (no prerequisite validation)
-  -Help, -h           Show this help message
-
-EXAMPLES:
-  # Check task prerequisites (plan.md required)
-  .\check-prerequisites.ps1 -Json
-  
-  # Check implementation prerequisites (plan.md + tasks.md required)
-  .\check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
-  
-  # Get feature paths only (no validation)
-  .\check-prerequisites.ps1 -PathsOnly
-
+Options:
+  -Json             Emit JSON only
+  -RequireTasks     Fail if tasks.md is missing
+  -IncludeTasks     Add tasks.md to AVAILABLE_DOCS when present
+  -PathsOnly        Return path metadata without validation
+  -Help             Display this help message
 "@
     exit 0
 }
 
-# Source common functions
 . "$PSScriptRoot/common.ps1"
 
-# Get feature paths and validate branch
 $paths = Get-FeaturePathsEnv
+$branchOk = Test-FeatureBranch -Branch $paths.CURRENT_BRANCH -HasGit:$paths.HAS_GIT -Quiet:$Json
 
-if (-not (Test-FeatureBranch -Branch $paths.CURRENT_BRANCH -HasGit:$paths.HAS_GIT)) { 
-    exit 1 
+$payload = [ordered]@{
+    ok          = $true
+    version     = '1.0.0'
+    timestamp   = (Get-Date).ToString('o')
+    branch      = $paths.CURRENT_BRANCH
+    require_tasks = [bool]$RequireTasks
+    paths       = [ordered]@{
+        repo_root    = $paths.REPO_ROOT
+        feature_dir  = $paths.FEATURE_DIR
+        feature_spec = $paths.FEATURE_SPEC
+        plan         = $paths.IMPL_PLAN
+        tasks        = $paths.TASKS
+    }
+    available_docs = @()
+    missing     = @()
+    notes       = @()
 }
 
-# If paths-only mode, output paths and exit (support combined -Json -PathsOnly)
+if (-not $branchOk) {
+    $payload.ok = $false
+    $payload.notes += "Not on a numbered feature branch."
+    if (-not $Json) {
+        Write-Output "ERROR: Not on a feature branch. Current branch: $($paths.CURRENT_BRANCH)"
+        Write-Output "Feature branches should be named like: 001-feature-name"
+    }
+}
+
 if ($PathsOnly) {
     if ($Json) {
-        [PSCustomObject]@{
-            REPO_ROOT    = $paths.REPO_ROOT
-            BRANCH       = $paths.CURRENT_BRANCH
-            FEATURE_DIR  = $paths.FEATURE_DIR
-            FEATURE_SPEC = $paths.FEATURE_SPEC
-            IMPL_PLAN    = $paths.IMPL_PLAN
-            TASKS        = $paths.TASKS
-        } | ConvertTo-Json -Compress
+        $payload | Select-Object -Property ok,version,timestamp,branch,@{Name='paths';Expression={$_.paths}} | ConvertTo-Json -Depth 4 -Compress
     } else {
         Write-Output "REPO_ROOT: $($paths.REPO_ROOT)"
         Write-Output "BRANCH: $($paths.CURRENT_BRANCH)"
@@ -82,67 +69,63 @@ if ($PathsOnly) {
         Write-Output "IMPL_PLAN: $($paths.IMPL_PLAN)"
         Write-Output "TASKS: $($paths.TASKS)"
     }
-    exit 0
+    if ($payload.ok) { exit 0 } else { exit 1 }
 }
 
-# Validate required directories and files
+$errors = @()
 if (-not (Test-Path $paths.FEATURE_DIR -PathType Container)) {
-    Write-Output "ERROR: Feature directory not found: $($paths.FEATURE_DIR)"
-    Write-Output "Run /speckit.specify first to create the feature structure."
-    exit 1
+    $payload.ok = $false
+    $errors += "Feature directory not found: $($paths.FEATURE_DIR)"
 }
-
 if (-not (Test-Path $paths.IMPL_PLAN -PathType Leaf)) {
-    Write-Output "ERROR: plan.md not found in $($paths.FEATURE_DIR)"
-    Write-Output "Run /speckit.plan first to create the implementation plan."
-    exit 1
+    $payload.ok = $false
+    $errors += "plan.md not found in $($paths.FEATURE_DIR)"
 }
-
-# Check for tasks.md if required
 if ($RequireTasks -and -not (Test-Path $paths.TASKS -PathType Leaf)) {
-    Write-Output "ERROR: tasks.md not found in $($paths.FEATURE_DIR)"
-    Write-Output "Run /speckit.tasks first to create the task list."
-    exit 1
+    $payload.ok = $false
+    $errors += "tasks.md not found in $($paths.FEATURE_DIR)"
 }
 
-# Build list of available documents
 $docs = @()
-
-# Always check these optional docs
 if (Test-Path $paths.RESEARCH) { $docs += 'research.md' }
 if (Test-Path $paths.DATA_MODEL) { $docs += 'data-model.md' }
-
-# Check contracts directory (only if it exists and has files)
-if ((Test-Path $paths.CONTRACTS_DIR) -and (Get-ChildItem -Path $paths.CONTRACTS_DIR -ErrorAction SilentlyContinue | Select-Object -First 1)) { 
-    $docs += 'contracts/' 
+if ((Test-Path $paths.CONTRACTS_DIR) -and (Get-ChildItem -Path $paths.CONTRACTS_DIR -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object -First 1)) {
+    $docs += 'contracts/'
 }
-
 if (Test-Path $paths.QUICKSTART) { $docs += 'quickstart.md' }
+if ($IncludeTasks -and (Test-Path $paths.TASKS -PathType Leaf)) { $docs += 'tasks.md' }
 
-# Include tasks.md if requested and it exists
-if ($IncludeTasks -and (Test-Path $paths.TASKS)) { 
-    $docs += 'tasks.md' 
+$payload.available_docs = $docs
+$payload.missing = $errors
+
+if ($Json) {
+    if (-not $payload.ok -and $errors.Count -gt 0) {
+        $payload.notes += $errors
+    }
+    $payload | ConvertTo-Json -Depth 6 -Compress
+    if ($payload.ok) { exit 0 } else { exit 1 }
 }
 
-# Output results
-if ($Json) {
-    # JSON output
-    [PSCustomObject]@{ 
-        FEATURE_DIR = $paths.FEATURE_DIR
-        AVAILABLE_DOCS = $docs 
-    } | ConvertTo-Json -Compress
-} else {
-    # Text output
-    Write-Output "FEATURE_DIR:$($paths.FEATURE_DIR)"
-    Write-Output "AVAILABLE_DOCS:"
-    
-    # Show status of each potential document
-    Test-FileExists -Path $paths.RESEARCH -Description 'research.md' | Out-Null
-    Test-FileExists -Path $paths.DATA_MODEL -Description 'data-model.md' | Out-Null
-    Test-DirHasFiles -Path $paths.CONTRACTS_DIR -Description 'contracts/' | Out-Null
-    Test-FileExists -Path $paths.QUICKSTART -Description 'quickstart.md' | Out-Null
-    
-    if ($IncludeTasks) {
-        Test-FileExists -Path $paths.TASKS -Description 'tasks.md' | Out-Null
+if ($errors.Count -gt 0) {
+    foreach ($err in $errors) {
+        Write-Output "ERROR: $err"
     }
+    if (-not (Test-Path $paths.FEATURE_DIR -PathType Container)) {
+        Write-Output "Run /speckit.specify first to create the feature structure."
+    } elseif (-not (Test-Path $paths.IMPL_PLAN -PathType Leaf)) {
+        Write-Output "Run /speckit.plan first to create the implementation plan."
+    } elseif ($RequireTasks) {
+        Write-Output "Run /speckit.tasks first to create the task list."
+    }
+    exit 1
+}
+
+Write-Output "FEATURE_DIR:$($paths.FEATURE_DIR)"
+Write-Output "AVAILABLE_DOCS:"
+Test-FileExists -Path $paths.RESEARCH -Description 'research.md' | Out-Null
+Test-FileExists -Path $paths.DATA_MODEL -Description 'data-model.md' | Out-Null
+Test-DirHasFiles -Path $paths.CONTRACTS_DIR -Description 'contracts/' | Out-Null
+Test-FileExists -Path $paths.QUICKSTART -Description 'quickstart.md' | Out-Null
+if ($IncludeTasks) {
+    Test-FileExists -Path $paths.TASKS -Description 'tasks.md' | Out-Null
 }

@@ -5,6 +5,7 @@ set -e
 JSON_MODE=false
 SHORT_NAME=""
 BRANCH_NUMBER=""
+ENCODED_VALUE=""
 ARGS=()
 i=1
 while [ $i -le $# ]; do
@@ -40,13 +41,22 @@ while [ $i -le $# ]; do
             fi
             BRANCH_NUMBER="$next_arg"
             ;;
-        --help|-h) 
-            echo "Usage: $0 [--json] [--short-name <name>] [--number N] <feature_description>"
+        --encoded)
+            if [ $((i + 1)) -gt $# ]; then
+                echo 'Error: --encoded requires a value' >&2
+                exit 1
+            fi
+            i=$((i + 1))
+            ENCODED_VALUE="${!i}"
+            ;;
+        --help|-h)
+            echo "Usage: $0 [--json] [--short-name <name>] [--number N] [--encoded <base64>] <feature_description>"
             echo ""
             echo "Options:"
             echo "  --json              Output in JSON format"
             echo "  --short-name <name> Provide a custom short name (2-4 words) for the branch"
             echo "  --number N          Specify branch number manually (overrides auto-detection)"
+            echo "  --encoded <value>   Base64-encoded feature description (UTF-8)"
             echo "  --help, -h          Show this help message"
             echo ""
             echo "Examples:"
@@ -54,16 +64,25 @@ while [ $i -le $# ]; do
             echo "  $0 'Implement OAuth2 integration for API' --number 5"
             exit 0
             ;;
-        *) 
-            ARGS+=("$arg") 
+        *)
+            ARGS+=("$arg")
             ;;
     esac
     i=$((i + 1))
 done
 
-FEATURE_DESCRIPTION="${ARGS[*]}"
+if [ -n "$ENCODED_VALUE" ]; then
+    if FEATURE_DESCRIPTION=$(printf '%s' "$ENCODED_VALUE" | base64 --decode 2>/dev/null); then
+        FEATURE_DESCRIPTION="${FEATURE_DESCRIPTION%%$'\r'}"
+    else
+        echo 'Error: Unable to decode --encoded value' >&2
+        exit 1
+    fi
+else
+    FEATURE_DESCRIPTION="${ARGS[*]}"
+fi
 if [ -z "$FEATURE_DESCRIPTION" ]; then
-    echo "Usage: $0 [--json] [--short-name <name>] [--number N] <feature_description>" >&2
+    echo "Usage: $0 [--json] [--short-name <name>] [--number N] [--encoded <base64>] <feature_description>" >&2
     exit 1
 fi
 

@@ -1,0 +1,27 @@
+name: CI Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  scripts-and-templates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Install-Module -Name Pester -Force -Scope CurrentUser -SkipPublisherCheck
+
+      - name: Run PowerShell JSON contract tests
+        shell: pwsh
+        run: |
+          Invoke-Pester -Path tests/powershell/ScriptSchema.Tests.ps1 -Output Detailed
+
+      - name: Validate template front matter
+        run: |
+          python3 scripts/ci/check_front_matter.py

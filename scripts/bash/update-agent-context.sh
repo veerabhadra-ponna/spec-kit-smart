@@ -70,8 +70,8 @@ KILOCODE_FILE="$REPO_ROOT/.kilocode/rules/specify-rules.md"
 AUGGIE_FILE="$REPO_ROOT/.augment/rules/specify-rules.md"
 ROO_FILE="$REPO_ROOT/.roo/rules/specify-rules.md"
 CODEBUDDY_FILE="$REPO_ROOT/CODEBUDDY.md"
-AMP_FILE="$REPO_ROOT/AGENTS.md"
-Q_FILE="$REPO_ROOT/AGENTS.md"
+AMP_FILE="$REPO_ROOT/.agents/commands/specify-rules.md"
+Q_FILE="$REPO_ROOT/.amazonq/prompts/specify-rules.md"
 
 # Template file
 TEMPLATE_FILE="$REPO_ROOT/.specify/templates/agent-file-template.md"
@@ -153,13 +153,34 @@ validate_environment() {
 extract_plan_field() {
     local field_pattern="$1"
     local plan_file="$2"
-    
-    grep "^\*\*${field_pattern}\*\*: " "$plan_file" 2>/dev/null | \
-        head -1 | \
-        sed "s|^\*\*${field_pattern}\*\*: ||" | \
-        sed 's/^[ \t]*//;s/[ \t]*$//' | \
-        grep -v "NEEDS CLARIFICATION" | \
-        grep -v "^N/A$" || echo ""
+
+    local legacy
+    legacy=$(grep "^\*\*${field_pattern}\*\*: " "$plan_file" 2>/dev/null | head -1 | sed "s|^\*\*${field_pattern}\*\*: ||" | sed 's/^[ \t]*//;s/[ \t]*$//')
+    if [[ -n "$legacy" && "$legacy" != "NEEDS CLARIFICATION" && "$legacy" != "N/A" ]]; then
+        echo "$legacy"
+        return
+    fi
+
+    local table_value
+    table_value=$(awk -F'|' -v key="$field_pattern" '
+        $0 ~ /^\|/ {
+            gsub(/^[[:space:]]+|[[:space:]]+$/, "", $2);
+            if ($2 == key) {
+                gsub(/^[[:space:]]+|[[:space:]]+$/, "", $3);
+                if ($3 !~ /^(NEEDS CLARIFICATION|N\/A|Decision)$/) {
+                    print $3;
+                    exit;
+                }
+            }
+        }
+    ' "$plan_file")
+
+    if [[ -n "$table_value" ]]; then
+        echo "$table_value"
+        return
+    fi
+
+    echo ""
 }
 
 parse_plan_data() {
