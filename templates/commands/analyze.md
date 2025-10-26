@@ -15,6 +15,7 @@ scripts:
   - No file writes, git commands, or additional scripts.
 - **Outputs**
   - Emit a single JSON code block summarizing findings:
+
     ```json
     {
       "status": "success" | "error",
@@ -26,6 +27,7 @@ scripts:
       "next_steps": ["<command suggestion>", "..."]
     }
     ```
+
 - **Idempotency**
   - Re-running must produce consistent findings for unchanged artifacts.
 - **Stop Conditions**

@@ -16,6 +16,7 @@ scripts:
   - Read-only command; do **not** modify repository files.
 - **Outputs**
   - Emit a JSON code block:
+
     ```json
     {
       "status": "success" | "error",
@@ -28,6 +29,7 @@ scripts:
       "suggested_checks": ["<command>", "..."]
     }
     ```
+
 - **Idempotency**
   - Re-running produces the same recommendations unless task completion state changes.
 - **Stop Conditions**

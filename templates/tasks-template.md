@@ -140,4 +140,3 @@ graph TD
   - US2: [COUNT]
   - US3: [COUNT]
 - **MVP Recommendation**: [Typically US1 completion]
-
