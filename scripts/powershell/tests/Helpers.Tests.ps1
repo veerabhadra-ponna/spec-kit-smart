@@ -1,13 +1,15 @@
 Import-Module Pester
 
 Describe 'PowerShell helper scripts' {
-    $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '../../..')).Path
+    $testRoot = if ($PSScriptRoot) { $PSScriptRoot } elseif ($PSCommandPath) { Split-Path -Parent $PSCommandPath } else { (Get-Location).Path }
+    $repoRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $testRoot))
     $featureName = '999-test-feature'
     $featureDir = Join-Path $repoRoot "specs/$featureName"
     $planPath = Join-Path $featureDir 'plan.md'
     $specPath = Join-Path $featureDir 'spec.md'
 
     BeforeAll {
+        New-Item -ItemType Directory -Path (Split-Path $featureDir -Parent) -Force | Out-Null
         New-Item -ItemType Directory -Path $featureDir -Force | Out-Null
         Set-Content -LiteralPath $specPath -Value '# Temporary spec'
     }
