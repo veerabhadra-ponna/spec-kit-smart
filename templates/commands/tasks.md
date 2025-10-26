@@ -17,6 +17,7 @@ scripts:
 - **Outputs**
   - Produce `tasks.md` using `templates/tasks-template.md`, including dependency registry and Mermaid graph.
   - Respond with a JSON code block:
+
     ```json
     {
       "status": "success" | "error",
@@ -34,6 +35,7 @@ scripts:
       "dependency_violations": ["<issue>", "..."]
     }
     ```
+
     Include every user story identifier present in the generated tasks.
 - **Idempotency**
   - Re-running must regenerate `tasks.md` deterministically from current artifacts without duplicating phases.

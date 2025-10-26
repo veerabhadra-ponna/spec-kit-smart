@@ -21,6 +21,7 @@ agent_scripts:
 - **Outputs**
   - Persist updated Markdown/contract artifacts in the feature directory.
   - Emit a single JSON code block:
+
     ```json
     {
       "status": "success" | "error",
@@ -37,6 +38,7 @@ agent_scripts:
       "next_actions": ["<follow-up>", "..."]
     }
     ```
+
 - **Idempotency**
   - Re-running must update artifacts in place without duplicating sections or regenerating context unnecessarily.
 - **Stop Conditions**

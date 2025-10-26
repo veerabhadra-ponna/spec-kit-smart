@@ -137,4 +137,3 @@ constitution_version: [CONSTITUTION VERSION OR UNKNOWN]
 | Date | Question | Resolution | Author |
 |------|----------|------------|--------|
 | [YYYY-MM-DD] | [Question text] | [Summary of answer] | [/speckit.clarify] |
-

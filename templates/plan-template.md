@@ -98,7 +98,6 @@ specs/[###-feature]/
 ├── contracts/           # Phase 1 output
 └── tasks.md             # Phase 2 output (/speckit.tasks)
 ```
-
 ```text
 [src/ structure as defined by this plan. Replace with actual layout.]
 ```

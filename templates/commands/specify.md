@@ -16,6 +16,7 @@ scripts:
   - Write `spec.md` using `templates/spec-template.md`.
   - Write/update `checklists/requirements.md` for quality validation.
   - Respond with a single JSON code block matching the schema:
+
     ```json
     {
       "status": "success" | "error",
@@ -35,6 +36,7 @@ scripts:
       ]
     }
     ```
+
 - **Idempotency**
   - Re-running with the same description must update `spec.md` in place without duplicating sections or regenerating branch metadata.
 - **Stop Conditions**
