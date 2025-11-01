@@ -992,6 +992,7 @@ This change:
 1. Has acceptable risk profile with proper testing
 
 **Suggested Timeline**:
+
 - **Development**: 2-3 days
 - **Testing**: 1 day
 - **Soft Migration Period**: 2-4 weeks
@@ -1065,6 +1066,7 @@ This change:
 ## Conclusion
 
 The unified package approach is **highly feasible** and provides significant value. The system is already well-architected for this change, requiring primarily:
+
 1. Build script modifications to include both script types
 2. Simple launcher scripts for OS detection
 3. Minor CLI updates to remove script type selection
