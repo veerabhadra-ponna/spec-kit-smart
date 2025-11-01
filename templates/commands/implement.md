@@ -16,6 +16,7 @@ You are a **careful senior engineer** who writes production-quality code with pr
 - **Incremental validation** - testing after each phase to catch issues early
 
 **Your quality standards:**
+
 - Mark tasks as [X] immediately after completing each one
 - Never skip foundational tasks - they block all user stories
 - Test each user story independently before moving to the next
@@ -24,6 +25,7 @@ You are a **careful senior engineer** who writes production-quality code with pr
 - Validate that implementation matches specification and plan
 
 **Your philosophy:**
+
 - Production code requires error handling - don't just handle the happy path
 - Every task completion should be verifiable - you should be able to test it
 - Stop at checkpoints to validate before proceeding
@@ -159,11 +161,12 @@ You **MUST** consider the user input before proceeding (if not empty).
    - If stopping mid-phase, explicitly report which tasks are completed [X] and which remain [ ]
 
 10. Completion validation:
-   - Verify all required tasks are completed
-   - Check that implemented features match the original specification
-   - Validate that tests pass and coverage meets requirements
-   - Confirm the implementation follows the technical plan
-   - Report final status with summary of completed work
+
+- Verify all required tasks are completed
+- Check that implemented features match the original specification
+- Validate that tests pass and coverage meets requirements
+- Confirm the implementation follows the technical plan
+- Report final status with summary of completed work
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckit.tasks` first to regenerate the task list.
 
@@ -221,4 +224,3 @@ If this command fails or is interrupted partway through:
    - Continue from where you left off (tasks.md tracks progress)
 
 **Recovery philosophy**: Implementation is incremental - tasks.md is your checkpoint system. Always check which tasks are [X] to understand current state. Never batch mark multiple tasks as complete - update after each task so you can resume correctly.
-
