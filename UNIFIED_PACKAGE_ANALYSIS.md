@@ -7,6 +7,7 @@
 **Feasibility**: ✅ **HIGHLY FEASIBLE** - The system is already well-architected for this change with minimal breaking changes required.
 
 **Impact**:
+
 - Reduces build artifacts from 32 packages (16 agents × 2 scripts) to 16 packages (1 per agent)
 - Simplifies user experience - no need to choose script type during installation
 - Makes the fork truly cross-platform and "smart"
@@ -55,6 +56,7 @@ default_script = "ps" if os.name == "nt" else "sh"
 ```
 
 **Current Flow**:
+
 1. User runs: `specify init --agent claude --script sh`
 2. CLI downloads: `spec-kit-template-claude-sh-v0.2.0.zip`
 3. Package contains ONLY bash scripts in `.specify/scripts/bash/`
@@ -77,13 +79,14 @@ agent_scripts:
 ```
 
 **Current Substitution** (lines 40-101 of build script):
+
 - Extracts script command based on selected variant (sh or ps)
 - Replaces `{SCRIPT}` placeholder with the selected script path
 - Removes the unused script variant from frontmatter
 
 ### 4. Current Script Organization
 
-```
+```text
 scripts/
 ├── bash/
 │   ├── common.sh
@@ -123,6 +126,7 @@ scripts/
 ### 🎯 Technical Feasibility Score: **9/10**
 
 The architecture is already 90% ready for this change. Main work is in:
+
 - Build script modifications (40% effort)
 - Prompt template handling (30% effort)
 - Runtime launcher creation (20% effort)
@@ -135,6 +139,7 @@ The architecture is already 90% ready for this change. Main work is in:
 ### Solution Overview
 
 Create a unified package with:
+
 1. **Both script directories** included in `.specify/scripts/`
 2. **Smart launcher scripts** that detect OS and delegate to correct implementation
 3. **Updated prompts** that reference launcher scripts (platform-agnostic)
@@ -142,7 +147,7 @@ Create a unified package with:
 
 ### Directory Structure (Unified Package)
 
-```
+```text
 .specify/
 ├── scripts/
 │   ├── bash/                    # Unix/Linux/macOS scripts
@@ -241,6 +246,7 @@ if __name__ == "__main__":
 ```
 
 **Recommendation**: Use **Option A (Shell-based)** because:
+
 - No Python dependency (keeps package lightweight)
 - Works in all environments (including containers)
 - Better for AI agent execution contexts
@@ -657,35 +663,36 @@ if (Test-IsUnix) {
 
 **Current**:
 
+````markdown
 ```markdown
 ## Installation
 
 ```bash
-
 specify init --agent claude --script sh
-
 ```
 
 Choose your AI agent and script type (sh for Unix/Linux/macOS, ps for Windows).
 ```
+````
 
 **New**:
 
+````markdown
 ```markdown
 ## Installation
 
 ```bash
-
 specify init --agent claude
-
 ```
 
 The package automatically detects your operating system:
+
 - **Windows**: Uses PowerShell scripts
 - **Unix/Linux/macOS**: Uses Bash scripts
 
 No need to specify script type anymore!
 ```
+````
 
 #### Change 5.2: Update AGENTS.md
 
@@ -702,9 +709,9 @@ Remove references to choosing script types.
 ### Phase 1: Preparation (1-2 hours)
 
 1. ✅ **Create feature branch** ✅ (already done)
-2. **Create launcher script template** in `scripts/launchers/`
-3. **Write launcher tests** to verify OS detection
-4. **Update build script** with `create_launcher_scripts()` function
+1. **Create launcher script template** in `scripts/launchers/`
+1. **Write launcher tests** to verify OS detection
+1. **Update build script** with `create_launcher_scripts()` function
 
 ### Phase 2: Build System (2-3 hours)
 
@@ -714,7 +721,7 @@ Remove references to choosing script types.
    - Add `create_launcher_scripts()` function
    - Update main loop to build unified packages
 
-2. **Test locally**:
+1. **Test locally**:
 
    ```bash
    AGENTS=claude .github/workflows/scripts/create-release-packages.sh v0.99.99
@@ -724,7 +731,7 @@ Remove references to choosing script types.
 - Verify both bash/ and powershell/ directories are included
 - Verify package size (~2x larger)
 
-3. **Update GitHub Actions workflow** (minimal changes):
+1. **Update GitHub Actions workflow** (minimal changes):
 
 - Workflow should work as-is (no SCRIPTS env var needed)
 
@@ -736,7 +743,7 @@ Remove references to choosing script types.
    - Update download logic
    - Update user messages
 
-2. **Test CLI**:
+1. **Test CLI**:
 
    ```bash
    specify init --agent claude --here
@@ -770,28 +777,28 @@ Remove references to choosing script types.
    - Run all commands
    - Verify bash scripts are executed
 
-2. **Test on Windows**:
+1. **Test on Windows**:
    - Initialize project
    - Run all commands
    - Verify PowerShell scripts are executed
 
-3. **Test on macOS** (if available):
+1. **Test on macOS** (if available):
    - Same verification
 
-4. **Test edge cases**:
+1. **Test edge cases**:
    - Windows with only Git Bash (no PowerShell)
    - Unix with PowerShell Core installed
    - Verify fallback logic works
 
-5. **Test backward compatibility**:
+1. **Test backward compatibility**:
    - Old package URLs should return 404 (expected)
    - CLI should show helpful error
 
 ### Phase 7: Release (30 minutes)
 
 1. **Create pull request** with all changes
-2. **Merge to main** (triggers release workflow)
-3. **Verify release**:
+1. **Merge to main** (triggers release workflow)
+1. **Verify release**:
    - Check GitHub releases for new unified packages
    - Download and test on multiple platforms
 
@@ -966,9 +973,9 @@ specify init --agent claude
 ### Mitigation Strategies
 
 1. **Extensive Testing**: Test on all major platforms before release
-2. **Fallback Logic**: Launcher tries PowerShell, then falls back to bash
-3. **Clear Documentation**: Explain requirements and troubleshooting
-4. **Gradual Rollout**: Soft migration keeps old packages available
+1. **Fallback Logic**: Launcher tries PowerShell, then falls back to bash
+1. **Clear Documentation**: Explain requirements and troubleshooting
+1. **Gradual Rollout**: Soft migration keeps old packages available
 
 ---
 
@@ -977,11 +984,12 @@ specify init --agent claude
 **PROCEED WITH IMPLEMENTATION** ✅
 
 This change:
+
 1. Is highly feasible with the current architecture
-2. Provides significant user experience improvements
-3. Reduces maintenance burden
-4. Makes the system truly cross-platform
-5. Has acceptable risk profile with proper testing
+1. Provides significant user experience improvements
+1. Reduces maintenance burden
+1. Makes the system truly cross-platform
+1. Has acceptable risk profile with proper testing
 
 **Suggested Timeline**:
 - **Development**: 2-3 days
@@ -994,19 +1002,19 @@ This change:
 ## Next Steps
 
 1. **Review this document** with stakeholders
-2. **Approve approach** (launcher strategy, migration plan)
-3. **Begin Phase 1** (create launcher template)
-4. **Iterate through phases** with testing after each
-5. **Create PR** with all changes
-6. **Merge and release**
+1. **Approve approach** (launcher strategy, migration plan)
+1. **Begin Phase 1** (create launcher template)
+1. **Iterate through phases** with testing after each
+1. **Create PR** with all changes
+1. **Merge and release**
 
 ## Questions to Resolve
 
 1. **Keep backward compatibility?** Recommend: Yes, for 1 release cycle
-2. **Launcher language?** Recommend: Shell script (no dependencies)
-3. **Documentation location?** Recommend: Add MIGRATION.md
-4. **Testing strategy?** Recommend: Automated tests + manual validation
-5. **Release timing?** Recommend: Next minor version (v0.3.0)
+1. **Launcher language?** Recommend: Shell script (no dependencies)
+1. **Documentation location?** Recommend: Add MIGRATION.md
+1. **Testing strategy?** Recommend: Automated tests + manual validation
+1. **Release timing?** Recommend: Next minor version (v0.3.0)
 
 ---
 
