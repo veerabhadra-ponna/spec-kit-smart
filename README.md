@@ -43,6 +43,7 @@ Spec-Driven Development **flips the script** on traditional software development
 ## ⚡ Get Started
 
 > **✨ Smart Cross-Platform Support**: Spec Kit Smart now features unified packages with automatic OS detection! Each package includes both Bash and PowerShell scripts, automatically selecting the right implementation for your operating system:
+>
 > - **Windows**: Uses PowerShell scripts
 > - **Unix/Linux/macOS**: Uses Bash scripts
 >
@@ -269,6 +270,7 @@ graph LR
 ```
 
 **Legend:**
+
 - **Blue boxes (solid)**: Required prompts for core Spec-Driven Development workflow
 - **Green boxes (dashed)**: Optional prompts for enhanced quality and validation
 - **Solid arrows**: Required flow

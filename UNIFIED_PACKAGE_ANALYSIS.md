@@ -21,6 +21,7 @@
 **File**: `.github/workflows/scripts/create-release-packages.sh`
 
 Currently builds separate packages:
+
 ```bash
 # For each agent (claude, gemini, etc.) and each script type (sh, ps):
 build_variant() {
@@ -31,6 +32,7 @@ build_variant() {
 ```
 
 **Script Copying Logic** (lines 116-131):
+
 ```bash
 case $script in
   sh)
@@ -255,6 +257,7 @@ if __name__ == "__main__":
 #### Change 1.1: Remove Script Loop (Lines 234-238)
 
 **Current**:
+
 ```bash
 for agent in "${AGENT_LIST[@]}"; do
   for script in "${SCRIPT_LIST[@]}"; do
@@ -264,6 +267,7 @@ done
 ```
 
 **New**:
+
 ```bash
 for agent in "${AGENT_LIST[@]}"; do
   build_unified_variant "$agent"
@@ -273,6 +277,7 @@ done
 #### Change 1.2: Create Unified Build Function
 
 **New Function** (replace `build_variant`):
+
 ```bash
 build_unified_variant() {
   local agent=$1
@@ -331,6 +336,7 @@ build_unified_variant() {
 #### Change 1.3: Create Launcher Script Generator
 
 **New Function**:
+
 ```bash
 create_launcher_scripts() {
   local scripts_dir=$1
@@ -396,6 +402,7 @@ LAUNCHER_EOF
 #### Change 1.4: Update Command Generation
 
 **New Function** (replace `generate_commands`):
+
 ```bash
 generate_unified_commands() {
   local agent=$1 ext=$2 arg_format=$3 output_dir=$4
@@ -464,6 +471,7 @@ generate_unified_commands() {
 #### Change 2.1: Simplify YAML Frontmatter
 
 **Current**:
+
 ```yaml
 ---
 description: Execute the implementation planning workflow
@@ -477,6 +485,7 @@ agent_scripts:
 ```
 
 **New** (OPTION 1 - Keep for documentation):
+
 ```yaml
 ---
 description: Execute the implementation planning workflow
@@ -489,6 +498,7 @@ agent_script: scripts/launchers/update-agent-context __AGENT__
 ```
 
 **New** (OPTION 2 - Minimal, recommended):
+
 ```yaml
 ---
 description: Execute the implementation planning workflow
@@ -500,6 +510,7 @@ With build-time substitution handling the script paths.
 #### Change 2.2: Update Prompt Instructions
 
 **Current**:
+
 ```markdown
 1. **Setup**: Run `{SCRIPT}` from repo root and parse JSON for FEATURE_SPEC...
    For single quotes in args like "I'm Groot", use escape syntax:
@@ -507,6 +518,7 @@ With build-time substitution handling the script paths.
 ```
 
 **New**:
+
 ```markdown
 1. **Setup**: Run `{SCRIPT}` from repo root and parse JSON for FEATURE_SPEC...
 
@@ -529,6 +541,7 @@ With build-time substitution handling the script paths.
 **Lines to Remove/Modify** (994-1012):
 
 **Current**:
+
 ```python
 if script_type:
     if script_type not in SCRIPT_TYPE_CHOICES:
@@ -546,6 +559,7 @@ console.print(f"[cyan]Selected script type:[/cyan] {selected_script}")
 ```
 
 **New**:
+
 ```python
 # Script type no longer needed - unified package contains both
 # Keep the parameter for backward compatibility but ignore it
@@ -562,6 +576,7 @@ console.print(f"[cyan]Package type:[/cyan] Unified (auto-detects OS)")
 #### Change 3.2: Update Download URL Construction
 
 **Current** (approximate line 1047):
+
 ```python
 download_and_extract_template(
     project_path, selected_ai, selected_script, here,
@@ -571,6 +586,7 @@ download_and_extract_template(
 ```
 
 **New**:
+
 ```python
 # selected_script is now always "unified" or None
 download_and_extract_template(
@@ -585,12 +601,14 @@ download_and_extract_template(
 **Find the function that constructs GitHub release URLs**:
 
 **Current**:
+
 ```python
 # Construct: spec-kit-template-{agent}-{script}-{version}.zip
 package_name = f"spec-kit-template-{agent}-{script}-{version}.zip"
 ```
 
 **New**:
+
 ```python
 # Construct: spec-kit-template-{agent}-{version}.zip
 package_name = f"spec-kit-template-{agent}-{version}.zip"
@@ -605,6 +623,7 @@ package_name = f"spec-kit-template-{agent}-{version}.zip"
 **Optional Enhancement**: Add OS detection warning in `common.sh` and `common.ps1`:
 
 **In `scripts/bash/common.sh`**:
+
 ```bash
 # Detect if running on Windows (when bash is available via WSL/Git Bash)
 is_windows() {
@@ -619,6 +638,7 @@ fi
 ```
 
 **In `scripts/powershell/common.ps1`**:
+
 ```powershell
 # Detect if running on Unix (via PowerShell Core)
 function Test-IsUnix {
@@ -636,22 +656,28 @@ if (Test-IsUnix) {
 #### Change 5.1: Update README.md
 
 **Current**:
+
 ```markdown
 ## Installation
 
 ```bash
+
 specify init --agent claude --script sh
+
 ```
 
 Choose your AI agent and script type (sh for Unix/Linux/macOS, ps for Windows).
 ```
 
 **New**:
+
 ```markdown
 ## Installation
 
 ```bash
+
 specify init --agent claude
+
 ```
 
 The package automatically detects your operating system:
@@ -689,15 +715,18 @@ Remove references to choosing script types.
    - Update main loop to build unified packages
 
 2. **Test locally**:
+
    ```bash
    AGENTS=claude .github/workflows/scripts/create-release-packages.sh v0.99.99
    ```
-   - Verify launcher scripts are created
-   - Verify both bash/ and powershell/ directories are included
-   - Verify package size (~2x larger)
+
+- Verify launcher scripts are created
+- Verify both bash/ and powershell/ directories are included
+- Verify package size (~2x larger)
 
 3. **Update GitHub Actions workflow** (minimal changes):
-   - Workflow should work as-is (no SCRIPTS env var needed)
+
+- Workflow should work as-is (no SCRIPTS env var needed)
 
 ### Phase 3: CLI Updates (1-2 hours)
 
@@ -708,6 +737,7 @@ Remove references to choosing script types.
    - Update user messages
 
 2. **Test CLI**:
+
    ```bash
    specify init --agent claude --here
    ls .specify/scripts/  # Should see bash/, powershell/, launchers/
@@ -836,12 +866,14 @@ Remove references to choosing script types.
 
 ### For Existing Users
 
-**Option 1: Soft Migration** (Recommended)
+#### Option 1: Soft Migration (Recommended)
+
 1. Keep building old packages for one more release (v0.3.0)
 2. Add deprecation warning to old package downloads
 3. CLI automatically switches to unified packages in v0.4.0
 
-**Option 2: Hard Migration**
+#### Option 2: Hard Migration
+
 1. Stop building old packages immediately
 2. Update CLI to reject `--script` parameter
 3. Show clear error message with migration instructions
@@ -981,28 +1013,43 @@ This change:
 ## Appendix: Alternative Approaches Considered
 
 ### Alternative 1: Python-based Launcher
+
 **Pros**: Cross-platform, easy to maintain
+
 **Cons**: Adds Python as runtime dependency
+
 **Verdict**: ❌ Rejected - increases dependencies
 
 ### Alternative 2: Platform-Specific Packages with Shared Code
+
 **Pros**: Smaller package size
+
 **Cons**: Still requires two packages per agent
+
 **Verdict**: ❌ Rejected - doesn't solve the core problem
 
 ### Alternative 3: Polyglot Scripts (Python/Bash/PowerShell hybrid)
+
 **Pros**: Single script file
+
 **Cons**: Complex, hard to maintain, poor readability
+
 **Verdict**: ❌ Rejected - too complex
 
 ### Alternative 4: Client-Side OS Detection (CLI does everything)
+
 **Pros**: No launcher scripts needed
+
 **Cons**: Doesn't work when AI agents call scripts directly
+
 **Verdict**: ❌ Rejected - breaks AI agent usage
 
 ### Alternative 5: Unified Package with Shell-based Launchers ✅
+
 **Pros**: No dependencies, simple, works everywhere
+
 **Cons**: Slightly larger packages, adds launcher layer
+
 **Verdict**: ✅ **SELECTED** - best balance of simplicity and functionality
 
 ---
