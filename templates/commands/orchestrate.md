@@ -123,7 +123,7 @@ Optional phases in brackets are skippable based on user preference or context.
    - If arguments are empty or "--resume": Jump to RESUME mode (see below)
    - Otherwise: New feature mode
 
-2. **Check for existing state:**
+1. **Check for existing state:**
 
    ```bash
    if [ -f .speckit-state.json ]; then
@@ -136,14 +136,14 @@ Optional phases in brackets are skippable based on user preference or context.
    fi
    ```
 
-3. **Gather workflow preferences (interactive):**
+1. **Gather workflow preferences (interactive):**
 
 ```text
    How would you like to run the workflow?
 
    1. Interactive (recommended) - Ask permission before each major phase
-   2. Auto-specify - Run constitution → specify → plan → tasks automatically, then pause
-   3. Full auto - Run entire workflow to implementation (requires confirmation)
+   1. Auto-specify - Run constitution → specify → plan → tasks automatically, then pause
+   1. Full auto - Run entire workflow to implementation (requires confirmation)
 
    Optional phases:
    - Include /speckit.clarify for ambiguity resolution? [y/N]
@@ -151,7 +151,7 @@ Optional phases in brackets are skippable based on user preference or context.
    - Pause before implementation for review? [Y/n]
    ```
 
-4. **Initialize state file:**
+1. **Initialize state file:**
 
    ```json
    {
@@ -633,7 +633,7 @@ When invoked with `--resume` or when resuming from state:
    feature_dir=$(echo "$state" | jq -r '.feature_dir')
    ```
 
-2. **Display resume summary:**
+1. **Display resume summary:**
 
 ```text
    ╔══════════════════════════════════════════════════════╗
@@ -654,7 +654,7 @@ When invoked with `--resume` or when resuming from state:
    Resume from task T016? [Y/n]
    ```
 
-3. **Jump to current phase:**
+1. **Jump to current phase:**
 
    ```bash
    case "$current_phase" in
@@ -683,7 +683,7 @@ When invoked with `--resume` or when resuming from state:
    esac
    ```
 
-4. **Continue workflow from checkpoint** with normal execution flow.
+1. **Continue workflow from checkpoint** with normal execution flow.
 
 ---
 
@@ -696,12 +696,12 @@ When invoked with `--resume` or when resuming from state:
    - Provide clear error message and recovery steps
    - Exit with non-zero code
 
-2. **User abort:**
+1. **User abort:**
    - Save current state
    - Provide resume instructions
    - Exit cleanly
 
-3. **Missing dependencies:**
+1. **Missing dependencies:**
    - Check for required files before each phase
    - Provide clear error if prerequisites missing
    - Suggest fixes
@@ -791,15 +791,16 @@ The orchestrator simply chains them together with state management.
 ```
 
 **Workflow:**
+
 1. Asks for preferences (interactive mode selected)
-2. Checks constitution (exists, skips creation)
-3. Creates spec → asks to continue
-4. Runs clarify (3 questions) → asks to continue
-5. Creates plan → asks to continue
-6. Generates tasks → asks to continue
-7. Runs analysis (no critical issues) → asks to continue
-8. Implements 42 tasks
-9. Completes and cleans up
+1. Checks constitution (exists, skips creation)
+1. Creates spec → asks to continue
+1. Runs clarify (3 questions) → asks to continue
+1. Creates plan → asks to continue
+1. Generates tasks → asks to continue
+1. Runs analysis (no critical issues) → asks to continue
+1. Implements 42 tasks
+1. Completes and cleans up
 
 ### Example 2: Auto-Spec Mode
 
@@ -808,11 +809,12 @@ The orchestrator simply chains them together with state management.
 ```
 
 **Workflow:**
+
 1. Runs constitution → specify → plan → tasks automatically
-2. Pauses before implementation
-3. User reviews tasks.md
-4. User runs `/speckit.resume` to continue
-5. Implements and completes
+1. Pauses before implementation
+1. User reviews tasks.md
+1. User runs `/speckit.resume` to continue
+1. Implements and completes
 
 ### Example 3: Resume After Chat Limit
 
@@ -825,11 +827,12 @@ The orchestrator simply chains them together with state management.
 ```
 
 **Workflow:**
+
 1. Loads .speckit-state.json
-2. Shows progress summary (28/42 tasks completed)
-3. Asks to continue from task T029
-4. Resumes implementation
-5. Completes remaining 14 tasks
+1. Shows progress summary (28/42 tasks completed)
+1. Asks to continue from task T029
+1. Resumes implementation
+1. Completes remaining 14 tasks
 
 ---
 
