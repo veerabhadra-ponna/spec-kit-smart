@@ -11,10 +11,10 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
 ## 2. Core Responsibilities
 
 * Interpret specifications and design documents as the **single source of truth**:
-  - `.specify/memory/constitution.md` - Project principles and constraints
-  - `specs/[###-feature-name]/spec.md` - Feature requirements and acceptance criteria
-  - `specs/[###-feature-name]/plan.md` - Implementation architecture
-  - `specs/[###-feature-name]/` - Supporting design documents (data-model, contracts, research, quickstart, tasks)
+  * `.specify/memory/constitution.md` - Project principles and constraints
+  * `specs/[###-feature-name]/spec.md` - Feature requirements and acceptance criteria
+  * `specs/[###-feature-name]/plan.md` - Implementation architecture
+  * `specs/[###-feature-name]/` - Supporting design documents (data-model, contracts, research, quickstart, tasks)
 
 * Generate or modify code, documentation, and tests **strictly aligned** with these specifications.
 * Produce results that are **deterministic**, **idempotent**, and **production-ready**.
@@ -26,7 +26,7 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
 
 * **Ambiguity Protocol:** When context is missing or conflicting, emit a clarification request instead of assuming:
 
-  ```
+  ```text
   CLARIFICATION NEEDED:
     - <question or gap>
     - <options/trade-offs>
@@ -85,9 +85,9 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
 * Add or update design documents in the feature directory when design trade-offs occur.
 * Document technical decisions with rationale and alternatives considered.
 * Notify human reviewers via the **standard PR description template**, including:
-  - Links to feature specification and implementation plan
-  - Which user stories and acceptance scenarios are implemented
-  - Which tests validate the implementation
+  * Links to feature specification and implementation plan
+  * Which user stories and acceptance scenarios are implemented
+  * Which tests validate the implementation
 
 ### Feedback Loop
 
@@ -120,26 +120,26 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
 ## 8. Violation Handling
 
 * **Specification Violations:** If the spec is ambiguous, contradictory, or incomplete:
-  - Use the CLARIFICATION NEEDED protocol (Section 3)
-  - Do not proceed with implementation until clarification is provided
-  - Suggest specific updates to specification documents
+  * Use the CLARIFICATION NEEDED protocol (Section 3)
+  * Do not proceed with implementation until clarification is provided
+  * Suggest specific updates to specification documents
 
 * **Constitutional Violations:** If the spec or implementation conflicts with Constitution principles:
-  - **Flag** the deviation immediately
-  - Document the conflict clearly with reference to specific Constitution articles
-  - If proceeding is necessary, add explicit justification to the "Complexity Tracking" section of the implementation plan
-  - Request human decision on priority
+  * **Flag** the deviation immediately
+  * Document the conflict clearly with reference to specific Constitution articles
+  * If proceeding is necessary, add explicit justification to the "Complexity Tracking" section of the implementation plan
+  * Request human decision on priority
 
 * **Quality Failures:** If tests fail or code quality checks do not pass:
-  - **Suspend** further implementation
-  - Report which acceptance scenario or spec requirement is failing
-  - Determine if it's a code issue or spec issue
-  - If spec issue, recommend spec updates; otherwise fix the implementation
+  * **Suspend** further implementation
+  * Report which acceptance scenario or spec requirement is failing
+  * Determine if it's a code issue or spec issue
+  * If spec issue, recommend spec updates; otherwise fix the implementation
 
 * **Technical Blockers:** If blocked by external dependencies, missing APIs, or technical limitations:
-  - Document the blocker in the research document or as a comment in the implementation plan
-  - Suggest alternative approaches or spec modifications
-  - Escalate promptly to avoid delays
+  * Document the blocker in the research document or as a comment in the implementation plan
+  * Suggest alternative approaches or spec modifications
+  * Escalate promptly to avoid delays
 
 ---
 
@@ -147,7 +147,7 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
 
 Projects using Spec-Driven Development have this structure:
 
-```
+```text
 project-root/
 ├── .specify/
 │   ├── memory/
