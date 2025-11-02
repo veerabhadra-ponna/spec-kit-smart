@@ -314,6 +314,37 @@ The orchestrator saves progress to `.speckit-state.json`, enabling:
 
 #### 3. **Flexible Execution Modes**
 
+```mermaid
+graph LR
+    subgraph Interactive["🤝 Interactive Mode (Recommended)"]
+        I1[Constitution] -->|"Ask user"| I2[Specify]
+        I2 -->|"Ask user"| I3[Clarify]
+        I3 -->|"Ask user"| I4[Plan]
+        I4 -->|"Ask user"| I5[Tasks]
+        I5 -->|"Ask user"| I6[Analyze]
+        I6 -->|"Ask user"| I7[Implement]
+    end
+
+    subgraph AutoSpec["⚡ Auto-Spec Mode"]
+        A1[Constitution] --> A2[Specify]
+        A2 --> A3[Plan]
+        A3 --> A4[Tasks]
+        A4 -->|"⏸️ PAUSE<br/>Ask user"| A5[Implement]
+    end
+
+    subgraph FullAuto["🚀 Full Auto Mode"]
+        F1[Constitution] --> F2[Specify]
+        F2 --> F3[Plan]
+        F3 --> F4[Tasks]
+        F4 --> F5[Implement]
+        F5 --> F6[Done]
+    end
+
+    style Interactive fill:#e3f2fd
+    style AutoSpec fill:#fff9c4
+    style FullAuto fill:#e8f5e9
+```
+
 **Interactive Mode** (recommended):
 - Asks permission before each major phase
 - Allows review and adjustment between phases
@@ -386,6 +417,42 @@ The resume command:
 **New chat** (fresh session):
 ```bash
 /speckit.resume
+```
+
+```mermaid
+flowchart TD
+    NewChat["🆕 New Chat Session<br/>(Zero History)"] --> Resume["/speckit.resume"]
+
+    Resume --> LoadState["📂 Load State<br/>.speckit-state.json"]
+    LoadState --> LoadArtifacts["📚 Load All Artifacts"]
+
+    LoadArtifacts --> Constitution["✓ Constitution"]
+    LoadArtifacts --> Spec["✓ Specification"]
+    LoadArtifacts --> Plan["✓ Plan, Research, Data Model"]
+    LoadArtifacts --> Tasks["✓ Tasks (28/47 completed)"]
+
+    Constitution --> Identify
+    Spec --> Identify
+    Plan --> Identify
+    Tasks --> Identify["🎯 Identify Resume Point<br/>Next: [T029] Webhook verification"]
+
+    Identify --> Summary["📊 Show Summary<br/>• Recently completed: 3 tasks<br/>• Next task: [T029]<br/>• Upcoming: 5 tasks"]
+
+    Summary --> Confirm{"❓ Resume at task T029?"}
+
+    Confirm -->|"Yes"| Continue["⚙️ Continue Implementation<br/>from exact stopping point"]
+    Confirm -->|"No"| Cancel["❌ Cancel<br/>(State preserved)"]
+
+    Continue --> Done["✅ Complete Remaining Tasks"]
+
+    style NewChat fill:#e8eaf6
+    style Resume fill:#e1f5e1
+    style LoadState fill:#fff9c4
+    style LoadArtifacts fill:#e3f2fd
+    style Identify fill:#fff4e6
+    style Summary fill:#e8f5e9
+    style Continue fill:#c8e6c9
+    style Done fill:#a5d6a7
 ```
 
 **What happens:**
@@ -510,58 +577,68 @@ Simply fix the issue (e.g., `npm install stripe`) and run `/speckit.resume` to c
 
 ### Workflow Diagram
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    SPEC-DRIVEN WORKFLOW                         │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    Start(["/speckit.orchestrate &lt;description&gt;"]) --> Constitution
 
-  START: /speckit.orchestrate <description>
-    │
-    ▼
-┌───────────────┐
-│ Constitution  │ ◄── If missing, create it
-└───────┬───────┘
-        │ ✓ State saved
-        ▼
-┌───────────────┐
-│   Specify     │ ──► Creates: spec.md, checklists/requirements.md
-└───────┬───────┘     Branch: ###-feature-name
-        │ ✓ State saved
-        ▼
-┌───────────────┐
-│   Clarify     │ ──► Updates spec with clarifications
-└───────┬───────┘     (Optional: skip if no ambiguities)
-        │ ✓ State saved
-        ▼
-┌───────────────┐
-│     Plan      │ ──► Creates: plan.md, research.md, data-model.md
-└───────┬───────┘              contracts/, quickstart.md
-        │ ✓ State saved
-        ▼
-┌───────────────┐
-│     Tasks     │ ──► Creates: tasks.md with executable breakdown
-└───────┬───────┘
-        │ ✓ State saved
-        ▼
-┌───────────────┐
-│    Analyze    │ ──► Validates consistency and coverage
-└───────┬───────┘     (Optional: skip if confident)
-        │ ✓ State saved
-        ▼
-┌───────────────┐
-│   Implement   │ ──► Executes all tasks, marks [X] as complete
-└───────┬───────┘     State updated after EACH task
-        │
-        ▼
-      DONE
+    Constitution["🏛️ Constitution<br/>Check/Create Principles"]
+    Constitution -->|"✓ State saved"| Specify
+    Constitution -.->|"If missing"| CreateConst["Create constitution.md"]
+    CreateConst --> Specify
 
-  ┌─────────────────────────────────────────┐
-  │  At any point, state is saved to:       │
-  │  .speckit-state.json                    │
-  │                                         │
-  │  Resume with: /speckit.resume           │
-  │  Works in NEW chat with ZERO history    │
-  └─────────────────────────────────────────┘
+    Specify["📝 Specify<br/>Create Specification"]
+    Specify -->|"✓ State saved<br/>Creates: spec.md, checklists/<br/>Branch: ###-feature-name"| Clarify
+
+    Clarify["❓ Clarify<br/>Resolve Ambiguities"]
+    Clarify -->|"✓ State saved<br/>Updates spec with clarifications"| Plan
+    Clarify -.->|"Optional:<br/>Skip if no ambiguities"| Plan
+
+    Plan["🏗️ Plan<br/>Technical Design"]
+    Plan -->|"✓ State saved<br/>Creates: plan.md, research.md,<br/>data-model.md, contracts/,<br/>quickstart.md"| Tasks
+
+    Tasks["📋 Tasks<br/>Generate Task Breakdown"]
+    Tasks -->|"✓ State saved<br/>Creates: tasks.md with<br/>executable breakdown"| Analyze
+
+    Analyze["🔍 Analyze<br/>Validate Consistency"]
+    Analyze -->|"✓ State saved<br/>Validates consistency<br/>and coverage"| Implement
+    Analyze -.->|"Optional:<br/>Skip if confident"| Implement
+
+    Implement["⚙️ Implement<br/>Execute All Tasks"]
+    Implement -->|"State updated after EACH task<br/>Marks tasks [X] as complete"| Done
+
+    Done([✅ DONE])
+
+    State["💾 .speckit-state.json<br/><br/>State saved at every checkpoint<br/><br/>Resume with: /speckit.resume<br/>Works in NEW chat with ZERO history"]
+
+    Constitution -.->|"Checkpoint"| State
+    Specify -.->|"Checkpoint"| State
+    Clarify -.->|"Checkpoint"| State
+    Plan -.->|"Checkpoint"| State
+    Tasks -.->|"Checkpoint"| State
+    Analyze -.->|"Checkpoint"| State
+    Implement -.->|"Checkpoint"| State
+
+    State -.->|"Resume from any phase"| Resume
+    Resume["🔄 /speckit.resume<br/>Restore Context & Continue"]
+    Resume -.-> Constitution
+    Resume -.-> Specify
+    Resume -.-> Clarify
+    Resume -.-> Plan
+    Resume -.-> Tasks
+    Resume -.-> Analyze
+    Resume -.-> Implement
+
+    style Start fill:#e1f5e1
+    style Done fill:#e1f5e1
+    style Constitution fill:#fff4e6
+    style Specify fill:#e3f2fd
+    style Clarify fill:#f3e5f5
+    style Plan fill:#e8f5e9
+    style Tasks fill:#fff9c4
+    style Analyze fill:#fce4ec
+    style Implement fill:#e0f2f1
+    style State fill:#fff3e0
+    style Resume fill:#e8eaf6
 ```
 
 ### Summary
