@@ -360,7 +360,7 @@ Our research and experimentation focus on:
 For Windows users, you need **one** of the following to run the automation scripts:
 
 - **Git for Windows** (includes Git Bash) - **Recommended** for most users
-  - Download from: https://git-scm.com/download/win
+  - Download from: <https://git-scm.com/download/win>
   - Automatically installed with Git
   - Works in corporate environments (no WSL needed)
 - **PowerShell 5.1+** - Built into modern Windows
