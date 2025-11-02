@@ -13,7 +13,12 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
 - Interpret feature specifications and implementation plans as the **single source of truth**:
   - **Feature Specifications**: `specs/[###-feature-name]/spec.md` - Contains user stories, acceptance criteria, and requirements
   - **Implementation Plans**: `specs/[###-feature-name]/plan.md` - Contains technical architecture and implementation details
-  - **Design Documents**: `data-model.md`, `contracts/`, `research.md`, `quickstart.md` in the feature folder
+  - **Design Documents** (all in `specs/[###-feature-name]/`):
+    - `data-model.md` - Database schemas and data structures
+    - `contracts/` - API specifications and contracts
+    - `research.md` - Technical context and decisions
+    - `quickstart.md` - Validation scenarios
+    - `tasks.md` - Implementation task list
   - **Project Constitution**: `.specify/memory/constitution.md` - Project-wide architectural principles, constraints, and standards
   - **Related Documents**: Any ADRs, design decisions, or technical documentation referenced in the spec
 - Generate or modify code, documentation, and tests **strictly aligned** with feature specifications and implementation plans.
@@ -24,7 +29,7 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
 
 ## 3. Behavioral Principles
 
-- **Single Source of Truth:** Derive all logic and structure from `spec.md`, `plan.md`, and related design documents in the feature folder.
+- **Single Source of Truth:** Derive all logic and structure from `specs/[###-feature-name]/spec.md`, `specs/[###-feature-name]/plan.md`, and related design documents in the feature folder (`specs/[###-feature-name]/`).
 - **Ambiguity Protocol:** When context is missing or conflicting, clearly communicate the ambiguity:
 
   ```
@@ -38,26 +43,26 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
   Do not make assumptions without explicit guidance. If the spec is unclear, suggest specific updates to the specification documents.
 
 - **Minimal Diffs:** Make small, reviewable, logically grouped changes that are easy to understand and review.
-- **Explain Rationale:** Include a concise "Why" statement linking changes to specific sections in `spec.md` or `plan.md` (e.g., "Implements User Story 2, Scenario 1 from spec.md").
+- **Explain Rationale:** Include a concise "Why" statement linking changes to specific sections in `specs/[###-feature-name]/spec.md` or `specs/[###-feature-name]/plan.md` (e.g., "Implements User Story 2, Scenario 1 from spec.md").
 - **Deterministic Output:** Same specification input should produce identical code output. Use fixed seeds if randomness is required.
 - **Idempotent Actions:** Re-execution must not duplicate or corrupt output.
 - **Safe by Default:** Respect the `.specify/` directory as read-only during implementation. Modify only source code and test files as directed by the implementation plan.
 - **Traceability:** Update commit messages and PR descriptions with:
   - Feature branch name (e.g., `###-feature-name`)
   - Reference to spec sections implemented (e.g., "User Story 1, Scenarios 1-3")
-  - Link to `spec.md` and `plan.md`
+  - Link to `specs/[###-feature-name]/spec.md` and `specs/[###-feature-name]/plan.md`
 - **Compliance:** Follow project Constitution principles for architecture, security, and privacy at all times. Flag any conflicts between the spec and Constitution immediately.
 
 ---
 
 ## 4. Quality & Verification
 
-- **Acceptance Testing:** Implement tests for all acceptance scenarios defined in `spec.md`. Each "Given-When-Then" scenario should have corresponding test code.
+- **Acceptance Testing:** Implement tests for all acceptance scenarios defined in `specs/[###-feature-name]/spec.md`. Each "Given-When-Then" scenario should have corresponding test code.
 - **Validation:** Run formatters, linters, and build checks as specified in the implementation plan before committing.
-- **Quickstart Verification:** If `quickstart.md` exists, verify all quickstart scenarios work as documented.
-- **Contract Compliance:** If `contracts/` directory exists, ensure all API implementations match the contract specifications.
-- **Data Model Alignment:** If `data-model.md` exists, verify all database schemas, models, and data structures match the documented design.
-- **Constitution Gates:** Verify compliance with any gates specified in the "Constitution Check" section of `plan.md`.
+- **Quickstart Verification:** If `specs/[###-feature-name]/quickstart.md` exists, verify all quickstart scenarios work as documented.
+- **Contract Compliance:** If `specs/[###-feature-name]/contracts/` directory exists, ensure all API implementations match the contract specifications.
+- **Data Model Alignment:** If `specs/[###-feature-name]/data-model.md` exists, verify all database schemas, models, and data structures match the documented design.
+- **Constitution Gates:** Verify compliance with any gates specified in the "Constitution Check" section of `specs/[###-feature-name]/plan.md`.
 - **Compilation:** Ensure all generated code compiles, builds, and loads without errors.
 - **Fail Fast:** Abort if build/test fails. Report reason, affected component(s), and which spec requirement is blocked.
 
@@ -115,18 +120,18 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
 
 - **Specification Issues:** If the spec is ambiguous, contradictory, or incomplete:
   - Use the CLARIFICATION NEEDED protocol (Section 3)
-  - Suggest specific updates to `spec.md` or `plan.md`
+  - Suggest specific updates to `specs/[###-feature-name]/spec.md` or `specs/[###-feature-name]/plan.md`
   - Do not proceed with implementation until clarification is provided
-- **Constitutional Conflicts:** If the spec conflicts with the project Constitution:
+- **Constitutional Conflicts:** If the spec conflicts with the project Constitution (`.specify/memory/constitution.md`):
   - Document the conflict clearly
   - Reference specific Constitution principles
   - Request human decision on priority
 - **Technical Blockers:** If implementation is blocked by external dependencies, missing APIs, or technical limitations:
-  - Document the blocker in the feature's `research.md` or as a comment in `plan.md`
+  - Document the blocker in `specs/[###-feature-name]/research.md` or as a comment in `specs/[###-feature-name]/plan.md`
   - Suggest alternative approaches or spec modifications
   - Escalate promptly to avoid delays
 - **Test Failures:** If acceptance scenarios cannot be satisfied:
-  - Identify which scenario in `spec.md` is failing
+  - Identify which scenario in `specs/[###-feature-name]/spec.md` is failing
   - Determine if it's a code issue or spec issue
   - If spec issue, recommend spec updates
 
@@ -153,11 +158,11 @@ AI agents working with Spec Kit should follow this workflow:
 - Order tasks by dependencies and priorities
 
 ### During `/speckit.implement`
-- Follow the task list from `tasks.md`
-- Reference `spec.md` for requirements and acceptance criteria
-- Reference `plan.md` for technical architecture and implementation details
+- Follow the task list from `specs/[###-feature-name]/tasks.md`
+- Reference `specs/[###-feature-name]/spec.md` for requirements and acceptance criteria
+- Reference `specs/[###-feature-name]/plan.md` for technical architecture and implementation details
 - Implement tests for each acceptance scenario
-- Validate against `quickstart.md` scenarios
+- Validate against `specs/[###-feature-name]/quickstart.md` scenarios
 - Ensure all changes trace back to specific spec requirements
 
 ### During `/speckit.resume`
