@@ -536,24 +536,84 @@ The orchestrator creates `.speckit-state.json` in your repository root:
 
 Throughout orchestration, you'll see clear progress indicators:
 
-```
-[1/7] ✓ Constitution check
-[2/7] ✓ Specification created
-[3/7] ⏭  Clarification skipped
-[4/7] ⚙  Planning in progress...
+**Phase-Level Progress:**
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'16px'}}}%%
+gantt
+    title Workflow Progress Example
+    dateFormat X
+    axisFormat %s
+
+    section Phases
+    Constitution ✓       :done,    p1, 0, 1
+    Specification ✓      :done,    p2, 1, 2
+    Clarification ⏭      :crit,    p3, 2, 2
+    Planning ⚙           :active,  p4, 2, 3
+    Tasks               :         p5, 3, 4
+    Analysis            :         p6, 4, 5
+    Implementation      :         p7, 5, 6
 ```
 
-For implementation phases:
+**Implementation Phase Progress:**
+
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'fontSize':'14px'}}}%%
+gantt
+    title Implementation Progress (28/47 tasks completed)
+    dateFormat X
+    axisFormat %s
+
+    section Phase 1: Setup
+    Setup Tasks ✓           :done, s1, 0, 3
+
+    section Phase 2: Foundational
+    Foundational Tasks ✓    :done, f1, 3, 11
+
+    section Phase 3: User Stories
+    US1 (P1) ✓             :done, u1, 11, 16
+    US2 (P1) ✓             :done, u2, 16, 20
+    US3 (P1) ⚙ Current     :active, u3, 20, 27
+    US4 (P2)               :u4, 27, 32
+    US5 (P2)               :u5, 32, 36
+    US6 (P3)               :u6, 36, 39
+
+    section Final: Polish
+    Polish & Cross-cutting :p1, 39, 42
 ```
-[7/7] Implementation
-  ├─ Phase 1: Setup [3/3] ✓
-  ├─ Phase 2: Foundational [8/8] ✓
-  ├─ Phase 3: User Stories [15/28] ⚙
-  │   ├─ US1 (P1) [5/5] ✓
-  │   ├─ US2 (P1) [4/4] ✓
-  │   └─ US3 (P1) [6/7] ⚙ Current: [T016] JWT validation
-  └─ Final: Polish [0/3] ⏳
+
+**Task-Level Detail:**
+
+```mermaid
+graph TD
+    subgraph US3["User Story 3 (P1) - In Progress"]
+        T015["[T015] ✓ Create auth middleware"]
+        T016["[T016] ⚙ JWT validation<br/><b>CURRENT TASK</b>"]
+        T017["[T017] ⏳ Token refresh logic"]
+        T018["[T018] ⏳ Logout handler"]
+        T019["[T019] ⏳ Rate limiting"]
+        T020["[T020] ⏳ Integration tests"]
+
+        T015 --> T016
+        T016 -.-> T017
+        T017 -.-> T018
+        T018 -.-> T019
+        T019 -.-> T020
+    end
+
+    style T015 fill:#c8e6c9,stroke:#4caf50
+    style T016 fill:#fff9c4,stroke:#fbc02d
+    style T017 fill:#f5f5f5,stroke:#9e9e9e
+    style T018 fill:#f5f5f5,stroke:#9e9e9e
+    style T019 fill:#f5f5f5,stroke:#9e9e9e
+    style T020 fill:#f5f5f5,stroke:#9e9e9e
 ```
+
+**Legend:**
+- ✓ = Completed
+- ⚙ = In Progress (current task)
+- ⏳ = Pending
+- ⏭ = Skipped
 
 ### Error Handling
 
