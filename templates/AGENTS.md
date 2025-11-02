@@ -18,10 +18,10 @@ Agents MUST follow these guidelines to ensure deterministic, auditable, and high
 
 ### Critical DO Rules
 
-✅ **MUST** Stop and emit `CLARIFICATION NEEDED` when spec is ambiguous  
-✅ **MUST** Follow Constitution principles at all times  
-✅ **MUST** Mark tasks `[x]` in `tasks.md` immediately after completion  
-✅ **MUST** Run formatters, linters, and tests before committing  
+✅ **MUST** Stop and emit `CLARIFICATION NEEDED` when spec is ambiguous
+✅ **MUST** Follow Constitution principles at all times
+✅ **MUST** Update task states in `tasks.md`: `[ ]` pending, `[x]` complete, `[F]` failed, `[B]` blocked
+✅ **MUST** Run formatters, linters, and tests before committing
 ✅ **MUST** Update spec documents first if implementation reveals issues
 
 ### Critical DON'T Rules
@@ -38,6 +38,10 @@ Agents MUST follow these guidelines to ensure deterministic, auditable, and high
 2. **Test Failure** → Report which acceptance scenario failed (see Section 7.3)
 3. **Constitutional Conflict** → Flag immediately, request human decision (see Section 7.2)
 4. **Technical Blocker** → Document in `research.md`, suggest alternatives (see Section 7.4)
+5. **Licensing Conflict** → Document in `research.md`, suggest compatible alternatives (see Section 9.2)
+6. **Workflow Command Fails** → Check prerequisites, retry once, escalate if retry fails (see Section 3)
+7. **Gate Failure** → Stop implementation, check plan.md for justification (see Section 6.6)
+8. **Git Merge Conflict** → Abort merge, notify human, wait for resolution (see Section 8.1)
 
 ---
 
@@ -78,6 +82,7 @@ When documents conflict, apply this priority order (highest to lowest):
    * *Example:* Plan specifies library X but you prefer Y → Plan wins
 4. **Supporting Documents** - Data models, contracts, research, quickstart, tasks
    * *Example:* Task says "file A" but data-model references "file B" → Clarify with human
+   * **Sub-priority within Supporting Docs:** data-model.md > contracts/ > research.md > quickstart.md > tasks.md
 
 **Conflict Resolution Protocol:**
 
@@ -87,6 +92,12 @@ If documents conflict at the same priority level:
 2. Emit `CLARIFICATION NEEDED` with references to conflicting sections
 3. **DO NOT** make assumptions or "best guesses"
 4. Wait for human clarification and spec update
+
+**Examples of Same-Level Conflicts:**
+
+* **Supporting docs conflict:** data-model.md says 3 fields but contracts/api.yaml says 4 fields → Apply sub-priority (data-model wins), but emit warning
+* **Multiple specs:** If multiple spec.md files exist for different features → Treat as separate contexts (no conflict unless features interact)
+* **Plan contradicts itself:** Section 3.2 says "use library X" but Section 4.5 says "use library Y" → Emit `CLARIFICATION NEEDED`
 
 ### Workflow Commands
 
@@ -100,6 +111,15 @@ Agents interact with Spec Kit through these commands:
 | `/speckit.tasks` | `tasks.md` | Generate ordered task list from plan |
 | `/speckit.implement` | Source code + tests | Execute tasks and write code |
 | `/speckit.resume` | Restored context | Resume from saved state or tasks.md |
+
+**Workflow Command Failure Handling:**
+
+If a workflow command fails (e.g., `/speckit.plan` errors, `/speckit.implement` crashes):
+
+1. **REPORT** error message and stack trace
+2. **CHECK** prerequisites: Does spec.md exist for `/speckit.plan`? Does plan.md exist for `/speckit.tasks`?
+3. **RETRY** once if transient error (network timeout, file lock)
+4. **ESCALATE** to human if retry fails, providing error details and blocked workflow step
 
 *For detailed workflow information, see `spec-driven.md` in project root.*
 
@@ -119,10 +139,16 @@ Agents MUST interpret specifications as the **single source of truth** and produ
 ### 4.2 Code Generation Standards
 
 * **MUST** generate code that is:
-  * **Deterministic** - Same spec input → identical code output (use fixed seeds if randomness needed)
+  * **Deterministic** - Same spec input → identical code output (if randomness needed: use fixed seed from spec.md, plan.md, or feature number hash)
   * **Idempotent** - Re-execution does not duplicate or corrupt output
   * **Production-ready** - Compiles, passes tests, follows project conventions
 * **MUST** align all code with specifications strictly
+
+**Deterministic Seed Sources (in priority order):**
+
+1. Explicit seed in spec.md or plan.md (e.g., "use seed 42 for test data generation")
+2. Hash of feature number (e.g., `hash("[###-feature-name]") mod 2^32`)
+3. Fixed constant (e.g., `0` for consistent test fixtures)
 
 ### 4.3 Output Requirements
 
@@ -165,6 +191,19 @@ CLARIFICATION NEEDED:
 ❌ Violates Constitution simplicity principle
 ```
 
+**Multiple Ambiguities:**
+
+If multiple ambiguities found during spec review (before implementation):
+
+* **BATCH** all clarifications into single `CLARIFICATION NEEDED` message with numbered questions
+* **EXAMPLE:** "Found 3 ambiguities in spec.md: (1) Line 45: 'real-time' undefined, (2) Line 67: CSV column order not specified, (3) Line 89: Error handling strategy missing"
+
+If ambiguities discovered during implementation (blocking different tasks):
+
+* **EMIT** `CLARIFICATION NEEDED` immediately when first ambiguity blocks progress
+* **CONTINUE** with non-blocked tasks while waiting for clarification
+* **EMIT** additional `CLARIFICATION NEEDED` if second ambiguity blocks different task
+
 ### 5.2 Minimal Changes
 
 **MUST** make small, reviewable, logically grouped changes.
@@ -172,8 +211,16 @@ CLARIFICATION NEEDED:
 **Definition of "Small":**
 
 * Single user story or acceptance scenario per commit
-* Modify 1-5 files per commit (exception: refactoring)
-* <300 lines changed per commit (exception: generated code, data migrations)
+* Modify 1-5 files per commit (exception: refactoring, adding new modules)
+* <300 lines changed per commit
+
+**Exceptions to <300 lines limit:**
+
+* Generated code (protobuf, OpenAPI schemas, database ORM models)
+* Data migrations (SQL schema changes, seed data)
+* Large test fixtures (JSON/XML test data files)
+* Initial project scaffolding (first commit only)
+* Dependency lockfiles (package-lock.json, Cargo.lock, poetry.lock)
 
 **Good Example:**
 
@@ -187,6 +234,13 @@ CLARIFICATION NEEDED:
 ```text
 ❌ Commit 1: Implement all 5 user stories (47 files, 3,421 lines)
 ```
+
+**Partial Implementation Policy:**
+
+* **MAY** ship user stories incrementally (e.g., User Story 1 complete, User Story 2 pending)
+* **MUST NOT** ship half-implemented user stories or scenarios (all scenarios for a user story must be complete or all pending)
+* **MUST** mark incomplete user stories as "⏳ In Progress" in PR description
+* **SHOULD** prioritize P1 user stories before P2/P3
 
 ### 5.3 Rationale Documentation
 
@@ -221,7 +275,8 @@ def export_to_csv(data):
 
 * Source code directories
 * Test directories
-* Build/config files (if specified in plan)
+* Development/test config files: `/config/dev.*`, `/config/test.*`, `/config/local.*`, `/config/development.*`, `/config/staging.*` (only if specified in plan)
+* Build files: `Makefile`, `package.json`, `Cargo.toml`, `build.gradle`, `pom.xml` (only if specified in plan)
 
 **Prohibited Modifications:**
 
@@ -229,6 +284,7 @@ def export_to_csv(data):
 * `.specify/templates/*`
 * `.specify/scripts/*`
 * `specs/[###-feature-name]/*.md` (except under human direction)
+* Production config files (see Section 5.5)
 
 ### 5.5 Guardrails
 
@@ -237,10 +293,10 @@ def export_to_csv(data):
 **Protected Paths (MUST NOT modify):**
 
 * `/data/` - Production data
-* `/config/*.production.*` - Production configs
-* `/vendor/` or `/node_modules/` - Dependencies
-* `.git/` - Version control
-* System files (e.g., `/etc/`, registry on Windows)
+* `/config/*.production.*`, `/config/*.prod.*` - Production configs
+* Dependency directories: `/vendor/`, `/node_modules/`, `/.venv/`, `/venv/`, `/target/` (Rust), `/build/` (compiled artifacts)
+* `.git/` - Version control metadata
+* System files (e.g., `/etc/`, `/usr/`, Windows registry)
 
 **Exception:** Changes explicitly directed by implementation plan with justification.
 
@@ -270,7 +326,7 @@ def export_to_csv(data):
 
 - ✅ Library-First: Implemented as standalone library
 - ✅ CLI Interface: Added CLI with text I/O
-- ✅ Test-First: 47 tests, 94% coverage
+- ✅ Test-First: 47 tests, 94% coverage (target: ≥80% line coverage, 100% acceptance scenario coverage)
 - ⚠️  Simplicity: Using 4 projects (violates Article VII limit of 3)
       Justification: See plan.md "Complexity Tracking" table
 
@@ -307,9 +363,16 @@ If Constitution conflicts with feature requirements:
 * Type checkers (e.g., mypy, TypeScript, Flow)
 * Build verification (code compiles without errors)
 
-**WHERE:** Run locally in agent environment  
-**WHEN:** Before `git commit`  
+**WHERE:** Run locally in agent environment
+**WHEN:** Before `git commit`
 **HOW:** Execute via project-defined pre-commit hooks or CI scripts
+
+**Fallback if No Pre-Commit Hooks:**
+
+1. Check for common config files: `.pre-commit-config.yaml`, `package.json` (scripts), `Makefile` (lint/test targets)
+2. If config exists but hooks not installed: Run tools manually based on config
+3. If no config exists: Run language-standard tools (e.g., `black .`, `eslint .`, `cargo clippy`)
+4. Document missing automation in research.md and suggest adding hooks to plan
 
 ### 6.2 Acceptance Testing
 
@@ -340,6 +403,13 @@ test_export.py:test_valid_csv_export()
   - assert: verifies file content and headers
 ```
 
+**Scenario Failure Policy:**
+
+* **MUST** fix all scenarios for a user story before marking that user story complete
+* **MAY** proceed to next user story if current user story scenarios all pass (even if later user stories have failing scenarios)
+* **MUST NOT** ship PR with any failing scenarios (all scenarios in PR must pass)
+* **Priority order:** Fix P1 user story scenarios before P2/P3 scenarios
+
 ### 6.3 Contract Compliance
 
 **MUST** ensure implementations match API specifications (if `contracts/` exists).
@@ -351,7 +421,11 @@ test_export.py:test_valid_csv_export()
 3. Test error responses match contract specifications
 4. Verify authentication/authorization as specified
 
-**Tool Recommendations:** OpenAPI validators, GraphQL schema validators
+**Tool Recommendations (SHOULD use if available):**
+
+* OpenAPI contracts: OpenAPI validators (e.g., Spectral, Redocly)
+* GraphQL contracts: GraphQL schema validators (e.g., graphql-inspector)
+* REST contracts: Contract testing tools (e.g., Pact, Spring Cloud Contract)
 
 ### 6.4 Data Model Alignment
 
@@ -379,7 +453,7 @@ test_export.py:test_valid_csv_export()
 
 **MUST** verify compliance with gates in "Constitution Check" section of `plan.md`.
 
-**Common Gates:**
+**Common Constitution-Based Gates:**
 
 * **Library-First Gate** - Feature implemented as standalone library
 * **CLI Interface Gate** - Library exposes CLI with text I/O
@@ -389,6 +463,14 @@ test_export.py:test_valid_csv_export()
 * **Integration-First Gate** - Real databases (not mocks), contract tests mandatory
 
 **Gate Failure = BLOCKER**: Implementation MUST NOT proceed if any gate fails without explicit justification in plan.md "Complexity Tracking" table.
+
+**Custom Gates (Non-Constitution):**
+
+If plan.md defines additional gates beyond Constitution (e.g., "Performance Gate: <100ms p95 latency"):
+
+* **MUST** verify custom gates same as Constitution gates
+* **MUST** treat custom gate failure as blocker unless plan.md explicitly marks it as "SHOULD" or "aspirational"
+* **SHOULD** report custom gate compliance in PR description
 
 ### 6.7 Fail Fast
 
@@ -445,10 +527,17 @@ Action Required: Review data-model.md vs spec.md for field list discrepancy
 **Recovery Process:**
 
 1. Human updates `specs/[###-feature-name]/spec.md` with clarification
-2. Human responds with "CLARIFICATION PROVIDED: [summary]"
+2. Human responds with "CLARIFICATION PROVIDED: [summary]" OR agent detects file modification timestamp change on spec.md
 3. Agent re-reads updated spec.md
-4. Agent validates clarification resolves ambiguity
+4. Agent validates clarification resolves ambiguity (checks that previously ambiguous section now has concrete values/requirements)
 5. Agent resumes implementation from blocked task
+
+**Human Response Detection Methods:**
+
+* **Interactive sessions:** Wait for explicit "CLARIFICATION PROVIDED" message (no timeout - session-based)
+* **Async workflows:** Poll spec.md file modification time every 30s (max 24h timeout, then report timeout and suspend)
+* **Git-based workflows:** Detect new commit on spec.md with message containing "clarification" or "update" (max 24h timeout)
+* **CI/CD workflows:** Fail build after 10min timeout (agent cannot wait indefinitely in CI)
 
 **Good Example:**
 
@@ -508,13 +597,17 @@ Agent: Resuming from task T015: Implement notification system
 1. **SUSPEND** further implementation
 2. **REPORT** failure (see Section 6.7)
 3. **DETERMINE** root cause:
-   * **Code Issue:** Bug in implementation → Fix and retry
+   * **Obvious Code Issue:** Auto-fix and retry (max 2 attempts)
+     * Examples: Syntax errors, typos in variable names, missing imports, incorrect indentation, missing semicolons, unclosed brackets
+   * **Ambiguous Failure:** Mark `[F]`, wait for human
+     * Examples: Logic bugs, assertion errors, unexpected test output, wrong algorithm, incorrect business logic
    * **Spec Issue:** Acceptance scenario impossible/incorrect → Flag for human
 4. **IF SPEC ISSUE:** Emit `CLARIFICATION NEEDED` suggesting spec update
 
 **Recovery:**
 
-* **Code Issue:** Fix implementation, re-run tests, resume
+* **Obvious Code Issue:** Fix implementation, re-run tests, resume (if fix successful after ≤2 attempts)
+* **Ambiguous Failure:** Wait for human diagnosis, apply directed fix, re-run tests, resume
 * **Spec Issue:** Wait for human to update spec, then regenerate code
 
 ### 7.4 Technical Blockers
@@ -523,7 +616,12 @@ Agent: Resuming from task T015: Implement notification system
 
 **Response:**
 
-1. **DOCUMENT** blocker in `specs/[###-feature-name]/research.md`:
+1. **DOCUMENT** blocker in `specs/[###-feature-name]/research.md`
+1. **UPDATE** tasks.md: Mark blocked tasks as `[B]` (Blocked) with inline comment
+1. **SUGGEST** alternative approaches if possible
+1. **ESCALATE** to human via console/log
+
+**Example: Documenting Blocker in research.md:**
 
 ```markdown
 ## Blocker: Missing Payment API Credentials
@@ -544,9 +642,13 @@ Agent: Resuming from task T015: Implement notification system
 **Status:** Waiting for credentials (added 2025-11-02)
 ```
 
-1. **UPDATE** tasks.md: Mark blocked tasks as `[B]` (Blocked)
-2. **SUGGEST** alternative approaches if possible
-3. **ESCALATE** to human via console/log
+**Example: Blocker Format in tasks.md:**
+
+```markdown
+- [B] T023: Implement payment gateway integration <!-- BLOCKED: Missing Stripe API credentials (see research.md "Blocker: Missing Payment API Credentials") -->
+- [B] T024: Test payment flow <!-- BLOCKED: Depends on T023 -->
+- [B] T025: Add payment error handling <!-- BLOCKED: Depends on T023 -->
+```
 
 **Recovery:**
 
@@ -564,7 +666,51 @@ Agent: Resuming from task T015: Implement notification system
 * **MUST** group related edits into atomic commits (one user story/scenario)
 * **MUST** reference feature numbers and spec sections in commit messages (Section 5.3)
 * **MUST** work on feature branches: `[###-feature-name]` (create if not exists)
-* **SHOULD** commit after each completed task in tasks.md
+* **SHOULD** commit after each completed task group: Multiple related tasks implementing a single scenario or user story SHOULD be grouped into one atomic commit. Individual unrelated tasks MAY be committed separately.
+
+**Commit Timing Workflow:**
+
+1. Complete implementation for scenario/user story
+2. Mark tasks as `[x]` in tasks.md
+3. Run pre-commit validation (formatters, linters, type checkers, tests)
+4. If validation passes → Create commit with atomic change
+5. If validation fails → Fix issues, repeat from step 3
+6. Push commits to feature branch after each logical unit (scenario/user story) is complete
+
+**Parallelization Policy:**
+
+* **SHOULD** work on one task at a time for deterministic, traceable execution
+* **MAY** work on multiple independent tasks in parallel if:
+  * Tasks have no shared dependencies (different files, different modules)
+  * Tasks implement different user stories
+  * Agent has capability for parallel execution (multi-threaded, multi-agent)
+* **MUST NOT** parallelize tasks that:
+  * Modify the same files
+  * Share data models or contracts
+  * Have sequential dependencies (Task B depends on Task A output)
+
+**Git Merge Conflict Handling:**
+
+If `git pull` or `git merge` results in conflicts:
+
+1. **ABORT** merge immediately (`git merge --abort` or `git rebase --abort`)
+2. **REPORT** conflict details to human:
+   * Conflicting files
+   * Local changes summary
+   * Remote changes summary
+3. **DO NOT** attempt to resolve conflicts automatically
+4. **WAIT** for human to resolve conflicts manually
+5. **RESUME** implementation after human completes merge
+
+**Rollback Procedure:**
+
+If PR is rejected or human requests rollback:
+
+1. **DO NOT** delete feature branch (preserve history)
+2. **REVERT** commits if already merged to main: `git revert <commit-range>`
+3. **RESET** branch if not yet merged: `git reset --hard <last-good-commit>` (only if human explicitly requests destructive reset)
+4. **PREFER** creating fix commits over rewriting history
+5. **WAIT** for human direction before force-pushing or deleting branches
 
 ### 8.2 Change Communication
 
@@ -595,7 +741,10 @@ Agent: Resuming from task T015: Implement notification system
 * **MUST** update spec documents first if implementation reveals issues
 * **SHOULD** learn from code review feedback and adjust approach
 * **MUST NOT** override human feedback unless reflected in updated specification documents
-* **MUST** regenerate affected code when specs are updated to maintain alignment
+* **MUST** regenerate affected code when specs are updated to maintain alignment:
+  * **Selective regeneration:** If spec change affects specific functions/classes, regenerate only those sections
+  * **Full regeneration:** If spec change affects core architecture, interfaces, or data models, regenerate entire affected modules
+  * **Test-first regeneration:** Always regenerate tests first to reflect new acceptance criteria, then regenerate implementation to pass updated tests
 
 ---
 
@@ -612,28 +761,65 @@ Agent: Resuming from task T015: Implement notification system
 
 **Detection:**
 
-* Run secret scanners before commit (e.g., git-secrets, truffleHog)
-* Validate no hardcoded credentials in code
-* Check for data leaks in logs/output
+* **MUST** run secret scanners before commit (tools: git-secrets, truffleHog, gitleaks, detect-secrets, GitHub Secret Scanning)
+* **MUST** validate no hardcoded credentials in code (search for patterns: password=, api_key=, token=, secret=)
+* **MUST** check for data leaks in logs/output (PII, email addresses, IP addresses)
+* **SHOULD** use .gitignore to prevent accidental commit of sensitive files (`.env`, `credentials.json`, `*.pem`, `*.key`)
 
 ### 9.2 Licensing & Compliance
 
 * **MUST** respect licensing terms of all third-party code and dependencies
-* **SHOULD** prefer open source libraries with permissive licenses (MIT, Apache 2.0)
+* **SHOULD** prefer open source libraries with permissive licenses (MIT, Apache 2.0, BSD)
 * **MUST NOT** include closed-source or non-redistributable components without approval
 * **MUST** ensure privacy and compliance align with project requirements and applicable laws
 
+**Licensing Conflicts:**
+
+If spec requires a library but its license conflicts with Constitution or project license:
+
+1. **STOP** implementation immediately
+2. **DOCUMENT** conflict in research.md:
+   * Required library and its license (e.g., "Library X under GPL-3.0")
+   * Constitution/project license requirement (e.g., "Article XII: MIT-only dependencies")
+   * Why library is needed (e.g., "Only implementation of Protocol Y")
+3. **SUGGEST** alternatives with compatible licenses
+4. **ESCALATE** to human for decision (accept GPL, find alternative, or update spec)
+5. **WAIT** for human direction before proceeding
+
 ### 9.3 Standards & Portability
 
-* **SHOULD** prefer open standards over proprietary formats
+* **SHOULD** prefer open standards over proprietary formats (JSON over binary, REST over proprietary RPC)
 * **SHOULD** write portable code (avoid platform-specific dependencies when possible)
 * **MUST** document platform dependencies in plan.md if unavoidable
+
+**Platform Dependency Documentation:**
+
+If implementation requires platform-specific code (e.g., Windows-only API, Linux-only system call):
+
+* **WHERE:** Document in plan.md "Platform Requirements" section
+* **WHAT:** Specify OS, version, architecture, required system libraries
+* **WHY:** Explain why platform-specific approach is necessary
+* **ALTERNATIVES:** Document rejected cross-platform alternatives
+
+**Example:**
+
+```markdown
+## Platform Requirements
+
+**Target:** Linux x86_64 only (Ubuntu 20.04+)
+
+**Platform-Specific Dependencies:**
+- inotify API for file watching (Linux kernel 2.6.13+)
+- Rejected alternative: Polling (violates Constitution Article VII: Simplicity - adds polling complexity)
+```
 
 ---
 
 ## 10. Glossary
 
 **Acceptance Scenario** - Given-When-Then test case in spec.md that defines success criteria
+
+**Acceptance Testing** - Verification that all Given-When-Then scenarios in spec.md have corresponding passing tests (Section 6.2)
 
 **Atomic Commit** - Single logical change implementing one user story or scenario
 
@@ -653,11 +839,17 @@ Agent: Resuming from task T015: Implement notification system
 
 **Feature Specification** - `specs/[###-feature-name]/spec.md` defining requirements (WHAT/WHY)
 
+**P1/P2/P3** - Priority levels for user stories in spec.md (P1 = highest priority, must-have; P2 = should-have; P3 = nice-to-have)
+
+**Pre-Commit Validation** - Running formatters, linters, type checkers, and build verification before `git commit` (Section 6.1)
+
 **Single Source of Truth** - Authoritative specification documents that all implementation derives from
 
 **Standard PR Template** - Pull request description format defined in Section 5.6
 
 **Supporting Documents** - Optional design artifacts: data-model.md, contracts/, research.md, quickstart.md, tasks.md
+
+**Task States** - Status markers in tasks.md: `[ ]` pending, `[x]` complete, `[F]` failed, `[B]` blocked
 
 ---
 
