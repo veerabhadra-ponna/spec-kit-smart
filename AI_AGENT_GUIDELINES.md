@@ -14,7 +14,7 @@ Agents follow this guide to ensure deterministic, auditable, and high-quality co
   - **Feature Specifications**: `specs/[###-feature-name]/spec.md` - Contains user stories, acceptance criteria, and requirements
   - **Implementation Plans**: `specs/[###-feature-name]/plan.md` - Contains technical architecture and implementation details
   - **Design Documents**: `data-model.md`, `contracts/`, `research.md`, `quickstart.md` in the feature folder
-  - **Project Constitution**: Project-wide architectural principles, constraints, and standards
+  - **Project Constitution**: `.specify/memory/constitution.md` - Project-wide architectural principles, constraints, and standards
   - **Related Documents**: Any ADRs, design decisions, or technical documentation referenced in the spec
 - Generate or modify code, documentation, and tests **strictly aligned** with feature specifications and implementation plans.
 - Produce results that are **deterministic**, **idempotent**, and **production-ready**.
@@ -208,10 +208,11 @@ When working on a feature, always consult these documents in order:
    - Implementation steps
    - Completion tracking
 
-8. **Project Constitution** - Project-wide standards
+8. **`.specify/memory/constitution.md`** - Project Constitution
    - Architectural principles
    - Security requirements
    - Technology constraints
+   - Compliance gates
 
 ---
 
