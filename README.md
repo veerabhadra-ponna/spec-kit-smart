@@ -24,6 +24,7 @@
 - [📽️ Video Overview](#️-video-overview)
 - [🤖 Supported AI Agents](#-supported-ai-agents)
 - [🔧 Specify CLI Reference](#-specify-cli-reference)
+- [🎭 Orchestrator Workflow](#-orchestrator-workflow)
 - [📚 Core Philosophy](#-core-philosophy)
 - [🌟 Development Phases](#-development-phases)
 - [🎯 Experimental Goals](#-experimental-goals)
@@ -225,9 +226,30 @@ specify check
 
 After running `specify init`, your AI coding agent will have access to these slash commands for structured development:
 
+#### Orchestration Commands
+
+**NEW**: Simplified workflow management and context restoration:
+
+| Command                  | Description                                                           |
+|--------------------------|-----------------------------------------------------------------------|
+| `/speckit.orchestrate`  | **Orchestrate the complete workflow** from feature description to implementation in a single command. Manages state, phase transitions, and provides interactive or automatic execution modes. |
+| `/speckit.resume`       | **Restore context and resume work** after chat limit or interruption. Loads all artifacts and continues from exact stopping point with zero context loss. |
+
+**Quick Start with Orchestrator:**
+
+```bash
+# Run entire workflow in one command
+/speckit.orchestrate Build a user authentication system with OAuth2 and JWT
+
+# Or resume after chat limit/interruption
+/speckit.resume
+```
+
+See [Orchestrator Workflow Guide](#-orchestrator-workflow) for detailed usage.
+
 #### Core Commands
 
-Essential commands for the Spec-Driven Development workflow:
+Essential commands for the Spec-Driven Development workflow (can be used individually or via orchestrator):
 
 | Command                  | Description                                                           |
 |--------------------------|-----------------------------------------------------------------------|
@@ -252,6 +274,312 @@ Additional commands for enhanced quality and validation:
 | Variable         | Description                                                                                    |
 |------------------|------------------------------------------------------------------------------------------------|
 | `SPECIFY_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches.<br/>**Must be set in the context of the agent you're working with prior to using `/speckit.plan` or follow-up commands. |
+
+## 🎭 Orchestrator Workflow
+
+### Overview
+
+The **Orchestrator** workflow simplifies the entire spec-driven development process by managing all phases automatically. Instead of manually invoking each command (constitution → specify → clarify → plan → tasks → analyze → implement), you can run the entire workflow with a single command.
+
+### Why Use the Orchestrator?
+
+**Before (Manual Workflow):**
+```bash
+/speckit.constitution <principles>
+/speckit.specify <feature-description>
+/speckit.clarify
+/speckit.plan <tech-stack>
+/speckit.tasks
+/speckit.analyze
+/speckit.implement
+```
+👎 **7 separate commands**, manual state tracking, context loss at chat limits
+
+**After (Orchestrator Workflow):**
+```bash
+/speckit.orchestrate <feature-description>
+```
+👍 **1 command**, automatic state management, seamless resumption
+
+### Key Features
+
+#### 1. **Single Entry Point**
+Run the entire workflow from feature description to implementation with one command.
+
+#### 2. **State Persistence**
+The orchestrator saves progress to `.speckit-state.json`, enabling:
+- Resumption after chat token limits
+- Cross-session continuity
+- Progress tracking
+
+#### 3. **Flexible Execution Modes**
+
+**Interactive Mode** (recommended):
+- Asks permission before each major phase
+- Allows review and adjustment between phases
+- User maintains full control
+
+**Auto-Spec Mode**:
+- Runs constitution → specify → plan → tasks automatically
+- Pauses before implementation for review
+
+**Full Auto Mode**:
+- Runs entire workflow to completion
+- Minimal user interaction required
+
+#### 4. **Context Restoration with `/speckit.resume`**
+
+When your chat reaches token limit during any phase:
+
+```bash
+# In new chat session (zero history needed)
+/speckit.resume
+```
+
+The resume command:
+- ✅ Loads all artifacts (constitution, spec, plan, tasks, etc.)
+- ✅ Identifies exact stopping point from task checkboxes
+- ✅ Reconstructs full context automatically
+- ✅ Continues from where you left off with zero duplicate work
+- ✅ Works across different machines (if artifacts are committed)
+
+### Usage Examples
+
+#### Example 1: Interactive Full Workflow
+
+```bash
+/speckit.orchestrate Build a user authentication system with OAuth2 and JWT tokens
+```
+
+**What happens:**
+1. Prompts for workflow preferences (interactive/auto-spec/full-auto)
+2. Asks to include optional phases (clarify, analyze)
+3. Checks constitution (creates if missing)
+4. Creates specification → asks to continue
+5. Runs clarification (if selected) → asks to continue
+6. Creates technical plan → asks to continue
+7. Generates task breakdown → asks to continue
+8. Runs analysis (if selected) → asks to continue
+9. Implements all tasks
+10. Cleans up state and shows completion summary
+
+#### Example 2: Auto-Spec Mode (Skip Confirmations Until Implementation)
+
+```bash
+/speckit.orchestrate --mode=auto-spec Create an analytics dashboard with real-time metrics
+```
+
+**What happens:**
+1. Automatically runs: constitution → specify → plan → tasks
+2. **Pauses before implementation** for review
+3. User reviews `tasks.md` and planning artifacts
+4. User runs `/speckit.resume` when ready to implement
+
+#### Example 3: Resume After Chat Limit
+
+**Original chat** (hit token limit during implementation):
+```bash
+/speckit.orchestrate Build a payment processing system with Stripe integration
+# ... chat reaches limit at task 28/47 ...
+```
+
+**New chat** (fresh session):
+```bash
+/speckit.resume
+```
+
+**What happens:**
+1. Loads `.speckit-state.json`
+2. Shows progress summary: 28/47 tasks completed
+3. Loads all artifacts:
+   - Constitution
+   - Specification
+   - Plan, research, data model
+   - Task list with [X] checkboxes
+4. Identifies next task: `[T029] Implement webhook signature verification`
+5. Shows recently completed and upcoming tasks
+6. Asks: "Resume at task T029? [Y/n]"
+7. **Continues implementation from exact stopping point**
+
+### State Management
+
+The orchestrator creates `.speckit-state.json` in your repository root:
+
+```json
+{
+  "version": "1.0",
+  "feature_number": "001",
+  "feature_name": "user-auth",
+  "feature_dir": "specs/001-user-auth",
+  "current_phase": "implement",
+  "completed_phases": ["constitution", "specify", "plan", "tasks"],
+  "workflow_mode": "interactive",
+  "started_at": "2025-11-02T10:30:00Z",
+  "last_updated": "2025-11-02T11:15:00Z",
+  "checkpoints": {
+    "implement": {
+      "status": "in_progress",
+      "tasks_completed": 28,
+      "tasks_total": 47,
+      "current_task": "[T029] Implement webhook verification"
+    }
+  }
+}
+```
+
+**Should you commit `.speckit-state.json`?**
+- ✅ **Yes** if you want cross-machine resumption or team collaboration
+- ❌ **Add to .gitignore** if you prefer local-only state
+
+### When to Use Orchestrator vs Individual Commands
+
+| Use Case | Recommendation |
+|----------|----------------|
+| **New feature (greenfield)** | Use `/speckit.orchestrate` for full automation |
+| **Multi-day workflows** | Use orchestrator + `/speckit.resume` for continuity |
+| **Learning the workflow** | Use individual commands to understand each phase |
+| **Re-running a single phase** | Use individual command (e.g., `/speckit.plan` to regenerate plan) |
+| **Non-linear workflows** | Use individual commands for manual control |
+| **Chat hit token limit** | Use `/speckit.resume` in new chat to continue |
+
+### Best Practices
+
+1. **Commit frequently during long workflows:**
+   ```bash
+   git add .
+   git commit -m "Complete planning phase for user-auth feature"
+   ```
+
+2. **Review before implementation:**
+   - Use interactive mode or auto-spec mode
+   - Review `tasks.md` to understand scope
+   - Check estimated task count and time
+
+3. **Use `.speckit-state.json` as source of truth:**
+   - State file tracks exact progress
+   - Resume command reads from state
+   - Commit state for cross-machine work
+
+4. **Handle interruptions gracefully:**
+   - Token limit reached? Start new chat and run `/speckit.resume`
+   - Need to pause? State is auto-saved, resume anytime
+   - Errors during implementation? Fix issue, then `/speckit.resume` to retry
+
+### Progress Visualization
+
+Throughout orchestration, you'll see clear progress indicators:
+
+```
+[1/7] ✓ Constitution check
+[2/7] ✓ Specification created
+[3/7] ⏭  Clarification skipped
+[4/7] ⚙  Planning in progress...
+```
+
+For implementation phases:
+```
+[7/7] Implementation
+  ├─ Phase 1: Setup [3/3] ✓
+  ├─ Phase 2: Foundational [8/8] ✓
+  ├─ Phase 3: User Stories [15/28] ⚙
+  │   ├─ US1 (P1) [5/5] ✓
+  │   ├─ US2 (P1) [4/4] ✓
+  │   └─ US3 (P1) [6/7] ⚙ Current: [T016] JWT validation
+  └─ Final: Polish [0/3] ⏳
+```
+
+### Error Handling
+
+If any phase fails:
+```
+❌ Error in phase: implement
+
+Error details: Module 'stripe' not found
+
+Your progress has been saved.
+
+To resume after fixing the issue:
+  /speckit.resume
+
+To start over:
+  rm .speckit-state.json
+  /speckit.orchestrate <feature-description>
+```
+
+Simply fix the issue (e.g., `npm install stripe`) and run `/speckit.resume` to continue.
+
+### Workflow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    SPEC-DRIVEN WORKFLOW                         │
+└─────────────────────────────────────────────────────────────────┘
+
+  START: /speckit.orchestrate <description>
+    │
+    ▼
+┌───────────────┐
+│ Constitution  │ ◄── If missing, create it
+└───────┬───────┘
+        │ ✓ State saved
+        ▼
+┌───────────────┐
+│   Specify     │ ──► Creates: spec.md, checklists/requirements.md
+└───────┬───────┘     Branch: ###-feature-name
+        │ ✓ State saved
+        ▼
+┌───────────────┐
+│   Clarify     │ ──► Updates spec with clarifications
+└───────┬───────┘     (Optional: skip if no ambiguities)
+        │ ✓ State saved
+        ▼
+┌───────────────┐
+│     Plan      │ ──► Creates: plan.md, research.md, data-model.md
+└───────┬───────┘              contracts/, quickstart.md
+        │ ✓ State saved
+        ▼
+┌───────────────┐
+│     Tasks     │ ──► Creates: tasks.md with executable breakdown
+└───────┬───────┘
+        │ ✓ State saved
+        ▼
+┌───────────────┐
+│    Analyze    │ ──► Validates consistency and coverage
+└───────┬───────┘     (Optional: skip if confident)
+        │ ✓ State saved
+        ▼
+┌───────────────┐
+│   Implement   │ ──► Executes all tasks, marks [X] as complete
+└───────┬───────┘     State updated after EACH task
+        │
+        ▼
+      DONE
+
+  ┌─────────────────────────────────────────┐
+  │  At any point, state is saved to:       │
+  │  .speckit-state.json                    │
+  │                                         │
+  │  Resume with: /speckit.resume           │
+  │  Works in NEW chat with ZERO history    │
+  └─────────────────────────────────────────┘
+```
+
+### Summary
+
+The orchestrator workflow provides:
+
+- ✅ **One-command execution** - Full workflow from description to implementation
+- ✅ **Automatic state management** - Resume from any checkpoint
+- ✅ **Zero context loss** - `/speckit.resume` restores complete context
+- ✅ **Flexible control** - Interactive, auto-spec, or full-auto modes
+- ✅ **Cross-session continuity** - Works across chat sessions and machines
+- ✅ **Error recovery** - Graceful handling with clear recovery paths
+- ✅ **Progress transparency** - Real-time phase and task tracking
+
+**Get started:**
+```bash
+/speckit.orchestrate <your-feature-description>
+```
 
 ## 📚 Core Philosophy
 
