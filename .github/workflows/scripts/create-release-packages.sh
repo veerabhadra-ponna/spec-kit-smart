@@ -132,8 +132,8 @@ build_variant() {
   
   [[ -d templates ]] && { mkdir -p "$SPEC_DIR/templates"; find templates -type f -not -path "templates/commands/*" -not -name "vscode-settings.json" -exec cp --parents {} "$SPEC_DIR"/ \; ; echo "Copied templates -> .specify/templates"; }
 
-  # Copy AI Agent Guidelines to package root
-  [[ -f AI_AGENT_GUIDELINES.md ]] && { cp AI_AGENT_GUIDELINES.md "$base_dir/"; echo "Copied AI_AGENT_GUIDELINES.md to package root"; }
+  # Copy AI Agent Guidelines to package root as AGENTS.md
+  [[ -f AI_AGENT_GUIDELINES.md ]] && { cp AI_AGENT_GUIDELINES.md "$base_dir/AGENTS.md"; echo "Copied AI_AGENT_GUIDELINES.md -> AGENTS.md in package root"; }
 
   # NOTE: We substitute {ARGS} internally. Outward tokens differ intentionally:
   #   * Markdown/prompt (claude, copilot, cursor-agent, opencode): $ARGUMENTS
