@@ -78,6 +78,7 @@ This file tracks orchestration progress in the repository root. Structure:
 ### State Operations
 
 **Load State:**
+
 ```bash
 # Check if state file exists
 if [ -f .speckit-state.json ]; then
@@ -87,6 +88,7 @@ fi
 ```
 
 **Update State:**
+
 ```bash
 # After each phase completion, update the state file with:
 # - current_phase: next phase name
@@ -95,6 +97,7 @@ fi
 ```
 
 **Clear State:**
+
 ```bash
 # On successful completion or user abort
 rm -f .speckit-state.json
@@ -106,7 +109,7 @@ rm -f .speckit-state.json
 
 The orchestrator manages this complete pipeline:
 
-```
+```text
 Constitution Check → Specify → [Clarify] → Plan → Tasks → [Analyze] → Implement → Cleanup
 ```
 
@@ -121,6 +124,7 @@ Optional phases in brackets are skippable based on user preference or context.
    - Otherwise: New feature mode
 
 2. **Check for existing state:**
+
    ```bash
    if [ -f .speckit-state.json ]; then
      echo "Found existing workflow state."
@@ -133,7 +137,8 @@ Optional phases in brackets are skippable based on user preference or context.
    ```
 
 3. **Gather workflow preferences (interactive):**
-   ```
+
+```text
    How would you like to run the workflow?
 
    1. Interactive (recommended) - Ask permission before each major phase
@@ -147,6 +152,7 @@ Optional phases in brackets are skippable based on user preference or context.
    ```
 
 4. **Initialize state file:**
+
    ```json
    {
      "version": "1.0",
@@ -165,6 +171,7 @@ Optional phases in brackets are skippable based on user preference or context.
 **Purpose:** Ensure project constitution exists
 
 **Execution:**
+
 ```bash
 # Check if constitution exists
 if [ ! -f memory/constitution.md ]; then
@@ -175,6 +182,7 @@ fi
 ```
 
 **State update:**
+
 ```json
 {
   "checkpoints": {
@@ -197,6 +205,7 @@ fi
 **Purpose:** Create feature specification
 
 **Execution:**
+
 ```bash
 # Invoke /speckit.specify with user's feature description
 # The specify command will:
@@ -207,6 +216,7 @@ fi
 ```
 
 **State update on completion:**
+
 ```json
 {
   "feature_number": "001",
@@ -226,7 +236,8 @@ fi
 ```
 
 **Output to user:**
-```
+
+```text
 ✓ Specification created: specs/001-user-auth/spec.md
 ✓ Branch created: 001-user-auth
 ✓ Initial checklist: specs/001-user-auth/checklists/requirements.md
@@ -235,7 +246,8 @@ Next phase: Clarification (optional)
 ```
 
 **Interactive checkpoint:** If mode = "interactive", ask:
-```
+
+```text
 Continue to clarification phase? [Y/n]
 - 'y' or Enter: Proceed to PHASE 3
 - 'n': Pause orchestration (state saved, can resume later)
@@ -249,11 +261,13 @@ Continue to clarification phase? [Y/n]
 **Purpose:** Resolve ambiguities in specification
 
 **Skip conditions:**
+
 - User preference `skip_clarify = true`
 - User selected "skip" at checkpoint
 - Spec has zero `[NEEDS CLARIFICATION]` markers
 
 **Execution if not skipped:**
+
 ```bash
 # Scan spec for [NEEDS CLARIFICATION] markers
 clarification_count=$(grep -c "\[NEEDS CLARIFICATION" "$spec_file" || echo 0)
@@ -268,6 +282,7 @@ fi
 ```
 
 **State update:**
+
 ```json
 {
   "completed_phases": ["constitution", "specify", "clarify"],
@@ -291,6 +306,7 @@ fi
 **Purpose:** Generate technical implementation plan
 
 **Execution:**
+
 ```bash
 # Invoke /speckit.plan
 # This will create:
@@ -303,6 +319,7 @@ fi
 ```
 
 **State update:**
+
 ```json
 {
   "completed_phases": ["constitution", "specify", "clarify", "plan"],
@@ -324,7 +341,8 @@ fi
 ```
 
 **Output to user:**
-```
+
+```text
 ✓ Implementation plan created
 ✓ Research findings documented
 ✓ Data model defined
@@ -335,7 +353,8 @@ Next phase: Task generation
 ```
 
 **Interactive checkpoint:** If mode = "interactive" OR mode = "auto-spec", ask:
-```
+
+```text
 Planning complete. Ready to generate implementation tasks?
 
 Continue to task generation? [Y/n]
@@ -351,6 +370,7 @@ Continue to task generation? [Y/n]
 **Purpose:** Generate executable task breakdown
 
 **Execution:**
+
 ```bash
 # Invoke /speckit.tasks
 # This will create tasks.md with:
@@ -361,6 +381,7 @@ Continue to task generation? [Y/n]
 ```
 
 **State update:**
+
 ```json
 {
   "completed_phases": ["constitution", "specify", "clarify", "plan", "tasks"],
@@ -383,7 +404,8 @@ Continue to task generation? [Y/n]
 ```
 
 **Output to user:**
-```
+
+```text
 ✓ Task breakdown created: 42 tasks across 5 phases
   - Setup: 3 tasks
   - Foundational: 8 tasks
@@ -402,10 +424,12 @@ Next phase: Analysis (optional quality check)
 **Purpose:** Validate consistency and coverage before implementation
 
 **Skip conditions:**
+
 - User preference `skip_analyze = true`
 - User selected "skip" at checkpoint
 
 **Execution if not skipped:**
+
 ```bash
 # Invoke /speckit.analyze
 # This performs read-only validation:
@@ -418,6 +442,7 @@ Next phase: Analysis (optional quality check)
 ```
 
 **State update:**
+
 ```json
 {
   "completed_phases": ["constitution", "specify", "clarify", "plan", "tasks", "analyze"],
@@ -438,6 +463,7 @@ Next phase: Analysis (optional quality check)
 ```
 
 **Critical finding gate:**
+
 ```bash
 if [ "$critical_findings" -gt 0 ] || [ "$high_findings" -gt 5 ]; then
   echo "⚠️  Analysis found significant issues:"
@@ -455,7 +481,8 @@ fi
 ```
 
 **Interactive checkpoint:** If mode != "full-auto", ALWAYS ask before proceeding to implementation:
-```
+
+```text
 ┌─────────────────────────────────────────────────────┐
 │  IMPLEMENTATION CHECKPOINT                          │
 ├─────────────────────────────────────────────────────┤
@@ -478,6 +505,7 @@ fi
 **Purpose:** Execute all tasks and build the feature
 
 **Execution:**
+
 ```bash
 # Invoke /speckit.implement
 # This will:
@@ -491,6 +519,7 @@ fi
 **Real-time state updates:**
 
 As implementation progresses, update state after each task:
+
 ```json
 {
   "checkpoints": {
@@ -507,6 +536,7 @@ As implementation progresses, update state after each task:
 ```
 
 **State update on completion:**
+
 ```json
 {
   "completed_phases": ["constitution", "specify", "clarify", "plan", "tasks", "analyze", "implement"],
@@ -527,6 +557,7 @@ As implementation progresses, update state after each task:
 **Error handling:**
 
 If implementation fails:
+
 ```json
 {
   "checkpoints": {
@@ -550,6 +581,7 @@ If implementation fails:
 **Purpose:** Finalize workflow and clean up state
 
 **Execution:**
+
 ```bash
 echo ""
 echo "╔══════════════════════════════════════════════════════╗"
@@ -576,6 +608,7 @@ echo "Cleaning up workflow state..."
 ```
 
 **Remove state file:**
+
 ```bash
 rm -f .speckit-state.json
 echo "✓ Workflow state cleared"
@@ -588,6 +621,7 @@ echo "✓ Workflow state cleared"
 When invoked with `--resume` or when resuming from state:
 
 1. **Load state file:**
+
    ```bash
    if [ ! -f .speckit-state.json ]; then
      echo "ERROR: No workflow state found. Nothing to resume."
@@ -600,7 +634,8 @@ When invoked with `--resume` or when resuming from state:
    ```
 
 2. **Display resume summary:**
-   ```
+
+```text
    ╔══════════════════════════════════════════════════════╗
    ║  RESUMING WORKFLOW                                   ║
    ╚══════════════════════════════════════════════════════╝
@@ -620,6 +655,7 @@ When invoked with `--resume` or when resuming from state:
    ```
 
 3. **Jump to current phase:**
+
    ```bash
    case "$current_phase" in
      "specify")
@@ -695,7 +731,7 @@ echo "  /speckit.orchestrate <feature-description>"
 
 Throughout execution, provide clear progress indicators:
 
-```
+```text
 [1/7] ✓ Constitution check
 [2/7] ✓ Specification created
 [3/7] ⏭  Clarification skipped
@@ -704,13 +740,13 @@ Throughout execution, provide clear progress indicators:
 
 For long-running phases (plan, implement), show sub-progress:
 
-```
+```text
 [4/7] Planning
   ├─ [1/2] ✓ Phase 0: Research complete
   └─ [2/2] ⚙  Phase 1: Design in progress...
 ```
 
-```
+```text
 [7/7] Implementation
   ├─ Phase 1: Setup [3/3] ✓
   ├─ Phase 2: Foundational [8/8] ✓
@@ -738,6 +774,7 @@ The orchestrator simply chains them together with state management.
 
 - **Use `/speckit.orchestrate`** for new features start-to-finish
 - **Use individual commands** for:
+
   - Re-running a single phase
   - Manual iteration on specific artifacts
   - Non-linear workflows
@@ -806,7 +843,8 @@ The `.speckit-state.json` file should be:
 - ✓ **Version-controlled** (backward compatibility)
 
 Add to `.gitignore` if you prefer local-only state:
-```
+
+```text
 # Optional: Keep workflow state local
 .speckit-state.json
 ```
@@ -815,7 +853,7 @@ Add to `.gitignore` if you prefer local-only state:
 
 ## Workflow Visualization
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    SPEC-DRIVEN WORKFLOW                         │
 └─────────────────────────────────────────────────────────────────┘

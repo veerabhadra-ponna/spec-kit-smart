@@ -284,6 +284,7 @@ The **Orchestrator** workflow simplifies the entire spec-driven development proc
 ### Why Use the Orchestrator?
 
 **Before (Manual Workflow):**
+
 ```bash
 /speckit.constitution <principles>
 /speckit.specify <feature-description>
@@ -293,21 +294,27 @@ The **Orchestrator** workflow simplifies the entire spec-driven development proc
 /speckit.analyze
 /speckit.implement
 ```
+
 👎 **7 separate commands**, manual state tracking, context loss at chat limits
 
 **After (Orchestrator Workflow):**
+
 ```bash
 /speckit.orchestrate <feature-description>
 ```
+
 👍 **1 command**, automatic state management, seamless resumption
 
 ### Key Features
 
 #### 1. **Single Entry Point**
+
 Run the entire workflow from feature description to implementation with one command.
 
 #### 2. **State Persistence**
+
 The orchestrator saves progress to `.speckit-state.json`, enabling:
+
 - Resumption after chat token limits
 - Cross-session continuity
 - Progress tracking
@@ -346,15 +353,18 @@ graph LR
 ```
 
 **Interactive Mode** (recommended):
+
 - Asks permission before each major phase
 - Allows review and adjustment between phases
 - User maintains full control
 
 **Auto-Spec Mode**:
+
 - Runs constitution → specify → plan → tasks automatically
 - Pauses before implementation for review
 
 **Full Auto Mode**:
+
 - Runs entire workflow to completion
 - Minimal user interaction required
 
@@ -368,6 +378,7 @@ When your chat reaches token limit during any phase:
 ```
 
 The resume command:
+
 - ✅ Loads all artifacts (constitution, spec, plan, tasks, etc.)
 - ✅ Identifies exact stopping point from task checkboxes
 - ✅ Reconstructs full context automatically
@@ -383,6 +394,7 @@ The resume command:
 ```
 
 **What happens:**
+
 1. Prompts for workflow preferences (interactive/auto-spec/full-auto)
 2. Asks to include optional phases (clarify, analyze)
 3. Checks constitution (creates if missing)
@@ -401,6 +413,7 @@ The resume command:
 ```
 
 **What happens:**
+
 1. Automatically runs: constitution → specify → plan → tasks
 2. **Pauses before implementation** for review
 3. User reviews `tasks.md` and planning artifacts
@@ -409,12 +422,14 @@ The resume command:
 #### Example 3: Resume After Chat Limit
 
 **Original chat** (hit token limit during implementation):
+
 ```bash
 /speckit.orchestrate Build a payment processing system with Stripe integration
 # ... chat reaches limit at task 28/47 ...
 ```
 
 **New chat** (fresh session):
+
 ```bash
 /speckit.resume
 ```
@@ -456,6 +471,7 @@ flowchart TD
 ```
 
 **What happens:**
+
 1. Loads `.speckit-state.json`
 2. Shows progress summary: 28/47 tasks completed
 3. Loads all artifacts:
@@ -495,6 +511,7 @@ The orchestrator creates `.speckit-state.json` in your repository root:
 ```
 
 **Should you commit `.speckit-state.json`?**
+
 - ✅ **Yes** if you want cross-machine resumption or team collaboration
 - ❌ **Add to .gitignore** if you prefer local-only state
 
@@ -512,6 +529,7 @@ The orchestrator creates `.speckit-state.json` in your repository root:
 ### Best Practices
 
 1. **Commit frequently during long workflows:**
+
    ```bash
    git add .
    git commit -m "Complete planning phase for user-auth feature"
@@ -610,6 +628,7 @@ graph TD
 ```
 
 **Legend:**
+
 - ✓ = Completed
 - ⚙ = In Progress (current task)
 - ⏳ = Pending
@@ -618,7 +637,8 @@ graph TD
 ### Error Handling
 
 If any phase fails:
-```
+
+```text
 ❌ Error in phase: implement
 
 Error details: Module 'stripe' not found
@@ -714,6 +734,7 @@ The orchestrator workflow provides:
 - ✅ **Progress transparency** - Real-time phase and task tracking
 
 **Get started:**
+
 ```bash
 /speckit.orchestrate <your-feature-description>
 ```

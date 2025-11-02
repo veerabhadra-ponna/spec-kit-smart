@@ -850,19 +850,24 @@ fi
 **Situation:** Chat hit token limit while implementing task T023 of 47
 
 **Resume flow:**
+
 1. `/speckit.resume` with no args
 2. Auto-detects from git branch: `001-user-auth`
 3. Loads:
+
    - Constitution
    - Spec (2500 lines)
    - Plan (800 lines)
    - Research (300 lines)
    - Data model (400 lines)
    - Tasks (22 completed [X], 25 pending [ ])
+
 4. Identifies next task: [T023] Implement password hashing middleware
 5. Shows context:
+
    - Last 3 completed tasks
    - Next 5 pending tasks
+
 6. Asks: "Resume at task T023? [Y/n]"
 7. Continues implementation exactly where left off
 
@@ -875,6 +880,7 @@ fi
 **Situation:** User worked on feature yesterday, resuming today in fresh chat
 
 **Resume flow:**
+
 1. `/speckit.resume`
 2. Auto-detects from branch
 3. Loads all artifacts
@@ -891,6 +897,7 @@ fi
 **Situation:** User paused orchestration, manually edited spec.md, wants to continue
 
 **Resume flow:**
+
 1. `/speckit.resume`
 2. Loads edited spec.md (detects changes via timestamp or git diff)
 3. Warns: "Spec has been modified since last run"
@@ -908,11 +915,13 @@ fi
 **Situation:** User pushed branch, cloned on different machine, wants to resume
 
 **Requirements:**
+
 - Feature branch pushed to remote
 - All artifacts (spec, plan, tasks) committed
 - .speckit-state.json committed (optional but recommended)
 
 **Resume flow:**
+
 1. `git clone <repo> && cd <repo>`
 2. `git checkout 001-user-auth`
 3. `/speckit.resume`
@@ -929,6 +938,7 @@ fi
 **Situation:** Implementation failed at task T030 due to dependency error
 
 **Resume flow:**
+
 1. User fixes dependency (e.g., installs missing package)
 2. `/speckit.resume`
 3. Loads context, sees T030 still pending [ ]
@@ -945,6 +955,7 @@ fi
 The `/speckit.resume` command works seamlessly with `/speckit.orchestrate`:
 
 **Orchestrator creates state:**
+
 ```json
 {
   "current_phase": "implement",
@@ -954,6 +965,7 @@ The `/speckit.resume` command works seamlessly with `/speckit.orchestrate`:
 ```
 
 **Resume loads state:**
+
 ```bash
 /speckit.resume
 # → Reads .speckit-state.json
@@ -963,6 +975,7 @@ The `/speckit.resume` command works seamlessly with `/speckit.orchestrate`:
 
 **Standalone workflows:**
 If NOT using orchestrator, resume still works by:
+
 - Auto-detecting phase from artifacts
 - Inferring next action from task checkboxes
 - No state file required (though helpful)
@@ -974,35 +987,42 @@ If NOT using orchestrator, resume still works by:
 ### **For Users:**
 
 1. **Commit frequently:**
+
    - Commit after each major phase completion
    - Commit .speckit-state.json for cross-machine resumption
    - Tag important milestones
 
 2. **Use descriptive branch names:**
+
    - Format: `###-feature-name` (e.g., `001-user-auth`)
    - Makes auto-detection reliable
 
 3. **Don't manually edit task checkboxes:**
+
    - Let commands mark [X] automatically
    - Manual edits can desync state
 
 4. **Review before resuming implementation:**
+
    - Use `review` option to see upcoming tasks
    - Ensure you understand where you left off
 
 ### **For Context Restoration:**
 
 1. **All critical info is in artifacts:**
+
    - Spec, plan, tasks, research contain everything needed
    - State file is optimization, not requirement
    - Chat history is NOT needed
 
 2. **Validation prevents errors:**
+
    - Context validation catches missing files
    - Branch checks prevent working on wrong feature
    - Git status warns about uncommitted work
 
 3. **Progressive loading:**
+
    - Load constitution first (global context)
    - Then spec (requirements)
    - Then plan (architecture)
@@ -1165,6 +1185,7 @@ The `/speckit.resume` command provides:
 **Key principle:** The filesystem IS the source of truth. Chat history is ephemeral; artifacts are permanent.
 
 **Recommended workflow:**
+
 1. Start feature: `/speckit.orchestrate <description>`
 2. Work until token limit or pause
 3. New chat: `/speckit.resume`
