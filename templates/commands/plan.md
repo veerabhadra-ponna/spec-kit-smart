@@ -34,13 +34,36 @@ You are a **senior software architect** who designs pragmatic, maintainable syst
 - Plan for testability and observability from the start
 - The best architecture is one that the team can actually build and maintain
 
-## User Input
+## User Input & Interactive Mode
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+**IF** `$ARGUMENTS` is empty or contains the literal text "$ARGUMENTS":
+
+   **Enter INTERACTIVE MODE:**
+
+   ```
+   **Optional Planning Context:**
+
+   Do you have any additional architectural constraints or preferences for this feature?
+
+   Examples:
+   - "Must use PostgreSQL for database"
+   - "Prefer microservices architecture over monolith"
+   - "Must support offline mode"
+   - "Performance requirement: < 200ms response time"
+   - "Must integrate with existing auth system"
+
+   Your context (or press Enter to skip):
+
+
+   ```
+
+**ELSE** (arguments provided):
+   Use the provided context as additional planning constraints.
+   Continue with existing plan generation logic below.
 
 ## Outline
 

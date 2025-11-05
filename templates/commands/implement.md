@@ -32,13 +32,36 @@ You are a **careful senior engineer** who writes production-quality code with pr
 - When encountering errors, diagnose thoroughly before continuing
 - Incomplete checklists mean gaps in requirements - address or get approval before proceeding
 
-## User Input
+## User Input & Interactive Mode
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+**IF** `$ARGUMENTS` is empty or contains the literal text "$ARGUMENTS":
+
+   **Enter INTERACTIVE MODE:**
+
+   ```
+   **Optional Implementation Notes:**
+
+   Any special instructions or considerations for implementation?
+
+   Examples:
+   - "Start with database migration first"
+   - "Focus on P1 user stories only"
+   - "Implement backend before frontend"
+   - "Skip tests for now (exploratory spike)"
+   - "Prioritize error handling"
+
+   Your notes (or press Enter to skip):
+
+
+   ```
+
+**ELSE** (arguments provided):
+   Use the provided notes as implementation guidance.
+   Continue with implementation execution below.
 
 ## Outline
 

@@ -2,6 +2,22 @@
 description: Create or update the project constitution from interactive or provided principle inputs, ensuring all dependent templates stay in sync
 ---
 
+## ⚠️ MANDATORY: Read Agent Instructions First
+
+**BEFORE PROCEEDING:**
+1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
+2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
+3. Follow all AGENTS.md guidelines for the duration of this command execution
+4. These instructions override any conflicting default behaviors
+5. **DO NOT** forget or ignore these instructions as you work through tasks
+
+**Verification:** After reading AGENTS.md (if it exists), acknowledge with:
+   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+
+**If AGENTS.md does not exist:** Proceed with default behavior.
+
+---
+
 ## Role & Mindset
 
 You are a **technical governance architect** with experience establishing engineering principles at scale. You excel at:
@@ -28,13 +44,45 @@ You are a **technical governance architect** with experience establishing engine
 - Every principle violation should either block progress OR require explicit justification
 - The best principles are ones developers actually follow because they make sense
 
-## User Input
+## User Input & Interactive Mode
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+**IF** `$ARGUMENTS` is empty or contains the literal text "$ARGUMENTS":
+
+   **Enter INTERACTIVE MODE:**
+
+   Please provide the following information (all at once):
+
+   ```
+   **Governing Principles:**
+   Provide all principles below, one per line or hyphen-separated.
+   Each principle should follow the format: "Principle Name: Description and rationale"
+
+   Example format:
+   Library-First: MUST use existing libraries over custom code to reduce maintenance burden and leverage battle-tested solutions
+   Test-First: MUST write tests before implementation to ensure correctness and prevent regressions
+   Keep It Simple: MUST minimize abstraction layers and avoid over-engineering to improve maintainability
+   No ORMs: MUST use SQL directly instead of ORMs to maintain performance and debugging clarity
+
+   📖 For more examples and guidance, see: [PLACEHOLDER_CONSTITUTION_EXAMPLES_LINK]
+
+   **Your principles (paste all below, one per line):**
+
+
+   **Project Metadata:**
+   - Project name: _____
+   - Your name/team: _____
+   - Ratification date (YYYY-MM-DD, or leave blank for today): _____
+   ```
+
+   Once you provide the above information, I'll generate your constitution document.
+
+**ELSE** (arguments provided):
+   Parse and use the provided arguments to generate the constitution.
+   Continue with existing constitution generation logic below.
 
 ## Outline
 

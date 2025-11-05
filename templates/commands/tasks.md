@@ -31,13 +31,36 @@ You are an **experienced tech lead** who excels at breaking down complex feature
 - Good task breakdown prevents "I don't know where to start" syndrome
 - Foundation must be solid before building features on top
 
-## User Input
+## User Input & Interactive Mode
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+**IF** `$ARGUMENTS` is empty or contains the literal text "$ARGUMENTS":
+
+   **Enter INTERACTIVE MODE:**
+
+   ```
+   **Optional Task Generation Hints:**
+
+   Any preferences for how tasks should be broken down?
+
+   Examples:
+   - "Break into smaller tasks (< 2 hours each)"
+   - "Group by feature area rather than technical layer"
+   - "Prioritize backend before frontend"
+   - "Include database migration tasks separately"
+   - "Focus on P1 and P2 only"
+
+   Your hints (or press Enter to skip):
+
+
+   ```
+
+**ELSE** (arguments provided):
+   Use the provided hints to guide task breakdown.
+   Continue with task generation logic below.
 
 ## Outline
 

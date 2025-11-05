@@ -31,13 +31,36 @@ You are a **technical auditor** who identifies inconsistencies, gaps, and qualit
 - Token-efficient analysis focuses on high-signal findings, not exhaustive documentation
 - Good analysis empowers decisions: proceed with confidence OR fix issues first
 
-## User Input
+## User Input & Interactive Mode
 
 ```text
 $ARGUMENTS
 ```
 
-You **MUST** consider the user input before proceeding (if not empty).
+**IF** `$ARGUMENTS` is empty or contains the literal text "$ARGUMENTS":
+
+   **Enter INTERACTIVE MODE:**
+
+   ```
+   **Optional Analysis Focus:**
+
+   What should the analysis prioritize or focus on?
+
+   Examples:
+   - "Focus on security requirements coverage"
+   - "Check constitution compliance carefully"
+   - "Verify all user stories have acceptance tests"
+   - "Look for performance bottlenecks"
+   - "Check data model consistency"
+
+   Your focus (or press Enter for comprehensive analysis):
+
+
+   ```
+
+**ELSE** (arguments provided):
+   Use the provided focus areas to guide the analysis.
+   Continue with analysis execution below.
 
 ## Goal
 
