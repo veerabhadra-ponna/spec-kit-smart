@@ -12,6 +12,12 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
+# Validate Jira number format if provided
+if ($JiraNumber -and $JiraNumber -notmatch '^C[0-9]{5}-[0-9]{4}$') {
+    Write-Error "Error: Jira number must match format C12345-7890 (e.g., C99999-1234)`nProvided: $JiraNumber"
+    exit 1
+}
+
 # Show help if requested
 if ($Help) {
     Write-Host "Usage: ./create-new-feature.ps1 [-Json] [-ShortName <name>] [-Number N] [-JiraNumber <jira>] <feature description>"
@@ -77,12 +83,13 @@ function Get-NextBranchNumber {
     # Find remote branches matching both old and new patterns using git ls-remote
     # Old pattern: refs/heads/001-short-name
     # New pattern: refs/heads/feature/001-C12345-7890-short-name
+    # Match only 3-digit spec-kit branches (001-, 002-, etc.) to avoid false positives
     $remoteBranches = @()
     try {
         $remoteRefs = git ls-remote --heads origin 2>$null
         if ($remoteRefs) {
-            $remoteBranches = $remoteRefs | Where-Object { $_ -match "refs/heads/(feature/)?(\d+)" } | ForEach-Object {
-                if ($_ -match "refs/heads/(?:feature/)?(\d+)") {
+            $remoteBranches = $remoteRefs | Where-Object { $_ -match "refs/heads/(feature/)?\d{3}-" } | ForEach-Object {
+                if ($_ -match "refs/heads/(?:feature/)?(\d{3})-") {
                     [int]$matches[1]
                 }
             }
@@ -92,12 +99,13 @@ function Get-NextBranchNumber {
     }
 
     # Check local branches (both patterns)
+    # Match only 3-digit spec-kit branches to avoid matching unrelated numeric branches
     $localBranches = @()
     try {
         $allBranches = git branch 2>$null
         if ($allBranches) {
-            $localBranches = $allBranches | Where-Object { $_ -match "^\*?\s*(feature/)?(\d+)" } | ForEach-Object {
-                if ($_ -match "(?:feature/)?(\d+)") {
+            $localBranches = $allBranches | Where-Object { $_ -match "^\*?\s*(feature/)?\d{3}-" } | ForEach-Object {
+                if ($_ -match "(?:feature/)?(\d{3})-") {
                     [int]$matches[1]
                 }
             }
@@ -107,11 +115,12 @@ function Get-NextBranchNumber {
     }
 
     # Check specs directory (directory name doesn't have feature/ prefix)
+    # Match only 3-digit spec-kit directories (001-*, 002-*, etc.)
     $specDirs = @()
     if (Test-Path $SpecsDir) {
         try {
-            $specDirs = Get-ChildItem -Path $SpecsDir -Directory | Where-Object { $_.Name -match "^(\d+)-" } | ForEach-Object {
-                if ($_.Name -match "^(\d+)-") {
+            $specDirs = Get-ChildItem -Path $SpecsDir -Directory | Where-Object { $_.Name -match "^(\d{3})-" } | ForEach-Object {
+                if ($_.Name -match "^(\d{3})-") {
                     [int]$matches[1]
                 }
             }

@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+# Create a new feature branch and spec directory
+#
+# TODO: Future improvements
+# - Add automated tests for regex patterns and edge cases
+# - Add environment variable for enforcing Jira requirement
+# - Improve error messages with examples and suggestions
+# - Add interactive mode validation with retry logic
 
 set -e
 
@@ -53,6 +60,12 @@ while [ $i -le $# ]; do
                 exit 1
             fi
             JIRA_NUMBER="$next_arg"
+            # Validate Jira number format (company convention: C12345-7890)
+            if ! [[ "$JIRA_NUMBER" =~ ^C[0-9]{5}-[0-9]{4}$ ]]; then
+                echo "Error: Jira number must match format C12345-7890 (e.g., C99999-1234)" >&2
+                echo "       Provided: $JIRA_NUMBER" >&2
+                exit 1
+            fi
             ;;
         --help|-h)
             echo "Usage: $0 [--json] [--short-name <name>] [--number N] [--jira-number <jira>] <feature_description>"
@@ -105,15 +118,18 @@ check_existing_branches() {
     # Find all branches matching both old and new patterns using git ls-remote
     # Old pattern: refs/heads/001-short-name
     # New pattern: refs/heads/feature/001-C12345-7890-short-name
-    local remote_branches=$(git ls-remote --heads origin 2>/dev/null | grep -E "refs/heads/(feature/)?[0-9]+" | sed 's/.*refs\/heads\/\(feature\/\)\?\([0-9]*\).*/\2/' | sort -n)
+    # Match only 3-digit spec-kit branches (001-, 002-, etc.) to avoid false positives
+    local remote_branches=$(git ls-remote --heads origin 2>/dev/null | grep -E "refs/heads/(feature/)?[0-9]{3}-" | sed 's/.*refs\/heads\/\(feature\/\)\?\([0-9]\{3\}\).*/\2/' | sort -n)
 
     # Also check local branches (both patterns)
-    local local_branches=$(git branch 2>/dev/null | grep -E "^[* ]*(feature/)?[0-9]+" | sed 's/^[* ]*//' | sed 's/^feature\///' | sed 's/-.*//' | sort -n)
+    # Match only 3-digit spec-kit branches to avoid matching unrelated numeric branches
+    local local_branches=$(git branch 2>/dev/null | grep -E "^[* ]*(feature/)?[0-9]{3}-" | sed 's/^[* ]*//' | sed 's/^feature\///' | sed 's/^\([0-9]\{3\}\)-.*/\1/' | sort -n)
 
     # Check specs directory as well (directory name doesn't have feature/ prefix)
+    # Match only 3-digit spec-kit directories (001-*, 002-*, etc.)
     local spec_dirs=""
     if [ -d "$SPECS_DIR" ]; then
-        spec_dirs=$(find "$SPECS_DIR" -maxdepth 1 -type d -name "[0-9]*-*" 2>/dev/null | xargs -n1 basename 2>/dev/null | sed 's/-.*//' | sort -n)
+        spec_dirs=$(find "$SPECS_DIR" -maxdepth 1 -type d -name "[0-9][0-9][0-9]-*" 2>/dev/null | xargs -n1 basename 2>/dev/null | sed 's/^\([0-9]\{3\}\)-.*/\1/' | sort -n)
     fi
 
     # Combine all sources and get the highest number

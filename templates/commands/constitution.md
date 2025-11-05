@@ -1,5 +1,10 @@
 ---
 description: Create or update the project constitution from interactive or provided principle inputs, ensuring all dependent templates stay in sync
+# TODO: Future improvements
+# - Add validation of user input format (parse and verify structure)
+# - Add retry logic if user input is malformed
+# - Add examples inline (remove dependency on external link)
+# - Add confirmation step before writing constitution
 ---
 
 ## ⚠️ MANDATORY: Read Agent Instructions First
@@ -54,31 +59,37 @@ $ARGUMENTS
 
    **Enter INTERACTIVE MODE:**
 
-   Please provide the following information (all at once):
+   Please provide the following information in this exact format (copy and fill in):
 
    ```
-   **Governing Principles:**
-   Provide all principles below, one per line or hyphen-separated.
-   Each principle should follow the format: "Principle Name: Description and rationale"
+   PRINCIPLES (one per line, format: "Name: Description"):
+   Library-First: MUST use existing libraries over custom code to reduce maintenance burden
+   Test-First: MUST write tests before implementation to ensure correctness
+   Keep It Simple: MUST minimize abstraction layers to improve maintainability
 
-   Example format:
-   Library-First: MUST use existing libraries over custom code to reduce maintenance burden and leverage battle-tested solutions
-   Test-First: MUST write tests before implementation to ensure correctness and prevent regressions
-   Keep It Simple: MUST minimize abstraction layers and avoid over-engineering to improve maintainability
-   No ORMs: MUST use SQL directly instead of ORMs to maintain performance and debugging clarity
-
-   📖 For more examples and guidance, see: [PLACEHOLDER_CONSTITUTION_EXAMPLES_LINK]
-
-   **Your principles (paste all below, one per line):**
-
-
-   **Project Metadata:**
-   - Project name: _____
-   - Your name/team: _____
-   - Ratification date (YYYY-MM-DD, or leave blank for today): _____
+   PROJECT METADATA:
+   Project name: MyApp
+   Team: Engineering Team
+   Ratification date: 2025-01-15
    ```
 
-   Once you provide the above information, I'll generate your constitution document.
+   **Format rules:**
+   - Start principles section with "PRINCIPLES" on its own line
+   - Each principle: one line, format "PrincipleName: Description" (use MUST/SHOULD/MAY)
+   - Separate principles from metadata with blank line
+   - Start metadata section with "PROJECT METADATA:" on its own line
+   - Metadata format: "Field: Value" (one per line)
+   - Ratification date: YYYY-MM-DD format (or write "today")
+
+   **Examples for reference:**
+   - Library-First: MUST use existing libraries over custom solutions
+   - Test-First: MUST write tests before implementation
+   - No ORMs: MUST use SQL directly instead of ORMs for clarity
+   - CLI-First: MUST provide command-line interfaces before GUIs
+
+   📖 More examples: [PLACEHOLDER_CONSTITUTION_EXAMPLES_LINK]
+
+   Once you provide the formatted input, I'll generate your constitution document.
 
 **ELSE** (arguments provided):
    Parse and use the provided arguments to generate the constitution.

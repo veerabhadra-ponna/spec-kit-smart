@@ -3,6 +3,11 @@ description: Create or update the feature specification from a natural language 
 scripts:
   sh: scripts/bash/create-new-feature.sh --json "{ARGS}"
   ps: scripts/powershell/create-new-feature.ps1 -Json "{ARGS}"
+# TODO: Future improvements
+# - Add validation of interactive input format (JIRA: / FEATURE: pattern)
+# - Add retry logic if Jira or feature description invalid
+# - Add feature description quality checks (minimum length, keywords)
+# - Add confirmation step showing branch name before creation
 ---
 
 ## ⚠️ MANDATORY: Read Agent Instructions First
@@ -55,37 +60,35 @@ $ARGUMENTS
 
    **Enter INTERACTIVE MODE:**
 
-   Please provide the following information (all at once):
+   Please provide the following information in this exact format (copy and fill in):
 
    ```
-   **1. Jira Ticket Number:**
-   Format: C12345-7890 (company convention)
-   Your Jira ticket: _____
-
-   **2. Feature Description:**
-   Be specific about what you want to build.
-
-   Good examples:
-   - "Add user authentication with email/password and OAuth2 (Google, GitHub)"
-   - "Create analytics dashboard showing user signups, revenue, and retention over time"
-   - "Implement CSV export for transaction history with date range filters"
-   - "Build REST API for managing customer orders with pagination and filtering"
-
-   Avoid vague descriptions (these will fail):
-   - "Make it better" ❌
-   - "Add security" ❌
-   - "Improve UI" ❌
-   - "Optimize performance" ❌
-
-   Your feature description:
-
-
+   JIRA: C12345-7890
+   FEATURE: Add user authentication with email/password and OAuth2 (Google, GitHub)
    ```
 
-   Once you provide both the Jira number and feature description, I'll create the feature branch and specification.
+   **Format rules:**
+   - Line 1: `JIRA: C12345-7890` (exactly 5 digits, dash, 4 digits)
+   - Line 2: `FEATURE: <your description>` (be specific, see examples below)
 
-   **Branch will be created as:** `feature/[auto-number]-[jira-number]-[short-name]`
-   **Example:** `feature/001-C12345-7890-user-auth`
+   **Good feature descriptions:**
+   ✅ "Add user authentication with email/password and OAuth2 (Google, GitHub)"
+   ✅ "Create analytics dashboard showing user signups, revenue, and retention over time"
+   ✅ "Implement CSV export for transaction history with date range filters"
+   ✅ "Build REST API for managing customer orders with pagination and filtering"
+
+   **Bad feature descriptions (too vague):**
+   ❌ "Make it better"
+   ❌ "Add security"
+   ❌ "Improve UI"
+   ❌ "Optimize performance"
+
+   **What happens next:**
+   - Branch created: `feature/[auto-number]-C12345-7890-[short-name]`
+   - Example: `feature/001-C12345-7890-user-auth`
+   - Spec directory: `specs/001-C12345-7890-user-auth/`
+
+   Once you provide the formatted input, I'll create the feature branch and specification.
 
 **ELSE** (arguments provided):
    Parse arguments (expecting Jira number and feature description).
