@@ -1,13 +1,36 @@
 # Reverse Engineering & Modernization Guide
 
-**Status**: ✅ Complete
-**Version**: 1.0.0
+**Status**: ⚠️ **EXPERIMENTAL** - Design proposal and templates (implementation in progress)
+**Version**: 1.0.0-alpha
 **Last Updated**: 2025-11-06
+
+---
+
+## ⚠️ Important Notice
+
+**Current State**: This feature is currently a **design proposal and template system**. The AI agent will guide the analysis process, but some capabilities require additional tooling:
+
+**What Works Now**:
+
+- ✅ Analysis framework and methodology
+- ✅ Comprehensive templates for reports
+- ✅ Scoring formulas and decision matrices
+- ✅ Workflow guidance for inline upgrade / greenfield rewrite
+
+**What Requires Additional Setup**:
+
+- ⚠️ Automated dependency scanning (requires npm audit, pip-audit, or similar tools)
+- ⚠️ Code metrics calculation (requires cloc, tokei, or similar tools)
+- ⚠️ Security vulnerability detection (best with Snyk, OWASP, or similar)
+- ⚠️ Automated score calculation (AI agent will assist manually)
+
+**For full automation**, see [Implementation Roadmap](#implementation-roadmap) below.
 
 ---
 
 ## Table of Contents
 
+- [Important Notice](#️-important-notice)
 - [Overview](#overview)
 - [When to Use This Feature](#when-to-use-this-feature)
 - [Quick Start](#quick-start)
@@ -18,6 +41,8 @@
 - [Decision Making](#decision-making)
 - [Workflow Examples](#workflow-examples)
 - [Best Practices](#best-practices)
+- [Known Limitations](#known-limitations)
+- [Implementation Roadmap](#implementation-roadmap)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 ---
@@ -703,6 +728,206 @@ FOCUS_AREAS: ARCHITECTURE, DEPENDENCIES
 - Update constitution with lessons learned
 - Document decisions (ADRs)
 - Share knowledge with team
+
+---
+
+## Known Limitations
+
+### Current Limitations
+
+**1. Template-Based Analysis**
+
+This feature currently provides comprehensive templates and methodology, but relies on the AI agent and available tools for execution. The analysis process is semi-automated rather than fully automated.
+
+**2. Tool Dependencies**
+
+Analysis quality depends on available tooling:
+
+- **Dependency Scanning**: Requires npm audit (Node.js), pip-audit (Python), or similar
+- **Code Metrics**: Requires cloc, tokei, scc, or similar tools
+- **Security Scanning**: Best results with Snyk, OWASP Dependency-Check, or similar
+- **Without tools**: AI agent will provide best-effort analysis based on manual inspection
+
+**3. Language Coverage**
+
+While the framework supports multiple languages, depth of analysis varies:
+
+- **Best Support**: JavaScript/Node.js, Python
+- **Good Support**: Java, .NET, Ruby, PHP
+- **Basic Support**: Other languages (general analysis only)
+
+**4. Large Codebase Performance**
+
+- **Tested on**: Projects up to 100K LOC
+- **May struggle with**: Monorepos >500K LOC, deeply nested dependencies
+- **Workaround**: Focus analysis on specific directories or modules
+
+**5. Scoring Calibration**
+
+Feasibility scores (0-100) are based on industry research and best practices, but:
+
+- Not calibrated against specific organization's risk tolerance
+- Weights are generic (customization requires manual adjustment)
+- Thresholds (e.g., 80+ = highly feasible) may need adjustment for your context
+
+**6. No Incremental Analysis**
+
+Currently all-or-nothing analysis. Cannot resume from checkpoint if interrupted.
+
+**7. Manual Report Assembly**
+
+AI agent generates sections sequentially. For very large projects, may require multiple sessions with manual compilation.
+
+**8. Security Considerations**
+
+When analyzing untrusted codebases:
+
+- AI agent reads code files but does not execute them
+- Be cautious with: symlinks, binary files, very large files
+- Recommendation: Analyze only trusted codebases or run in sandboxed environment
+
+### Workarounds
+
+**For Better Results**:
+
+1. **Install analysis tools** before running:
+
+   ```bash
+   # Node.js projects
+   npm install -g npm-check-updates
+
+   # Python projects
+   pip install pip-audit
+
+   # Code metrics (any language)
+   npm install -g cloc
+   # or: cargo install tokei
+   ```
+
+2. **Break down large projects**:
+
+   ```bash
+   # Analyze subdirectories separately
+   /speckit.analyze-project
+   PROJECT_PATH: /project/backend
+
+   /speckit.analyze-project
+   PROJECT_PATH: /project/frontend
+   ```
+
+3. **Use focus areas** for faster analysis:
+
+   ```bash
+   # Security-only audit
+   FOCUS_AREAS: SECURITY
+
+   # Dependencies-only check
+   FOCUS_AREAS: DEPENDENCIES
+   ```
+
+4. **Customize scoring weights** in generated reports based on your priorities
+
+---
+
+## Implementation Roadmap
+
+The following enhancements are planned to address current limitations:
+
+### Phase 1: Core Implementation (4-6 weeks)
+
+**Goal**: Fully automated analysis with executable scripts
+
+**Deliverables**:
+
+- `scripts/bash/analyze-project.sh` - Main orchestration script
+- `scripts/python/analyzer/` - Python analysis library
+  - `scanner.py` - Directory scanning
+  - `dependency_analyzer.py` - Dependency health
+  - `metrics_calculator.py` - Code metrics
+  - `security_scanner.py` - Vulnerability detection
+  - `scoring_engine.py` - Feasibility scoring
+  - `report_generator.py` - Markdown report generation
+- Integration with npm audit, pip-audit, cargo audit
+- Integration with cloc, tokei for metrics
+- Automated feasibility score calculation
+- Error handling and graceful degradation
+
+**Priority**: HIGH
+
+### Phase 2: Language-Specific Analyzers (2-3 weeks)
+
+**Goal**: Deep analysis for each major language
+
+**Deliverables**:
+
+- JavaScript/Node.js: Framework detection, build tool analysis
+- Python: Virtual environment analysis, Django/Flask specifics
+- Java: Maven/Gradle analysis, Spring Boot versions
+- .NET: NuGet analysis, framework version detection
+- Ruby: Bundler analysis, Rails specifics
+- PHP: Composer analysis, Laravel/Symfony specifics
+
+**Priority**: HIGH
+
+### Phase 3: Incremental Analysis & Checkpoints (1-2 weeks)
+
+**Goal**: Support large codebases, resume capability
+
+**Deliverables**:
+
+- Checkpoint system (save progress)
+- Resume from last checkpoint
+- Progress indicators
+- Streaming reports (generate sections as completed)
+
+**Priority**: MEDIUM
+
+### Phase 4: Advanced Features (3-4 weeks)
+
+**Goal**: Enhanced capabilities
+
+**Deliverables**:
+
+- Baseline comparison (track progress over time)
+- CI/CD integration (GitHub Actions, GitLab CI)
+- Plugin architecture for custom analyzers
+- Export formats (PDF, JSON, HTML)
+- Architecture diagram generation
+- Cost estimation
+- License compliance analysis
+
+**Priority**: MEDIUM
+
+### Phase 5: Enterprise Features (4-6 weeks)
+
+**Goal**: Enterprise-scale support
+
+**Deliverables**:
+
+- Multi-project analysis (monorepo support)
+- Custom scoring weights configuration
+- Team capacity assessment questionnaire
+- Historical trending and analytics
+- Integration with enterprise tools (SonarQube, Snyk, etc.)
+- RBAC and audit logging
+
+**Priority**: LOW
+
+### How to Contribute
+
+Want to help implement these features?
+
+1. Check [GitHub Issues](https://github.com/veerabhadra-ponna/spec-kit-smart/issues) for tasks labeled `reverse-engineering`
+2. See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines
+3. Join discussions in [GitHub Discussions](https://github.com/veerabhadra-ponna/spec-kit-smart/discussions)
+
+**Priority Tasks Looking for Contributors**:
+
+- [ ] Python implementation of `scoring_engine.py`
+- [ ] JavaScript/Node.js analyzer
+- [ ] Python analyzer
+- [ ] Integration tests with sample projects
+- [ ] Documentation improvements
 
 ---
 

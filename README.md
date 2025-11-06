@@ -182,16 +182,9 @@ Then use `/speckit.resume` to continue after chat limits or interruptions.
 
 ## 🔄 Reverse Engineering & Modernization
 
+⚠️ **Status**: EXPERIMENTAL - Design proposal and templates ([see limitations](docs/reverse-engineering.md#known-limitations))
+
 **NEW**: Analyze existing projects, assess technical debt, and plan modernization strategies!
-
-Spec Kit now supports **reverse engineering existing codebases** to help you:
-
-- 📊 **Assess current state** - Technology stack, architecture, dependencies, code quality
-- ✅ **Identify strengths** - What's working well and should be preserved
-- ❌ **Find weaknesses** - Technical debt, security vulnerabilities, anti-patterns
-- 🔄 **Plan upgrades** - LTS versions, security patches, framework migrations
-- 🎯 **Make decisions** - Inline upgrade vs greenfield rewrite vs hybrid approach
-- 📈 **Score feasibility** - Data-driven confidence scores for recommendations
 
 ### Quick Start
 
@@ -200,7 +193,7 @@ Spec Kit now supports **reverse engineering existing codebases** to help you:
 /speckit.analyze-project
 ```
 
-When prompted, provide:
+When prompted:
 
 ```text
 PROJECT_PATH: /path/to/your/existing/project
@@ -210,131 +203,42 @@ FOCUS_AREAS: ALL
 
 ### What You Get
 
-Analysis generates comprehensive reports in `.analysis/[PROJECT]-[TIMESTAMP]/`:
+Comprehensive analysis with:
 
-- **`analysis-report.md`** - Complete assessment with good/bad aspects, upgrade paths, and recommendations
-- **`upgrade-plan.md`** - Step-by-step upgrade instructions (if inline upgrade recommended)
-- **`recommended-constitution.md`** - Suggested project principles derived from codebase analysis
-- **`decision-matrix.md`** - Stakeholder-friendly comparison table
-- **`dependency-audit.json`** - Machine-readable dependency data
-- **`metrics-summary.json`** - Codebase metrics
+- **`analysis-report.md`** - Assessment with strengths/weaknesses, upgrade paths, and data-driven recommendations
+- **`upgrade-plan.md`** - Step-by-step upgrade instructions (9 phases from prep to deployment)
+- **`recommended-constitution.md`** - Project principles derived from codebase patterns
+- **Feasibility scores** (0-100) for inline upgrade vs greenfield rewrite
+- **Confidence scores** for analysis quality
 
-### Analysis Depths
+### Key Capabilities
 
-- **QUICK** (30 min) - Basic health check, dependency scan, critical issues
-- **STANDARD** (2-4 hours) - Full analysis, architecture review, upgrade roadmaps - **Recommended**
-- **COMPREHENSIVE** (1-2 days) - Deep dive with performance profiling, security audit, detailed planning
-
-### Focus Areas
-
-- **ALL** - Complete analysis (recommended for first-time analysis)
-- **SECURITY** - Vulnerability scanning, dependency audits, security patterns
-- **PERFORMANCE** - Bottleneck identification, optimization opportunities
-- **ARCHITECTURE** - Design patterns, technical debt, modularity assessment
-- **DEPENDENCIES** - Package analysis, upgrade paths, LTS compliance
-
-### Feasibility Scoring
-
-**Inline Upgrade Feasibility** (0-100):
-
-Calculated from:
-- Code Quality (20%)
-- Test Coverage (15%)
-- Dependency Health (20%)
-- Architecture Quality (15%)
-- Team Familiarity (10%)
-- Documentation (10%)
-- Breaking Changes (10%)
-
-**Interpretation**:
-- **80-100**: ✅ Highly feasible - proceed with inline upgrade
-- **60-79**: ⚠️ Feasible with caution - assess risks carefully
-- **40-59**: 🟡 Moderately risky - consider hybrid approach
-- **0-39**: 🔴 High risk - consider greenfield rewrite
-
-**Greenfield Rewrite Feasibility** (0-100):
-
-Calculated from:
-- Requirements Clarity (20%)
-- Technical Debt Level (20%)
-- Business Continuity (15%)
-- Team Capacity (15%)
-- Time Available (15%)
-- Budget (15%)
-
-### Example Output
-
-```
-✅ Analysis Complete: MyLegacyApp
-
-📊 Analysis Summary:
-   - Project Type: Monolithic Web Application
-   - Primary Stack: Node.js 14.x + React 16.8
-   - Lines of Code: 45,320
-   - Dependencies: 237 (42 outdated, 7 vulnerable)
-   - Test Coverage: 43%
-
-🎯 Recommendation: INLINE UPGRADE (Feasibility: 68/100, Confidence: 85%)
-
-🚨 Immediate Actions (Critical):
-   1. Upgrade lodash (CVE-2021-23337, CVSS 9.8) - 15 mins
-   2. Patch Node.js 14.x → 18.x (EOL passed) - 2-3 hours
-   3. Fix authentication bypass in /api/login - 4 hours
-
-📁 Generated Reports:
-   - .analysis/MyLegacyApp-2025-11-06/analysis-report.md
-   - .analysis/MyLegacyApp-2025-11-06/upgrade-plan.md
-   - .analysis/MyLegacyApp-2025-11-06/decision-matrix.md
-```
+- 📊 Technology stack detection & EOL tracking
+- 🔒 Security vulnerability scanning (CVEs)
+- 📦 Dependency health analysis (outdated, deprecated)
+- 🏗️ Architecture assessment (patterns, technical debt)
+- ⚡ Performance bottleneck identification
+- 🎯 Data-driven recommendations (inline/greenfield/hybrid)
 
 ### Use Cases
 
-**When to use reverse engineering**:
-
 1. **Inherited Codebase** - Understand state, assess technical debt
-2. **Modernization Planning** - Runtime/framework versions approaching EOL
-3. **Migration Decision** - Deciding between upgrade-in-place vs rewrite
-4. **Compliance & Security** - Security audit, identify vulnerabilities
-5. **Team Onboarding** - Architecture overview, establish coding standards
+2. **Modernization Planning** - LTS upgrades, framework migrations
+3. **Security Audits** - Identify vulnerabilities and compliance gaps
+4. **Migration Decisions** - Upgrade-in-place vs rewrite with feasibility scoring
 
-### Workflow Examples
+### Workflows
 
-**Inline Upgrade Workflow**:
-1. Run `/speckit.analyze-project`
-2. Review `analysis-report.md`
-3. Fix critical security issues immediately
-4. Follow `upgrade-plan.md` phase-by-phase
-5. Validate at each checkpoint
-6. Deploy to production
+**Inline Upgrade**: Follow `upgrade-plan.md` → Fix critical issues → Upgrade incrementally
 
-**Greenfield Rewrite Workflow**:
-1. Run `/speckit.analyze-project`
-2. Review recommendation (greenfield rewrite)
-3. Use `recommended-constitution.md` to establish principles:
-   ```bash
-   /speckit.constitution [use recommended principles from analysis]
-   ```
-4. Create spec based on reverse-engineered requirements:
-   ```bash
-   /speckit.specify [describe features from analysis]
-   ```
-5. Plan with modern tech stack:
-   ```bash
-   /speckit.plan [modern technologies]
-   ```
-6. Implement using `/speckit.orchestrate`
+**Greenfield Rewrite**: Use `recommended-constitution.md` → `/speckit.orchestrate` with modern stack
 
-**Hybrid Approach (Strangler Fig)**:
-1. Extract and modernize components incrementally
-2. Maintain parallel systems during migration
-3. Gradually decommission legacy system
+**Hybrid (Strangler Fig)**: Extract modules incrementally, modernize, maintain parallel systems
 
 ### Documentation
 
-For comprehensive guide with examples, scoring details, and prompt suggestions:
-
-- **Full Guide**: [docs/reverse-engineering.md](docs/reverse-engineering.md)
-- **Examples & Prompts**: [docs/reverse-engineering-examples.md](docs/reverse-engineering-examples.md)
+- **📖 Complete Guide**: [docs/reverse-engineering.md](docs/reverse-engineering.md) - Comprehensive documentation
+- **💡 Examples & Prompts**: [docs/reverse-engineering-examples.md](docs/reverse-engineering-examples.md) - Practical workflows
 
 ---
 

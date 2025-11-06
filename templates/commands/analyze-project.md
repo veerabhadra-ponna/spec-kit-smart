@@ -1,5 +1,30 @@
 ---
 description: Reverse engineer and analyze an existing project to assess modernization opportunities, identify technical debt, and recommend upgrade paths
+status: EXPERIMENTAL
+version: 1.0.0-alpha
+---
+
+## ⚠️ Implementation Status
+
+**Current State**: This command provides a comprehensive analysis framework and templates.
+
+**What Works**:
+
+- ✅ Guided analysis workflow
+- ✅ Comprehensive report templates
+- ✅ Scoring methodology
+- ✅ Recommendation logic
+
+**What Requires External Tools**:
+
+- ⚠️ Automated dependency scanning (npm audit, pip-audit, etc.)
+- ⚠️ Code metrics calculation (cloc, tokei, etc.)
+- ⚠️ Security vulnerability detection (Snyk, OWASP, etc.)
+
+The AI agent will guide you through the analysis process and help generate reports using available tools. Install relevant tools for your tech stack for best results.
+
+For limitations and workarounds, see [Known Limitations](../../docs/reverse-engineering.md#known-limitations).
+
 ---
 
 ## ⚠️ MANDATORY: Read Agent Instructions First
