@@ -133,7 +133,7 @@ When completing improvements:
 
 ## ✅ Completed Improvements
 
-*(Track completed items here for reference)*
+Track completed items here for reference.
 
 ### 2025-01-XX
 

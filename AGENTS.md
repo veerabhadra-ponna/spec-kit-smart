@@ -19,18 +19,21 @@ The toolkit supports multiple AI coding assistants, allowing teams to use their 
 **RULE:** Never add TODO comments to prompt files (`.md` files in `templates/commands/`) or template files. TODOs in prompts can confuse AI agents, causing them to misinterpret instructions or attempt to execute the TODO items instead of their primary task.
 
 **Why this matters:**
+
 - AI agents read prompts as instructions
 - TODO comments can be interpreted as tasks to perform
 - Scattered TODOs across files make tracking difficult
 - Can lead to unexpected agent behavior
 
 **Instead:**
+
 - **Always** add improvements to `/IMPROVEMENTS.md` (centralized tracking)
 - Use clear priority levels (High/Medium/Low)
 - Link to related issues/PRs
 - Group by category for easy review
 
 **Example - Wrong:**
+
 ```markdown
 <!-- templates/commands/specify.md -->
 ---
@@ -41,6 +44,7 @@ description: Create feature specification
 ```
 
 **Example - Correct:**
+
 ```markdown
 <!-- IMPROVEMENTS.md -->
 ## 🔴 High Priority
@@ -49,16 +53,75 @@ description: Create feature specification
 ```
 
 **Where to document improvements:**
+
 - `/IMPROVEMENTS.md` - All future enhancements and known limitations
 - GitHub Issues - For discussion and tracking
 - Pull Requests - When implementing improvements
 
 **Benefits of centralized tracking:**
+
 - ✅ All improvements visible in one place
 - ✅ Easy to prioritize and plan sprints
 - ✅ No risk of confusing AI agents
 - ✅ Clear completion tracking with checkboxes
 - ✅ Better collaboration and visibility
+
+### Pre-Commit Quality Checks
+
+**RULE:** Always run quality checks before committing to catch errors early.
+
+**Required checks before every commit:**
+
+1. **Markdownlint** - Check all markdown files for formatting issues
+
+   ```bash
+   # Install markdownlint-cli2 (first time only)
+   npm install -g markdownlint-cli2
+
+   # Run from repository root
+   markdownlint-cli2 "**/*.md"
+   ```
+
+   **Common markdownlint errors to fix:**
+
+   - **MD032** - Blank lines around lists: Add blank line before/after lists
+   - **MD031** - Blank lines around code fences: Add blank line before/after code blocks
+   - **MD036** - No emphasis as heading: Use proper headings (##) not emphasis (*text*)
+   - **MD007** - List indentation: Use 0-space indentation for lists at document root
+   - **MD040** - Code language: Specify language for fenced code blocks (```bash, ```markdown, ```text)
+
+2. **Spell check** - Review for typos and grammar (manual or with tools)
+
+3. **Test scripts** - If modifying bash/PowerShell scripts, test them locally
+
+   ```bash
+   # Test bash scripts
+   bash scripts/bash/create-new-feature.sh --help
+
+   # Test PowerShell scripts (if on Windows/PowerShell)
+   pwsh scripts/powershell/create-new-feature.ps1 -Help
+   ```
+
+**Why this matters:**
+
+- ✅ Catches errors before CI fails
+- ✅ Keeps codebase clean and consistent
+- ✅ Saves time in code review
+- ✅ Prevents broken builds
+- ✅ Maintains professional quality
+
+**CI checks that will run automatically:**
+
+- Markdownlint on all `.md` files
+- (Add more as CI pipeline grows)
+
+**Quick pre-commit checklist:**
+
+- [ ] Ran markdownlint and fixed all errors
+- [ ] No TODOs added to prompt files
+- [ ] Updated IMPROVEMENTS.md if needed
+- [ ] Tested any script changes locally
+- [ ] Commit message is clear and descriptive
 
 ## Adding New Agent Support
 
