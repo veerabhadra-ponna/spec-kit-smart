@@ -103,8 +103,8 @@ If multiple tech stacks detected:
 **Stack mapping precedence (for compliance checking):**
 
 1. **Explicit path mapping** (from stack-mapping.json) - HIGHEST
-2. **File path patterns** (frontend/* → React, backend/* → Java)
-3. **File extensions** (*.tsx → React, *.java → Java)
+2. **File path patterns** (frontend/\* → React, backend/\* → Java)
+3. **File extensions** (\*.tsx → React, \*.java → Java)
 4. **Auto-detection** (from plan.md tech stack) - LOWEST
 
 **Example multi-stack validation:**

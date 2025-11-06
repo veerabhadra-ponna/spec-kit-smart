@@ -103,7 +103,7 @@ If multiple tech stacks detected:
 **Stack mapping precedence:**
 
 1. **Explicit path mapping** (from stack-mapping.json) - HIGHEST
-2. **File extension** (*.tsx → React, *.java → Java)
+2. **File extension** (\*.tsx → React, \*.java → Java)
 3. **Directory convention** (frontend/ → React, backend/ → Java)
 4. **Auto-detection** (from package.json, pom.xml markers) - LOWEST
 

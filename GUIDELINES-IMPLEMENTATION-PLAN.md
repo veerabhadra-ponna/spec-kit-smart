@@ -51,14 +51,12 @@
 
 Traditional (won't work in corporate):
 
-
 ```bash
 npx create-react-app my-app  # ❌ Blocked by firewall
 npm install react-router-dom  # ❌ Can't reach public npm
 ```
 
 Corporate approach:
-
 
 ```bash
 npx @acmecorp/create-react-app my-app --template=enterprise
@@ -233,7 +231,8 @@ Priority: After Constitution, before defaults
 **Priority order:**
 
 1. **Auto-detect from codebase files:**
-   ```
+
+   ```text
    package.json → Node.js/React (check dependencies for specifics)
    pom.xml → Java
    *.csproj → .NET
@@ -242,13 +241,15 @@ Priority: After Constitution, before defaults
    ```
 
 2. **Check constitution for declaration:**
+
    ```markdown
    TECH_STACK: java
    FRONTEND_STACK: reactjs
    ```
 
 3. **Ask user in plan.md if unclear:**
-   ```
+
+   ```text
    "I couldn't detect the tech stack. What are you using?
    - Java / .NET / React.js / Node.js / Python / Other"
    ```
@@ -691,6 +692,7 @@ Path mapping:
 4. **Selective loading:** Only load relevant sections per prompt
 
 **Example optimization:**
+
 ```markdown
 ## Summary (First 30 lines - always load)
 - Architecture: Spring Boot with Clean Architecture
