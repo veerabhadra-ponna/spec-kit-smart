@@ -76,7 +76,32 @@ This document tracks all planned improvements and known limitations for the Spec
 - [ ] Add command to list all feature branches
 - [ ] Add command to cleanup old/merged branches
 - [ ] Add branch naming validation before creation
-- [ ] Support custom branch naming patterns (config file)
+
+### Corporate Guidelines - Phase 2 (Configurable Branch Naming)
+
+- [ ] Create `branch-config.json` schema and examples
+- [ ] Add JSON schema validation for branch configuration
+- [ ] Refactor `create-new-feature.sh` to read from config file
+- [ ] Refactor `create-new-feature.ps1` to read from config file
+- [ ] Update documentation for branch configuration
+- [ ] Add examples for common branch naming patterns
+- [ ] Test with multiple branch naming patterns
+
+### Corporate Guidelines - Phase 3 (Multi-Stack Coordination)
+
+- [ ] Implement guideline precedence rules for multi-stack projects
+- [ ] Add guideline version management (optional)
+- [ ] Create guideline validation tool
+- [ ] Add guideline update notifications
+- [ ] Support team-specific guideline overrides
+
+### Corporate Guidelines - Phase 4 (Advanced Features)
+
+- [ ] Interactive guideline compliance checker
+- [ ] Guideline diff tool (compare project vs template)
+- [ ] Auto-fix common guideline violations
+- [ ] Guideline analytics (compliance metrics)
+- [ ] CI/CD integration for guideline checking
 
 ### PowerShell Script
 
@@ -135,13 +160,21 @@ When completing improvements:
 
 Track completed items here for reference.
 
-### 2025-01-XX
+### 2025-01-15
 
 - [x] Add Jira number validation (regex format check) - PR #X
 - [x] Fix branch detection regex to be more precise - PR #X
 - [x] Clarify interactive input formats with templates - PR #X
-- [x] Fix all markdownlint errors - PR #X
-- [x] Create this centralized improvements document - PR #X
+- [x] Fix all markdownlint errors (multiple PRs) - PR #X
+- [x] Create centralized improvements document - PR #X
+- [x] Fix interactive mode detection in prompts (plan, implement, tasks, analyze) - PR #X
+- [x] Implement Corporate Guidelines Phase 1 (Foundation) - PR #X
+  - Created 7 guideline template files
+  - Integrated guidelines into plan/implement/analyze/tasks prompts
+  - Added tech stack auto-detection
+  - Implemented multi-stack support
+  - Added non-compliance handling
+  - Updated AGENTS.md with guidelines documentation
 
 ---
 
