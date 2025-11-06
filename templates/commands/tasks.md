@@ -53,11 +53,11 @@ $ARGUMENTS
 
    **Examples of valid task generation preferences:**
 
-   - Task size: "Break into smaller tasks (< 2 hours each)", "Keep tasks larger (half-day chunks)"
-   - Grouping: "Group by feature area rather than technical layer", "Separate by user story strictly"
-   - Priority: "Prioritize backend before frontend", "Focus on P1 and P2 only"
-   - Scope: "Include database migration tasks separately", "Bundle setup tasks together"
-   - Detail level: "Include detailed sub-tasks", "Keep high-level only"
+- Task size: "Break into smaller tasks (< 2 hours each)", "Keep tasks larger (half-day chunks)"
+- Grouping: "Group by feature area rather than technical layer", "Separate by user story strictly"
+- Priority: "Prioritize backend before frontend", "Focus on P1 and P2 only"
+- Scope: "Include database migration tasks separately", "Bundle setup tasks together"
+- Detail level: "Include detailed sub-tasks", "Keep high-level only"
 
    **Your preferences** (type your preferences above, or "none" to skip):
 
@@ -118,8 +118,8 @@ Detected stacks: React + Java
 Load: reactjs-guidelines.md, java-guidelines.md
 
 Apply:
-  - Tasks for frontend/* → React guidelines
-  - Tasks for backend/* → Java guidelines
+  - Tasks for frontend/\* → React guidelines
+  - Tasks for backend/\* → Java guidelines
   - Shared infrastructure → Both guidelines (or constitution priority)
 ```
 
