@@ -13,6 +13,7 @@ scripts:
 ## ⚠️ MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
+
 1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
 2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
 3. Follow all AGENTS.md guidelines for the duration of this command execution
@@ -62,14 +63,15 @@ $ARGUMENTS
 
    Please provide the following information in this exact format (copy and fill in):
 
-   ```
+   ```text
    JIRA: C12345-7890
    FEATURE: Add user authentication with email/password and OAuth2 (Google, GitHub)
    ```
 
    **Format rules:**
-   - Line 1: `JIRA: C12345-7890` (exactly 5 digits, dash, 4 digits)
-   - Line 2: `FEATURE: <your description>` (be specific, see examples below)
+
+- Line 1: `JIRA: C12345-7890` (exactly 5 digits, dash, 4 digits)
+- Line 2: `FEATURE: <your description>` (be specific, see examples below)
 
    **Good feature descriptions:**
    ✅ "Add user authentication with email/password and OAuth2 (Google, GitHub)"
@@ -84,9 +86,10 @@ $ARGUMENTS
    ❌ "Optimize performance"
 
    **What happens next:**
-   - Branch created: `feature/[auto-number]-C12345-7890-[short-name]`
-   - Example: `feature/001-C12345-7890-user-auth`
-   - Spec directory: `specs/001-C12345-7890-user-auth/`
+
+- Branch created: `feature/[auto-number]-C12345-7890-[short-name]`
+- Example: `feature/001-C12345-7890-user-auth`
+- Spec directory: `specs/001-C12345-7890-user-auth/`
 
    Once you provide the formatted input, I'll create the feature branch and specification.
 

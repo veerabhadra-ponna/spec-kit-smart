@@ -10,6 +10,7 @@ description: Create or update the project constitution from interactive or provi
 ## ⚠️ MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
+
 1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
 2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
 3. Follow all AGENTS.md guidelines for the duration of this command execution
@@ -61,7 +62,7 @@ $ARGUMENTS
 
    Please provide the following information in this exact format (copy and fill in):
 
-   ```
+   ```text
    PRINCIPLES (one per line, format: "Name: Description"):
    Library-First: MUST use existing libraries over custom code to reduce maintenance burden
    Test-First: MUST write tests before implementation to ensure correctness
@@ -74,18 +75,20 @@ $ARGUMENTS
    ```
 
    **Format rules:**
-   - Start principles section with "PRINCIPLES" on its own line
-   - Each principle: one line, format "PrincipleName: Description" (use MUST/SHOULD/MAY)
-   - Separate principles from metadata with blank line
-   - Start metadata section with "PROJECT METADATA:" on its own line
-   - Metadata format: "Field: Value" (one per line)
-   - Ratification date: YYYY-MM-DD format (or write "today")
+
+- Start principles section with "PRINCIPLES" on its own line
+- Each principle: one line, format "PrincipleName: Description" (use MUST/SHOULD/MAY)
+- Separate principles from metadata with blank line
+- Start metadata section with "PROJECT METADATA:" on its own line
+- Metadata format: "Field: Value" (one per line)
+- Ratification date: YYYY-MM-DD format (or write "today")
 
    **Examples for reference:**
-   - Library-First: MUST use existing libraries over custom solutions
-   - Test-First: MUST write tests before implementation
-   - No ORMs: MUST use SQL directly instead of ORMs for clarity
-   - CLI-First: MUST provide command-line interfaces before GUIs
+
+- Library-First: MUST use existing libraries over custom solutions
+- Test-First: MUST write tests before implementation
+- No ORMs: MUST use SQL directly instead of ORMs for clarity
+- CLI-First: MUST provide command-line interfaces before GUIs
 
    📖 More examples: [PLACEHOLDER_CONSTITUTION_EXAMPLES_LINK]
 

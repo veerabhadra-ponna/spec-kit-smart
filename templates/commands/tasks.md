@@ -41,7 +41,7 @@ $ARGUMENTS
 
    **Enter INTERACTIVE MODE:**
 
-   ```
+   ```text
    **Optional Task Generation Hints:**
 
    Any preferences for how tasks should be broken down?

@@ -8,6 +8,7 @@ scripts:
 ## ⚠️ MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
+
 1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
 2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
 3. Follow all AGENTS.md guidelines for the duration of this command execution

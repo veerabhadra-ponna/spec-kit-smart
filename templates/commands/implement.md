@@ -42,7 +42,7 @@ $ARGUMENTS
 
    **Enter INTERACTIVE MODE:**
 
-   ```
+   ```text
    **Optional Implementation Notes:**
 
    Any special instructions or considerations for implementation?

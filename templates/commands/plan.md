@@ -44,7 +44,7 @@ $ARGUMENTS
 
    **Enter INTERACTIVE MODE:**
 
-   ```
+   ```text
    **Optional Planning Context:**
 
    Do you have any additional architectural constraints or preferences for this feature?

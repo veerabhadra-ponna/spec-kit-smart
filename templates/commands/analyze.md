@@ -41,7 +41,7 @@ $ARGUMENTS
 
    **Enter INTERACTIVE MODE:**
 
-   ```
+   ```text
    **Optional Analysis Focus:**
 
    What should the analysis prioritize or focus on?
