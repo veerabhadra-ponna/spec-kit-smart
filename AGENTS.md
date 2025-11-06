@@ -88,7 +88,7 @@ description: Create feature specification
    - **MD031** - Blank lines around code fences: Add blank line before/after code blocks
    - **MD036** - No emphasis as heading: Use proper headings (##) not emphasis (*text*)
    - **MD007** - List indentation: Use 0-space indentation for lists at document root
-   - **MD040** - Code language: Specify language for fenced code blocks (```bash, ```markdown, ```text)
+   - **MD040** - Code language: Specify language for fenced code blocks (bash, markdown, text, etc.)
 
 2. **Spell check** - Review for typos and grammar (manual or with tools)
 
