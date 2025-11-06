@@ -3,11 +3,6 @@ description: Create or update the feature specification from a natural language 
 scripts:
   sh: scripts/bash/create-new-feature.sh --json "{ARGS}"
   ps: scripts/powershell/create-new-feature.ps1 -Json "{ARGS}"
-# TODO: Future improvements
-# - Add validation of interactive input format (JIRA: / FEATURE: pattern)
-# - Add retry logic if Jira or feature description invalid
-# - Add feature description quality checks (minimum length, keywords)
-# - Add confirmation step showing branch name before creation
 ---
 
 ## ⚠️ MANDATORY: Read Agent Instructions First

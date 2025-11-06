@@ -14,6 +14,52 @@ The toolkit supports multiple AI coding assistants, allowing teams to use their 
 
 - Any changes to `__init__.py` for the Specify CLI require a version rev in `pyproject.toml` and addition of entries to `CHANGELOG.md`.
 
+### ⚠️ CRITICAL: Never Use TODOs in Prompts or Templates
+
+**RULE:** Never add TODO comments to prompt files (`.md` files in `templates/commands/`) or template files. TODOs in prompts can confuse AI agents, causing them to misinterpret instructions or attempt to execute the TODO items instead of their primary task.
+
+**Why this matters:**
+- AI agents read prompts as instructions
+- TODO comments can be interpreted as tasks to perform
+- Scattered TODOs across files make tracking difficult
+- Can lead to unexpected agent behavior
+
+**Instead:**
+- **Always** add improvements to `/IMPROVEMENTS.md` (centralized tracking)
+- Use clear priority levels (High/Medium/Low)
+- Link to related issues/PRs
+- Group by category for easy review
+
+**Example - Wrong:**
+```markdown
+<!-- templates/commands/specify.md -->
+---
+description: Create feature specification
+# TODO: Add validation
+# TODO: Improve error messages
+---
+```
+
+**Example - Correct:**
+```markdown
+<!-- IMPROVEMENTS.md -->
+## 🔴 High Priority
+- [ ] Add validation of interactive input format
+- [ ] Improve error messages with examples
+```
+
+**Where to document improvements:**
+- `/IMPROVEMENTS.md` - All future enhancements and known limitations
+- GitHub Issues - For discussion and tracking
+- Pull Requests - When implementing improvements
+
+**Benefits of centralized tracking:**
+- ✅ All improvements visible in one place
+- ✅ Easy to prioritize and plan sprints
+- ✅ No risk of confusing AI agents
+- ✅ Clear completion tracking with checkboxes
+- ✅ Better collaboration and visibility
+
 ## Adding New Agent Support
 
 This section explains how to add support for new AI agents/assistants to the Specify CLI. Use this guide as a reference when integrating new AI tools into the Spec-Driven Development workflow.

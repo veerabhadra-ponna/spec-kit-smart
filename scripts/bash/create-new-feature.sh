@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 # Create a new feature branch and spec directory
-#
-# TODO: Future improvements
-# - Add automated tests for regex patterns and edge cases
-# - Add environment variable for enforcing Jira requirement
-# - Improve error messages with examples and suggestions
-# - Add interactive mode validation with retry logic
 
 set -e
 

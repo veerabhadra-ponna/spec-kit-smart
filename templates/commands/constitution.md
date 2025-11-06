@@ -1,10 +1,5 @@
 ---
 description: Create or update the project constitution from interactive or provided principle inputs, ensuring all dependent templates stay in sync
-# TODO: Future improvements
-# - Add validation of user input format (parse and verify structure)
-# - Add retry logic if user input is malformed
-# - Add examples inline (remove dependency on external link)
-# - Add confirmation step before writing constitution
 ---
 
 ## ⚠️ MANDATORY: Read Agent Instructions First
