@@ -128,6 +128,81 @@ Use **`/speckit.implement`** to execute all tasks and build your feature accordi
 
 For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
 
+### Workflow Diagram
+
+```mermaid
+flowchart TD
+    Start([Start New Feature]) --> Constitution
+
+    Constitution["🏛️ /speckit.constitution<br/><b>REQUIRED</b><br/>Establish project principles"]
+    Constitution --> Specify
+
+    Specify["📝 /speckit.specify<br/><b>REQUIRED</b><br/>Define requirements & user stories"]
+    Specify --> Clarify
+
+    Clarify["❓ /speckit.clarify<br/><i>OPTIONAL</i><br/>Resolve ambiguities & gaps"]
+    Clarify -->|Recommended| Plan
+    Clarify -.->|Skip if clear| Plan
+
+    Plan["🏗️ /speckit.plan<br/><b>REQUIRED</b><br/>Create technical design"]
+    Plan --> Tasks
+
+    Tasks["📋 /speckit.tasks<br/><b>REQUIRED</b><br/>Generate task breakdown"]
+    Tasks --> Analyze
+
+    Analyze["🔍 /speckit.analyze<br/><i>OPTIONAL</i><br/>Validate consistency & coverage"]
+    Analyze -->|Recommended| Implement
+    Analyze -.->|Skip if confident| Implement
+
+    Implement["⚙️ /speckit.implement<br/><b>REQUIRED</b><br/>Execute all tasks"]
+    Implement --> Checklist
+
+    Checklist["✅ /speckit.checklist<br/><i>OPTIONAL</i><br/>Quality validation"]
+    Checklist --> Done
+
+    Done([✅ Feature Complete])
+
+    subgraph Legend
+        Required["<b>REQUIRED</b><br/>Essential for workflow"]
+        Optional["<i>OPTIONAL</i><br/>Recommended but skippable"]
+    end
+
+    style Constitution fill:#ffcccc
+    style Specify fill:#ffcccc
+    style Plan fill:#ffcccc
+    style Tasks fill:#ffcccc
+    style Implement fill:#ffcccc
+    style Clarify fill:#ffffcc
+    style Analyze fill:#ffffcc
+    style Checklist fill:#ffffcc
+    style Start fill:#ccffcc
+    style Done fill:#ccffcc
+    style Required fill:#ffcccc
+    style Optional fill:#ffffcc
+```
+
+**Required Commands** (Red):
+
+- `/speckit.constitution` - Establish project principles
+- `/speckit.specify` - Define what to build
+- `/speckit.plan` - Create technical design
+- `/speckit.tasks` - Generate actionable tasks
+- `/speckit.implement` - Execute implementation
+
+**Optional Commands** (Yellow):
+
+- `/speckit.clarify` - Resolve ambiguities (recommended before planning)
+- `/speckit.analyze` - Validate consistency (recommended before implementation)
+- `/speckit.checklist` - Quality validation (recommended after implementation)
+
+**Alternative: Use Orchestrator** - Run the entire workflow with a single command:
+
+```bash
+/speckit.orchestrate <feature-description>
+```
+
+Then use `/speckit.resume` to continue after chat limits or interruptions.
+
 ## 📽️ Video Overview
 
 Want to see Spec Kit in action? Watch our [video overview](https://www.youtube.com/watch?v=a9eR1xsfvHg&pp=0gcJCckJAYcqIYzv)!
