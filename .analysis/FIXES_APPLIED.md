@@ -16,11 +16,13 @@ Applied **ALL CRITICAL** and **MOST HIGH-PRIORITY** fixes from the architecture 
 ### 1. ✅ Security: Command Injection Prevention
 
 **Files Modified**:
+
 - `scripts/python/analyzer/security.py` (NEW)
 - `scripts/python/analyzer/scanner.py`
 - `scripts/python/analyzer/dependency_analyzer.py`
 
 **Changes**:
+
 - Created `security.py` module with `validate_project_path()` function
 - Validates all project paths before use
 - Prevents analysis of system directories (`/bin`, `/etc`, `/usr`, etc.)
@@ -28,6 +30,7 @@ Applied **ALL CRITICAL** and **MOST HIGH-PRIORITY** fixes from the architecture 
 - Resolves paths to absolute paths with `strict=True`
 
 **Code Example**:
+
 ```python
 def validate_project_path(path: Path) -> Path:
     """Validate that a project path is safe to analyze."""
@@ -43,10 +46,12 @@ def validate_project_path(path: Path) -> Path:
 ### 2. ✅ Error Handling: Specific Exception Types
 
 **Files Modified**:
+
 - `scripts/python/analyzer/scanner.py`
 - `scripts/python/analyzer/dependency_analyzer.py`
 
 **Changes**:
+
 - Replaced generic `except Exception: pass` with specific exception handling
 - Added separate handlers for:
   - `PermissionError`: File access denied
@@ -57,6 +62,7 @@ def validate_project_path(path: Path) -> Path:
 - Propagated errors up where appropriate
 
 **Code Example**:
+
 ```python
 try:
     scan_result = self._detect_tech_stack()
@@ -71,11 +77,13 @@ except OSError as e:
 ### 3. ✅ Resource Management: Added Timeout Protection
 
 **Files Modified**:
+
 - `scripts/python/analyzer/scanner.py`
 - `scripts/python/analyzer/dependency_analyzer.py`
 - `scripts/python/analyzer/config.py` (NEW)
 
 **Changes**:
+
 - Added timeouts to ALL subprocess calls
 - Created configuration for timeout values:
   - `subprocess_timeout_quick`: 10s (for tool checks)
@@ -84,6 +92,7 @@ except OSError as e:
 - Added timeout handling in all subprocess calls
 
 **Code Example**:
+
 ```python
 result = subprocess.run(
     ["cloc", ".", "--json", ...],
@@ -98,9 +107,11 @@ result = subprocess.run(
 ### 4. ✅ Configuration: Extracted Magic Numbers
 
 **Files Created**:
+
 - `scripts/python/analyzer/config.py`
 
 **Changes**:
+
 - Created centralized configuration module
 - Moved all magic numbers to config:
   - Scoring weights (inline upgrade, greenfield rewrite)
@@ -111,6 +122,7 @@ result = subprocess.run(
 - All modules now import from `config.py`
 
 **Code Example**:
+
 ```python
 @dataclass
 class ScoringWeights:
@@ -122,12 +134,14 @@ class ScoringWeights:
 ### 5. ✅ Logging: Added Structured Logging
 
 **Files Modified**:
+
 - `scripts/python/analyzer/scanner.py`
 - `scripts/python/analyzer/dependency_analyzer.py`
 - `scripts/python/analyzer/scoring_engine.py`
 - `scripts/bash/analyze-project.sh`
 
 **Changes**:
+
 - Added `logging` import to all modules
 - Created module-level loggers: `logger = logging.getLogger(__name__)`
 - Added logging at key points:
@@ -136,6 +150,7 @@ class ScoringWeights:
   - Errors and warnings
   - Debug information
 - Configured logging format in bash script:
+
   ```python
   logging.basicConfig(
       level=logging.INFO,
@@ -146,9 +161,11 @@ class ScoringWeights:
 ### 6. ✅ Bash Script: Fixed Variable Expansion Security
 
 **Files Modified**:
+
 - `scripts/bash/analyze-project.sh`
 
 **Changes**:
+
 - Changed heredoc from unquoted to single-quoted: `<<'PYTHON_SCRIPT'`
 - Prevents shell variable expansion in Python code
 - Passes `ANALYZER_DIR` as command-line argument instead
@@ -156,6 +173,7 @@ class ScoringWeights:
 - Safer handling of paths with spaces or special characters
 
 **Code Example**:
+
 ```bash
 # Before (UNSAFE):
 cat > "$OUTPUT_DIR/run_analysis.py" <<PYTHON_SCRIPT
@@ -173,9 +191,11 @@ python3 "$OUTPUT_DIR/run_analysis.py" "$ANALYZER_DIR" ...
 ### 7. ✅ Performance: Optimized File Walking
 
 **Files Modified**:
+
 - `scripts/python/analyzer/scanner.py`
 
 **Changes**:
+
 - Replaced `os.walk()` with `Path.rglob()` for better performance
 - Changed from `f.readlines()` to `sum(1 for _ in f)` to stream files
 - Avoids loading entire files into memory
@@ -183,6 +203,7 @@ python3 "$OUTPUT_DIR/run_analysis.py" "$ANALYZER_DIR" ...
 - Faster for large codebases
 
 **Code Example**:
+
 ```python
 # Before:
 for root, dirs, files in os.walk(self.project_path):
@@ -200,16 +221,19 @@ for file_path in self.project_path.rglob("*"):
 ### 8. ✅ Error Messages: Improved User-Friendliness
 
 **Files Modified**:
+
 - `scripts/python/analyzer/scanner.py`
 - `scripts/python/analyzer/dependency_analyzer.py`
 
 **Changes**:
+
 - Improved error messages with context
 - Changed from generic "npm not installed" to specific guidance
 - Added actionable suggestions
 - Included file paths and specific errors
 
 **Code Example**:
+
 ```python
 # Before:
 error_message="npm not installed"
@@ -221,11 +245,13 @@ error_message="npm not found. Install Node.js from https://nodejs.org or skip np
 ### 9. ✅ Code Quality: Improved Type Hints
 
 **Files Modified**:
+
 - `scripts/python/analyzer/scanner.py`
 - `scripts/python/analyzer/dependency_analyzer.py`
 - `scripts/python/analyzer/scoring_engine.py`
 
 **Changes**:
+
 - Used consistent Python 3.10+ type hint syntax
 - Changed `Optional[str]` to `str | None` where appropriate
 - Used `dict` and `list` instead of `Dict` and `List` from typing
@@ -233,6 +259,7 @@ error_message="npm not found. Install Node.js from https://nodejs.org or skip np
 - Improved type hint consistency
 
 **Code Example**:
+
 ```python
 # Before:
 def _detect_framework(self, deps: Dict[str, str]) -> tuple[Optional[str], Optional[str]]:
@@ -244,10 +271,12 @@ def _detect_framework(self, deps: dict[str, str]) -> tuple[str | None, str | Non
 ### 10. ✅ Documentation: Added Architecture Review
 
 **Files Created**:
+
 - `.analysis/ARCHITECTURE_REVIEW.md`
 - `.analysis/FIXES_APPLIED.md` (this file)
 
 **Changes**:
+
 - Created comprehensive 500-line architecture review
 - Documented all 21 issues found
 - Provided examples and fixes for each issue
@@ -325,7 +354,7 @@ def _detect_framework(self, deps: dict[str, str]) -> tuple[str | None, str | Non
 
 ## 📝 REMAINING WORK (Recommended for Follow-up)
 
-### Immediate (Before Production Use):
+### Immediate (Before Production Use)
 
 1. **Add Unit Tests** (HIGH PRIORITY)
    - Test scoring engine formulas
@@ -337,7 +366,7 @@ def _detect_framework(self, deps: dict[str, str]) -> tuple[str | None, str | Non
    - Test with sample projects
    - Test error scenarios
 
-### Short-term (Next Sprint):
+### Short-term (Next Sprint)
 
 3. **Extract Base Classes** (MEDIUM PRIORITY)
    - Create BaseLanguageAnalyzer
@@ -351,7 +380,7 @@ def _detect_framework(self, deps: dict[str, str]) -> tuple[str | None, str | Non
    - Add plugin architecture
    - Configuration-driven framework detection
 
-### Long-term (Future Enhancements):
+### Long-term (Future Enhancements)
 
 6. **Add Web UI** (LOW PRIORITY)
 7. **Add Database Backend** (LOW PRIORITY)
@@ -364,6 +393,7 @@ def _detect_framework(self, deps: dict[str, str]) -> tuple[str | None, str | Non
 **ARCHITECTURE REVIEW**: ✅ **APPROVED** (Conditional)
 
 **Conditions Met**:
+
 - ✅ Fixed 3 critical security issues
 - ✅ Added logging framework
 - ✅ Extracted configuration

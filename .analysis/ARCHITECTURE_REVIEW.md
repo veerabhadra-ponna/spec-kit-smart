@@ -34,6 +34,7 @@
 **Files**: `scanner.py:367-372`, `dependency_analyzer.py:278-284`, `dependency_analyzer.py:294-298`
 
 **Issue**:
+
 ```python
 # scanner.py:367 - User-controlled path passed to shell command
 result = subprocess.run(
@@ -48,6 +49,7 @@ result = subprocess.run(
 **Risk**: If `project_path` contains special characters or is a symlink to sensitive directories, could expose system files or execute unintended commands.
 
 **Fix Required**:
+
 ```python
 def _validate_project_path(self, path: Path) -> bool:
     """Validate project path is safe."""
@@ -74,6 +76,7 @@ def _validate_project_path(self, path: Path) -> bool:
 **Files**: All analyzer modules
 
 **Issue**:
+
 ```python
 # Example from scanner.py:126-133
 try:
@@ -88,6 +91,7 @@ except Exception as e:
 **Problem**: Catching broad exceptions masks real errors. Users won't know WHY analysis failed.
 
 **Fix Required**:
+
 ```python
 import logging
 
@@ -141,6 +145,7 @@ result = subprocess.run(
 **Issue**: Mixing `Optional[str]` and `str | None`, inconsistent return types
 
 **Example**:
+
 ```python
 # scoring_engine.py:93 - Uses tuple[float, Dict[str, float]]
 def calculate_inline_upgrade_score(self, metrics: ProjectMetrics) -> tuple[float, Dict[str, float]]:
@@ -151,6 +156,7 @@ def _detect_framework(self, deps: Dict[str, str]) -> tuple[Optional[str], Option
 ```
 
 **Fix**: Use consistent Python 3.10+ syntax:
+
 ```python
 def calculate_inline_upgrade_score(self, metrics: ProjectMetrics) -> tuple[float, dict[str, float]]:
 def _detect_framework(self, deps: dict[str, str]) -> tuple[str | None, str | None]:
@@ -164,13 +170,15 @@ def _detect_framework(self, deps: dict[str, str]) -> tuple[str | None, str | Non
 **Impact**: Cannot validate correctness, refactoring is dangerous
 
 **Required**:
+
 - Unit tests for scoring engine formulas
 - Integration tests for end-to-end analysis
 - Mock tests for subprocess calls
 - Test fixtures for various project types
 
 **Suggested Structure**:
-```
+
+```text
 tests/
 ├── unit/
 │   ├── test_scoring_engine.py
@@ -191,6 +199,7 @@ tests/
 **Severity**: HIGH
 
 **Missing**:
+
 - System architecture diagram
 - Module interaction flowchart
 - Decision flow for scoring algorithms
@@ -206,6 +215,7 @@ tests/
 **File**: `scanner.py:439-466`
 
 **Issue**:
+
 ```python
 def _calculate_metrics_manual(self) -> CodeMetrics:
     for root, dirs, files in os.walk(self.project_path):  # ⚠️ Slow for large projects
@@ -217,6 +227,7 @@ def _calculate_metrics_manual(self) -> CodeMetrics:
 ```
 
 **Fix**:
+
 ```python
 # Use Path.rglob with generator
 for file_path in self.project_path.rglob("*"):
@@ -240,11 +251,13 @@ for file_path in self.project_path.rglob("*"):
 **Issue**: Thresholds and weights scattered throughout code
 
 **Examples**:
+
 - `scoring_engine.py:73-81` - Inline weights
 - `scoring_engine.py:319-325` - Score thresholds
 - `report_generator.py:257-261` - Risk calculations
 
 **Fix**: Create configuration file
+
 ```python
 # config.py
 SCORING_CONFIG = {
@@ -271,11 +284,13 @@ SCORING_CONFIG = {
 **Issue**: Error messages too technical for stakeholders
 
 **Example**:
+
 ```python
 error_message="npm not installed"  # ❌ What should I do?
 ```
 
 **Better**:
+
 ```python
 error_message="npm not found. Install Node.js from https://nodejs.org or skip npm analysis with --skip-npm"
 ```
@@ -290,12 +305,14 @@ error_message="npm not found. Install Node.js from https://nodejs.org or skip np
 **Issue**: While the heredoc fix is correct, `$PROJECT_PATH` and `$OUTPUT_DIR` used in Python script are still vulnerable if they contain spaces or special chars.
 
 **Current**:
+
 ```bash
 cat > "$OUTPUT_DIR/run_analysis.py" <<PYTHON_SCRIPT
 analyzer_dir = Path("$ANALYZER_DIR")  # ⚠️ Not escaped for Python
 ```
 
 **Fix**:
+
 ```bash
 cat > "$OUTPUT_DIR/run_analysis.py" <<'PYTHON_SCRIPT'
 import sys
@@ -313,6 +330,7 @@ python3 "$OUTPUT_DIR/run_analysis.py" "$ANALYZER_DIR" "$PROJECT_PATH" ...
 **File**: `report_generator.py:14-21`
 
 **Issue**:
+
 ```python
 try:
     from .dependency_analyzer import DependencyReport
@@ -335,6 +353,7 @@ except ImportError:
 **Issue**: `report_generator.py` directly imports and uses multiple concrete classes
 
 **Better**: Use dependency injection
+
 ```python
 class ReportGenerator:
     def __init__(self, config: ReportConfig, scorer: FeasibilityScorerProtocol):
@@ -351,6 +370,7 @@ class ReportGenerator:
 **Issue**: Adding new frameworks requires code changes
 
 **Better**: Use plugin architecture or configuration-driven detection
+
 ```yaml
 # frameworks.yaml
 javascript:
@@ -370,6 +390,7 @@ javascript:
 **Issue**: `_detect_framework`, `_detect_testing`, `_detect_orm` similar across all language analyzers
 
 **Fix**: Extract to base class
+
 ```python
 class BaseLanguageAnalyzer:
     def _detect_from_deps(self, deps: dict, indicators: dict) -> str | None:
@@ -411,6 +432,7 @@ class BaseLanguageAnalyzer:
 **Issue**: Checkpoint file could be corrupted if process killed during write
 
 **Fix**: Use atomic writes
+
 ```python
 import tempfile
 with tempfile.NamedTemporaryFile(mode='w', dir=checkpoint_file.parent, delete=False) as f:
@@ -426,6 +448,7 @@ os.replace(temp_path, checkpoint_file)  # Atomic on POSIX
 ### 18. **Code Style: Inconsistent Naming**
 
 **Examples**:
+
 - `_get_all_dependencies` (get prefix)
 - `_detect_framework` (detect prefix)
 - `_analyze_structure` (analyze prefix)
@@ -446,6 +469,7 @@ FrameworkIndicators = dict[str, list[str]]
 ### 20. **File Organization: Empty `__init__.py`**
 
 **Suggestion**: Export public APIs
+
 ```python
 # scripts/python/analyzer/__init__.py
 from .scanner import ProjectScanner
@@ -578,12 +602,14 @@ Once these 5 conditions are met, this feature is **READY TO MERGE**.
 **Grade**: B+ (85/100)
 
 **Strengths**:
+
 - Excellent architecture and separation of concerns
 - Comprehensive feature set
 - Well-documented code
 - Thoughtful UX
 
 **Weaknesses**:
+
 - Critical security vulnerabilities
 - No tests
 - Silent error handling
