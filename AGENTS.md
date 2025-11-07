@@ -452,7 +452,7 @@ We use markdownlint for consistent markdown formatting across all documentation 
 - 2-space indent for nested lists
 - Blank lines around lists
 
-**Rules disabled**: MD013 (line length), MD033 (HTML), MD041 (first line header) - see `.markdownlintrc` for rationale.
+**Rules disabled**: MD013 (line length), MD029 (ordered list numbering), MD033 (HTML), MD036 (emphasis as heading), MD040 (code language), MD041 (first line header), MD051 (link fragments) - see `.markdownlintrc` for rationale.
 
 ### Quick Reference
 
@@ -461,7 +461,7 @@ We use markdownlint for consistent markdown formatting across all documentation 
 npx markdownlint-cli2 "**/*.md"
 
 # Auto-fix issues
-npx markdownlint-cli2-fix "**/*.md"
+npx markdownlint-cli2 --fix "**/*.md"
 ```
 
 ### Best Practices
