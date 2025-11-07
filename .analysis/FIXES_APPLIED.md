@@ -368,23 +368,23 @@ def _detect_framework(self, deps: dict[str, str]) -> tuple[str | None, str | Non
 
 ### Short-term (Next Sprint)
 
-3. **Extract Base Classes** (MEDIUM PRIORITY)
+1. **Extract Base Classes** (MEDIUM PRIORITY)
    - Create BaseLanguageAnalyzer
    - Reduce code duplication
 
-4. **Add Atomic Checkpoint Writes** (MEDIUM PRIORITY)
+2. **Add Atomic Checkpoint Writes** (MEDIUM PRIORITY)
    - Prevent checkpoint corruption
    - Use tempfile + os.replace()
 
-5. **Improve Extensibility** (MEDIUM PRIORITY)
+3. **Improve Extensibility** (MEDIUM PRIORITY)
    - Add plugin architecture
    - Configuration-driven framework detection
 
 ### Long-term (Future Enhancements)
 
-6. **Add Web UI** (LOW PRIORITY)
-7. **Add Database Backend** (LOW PRIORITY)
-8. **Add ML-based Scoring** (LOW PRIORITY)
+1. **Add Web UI** (LOW PRIORITY)
+2. **Add Database Backend** (LOW PRIORITY)
+3. **Add ML-based Scoring** (LOW PRIORITY)
 
 ---
 

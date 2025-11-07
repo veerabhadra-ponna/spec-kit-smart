@@ -1,14 +1,5 @@
 {
   "default": true,
   "MD013": false,
-  "MD024": false,
-  "MD029": false,
-  "MD033": {
-    "allowed_elements": [
-      "br", "img", "details", "summary", "li", "ul", "b", "code",
-      "div", "h1", "h2", "h3", "em", "p", "strong", "a", "Option"
-    ]
-  },
-  "MD041": false,
-  "MD051": false
+  "MD041": false
 }

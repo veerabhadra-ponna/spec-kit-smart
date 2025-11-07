@@ -526,23 +526,23 @@ __all__ = ["ProjectScanner", "DependencyAnalyzer", "FeasibilityScorer"]
 
 ### Should Fix (High Priority)
 
-5. ⚠️ Add unit tests (minimum 50% coverage)
-6. ⚠️ Extract magic numbers to configuration
-7. ⚠️ Fix bash script variable expansion security
-8. ⚠️ Add architecture documentation
-9. ⚠️ Optimize file walking performance
-10. ⚠️ Improve error messages for end users
-11. ⚠️ Fix import error handling
+1. ⚠️ Add unit tests (minimum 50% coverage)
+2. ⚠️ Extract magic numbers to configuration
+3. ⚠️ Fix bash script variable expansion security
+4. ⚠️ Add architecture documentation
+5. ⚠️ Optimize file walking performance
+6. ⚠️ Improve error messages for end users
+7. ⚠️ Fix import error handling
 
 ### Nice to Have (Medium/Low)
 
-12. 📝 Add structured logging
-13. 📝 Add plugin architecture for frameworks
-14. 📝 Add atomic checkpoint writes
-15. 📝 Extract base class for language analyzers
-16. 📝 Add type aliases for complex types
-17. 📝 Export public APIs from `__init__.py`
-18. 📝 Validate CI/CD YAML files
+1. 📝 Add structured logging
+2. 📝 Add plugin architecture for frameworks
+3. 📝 Add atomic checkpoint writes
+4. 📝 Extract base class for language analyzers
+5. 📝 Add type aliases for complex types
+6. 📝 Export public APIs from `__init__.py`
+7. 📝 Validate CI/CD YAML files
 
 ---
 
