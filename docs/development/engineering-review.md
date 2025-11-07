@@ -42,7 +42,7 @@ The reverse engineering feature has a solid conceptual foundation and comprehens
 ```markdown
 # templates/commands/analyze-project.md
 Contains only instructions for the AI agent, no executable code
-```
+```text
 
 **Required**:
 
@@ -70,7 +70,7 @@ scripts/python/analyzer/
   ├── architecture_analyzer.py        # Architecture assessment
   ├── scoring_engine.py               # Feasibility scoring
   └── report_generator.py             # Generate markdown reports
-```
+```text
 
 ---
 
@@ -82,7 +82,7 @@ scripts/python/analyzer/
 
 ```markdown
 Score = (Code_Quality × 0.20) + (Test_Coverage × 0.15) + ...
-```
+```text
 
 **Required**:
 
@@ -104,7 +104,7 @@ class FeasibilityScorer:
         # Normalize each metric to 0-10 scale
         # Apply weights
         # Return 0-100 score
-```
+```text
 
 **Impact**: Cannot provide data-driven recommendations
 
@@ -143,7 +143,7 @@ def analyze_dependencies(project_path: str) -> Optional[Dict]:
         except Exception as e:
             logger.error(f"Dependency analysis failed: {e}")
             return None  # Continue with other analysis phases
-```
+```text
 
 **Impact**: Brittle, will fail on edge cases
 
@@ -189,7 +189,7 @@ def safe_file_read(path: str) -> Optional[str]:
     # Never execute code, only read and parse
     with open(path, 'r', encoding='utf-8', errors='ignore') as f:
         return f.read()
-```
+```text
 
 **Impact**: Security vulnerability if analyzing untrusted codebases
 
@@ -216,7 +216,7 @@ def safe_file_read(path: str) -> Optional[str]:
 /speckit.specify --from-analysis .analysis/Project-2025-11-06/analysis-report.md
 
 /speckit.orchestrate --modernize --based-on .analysis/Project-2025-11-06/
-```
+```text
 
 **Impact**: Poor user experience, manual copying required
 
@@ -253,7 +253,7 @@ def resume_analysis(checkpoint_dir: str):
         except Exception as e:
             logger.error(f"Phase {phase} failed: {e}")
             break
-```
+```text
 
 **Impact**: Large projects will fail or timeout
 
@@ -285,7 +285,7 @@ scoring:
       team_familiarity: 0.05
       documentation: 0.05
       breaking_changes: 0.05
-```
+```text
 
 **Impact**: One-size-fits-all scoring may give wrong recommendations
 
@@ -316,7 +316,7 @@ scoring:
    - Complexity: 8.2 → 9.1 (+0.9)
 
 📈 Trend: IMPROVING (score 52 → 61)
-```
+```text
 
 **Impact**: Cannot measure modernization progress
 
@@ -358,7 +358,7 @@ class JavaScriptAnalyzer(LanguageAnalyzer):
 
     def check_node_version(self, package_json: Dict) -> NodeVersionReport:
         """Check Node.js version vs LTS"""
-```
+```text
 
 **Impact**: Generic analysis misses language-specific issues
 
@@ -398,7 +398,7 @@ jobs:
         if: failure()
         uses: actions/github-script@v6
         # Auto-create issue for degraded scores
-```
+```text
 
 **Impact**: Analysis becomes stale quickly
 
@@ -431,7 +431,7 @@ class LicenseAnalyzer:
                 message='GPL-3.0 incompatible with commercial license',
                 action='Remove GPL dependency or change project license'
             )
-```
+```text
 
 **Impact**: Legal risk if incompatible licenses
 
@@ -463,7 +463,7 @@ templates/analysis/
 
 # Compose final report from modules
 cat templates/analysis/report-*.md > final-report.md
-```
+```text
 
 **Impact**: High cost, slow generation, difficult customization
 
@@ -518,10 +518,10 @@ cat templates/analysis/report-*.md > final-report.md
 
 **Required**:
 
-```
+```text
 Inline Upgrade: $50K-$100K (2 engineers × 4 weeks × $6K/week)
 Greenfield Rewrite: $500K-$1M (4 engineers × 6 months × $25K/month)
-```
+```text
 
 ---
 
@@ -622,11 +622,11 @@ Analyze existing projects for modernization opportunities.
 **Quick Start**:
 ```bash
 /speckit.analyze-project
-```
+```text
 
 **For full guide**: See [docs/reverse-engineering.md](docs/reverse-engineering.md)
 
-```
+```text
 
 ---
 
@@ -637,20 +637,20 @@ Analyze existing projects for modernization opportunities.
 1. **MD013 - Line too long**: Multiple files exceed 80 chars
    - Not critical for documentation, but affects readability
 
-2. **MD024 - Multiple headers with same content**:
+1. **MD024 - Multiple headers with same content**:
    - `analysis-report-template.md` has multiple "Examples" headers
 
-3. **MD026 - Trailing punctuation in header**:
+1. **MD026 - Trailing punctuation in header**:
    - `## What's Good ✅` (emoji is fine, but lint may flag)
 
-4. **MD033 - Inline HTML**:
+1. **MD033 - Inline HTML**:
    - README.md uses `<div align="center">`
    - Acceptable for styling, but flagged by strict linters
 
-5. **MD041 - First line in file should be top-level header**:
+1. **MD041 - First line in file should be top-level header**:
    - analyze-project.md starts with YAML front matter (acceptable)
 
-6. **MD046 - Code block style inconsistent**:
+1. **MD046 - Code block style inconsistent**:
    - Mix of fenced (```) and indented code blocks
 
 ### Markdown Best Practices Violations:
@@ -658,14 +658,14 @@ Analyze existing projects for modernization opportunities.
 1. **Inconsistent heading styles**:
    - Some use `## Heading`, others `##Heading` (missing space)
 
-2. **Inconsistent list styles**:
+1. **Inconsistent list styles**:
    - Mix of `-` and `*` for bullets
 
-3. **Missing blank lines**:
+1. **Missing blank lines**:
    - Around code blocks
    - Around headings
 
-4. **Table formatting inconsistencies**:
+1. **Table formatting inconsistencies**:
    - Some tables have aligned pipes, others don't
 
 ---
@@ -685,7 +685,7 @@ Analyze existing projects for modernization opportunities.
 
 **Should be**: Orchestrator that calls specialized analyzers
 
-```
+```text
 
 CommandOrchestrator
   ├── ProjectDiscovery
@@ -696,7 +696,7 @@ CommandOrchestrator
   ├── ScoringEngine
   └── ReportGenerator
 
-```
+```text
 
 ---
 
@@ -713,7 +713,7 @@ class RustAnalyzer(LanguageAnalyzerPlugin):
 
     def analyze(self, project_path: str) -> AnalysisReport:
         # Rust-specific analysis
-```
+```text
 
 ---
 
@@ -729,7 +729,7 @@ specify analyze /path/to/project --output analysis-report.md
 
 # AI agent can call it
 /speckit.analyze-project → calls → specify analyze
-```
+```text
 
 ---
 
@@ -760,7 +760,7 @@ class AnalysisReport:
 
     def to_html(self) -> str:
         """Render as HTML dashboard"""
-```
+```text
 
 ---
 
@@ -779,7 +779,7 @@ class AnalysisReport:
 template_version: 2.0.0
 compatible_with: spec-kit >= 1.5.0
 ---
-```
+```text
 
 ---
 
@@ -808,24 +808,24 @@ Despite the issues, there are strong foundations:
 
 ### Short-term (Next Sprint)
 
-5. 🔧 **Implement actual analysis scripts** (2-3 weeks)
-6. 🔧 **Add error handling** (1 week)
-7. 🔧 **Add security safeguards** (1 week)
-8. 🔧 **Integrate with existing workflows** (3-5 days)
+1. 🔧 **Implement actual analysis scripts** (2-3 weeks)
+2. 🔧 **Add error handling** (1 week)
+3. 🔧 **Add security safeguards** (1 week)
+4. 🔧 **Integrate with existing workflows** (3-5 days)
 
 ### Medium-term (Next Month)
 
-9. 🔧 **Add language-specific analyzers** (2 weeks)
-10. 🔧 **Implement incremental analysis** (1 week)
-11. 🔧 **Add CI/CD integration** (3-5 days)
-12. 🔧 **Modularize templates** (2-3 days)
+1. 🔧 **Add language-specific analyzers** (2 weeks)
+2. 🔧 **Implement incremental analysis** (1 week)
+3. 🔧 **Add CI/CD integration** (3-5 days)
+4. 🔧 **Modularize templates** (2-3 days)
 
 ### Long-term (Next Quarter)
 
-13. 🔧 **Build plugin architecture** (2-3 weeks)
-14. 🔧 **Create standalone CLI tool** (3-4 weeks)
-15. 🔧 **Add baseline comparison** (1 week)
-16. 🔧 **Implement cost estimation** (1 week)
+1. 🔧 **Build plugin architecture** (2-3 weeks)
+2. 🔧 **Create standalone CLI tool** (3-4 weeks)
+3. 🔧 **Add baseline comparison** (1 week)
+4. 🔧 **Implement cost estimation** (1 week)
 
 ---
 

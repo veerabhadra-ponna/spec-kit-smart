@@ -26,7 +26,7 @@ The toolkit supports multiple AI coding assistants, allowing teams to use their 
 
 **Required checks:**
 
-1. **Markdownlint**: `npx markdownlint-cli2 "**/*.md"` - See [Markdown Style Guide](#markdown-style-guide) section
+1. **Markdownlint**: `npx markdownlint-cli2 "**/*.md"` (configured via `.markdownlint-cli2.jsonc`)
 2. **Spell check**: Review for typos/grammar
 3. **Test scripts**: If modifying bash/PowerShell, test locally with `--help`
 
@@ -437,22 +437,20 @@ When adding new agents:
 
 ## Markdown Style Guide
 
-We use markdownlint for consistent markdown formatting across all documentation and templates.
+We use markdownlint-cli2 for consistent markdown formatting across all documentation and templates.
 
 ### Configuration
 
-- **Primary config**: `.markdownlintrc` (synchronized with `.markdownlint-cli2.jsonc`)
+- **Config file**: `.markdownlint-cli2.jsonc`
 - **Rules reference**: [Markdownlint Rules Documentation](https://github.com/DavidAnson/markdownlint/blob/main/doc/Rules.md)
 
 **Key rules enforced**:
 
 - ATX-style headers (`## Heading`)
 - Asterisk-style emphasis (`*italic*`, `**bold**`)
-- Fenced code blocks with blank lines around them
 - 2-space indent for nested lists
-- Blank lines around lists
 
-**Rules disabled**: MD013 (line length), MD029 (ordered list numbering), MD033 (HTML), MD036 (emphasis as heading), MD040 (code language), MD041 (first line header), MD051 (link fragments) - see `.markdownlintrc` for rationale.
+**Rules disabled**: MD013 (line length), MD033 (HTML), MD041 (first line header), MD051 (link fragments) - see `.markdownlint-cli2.jsonc` for complete configuration.
 
 ### Quick Reference
 
@@ -467,12 +465,11 @@ npx markdownlint-cli2 --fix "**/*.md"
 ### Best Practices
 
 - Use blank lines before/after headers, lists, and code blocks
-- Specify language for code blocks (bash, python, json, etc.)
+- Specify language for code blocks (bash, python, json, text, etc.)
 - Use dashes for unordered lists
 - Keep prose under 100 characters when possible (long commands/URLs excepted)
-- Use reference-style links for repeated URLs
 
-See `.markdownlintrc` for complete rule configuration and [CommonMark Spec](https://commonmark.org/) for markdown syntax.
+See `.markdownlint-cli2.jsonc` for complete rule configuration and [CommonMark Spec](https://commonmark.org/) for markdown syntax.
 
 ---
 

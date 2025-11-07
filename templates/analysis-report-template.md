@@ -54,9 +54,9 @@
 
 **Architecture Pattern**: [MVC | MVVM | CLEAN_ARCHITECTURE | LAYERED | MICROSERVICES]
 
-```
+```text
 [Include architecture diagram or description]
-```
+```text
 
 **Key Components**:
 
@@ -83,9 +83,9 @@
 
 **Examples**:
 
-```
+```text
 [Code example or file reference showing good practice]
-```
+```text
 
 ### 2.2 Code Quality
 
@@ -142,9 +142,9 @@
 
 **Examples**:
 
-```
+```text
 [Code example showing technical debt]
-```
+```text
 
 ### 3.2 Anti-Patterns
 
@@ -248,7 +248,7 @@
 
 **Node.js Upgrade** (Example):
 
-```
+```text
 Current: Node.js 14.x (EOL: 2023-04-30)
   ↓
 Step 1: Node.js 16.x (LTS until 2023-09-11)
@@ -256,7 +256,7 @@ Step 1: Node.js 16.x (LTS until 2023-09-11)
 Step 2: Node.js 18.x (LTS until 2025-04-30)
   ↓
 Target: Node.js 20.x (LTS until 2026-04-30)
-```
+```text
 
 **Estimated Effort**: [DAYS/WEEKS]
 
@@ -264,11 +264,11 @@ Target: Node.js 20.x (LTS until 2026-04-30)
 
 **[Framework Name] Upgrade**:
 
-```
+```text
 Current: [version]
   ↓
 Target: [version]
-```
+```text
 
 **Breaking Changes**:
 
@@ -428,7 +428,7 @@ Target: [version]
 
 **Calculation**:
 
-```
+```text
 Score = (Code_Quality * 0.20) +
         (Test_Coverage * 0.15) +
         (Dependency_Health * 0.20) +
@@ -439,7 +439,7 @@ Score = (Code_Quality * 0.20) +
 
 Each factor scored 0-10, then multiplied by weight and summed (max 10.0)
 Final score = (Weighted sum) * 10 (max 100)
-```
+```text
 
 ### 8.2 Greenfield Rewrite Feasibility
 
@@ -625,7 +625,7 @@ Based on:
 
 ---
 
-**End of Report**
+### End of Report
 
 ---
 

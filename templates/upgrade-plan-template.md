@@ -76,7 +76,7 @@ pip install pylint
 npm install -g jest
 # or
 pip install pytest
-```
+```text
 
 ---
 
@@ -101,7 +101,7 @@ pip install pytest
    git push -u origin upgrade/[DESCRIPTION]
    ```
 
-2. **Capture current metrics**
+1. **Capture current metrics**
 
    ```bash
    # Test coverage
@@ -114,12 +114,12 @@ pip install pytest
    [COMMAND]
    ```
 
-3. **Document current behavior**
+1. **Document current behavior**
    - Run full test suite and save results
    - Capture screenshots of key workflows
    - Note any existing issues/quirks
 
-4. **Set up monitoring**
+1. **Set up monitoring**
    - Error tracking: [TOOL]
    - Performance monitoring: [TOOL]
    - Logs aggregation: [TOOL]
@@ -188,7 +188,7 @@ pip install pytest
    <TargetFramework>net[VERSION]</TargetFramework>
    ```
 
-2. **Update CI/CD configuration**
+1. **Update CI/CD configuration**
 
    ```yaml
    # .github/workflows/*.yml
@@ -197,7 +197,7 @@ pip install pytest
        node-version: '[NEW_VERSION]'
    ```
 
-3. **Address runtime-specific breaking changes**
+1. **Address runtime-specific breaking changes**
 
    **[Breaking Change 1]**:
    - **Files affected**: [LIST]
@@ -207,13 +207,13 @@ pip install pytest
    - **Files affected**: [LIST]
    - **Fix**: [CODE CHANGES]
 
-4. **Run tests**
+1. **Run tests**
 
    ```bash
    [TEST_COMMAND]
    ```
 
-5. **Fix failing tests**
+1. **Fix failing tests**
    - Expected failures: [LIST]
    - Fix each by: [APPROACH]
 
@@ -232,7 +232,7 @@ pip install pytest
 nvm use [OLD_VERSION]
 # or
 git checkout main -- .nvmrc [OTHER_CONFIG_FILES]
-```
+```text
 
 ---
 
@@ -287,7 +287,7 @@ git checkout main -- .nvmrc [OTHER_CONFIG_FILES]
    </parent>
    ```
 
-2. **Apply framework-specific migrations**
+1. **Apply framework-specific migrations**
 
    **React 16 → 18 Example**:
    - Update root rendering:
@@ -314,7 +314,7 @@ git checkout main -- .nvmrc [OTHER_CONFIG_FILES]
      path('articles/', include('articles.urls'))
      ```
 
-3. **Run automated codemods** (if available)
+1. **Run automated codemods** (if available)
 
    ```bash
    # React codemods
@@ -324,7 +324,7 @@ git checkout main -- .nvmrc [OTHER_CONFIG_FILES]
    [CODEMOD_COMMAND]
    ```
 
-4. **Manual code updates**
+1. **Manual code updates**
    - Search for deprecated API usage:
 
      ```bash
@@ -334,13 +334,13 @@ git checkout main -- .nvmrc [OTHER_CONFIG_FILES]
    - Replace with new API:
      [REPLACEMENT_PATTERN]
 
-5. **Update TypeScript types** (if applicable)
+1. **Update TypeScript types** (if applicable)
 
    ```bash
    npm install --save-dev @types/[package]@[version]
    ```
 
-6. **Run tests after each dependency**
+1. **Run tests after each dependency**
 
    ```bash
    npm test
@@ -361,7 +361,7 @@ git checkout main -- .nvmrc [OTHER_CONFIG_FILES]
 ```bash
 git checkout HEAD -- package.json package-lock.json
 npm install
-```
+```text
 
 ---
 
@@ -397,7 +397,7 @@ npm install
    npm install [package]@[version]
    ```
 
-2. **Address packages with breaking changes** (one at a time)
+1. **Address packages with breaking changes** (one at a time)
 
    ```bash
    npm install [package]@[version]
@@ -405,7 +405,7 @@ npm install
    # Fix issues before proceeding to next
    ```
 
-3. **Remove deprecated packages**
+1. **Remove deprecated packages**
 
    ```bash
    npm uninstall [deprecated-package]
@@ -464,11 +464,11 @@ npm install
    # Update package.json scripts
    ```
 
-2. **Update configuration files**
+1. **Update configuration files**
    - [Config file 1]: [Changes needed]
    - [Config file 2]: [Changes needed]
 
-3. **Test build**
+1. **Test build**
 
    ```bash
    npm run build
@@ -479,7 +479,7 @@ npm install
    # - Assets copied correctly
    ```
 
-4. **Test production build locally**
+1. **Test production build locally**
 
    ```bash
    npm run serve
@@ -527,11 +527,11 @@ npm install
    npx jscodeshift -t transforms/modern-js.js src/
    ```
 
-2. **Replace deprecated APIs**
+1. **Replace deprecated APIs**
    - [Old API] → [New API] in [FILES]
    - Use codemod or manual search/replace
 
-3. **Optional refactoring** (defer to later if time-constrained)
+1. **Optional refactoring** (defer to later if time-constrained)
    - Extract complex functions
    - Reduce nesting
    - Add types (TypeScript/JSDoc)
@@ -572,7 +572,7 @@ npm install
    snyk test
    ```
 
-2. **Fix vulnerabilities**
+1. **Fix vulnerabilities**
 
    ```bash
    # Auto-fix where possible
@@ -583,17 +583,17 @@ npm install
    # Then test and fix issues
    ```
 
-3. **Address unfixable vulnerabilities**
+1. **Address unfixable vulnerabilities**
    - Check if vulnerability affects our usage
    - Document risk acceptance if not exploitable
    - Or find alternative package
 
-4. **Add security headers** (if web app)
+1. **Add security headers** (if web app)
    - Content-Security-Policy
    - X-Frame-Options
    - X-Content-Type-Options
 
-5. **Update authentication/authorization** (if needed)
+1. **Update authentication/authorization** (if needed)
    - Modern OAuth2 flows
    - Secure session management
    - CSRF protection
@@ -625,11 +625,11 @@ npm install
    # or equivalent for your framework
    ```
 
-2. **Add missing tests** (if coverage dropped)
+1. **Add missing tests** (if coverage dropped)
    - Target: Maintain or improve current [X]% coverage
    - Focus on areas affected by upgrades
 
-3. **Manual QA testing**
+1. **Manual QA testing**
 
    **Critical User Flows**:
    - [ ] [Flow 1: e.g., User login]
@@ -648,7 +648,7 @@ npm install
    - [ ] Tablet (iPad)
    - [ ] Mobile (iPhone, Android)
 
-4. **Performance testing**
+1. **Performance testing**
 
    ```bash
    # Compare with baseline from Phase 0
@@ -661,7 +661,7 @@ npm install
    - [ ] Bundle size: [CURRENT vs BASELINE]
    - [ ] API response times: [CURRENT vs BASELINE]
 
-5. **Accessibility testing** (if applicable)
+1. **Accessibility testing** (if applicable)
 
    ```bash
    npm run a11y:test
@@ -701,7 +701,7 @@ npm install
    [Updated installation steps if changed]
    ```
 
-2. **Update CHANGELOG**
+1. **Update CHANGELOG**
 
    ```markdown
    ## [NEW_VERSION] - [DATE]
@@ -717,12 +717,12 @@ npm install
    - [Description of any API changes]
    ```
 
-3. **Update team documentation**
+1. **Update team documentation**
    - Onboarding docs
    - Development setup guide
    - Deployment runbook
 
-4. **Create upgrade announcement**
+1. **Create upgrade announcement**
    - Email/Slack message for team
    - Highlight breaking changes
    - Note any new features available
@@ -756,21 +756,21 @@ npm install
    - [ ] Rollback plan ready
    - [ ] Monitoring alerts configured
 
-2. **Deploy to staging**
+1. **Deploy to staging**
 
    ```bash
    git push origin upgrade/[BRANCH]
    # Trigger staging deployment
    ```
 
-3. **Staging validation**
+1. **Staging validation**
    - [ ] Application starts successfully
    - [ ] Health checks passing
    - [ ] Critical flows working
    - [ ] Performance acceptable
    - [ ] No errors in logs
 
-4. **Deploy to production**
+1. **Deploy to production**
 
    **Blue-Green Deployment** (recommended):
 
@@ -788,13 +788,13 @@ npm install
    # Monitor each batch
    ```
 
-5. **Post-deployment monitoring** (first 24-48 hours)
+1. **Post-deployment monitoring** (first 24-48 hours)
    - [ ] Error rates normal
    - [ ] Performance metrics normal
    - [ ] User feedback positive
    - [ ] No unusual traffic patterns
 
-6. **Gradual rollout** (if possible)
+1. **Gradual rollout** (if possible)
    - 10% traffic → Monitor
    - 50% traffic → Monitor
    - 100% traffic → Monitor
@@ -823,7 +823,7 @@ npm install
 
 ### Quick Rollback (Production)
 
-**Option 1: Revert Deployment**
+### Option 1: Revert Deployment
 
 ```bash
 # If using containers
@@ -834,9 +834,9 @@ heroku rollback
 
 # If manual deployment
 # Redeploy previous version
-```
+```text
 
-**Option 2: Feature Flag**
+### Option 2: Feature Flag
 
 ```javascript
 if (featureFlags.useNewVersion) {
@@ -844,7 +844,7 @@ if (featureFlags.useNewVersion) {
 } else {
   // Old code (fallback)
 }
-```
+```text
 
 ### Full Rollback (Development)
 
@@ -860,7 +860,7 @@ npm ci
 # or
 git checkout HEAD~1 -- package-lock.json
 npm install
-```
+```text
 
 **Post-Rollback**:
 
