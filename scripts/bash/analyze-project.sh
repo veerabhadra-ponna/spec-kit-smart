@@ -191,7 +191,8 @@ run_analysis() {
     print_info "Focus areas: $FOCUS_AREAS"
 
     # Create Python script to run the full analysis
-    cat > "$OUTPUT_DIR/run_analysis.py" <<PYTHON_SCRIPT
+    # Use single quotes to prevent variable expansion (security)
+    cat > "$OUTPUT_DIR/run_analysis.py" <<'PYTHON_SCRIPT'
 #!/usr/bin/env python3
 """
 Orchestration script for running complete project analysis.
@@ -199,29 +200,35 @@ Orchestration script for running complete project analysis.
 
 import sys
 import json
+import logging
 from pathlib import Path
 
-# Add analyzer to path
-analyzer_dir = Path("$ANALYZER_DIR")
-sys.path.insert(0, str(analyzer_dir))
-
-from scanner import ProjectScanner
-from dependency_analyzer import DependencyAnalyzer
-from scoring_engine import FeasibilityScorer, ProjectMetrics
-from report_generator import ReportGenerator, ReportConfig
-
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 def main():
-    # Parse arguments
-    if len(sys.argv) < 4:
-        print("Usage: run_analysis.py PROJECT_PATH OUTPUT_DIR PROJECT_NAME [DEPTH] [FOCUS]")
+    # Parse arguments - analyzer_dir now passed as argument for security
+    if len(sys.argv) < 5:
+        print("Usage: run_analysis.py ANALYZER_DIR PROJECT_PATH OUTPUT_DIR PROJECT_NAME [DEPTH] [FOCUS]")
         sys.exit(1)
 
-    project_path = Path(sys.argv[1])
-    output_dir = Path(sys.argv[2])
-    project_name = sys.argv[3]
-    analysis_depth = sys.argv[4] if len(sys.argv) > 4 else "STANDARD"
-    focus_areas = sys.argv[5].split(",") if len(sys.argv) > 5 else ["ALL"]
+    analyzer_dir = Path(sys.argv[1])
+    project_path = Path(sys.argv[2])
+    output_dir = Path(sys.argv[3])
+    project_name = sys.argv[4]
+    analysis_depth = sys.argv[5] if len(sys.argv) > 5 else "STANDARD"
+    focus_areas = sys.argv[6].split(",") if len(sys.argv) > 6 else ["ALL"]
+
+    # Add analyzer to path
+    sys.path.insert(0, str(analyzer_dir))
+
+    from scanner import ProjectScanner
+    from dependency_analyzer import DependencyAnalyzer
+    from scoring_engine import FeasibilityScorer, ProjectMetrics
+    from report_generator import ReportGenerator, ReportConfig
 
     print(f"\n📊 Analyzing: {project_name}")
     print(f"📂 Path: {project_path}")
@@ -371,8 +378,9 @@ PYTHON_SCRIPT
     # Make it executable
     chmod +x "$OUTPUT_DIR/run_analysis.py"
 
-    # Run the analysis
+    # Run the analysis (pass analyzer_dir as first argument for security)
     python3 "$OUTPUT_DIR/run_analysis.py" \
+        "$ANALYZER_DIR" \
         "$PROJECT_PATH" \
         "$OUTPUT_DIR" \
         "$PROJECT_NAME" \

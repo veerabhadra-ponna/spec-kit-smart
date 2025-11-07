@@ -7,10 +7,16 @@ outdated packages, and deprecation warnings.
 """
 
 import json
+import logging
 import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional
+
+from .config import DEFAULT_CONFIG
+from .security import validate_project_path, SecurityError
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -55,8 +61,18 @@ class DependencyAnalyzer:
 
         Args:
             project_path: Path to project root directory
+
+        Raises:
+            SecurityError: If path is unsafe
+            FileNotFoundError: If path doesn't exist
         """
-        self.project_path = Path(project_path)
+        # Validate path for security
+        try:
+            self.project_path = validate_project_path(Path(project_path))
+            logger.info(f"Initialized dependency analyzer for: {self.project_path}")
+        except (SecurityError, FileNotFoundError, PermissionError) as e:
+            logger.error(f"Cannot initialize dependency analyzer: {e}")
+            raise
 
     def analyze_dependencies(self) -> List[DependencyReport]:
         """
@@ -280,9 +296,14 @@ class DependencyAnalyzer:
                 capture_output=True,
                 text=True,
                 cwd=self.project_path,
+                timeout=DEFAULT_CONFIG.security.subprocess_timeout_quick,
             )
             return result.returncode == 0
-        except Exception:
+        except subprocess.TimeoutExpired:
+            logger.warning(f"Timeout checking for tool: {tool_name}")
+            return False
+        except Exception as e:
+            logger.debug(f"Error checking for tool {tool_name}: {e}")
             return False
 
     def _run_npm_audit(self) -> List[DependencyIssue]:
@@ -295,7 +316,7 @@ class DependencyAnalyzer:
                 capture_output=True,
                 text=True,
                 cwd=self.project_path,
-                timeout=60,
+                timeout=DEFAULT_CONFIG.security.subprocess_timeout_default,
             )
 
             if result.stdout:
@@ -314,10 +335,14 @@ class DependencyAnalyzer:
                         )
                         issues.append(issue)
 
+                logger.info(f"npm audit found {len(issues)} vulnerabilities")
+
         except subprocess.TimeoutExpired:
-            pass  # Timeout, return what we have
-        except Exception:
-            pass  # Tool error, gracefully continue
+            logger.warning(f"npm audit timed out after {DEFAULT_CONFIG.security.subprocess_timeout_default}s")
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse npm audit output: {e}")
+        except Exception as e:
+            logger.warning(f"npm audit failed: {e}")
 
         return issues
 

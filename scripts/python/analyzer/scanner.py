@@ -4,11 +4,17 @@ Project scanner for reverse engineering analysis.
 Detects tech stack, calculates code metrics, and discovers project structure.
 """
 
+import logging
 import os
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Set
+
+from .config import DEFAULT_CONFIG
+from .security import validate_project_path, SecurityError
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -101,8 +107,18 @@ class ProjectScanner:
 
         Args:
             project_path: Path to project root directory
+
+        Raises:
+            SecurityError: If path is unsafe
+            FileNotFoundError: If path doesn't exist
         """
-        self.project_path = Path(project_path).resolve()
+        # Validate path for security
+        try:
+            self.project_path = validate_project_path(Path(project_path))
+            logger.info(f"Initialized scanner for: {self.project_path}")
+        except (SecurityError, FileNotFoundError, PermissionError) as e:
+            logger.error(f"Cannot initialize scanner: {e}")
+            raise
 
     def scan_project(self) -> ScanResult:
         """
@@ -111,10 +127,17 @@ class ProjectScanner:
         Returns:
             ScanResult with tech stack, metrics, and structure
         """
+        logger.info("Starting project scan...")
+
         try:
             tech_stack = self._detect_tech_stack()
+            logger.info(f"Detected tech stack: {tech_stack.primary_language}")
+
             metrics = self._calculate_metrics()
+            logger.info(f"Calculated metrics: {metrics.code_lines} lines of code")
+
             structure = self._analyze_structure()
+            logger.info("Project structure analysis complete")
 
             return ScanResult(
                 tech_stack=tech_stack,
@@ -123,13 +146,37 @@ class ProjectScanner:
                 scan_successful=True,
             )
 
-        except Exception as e:
+        except PermissionError as e:
+            error_msg = f"Permission denied while scanning project: {e}"
+            logger.error(error_msg)
             return ScanResult(
                 tech_stack=TechStack(primary_language="unknown"),
                 metrics=CodeMetrics(),
                 structure=ProjectStructure(root_path=self.project_path),
                 scan_successful=False,
-                error_message=str(e),
+                error_message=error_msg,
+            )
+
+        except OSError as e:
+            error_msg = f"File system error during scan: {e}"
+            logger.error(error_msg)
+            return ScanResult(
+                tech_stack=TechStack(primary_language="unknown"),
+                metrics=CodeMetrics(),
+                structure=ProjectStructure(root_path=self.project_path),
+                scan_successful=False,
+                error_message=error_msg,
+            )
+
+        except Exception as e:
+            error_msg = f"Unexpected error during scan: {e}"
+            logger.exception(error_msg)  # Includes stack trace
+            return ScanResult(
+                tech_stack=TechStack(primary_language="unknown"),
+                metrics=CodeMetrics(),
+                structure=ProjectStructure(root_path=self.project_path),
+                scan_successful=False,
+                error_message=error_msg,
             )
 
     def _detect_tech_stack(self) -> TechStack:
@@ -369,7 +416,7 @@ class ProjectScanner:
                 capture_output=True,
                 text=True,
                 cwd=self.project_path,
-                timeout=120,
+                timeout=DEFAULT_CONFIG.security.subprocess_timeout_long,
             )
 
             if result.returncode == 0 and result.stdout:
@@ -382,6 +429,7 @@ class ProjectScanner:
                     if lang not in ["header", "SUM"]:
                         languages_breakdown[lang] = stats.get("code", 0)
 
+                logger.info(f"cloc analysis complete: {summary.get('code', 0)} lines of code")
                 return CodeMetrics(
                     total_lines=summary.get("blank", 0) + summary.get("comment", 0) + summary.get("code", 0),
                     code_lines=summary.get("code", 0),
@@ -390,8 +438,12 @@ class ProjectScanner:
                     file_count=summary.get("nFiles", 0),
                     languages_breakdown=languages_breakdown,
                 )
-        except Exception:
-            pass
+        except subprocess.TimeoutExpired:
+            logger.warning(f"cloc analysis timed out after {DEFAULT_CONFIG.security.subprocess_timeout_long}s")
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse cloc output: {e}")
+        except Exception as e:
+            logger.warning(f"cloc analysis failed: {e}")
 
         return CodeMetrics()
 
@@ -403,7 +455,7 @@ class ProjectScanner:
                 capture_output=True,
                 text=True,
                 cwd=self.project_path,
-                timeout=120,
+                timeout=DEFAULT_CONFIG.security.subprocess_timeout_long,
             )
 
             if result.returncode == 0 and result.stdout:
@@ -423,6 +475,7 @@ class ProjectScanner:
                         total_blanks += stats.get("blanks", 0)
                         languages_breakdown[lang] = code
 
+                logger.info(f"tokei analysis complete: {total_code} lines of code")
                 return CodeMetrics(
                     total_lines=total_code + total_comments + total_blanks,
                     code_lines=total_code,
@@ -431,31 +484,51 @@ class ProjectScanner:
                     file_count=len(list(self.project_path.rglob("*.*"))),
                     languages_breakdown=languages_breakdown,
                 )
-        except Exception:
-            pass
+        except subprocess.TimeoutExpired:
+            logger.warning(f"tokei analysis timed out after {DEFAULT_CONFIG.security.subprocess_timeout_long}s")
+        except json.JSONDecodeError as e:
+            logger.error(f"Failed to parse tokei output: {e}")
+        except Exception as e:
+            logger.warning(f"tokei analysis failed: {e}")
 
         return CodeMetrics()
 
     def _calculate_metrics_manual(self) -> CodeMetrics:
-        """Manual metric calculation (fallback)."""
+        """Manual metric calculation (fallback). Optimized for performance."""
         exclude_dirs = {"node_modules", "vendor", ".git", "venv", "__pycache__", "build", "dist", ".next", "target"}
+        file_extensions = {".py", ".js", ".ts", ".java", ".go", ".rs", ".rb", ".php", ".cs"}
 
         file_count = 0
         total_lines = 0
 
-        for root, dirs, files in os.walk(self.project_path):
-            # Remove excluded directories
-            dirs[:] = [d for d in dirs if d not in exclude_dirs]
+        logger.info("Using manual file counting (cloc/tokei not available)")
 
-            for file in files:
-                if file.endswith((".py", ".js", ".ts", ".java", ".go", ".rs", ".rb", ".php", ".cs")):
-                    file_count += 1
-                    file_path = Path(root) / file
-                    try:
-                        with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
-                            total_lines += len(f.readlines())
-                    except Exception:
-                        pass
+        # Use rglob for better performance than os.walk
+        for file_path in self.project_path.rglob("*"):
+            # Skip if not a file
+            if not file_path.is_file():
+                continue
+
+            # Skip if in excluded directory
+            if any(part in exclude_dirs for part in file_path.parts):
+                continue
+
+            # Skip if not a code file
+            if file_path.suffix not in file_extensions:
+                continue
+
+            file_count += 1
+
+            # Stream file line by line instead of loading all into memory
+            try:
+                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                    total_lines += sum(1 for _ in f)
+            except PermissionError:
+                logger.debug(f"Permission denied reading file: {file_path}")
+            except Exception as e:
+                logger.debug(f"Error reading file {file_path}: {e}")
+
+        logger.info(f"Manual count complete: {file_count} files, ~{total_lines} lines")
 
         return CodeMetrics(
             total_lines=total_lines,
@@ -526,9 +599,14 @@ class ProjectScanner:
                 ["which", tool_name],
                 capture_output=True,
                 text=True,
+                timeout=DEFAULT_CONFIG.security.subprocess_timeout_quick,
             )
             return result.returncode == 0
-        except Exception:
+        except subprocess.TimeoutExpired:
+            logger.warning(f"Timeout checking for tool: {tool_name}")
+            return False
+        except Exception as e:
+            logger.warning(f"Error checking for tool {tool_name}: {e}")
             return False
 
 

@@ -6,8 +6,13 @@ based on multiple factors including code quality, test coverage, dependencies,
 architecture, and business constraints.
 """
 
+import logging
 from dataclasses import dataclass
 from typing import Dict, Optional
+
+from .config import DEFAULT_CONFIG
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -69,26 +74,31 @@ class FeasibilityScorer:
     """
 
     def __init__(self):
+        # Load weights from configuration
+        weights = DEFAULT_CONFIG.scoring_weights
+
         # Inline upgrade weights (must sum to 1.0)
         self.inline_weights = {
-            "code_quality": 0.20,
-            "test_coverage": 0.15,
-            "dependency_health": 0.20,
-            "architecture_quality": 0.15,
-            "team_familiarity": 0.10,
-            "documentation": 0.10,
-            "breaking_changes": 0.10,
+            "code_quality": weights.inline_code_quality,
+            "test_coverage": weights.inline_test_coverage,
+            "dependency_health": weights.inline_dependency_health,
+            "architecture_quality": weights.inline_architecture_quality,
+            "team_familiarity": weights.inline_team_familiarity,
+            "documentation": weights.inline_documentation,
+            "breaking_changes": weights.inline_breaking_changes,
         }
 
         # Greenfield rewrite weights (must sum to 1.0)
         self.greenfield_weights = {
-            "requirements_clarity": 0.20,
-            "technical_debt_level": 0.20,
-            "business_continuity": 0.15,
-            "team_capacity": 0.15,
-            "time_available": 0.15,
-            "budget": 0.15,
+            "requirements_clarity": weights.greenfield_requirements_clarity,
+            "technical_debt_level": weights.greenfield_technical_debt,
+            "business_continuity": weights.greenfield_business_continuity,
+            "team_capacity": weights.greenfield_team_capacity,
+            "time_available": weights.greenfield_time_available,
+            "budget": weights.greenfield_budget,
         }
+
+        logger.debug("Initialized FeasibilityScorer with configured weights")
 
     def calculate_inline_upgrade_score(self, metrics: ProjectMetrics) -> tuple[float, Dict[str, float]]:
         """
@@ -315,14 +325,16 @@ class FeasibilityScorer:
         Returns:
             Tuple of (recommendation, rationale)
         """
-        # Interpretation thresholds from reverse-engineering.md
-        INLINE_HIGHLY_FEASIBLE = 80
-        INLINE_FEASIBLE = 60
-        INLINE_RISKY = 40
+        # Load thresholds from configuration
+        thresholds = DEFAULT_CONFIG.score_thresholds
 
-        GREENFIELD_STRONG = 80
-        GREENFIELD_VIABLE = 60
-        GREENFIELD_CHALLENGING = 40
+        INLINE_HIGHLY_FEASIBLE = thresholds.inline_highly_feasible
+        INLINE_FEASIBLE = thresholds.inline_feasible
+        INLINE_RISKY = thresholds.inline_risky
+
+        GREENFIELD_STRONG = thresholds.greenfield_strong
+        GREENFIELD_VIABLE = thresholds.greenfield_viable
+        GREENFIELD_CHALLENGING = thresholds.greenfield_challenging
 
         # Decision logic
         if inline_score >= INLINE_HIGHLY_FEASIBLE and inline_score > greenfield_score:
