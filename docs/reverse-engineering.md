@@ -28,7 +28,7 @@
 
 ---
 
-## Table of Contents
+**Table of Contents:**
 
 - [Important Notice](#️-important-notice)
 - [Overview](#overview)
