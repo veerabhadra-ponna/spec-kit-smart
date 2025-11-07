@@ -350,6 +350,71 @@ Target: [version]
 - **40-59**: Moderately risky - consider hybrid approach
 - **0-39**: High risk - consider greenfield rewrite
 
+**Scoring Rubric (0-10 for each factor)**:
+
+- **Code Quality**:
+  - 9-10: Clean code, low complexity, few smells
+  - 7-8: Generally good with some debt
+  - 5-6: Moderate debt, manageable
+  - 3-4: Significant debt, needs work
+  - 0-2: Critical debt, hard to maintain
+
+- **Test Coverage**:
+  - 9-10: >80% coverage, good test quality
+  - 7-8: 60-80% coverage
+  - 5-6: 40-60% coverage
+  - 3-4: 20-40% coverage
+  - 0-2: <20% or no tests
+
+- **Dependency Health**:
+  - 9-10: All current, no vulnerabilities
+  - 7-8: Mostly current, low-severity issues only
+  - 5-6: Some outdated, medium-severity issues
+  - 3-4: Many outdated, high-severity issues
+  - 0-2: Critical vulnerabilities, major upgrades needed
+
+- **Architecture Quality**:
+  - 9-10: Well-designed, modular, loosely coupled
+  - 7-8: Good structure with minor coupling issues
+  - 5-6: Acceptable structure, some refactoring needed
+  - 3-4: Poor separation of concerns
+  - 0-2: Monolithic, tightly coupled
+
+- **Team Familiarity**:
+  - 9-10: Team knows codebase well
+  - 7-8: Most team members familiar
+  - 5-6: Some knowledge exists
+  - 3-4: Limited team knowledge
+  - 0-2: No original team members remain
+
+- **Documentation**:
+  - 9-10: Comprehensive docs, architecture diagrams
+  - 7-8: Good docs with minor gaps
+  - 5-6: Basic docs exist
+  - 3-4: Minimal documentation
+  - 0-2: No documentation
+
+- **Breaking Changes**:
+  - 9-10: No breaking changes in upgrades
+  - 7-8: Few minor breaking changes
+  - 5-6: Moderate breaking changes
+  - 3-4: Many breaking changes
+  - 0-2: Complete API/behavior changes
+
+**Calculation**:
+```
+Score = (Code_Quality * 0.20) +
+        (Test_Coverage * 0.15) +
+        (Dependency_Health * 0.20) +
+        (Architecture_Quality * 0.15) +
+        (Team_Familiarity * 0.10) +
+        (Documentation * 0.10) +
+        (Breaking_Changes * 0.10)
+
+Each factor scored 0-10, then multiplied by weight and summed (max 10.0)
+Final score = (Weighted sum) * 10 (max 100)
+```
+
 ### 8.2 Greenfield Rewrite Feasibility
 
 **Feasibility Score**: [0-100]/100
