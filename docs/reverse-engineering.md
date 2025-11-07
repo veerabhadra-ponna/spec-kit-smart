@@ -829,105 +829,6 @@ When analyzing untrusted codebases:
 
 ---
 
-## Implementation Roadmap
-
-The following enhancements are planned to address current limitations:
-
-### Phase 1: Core Implementation (4-6 weeks)
-
-**Goal**: Fully automated analysis with executable scripts
-
-**Deliverables**:
-
-- `scripts/bash/analyze-project.sh` - Main orchestration script
-- `scripts/python/analyzer/` - Python analysis library
-  - `scanner.py` - Directory scanning
-  - `dependency_analyzer.py` - Dependency health
-  - `metrics_calculator.py` - Code metrics
-  - `security_scanner.py` - Vulnerability detection
-  - `scoring_engine.py` - Feasibility scoring
-  - `report_generator.py` - Markdown report generation
-- Integration with npm audit, pip-audit, cargo audit
-- Integration with cloc, tokei for metrics
-- Automated feasibility score calculation
-- Error handling and graceful degradation
-
-**Priority**: HIGH
-
-### Phase 2: Language-Specific Analyzers (2-3 weeks)
-
-**Goal**: Deep analysis for each major language
-
-**Deliverables**:
-
-- JavaScript/Node.js: Framework detection, build tool analysis
-- Python: Virtual environment analysis, Django/Flask specifics
-- Java: Maven/Gradle analysis, Spring Boot versions
-- .NET: NuGet analysis, framework version detection
-- Ruby: Bundler analysis, Rails specifics
-- PHP: Composer analysis, Laravel/Symfony specifics
-
-**Priority**: HIGH
-
-### Phase 3: Incremental Analysis & Checkpoints (1-2 weeks)
-
-**Goal**: Support large codebases, resume capability
-
-**Deliverables**:
-
-- Checkpoint system (save progress)
-- Resume from last checkpoint
-- Progress indicators
-- Streaming reports (generate sections as completed)
-
-**Priority**: MEDIUM
-
-### Phase 4: Advanced Features (3-4 weeks)
-
-**Goal**: Enhanced capabilities
-
-**Deliverables**:
-
-- Baseline comparison (track progress over time)
-- CI/CD integration (GitHub Actions, GitLab CI)
-- Plugin architecture for custom analyzers
-- Export formats (PDF, JSON, HTML)
-- Architecture diagram generation
-- Cost estimation
-- License compliance analysis
-
-**Priority**: MEDIUM
-
-### Phase 5: Enterprise Features (4-6 weeks)
-
-**Goal**: Enterprise-scale support
-
-**Deliverables**:
-
-- Multi-project analysis (monorepo support)
-- Custom scoring weights configuration
-- Team capacity assessment questionnaire
-- Historical trending and analytics
-- Integration with enterprise tools (SonarQube, Snyk, etc.)
-- RBAC and audit logging
-
-**Priority**: LOW
-
-### How to Contribute
-
-Want to help implement these features?
-
-1. Check [GitHub Issues](https://github.com/veerabhadra-ponna/spec-kit-smart/issues) for tasks labeled `reverse-engineering`
-2. See [CONTRIBUTING.md](../CONTRIBUTING.md) for contribution guidelines
-3. Join discussions in [GitHub Discussions](https://github.com/veerabhadra-ponna/spec-kit-smart/discussions)
-
-**Priority Tasks Looking for Contributors**:
-
-- [ ] Python implementation of `scoring_engine.py`
-- [ ] JavaScript/Node.js analyzer
-- [ ] Python analyzer
-- [ ] Integration tests with sample projects
-- [ ] Documentation improvements
 
 ---
 
@@ -1051,3 +952,29 @@ https://github.com/veerabhadra-ponna/spec-kit-smart/issues
 ---
 
 **Happy Modernizing!** 🚀
+
+---
+
+## Developer Resources
+
+For developers interested in implementing or contributing to this feature:
+
+- **Implementation Roadmap**: See [development/implementation-roadmap.md](./development/implementation-roadmap.md)
+  - 5-phase plan (16-21 weeks)
+  - Priority tasks for contributors
+  - Technical requirements and deliverables
+
+- **Engineering Review**: See [development/engineering-review.md](./development/engineering-review.md)
+  - Comprehensive technical assessment
+  - Issues identified and prioritized
+  - Architectural recommendations
+
+- **Contributing**: See [CONTRIBUTING.md](../CONTRIBUTING.md) and [AGENTS.md](../AGENTS.md)
+  - Contribution guidelines
+  - AI agent instructions
+  - Development standards
+
+**Quick Links**:
+- [GitHub Issues](https://github.com/veerabhadra-ponna/spec-kit-smart/issues) (label: `reverse-engineering`)
+- [GitHub Discussions](https://github.com/veerabhadra-ponna/spec-kit-smart/discussions)
+
