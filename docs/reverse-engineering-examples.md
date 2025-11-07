@@ -349,8 +349,6 @@ All phases complete. Now let's deploy:
 
 Please help me execute the deployment checklist from the upgrade plan.
 
-```text
-
 ---
 
 ## Greenfield Rewrite Workflow
@@ -359,7 +357,7 @@ Please help me execute the deployment checklist from the upgrade plan.
 
 ### Step 1: Analysis
 
-```
+```text
 
 We have a 10-year-old Java monolith that's becoming unmaintainable. I want to assess whether we should upgrade it or rewrite it.
 
@@ -513,8 +511,6 @@ Phase 2: Order Service (4 weeks)
 
 Please help me execute Phase 1.
 
-```text
-
 ---
 
 ## Hybrid Approach Workflow
@@ -525,7 +521,7 @@ Please help me execute Phase 1.
 
 **Workflow**:
 
-```
+```text
 
 The analysis shows:
 

@@ -568,7 +568,7 @@ Feasibility: 72/100
 Confidence: 85/100
 
 Interpretation: Moderately feasible inline upgrade with high confidence in assessment
-```text
+```
 
 ---
 
