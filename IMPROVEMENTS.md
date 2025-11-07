@@ -97,6 +97,41 @@ Additional nice-to-have features:
 - [ ] Add better error handling for Windows-specific issues
 - [ ] Test on PowerShell Core (cross-platform)
 
+### Reverse Engineering & Modernization Feature
+
+**Note**: Phase 1 complete. See "Completed Improvements" section below.
+
+**Phase 2 - Language-Specific Analyzers** (2-3 weeks):
+
+- [ ] JavaScript/Node.js analyzer (framework detection, build tools)
+- [ ] Python analyzer (virtual env, framework detection)
+- [ ] Java analyzer (Maven/Gradle, Spring Boot)
+- [ ] .NET analyzer (NuGet, project type)
+- [ ] Ruby analyzer (Rails, Bundler)
+- [ ] PHP analyzer (Composer, Laravel/Symfony)
+
+**Phase 3 - Incremental Analysis** (1-2 weeks):
+
+- [ ] Checkpoint system for large codebases
+- [ ] Resume capability from last checkpoint
+- [ ] Progress indicators and streaming reports
+- [ ] Support for 500K+ LOC projects
+
+**Phase 4 - Advanced Features** (3-4 weeks):
+
+- [ ] Baseline comparison (track improvements over time)
+- [ ] CI/CD integration templates
+- [ ] Plugin architecture for custom analyzers
+- [ ] Export formats (PDF, JSON, HTML, CSV)
+- [ ] Architecture diagram generation
+
+**Phase 5 - Enterprise Features** (4-6 weeks):
+
+- [ ] Multi-project/monorepo analysis
+- [ ] Customizable scoring weights
+- [ ] Team capacity assessment
+- [ ] Historical analytics and trending
+
 ---
 
 ## 🐛 Known Limitations
@@ -183,6 +218,14 @@ Track completed items here for reference.
   - Added comprehensive testing suite for critical paths
   - Implemented advanced guideline features
   - Completed full corporate customization system
+- [x] Implement Reverse Engineering Phase 1 (Core Implementation) - (commits f0eff30, 9f5629a)
+  - Created scoring_engine.py for feasibility scoring (inline/greenfield)
+  - Created dependency_analyzer.py for npm/pip security analysis
+  - Created scanner.py for tech stack detection and metrics
+  - Created report_generator.py for markdown report generation
+  - Created analyze-project.sh bash orchestration script
+  - Full end-to-end analysis workflow operational
+  - Tested successfully on spec-kit-smart project
 
 ---
 
@@ -199,6 +242,7 @@ Track completed items here for reference.
 **Final Status**: ✅ **FULLY IMPLEMENTED** - All 4 phases completed successfully.
 
 **Key Deliverables**:
+
 1. `.guidelines/` directory with comprehensive templates (ReactJS, Java, .NET, Node.js, Python)
 2. `branch-config.json` for configurable branch naming patterns
 3. `stack-mapping.json` for multi-stack project coordination
@@ -207,6 +251,7 @@ Track completed items here for reference.
 6. Priority system: Constitution > Corporate Guidelines > Spec Kit Defaults
 
 **Results**:
+
 - Teams can now customize Spec Kit to match corporate standards
 - Supports corporate package registries (Artifactory, Nexus)
 - Configurable branch naming without code changes
@@ -214,6 +259,7 @@ Track completed items here for reference.
 - Backward compatible - works with existing projects
 
 **Lessons Learned**:
+
 - Phased approach worked well for managing complexity
 - Template-based guidelines provided good flexibility
 - JSON configuration files easier than hardcoded scripts
@@ -221,6 +267,7 @@ Track completed items here for reference.
 - Clear priority hierarchy (Constitution > Guidelines > Defaults) prevented conflicts
 
 **Reference PRs**:
+
 - Phase 1: Foundation - TBD
 - Phase 2: Branch Configuration - PR #18 (commit 98195d8)
 - Phase 3: Multi-Stack Coordination - PR #19 (commit 8f51529)
