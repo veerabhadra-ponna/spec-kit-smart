@@ -129,7 +129,7 @@ Use **`/speckit.implement`** to execute all tasks and build your feature accordi
 
 For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
 
-### Workflow Diagram
+### Workflow Diagram (Spec-Driven Development)
 
 ```mermaid
 flowchart TD
@@ -186,7 +186,7 @@ Then use `/speckit.resume` to continue after chat limits or interruptions.
 
 **NEW**: Analyze existing projects, assess technical debt, and plan modernization strategies!
 
-### Quick Start
+### Quick Start (Reverse Engineering)
 
 ```bash
 # In your AI coding agent (Claude Code, GitHub Copilot, etc.)
@@ -235,7 +235,7 @@ Comprehensive analysis with:
 
 **Hybrid (Strangler Fig)**: Extract modules incrementally, modernize, maintain parallel systems
 
-### Documentation
+### Documentation (Reverse Engineering)
 
 - **📖 Complete Guide**: [docs/reverse-engineering.md](docs/reverse-engineering.md) - Comprehensive documentation
 - **💡 Examples & Prompts**: [docs/reverse-engineering-examples.md](docs/reverse-engineering-examples.md) - Practical workflows
@@ -627,7 +627,7 @@ To start over:
 
 Simply fix the issue (e.g., `npm install stripe`) and run `/speckit.resume` to continue.
 
-### Workflow Diagram
+### Workflow Diagram (Orchestrator)
 
 ```mermaid
 flowchart TD
@@ -855,7 +855,7 @@ graph TD
 
 **Example:** If constitution says "MUST use PostgreSQL" but guidelines suggest MySQL, constitution wins.
 
-### Quick Start
+### Quick Start (Guidelines)
 
 1. Customize guidelines: Edit `.guidelines/*.md` files
 2. Configure branch naming: Edit `.guidelines/branch-config.json` (optional)
@@ -863,7 +863,7 @@ graph TD
 4. Auto-fix issues: `./scripts/bash/autofix-guidelines.sh`
 5. Set up CI/CD: Copy templates from `.guidelines/examples/ci-cd/`
 
-### Documentation
+### Documentation (Guidelines)
 
 See `.guidelines/README.md`, `GUIDELINES-IMPLEMENTATION-PLAN.md`, `IMPROVEMENTS.md`, and `.guidelines/examples/ci-cd/` for details.
 
