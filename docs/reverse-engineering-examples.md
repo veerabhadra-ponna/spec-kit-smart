@@ -20,6 +20,7 @@ This document provides example prompts and workflows for using the reverse engin
 ### Comprehensive Analysis
 
 **Prompt**:
+
 ```
 I have an existing Node.js project at /home/user/my-legacy-app that I want to modernize. Please analyze it comprehensively and provide recommendations on whether to upgrade in place or start fresh.
 
@@ -32,6 +33,7 @@ When prompted, use:
 ```
 
 **What happens**:
+
 - Agent scans entire codebase
 - Analyzes dependencies, code quality, architecture
 - Generates comprehensive report with recommendation
@@ -42,6 +44,7 @@ When prompted, use:
 ### Security-Focused Analysis
 
 **Prompt**:
+
 ```
 I need to assess security vulnerabilities in my Python Django application before our compliance audit.
 
@@ -54,6 +57,7 @@ Settings:
 ```
 
 **What happens**:
+
 - Deep security scan
 - CVE analysis of all dependencies
 - Code pattern analysis for security anti-patterns
@@ -64,6 +68,7 @@ Settings:
 ### Quick Health Check
 
 **Prompt**:
+
 ```
 I want a quick sanity check on our React frontend to see if there are any critical issues.
 
@@ -74,6 +79,7 @@ PROJECT_PATH: ./frontend
 ```
 
 **What happens**:
+
 - 30-minute rapid scan
 - Critical vulnerabilities identified
 - Outdated dependencies flagged
@@ -86,6 +92,7 @@ PROJECT_PATH: ./frontend
 ### Focus Area: Architecture
 
 **Prompt**:
+
 ```
 Our team is planning a major refactoring. I want to understand the current architecture quality and get suggestions for improvements.
 
@@ -96,6 +103,7 @@ FOCUS_AREAS: ARCHITECTURE
 ```
 
 **Output includes**:
+
 - Architecture pattern identification (MVC, layered, microservices)
 - Component coupling analysis
 - Separation of concerns assessment
@@ -107,6 +115,7 @@ FOCUS_AREAS: ARCHITECTURE
 ### Focus Area: Performance
 
 **Prompt**:
+
 ```
 Our application has performance issues. Users are complaining about slow page loads. Please analyze and identify bottlenecks.
 
@@ -117,6 +126,7 @@ FOCUS_AREAS: PERFORMANCE
 ```
 
 **Output includes**:
+
 - Performance metrics (if available from logs)
 - Identified bottlenecks
 - Database query analysis
@@ -128,6 +138,7 @@ FOCUS_AREAS: PERFORMANCE
 ### Focus Area: Dependencies Only
 
 **Prompt**:
+
 ```
 I just want to understand our dependency health - what's outdated, what's vulnerable, what needs urgent attention.
 
@@ -138,6 +149,7 @@ FOCUS_AREAS: DEPENDENCIES
 ```
 
 **Output includes**:
+
 - Outdated dependencies table
 - Vulnerable dependencies (CVEs)
 - Deprecated packages
@@ -154,11 +166,13 @@ FOCUS_AREAS: DEPENDENCIES
 **Workflow**:
 
 1. **Review the generated constitution**:
+
    ```bash
    cat .analysis/MyApp-2025-11-06/recommended-constitution.md
    ```
 
 2. **Use it to start new project**:
+
    ```
    I want to create a new modern version of MyApp based on the analysis.
 
@@ -172,6 +186,7 @@ FOCUS_AREAS: DEPENDENCIES
    ```
 
 3. **Create spec based on reverse-engineered requirements**:
+
    ```
    /speckit.specify
 
@@ -194,11 +209,13 @@ FOCUS_AREAS: DEPENDENCIES
 **Workflow**:
 
 1. **Review the upgrade plan**:
+
    ```bash
    cat .analysis/MyApp-2025-11-06/upgrade-plan.md
    ```
 
 2. **Start Phase 0 (Preparation)**:
+
    ```
    I'm ready to start the upgrade process. Let's begin with Phase 0: Preparation & Baseline from the upgrade plan.
 
@@ -210,6 +227,7 @@ FOCUS_AREAS: DEPENDENCIES
    ```
 
 3. **Execute Phase 1**:
+
    ```
    Phase 0 is complete. Let's move to Phase 1: Runtime/Platform Upgrade.
 
@@ -223,6 +241,7 @@ FOCUS_AREAS: DEPENDENCIES
    ```
 
 4. **Continue through phases**:
+
    ```
    Phase [N] validation complete. Let's proceed to Phase [N+1]: [Phase Name].
 
@@ -525,6 +544,7 @@ Step 6: Repeat for next module
 ### For Greenfield Projects Using Analysis
 
 **Constitution Prompt**:
+
 ```
 /speckit.constitution
 
@@ -550,6 +570,7 @@ Also add these additional principles specific to our team:
 ```
 
 **Spec Prompt**:
+
 ```
 /speckit.specify
 
@@ -570,6 +591,7 @@ The new system should follow the constitution we established and address all the
 ```
 
 **Plan Prompt**:
+
 ```
 /speckit.plan
 
@@ -601,11 +623,13 @@ Please create a plan that:
 ### 1. Reference Specific Analysis Sections
 
 ❌ **Vague**:
+
 ```
 Use the analysis findings.
 ```
 
 ✅ **Specific**:
+
 ```
 According to Section 3.3 (Security Issues) of the analysis report, we have 7 critical vulnerabilities. Let's address the top 3:
 1. CVE-2021-XXXXX in lodash
@@ -616,11 +640,13 @@ According to Section 3.3 (Security Issues) of the analysis report, we have 7 cri
 ### 2. Break Down Large Tasks
 
 ❌ **Too big**:
+
 ```
 Execute the entire upgrade plan.
 ```
 
 ✅ **Manageable**:
+
 ```
 Let's execute Phase 1 of the upgrade plan: Runtime/Platform Upgrade.
 
@@ -632,6 +658,7 @@ After step 1 is complete and validated, we'll move to step 2.
 ### 3. Use Validation Checkpoints
 
 ✅ **Good practice**:
+
 ```
 After completing [task], please validate:
 1. All tests pass (npm test)
@@ -645,6 +672,7 @@ If all 4 pass, we proceed. If any fail, we debug before continuing.
 ### 4. Provide Context from Analysis
 
 ✅ **Helpful context**:
+
 ```
 The analysis found that we're using React class components with legacy lifecycle methods.
 
@@ -685,4 +713,4 @@ Please help refactor this component.
 
 See full documentation: `docs/reverse-engineering.md`
 
-Open issues: https://github.com/veerabhadra-ponna/spec-kit-smart/issues
+Open issues: <https://github.com/veerabhadra-ponna/spec-kit-smart/issues>

@@ -59,6 +59,7 @@ The **Reverse Engineering & Modernization** feature helps you analyze existing c
 - 📈 **Score feasibility** - Data-driven confidence scores for recommendations
 
 This is particularly useful for:
+
 - **Legacy modernization** projects
 - **Technical debt** assessment
 - **Security audits** and compliance
@@ -124,6 +125,7 @@ FOCUS_AREAS: ALL
 ### Step 2: Wait for Completion
 
 The agent will:
+
 - Scan your codebase
 - Analyze dependencies
 - Detect tech stack
@@ -147,14 +149,17 @@ Analysis results saved to `.analysis/[PROJECT_NAME]-[TIMESTAMP]/`:
 Based on the recommendation:
 
 **If INLINE UPGRADE**:
+
 1. Review `upgrade-plan.md`
 2. Follow phase-by-phase instructions
 3. Start with immediate security patches
 4. Test thoroughly at each phase
 
 **If GREENFIELD REWRITE**:
+
 1. Review `recommended-constitution.md`
 2. Use as starting point for new project:
+
    ```bash
    /speckit.constitution [use recommended principles]
    /speckit.specify [describe features based on analysis]
@@ -162,6 +167,7 @@ Based on the recommendation:
    ```
 
 **If HYBRID APPROACH**:
+
 1. Use Strangler Fig pattern
 2. Extract and modernize components incrementally
 3. Maintain parallel systems during migration
@@ -175,17 +181,20 @@ Choose the depth based on your needs and available time:
 ### QUICK (30 minutes)
 
 **Best For**:
+
 - Initial assessment
 - Quick health check
 - Time-constrained evaluations
 
 **Includes**:
+
 - Basic dependency scan
 - Security vulnerability check
 - Tech stack detection
 - High-level metrics (LOC, file count)
 
 **Output**:
+
 - Executive summary
 - Critical issues only
 - Basic upgrade paths
@@ -193,11 +202,13 @@ Choose the depth based on your needs and available time:
 ### STANDARD (2-4 hours) - **Recommended**
 
 **Best For**:
+
 - Most use cases
 - Comprehensive assessment
 - Migration planning
 
 **Includes**:
+
 - Full codebase analysis
 - Architecture review
 - Code quality assessment
@@ -206,6 +217,7 @@ Choose the depth based on your needs and available time:
 - Feasibility scoring
 
 **Output**:
+
 - Complete analysis report
 - Detailed upgrade plan
 - Recommended constitution
@@ -214,12 +226,14 @@ Choose the depth based on your needs and available time:
 ### COMPREHENSIVE (1-2 days)
 
 **Best For**:
+
 - Mission-critical systems
 - Large-scale migrations
 - Compliance requirements
 - Detailed due diligence
 
 **Includes**:
+
 - Everything in STANDARD, plus:
 - Performance profiling
 - Deep security audit
@@ -229,6 +243,7 @@ Choose the depth based on your needs and available time:
 - ROI calculations
 
 **Output**:
+
 - All STANDARD outputs, plus:
 - Performance optimization roadmap
 - Security hardening plan
@@ -241,6 +256,7 @@ Choose the depth based on your needs and available time:
 ### 1. Technology Stack
 
 **Detected**:
+
 - Languages (JavaScript, Python, Java, C#, Ruby, PHP, etc.)
 - Frameworks (React, Vue, Django, Spring Boot, ASP.NET, etc.)
 - Databases (PostgreSQL, MySQL, MongoDB, etc.)
@@ -248,6 +264,7 @@ Choose the depth based on your needs and available time:
 - Runtime versions (Node.js, Python, .NET, etc.)
 
 **Analysis**:
+
 - Current versions vs latest LTS
 - EOL dates
 - Breaking changes in upgrades
@@ -256,6 +273,7 @@ Choose the depth based on your needs and available time:
 ### 2. Dependencies
 
 **Checked**:
+
 - Direct and transitive dependencies
 - Outdated packages
 - Security vulnerabilities (CVEs)
@@ -263,6 +281,7 @@ Choose the depth based on your needs and available time:
 - Maintenance status (last update date)
 
 **Output**:
+
 - Outdated dependencies table
 - Vulnerable dependencies table
 - Upgrade priority list
@@ -270,12 +289,14 @@ Choose the depth based on your needs and available time:
 ### 3. Code Quality
 
 **Metrics**:
+
 - Lines of code (excluding vendor/node_modules)
 - Test coverage percentage
 - Cyclomatic complexity
 - Function/method length distribution
 
 **Patterns**:
+
 - Code smells (long functions, deep nesting)
 - Anti-patterns (god objects, tight coupling)
 - TODO/FIXME/HACK comments
@@ -283,12 +304,14 @@ Choose the depth based on your needs and available time:
 ### 4. Architecture
 
 **Assessed**:
+
 - Architecture pattern (MVC, microservices, etc.)
 - Layer separation (routes, controllers, services, data)
 - Component coupling
 - API design consistency
 
 **Identified**:
+
 - Modularity issues
 - Separation of concerns violations
 - Circular dependencies
@@ -296,6 +319,7 @@ Choose the depth based on your needs and available time:
 ### 5. Security
 
 **Scanned**:
+
 - Known vulnerabilities (CVEs)
 - Missing input validation
 - Unsafe authentication patterns
@@ -303,6 +327,7 @@ Choose the depth based on your needs and available time:
 - Missing security headers
 
 **Prioritized by severity**:
+
 - 🔴 CRITICAL (immediate action)
 - 🟠 HIGH (fix within week)
 - 🟡 MEDIUM (fix within month)
@@ -311,18 +336,21 @@ Choose the depth based on your needs and available time:
 ### 6. Performance
 
 **Analyzed** (if data available):
+
 - API response times
 - Database query efficiency
 - Bundle sizes
 - Rendering performance
 
 **Identified**:
+
 - Performance bottlenecks
 - Optimization opportunities
 
 ### 7. Documentation
 
 **Reviewed**:
+
 - README completeness
 - Code comments quality
 - API documentation
@@ -413,6 +441,7 @@ Choose the depth based on your needs and available time:
 - Timeline and milestones
 
 **Example phases**:
+
 1. Preparation & Baseline
 2. Runtime/Platform Upgrade
 3. Core Dependencies Upgrade
@@ -429,11 +458,13 @@ Choose the depth based on your needs and available time:
 **Project principles** (generated if greenfield rewrite recommended):
 
 Derived from analyzing:
+
 - ✅ Good patterns to preserve
 - ❌ Anti-patterns to avoid
 - 🔍 Gaps to address
 
 **10 principles** covering:
+
 1. Code Quality
 2. Testing
 3. Security
@@ -446,6 +477,7 @@ Derived from analyzing:
 10. Deployment
 
 Each principle includes:
+
 - Clear statement (MUST/SHOULD/MAY)
 - Rationale (why it matters)
 - Implementation guidance
@@ -473,6 +505,7 @@ Helps communicate with non-technical stakeholders.
 ### Inline Upgrade Feasibility (0-100)
 
 **Formula**:
+
 ```
 Score = (Code_Quality × 0.20) +
         (Test_Coverage × 0.15) +
@@ -484,6 +517,7 @@ Score = (Code_Quality × 0.20) +
 ```
 
 **Interpretation**:
+
 - **80-100**: ✅ Highly feasible - proceed with inline upgrade
 - **60-79**: ⚠️ Feasible with caution - assess risks carefully
 - **40-59**: 🟡 Moderately risky - consider hybrid approach
@@ -492,6 +526,7 @@ Score = (Code_Quality × 0.20) +
 ### Greenfield Rewrite Feasibility (0-100)
 
 **Formula**:
+
 ```
 Score = (Requirements_Clarity × 0.20) +
         (Technical_Debt_Level × 0.20) +
@@ -502,6 +537,7 @@ Score = (Requirements_Clarity × 0.20) +
 ```
 
 **Interpretation**:
+
 - **80-100**: ✅ Strong candidate for rewrite
 - **60-79**: ⚠️ Viable with proper planning
 - **40-59**: 🟡 Challenging - need strong business case
@@ -511,6 +547,7 @@ Score = (Requirements_Clarity × 0.20) +
 
 **Analysis Confidence** (0-100):
 Based on:
+
 - Code accessibility (can we read all files?)
 - Documentation availability
 - Test coverage (more tests = more confidence)
@@ -518,11 +555,13 @@ Based on:
 
 **Recommendation Confidence** (0-100):
 Based on:
+
 - Data completeness
 - Industry experience with similar migrations
 - Risk assessment accuracy
 
 **Example**:
+
 ```
 Recommendation: INLINE UPGRADE
 Feasibility: 72/100
@@ -566,6 +605,7 @@ Check Business Constraints
 ### Recommendation Logic
 
 **Inline Upgrade** chosen when:
+
 - ✅ Inline score ≥ 70
 - ✅ Code quality acceptable
 - ✅ Test coverage adequate (≥60%)
@@ -573,6 +613,7 @@ Check Business Constraints
 - ✅ Team knows codebase well
 
 **Greenfield Rewrite** chosen when:
+
 - ✅ Greenfield score ≥ 60
 - ❌ Inline score < 50
 - 🔴 Critical technical debt
@@ -581,6 +622,7 @@ Check Business Constraints
 - ✅ Time and budget available
 
 **Hybrid Approach** (Strangler Fig) chosen when:
+
 - 🟡 Both scores in middle range (50-69)
 - ⚠️ Inline risky, greenfield too expensive
 - ✅ Can maintain parallel systems
@@ -596,6 +638,7 @@ Check Business Constraints
 **Scenario**: Inherited a Node.js 12 app, need to upgrade
 
 **Analysis**:
+
 ```bash
 /speckit.analyze-project
 
@@ -605,6 +648,7 @@ FOCUS_AREAS: ALL
 ```
 
 **Results**:
+
 - Node.js 12 (EOL: 2022-04-30) - Critical
 - 47 outdated dependencies, 7 with CVEs
 - Test coverage: 38%
@@ -614,6 +658,7 @@ FOCUS_AREAS: ALL
 **Recommendation**: INLINE UPGRADE (Feasibility: 68/100)
 
 **Action Taken**:
+
 1. Reviewed `upgrade-plan.md`
 2. Fixed critical CVEs immediately (2 hours)
 3. Started Phase 1: Node.js 12 → 16 → 18 (1 week)
@@ -626,6 +671,7 @@ FOCUS_AREAS: ALL
 **Scenario**: 10-year-old Java 8 monolith, performance issues
 
 **Analysis**:
+
 ```bash
 /speckit.analyze-project
 
@@ -635,6 +681,7 @@ FOCUS_AREAS: ALL
 ```
 
 **Results**:
+
 - Java 8 (EOL: 2030 but outdated features)
 - 200K+ LOC, deeply coupled
 - No tests (0% coverage)
@@ -644,6 +691,7 @@ FOCUS_AREAS: ALL
 **Recommendation**: GREENFIELD REWRITE (Inline: 32/100, Greenfield: 78/100)
 
 **Action Taken**:
+
 1. Used `recommended-constitution.md` to establish principles
 2. Reverse-engineered requirements from code
 3. Started new project with modern stack (Spring Boot 3, Java 21)
@@ -657,6 +705,7 @@ FOCUS_AREAS: ALL
 **Scenario**: React 16 app, need React 18 features (concurrent rendering)
 
 **Analysis**:
+
 ```bash
 /speckit.analyze-project
 
@@ -666,6 +715,7 @@ FOCUS_AREAS: ARCHITECTURE, DEPENDENCIES
 ```
 
 **Results**:
+
 - React 16.8, TypeScript 3.9
 - Well-architected, modular
 - 82% test coverage
@@ -675,6 +725,7 @@ FOCUS_AREAS: ARCHITECTURE, DEPENDENCIES
 **Recommendation**: INLINE UPGRADE (Feasibility: 92/100, Confidence: 95%)
 
 **Action Taken**:
+
 1. Followed `upgrade-plan.md`
 2. Updated React 16 → 17 → 18 (3 days)
 3. Updated createRoot API (1 day)
@@ -829,7 +880,6 @@ When analyzing untrusted codebases:
 
 ---
 
-
 ---
 
 ## Frequently Asked Questions
@@ -837,6 +887,7 @@ When analyzing untrusted codebases:
 ### Q: How long does analysis take?
 
 **A**: Depends on depth:
+
 - QUICK: 30 minutes
 - STANDARD: 2-4 hours
 - COMPREHENSIVE: 1-2 days
@@ -844,6 +895,7 @@ When analyzing untrusted codebases:
 ### Q: Can I analyze non-JavaScript projects?
 
 **A**: Yes! Supports:
+
 - JavaScript/TypeScript (Node.js, React, etc.)
 - Python (Django, Flask, etc.)
 - Java (Spring Boot, etc.)
@@ -855,6 +907,7 @@ When analyzing untrusted codebases:
 ### Q: What if my project has no tests?
 
 **A**: Analysis will flag this as critical issue and:
+
 - Recommend adding tests before upgrade
 - Lower feasibility score
 - Suggest greenfield rewrite (if other factors also poor)
@@ -862,6 +915,7 @@ When analyzing untrusted codebases:
 ### Q: Can I analyze a monorepo with multiple projects?
 
 **A**: Yes, but analyze each project separately:
+
 ```bash
 /speckit.analyze-project
 PROJECT_PATH: /monorepo/packages/frontend
@@ -873,6 +927,7 @@ PROJECT_PATH: /monorepo/packages/backend
 ### Q: What if I disagree with the recommendation?
 
 **A**: The AI provides data-driven recommendations, but you make the final decision. Review:
+
 - Feasibility scores and how they're calculated
 - Business constraints the AI may not know
 - Team capabilities
@@ -883,6 +938,7 @@ You can override the recommendation.
 ### Q: Can I re-run analysis after making changes?
 
 **A**: Yes! Re-run to:
+
 - Track progress
 - Validate improvements
 - Update recommendations
@@ -890,6 +946,7 @@ You can override the recommendation.
 ### Q: What tools does the analysis use?
 
 **A**: Gracefully uses available tools:
+
 - `npm audit`, `pip-audit` for vulnerabilities
 - `cloc`, `tokei` for code metrics
 - `eslint`, `pylint` for code quality
@@ -902,6 +959,7 @@ You can override the recommendation.
 ### Q: Can I customize the analysis?
 
 **A**: Yes, focus on specific areas:
+
 ```bash
 FOCUS_AREAS: SECURITY  # Security-focused audit
 FOCUS_AREAS: PERFORMANCE  # Performance optimization
@@ -911,6 +969,7 @@ FOCUS_AREAS: DEPENDENCIES  # Dependency health only
 ### Q: What if analysis finds critical security issues?
 
 **A**: Immediate actions section will list:
+
 - CVE numbers and CVSS scores
 - Affected packages
 - Fix versions
@@ -921,6 +980,7 @@ FOCUS_AREAS: DEPENDENCIES  # Dependency health only
 ### Q: Can I use this for greenfield projects?
 
 **A**: No. For new projects, use:
+
 ```bash
 /speckit.orchestrate <feature-description>
 ```
@@ -947,7 +1007,7 @@ After running analysis:
 ## Support
 
 Questions or issues? Open a GitHub issue:
-https://github.com/veerabhadra-ponna/spec-kit-smart/issues
+<https://github.com/veerabhadra-ponna/spec-kit-smart/issues>
 
 ---
 
@@ -975,6 +1035,6 @@ For developers interested in implementing or contributing to this feature:
   - Development standards
 
 **Quick Links**:
+
 - [GitHub Issues](https://github.com/veerabhadra-ponna/spec-kit-smart/issues) (label: `reverse-engineering`)
 - [GitHub Discussions](https://github.com/veerabhadra-ponna/spec-kit-smart/discussions)
-

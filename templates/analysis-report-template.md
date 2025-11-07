@@ -14,6 +14,7 @@
 **Current State**: [EARLY_STAGE | PRODUCTION | LEGACY | UNMAINTAINED]
 
 **Key Findings**:
+
 - [High-level finding 1]
 - [High-level finding 2]
 - [High-level finding 3]
@@ -27,6 +28,7 @@
 ### 1.1 Technology Stack
 
 #### Frontend
+
 - **Framework**: [e.g., React 16.8.0]
 - **Build Tool**: [e.g., Webpack 4.x]
 - **State Management**: [e.g., Redux]
@@ -34,6 +36,7 @@
 - **Testing**: [e.g., Jest, React Testing Library]
 
 #### Backend
+
 - **Runtime**: [e.g., Node.js 14.x]
 - **Framework**: [e.g., Express 4.x]
 - **Database**: [e.g., PostgreSQL 11]
@@ -41,6 +44,7 @@
 - **Authentication**: [e.g., Passport.js, JWT]
 
 #### Infrastructure
+
 - **Hosting**: [e.g., AWS, Azure, GCP, On-premise]
 - **CI/CD**: [e.g., GitHub Actions, Jenkins]
 - **Monitoring**: [e.g., DataDog, New Relic]
@@ -55,9 +59,6 @@
 ```
 
 **Key Components**:
-- [Component 1]: [Description]
-- [Component 2]: [Description]
-- [Component 3]: [Description]
 
 ### 1.3 Codebase Metrics
 
@@ -75,11 +76,13 @@
 ### 2.1 Architecture & Design
 
 **Strengths**:
+
 - [Positive aspect 1 with evidence]
 - [Positive aspect 2 with evidence]
 - [Positive aspect 3 with evidence]
 
 **Examples**:
+
 ```
 [Code example or file reference showing good practice]
 ```
@@ -87,21 +90,25 @@
 ### 2.2 Code Quality
 
 **Strengths**:
+
 - [Quality aspect 1]
 - [Quality aspect 2]
 - [Quality aspect 3]
 
 **Best Practices Observed**:
+
 - [Practice 1]
 - [Practice 2]
 
 ### 2.3 Testing & Quality Assurance
 
 **Strengths**:
+
 - [Testing aspect 1]
 - [Testing aspect 2]
 
 **Test Coverage Highlights**:
+
 - Unit tests: [PERCENTAGE]%
 - Integration tests: [YES/NO]
 - E2E tests: [YES/NO]
@@ -109,12 +116,14 @@
 ### 2.4 Documentation
 
 **Strengths**:
+
 - [Documentation aspect 1]
 - [Documentation aspect 2]
 
 ### 2.5 Maintainability
 
 **Strengths**:
+
 - [Maintainability aspect 1]
 - [Maintainability aspect 2]
 
@@ -132,6 +141,7 @@
 | [Issue 2] | HIGH/MEDIUM/LOW | [File/Component] | [DAYS/WEEKS/MONTHS] |
 
 **Examples**:
+
 ```
 [Code example showing technical debt]
 ```
@@ -139,6 +149,7 @@
 ### 3.2 Anti-Patterns
 
 **Identified Anti-Patterns**:
+
 - **[Anti-pattern name]**: [Description and location]
   - **Impact**: [What problems does this cause?]
   - **Recommendation**: [How to fix it]
@@ -155,10 +166,12 @@
 ### 3.4 Performance Issues
 
 **Identified Bottlenecks**:
+
 - [Performance issue 1]
 - [Performance issue 2]
 
 **Metrics** (if available):
+
 - Average response time: [MS]
 - Database query time: [MS]
 - Bundle size: [KB/MB]
@@ -166,12 +179,14 @@
 ### 3.5 Code Smells
 
 **Common Code Smells**:
+
 - [Code smell 1 with location]
 - [Code smell 2 with location]
 
 ### 3.6 Outdated Practices
 
 **Deprecated Patterns**:
+
 - [Outdated practice 1]
 - [Outdated practice 2]
 
@@ -197,12 +212,14 @@
 ### 4.3 Deprecated Dependencies
 
 **Unmaintained Packages** (no updates in 2+ years):
+
 - [package-1]: Last update [DATE], [recommendation]
 - [package-2]: Last update [DATE], [recommendation]
 
 ### 4.4 License Issues
 
 **License Compatibility**:
+
 - [package]: [LICENSE] - ⚠️ [Issue if any]
 
 ---
@@ -230,6 +247,7 @@
 ### 6.1 LTS Upgrade Roadmap
 
 **Node.js Upgrade** (Example):
+
 ```
 Current: Node.js 14.x (EOL: 2023-04-30)
   ↓
@@ -245,6 +263,7 @@ Target: Node.js 20.x (LTS until 2026-04-30)
 ### 6.2 Framework Upgrades
 
 **[Framework Name] Upgrade**:
+
 ```
 Current: [version]
   ↓
@@ -252,6 +271,7 @@ Target: [version]
 ```
 
 **Breaking Changes**:
+
 - [Breaking change 1]: [Migration effort]
 - [Breaking change 2]: [Migration effort]
 
@@ -300,6 +320,7 @@ Target: [version]
 ### 7.3 Development Process Improvements
 
 **Process Enhancements**:
+
 - [ ] Implement CI/CD pipeline
 - [ ] Add automated testing
 - [ ] Set up code quality gates
@@ -309,16 +330,19 @@ Target: [version]
 ### 7.4 Code Organization
 
 **Refactoring Opportunities**:
+
 - [Refactoring 1]: [Description and benefits]
 - [Refactoring 2]: [Description and benefits]
 
 ### 7.5 Performance Optimizations
 
 **Quick Wins** (low effort, high impact):
+
 - [Optimization 1]
 - [Optimization 2]
 
 **Long-term Optimizations** (high effort, high impact):
+
 - [Optimization 1]
 - [Optimization 2]
 
@@ -345,6 +369,7 @@ Target: [version]
 **Total Feasibility Score**: [WEIGHTED_SUM] / 100
 
 **Interpretation**:
+
 - **80-100**: Highly feasible - proceed with inline upgrade
 - **60-79**: Feasible with caution - assess risks carefully
 - **40-59**: Moderately risky - consider hybrid approach
@@ -402,6 +427,7 @@ Target: [version]
   - 0-2: Complete API/behavior changes
 
 **Calculation**:
+
 ```
 Score = (Code_Quality * 0.20) +
         (Test_Coverage * 0.15) +
@@ -437,6 +463,7 @@ Final score = (Weighted sum) * 10 (max 100)
 **Analysis Confidence**: [0-100]/100
 
 **Factors Affecting Confidence**:
+
 - Code accessibility: [HIGH/MEDIUM/LOW]
 - Documentation availability: [HIGH/MEDIUM/LOW]
 - Test coverage: [PERCENTAGE]%
@@ -445,6 +472,7 @@ Final score = (Weighted sum) * 10 (max 100)
 **Recommendation Confidence**: [0-100]/100
 
 Based on:
+
 - Data completeness: [PERCENTAGE]%
 - Industry experience with similar migrations
 - Risk assessment accuracy
@@ -470,6 +498,7 @@ Based on:
 **Feasibility**: [YES/NO]
 
 **Strategy**:
+
 1. [Step 1: e.g., Extract authentication module]
 2. [Step 2: e.g., Modernize API layer]
 3. [Step 3: e.g., Migrate database incrementally]
@@ -539,12 +568,15 @@ Based on:
 **IF proceeding with greenfield rewrite**, use these recommended principles:
 
 ### Principle 1: [PRINCIPLE_NAME]
+
 [Description of principle and rationale]
 
 ### Principle 2: [PRINCIPLE_NAME]
+
 [Description of principle and rationale]
 
 ### Principle 3: [PRINCIPLE_NAME]
+
 [Description of principle and rationale]
 
 **See**: `recommended-constitution.md` for full details
@@ -562,14 +594,14 @@ Based on:
 ## 14. Resources & References
 
 ### 14.1 Migration Guides
+
 - [Link to official migration guide]
 - [Link to community resources]
 
 ### 14.2 Tools Recommended
-- [Tool 1]: [Purpose]
-- [Tool 2]: [Purpose]
 
 ### 14.3 Further Reading
+
 - [Article/Book 1]
 - [Article/Book 2]
 
@@ -598,6 +630,7 @@ Based on:
 ---
 
 **Next Steps**:
+
 1. Review this analysis with stakeholders
 2. Choose upgrade path (inline/greenfield/hybrid)
 3. If inline: Use generated upgrade plan

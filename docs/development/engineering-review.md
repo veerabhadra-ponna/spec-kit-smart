@@ -16,6 +16,7 @@ The reverse engineering feature has a solid conceptual foundation and comprehens
 **Recommendation**: MAJOR REVISIONS REQUIRED
 
 **Severity Breakdown**:
+
 - 🔴 CRITICAL: 4 issues
 - 🟠 HIGH: 8 issues
 - 🟡 MEDIUM: 12 issues
@@ -28,6 +29,7 @@ The reverse engineering feature has a solid conceptual foundation and comprehens
 ### 🔴 CRITICAL-1: No Actual Implementation
 
 **Issue**: The `/speckit.analyze-project` command is a TEMPLATE ONLY. There's no actual code to:
+
 - Scan directories
 - Parse configuration files
 - Analyze dependencies
@@ -36,12 +38,14 @@ The reverse engineering feature has a solid conceptual foundation and comprehens
 - Generate reports
 
 **Current State**:
+
 ```markdown
 # templates/commands/analyze-project.md
 Contains only instructions for the AI agent, no executable code
 ```
 
 **Required**:
+
 - Python/Shell scripts to perform actual analysis
 - Dependency scanning tools integration (npm audit, pip-audit, etc.)
 - Code metrics calculation (cloc, radon, etc.)
@@ -53,6 +57,7 @@ Contains only instructions for the AI agent, no executable code
 **Effort**: 2-3 weeks of development
 
 **Recommendation**:
+
 ```bash
 # Create actual implementation
 scripts/bash/analyze-project.sh       # Main orchestration script
@@ -74,11 +79,13 @@ scripts/python/analyzer/
 **Issue**: Feasibility scoring is described but not implemented as executable code.
 
 **Current State**:
+
 ```markdown
 Score = (Code_Quality × 0.20) + (Test_Coverage × 0.15) + ...
 ```
 
 **Required**:
+
 ```python
 # scripts/python/analyzer/scoring_engine.py
 class FeasibilityScorer:
@@ -108,18 +115,21 @@ class FeasibilityScorer:
 ### 🔴 CRITICAL-3: No Error Handling or Rollback Strategy
 
 **Issue**: Templates assume perfect execution. No guidance for:
+
 - Analysis failures (file access errors, tool missing)
 - Incomplete analysis results
 - Conflicting recommendations
 - Tool version mismatches
 
 **Required**:
+
 - Try-catch blocks in implementation scripts
 - Partial analysis handling (continue with what's available)
 - Tool availability checks with graceful degradation
 - Checkpoint system to resume failed analyses
 
 **Example**:
+
 ```python
 def analyze_dependencies(project_path: str) -> Optional[Dict]:
     """Analyze dependencies with graceful degradation"""
@@ -146,12 +156,14 @@ def analyze_dependencies(project_path: str) -> Optional[Dict]:
 **Issue**: No safeguards against analyzing malicious codebases.
 
 **Risks**:
+
 - Executing code during analysis (eval, exec)
 - Following symlinks to sensitive files
 - Reading secrets/credentials
 - Infinite loops in circular dependencies
 
 **Required Safeguards**:
+
 ```python
 # Sandbox execution
 ALLOWED_FILE_TYPES = {'.js', '.py', '.java', '.md', '.json', '.yaml'}
@@ -190,6 +202,7 @@ def safe_file_read(path: str) -> Optional[str]:
 ### 🟠 HIGH-1: No Integration with Existing Spec Kit Workflow
 
 **Issue**: Reverse engineering is standalone. Doesn't integrate with:
+
 - `/speckit.constitution` (should auto-populate from analysis)
 - `/speckit.specify` (should use reverse-engineered requirements)
 - `/speckit.orchestrate` (no workflow integration)
@@ -216,6 +229,7 @@ def safe_file_read(path: str) -> Optional[str]:
 **Issue**: Analysis is all-or-nothing. For large codebases (100K+ LOC), this is impractical.
 
 **Required**:
+
 - Checkpoint system (save progress)
 - Resume capability
 - Incremental reporting
@@ -252,10 +266,12 @@ def resume_analysis(checkpoint_dir: str):
 **Issue**: Hardcoded weights (Code Quality 20%, Test Coverage 15%, etc.) may not fit all organizations.
 
 **Example**: Startup vs Enterprise
+
 - Startup: Speed > Quality (weight time more)
 - Enterprise: Security > Speed (weight security more)
 
 **Required**:
+
 ```yaml
 # .analysis-config.yaml
 scoring:
@@ -282,6 +298,7 @@ scoring:
 **Issue**: Cannot track improvement over time. No "analysis diff" capability.
 
 **Required**:
+
 ```bash
 # Compare current analysis with previous
 /speckit.analyze-project --compare-with .analysis/Project-2025-10-01/
@@ -310,6 +327,7 @@ scoring:
 ### 🟠 HIGH-5: Missing Language-Specific Analysis
 
 **Issue**: Templates are generic. Need specialized analysis for:
+
 - **JavaScript/Node.js**: package.json, npm audit, ESLint, Webpack config
 - **Python**: requirements.txt, pip-audit, Pylint, virtualenv
 - **Java**: pom.xml, Maven/Gradle, SonarQube, Spring Boot versions
@@ -353,6 +371,7 @@ class JavaScriptAnalyzer(LanguageAnalyzer):
 **Issue**: Analysis is manual. Should integrate with CI/CD for continuous monitoring.
 
 **Required**:
+
 ```yaml
 # .github/workflows/analyze-codebase.yml
 name: Quarterly Codebase Analysis
@@ -392,6 +411,7 @@ jobs:
 **Issue**: Only checks for security, not license compliance.
 
 **Required**:
+
 - License detection (MIT, GPL, Apache, proprietary)
 - Compatibility checking (GPL conflicts with proprietary)
 - Attribution requirements
@@ -422,6 +442,7 @@ class LicenseAnalyzer:
 ### 🟠 HIGH-8: Template Verbosity Issues
 
 **Issue**: Templates are extremely long (analysis-report-template.md is 1000+ lines). This creates:
+
 - High token usage for AI agents
 - Difficult to customize
 - Hard to maintain
@@ -457,6 +478,7 @@ cat templates/analysis/report-*.md > final-report.md
 **Issue**: Claims to analyze performance but no concrete metrics.
 
 **Required**:
+
 - Parse application logs for response times
 - Analyze database query logs (slow query log)
 - Bundle size analysis for frontend
@@ -467,6 +489,7 @@ cat templates/analysis/report-*.md > final-report.md
 ### 🟡 MEDIUM-2: Upgrade Plan Assumes Perfect Execution
 
 **Issue**: upgrade-plan-template.md has no contingencies for:
+
 - Tests failing after upgrade
 - Breaking changes not in migration guide
 - Team velocity slower than estimated
@@ -481,6 +504,7 @@ cat templates/analysis/report-*.md > final-report.md
 **Issue**: "Team Familiarity" is a scoring factor but no guidance on how to measure it.
 
 **Required**: Questionnaire or heuristics
+
 - Years working on codebase
 - Original authors still on team?
 - Documentation quality
@@ -493,6 +517,7 @@ cat templates/analysis/report-*.md > final-report.md
 **Issue**: Decision matrix compares time/risk but not actual cost in dollars.
 
 **Required**:
+
 ```
 Inline Upgrade: $50K-$100K (2 engineers × 4 weeks × $6K/week)
 Greenfield Rewrite: $500K-$1M (4 engineers × 6 months × $25K/month)
@@ -505,6 +530,7 @@ Greenfield Rewrite: $500K-$1M (4 engineers × 6 months × $25K/month)
 **Issue**: "Include architecture diagram" but no code to generate it.
 
 **Tools to integrate**:
+
 - `madge` for dependency graphs
 - `graphviz` for visualization
 - `structurizr` for C4 model diagrams
@@ -522,6 +548,7 @@ Greenfield Rewrite: $500K-$1M (4 engineers × 6 months × $25K/month)
 ### 🟡 MEDIUM-7: No Export Formats
 
 **Issue**: Only markdown output. Stakeholders may want:
+
 - PDF (executive summary)
 - JSON (for tooling integration)
 - HTML (interactive dashboard)
@@ -534,6 +561,7 @@ Greenfield Rewrite: $500K-$1M (4 engineers × 6 months × $25K/month)
 **Issue**: "Estimated effort: X days" with no buffer.
 
 **Software estimation rule**: Multiply by π (3.14)
+
 - Estimate: 2 weeks → Actual: 6-7 weeks
 - Add explicit buffer: "Estimated: 2-3 weeks + 1 week buffer"
 
@@ -544,6 +572,7 @@ Greenfield Rewrite: $500K-$1M (4 engineers × 6 months × $25K/month)
 **Issue**: Documentation lacks real-world examples of successful analyses.
 
 **Add**:
+
 - Before/After screenshots
 - Actual metrics improvements
 - Time/cost savings
@@ -554,6 +583,7 @@ Greenfield Rewrite: $500K-$1M (4 engineers × 6 months × $25K/month)
 ### 🟡 MEDIUM-10: Scoring Thresholds May Be Wrong
 
 **Issue**:
+
 - 80-100: Highly feasible
 - 60-79: Feasible with caution
 
@@ -567,6 +597,7 @@ Greenfield Rewrite: $500K-$1M (4 engineers × 6 months × $25K/month)
 ### 🟡 MEDIUM-11: No Competitor Analysis
 
 **Issue**: How does this compare to existing tools?
+
 - SonarQube
 - Snyk
 - Dependabot
@@ -582,6 +613,7 @@ Greenfield Rewrite: $500K-$1M (4 engineers × 6 months × $25K/month)
 **Issue**: Reverse engineering section in README.md is 160+ lines. README is getting bloated.
 
 **Recommendation**: Keep README brief, link to detailed docs
+
 ```markdown
 ## 🔄 Reverse Engineering & Modernization
 
@@ -593,6 +625,7 @@ Analyze existing projects for modernization opportunities.
 ```
 
 **For full guide**: See [docs/reverse-engineering.md](docs/reverse-engineering.md)
+
 ```
 
 ---
@@ -653,6 +686,7 @@ Analyze existing projects for modernization opportunities.
 **Should be**: Orchestrator that calls specialized analyzers
 
 ```
+
 CommandOrchestrator
   ├── ProjectDiscovery
   ├── DependencyAnalyzer
@@ -661,6 +695,7 @@ CommandOrchestrator
   ├── ArchitectureReviewer
   ├── ScoringEngine
   └── ReportGenerator
+
 ```
 
 ---
@@ -687,6 +722,7 @@ class RustAnalyzer(LanguageAnalyzerPlugin):
 **Issue**: Feature depends on AI agent interpreting instructions.
 
 **Should have**: Standalone CLI tool that AI can call
+
 ```bash
 # Usable without AI agent
 specify analyze /path/to/project --output analysis-report.md
@@ -702,6 +738,7 @@ specify analyze /path/to/project --output analysis-report.md
 **Issue**: Reports are markdown strings. No structured data model.
 
 **Should have**:
+
 ```python
 @dataclass
 class AnalysisReport:
@@ -730,11 +767,13 @@ class AnalysisReport:
 ### ARCH-5: No Versioning Strategy
 
 **Issue**: Templates will evolve. How to handle:
+
 - Old analysis reports (use old template)
 - New features (update template)
 - Breaking changes (version bump)
 
 **Required**: Template versioning
+
 ```markdown
 ---
 template_version: 2.0.0
@@ -760,28 +799,28 @@ Despite the issues, there are strong foundations:
 
 ## Recommendations Summary
 
-### Immediate (Before Merge):
+### Immediate (Before Merge)
 
 1. ✅ **Fix markdown linting issues** (2-3 hours)
 2. ✅ **Add disclaimers** about implementation status (30 min)
 3. ✅ **Shorten README section** (1 hour)
 4. ✅ **Add "Known Limitations" section** to docs (1 hour)
 
-### Short-term (Next Sprint):
+### Short-term (Next Sprint)
 
 5. 🔧 **Implement actual analysis scripts** (2-3 weeks)
 6. 🔧 **Add error handling** (1 week)
 7. 🔧 **Add security safeguards** (1 week)
 8. 🔧 **Integrate with existing workflows** (3-5 days)
 
-### Medium-term (Next Month):
+### Medium-term (Next Month)
 
 9. 🔧 **Add language-specific analyzers** (2 weeks)
 10. 🔧 **Implement incremental analysis** (1 week)
 11. 🔧 **Add CI/CD integration** (3-5 days)
 12. 🔧 **Modularize templates** (2-3 days)
 
-### Long-term (Next Quarter):
+### Long-term (Next Quarter)
 
 13. 🔧 **Build plugin architecture** (2-3 weeks)
 14. 🔧 **Create standalone CLI tool** (3-4 weeks)
@@ -795,12 +834,14 @@ Despite the issues, there are strong foundations:
 **Rating**: 6.5/10
 
 **Strengths**:
+
 - Excellent documentation and user guidance
 - Well-thought-out workflows
 - Comprehensive templates
 - Clear scoring methodology
 
 **Weaknesses**:
+
 - No actual implementation (templates only)
 - Critical security and error handling gaps
 - Not integrated with existing Spec Kit workflows
@@ -809,6 +850,7 @@ Despite the issues, there are strong foundations:
 **Recommendation for Merge**: ⚠️ **MERGE WITH CAVEATS**
 
 Can merge as "EXPERIMENTAL / TEMPLATES ONLY" with clear warnings that:
+
 1. This is a design proposal, not a working implementation
 2. Requires 4-6 weeks of development to be functional
 3. Users should not expect it to work without custom tooling
@@ -820,6 +862,7 @@ Can merge as "EXPERIMENTAL / TEMPLATES ONLY" with clear warnings that:
 ## Action Items for Developer
 
 **High Priority**:
+
 - [ ] Add "Known Limitations" section to all docs
 - [ ] Fix markdown linting issues
 - [ ] Add implementation roadmap to docs
@@ -827,12 +870,14 @@ Can merge as "EXPERIMENTAL / TEMPLATES ONLY" with clear warnings that:
 - [ ] Add disclaimers about template-only status
 
 **Medium Priority**:
+
 - [ ] Create proof-of-concept implementation for one language (JavaScript)
 - [ ] Add error handling examples
 - [ ] Add security considerations section
 - [ ] Implement scoring engine as executable code
 
 **Low Priority**:
+
 - [ ] Add success stories when available
 - [ ] Create competitor comparison
 - [ ] Add cost estimation examples
