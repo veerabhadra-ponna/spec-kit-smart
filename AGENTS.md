@@ -757,7 +757,7 @@ This section defines the markdown style conventions for all documentation and te
 
 ### Markdownlint Configuration
 
-We use `.markdownlintrc` that balances strictness with practicality for technical documentation.
+We use `.markdownlintrc` that balances strictness with practicality for technical documentation. This file is synchronized with `.markdownlint-cli2.jsonc` to ensure consistent linting behavior.
 
 ### Enabled Rules (Enforced)
 
@@ -766,20 +766,25 @@ We use `.markdownlintrc` that balances strictness with practicality for technica
 - ✅ Correct: `## Heading`
 - ❌ Incorrect: `Heading\n-------`
 
-**MD004**: Unordered list style - Dash style
+**MD007**: List indentation - 2-space indent for nested lists
 
-- ✅ Correct: `- List item`
-- ❌ Incorrect: `* List item` or `+ List item`
+- ✅ Correct: Nested lists indented by 2 spaces
+- Ensures consistent list hierarchy
 
 **MD024**: Multiple headers with same content (siblings_only)
 
 - Same headers allowed in different sections
 - Helps with FAQ sections and repeated patterns
 
-**MD046**: Code block style - Fenced (` ``` `)
+**MD049**: Emphasis style - Asterisk style for italics
 
-- ✅ Correct: ` ```language\ncode\n``` `
-- ❌ Incorrect: Indented code blocks
+- ✅ Correct: `*italic*`
+- ❌ Incorrect: `_italic_`
+
+**MD050**: Strong style - Asterisk style for bold
+
+- ✅ Correct: `**bold**`
+- ❌ Incorrect: `__bold__`
 
 ### Disabled Rules (With Rationale)
 
@@ -792,29 +797,14 @@ We use `.markdownlintrc` that balances strictness with practicality for technica
   - Table content
 - **Best practice**: Still try to keep prose under 100 characters when possible
 
-**MD026 (Trailing punctuation in headers)**: Disabled
+**MD033 (Inline HTML)**: Disabled
 
-- **Why**: Allows headers like:
-  - `## What's Good ✅`
-  - `## What's Bad ❌`
-  - `## Prerequisites?`
-- Emojis and question marks can improve readability
-
-**MD033 (Inline HTML)**: Disabled with limits
-
-- **Why**: Allows specific HTML elements for styling:
-  - `<div align="center">` for centering content
-  - `<img>` for logo/images with specific attributes
-  - `<h1>`, `<h3>`, `<p>`, `<strong>`, `<a>` for README styling
-- **Guideline**: Still discouraged outside README and landing pages
-
-**MD040 (Code block language)**: Disabled
-
-- **Why**: Many examples use plain text or outputs:
-  - Command outputs
-  - Generic text examples
-  - Multi-language snippets
-- **Best practice**: Add language when known (bash, python, json, etc.)
+- **Why**: Technical documentation often requires HTML for:
+  - Complex layouts and styling
+  - README badges and branding
+  - Interactive elements
+  - Compatibility with various markdown renderers
+- **Guideline**: Use sparingly and only when markdown syntax is insufficient
 
 **MD041 (First line should be header)**: Disabled
 
