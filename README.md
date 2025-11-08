@@ -327,6 +327,16 @@ Want to see Spec Kit in action? Watch our [video overview](https://www.youtube.c
 | [Amazon Q Developer CLI](https://aws.amazon.com/developer/learning/q-developer-cli/) | ⚠️ | Amazon Q Developer CLI [does not support](https://github.com/aws/amazon-q-developer-cli/issues/3064) custom arguments for slash commands. |
 | [Amp](https://ampcode.com/) | ✅ | |
 
+### Cross-Platform Support
+
+All packages include **both bash and PowerShell scripts**, providing seamless cross-platform support:
+
+- **Unix/Linux/macOS**: Uses `scripts/bash/` automatically
+- **Windows**: Uses `scripts/powershell/` automatically
+- **Git Bash on Windows**: Uses bash scripts
+
+No need to choose between sh/ps packages - one package works everywhere!
+
 ## 🔧 Specify CLI Reference
 
 The `specify` command supports the following options:
