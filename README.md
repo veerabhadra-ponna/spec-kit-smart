@@ -223,6 +223,44 @@ Comprehensive analysis with:
 3. **Security Audits** - Identify vulnerabilities and compliance gaps
 4. **Migration Decisions** - Upgrade-in-place vs rewrite with feasibility scoring
 
+### How It Works (Technical Implementation)
+
+The reverse engineering system uses a **bash orchestration script** that invokes **Python analysis modules**:
+
+**Execution Flow:**
+
+1. `/speckit.analyze-project` command (AI agent)
+2. → `scripts/bash/analyze-project.sh` (orchestration, validation, file I/O)
+3. → Generates `run_analysis.py` script dynamically
+4. → `run_analysis.py` imports and executes Python modules:
+   - `scanner.py` - Tech stack detection, code metrics calculation
+   - `dependency_analyzer.py` - Dependency health analysis
+   - `scoring_engine.py` - Feasibility score calculation (0-100)
+   - `report_generator.py` - Markdown report generation
+   - `security.py` - Security validation and CVE detection
+   - **Language-specific analyzers**:
+     - `languages/java.py` - Java/Spring Boot analysis
+     - `languages/python.py` - Python/Django/Flask analysis
+     - `languages/javascript.py` - Node.js/React analysis
+     - `languages/dotnet.py` - .NET/C# analysis
+
+**Note:** The Python modules are **library code**, not standalone CLI commands. They are invoked exclusively through the bash orchestration script. Direct Python execution is not supported.
+
+**Requirements:**
+
+- Python 3.10+ (detected automatically by bash script)
+- Optional external tools for enhanced analysis:
+  - `npm audit` / `pip-audit` - Automated dependency scanning
+  - `cloc` / `tokei` - Code metrics calculation
+  - Snyk / OWASP - Advanced security vulnerability detection
+
+**Generated Output:**
+
+- `analysis-report.md` - Complete assessment with scores
+- `upgrade-plan.md` - 9-phase upgrade roadmap
+- `recommended-constitution.md` - Derived project principles
+- `metrics-summary.json` - Machine-readable metrics
+
 ### Workflows
 
 **Inline Upgrade**: Follow `upgrade-plan.md` → Fix critical issues → Upgrade incrementally
