@@ -50,6 +50,7 @@ Problem → Action
 **Available Capabilities:** The toolkit provides cross-platform scripts (bash + PowerShell) for common operations. Agents SHOULD leverage these instead of implementing from scratch.
 
 **Script Locations:**
+
 - Bash: `.specify/scripts/bash/`
 - PowerShell: `.specify/scripts/powershell/`
 
@@ -64,15 +65,18 @@ Problem → Action
 | File validation | Checks file existence | `check_file()` | `Test-FileExists` |
 
 **Environment Variables:**
+
 - `SPECIFY_FEATURE`: Override feature detection (useful for CI/CD)
 - Standard git env vars (GIT_DIR, etc.) work as expected
 
 **OS Detection:** Agents CAN detect OS from:
+
 1. Bash presence → Unix-like (Linux/macOS)
 2. PowerShell presence → Windows (or cross-platform)
 3. Script file extensions in project (.sh → bash, .ps1 → PowerShell)
 
 **Pre-commit Hooks:** Check for:
+
 - `.pre-commit-config.yaml` (pre-commit framework)
 - `.git/hooks/pre-commit` (manual hooks)
 - `package.json` → `husky`, `lint-staged`
@@ -290,6 +294,7 @@ project-root/
 ### 7.1 Version Control
 
 **Commit Rules:**
+
 - **MUST** atomic commits (1 story/scenario)
 - **MUST** commit after validation passes (§5.1)
 - **MUST** reference feature + spec sections
