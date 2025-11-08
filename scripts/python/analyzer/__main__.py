@@ -260,13 +260,18 @@ def main():
             with open(metrics_summary_path, 'w', encoding='utf-8') as f:
                 metrics_summary = {
                     "lines_of_code": metrics.lines_of_code,
-                    "file_count": metrics.file_count,
+                    "file_count": scan_result.metrics.file_count,
                     "test_coverage": metrics.test_coverage,
                     "code_quality_score": metrics.code_quality_score,
                     "technical_debt_percentage": metrics.technical_debt_percentage,
                     "modularity_score": metrics.modularity_score,
-                    "has_ci_cd": metrics.has_ci_cd,
-                    "has_tests": metrics.has_tests,
+                    "architecture_score": metrics.architecture_score,
+                    "has_ci_cd": scan_result.structure.has_ci_cd,
+                    "has_tests": scan_result.structure.has_tests,
+                    "total_dependencies": metrics.total_dependencies,
+                    "outdated_dependencies": metrics.outdated_dependencies,
+                    "vulnerable_dependencies": metrics.vulnerable_dependencies,
+                    "deprecated_dependencies": metrics.deprecated_dependencies,
                     "tech_stack": {
                         "primary_language": scan_result.tech_stack.primary_language,
                         "languages": scan_result.tech_stack.languages,
