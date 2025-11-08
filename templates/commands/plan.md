@@ -54,9 +54,9 @@ $ARGUMENTS
 
    **Format rules:**
 
-   - Each constraint on its own line starting with a dash (-)
-   - Type "none" to proceed without additional constraints
-   - Be specific about technology, architecture, performance, integration, or compliance requirements
+- Each constraint on its own line starting with a dash (-)
+- Type "none" to proceed without additional constraints
+- Be specific about technology, architecture, performance, integration, or compliance requirements
 
    **Examples of valid constraints:**
 
@@ -68,8 +68,8 @@ $ARGUMENTS
 
    **What happens next:**
 
-   - I'll incorporate your constraints into the architecture and design decisions
-   - If you type "none", I'll proceed with standard best practices from the specification
+- I'll incorporate your constraints into the architecture and design decisions
+- If you type "none", I'll proceed with standard best practices from the specification
 
    Once you provide your constraints (or type "none"), I'll proceed with generating the implementation plan.
 

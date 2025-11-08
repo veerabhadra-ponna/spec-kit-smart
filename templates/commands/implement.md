@@ -52,9 +52,9 @@ $ARGUMENTS
 
    **Format rules:**
 
-   - Each note on its own line starting with a dash (-)
-   - Type "none" to proceed with standard implementation
-   - Be specific about execution order, scope, testing, priorities, or constraints
+- Each note on its own line starting with a dash (-)
+- Type "none" to proceed with standard implementation
+- Be specific about execution order, scope, testing, priorities, or constraints
 
    **Examples of valid implementation notes:**
 
@@ -66,8 +66,8 @@ $ARGUMENTS
 
    **What happens next:**
 
-   - I'll follow your notes during implementation
-   - If you type "none", I'll execute the task plan using standard best practices
+- I'll follow your notes during implementation
+- If you type "none", I'll execute the task plan using standard best practices
 
    Once you provide your notes (or type "none"), I'll proceed with executing the implementation plan.
 
