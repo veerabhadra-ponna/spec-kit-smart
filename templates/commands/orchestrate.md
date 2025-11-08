@@ -82,6 +82,38 @@ The user input may contain a mixture of:
 
 If user input contains multiple components, you will pass the appropriate extracted content to each phase.
 
+### Extraction Validation Rules
+
+**CRITICAL: After extraction, validate inputs:**
+
+1. **EXTRACTED_FEATURE must not be empty:**
+   - If empty: ERROR - cannot proceed without a feature description
+   - Minimum length: 10 characters
+   - Ask user: "What feature do you want to build?"
+
+2. **Keep related clauses together:**
+   - "Add X using Y" → Keep full phrase, note "using Y" as constraint
+   - Don't split mid-sentence - preserve context
+
+3. **Handle ambiguity:**
+   - If only constraints provided (no feature) → Request feature description
+   - If only feature provided (no constraints) → Proceed with defaults
+   - If extraction unclear → Show what was extracted, ask for confirmation
+
+**Example Extractions:**
+
+**Input 1:** "Add user authentication using OAuth2. Must support Google and GitHub. Response time < 100ms. Follow clean architecture."
+
+**Extracted:**
+
+- Principles: "Follow clean architecture"
+- Functional: "Add user authentication. Must support Google and GitHub providers."
+- Technical: "using OAuth2, Response time < 100ms, Must support Google and GitHub"
+
+**Input 2:** "Must use PostgreSQL. < 200ms response time." (INVALID - no feature!)
+
+**Action:** ERROR - "No feature description found. Please provide what you want to build."
+
 ## Workflow State Management
 
 ### State File: `.speckit-state.json`
