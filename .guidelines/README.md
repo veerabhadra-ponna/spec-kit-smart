@@ -17,9 +17,8 @@ Constitution always wins. If constitution says "MUST use PostgreSQL" but guideli
 ```text
 .guidelines/
 ├── README.md                    # This file
-├── branch-config.json           # Branch naming configuration (Phase 2)
-├── stack-mapping.json           # Multi-stack path mapping (Phase 3)
-├── branching-guidelines.md      # Branch naming conventions
+├── branch-config.json           # Branch naming configuration
+├── stack-mapping.json           # Multi-stack path mapping
 ├── reactjs-guidelines.md        # React/frontend standards
 ├── java-guidelines.md           # Java/Spring Boot standards
 ├── dotnet-guidelines.md         # .NET/C# standards
@@ -88,6 +87,12 @@ Precedence (highest to lowest):
 2. File extension (`*.tsx` → React, `*.java` → Java)
 3. Directory convention (`frontend/` → React, `backend/` → Java)
 4. Auto-detection (project markers)
+
+## Branch Configuration
+
+**Note**: Branch naming strategy is handled by `branch-config.json` (machine-readable configuration) and scripts (`scripts/bash/create-new-feature.sh`), not by markdown guidelines. AI agents should use the JSON configuration for deterministic branch creation.
+
+See `docs/branching-strategy.md` for user documentation on the branching system.
 
 ## Customization
 
