@@ -51,9 +51,9 @@ $ARGUMENTS
 
    **Format rules:**
 
-   - Each preference on its own line starting with a dash (-)
-   - Type "none" to use standard task breakdown
-   - Be specific about task size, grouping, priority, scope, or detail level
+- Each preference on its own line starting with a dash (-)
+- Type "none" to use standard task breakdown
+- Be specific about task size, grouping, priority, scope, or detail level
 
    **Examples of valid task generation preferences:**
 
@@ -65,8 +65,8 @@ $ARGUMENTS
 
    **What happens next:**
 
-   - I'll apply your preferences when breaking down the implementation plan into tasks
-   - If you type "none", I'll use standard task breakdown by user story with default sizing
+- I'll apply your preferences when breaking down the implementation plan into tasks
+- If you type "none", I'll use standard task breakdown by user story with default sizing
 
    **Once you provide your preferences (or type "none"), I'll proceed with generating the task breakdown.**
 
