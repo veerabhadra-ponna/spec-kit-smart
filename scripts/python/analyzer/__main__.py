@@ -113,8 +113,27 @@ def main():
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
-    project_path = Path(args.project).resolve()
-    output_path = Path(args.output).resolve()
+    # Validate and resolve paths
+    try:
+        project_path = Path(args.project).resolve()
+        if not project_path.exists():
+            logger.error(f"Project path does not exist: {args.project}")
+            sys.exit(1)
+        if not project_path.is_dir():
+            logger.error(f"Project path is not a directory: {args.project}")
+            sys.exit(1)
+    except (OSError, RuntimeError) as e:
+        logger.error(f"Cannot access project path: {e}")
+        sys.exit(1)
+
+    # Create output directory if it doesn't exist
+    try:
+        output_path = Path(args.output).resolve()
+        output_path.mkdir(parents=True, exist_ok=True)
+    except (OSError, PermissionError) as e:
+        logger.error(f"Cannot create output directory: {e}")
+        sys.exit(1)
+
     project_name = project_path.name
 
     logger.info(f"Starting analysis of: {project_path}")
@@ -202,55 +221,61 @@ def main():
         dependency_audit_path = output_path / "dependency-audit.json"
         metrics_summary_path = output_path / "metrics-summary.json"
 
-        with open(dependency_audit_path, 'w') as f:
-            dep_summary = {
-                "reports": [
-                    {
-                        "ecosystem": r.ecosystem,
-                        "total": r.total_dependencies,
-                        "outdated": r.outdated_count,
-                        "vulnerable": r.vulnerable_count,
-                        "deprecated": r.deprecated_count,
-                        "issues": [
-                            {
-                                "package": i.package_name,
-                                "current_version": i.current_version,
-                                "latest_version": i.latest_version,
-                                "severity": i.severity,
-                                "type": i.issue_type,
-                                "cve": i.cve
-                            }
-                            for i in r.issues[:10]  # Top 10 issues
-                        ]
-                    }
-                    for r in dependency_reports
-                ]
-            }
-            json.dump(dep_summary, f, indent=2)
-
-        logger.info(f"✓ Saved dependency audit to: {dependency_audit_path}")
-
-        with open(metrics_summary_path, 'w') as f:
-            metrics_summary = {
-                "lines_of_code": metrics.lines_of_code,
-                "file_count": metrics.file_count,
-                "test_coverage": metrics.test_coverage,
-                "code_quality_score": metrics.code_quality_score,
-                "technical_debt_percentage": metrics.technical_debt_percentage,
-                "modularity_score": metrics.modularity_score,
-                "has_ci_cd": metrics.has_ci_cd,
-                "has_tests": metrics.has_tests,
-                "tech_stack": {
-                    "primary_language": scan_result.tech_stack.primary_language,
-                    "languages": scan_result.tech_stack.languages,
-                    "frameworks": scan_result.tech_stack.frameworks,
-                    "build_tools": scan_result.tech_stack.build_tools,
-                    "runtime_version": scan_result.tech_stack.runtime_version
+        try:
+            with open(dependency_audit_path, 'w', encoding='utf-8') as f:
+                dep_summary = {
+                    "reports": [
+                        {
+                            "ecosystem": r.ecosystem,
+                            "total": r.total_dependencies,
+                            "outdated": r.outdated_count,
+                            "vulnerable": r.vulnerable_count,
+                            "deprecated": r.deprecated_count,
+                            "issues": [
+                                {
+                                    "package": i.package_name,
+                                    "current_version": i.current_version,
+                                    "latest_version": i.latest_version,
+                                    "severity": i.severity,
+                                    "type": i.issue_type,
+                                    "cve": i.cve
+                                }
+                                for i in r.issues[:10]  # Top 10 issues
+                            ]
+                        }
+                        for r in dependency_reports
+                    ]
                 }
-            }
-            json.dump(metrics_summary, f, indent=2)
+                json.dump(dep_summary, f, indent=2)
+            logger.info(f"✓ Saved dependency audit to: {dependency_audit_path}")
+        except (OSError, IOError) as e:
+            logger.error(f"Failed to save dependency audit: {e}")
+            # Continue execution - this is not critical
 
-        logger.info(f"✓ Saved metrics summary to: {metrics_summary_path}")
+        try:
+            with open(metrics_summary_path, 'w', encoding='utf-8') as f:
+                metrics_summary = {
+                    "lines_of_code": metrics.lines_of_code,
+                    "file_count": metrics.file_count,
+                    "test_coverage": metrics.test_coverage,
+                    "code_quality_score": metrics.code_quality_score,
+                    "technical_debt_percentage": metrics.technical_debt_percentage,
+                    "modularity_score": metrics.modularity_score,
+                    "has_ci_cd": metrics.has_ci_cd,
+                    "has_tests": metrics.has_tests,
+                    "tech_stack": {
+                        "primary_language": scan_result.tech_stack.primary_language,
+                        "languages": scan_result.tech_stack.languages,
+                        "frameworks": scan_result.tech_stack.frameworks,
+                        "build_tools": scan_result.tech_stack.build_tools,
+                        "runtime_version": scan_result.tech_stack.runtime_version
+                    }
+                }
+                json.dump(metrics_summary, f, indent=2)
+            logger.info(f"✓ Saved metrics summary to: {metrics_summary_path}")
+        except (OSError, IOError) as e:
+            logger.error(f"Failed to save metrics summary: {e}")
+            # Continue execution - this is not critical
 
         # Output JSON summary if requested
         if args.json:
