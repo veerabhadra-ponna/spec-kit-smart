@@ -6,22 +6,16 @@
 
 **Solution**: Unified package containing both script types with intelligent OS detection at the AI agent level.
 
-## Why Previous Launcher Approach Failed
-
-The previous attempt created `.sh` launcher scripts in `scripts/launchers/` directory:
-- ❌ `.sh` files don't execute properly on Windows (even with Git Bash)
-- ❌ Required users to have bash available on Windows
-- ❌ Path resolution issues in packaged releases
-- ❌ Still OS-dependent (required sh-compatible environment)
-
-## Recommended Solution: "Intelligent Unified Package"
+## Solution Architecture: "Intelligent Unified Package"
 
 ### Three-Layer Approach
 
 #### Layer 1: AI Agent OS Detection (Primary)
-**The AI agents themselves detect OS and run appropriate scripts**
+
+The AI agents themselves detect OS and run appropriate scripts.
 
 **Why this works:**
+
 - ✅ No launcher scripts needed
 - ✅ All AI agents already have OS detection capabilities
 - ✅ Works across all platforms (Claude, Gemini, Copilot, etc.)
@@ -29,12 +23,14 @@ The previous attempt created `.sh` launcher scripts in `scripts/launchers/` dire
 - ✅ Simplest implementation
 
 **How it works:**
+
 1. Unified package contains BOTH `scripts/bash/` and `scripts/powershell/` directories
 2. Prompts include OS detection instructions for the AI
 3. AI detects platform using standard commands (`uname`, `$env:OS`, etc.)
 4. AI executes the appropriate script based on detection
 
 **Example prompt modification:**
+
 ```markdown
 ## Setup
 
@@ -46,21 +42,25 @@ scripts/bash/setup-plan.sh --json
 ```
 
 **On Windows (PowerShell):**
+
 ```powershell
 scripts/powershell/setup-plan.ps1 -Json
 ```
 
 **OS Detection:**
+
 - Run `uname` - if it succeeds, you're on Unix/Linux/macOS
 - Check `$env:OS` or `$IsWindows` - if "Windows_NT" or true, you're on Windows
 - Use `scripts/bash/` for Unix-like systems
 - Use `scripts/powershell/` for Windows systems
 
 Parse the JSON output for: FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH
-```
+
+```text
 
 #### Layer 2: Environment Variable Override (Fallback)
-**Support explicit OS specification via environment variable**
+
+Support explicit OS specification via environment variable.
 
 **Variable:** `SPEC_KIT_PLATFORM`
 
@@ -88,10 +88,12 @@ if ($env:SPEC_KIT_PLATFORM -eq 'unix') {
 ```
 
 #### Layer 3: Unified Package Structure
-**Single package containing both script implementations**
+
+Single package containing both script implementations.
 
 **New package structure:**
-```
+
+```text
 spec-kit-template-{agent}-unified-{version}.zip
 ├── .specify/
 │   ├── scripts/
@@ -117,6 +119,7 @@ spec-kit-template-{agent}-unified-{version}.zip
 ```
 
 **Package count reduction:**
+
 - Before: 28 packages (14 agents × 2 script types)
 - After: 14 packages (14 agents × 1 unified)
 - **50% reduction** in release artifacts
@@ -157,142 +160,155 @@ On Unix/Linux/macOS, run:
 ```bash
 uname
 ```
+
 If successful, you're on a Unix-like system → Use bash scripts
 
 On Windows, check:
+
 ```powershell
 $env:OS
 $IsWindows
 ```
+
 If `$env:OS` equals "Windows_NT" or `$IsWindows` is true → Use PowerShell scripts
 
-**Step 2: Run Setup Script**
+## Step 2: Run Setup Script
 
 **For Unix/Linux/macOS (bash):**
+
 ```bash
 {SCRIPT_BASH}
 ```
 
 **For Windows (PowerShell):**
+
 ```powershell
 {SCRIPT_POWERSHELL}
 ```
 
 Parse the JSON output for: FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH
-```
+
+```text
 
 ### Step 2: Update Build Script
 
 **Modify `create-release-packages.sh`:**
 
 1. **Change function signature** to remove script variant:
-```bash
-# Before:
-build_variant() {
-  local agent=$1 script=$2
 
-# After:
-build_unified() {
-  local agent=$1
-```
+    ```bash
+    # Before:
+    build_variant() {
+      local agent=$1 script=$2
 
-2. **Copy BOTH script directories:**
-```bash
-# New implementation:
-if [[ -d scripts ]]; then
-  mkdir -p "$SPEC_DIR/scripts"
-  # Copy both bash and powershell directories
-  [[ -d scripts/bash ]] && {
-    cp -r scripts/bash "$SPEC_DIR/scripts/"
-    echo "Copied scripts/bash -> .specify/scripts"
-  }
-  [[ -d scripts/powershell ]] && {
-    cp -r scripts/powershell "$SPEC_DIR/scripts/"
-    echo "Copied scripts/powershell -> .specify/scripts"
-  }
-  # Copy any root-level scripts
-  find scripts -maxdepth 1 -type f -exec cp {} "$SPEC_DIR/scripts/" \; 2>/dev/null || true
-fi
-```
+    # After:
+    build_unified() {
+      local agent=$1
+    ```
 
-3. **Update command generation** to include both script paths:
-```bash
-generate_commands() {
-  local agent=$1 ext=$2 arg_format=$3 output_dir=$4
-  # Remove script_variant parameter
+1. **Copy BOTH script directories:**
 
-  for template in templates/commands/*.md; do
-    # Extract BOTH script commands
-    script_bash=$(awk '/^[[:space:]]*bash:[[:space:]]*/ {...}')
-    script_powershell=$(awk '/^[[:space:]]*powershell:[[:space:]]*/ {...}')
+    ```bash
+    # New implementation:
+    if [[ -d scripts ]]; then
+      mkdir -p "$SPEC_DIR/scripts"
+      # Copy both bash and powershell directories
+      [[ -d scripts/bash ]] && {
+        cp -r scripts/bash "$SPEC_DIR/scripts/"
+        echo "Copied scripts/bash -> .specify/scripts"
+      }
+      [[ -d scripts/powershell ]] && {
+        cp -r scripts/powershell "$SPEC_DIR/scripts/"
+        echo "Copied scripts/powershell -> .specify/scripts"
+      }
+      # Copy any root-level scripts
+      find scripts -maxdepth 1 -type f -exec cp {} "$SPEC_DIR/scripts/" \; 2>/dev/null || true
+    fi
+    ```
 
-    # Replace placeholders
-    body=$(sed "s|{SCRIPT_BASH}|${script_bash}|g" "$template")
-    body=$(sed "s|{SCRIPT_POWERSHELL}|${script_powershell}|g" "$body")
+1. **Update command generation** to include both script paths:
 
-    # Keep scripts section in frontmatter for AI reference
-    # Don't remove it anymore
-  done
-}
-```
+    ```bash
+    generate_commands() {
+      local agent=$1 ext=$2 arg_format=$3 output_dir=$4
+      # Remove script_variant parameter
 
-4. **Update main loop** to build unified packages:
-```bash
-# Before:
-for agent in "${AGENT_LIST[@]}"; do
-  for script in "${SCRIPT_LIST[@]}"; do
-    build_variant "$agent" "$script"
-  done
-done
+      for template in templates/commands/*.md; do
+        # Extract BOTH script commands
+        script_bash=$(awk '/^[[:space:]]*bash:[[:space:]]*/ {...}')
+        script_powershell=$(awk '/^[[:space:]]*powershell:[[:space:]]*/ {...}')
 
-# After:
-for agent in "${AGENT_LIST[@]}"; do
-  build_unified "$agent"
-done
+        # Replace placeholders
+        body=$(sed "s|{SCRIPT_BASH}|${script_bash}|g" "$template")
+        body=$(sed "s|{SCRIPT_POWERSHELL}|${script_powershell}|g" "$body")
 
-# Remove SCRIPTS env var support (no longer needed)
-```
+        # Keep scripts section in frontmatter for AI reference
+        # Don't remove it anymore
+      done
+    }
+    ```
 
-5. **Update package naming:**
-```bash
-# Before:
-spec-kit-template-${agent}-${script}-${NEW_VERSION}.zip
+1. **Update main loop** to build unified packages:
 
-# After:
-spec-kit-template-${agent}-unified-${NEW_VERSION}.zip
-# Or simply:
-spec-kit-template-${agent}-${NEW_VERSION}.zip
-```
+    ```bash
+    # Before:
+    for agent in "${AGENT_LIST[@]}"; do
+      for script in "${SCRIPT_LIST[@]}"; do
+        build_variant "$agent" "$script"
+      done
+    done
+
+    # After:
+    for agent in "${AGENT_LIST[@]}"; do
+      build_unified "$agent"
+    done
+
+    # Remove SCRIPTS env var support (no longer needed)
+    ```
+
+1. **Update package naming:**
+
+    ```bash
+    # Before:
+    spec-kit-template-${agent}-${script}-${NEW_VERSION}.zip
+
+    # After:
+    spec-kit-template-${agent}-unified-${NEW_VERSION}.zip
+    # Or simply:
+    spec-kit-template-${agent}-${NEW_VERSION}.zip
+    ```
 
 ### Step 3: Update Workflow Files
 
 **Modify `.github/workflows/release.yml`:**
 
 1. Remove script matrix:
-```yaml
-# Before:
-strategy:
-  matrix:
-    agent: [claude, gemini, ...]
-    script: [sh, ps]
 
-# After:
-strategy:
-  matrix:
-    agent: [claude, gemini, ...]
-```
+    ```yaml
+    # Before:
+    strategy:
+      matrix:
+        agent: [claude, gemini, ...]
+        script: [sh, ps]
 
-2. Update artifact paths:
-```yaml
-# Before:
-path: .genreleases/spec-kit-template-*-sh-*.zip
-path: .genreleases/spec-kit-template-*-ps-*.zip
+    # After:
+    strategy:
+      matrix:
+        agent: [claude, gemini, ...]
+    ```
 
-# After:
-path: .genreleases/spec-kit-template-*-unified-*.zip
-# Or:
-path: .genreleases/spec-kit-template-*-v*.zip
-```
+1. Update artifact paths:
+
+    ```yaml
+    # Before:
+    path: .genreleases/spec-kit-template-*-sh-*.zip
+    path: .genreleases/spec-kit-template-*-ps-*.zip
+
+    # After:
+    path: .genreleases/spec-kit-template-*-unified-*.zip
+    # Or:
+    path: .genreleases/spec-kit-template-*-v*.zip
+    ```
 
 ### Step 4: Documentation Updates
 
@@ -330,23 +346,25 @@ export SPEC_KIT_PLATFORM=windows
 - **Unix/Linux/macOS**: Requires bash 4.0+
 - **Windows**: Requires PowerShell 5.1+ or PowerShell Core 7+
 - **Git Bash on Windows**: Uses bash scripts automatically
-```
 
 ## Benefits
 
 ### For Developers
+
 - ✅ **One package for all environments** - Download once, use everywhere
 - ✅ **Seamless switching** - Move between Windows laptop and Linux cloud without re-downloading
 - ✅ **Explicit control** - Override detection with environment variable
 - ✅ **Better DX** - No confusion about which package to download
 
 ### For Maintainers
+
 - ✅ **50% fewer packages** - 14 instead of 28
 - ✅ **Simpler releases** - Half the artifacts to upload and test
 - ✅ **No launcher complexity** - AI handles OS detection
 - ✅ **Future-proof** - Easy to add more platforms (e.g., Python scripts)
 
 ### For AI Agents
+
 - ✅ **Platform-aware execution** - Use existing OS detection capabilities
 - ✅ **Fallback support** - Environment variable override for edge cases
 - ✅ **Clear instructions** - Prompts explain exactly what to do
@@ -355,16 +373,19 @@ export SPEC_KIT_PLATFORM=windows
 ## Migration Path
 
 ### Phase 1: Dual Support (Transition Period)
+
 - Generate BOTH old (sh/ps) and new (unified) packages
 - Users can test unified packages while old ones still work
 - Deprecation notice in old package README
 
 ### Phase 2: Unified Only
+
 - Stop generating sh/ps packages
 - Only unified packages in releases
 - Update all documentation
 
 ### Phase 3: Cleanup
+
 - Remove sh/ps build logic from scripts
 - Archive old packages
 - Finalize documentation
@@ -397,73 +418,17 @@ export SPEC_KIT_PLATFORM=windows
    - GitHub Actions (Windows runner)
    - Docker container
 
-## Alternative Solutions Considered
-
-### Alternative 1: Node.js Launcher
-**Pros:**
-- Node.js widely available
-- Easy to write cross-platform code
-- Single launcher file
-
-**Cons:**
-- ❌ Requires Node.js installed
-- ❌ Not all environments have Node
-- ❌ Adds external dependency
-- ❌ Slower than direct script execution
-
-### Alternative 2: Python Launcher
-**Pros:**
-- Python commonly available
-- Cross-platform by design
-- Standard library has OS detection
-
-**Cons:**
-- ❌ Requires Python installed
-- ❌ Not always available on minimal containers
-- ❌ Adds external dependency
-
-### Alternative 3: Dual Launcher Files
-**Pros:**
-- No external dependencies
-- Platform-native execution
-
-**Cons:**
-- ❌ Still requires OS-specific files (.sh + .cmd)
-- ❌ Similar to failed previous approach
-- ❌ More files to maintain
-
-### Alternative 4: Compiled Binary
-**Pros:**
-- No runtime dependencies
-- Fast execution
-
-**Cons:**
-- ❌ Need separate binaries for each platform
-- ❌ Defeats purpose of unified package
-- ❌ Complex build process
-
-## Why AI Agent Detection is Superior
-
-The recommended solution (AI agent OS detection) beats all alternatives:
-
-| Criteria | AI Detection | Node.js | Python | Dual Files | Binary |
-|----------|--------------|---------|---------|------------|--------|
-| No external dependencies | ✅ | ❌ | ❌ | ✅ | ✅ |
-| Single launcher file | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Works in all environments | ✅ | ❌ | ❌ | ⚠️ | ❌ |
-| Simple implementation | ✅ | ⚠️ | ⚠️ | ⚠️ | ❌ |
-| Fast execution | ✅ | ⚠️ | ⚠️ | ✅ | ✅ |
-| Maintainability | ✅ | ⚠️ | ⚠️ | ❌ | ❌ |
-
 ## Rollout Plan
 
 ### Week 1: Implementation
+
 - [ ] Update all 10 prompt templates with OS detection sections
 - [ ] Modify build script to generate unified packages
 - [ ] Update workflow to build unified packages
 - [ ] Add environment variable documentation
 
 ### Week 2: Testing
+
 - [ ] Test on Windows 10/11 with PowerShell 5.1
 - [ ] Test on Windows with PowerShell Core 7
 - [ ] Test on Ubuntu 20.04/22.04
@@ -471,18 +436,21 @@ The recommended solution (AI agent OS detection) beats all alternatives:
 - [ ] Test with Claude, Gemini, Copilot agents
 
 ### Week 3: Dual Release
+
 - [ ] Generate both old (sh/ps) and new (unified) packages
 - [ ] Add deprecation notice to old packages
 - [ ] Update documentation with migration guide
 - [ ] Announce unified packages
 
 ### Week 4: Monitor & Iterate
+
 - [ ] Collect user feedback
 - [ ] Fix any edge cases
 - [ ] Improve OS detection instructions if needed
 - [ ] Plan for full migration
 
 ### Week 5+: Full Migration
+
 - [ ] Remove old package generation
 - [ ] Update all documentation
 - [ ] Archive old packages
@@ -497,12 +465,12 @@ The recommended solution (AI agent OS detection) beats all alternatives:
 - ✅ Zero reported issues with cross-platform execution
 - ✅ Developer satisfaction improves (survey after 1 month)
 
-## Conclusion
+## Implementation Summary
 
-The **AI Agent OS Detection** approach is the simplest, most maintainable solution that requires:
-- ✅ No launcher scripts
-- ✅ No external dependencies
-- ✅ Minimal code changes
-- ✅ Maximum compatibility
+The unified package solution provides:
 
-It leverages the AI agents' existing capabilities and provides explicit control via environment variables when needed.
+- ✅ Single package for all platforms (Windows, Linux, macOS)
+- ✅ AI agent-based OS detection (no launcher scripts)
+- ✅ Environment variable override for explicit control
+- ✅ 50% reduction in package count (14 instead of 28)
+- ✅ Simple implementation with minimal code changes
