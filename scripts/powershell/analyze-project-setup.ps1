@@ -130,22 +130,19 @@ if ($pythonCmd) {
             "--json"
         )
 
-        # Capture all output - use ErrorAction Continue to prevent exceptions on non-zero exit
-        $output = & $pythonCmd $analyzerArgs 2>&1
+        # Run analyzer and tee output to log file (this works better than capturing to variable)
+        & $pythonCmd $analyzerArgs 2>&1 | Tee-Object -FilePath $logPath | Out-Null
 
         # Capture exit code before Pop-Location resets it
         $analyzerExitCode = $LASTEXITCODE
     } catch {
-        # If we catch an exception, record it
-        $output = $_.Exception.Message
+        # If we catch an exception, log it
+        $_ | Out-File -FilePath $logPath -Append -Encoding utf8
         $analyzerExitCode = 1
     } finally {
         # Always pop location
         Pop-Location
     }
-
-    # Write full output to log file
-    $output | Out-File -FilePath $logPath -Encoding utf8
 
     # Check result
     if ($analyzerExitCode -eq 0) {
@@ -155,9 +152,7 @@ if ($pythonCmd) {
         $pythonAnalysisStatus = "failed"
         $pythonAnalysisError = "Python analyzer exit code: $analyzerExitCode - see $logPath"
         Write-Host "⚠ Python analyzer failed with exit code: $analyzerExitCode" -ForegroundColor Yellow
-        Write-Host "Full error output:" -ForegroundColor Yellow
-        $output | ForEach-Object { Write-Host $_ }
-        Write-Host "`nComplete log saved to: $logPath" -ForegroundColor Cyan
+        Write-Host "Check log file for details: $logPath" -ForegroundColor Cyan
     }
 } else {
     Write-Host "⚠ Python not available - will use AI-guided analysis" -ForegroundColor Yellow
