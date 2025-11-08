@@ -823,3 +823,132 @@ breaking_changes:
 **Reviewed by:** AI Senior Developer & Solution Architect
 **Recommendation:** Approve with minor security fixes
 **Next Steps:** Address critical items 1-3, then merge
+
+---
+
+## 11. Critical Bug Fix: Constitution Check Logic
+
+**Date:** 2025-11-08 (Post-Review Update)
+
+### Issue Identified by User
+
+**Original (WRONG) Logic:**
+```bash
+if [ -f memory/constitution.md ]; then
+  # Skip constitution - file exists
+fi
+```
+
+**Problem:**
+- `memory/constitution.md` ALWAYS exists (created during repo setup)
+- File contains template placeholders: `[PROJECT_NAME]`, `[PRINCIPLE_1_NAME]`, etc.
+- Wrong check: file existence vs content state
+- Result: Constitution never runs even with template placeholders
+
+### Root Cause Analysis
+
+**Constitution Workflow:**
+1. Repo setup creates `memory/constitution.md` with template placeholders
+2. `/speckit.constitution` command fills placeholders with actual principles
+3. Template state: Has `[PLACEHOLDER]` tokens
+4. Established state: Placeholders replaced with values
+
+**Correct Check:**
+- ✅ Check if placeholders exist (template state)
+- ❌ Check if file exists (always true)
+
+### Corrected Logic
+
+```bash
+# Check for placeholder tokens (template state)
+if grep -q "\[PROJECT_NAME\]" memory/constitution.md || \
+   grep -q "\[PRINCIPLE_1_NAME\]" memory/constitution.md || \
+   grep -q "\[CONSTITUTION_VERSION\]" memory/constitution.md; then
+
+  echo "⚠️  Constitution template found but not yet established"
+  echo "Running /speckit.constitution to fill in principles..."
+  # Run constitution workflow
+
+else
+  echo "✓ Constitution already established: memory/constitution.md"
+  echo "✓ Skipping constitution phase (no placeholders found)"
+  # Skip - already done
+fi
+```
+
+### Impact Assessment
+
+**Severity:** 🔴 CRITICAL
+
+**Affected:**
+- Orchestrate workflow PHASE 1
+- All first-time orchestrations would incorrectly skip constitution
+
+**Fixed In:**
+- `templates/commands/orchestrate.md:245-311`
+
+**User Impact:**
+- Before: Constitution always skipped (file exists check)
+- After: Constitution runs when placeholders detected
+- Subsequent features correctly skip (no placeholders)
+
+### Key Learning
+
+**Template vs Established State:**
+
+| State | File Exists | Has Placeholders | Action |
+|-------|-------------|------------------|--------|
+| **Template** | ✅ Yes | ✅ Yes | Run constitution |
+| **Established** | ✅ Yes | ❌ No | Skip constitution |
+| **Missing** | ❌ No | N/A | Error (should never happen) |
+
+**Wrong Assumption:** File existence = Constitution established
+**Correct Logic:** No placeholders = Constitution established
+
+### Related Files
+
+**Template Files:**
+- `memory/constitution.md` - Always exists, may have placeholders
+- `templates/recommended-constitution-template.md` - For reverse engineering flow (different use case)
+
+**Prompt Files:**
+- `templates/commands/constitution.md` - Fills placeholders
+- `templates/commands/plan.md` - Loads constitution (assumes established)
+
+### Recommendation
+
+**Add Similar Checks Everywhere Constitution is Referenced:**
+
+```bash
+# Pattern to use everywhere
+is_constitution_established() {
+    if [ ! -f memory/constitution.md ]; then
+        return 1  # File missing (error state)
+    fi
+    
+    # Check for common placeholder tokens
+    if grep -q "\[PROJECT_NAME\]" memory/constitution.md || \
+       grep -q "\[PRINCIPLE_" memory/constitution.md || \
+       grep -q "\[CONSTITUTION_VERSION\]" memory/constitution.md; then
+        return 1  # Template state (not established)
+    fi
+    
+    return 0  # Established
+}
+```
+
+### Updated Architecture Rating
+
+| Category | Before | After | Change |
+|----------|--------|-------|--------|
+| **Architecture** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | No change (design sound) |
+| **Correctness** | ⭐⭐☆☆☆ | ⭐⭐⭐⭐⭐ | 🔼 Fixed critical bug |
+
+**Overall Impact:** Major improvement in correctness
+
+---
+
+**Reviewed & Fixed by:** AI Senior Developer & Solution Architect
+**Issue Reported by:** User
+**Status:** ✅ FIXED
+**Commit:** Pending

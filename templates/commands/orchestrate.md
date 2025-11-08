@@ -244,20 +244,21 @@ Optional phases in brackets are skippable based on user preference or context.
 
 #### **PHASE 1: Constitution Check**
 
-**Purpose:** Ensure project constitution exists (run ONCE per repository)
+**Purpose:** Ensure project constitution is established (run ONCE per repository)
 
 **Smart Constitution Logic:**
 
 ```bash
-# Step 1: Check if constitution already exists
-if [ -f memory/constitution.md ]; then
-  echo "✓ Constitution already established: memory/constitution.md"
-  echo "✓ Skipping constitution phase (already exists)"
-  # Mark as completed-existing and proceed to specify
+# Step 1: Check if constitution is ESTABLISHED (not just file exists)
+# memory/constitution.md always exists but may contain template placeholders
 
-elif [ -f templates/recommended-constitution-template.md ]; then
-  echo "⚠️  No constitution found, but template exists"
-  echo "Running /speckit.constitution to establish principles..."
+# Check for placeholder tokens (template state)
+if grep -q "\[PROJECT_NAME\]" memory/constitution.md || \
+   grep -q "\[PRINCIPLE_1_NAME\]" memory/constitution.md || \
+   grep -q "\[CONSTITUTION_VERSION\]" memory/constitution.md; then
+
+  echo "⚠️  Constitution template found but not yet established"
+  echo "Running /speckit.constitution to fill in principles..."
 
   # Extract principles from user input (if any)
   EXTRACTED_PRINCIPLES="<extracted from user input in smart parsing step>"
@@ -267,11 +268,18 @@ elif [ -f templates/recommended-constitution-template.md ]; then
   # Wait for completion
 
 else
-  echo "⚠️  No constitution and no template found"
-  echo "Skipping constitution phase - proceeding with defaults"
-  # Proceed without constitution (optional for this toolkit)
+  echo "✓ Constitution already established: memory/constitution.md"
+  echo "✓ Skipping constitution phase (no placeholders found)"
+  # Mark as completed-existing and proceed to specify
 fi
 ```
+
+**Key Points:**
+
+- `memory/constitution.md` ALWAYS exists (created during repo setup)
+- Template contains placeholders: `[PROJECT_NAME]`, `[PRINCIPLE_1_NAME]`, `[PRINCIPLE_1_DESCRIPTION]`, etc.
+- Constitution is "established" when placeholders are replaced with actual values
+- Check for placeholder tokens to determine if constitution needs to be filled
 
 **State update:**
 
@@ -279,22 +287,29 @@ fi
 {
   "checkpoints": {
     "constitution": {
-      "status": "completed|skipped|completed-existing",
+      "status": "completed|completed-existing",
       "timestamp": "<timestamp>",
       "file": "memory/constitution.md",
-      "action": "created|skipped|reused-existing"
+      "action": "created|reused-existing",
+      "has_placeholders": false
     }
   },
   "current_phase": "specify",
   "context": {
-    "constitution_exists": true
+    "constitution_exists": true,
+    "constitution_established": true
   }
 }
 ```
 
-**Gate:** Constitution is OPTIONAL. If it exists, use it. If not, continue with defaults.
+**Gate:** Constitution is OPTIONAL but RECOMMENDED. If placeholders found, establish it. If already established, reuse it.
 
-**Rationale:** Constitution is established once per repository, not per feature. Subsequent orchestrations should skip this step if constitution already exists.
+**Rationale:**
+
+- Constitution is established once per repository, not per feature
+- Subsequent orchestrations skip this step if already established
+- Template file always exists, check content not file existence
+- `templates/recommended-constitution-template.md` is for reverse engineering flow (different use case)
 
 ---
 
