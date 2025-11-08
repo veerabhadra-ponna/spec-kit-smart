@@ -141,6 +141,7 @@ Additional nice-to-have features:
 **Goal**: Move from EXPERIMENTAL to PRODUCTION-READY status
 
 **Current Blockers**:
+
 - ❌ No unit tests (0% coverage)
 - ❌ Not tested on real-world projects (0 validations)
 - ❌ AI-guided workflow requires manual intervention
@@ -152,6 +153,7 @@ Additional nice-to-have features:
 #### 6.1 Testing & Validation (4-6 weeks) - HIGH PRIORITY
 
 **Unit Tests**:
+
 - [ ] Create `tests/` directory structure
 - [ ] Write unit tests for all Python modules:
   - [ ] `test_scanner.py` - Tech stack detection, metrics
@@ -166,6 +168,7 @@ Additional nice-to-have features:
 - [ ] Add CI/CD workflow for automated testing
 
 **Integration Tests**:
+
 - [ ] Test against 10+ real-world projects:
   - [ ] 3x Node.js projects (React, Vue, Express)
   - [ ] 2x Python projects (Django, Flask)
@@ -178,6 +181,7 @@ Additional nice-to-have features:
 - [ ] Add regression tests for discovered issues
 
 **Performance Testing**:
+
 - [ ] Test varying project sizes:
   - [ ] Small (< 10K LOC)
   - [ ] Medium (10K-100K LOC)
@@ -192,6 +196,7 @@ Additional nice-to-have features:
 - [ ] Target: < 30 minutes for 500K LOC, < 2GB RAM
 
 **Error Handling**:
+
 - [ ] Test error scenarios:
   - [ ] Missing/corrupted package.json
   - [ ] Inaccessible files/directories
@@ -205,12 +210,15 @@ Additional nice-to-have features:
 #### 6.2 Automation Improvements (3-4 weeks) - HIGH PRIORITY
 
 **Reduce AI Manual Intervention**:
+
 - [ ] Implement full automated report generation
 - [ ] Auto-populate all template sections from analysis data
 - [ ] Add CLI mode for non-interactive execution:
+
   ```bash
   python -m analyzer.main --project /path --depth STANDARD --output json
   ```
+
 - [ ] Implement automated decision-making:
   - [ ] Auto-recommend inline vs greenfield based on scores
   - [ ] Auto-prioritize issues by severity
@@ -218,6 +226,7 @@ Additional nice-to-have features:
 - [ ] Target: Complete analysis without AI agent intervention
 
 **External Tool Integration**:
+
 - [ ] Add automatic tool detection and installation suggestions
 - [ ] Improve fallback analysis quality (< 10% difference)
 - [ ] Add support for more package managers:
@@ -230,6 +239,7 @@ Additional nice-to-have features:
 - [ ] Add CVE database integration (offline mode)
 
 **Structured Output Formats**:
+
 - [x] JSON output format - Already exists
 - [ ] YAML output format
 - [ ] HTML report generation
@@ -239,6 +249,7 @@ Additional nice-to-have features:
 #### 6.3 User Validation (6-8 weeks) - MEDIUM PRIORITY
 
 **Beta Testing Program**:
+
 - [ ] Recruit 20+ beta testers:
   - [ ] Enterprise developers
   - [ ] Open source maintainers
@@ -255,6 +266,7 @@ Additional nice-to-have features:
 - [ ] Target: 80%+ satisfaction, < 5 critical bugs
 
 **Case Studies**:
+
 - [ ] Create 5+ detailed case studies:
   - [ ] Legacy Node.js app modernization
   - [ ] Java monolith assessment
@@ -268,6 +280,7 @@ Additional nice-to-have features:
 #### 6.4 Production Hardening (2-3 weeks) - MEDIUM PRIORITY
 
 **Security Audit**:
+
 - [ ] Security review of path validation logic
 - [ ] Test against malicious inputs:
   - [ ] Path traversal attacks
@@ -280,6 +293,7 @@ Additional nice-to-have features:
 - [ ] Target: Pass audit with 0 high/critical findings
 
 **Dependency Management**:
+
 - [ ] Create `requirements.txt` with pinned versions
 - [ ] Create `requirements-dev.txt` for dev tools
 - [ ] Test with minimum supported Python versions
@@ -288,6 +302,7 @@ Additional nice-to-have features:
 - [ ] Add `setup.py` or `pyproject.toml` for distribution
 
 **Cross-Platform Testing**:
+
 - [ ] Test on Linux (Ubuntu, Debian, Fedora, Arch)
 - [ ] Test on macOS (Intel + Apple Silicon)
 - [ ] Test on Windows (10, 11)
@@ -298,6 +313,7 @@ Additional nice-to-have features:
 #### 6.5 Documentation & Support (2 weeks) - MEDIUM PRIORITY
 
 **Documentation**:
+
 - [ ] API documentation for Python modules (Sphinx)
 - [ ] Developer guide for contributors
 - [ ] Detailed troubleshooting guide
@@ -307,6 +323,7 @@ Additional nice-to-have features:
 - [ ] Migration guide (alpha → v1.0)
 
 **Support Infrastructure**:
+
 - [ ] Create GitHub issue templates:
   - [ ] Bug report
   - [ ] Feature request
@@ -319,6 +336,7 @@ Additional nice-to-have features:
 #### 6.6 Release Engineering (1 week) - LOW PRIORITY
 
 **Version Management**:
+
 - [ ] Update version: v1.0.0-alpha → v1.0.0-beta1 (after 6.1)
 - [ ] Update version: v1.0.0-beta1 → v1.0.0-rc1 (after 6.2-6.3)
 - [ ] Update version: v1.0.0-rc1 → v1.0.0 (after 6.4-6.5)
@@ -329,6 +347,7 @@ Additional nice-to-have features:
 - [ ] Update README badges
 
 **Success Criteria for v1.0.0**:
+
 - ✅ 85%+ unit test coverage
 - ✅ 95%+ accuracy on 10+ real projects
 - ✅ Full automation (no AI intervention)
@@ -343,6 +362,7 @@ Additional nice-to-have features:
 ### Quick Wins (Can Start Immediately)
 
 **Week 1-2**:
+
 - [ ] Create `tests/` directory + basic test structure
 - [ ] Add pytest + pytest-cov to project
 - [ ] Create `requirements.txt` with pinned dependencies
@@ -350,6 +370,7 @@ Additional nice-to-have features:
 - [ ] Test on 3 diverse real projects
 
 **Week 3-4**:
+
 - [ ] Write unit tests for scanner.py, scoring_engine.py
 - [ ] Improve error messages with examples
 - [ ] Add CLI mode for non-interactive execution
