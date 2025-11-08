@@ -130,9 +130,10 @@ if ($pythonCmd) {
             "--json"
         )
 
-        # Run analyzer and tee output to log file
-        # Note: Don't use Out-Null as it can interfere with exit codes
-        & $pythonCmd $analyzerArgs 2>&1 | Tee-Object -FilePath $logPath | Out-Host
+        # Run analyzer and capture output
+        # Note: Don't use 2>&1 as PowerShell treats Python's stderr logging as errors
+        # This causes PowerShell to throw RemoteException and kill the process
+        & $pythonCmd $analyzerArgs *>&1 | Out-File -FilePath $logPath -Encoding utf8
 
         # Capture exit code before Pop-Location resets it
         $analyzerExitCode = $LASTEXITCODE
