@@ -130,10 +130,16 @@ if ($pythonCmd) {
             "--json"
         )
 
+        # Temporarily disable error action to prevent PowerShell from treating
+        # Python's stderr logging output as terminating errors
+        $previousErrorAction = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+
         # Run analyzer and capture output
-        # Note: Don't use 2>&1 as PowerShell treats Python's stderr logging as errors
-        # This causes PowerShell to throw RemoteException and kill the process
-        & $pythonCmd $analyzerArgs *>&1 | Out-File -FilePath $logPath -Encoding utf8
+        & $pythonCmd $analyzerArgs 2>&1 | Out-File -FilePath $logPath -Encoding utf8
+
+        # Restore error action preference
+        $ErrorActionPreference = $previousErrorAction
 
         # Capture exit code before Pop-Location resets it
         $analyzerExitCode = $LASTEXITCODE
@@ -141,6 +147,8 @@ if ($pythonCmd) {
         # If we catch an exception, log it
         $_ | Out-File -FilePath $logPath -Append -Encoding utf8
         $analyzerExitCode = 1
+        # Restore error action preference
+        $ErrorActionPreference = $previousErrorAction
     } finally {
         # Always pop location
         Pop-Location
