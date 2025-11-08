@@ -114,45 +114,45 @@ if ($pythonCmd) {
     # Try to run the Python analyzer
     Write-Host "Running Python analyzer..." -ForegroundColor Yellow
 
+    $logPath = Join-Path $analysisDir "analyzer-log.txt"
+
+    # Change to repository root to ensure Python can find the scripts module
+    Push-Location $repoRoot
+
     try {
-        $logPath = Join-Path $analysisDir "analyzer-log.txt"
-
-        # Change to repository root to ensure Python can find the scripts module
-        Push-Location $repoRoot
-
-        # Capture all output to log file
+        # Capture all output - use ErrorAction Continue to prevent exceptions on non-zero exit
         $output = & $pythonCmd -m scripts.python.analyzer `
             --project $ProjectPath `
             --output $analysisDir `
             --depth $Depth `
             --focus $Focus `
-            --json 2>&1
-
-        # Write full output to log file
-        $output | Out-File -FilePath $logPath -Encoding utf8
+            --json 2>&1 -ErrorAction Continue
 
         # Capture exit code before Pop-Location resets it
         $analyzerExitCode = $LASTEXITCODE
-        Pop-Location
-
-        if ($analyzerExitCode -eq 0) {
-            $pythonAnalysisStatus = "success"
-            Write-Host "✓ Python analyzer completed successfully" -ForegroundColor Green
-        } else {
-            $pythonAnalysisStatus = "failed"
-            $pythonAnalysisError = "Python analyzer exit code: $analyzerExitCode"
-            Write-Host "⚠ Python analyzer failed with exit code: $analyzerExitCode" -ForegroundColor Yellow
-            Write-Host "Full error output:" -ForegroundColor Yellow
-            $output | Write-Host
-        }
     } catch {
-        $pythonAnalysisStatus = "failed"
-        $pythonAnalysisError = "Exception during Python analyzer: $_"
-        Write-Host "⚠ Python analyzer failed with exception: $_" -ForegroundColor Red
-        Write-Host $_.Exception.Message -ForegroundColor Red
-        Write-Host $_.ScriptStackTrace -ForegroundColor Red
-        # Ensure we pop location even on error
+        # If we catch an exception, record it
+        $output = $_.Exception.Message
+        $analyzerExitCode = 1
+    } finally {
+        # Always pop location
         Pop-Location
+    }
+
+    # Write full output to log file
+    $output | Out-File -FilePath $logPath -Encoding utf8
+
+    # Check result
+    if ($analyzerExitCode -eq 0) {
+        $pythonAnalysisStatus = "success"
+        Write-Host "✓ Python analyzer completed successfully" -ForegroundColor Green
+    } else {
+        $pythonAnalysisStatus = "failed"
+        $pythonAnalysisError = "Python analyzer exit code: $analyzerExitCode - see $logPath"
+        Write-Host "⚠ Python analyzer failed with exit code: $analyzerExitCode" -ForegroundColor Yellow
+        Write-Host "Full error output:" -ForegroundColor Yellow
+        $output | ForEach-Object { Write-Host $_ }
+        Write-Host "`nComplete log saved to: $logPath" -ForegroundColor Cyan
     }
 } else {
     Write-Host "⚠ Python not available - will use AI-guided analysis" -ForegroundColor Yellow
