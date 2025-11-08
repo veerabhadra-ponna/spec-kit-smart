@@ -120,12 +120,16 @@ if ($pythonCmd) {
         # Change to repository root to ensure Python can find the scripts module
         Push-Location $repoRoot
 
-        & $pythonCmd -m scripts.python.analyzer `
+        # Capture all output to log file
+        $output = & $pythonCmd -m scripts.python.analyzer `
             --project $ProjectPath `
             --output $analysisDir `
             --depth $Depth `
             --focus $Focus `
-            --json 2>&1 | Tee-Object -FilePath $logPath | Select-Object -Last 20
+            --json 2>&1
+
+        # Write full output to log file
+        $output | Out-File -FilePath $logPath -Encoding utf8
 
         # Capture exit code before Pop-Location resets it
         $analyzerExitCode = $LASTEXITCODE
@@ -136,13 +140,17 @@ if ($pythonCmd) {
             Write-Host "✓ Python analyzer completed successfully" -ForegroundColor Green
         } else {
             $pythonAnalysisStatus = "failed"
-            $pythonAnalysisError = "Python analyzer failed - see analyzer-log.txt"
-            Write-Host "⚠ Python analyzer failed - will use AI-guided analysis fallback" -ForegroundColor Yellow
+            $pythonAnalysisError = "Python analyzer exit code: $analyzerExitCode"
+            Write-Host "⚠ Python analyzer failed with exit code: $analyzerExitCode" -ForegroundColor Yellow
+            Write-Host "Full error output:" -ForegroundColor Yellow
+            $output | Write-Host
         }
     } catch {
         $pythonAnalysisStatus = "failed"
         $pythonAnalysisError = "Exception during Python analyzer: $_"
-        Write-Host "⚠ Python analyzer failed - will use AI-guided analysis fallback" -ForegroundColor Yellow
+        Write-Host "⚠ Python analyzer failed with exception: $_" -ForegroundColor Red
+        Write-Host $_.Exception.Message -ForegroundColor Red
+        Write-Host $_.ScriptStackTrace -ForegroundColor Red
         # Ensure we pop location even on error
         Pop-Location
     }
