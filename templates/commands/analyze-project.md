@@ -1,8 +1,8 @@
 ---
 description: Reverse engineer and analyze an existing project to assess modernization opportunities, identify technical debt, and recommend upgrade paths
 scripts:
-  sh: scripts/bash/analyze-project-setup.sh --json --project "$1" --depth "$2" --focus "$3"
-  ps: scripts/powershell/analyze-project-setup.ps1 -Json -ProjectPath "$1" -Depth "$2" -Focus "$3"
+  bash: scripts/bash/analyze-project-setup.sh --json --project "$1" --depth "$2" --focus "$3"
+  powershell: scripts/powershell/analyze-project-setup.ps1 -Json -ProjectPath "$1" -Depth "$2" -Focus "$3"
 status: EXPERIMENTAL
 version: 1.0.0-alpha
 ---
