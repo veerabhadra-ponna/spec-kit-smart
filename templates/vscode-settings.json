@@ -10,6 +10,7 @@
         ".specify/scripts/bash/": true,
         ".specify/scripts/powershell/": true,
         ".specify/scripts/python/": true,
+        ".specify/scripts/": true,
         "git status": true,
         "git diff": true,
         "git log": true,
