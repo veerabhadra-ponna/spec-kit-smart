@@ -120,13 +120,18 @@ if ($pythonCmd) {
     Push-Location $repoRoot
 
     try {
+        # Build arguments array
+        $analyzerArgs = @(
+            "-m", "scripts.python.analyzer",
+            "--project", $ProjectPath,
+            "--output", $analysisDir,
+            "--depth", $Depth,
+            "--focus", $Focus,
+            "--json"
+        )
+
         # Capture all output - use ErrorAction Continue to prevent exceptions on non-zero exit
-        $output = & $pythonCmd -m scripts.python.analyzer `
-            --project $ProjectPath `
-            --output $analysisDir `
-            --depth $Depth `
-            --focus $Focus `
-            --json 2>&1 -ErrorAction Continue
+        $output = & $pythonCmd $analyzerArgs 2>&1
 
         # Capture exit code before Pop-Location resets it
         $analyzerExitCode = $LASTEXITCODE
