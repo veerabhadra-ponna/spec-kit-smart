@@ -72,31 +72,6 @@ generate_commands() {
       in_scripts && /^[a-zA-Z]/ { in_scripts=0 }
     ')
 
-    # Also support legacy 'sh' and 'ps' keys for backwards compatibility
-    if [[ -z $script_bash ]]; then
-      script_bash=$(printf '%s\n' "$file_content" | awk '
-        /^scripts:$/ { in_scripts=1; next }
-        in_scripts && /^[[:space:]]*sh:[[:space:]]*/ {
-          sub(/^[[:space:]]*sh:[[:space:]]*/, "")
-          print
-          exit
-        }
-        in_scripts && /^[a-zA-Z]/ { in_scripts=0 }
-      ')
-    fi
-
-    if [[ -z $script_powershell ]]; then
-      script_powershell=$(printf '%s\n' "$file_content" | awk '
-        /^scripts:$/ { in_scripts=1; next }
-        in_scripts && /^[[:space:]]*ps:[[:space:]]*/ {
-          sub(/^[[:space:]]*ps:[[:space:]]*/, "")
-          print
-          exit
-        }
-        in_scripts && /^[a-zA-Z]/ { in_scripts=0 }
-      ')
-    fi
-
     if [[ -z $script_bash && -z $script_powershell ]]; then
       echo "Warning: no script commands found in $template" >&2
     fi
@@ -106,11 +81,6 @@ generate_commands() {
       /^agent_scripts:$/ { in_agent_scripts=1; next }
       in_agent_scripts && /^[[:space:]]*bash:[[:space:]]*/ {
         sub(/^[[:space:]]*bash:[[:space:]]*/, "")
-        print
-        exit
-      }
-      in_agent_scripts && /^[[:space:]]*sh:[[:space:]]*/ {
-        sub(/^[[:space:]]*sh:[[:space:]]*/, "")
         print
         exit
       }
@@ -124,19 +94,11 @@ generate_commands() {
         print
         exit
       }
-      in_agent_scripts && /^[[:space:]]*ps:[[:space:]]*/ {
-        sub(/^[[:space:]]*ps:[[:space:]]*/, "")
-        print
-        exit
-      }
       in_agent_scripts && /^[a-zA-Z]/ { in_agent_scripts=0 }
     ')
 
     # Replace {SCRIPT_BASH} and {SCRIPT_POWERSHELL} placeholders
     body=$(printf '%s\n' "$file_content" | sed "s|{SCRIPT_BASH}|${script_bash}|g" | sed "s|{SCRIPT_POWERSHELL}|${script_powershell}|g")
-
-    # Also replace legacy {SCRIPT} placeholder with bash version for backwards compatibility
-    body=$(printf '%s\n' "$body" | sed "s|{SCRIPT}|${script_bash}|g")
 
     # Replace {AGENT_SCRIPT_BASH} and {AGENT_SCRIPT_POWERSHELL} placeholders if found
     if [[ -n $agent_script_bash ]]; then
@@ -144,10 +106,6 @@ generate_commands() {
     fi
     if [[ -n $agent_script_powershell ]]; then
       body=$(printf '%s\n' "$body" | sed "s|{AGENT_SCRIPT_POWERSHELL}|${agent_script_powershell}|g")
-    fi
-    # Also replace legacy {AGENT_SCRIPT} with bash version
-    if [[ -n $agent_script_bash ]]; then
-      body=$(printf '%s\n' "$body" | sed "s|{AGENT_SCRIPT}|${agent_script_bash}|g")
     fi
 
     # Keep the scripts: and agent_scripts: sections in frontmatter for AI reference
@@ -260,8 +218,14 @@ build_unified() {
 ALL_AGENTS=(claude gemini copilot cursor-agent qwen opencode windsurf codex kilocode auggie roo codebuddy amp q)
 
 norm_list() {
-  # convert comma+space separated -> space separated unique while preserving order of first occurrence
-  tr ',\n' '  ' | awk '{for(i=1;i<=NF;i++){if(!seen[$i]++){printf((out?" ":"") $i)}}}END{printf("\n")}'
+  # convert comma+space separated -> newline separated unique while preserving order of first occurrence
+  tr ',\n' '  ' | awk '{
+    for(i=1;i<=NF;i++){
+      if(!seen[$i]++){
+        print $i
+      }
+    }
+  }'
 }
 
 validate_subset() {
