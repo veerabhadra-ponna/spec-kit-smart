@@ -96,7 +96,6 @@ When defaults are applied, MUST show user exactly which principles were used:
 ✓ Lean & Simple - Avoid over-engineering and unnecessary abstractions
 ✓ Minimal Dependencies - Use standard libraries first
 ✓ Readability First - Prioritize clarity over cleverness
-✓ Composition Over Inheritance - Prefer composition patterns
 ✓ Code Reuse - Check for existing methods before creating duplicates
 ✓ Self-Documenting Code - Use clear naming and structure
 ✓ Intent Documentation - Document WHY, not WHAT
