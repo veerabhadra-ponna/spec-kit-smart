@@ -225,12 +225,14 @@ Comprehensive analysis with:
 
 ### How It Works (Technical Implementation)
 
-The reverse engineering system uses a **bash orchestration script** that invokes **Python analysis modules**:
+The reverse engineering system uses **orchestration scripts (bash/PowerShell)** that invoke **Python analysis modules**:
 
 **Execution Flow:**
 
 1. `/speckit.analyze-project` command (AI agent)
-2. → `scripts/bash/analyze-project.sh` (orchestration, validation, file I/O)
+2. → Orchestration script (cross-platform):
+   - **Unix/Linux/macOS**: `scripts/bash/analyze-project-setup.sh`
+   - **Windows**: `scripts/powershell/analyze-project-setup.ps1`
 3. → Generates `run_analysis.py` script dynamically
 4. → `run_analysis.py` imports and executes Python modules:
    - `scanner.py` - Tech stack detection, code metrics calculation
@@ -244,11 +246,11 @@ The reverse engineering system uses a **bash orchestration script** that invokes
      - `languages/javascript.py` - Node.js/React analysis
      - `languages/dotnet.py` - .NET/C# analysis
 
-**Note:** The Python modules are **library code**, not standalone CLI commands. They are invoked exclusively through the bash orchestration script. Direct Python execution is not supported.
+**Note:** The Python modules are **library code**, not standalone CLI commands. They are invoked exclusively through the orchestration scripts. Direct Python execution is not supported.
 
 **Requirements:**
 
-- Python 3.10+ (detected automatically by bash script)
+- Python 3.10+ (detected automatically by orchestration scripts)
 - Optional external tools for enhanced analysis:
   - `npm audit` / `pip-audit` - Automated dependency scanning
   - `cloc` / `tokei` - Code metrics calculation
