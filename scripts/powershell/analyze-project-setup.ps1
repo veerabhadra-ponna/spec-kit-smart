@@ -127,9 +127,11 @@ if ($pythonCmd) {
             --focus $Focus `
             --json 2>&1 | Tee-Object -FilePath $logPath | Select-Object -Last 20
 
+        # Capture exit code before Pop-Location resets it
+        $analyzerExitCode = $LASTEXITCODE
         Pop-Location
 
-        if ($LASTEXITCODE -eq 0) {
+        if ($analyzerExitCode -eq 0) {
             $pythonAnalysisStatus = "success"
             Write-Host "✓ Python analyzer completed successfully" -ForegroundColor Green
         } else {
