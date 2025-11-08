@@ -47,6 +47,10 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --arguments)
+            if [[ -z "$2" || "$2" == -* ]]; then
+                echo "ERROR: --arguments requires a value" >&2
+                exit 1
+            fi
             ARGUMENTS="$2"
             shift 2
             ;;

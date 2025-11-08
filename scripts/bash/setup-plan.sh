@@ -13,6 +13,10 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         --arguments)
+            if [[ -z "$2" || "$2" == -* ]]; then
+                echo "ERROR: --arguments requires a value" >&2
+                exit 1
+            fi
             ARGUMENTS="$2"
             shift 2
             ;;
@@ -50,7 +54,9 @@ if [[ -f "$TEMPLATE" ]]; then
 
     # Replace the Input line with user arguments if provided
     if [[ -n "$ARGUMENTS" ]]; then
-        sed -i.bak "s|\*\*Input\*\*:.*|\*\*Input\*\*: User description: \"$ARGUMENTS\"|" "$IMPL_PLAN"
+        # Escape special characters for sed replacement (escape &, \, /, and |)
+        ESCAPED_ARGS=$(printf '%s\n' "$ARGUMENTS" | sed 's/[&\/|\\]/\\&/g')
+        sed -i.bak "s|\*\*Input\*\*:.*|\*\*Input\*\*: User description: \"$ESCAPED_ARGS\"|" "$IMPL_PLAN"
         rm -f "$IMPL_PLAN.bak"
     fi
 

@@ -40,8 +40,13 @@ if (Test-Path $template) {
 
     # Replace the Input line with user arguments if provided
     if ($Arguments) {
+        # Escape special regex characters in the replacement string
+        $escapedArgs = [regex]::Escape($Arguments)
+        # Note: [regex]::Escape escapes for pattern matching, but for replacement we need literal $
+        $escapedArgs = $Arguments -replace '\$', '$$'
+
         $content = Get-Content $paths.IMPL_PLAN -Raw
-        $content = $content -replace '\*\*Input\*\*:.*', "**Input**: User description: `"$Arguments`""
+        $content = $content -replace '\*\*Input\*\*:.*', "**Input**: User description: `"$escapedArgs`""
         Set-Content -Path $paths.IMPL_PLAN -Value $content -NoNewline
     }
 
