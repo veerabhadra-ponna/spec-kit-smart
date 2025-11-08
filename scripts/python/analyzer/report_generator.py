@@ -15,6 +15,7 @@ try:
     from .dependency_analyzer import DependencyReport
     from .scanner import ScanResult
     from .scoring_engine import FeasibilityResult, ProjectMetrics
+    from .analysis_context import AnalysisContext
     from .prompt_generator import PromptGenerator
     from .principle_extractor import PrincipleExtractor
     from .functional_spec_generator import FunctionalSpecGenerator
@@ -23,6 +24,7 @@ except ImportError:
     from dependency_analyzer import DependencyReport
     from scanner import ScanResult
     from scoring_engine import FeasibilityResult, ProjectMetrics
+    from analysis_context import AnalysisContext
     from prompt_generator import PromptGenerator
     from principle_extractor import PrincipleExtractor
     from functional_spec_generator import FunctionalSpecGenerator
@@ -113,48 +115,38 @@ class ReportGenerator:
         # Phase 7: Generate analysis-to-spec workflow artifacts
         # These help bridge reverse engineering analysis with spec-driven development
 
-        # 7.1: Generate stage-specific prompts
-        prompt_generator = PromptGenerator(
+        # Create shared context for all Phase 7 generators
+        context = AnalysisContext.create(
             scan_result=scan_result,
             dependency_reports=dependency_reports,
             metrics=metrics,
-            project_name=self.config.project_name,
+            project_name=self.config.project_name
+        )
+
+        # 7.1: Generate stage-specific prompts
+        prompt_generator = PromptGenerator(
+            context=context,
             output_dir=self.config.output_dir
         )
         stage_prompt_files = prompt_generator.generate_all_prompts()
         generated_files.extend(stage_prompt_files)
 
         # 7.2: Generate extracted principles
-        principle_extractor = PrincipleExtractor(
-            scan_result=scan_result,
-            dependency_reports=dependency_reports,
-            metrics=metrics,
-            project_name=self.config.project_name
-        )
+        principle_extractor = PrincipleExtractor(context=context)
         principles_path = principle_extractor.generate_extracted_principles(
             self.config.output_dir / "extracted-principles.md"
         )
         generated_files.append(principles_path)
 
         # 7.3: Generate functional specification
-        func_spec_generator = FunctionalSpecGenerator(
-            scan_result=scan_result,
-            dependency_reports=dependency_reports,
-            metrics=metrics,
-            project_name=self.config.project_name
-        )
+        func_spec_generator = FunctionalSpecGenerator(context=context)
         func_spec_path = func_spec_generator.generate_functional_spec(
             self.config.output_dir / "functional-spec.md"
         )
         generated_files.append(func_spec_path)
 
         # 7.4: Generate proposed tech stack
-        tech_stack_proposer = TechStackProposer(
-            scan_result=scan_result,
-            dependency_reports=dependency_reports,
-            metrics=metrics,
-            project_name=self.config.project_name
-        )
+        tech_stack_proposer = TechStackProposer(context=context)
         tech_stack_path = tech_stack_proposer.generate_proposed_stack(
             self.config.output_dir / "proposed-tech-stack.md"
         )

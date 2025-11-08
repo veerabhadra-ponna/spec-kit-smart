@@ -1,24 +1,37 @@
 """
-Tech stack proposer with LTS recommendations.
+Tech stack proposer with AI-driven LTS recommendations.
 
-Generates proposed-tech-stack.md with latest LTS versions and detailed
-rationale for each technology choice.
+Generates proposed-tech-stack.md with guidance for AI to determine latest LTS
+versions and detailed rationale for each technology choice.
+
+Design Philosophy:
+- Provide documentation URLs and guidance for AI agents
+- AI determines latest LTS versions using its knowledge base
+- No hardcoded version numbers that require maintenance
+- Focus on rationale and migration complexity assessment
 """
 
 from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Tuple, Optional
 
 # Handle both relative and absolute imports
 try:
-    from .scanner import ScanResult
-    from .dependency_analyzer import DependencyReport
-    from .scoring_engine import ProjectMetrics
+    from .analysis_context import AnalysisContext
+    from .constants import (
+        LTSGuidance,
+        ProjectSizeThresholds,
+        MigrationComplexity,
+        QuirkThresholds
+    )
 except ImportError:
-    from scanner import ScanResult
-    from dependency_analyzer import DependencyReport
-    from scoring_engine import ProjectMetrics
+    from analysis_context import AnalysisContext
+    from constants import (
+        LTSGuidance,
+        ProjectSizeThresholds,
+        MigrationComplexity,
+        QuirkThresholds
+    )
 
 
 @dataclass
@@ -27,74 +40,66 @@ class TechRecommendation:
 
     component_type: str  # "Language", "Framework", "Database", etc.
     current: str
-    proposed: str
-    lts_until: Optional[str]
+    proposed_guidance: str  # AI guidance for determining version
     rationale: List[str]
     migration_complexity: str  # LOW, MEDIUM, HIGH
-    migration_guide_url: Optional[str]
+    documentation_url: str
     alternatives: List[Tuple[str, str]]  # [(name, reason), ...]
 
 
 class TechStackProposer:
     """
-    Propose modernized tech stack with LTS versions and rationale.
+    Propose modernized tech stack with AI-driven LTS recommendations.
 
-    Recommends specific versions based on current stack, provides migration
-    complexity assessment, and suggests alternatives.
+    Uses AI knowledge base to determine latest LTS versions rather than
+    maintaining hardcoded version data.
     """
 
-    # LTS version mappings (as of 2025-01)
-    LTS_VERSIONS = {
-        "python": ("3.12", "2028-10", "https://www.python.org/downloads/"),
-        "node": ("20", "2026-04", "https://nodejs.org/en/about/releases/"),
-        "java": ("21", "2029-09", "https://www.oracle.com/java/technologies/java-se-support-roadmap.html"),
-        "dotnet": ("8", "2026-11", "https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core"),
-        "go": ("1.21", "N/A", "https://go.dev/dl/"),
-        "ruby": ("3.3", "N/A", "https://www.ruby-lang.org/en/downloads/"),
-        "php": ("8.3", "2026-11", "https://www.php.net/supported-versions.php"),
-        "rust": ("1.75", "N/A", "https://www.rust-lang.org/"),
+    # Documentation URLs for AI to reference when determining LTS versions
+    LANGUAGE_DOCS = {
+        "python": "https://www.python.org/downloads/",
+        "javascript": "https://nodejs.org/en/about/releases/",
+        "node": "https://nodejs.org/en/about/releases/",
+        "java": "https://www.oracle.com/java/technologies/java-se-support-roadmap.html",
+        "csharp": "https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core",
+        "dotnet": "https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core",
+        "go": "https://go.dev/dl/",
+        "ruby": "https://www.ruby-lang.org/en/downloads/",
+        "php": "https://www.php.net/supported-versions.php",
+        "rust": "https://www.rust-lang.org/",
     }
 
-    FRAMEWORK_RECOMMENDATIONS = {
-        "react": ("18", "Latest stable", "https://react.dev/"),
-        "vue": ("3", "Latest stable", "https://vuejs.org/"),
-        "angular": ("17", "Latest stable", "https://angular.io/"),
-        "express": ("4", "Latest stable", "https://expressjs.com/"),
-        "fastapi": ("0.104", "Latest stable", "https://fastapi.tiangolo.com/"),
-        "django": ("5.0", "LTS until 2026-04", "https://www.djangoproject.com/"),
-        "flask": ("3.0", "Latest stable", "https://flask.palletsprojects.com/"),
-        "spring-boot": ("3.2", "Latest stable", "https://spring.io/projects/spring-boot"),
+    FRAMEWORK_DOCS = {
+        "react": "https://react.dev/",
+        "vue": "https://vuejs.org/",
+        "angular": "https://angular.io/",
+        "express": "https://expressjs.com/",
+        "fastapi": "https://fastapi.tiangolo.com/",
+        "django": "https://www.djangoproject.com/",
+        "flask": "https://flask.palletsprojects.com/",
+        "spring-boot": "https://spring.io/projects/spring-boot",
+        "rails": "https://rubyonrails.org/",
+        "laravel": "https://laravel.com/",
+        "aspnet": "https://dotnet.microsoft.com/apps/aspnet",
     }
 
-    DATABASE_RECOMMENDATIONS = {
-        "postgresql": ("16", "2028-11", "https://www.postgresql.org/support/versioning/"),
-        "mysql": ("8.4", "2032-04", "https://www.mysql.com/support/"),
-        "mongodb": ("7.0", "N/A", "https://www.mongodb.com/"),
-        "redis": ("7.2", "2027-01", "https://redis.io/"),
-        "mariadb": ("11.2", "N/A", "https://mariadb.org/"),
+    DATABASE_DOCS = {
+        "postgresql": "https://www.postgresql.org/support/versioning/",
+        "mysql": "https://www.mysql.com/support/",
+        "mongodb": "https://www.mongodb.com/",
+        "redis": "https://redis.io/",
+        "mariadb": "https://mariadb.org/",
+        "sqlite": "https://www.sqlite.org/",
     }
 
-    def __init__(
-        self,
-        scan_result: ScanResult,
-        dependency_reports: List[DependencyReport],
-        metrics: ProjectMetrics,
-        project_name: str
-    ):
+    def __init__(self, context: AnalysisContext):
         """
         Initialize tech stack proposer.
 
         Args:
-            scan_result: Results from ProjectScanner
-            dependency_reports: Results from DependencyAnalyzer
-            metrics: ProjectMetrics from analysis
-            project_name: Name of the project
+            context: Shared analysis context with scan results and metrics
         """
-        self.scan_result = scan_result
-        self.dependency_reports = dependency_reports
-        self.metrics = metrics
-        self.project_name = project_name
-        self.date_only = datetime.now().strftime("%Y-%m-%d")
+        self.context = context
 
     def generate_proposed_stack(self, output_path: Path) -> Path:
         """
@@ -118,22 +123,22 @@ class TechStackProposer:
         recommendations = self._build_recommendations()
 
         # Language & Runtime
-        if recommendations["language"]:
-            sections.append(self._format_language_recommendation(recommendations["language"]))
+        if recommendations.get("language"):
+            sections.append(self._format_recommendation(recommendations["language"]))
 
         # Framework
-        if recommendations["framework"]:
-            sections.append(self._format_framework_recommendation(recommendations["framework"]))
+        if recommendations.get("framework"):
+            sections.append(self._format_recommendation(recommendations["framework"]))
 
         # Database
-        if recommendations["database"]:
-            sections.append(self._format_database_recommendation(recommendations["database"]))
+        if recommendations.get("database"):
+            sections.append(self._format_recommendation(recommendations["database"]))
 
         # Summary Table
         sections.append(self._build_summary_table(recommendations))
 
         # Migration Strategy
-        sections.append(self._build_migration_strategy(recommendations))
+        sections.append(self._build_migration_strategy())
 
         # How to Use
         sections.append(self._build_usage_guide())
@@ -146,41 +151,43 @@ class TechStackProposer:
 
     def _build_header(self) -> str:
         """Build header section."""
-        return f"""# Proposed Tech Stack (with LTS + Rationale)
+        return f"""# Proposed Tech Stack (AI-Driven LTS Recommendations)
 
-**Project**: {self.project_name}
-**Analysis Date**: {self.date_only}
+**Project**: {self.context.project_name}
+**Analysis Date**: {self.context.analysis_date}
 **Purpose**: Technology recommendations for modernization
 
 ---
 
 ## Document Purpose
 
-This document recommends specific technology versions for modernization,
-with detailed rationale for each choice. All recommendations include:
+This document provides technology recommendations for modernization, with
+guidance for AI agents to determine the latest LTS (Long-Term Support) versions.
 
-- **Latest LTS version** (or latest stable if no formal LTS)
-- **Rationale** for the choice (why this version, why this tech)
+**AI Guidance**: Use your knowledge base to determine current LTS versions as of
+the analysis date. This approach ensures recommendations stay current without
+manual maintenance of version data.
+
+All recommendations include:
+- **AI guidance** for determining appropriate versions
+- **Rationale** for the technology choice
 - **Migration complexity** assessment
 - **Alternative options** for comparison
-- **EOL dates** for planning future upgrades
+- **Documentation URLs** for verification
 
 ---"""
 
     def _build_executive_summary(self) -> str:
         """Build executive summary."""
-        current_stack = self._format_current_stack()
-        proposed_stack = self._format_proposed_stack()
-
         return f"""## Executive Summary
 
 ### Current State
 
-{current_stack}
+{self._format_current_stack()}
 
 ### Proposed State
 
-{proposed_stack}
+{self._format_proposed_guidance()}
 
 ### Overall Assessment
 
@@ -200,124 +207,139 @@ with detailed rationale for each choice. All recommendations include:
         }
 
     def _recommend_language(self) -> Optional[TechRecommendation]:
-        """Recommend language/runtime version."""
-        current_lang = self.scan_result.tech_stack.primary_language.lower()
-        current_version = self.scan_result.tech_stack.runtime_version or "Unknown"
+        """Recommend language/runtime version using AI knowledge base."""
+        current_lang = self.context.scan_result.tech_stack.primary_language.lower()
+        current_version = self.context.scan_result.tech_stack.runtime_version or "Unknown"
 
-        # Get LTS recommendation
-        if current_lang in self.LTS_VERSIONS:
-            lts_version, lts_until, docs_url = self.LTS_VERSIONS[current_lang]
+        docs_url = self.LANGUAGE_DOCS.get(current_lang, "")
 
-            # Build rationale
-            rationale = [
-                f"Latest LTS version with support until {lts_until}" if lts_until != "N/A" else "Latest stable version",
-                "Performance improvements over older versions",
-                "Security updates and bug fixes",
-                "Modern language features and better tooling",
-                "Long-term support ensures stability"
-            ]
+        # Build AI guidance for determining LTS version
+        guidance = f"**AI Task**: Determine latest LTS version for {current_lang.title()} as of {self.context.analysis_date}"
 
-            # Assess migration complexity
-            complexity = self._assess_language_migration_complexity(current_version, lts_version)
+        # Build rationale
+        rationale = [
+            "Latest LTS version provides long-term support and stability",
+            "Performance improvements over older versions",
+            "Security updates and bug fixes",
+            "Modern language features and better tooling",
+            "Active community support and ecosystem"
+        ]
 
-            # Build alternatives
-            alternatives = self._get_language_alternatives(current_lang)
+        # Assess migration complexity
+        complexity = self._assess_language_migration(current_version)
 
-            return TechRecommendation(
-                component_type="Language & Runtime",
-                current=f"{current_lang.title()} {current_version}",
-                proposed=f"{current_lang.title()} {lts_version}",
-                lts_until=lts_until if lts_until != "N/A" else None,
-                rationale=rationale,
-                migration_complexity=complexity,
-                migration_guide_url=docs_url,
-                alternatives=alternatives
-            )
+        # Build alternatives
+        alternatives = self._get_language_alternatives(current_lang)
 
-        return None
+        return TechRecommendation(
+            component_type="Language & Runtime",
+            current=f"{current_lang.title()} {current_version}",
+            proposed_guidance=guidance,
+            rationale=rationale,
+            migration_complexity=complexity,
+            documentation_url=docs_url,
+            alternatives=alternatives
+        )
 
     def _recommend_framework(self) -> Optional[TechRecommendation]:
-        """Recommend framework version."""
-        if not self.scan_result.tech_stack.frameworks:
+        """Recommend framework version using AI knowledge base."""
+        if not self.context.scan_result.tech_stack.frameworks:
             return None
 
         # Get primary framework (first detected)
-        current_framework = self.scan_result.tech_stack.frameworks[0].lower()
+        current_framework = self.context.scan_result.tech_stack.frameworks[0].lower()
 
-        # Check if we have recommendation
-        for fw_key in self.FRAMEWORK_RECOMMENDATIONS:
-            if fw_key in current_framework:
-                version, lts_info, docs_url = self.FRAMEWORK_RECOMMENDATIONS[fw_key]
+        # Find matching framework key
+        framework_key = None
+        for key in self.FRAMEWORK_DOCS:
+            if key in current_framework:
+                framework_key = key
+                break
 
-                # Build rationale based on framework
-                rationale = self._get_framework_rationale(fw_key, version)
+        if not framework_key:
+            return None
 
-                # Assess complexity
-                complexity = self._assess_framework_migration_complexity(fw_key)
+        docs_url = self.FRAMEWORK_DOCS[framework_key]
 
-                # Get alternatives
-                alternatives = self._get_framework_alternatives(fw_key)
+        # Build AI guidance
+        guidance = f"**AI Task**: Determine latest stable version for {framework_key.title()} as of {self.context.analysis_date}"
 
-                return TechRecommendation(
-                    component_type="Web Framework",
-                    current=f"{current_framework.title()} (version unknown)",
-                    proposed=f"{fw_key.title()} {version}",
-                    lts_until=lts_info if "LTS" in lts_info else None,
-                    rationale=rationale,
-                    migration_complexity=complexity,
-                    migration_guide_url=docs_url,
-                    alternatives=alternatives
-                )
+        # Build rationale
+        rationale = self._get_framework_rationale(framework_key)
 
-        return None
+        # Assess complexity
+        complexity = self._assess_framework_migration(framework_key)
+
+        # Get alternatives
+        alternatives = self._get_framework_alternatives(framework_key)
+
+        return TechRecommendation(
+            component_type="Web Framework",
+            current=f"{current_framework.title()} (version unknown)",
+            proposed_guidance=guidance,
+            rationale=rationale,
+            migration_complexity=complexity,
+            documentation_url=docs_url,
+            alternatives=alternatives
+        )
 
     def _recommend_database(self) -> Optional[TechRecommendation]:
-        """Recommend database version."""
-        if not self.scan_result.tech_stack.databases:
-            # Try to infer from config files
-            inferred_db = self._infer_database()
-            if not inferred_db:
-                return None
+        """Recommend database version using AI knowledge base."""
+        # Try to infer database from config files or detected databases
+        inferred_db = None
+        if self.context.scan_result.tech_stack.databases:
+            inferred_db = self.context.scan_result.tech_stack.databases[0].lower()
         else:
-            inferred_db = self.scan_result.tech_stack.databases[0].lower()
+            inferred_db = self._infer_database()
 
-        # Check if we have recommendation
-        for db_key in self.DATABASE_RECOMMENDATIONS:
-            if db_key in inferred_db.lower():
-                version, lts_until, docs_url = self.DATABASE_RECOMMENDATIONS[db_key]
+        if not inferred_db:
+            return None
 
-                # Build rationale
-                rationale = self._get_database_rationale(db_key, version)
+        # Find matching database key
+        db_key = None
+        for key in self.DATABASE_DOCS:
+            if key in inferred_db.lower():
+                db_key = key
+                break
 
-                # Assess complexity
-                complexity = self._assess_database_migration_complexity(db_key)
+        if not db_key:
+            return None
 
-                # Get alternatives
-                alternatives = self._get_database_alternatives(db_key)
+        docs_url = self.DATABASE_DOCS[db_key]
 
-                return TechRecommendation(
-                    component_type="Database",
-                    current=f"{inferred_db.title()} (version unknown)",
-                    proposed=f"{db_key.title()} {version}",
-                    lts_until=lts_until if lts_until != "N/A" else None,
-                    rationale=rationale,
-                    migration_complexity=complexity,
-                    migration_guide_url=docs_url,
-                    alternatives=alternatives
-                )
+        # Build AI guidance
+        guidance = f"**AI Task**: Determine latest LTS version for {db_key.title()} as of {self.context.analysis_date}"
 
-        return None
+        # Build rationale
+        rationale = self._get_database_rationale(db_key)
 
-    def _format_language_recommendation(self, rec: TechRecommendation) -> str:
-        """Format language recommendation section."""
+        # Assess complexity
+        complexity = MigrationComplexity.LOW  # Database migrations typically low if schema compatible
+
+        # Get alternatives
+        alternatives = self._get_database_alternatives(db_key)
+
+        return TechRecommendation(
+            component_type="Database",
+            current=f"{inferred_db.title()} (version unknown)",
+            proposed_guidance=guidance,
+            rationale=rationale,
+            migration_complexity=complexity,
+            documentation_url=docs_url,
+            alternatives=alternatives
+        )
+
+    def _format_recommendation(self, rec: TechRecommendation) -> str:
+        """Format a technology recommendation section."""
         return f"""## {rec.component_type}
 
-### Recommendation: {rec.proposed}
+### Recommendation
+
+{rec.proposed_guidance}
 
 **Current**: {rec.current}
-**Proposed**: {rec.proposed}
-{f"**LTS Until**: {rec.lts_until}" if rec.lts_until else "**Status**: Latest Stable"}
 **Migration Complexity**: {rec.migration_complexity}
+**Documentation**: {rec.documentation_url}
 
 #### Rationale
 
@@ -325,63 +347,7 @@ with detailed rationale for each choice. All recommendations include:
 
 #### Migration Complexity: {rec.migration_complexity}
 
-{self._explain_language_complexity(rec.migration_complexity)}
-
-{f"**Migration Guide**: {rec.migration_guide_url}" if rec.migration_guide_url else ""}
-
-#### Alternative Options
-
-{chr(10).join([f"- **{name}**: {reason}" for name, reason in rec.alternatives])}
-
----"""
-
-    def _format_framework_recommendation(self, rec: TechRecommendation) -> str:
-        """Format framework recommendation section."""
-        return f"""## {rec.component_type}
-
-### Recommendation: {rec.proposed}
-
-**Current**: {rec.current}
-**Proposed**: {rec.proposed}
-{f"**LTS Until**: {rec.lts_until}" if rec.lts_until else "**Status**: Latest Stable"}
-**Migration Complexity**: {rec.migration_complexity}
-
-#### Rationale
-
-{chr(10).join([f"- {r}" for r in rec.rationale])}
-
-#### Migration Complexity: {rec.migration_complexity}
-
-{self._explain_framework_complexity(rec.migration_complexity, rec.proposed)}
-
-{f"**Documentation**: {rec.migration_guide_url}" if rec.migration_guide_url else ""}
-
-#### Alternative Options
-
-{chr(10).join([f"- **{name}**: {reason}" for name, reason in rec.alternatives])}
-
----"""
-
-    def _format_database_recommendation(self, rec: TechRecommendation) -> str:
-        """Format database recommendation section."""
-        return f"""## {rec.component_type}
-
-### Recommendation: {rec.proposed}
-
-**Current**: {rec.current}
-**Proposed**: {rec.proposed}
-{f"**LTS Until**: {rec.lts_until}" if rec.lts_until else "**Status**: Latest Stable"}
-**Migration Complexity**: {rec.migration_complexity}
-
-#### Rationale
-
-{chr(10).join([f"- {r}" for r in rec.rationale])}
-
-#### Migration Complexity: {rec.migration_complexity}
-
-{self._explain_database_complexity(rec.migration_complexity)}
-
-{f"**Documentation**: {rec.migration_guide_url}" if rec.migration_guide_url else ""}
+{self._explain_complexity(rec.migration_complexity, rec.component_type)}
 
 #### Alternative Options
 
@@ -395,34 +361,38 @@ with detailed rationale for each choice. All recommendations include:
 
         for key, rec in recommendations.items():
             if rec:
+                # Extract component type abbreviation
+                priority = self._prioritize_component(rec.component_type)
                 rows.append(
-                    f"| {rec.component_type} | {rec.current} | {rec.proposed} | "
-                    f"{rec.migration_complexity} | "
-                    f"{self._prioritize_component(rec.component_type)} |"
+                    f"| {rec.component_type} | {rec.current} | "
+                    f"Latest LTS (AI-determined) | {rec.migration_complexity} | {priority} |"
                 )
 
         if not rows:
             table = "No specific recommendations generated."
         else:
-            table = """| Component | Current | Proposed (LTS) | Complexity | Priority |
-|-----------|---------|----------------|------------|----------|
+            table = """| Component | Current | Proposed | Complexity | Priority |
+|-----------|---------|----------|------------|----------|
 """ + "\n".join(rows)
 
         return f"""## Summary Table
 
 {table}
 
+**Note**: AI agents should use their knowledge base to determine specific LTS
+versions as of {self.context.analysis_date}. This ensures recommendations remain
+current without manual version maintenance.
+
 **Priority Levels**:
 - **CRITICAL**: Must be addressed (security, EOL)
 - **HIGH**: Should be addressed soon (performance, support)
 - **MEDIUM**: Address during modernization
-- **LOW**: Optional upgrade
 
 ---"""
 
-    def _build_migration_strategy(self, recommendations: Dict[str, Optional[TechRecommendation]]) -> str:
+    def _build_migration_strategy(self) -> str:
         """Build migration strategy section."""
-        total_complexity = self._calculate_total_complexity(recommendations)
+        total_complexity = self._assess_overall_complexity()
 
         return f"""## Migration Strategy
 
@@ -432,12 +402,19 @@ with detailed rationale for each choice. All recommendations include:
 
 ### Migration Phases
 
+#### Phase 0: Planning & Research (Week 1)
+
+1. **AI Task**: Determine specific LTS versions using knowledge base
+2. **Verify** versions against official documentation
+3. **Review** breaking changes and migration guides
+4. **Plan** upgrade order and dependencies
+
 #### Phase 1: Foundation (Week 1-2)
 
-1. **Set up new project structure** with proposed tech stack
-2. **Configure build tools** and development environment
-3. **Set up CI/CD pipeline** with new versions
-4. **Create testing infrastructure** (80%+ coverage target)
+1. **Set up** new project structure with modern stack
+2. **Configure** build tools and development environment
+3. **Set up** CI/CD pipeline with new versions
+4. **Create** testing infrastructure (80%+ coverage target)
 
 #### Phase 2: Core Migration (Varies)
 
@@ -447,16 +424,16 @@ with detailed rationale for each choice. All recommendations include:
 
 #### Phase 3: Testing & Validation (Week 1-2)
 
-1. **Run full test suite** (target: 80%+ coverage)
-2. **Performance testing** (meet or exceed legacy benchmarks)
-3. **Security scanning** (no critical vulnerabilities)
-4. **Manual QA** for critical workflows
+1. **Run** full test suite (target: 80%+ coverage)
+2. **Performance** testing (meet or exceed legacy benchmarks)
+3. **Security** scanning (no critical vulnerabilities)
+4. **Manual** QA for critical workflows
 
 #### Phase 4: Deployment (Week 1)
 
-1. **Deploy to staging** environment
-2. **Smoke testing** and validation
-3. **Deploy to production** with rollback plan ready
+1. **Deploy** to staging environment
+2. **Smoke** testing and validation
+3. **Deploy** to production with rollback plan ready
 4. **Monitor** and address issues
 
 ### Risk Mitigation
@@ -467,31 +444,50 @@ with detailed rationale for each choice. All recommendations include:
 
     def _build_usage_guide(self) -> str:
         """Build usage guide."""
-        return """## How to Use This Document
+        return f"""## How to Use This Document
+
+### For AI Agents
+
+**Important**: This document uses an AI-driven approach for LTS recommendations.
+
+**Your Tasks**:
+1. **Determine** latest LTS versions using your knowledge base as of {self.context.analysis_date}
+2. **Verify** versions against official documentation URLs provided
+3. **Check** EOL (End-of-Life) dates for current versions
+4. **Recommend** specific version numbers in your analysis
+
+**Example**:
+```
+For Python recommendation:
+1. Check Python releases as of {self.context.analysis_date}
+2. Identify latest LTS version (e.g., Python 3.12)
+3. Note LTS support end date (e.g., October 2028)
+4. Recommend: "Python 3.12 (LTS until October 2028)"
+```
 
 ### For Planning
 
-1. **Review Recommendations**: Understand proposed tech stack
-2. **Assess Complexity**: Review migration complexity for each component
-3. **Check Alternatives**: Consider if alternatives better fit your needs
-4. **Plan Timeline**: Use complexity to estimate migration effort
+1. **Review** AI-determined recommendations with specific versions
+2. **Assess** migration complexity for each component
+3. **Check** alternatives if primary recommendation doesn't fit
+4. **Plan** timeline using complexity assessments
 
 ### For Implementation
 
-1. **Follow LTS Versions**: Use exact versions specified (or newer LTS if available)
-2. **Read Migration Guides**: Follow official migration documentation
-3. **Test Incrementally**: Don't upgrade everything at once
-4. **Monitor Performance**: Ensure no regressions
+1. **Use** AI-determined LTS versions (or newer if available)
+2. **Read** official migration guides from documentation URLs
+3. **Test** incrementally - don't upgrade everything at once
+4. **Monitor** performance to ensure no regressions
 
 ### For `/speckit.plan` Command
 
-Use this document as input when running `/speckit.plan`:
+Use AI-determined versions when running `/speckit.plan`:
 
 ```
 Target Tech Stack:
-- [Language]: [Proposed Version] (LTS until [Date])
-- [Framework]: [Proposed Version]
-- [Database]: [Proposed Version] (LTS until [Date])
+- [Language]: [AI-Determined LTS Version]
+- [Framework]: [AI-Determined Version]
+- [Database]: [AI-Determined LTS Version]
 
 Rationale: See proposed-tech-stack.md for detailed reasoning
 
@@ -499,215 +495,194 @@ Migration Complexity: [Overall Assessment]
 Estimated Effort: [Time Estimate]
 ```
 
-### Version Updates
-
-**Note**: This document is generated based on LTS information as of {self.date_only}.
-Always verify latest LTS versions before starting migration:
-
-- Check official project websites
-- Review end-of-life dates
-- Consider newer LTS releases if available
-
 ---
 
-**Generated**: {self.date_only}
-**Status**: Recommendations based on automated analysis and LTS version data"""
+**Generated**: {self.context.analysis_date}
+**Approach**: AI-driven LTS recommendations (no hardcoded versions)
+**Benefit**: Recommendations stay current without manual maintenance"""
 
     # Helper methods
 
     def _format_current_stack(self) -> str:
         """Format current stack description."""
         parts = [
-            f"- **Language**: {self.scan_result.tech_stack.primary_language.title()} {self.scan_result.tech_stack.runtime_version or '(version unknown)'}",
+            f"- **Language**: {self.context.scan_result.tech_stack.primary_language.title()} "
+            f"{self.context.scan_result.tech_stack.runtime_version or '(version unknown)'}",
         ]
 
-        if self.scan_result.tech_stack.frameworks:
-            parts.append(f"- **Framework**: {', '.join(self.scan_result.tech_stack.frameworks)}")
+        if self.context.scan_result.tech_stack.frameworks:
+            parts.append(f"- **Framework**: {', '.join(self.context.scan_result.tech_stack.frameworks)}")
 
-        if self.scan_result.tech_stack.databases:
-            parts.append(f"- **Database**: {', '.join(self.scan_result.tech_stack.databases)}")
-
-        if self.scan_result.tech_stack.build_tools:
-            parts.append(f"- **Build Tools**: {', '.join(self.scan_result.tech_stack.build_tools)}")
+        if self.context.scan_result.tech_stack.databases:
+            parts.append(f"- **Database**: {', '.join(self.context.scan_result.tech_stack.databases)}")
 
         return "\n".join(parts)
 
-    def _format_proposed_stack(self) -> str:
-        """Format proposed stack description."""
-        parts = []
+    def _format_proposed_guidance(self) -> str:
+        """Format proposed guidance for AI."""
+        return f"""**AI Guidance**: Determine latest LTS versions for:
 
-        # Language
-        lang = self.scan_result.tech_stack.primary_language.lower()
-        if lang in self.LTS_VERSIONS:
-            version, lts_until, _ = self.LTS_VERSIONS[lang]
-            parts.append(f"- **Language**: {lang.title()} {version} (LTS until {lts_until})")
+- **Language**: {self.context.scan_result.tech_stack.primary_language.title()}
+- **Framework**: {', '.join(self.context.scan_result.tech_stack.frameworks) if self.context.scan_result.tech_stack.frameworks else 'None detected'}
+- **Database**: {self._infer_database() or 'Examine config files to determine'}
 
-        # Framework
-        if self.scan_result.tech_stack.frameworks:
-            fw = self.scan_result.tech_stack.frameworks[0].lower()
-            for fw_key, (version, lts_info, _) in self.FRAMEWORK_RECOMMENDATIONS.items():
-                if fw_key in fw:
-                    parts.append(f"- **Framework**: {fw_key.title()} {version} ({lts_info})")
-                    break
-
-        # Database (inferred or detected)
-        db = self._infer_database()
-        if db:
-            for db_key, (version, lts_until, _) in self.DATABASE_RECOMMENDATIONS.items():
-                if db_key in db.lower():
-                    lts_str = f"LTS until {lts_until}" if lts_until != "N/A" else "Latest stable"
-                    parts.append(f"- **Database**: {db_key.title()} {version} ({lts_str})")
-                    break
-
-        return "\n".join(parts) if parts else "- See detailed recommendations below"
+Use your knowledge base as of {self.context.analysis_date} to provide specific version recommendations."""
 
     def _assess_overall_complexity(self) -> str:
         """Assess overall migration complexity."""
-        loc = self.metrics.lines_of_code
-        debt = self.metrics.technical_debt_percentage
-        tests = self.metrics.test_coverage
+        loc = self.context.metrics.lines_of_code
+        debt = self.context.metrics.technical_debt_percentage
+        tests = self.context.metrics.test_coverage
 
         score = 0
-        if loc > 50000:
+        if loc > ProjectSizeThresholds.LARGE_CODEBASE_INCREMENTAL:
             score += 2
-        elif loc > 10000:
+        elif loc > ProjectSizeThresholds.SMALL_PROJECT_LOC:
             score += 1
 
-        if debt > 60:
+        if debt > QuirkThresholds.HIGH_TECH_DEBT * 1.5:  # 60%
             score += 2
-        elif debt > 40:
+        elif debt > QuirkThresholds.HIGH_TECH_DEBT:
             score += 1
 
-        if tests < 40:
+        if tests < QuirkThresholds.LOW_TEST_COVERAGE * 0.67:  # 40%
             score += 1
 
         if score >= 4:
-            return "HIGH"
+            return MigrationComplexity.HIGH
         elif score >= 2:
-            return "MEDIUM"
+            return MigrationComplexity.MEDIUM
         else:
-            return "LOW"
+            return MigrationComplexity.LOW
 
     def _estimate_overall_effort(self) -> str:
         """Estimate overall migration effort."""
         complexity = self._assess_overall_complexity()
 
-        if complexity == "HIGH":
+        if complexity == MigrationComplexity.HIGH:
             return "4-6 months"
-        elif complexity == "MEDIUM":
+        elif complexity == MigrationComplexity.MEDIUM:
             return "2-3 months"
         else:
             return "2-4 weeks"
 
     def _assess_overall_risk(self) -> str:
         """Assess overall risk level."""
-        if self.metrics.test_coverage < 40:
+        if self.context.metrics.test_coverage < QuirkThresholds.LOW_TEST_COVERAGE * 0.67:
             return "HIGH (low test coverage)"
-        elif self.metrics.technical_debt_percentage > 60:
+        elif self.context.metrics.technical_debt_percentage > QuirkThresholds.HIGH_TECH_DEBT * 1.5:
             return "HIGH (high technical debt)"
-        elif self.metrics.test_coverage >= 80:
+        elif self.context.metrics.test_coverage >= QuirkThresholds.EXCELLENT_TEST_COVERAGE:
             return "LOW (good test coverage)"
         else:
             return "MEDIUM"
 
     def _recommend_approach(self) -> str:
         """Recommend migration approach."""
-        if self.metrics.lines_of_code > 50000 or self.metrics.technical_debt_percentage > 60:
+        if (self.context.metrics.lines_of_code > ProjectSizeThresholds.LARGE_CODEBASE_INCREMENTAL
+            or self.context.metrics.technical_debt_percentage > QuirkThresholds.HIGH_TECH_DEBT * 1.5):
             return "Incremental (Strangler Fig pattern)"
-        elif self.metrics.test_coverage >= 80:
+        elif self.context.metrics.test_coverage >= QuirkThresholds.EXCELLENT_TEST_COVERAGE:
             return "Big Bang (high test coverage supports full migration)"
         else:
             return "Phased (module by module)"
 
-    def _assess_language_migration_complexity(self, current: str, proposed: str) -> str:
+    def _assess_language_migration(self, current: str) -> str:
         """Assess language migration complexity."""
-        # This is simplified - in reality would parse versions
         if "unknown" in current.lower():
-            return "MEDIUM"
-        elif "2." in current and "3." in proposed:  # Python 2 -> 3
-            return "HIGH"
+            return MigrationComplexity.MEDIUM
+        elif "2." in current and "3." in current:  # Python 2 -> 3 type scenario
+            return MigrationComplexity.HIGH
         else:
-            return "LOW"
+            return MigrationComplexity.LOW
+
+    def _assess_framework_migration(self, framework: str) -> str:
+        """Assess framework migration complexity."""
+        # Most framework upgrades are MEDIUM complexity
+        if framework in ["angular", "django"]:
+            return MigrationComplexity.MEDIUM
+        else:
+            return MigrationComplexity.LOW
 
     def _get_language_alternatives(self, lang: str) -> List[Tuple[str, str]]:
         """Get alternative language options."""
         if lang == "python":
             return [
-                ("Python 3.11", "Previous LTS, stable but shorter support"),
-                ("Go 1.21", "Better performance, but team learning curve"),
+                ("Previous LTS", "If team prefers proven stability over latest features"),
+                ("Go", "Better performance, but team learning curve required"),
             ]
-        elif lang == "javascript":
+        elif lang in ["javascript", "node"]:
             return [
-                ("Node.js 18 LTS", "Previous LTS, still supported until 2025-04"),
-                ("Deno 1.x", "Modern runtime, but ecosystem less mature"),
+                ("Previous LTS", "Still supported, familiar to team"),
+                ("Deno", "Modern runtime, but less mature ecosystem"),
             ]
         elif lang == "java":
             return [
-                ("Java 17 LTS", "Previous LTS, supported until 2026"),
-                ("Kotlin", "Modern JVM language, but team learning curve"),
+                ("Previous LTS", "Well-tested, team is familiar"),
+                ("Kotlin", "Modern JVM language, gradual adoption possible"),
             ]
         else:
-            return [("Current version", "If team prefers familiarity over latest LTS")]
+            return [("Current version", "If team prefers stability over latest features")]
 
-    def _get_framework_rationale(self, framework: str, version: str) -> List[str]:
+    def _get_framework_rationale(self, framework: str) -> List[str]:
         """Get framework-specific rationale."""
-        if framework == "react":
-            return [
-                "Latest stable version with concurrent features",
-                "Server components support",
-                "Improved performance",
-                "Large ecosystem and community",
-                "Team likely already familiar"
-            ]
-        elif framework == "django":
-            return [
-                "Latest LTS with extended support until 2026",
-                "Security updates and bug fixes",
-                "Async support for better performance",
+        rationale_map = {
+            "react": [
+                "Most popular frontend framework with large ecosystem",
+                "Strong TypeScript support",
+                "Server components for better performance",
+                "Extensive community and tooling",
+            ],
+            "django": [
+                "Batteries-included web framework",
                 "Strong ORM and admin interface",
-                "Batteries-included approach"
-            ]
-        elif framework == "fastapi":
-            return [
+                "Excellent security track record",
+                "Good LTS support policy",
+            ],
+            "fastapi": [
                 "Modern async Python framework",
                 "Automatic OpenAPI documentation",
                 "Type validation with Pydantic",
-                "High performance (comparable to Node.js/Go)",
-                "Growing ecosystem"
-            ]
-        else:
-            return [
-                f"Latest stable {framework} version",
-                "Modern features and improvements",
-                "Active community support"
-            ]
+                "High performance comparable to Node.js",
+            ],
+            "flask": [
+                "Lightweight and flexible",
+                "Large ecosystem of extensions",
+                "Easy to learn and use",
+                "Good for microservices",
+            ],
+        }
 
-    def _assess_framework_migration_complexity(self, framework: str) -> str:
-        """Assess framework migration complexity."""
-        # Most framework upgrades are MEDIUM complexity
-        if framework in ["angular", "django"]:
-            return "MEDIUM"
-        else:
-            return "LOW"
+        return rationale_map.get(framework, [
+            "Well-established framework with good community support",
+            "Modern features and active development",
+            "Good documentation and tooling",
+        ])
 
     def _get_framework_alternatives(self, framework: str) -> List[Tuple[str, str]]:
         """Get alternative framework options."""
-        if framework in ["flask", "fastapi"]:
-            return [
-                ("Django 5.0", "More batteries-included, but heavier"),
-                ("Flask 3.0", "Lighter weight, but less features"),
-            ]
-        elif framework == "react":
-            return [
-                ("Vue 3", "Easier learning curve, similar features"),
-                ("Solid.js", "Better performance, smaller bundle"),
-            ]
-        else:
-            return [("Current framework", "If team is productive and satisfied")]
+        alternatives_map = {
+            "react": [
+                ("Vue", "Easier learning curve, similar features"),
+                ("Solid.js", "Better performance, smaller bundle size"),
+            ],
+            "django": [
+                ("Flask", "Lighter weight, more flexibility"),
+                ("FastAPI", "Modern async support, better performance"),
+            ],
+            "fastapi": [
+                ("Django", "More batteries included, but heavier"),
+                ("Flask", "Lighter weight, more mature ecosystem"),
+            ],
+        }
+
+        return alternatives_map.get(framework, [
+            ("Current framework", "If team is productive and requirements are met")
+        ])
 
     def _infer_database(self) -> Optional[str]:
         """Infer database from config files."""
-        for config_file in self.scan_result.structure.config_files:
+        for config_file in self.context.scan_result.structure.config_files:
             lower = config_file.lower()
             if "postgres" in lower or "pg" in lower:
                 return "postgresql"
@@ -717,69 +692,91 @@ Always verify latest LTS versions before starting migration:
                 return "mongodb"
             elif "redis" in lower:
                 return "redis"
+            elif "sqlite" in lower:
+                return "sqlite"
 
         return None
 
-    def _get_database_rationale(self, database: str, version: str) -> List[str]:
+    def _get_database_rationale(self, database: str) -> List[str]:
         """Get database-specific rationale."""
-        if database == "postgresql":
-            return [
-                f"Latest LTS version (PostgreSQL {version})",
-                "JSONB support for flexible schemas",
-                "Excellent performance and reliability",
+        rationale_map = {
+            "postgresql": [
+                "Most advanced open-source relational database",
+                "Excellent JSONB support for flexible schemas",
                 "Strong ACID compliance",
-                "Active development and community"
-            ]
-        elif database == "mysql":
-            return [
-                f"Latest LTS version (MySQL {version})",
-                "Wide compatibility and support",
+                "Active development and community",
+            ],
+            "mysql": [
+                "Wide compatibility and ecosystem support",
                 "Good performance for most workloads",
-                "Familiar to most developers"
-            ]
-        else:
-            return [
-                f"Latest stable {database} version",
-                "Modern features and performance",
-                "Active community support"
-            ]
+                "Familiar to most developers",
+                "Large community and resources",
+            ],
+            "mongodb": [
+                "Flexible document-oriented storage",
+                "Horizontal scaling built-in",
+                "Good for rapidly evolving schemas",
+                "Rich query capabilities",
+            ],
+        }
 
-    def _assess_database_migration_complexity(self, database: str) -> str:
-        """Assess database migration complexity."""
-        # Database migrations are typically LOW if schema is compatible
-        return "LOW"
+        return rationale_map.get(database, [
+            "Reliable and well-supported database system",
+            "Good performance characteristics",
+            "Active community and ecosystem",
+        ])
 
     def _get_database_alternatives(self, database: str) -> List[Tuple[str, str]]:
         """Get alternative database options."""
-        if database == "postgresql":
-            return [
-                ("MySQL 8.4 LTS", "More familiar, less feature-rich"),
-                ("MongoDB 7.0", "NoSQL flexibility, lose ACID guarantees"),
-            ]
-        elif database == "mysql":
-            return [
-                ("PostgreSQL 16", "More features, better JSON support"),
-                ("MariaDB 11.2", "MySQL fork with additional features"),
-            ]
-        else:
-            return [("Current database", "If performance and features are adequate")]
+        alternatives_map = {
+            "postgresql": [
+                ("MySQL", "More familiar to some teams, slightly simpler"),
+                ("MongoDB", "NoSQL flexibility, but lose ACID guarantees"),
+            ],
+            "mysql": [
+                ("PostgreSQL", "More features, better JSON support"),
+                ("MariaDB", "MySQL fork with additional features"),
+            ],
+            "mongodb": [
+                ("PostgreSQL", "ACID compliance with JSONB support"),
+                ("DynamoDB", "Managed NoSQL, but vendor lock-in"),
+            ],
+        }
 
-    def _calculate_total_complexity(self, recommendations: Dict) -> str:
-        """Calculate total migration complexity."""
-        complexities = [rec.migration_complexity for rec in recommendations.values() if rec]
+        return alternatives_map.get(database, [
+            ("Current database", "If performance and features meet requirements")
+        ])
 
-        if "HIGH" in complexities:
-            return "HIGH"
-        elif complexities.count("MEDIUM") >= 2:
-            return "MEDIUM-HIGH"
-        elif "MEDIUM" in complexities:
-            return "MEDIUM"
+    def _explain_complexity(self, complexity: str, component_type: str) -> str:
+        """Explain migration complexity."""
+        if complexity == MigrationComplexity.HIGH:
+            return f"""**Why HIGH?**:
+- Major version changes with breaking changes
+- Significant syntax or API differences
+- Extensive testing required
+- May require architectural adjustments
+
+**Effort**: 40-60% of total migration time"""
+        elif complexity == MigrationComplexity.MEDIUM:
+            return f"""**Why MEDIUM?**:
+- Some breaking changes expected
+- Migration guide available
+- Moderate testing required
+- Most patterns still work
+
+**Effort**: 20-30% of total migration time"""
         else:
-            return "LOW"
+            return f"""**Why LOW?**:
+- Mostly compatible upgrade
+- Few or no breaking changes
+- Good backward compatibility
+- Limited testing needed
+
+**Effort**: 5-10% of total migration time"""
 
     def _describe_migration_approach(self, complexity: str) -> str:
         """Describe migration approach based on complexity."""
-        if complexity == "HIGH":
+        if complexity == MigrationComplexity.HIGH:
             return """**Incremental Migration (Strangler Fig Pattern)**
 
 Due to high complexity, recommend gradual migration:
@@ -787,7 +784,7 @@ Due to high complexity, recommend gradual migration:
 - Migrate module by module
 - Validate each module before moving to next
 - Reduce risk by limiting scope of each change"""
-        elif "MEDIUM" in complexity:
+        elif complexity == MigrationComplexity.MEDIUM:
             return """**Phased Migration (Module by Module)**
 
 Moderate complexity suggests phased approach:
@@ -801,7 +798,7 @@ Moderate complexity suggests phased approach:
 Low complexity supports full migration:
 - Create new system with modern stack
 - Migrate all code in single effort
-- Leverage high test coverage for validation
+- Leverage good test coverage for validation
 - Deploy when all tests pass"""
 
     def _estimate_core_effort(self) -> str:
@@ -810,7 +807,7 @@ Low complexity supports full migration:
 
     def _describe_core_migration_strategy(self) -> str:
         """Describe core migration strategy."""
-        if self.metrics.lines_of_code > 50000:
+        if self.context.metrics.lines_of_code > ProjectSizeThresholds.LARGE_CODEBASE_INCREMENTAL:
             return """**Large Codebase Strategy**:
 1. Prioritize by business value (critical features first)
 2. Migrate 5-10K LOC per sprint
@@ -838,9 +835,8 @@ Low complexity supports full migration:
     def _prioritize_component(self, component_type: str) -> str:
         """Prioritize component for migration."""
         if component_type == "Language & Runtime":
-            # Check if EOL
-            vulnerable = sum(r.vulnerable_count for r in self.dependency_reports)
-            if vulnerable > 10:
+            vulnerable = sum(r.vulnerable_count for r in self.context.dependency_reports)
+            if vulnerable > QuirkThresholds.VULNERABLE_DEPENDENCIES_CRITICAL:
                 return "CRITICAL"
             return "HIGH"
         elif component_type == "Database":
@@ -848,71 +844,12 @@ Low complexity supports full migration:
         else:
             return "MEDIUM"
 
-    def _explain_language_complexity(self, complexity: str) -> str:
-        """Explain language migration complexity."""
-        if complexity == "HIGH":
-            return """**Why HIGH?**:
-- Major version upgrade with breaking changes
-- Significant syntax differences
-- Many dependencies need updating
-- Extensive testing required
-
-**Effort**: 40-60% of total migration time"""
-        elif complexity == "MEDIUM":
-            return """**Why MEDIUM?**:
-- Minor version upgrade with some breaking changes
-- Most syntax compatible
-- Some dependency updates needed
-- Moderate testing required
-
-**Effort**: 20-30% of total migration time"""
-        else:
-            return """**Why LOW?**:
-- Minor version upgrade, mostly compatible
-- Few or no breaking changes
-- Dependencies likely compatible
-- Limited testing needed
-
-**Effort**: 5-10% of total migration time"""
-
-    def _explain_framework_complexity(self, complexity: str, framework: str) -> str:
-        """Explain framework migration complexity."""
-        if complexity == "HIGH":
-            return f"""**Why HIGH?**:
-- {framework} has significant API changes
-- Requires architectural adjustments
-- Migration guide extensive
-
-**Effort**: 30-40% of total migration time"""
-        elif complexity == "MEDIUM":
-            return f"""**Why MEDIUM?**:
-- {framework} has some breaking changes
-- Most patterns still work
-- Follow official migration guide
-
-**Effort**: 15-25% of total migration time"""
-        else:
-            return f"""**Why LOW?**:
-- {framework} upgrade mostly compatible
-- Deprecation warnings to address
-- Straightforward migration
-
-**Effort**: 5-10% of total migration time"""
-
-    def _explain_database_complexity(self, complexity: str) -> str:
-        """Explain database migration complexity."""
-        return f"""**Why {complexity}?**:
-- Schema compatibility: {complexity}
-- Data migration tools available
-- Testing required: {complexity}
-
-**Effort**: 10-15% of total migration time"""
-
 
 def main():
     """Example usage of TechStackProposer."""
     print("TechStackProposer module loaded successfully")
-    print("This module is called by ReportGenerator during analysis")
+    print("This module uses AI-driven LTS recommendations")
+    print("No hardcoded version numbers - AI determines versions using knowledge base")
 
 
 if __name__ == "__main__":

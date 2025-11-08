@@ -12,13 +12,9 @@ from typing import List, Dict
 
 # Handle both relative and absolute imports
 try:
-    from .scanner import ScanResult
-    from .dependency_analyzer import DependencyReport
-    from .scoring_engine import ProjectMetrics
+    from .analysis_context import AnalysisContext
 except ImportError:
-    from scanner import ScanResult
-    from dependency_analyzer import DependencyReport
-    from scoring_engine import ProjectMetrics
+    from analysis_context import AnalysisContext
 
 
 class PrincipleExtractor:
@@ -29,27 +25,14 @@ class PrincipleExtractor:
     that can be used to create a project constitution.
     """
 
-    def __init__(
-        self,
-        scan_result: ScanResult,
-        dependency_reports: List[DependencyReport],
-        metrics: ProjectMetrics,
-        project_name: str
-    ):
+    def __init__(self, context: AnalysisContext):
         """
         Initialize principle extractor.
 
         Args:
-            scan_result: Results from ProjectScanner
-            dependency_reports: Results from DependencyAnalyzer
-            metrics: ProjectMetrics from analysis
-            project_name: Name of the project
+            context: Shared analysis context
         """
-        self.scan_result = scan_result
-        self.dependency_reports = dependency_reports
-        self.metrics = metrics
-        self.project_name = project_name
-        self.date_only = datetime.now().strftime("%Y-%m-%d")
+        self.context = context
 
     def generate_extracted_principles(self, output_path: Path) -> Path:
         """
@@ -91,8 +74,8 @@ class PrincipleExtractor:
         """Build header section."""
         return f"""# Extracted Principles (from Legacy Codebase Analysis)
 
-**Project**: {self.project_name}
-**Analysis Date**: {self.date_only}
+**Project**: {self.context.project_name}
+**Analysis Date**: {self.context.analysis_date}
 **Purpose**: Feed into `/speckit.constitution` for project modernization
 
 ---
@@ -104,11 +87,11 @@ These are NOT generic templates - they are based on ACTUAL patterns, practices,
 and requirements discovered in the existing system.
 
 **Key Stats**:
-- **Lines of Code**: {self.metrics.lines_of_code:,}
-- **Primary Language**: {self.scan_result.tech_stack.primary_language.title()}
-- **Frameworks**: {", ".join(self.scan_result.tech_stack.frameworks) if self.scan_result.tech_stack.frameworks else "None detected"}
-- **Test Coverage**: {self.metrics.test_coverage:.0f}%
-- **Technical Debt**: {self.metrics.technical_debt_percentage:.0f}%
+- **Lines of Code**: {self.context.metrics.lines_of_code:,}
+- **Primary Language**: {self.context.scan_result.tech_stack.primary_language.title()}
+- **Frameworks**: {", ".join(self.context.scan_result.tech_stack.frameworks) if self.context.scan_result.tech_stack.frameworks else "None detected"}
+- **Test Coverage**: {self.context.metrics.test_coverage:.0f}%
+- **Technical Debt**: {self.context.metrics.technical_debt_percentage:.0f}%
 
 ---"""
 
@@ -116,13 +99,13 @@ and requirements discovered in the existing system.
         """Build overview section."""
         findings = []
 
-        if self.scan_result.structure.has_tests:
+        if self.context.scan_result.structure.has_tests:
             findings.append("testing infrastructure")
-        if self.scan_result.structure.has_ci_cd:
+        if self.context.scan_result.structure.has_ci_cd:
             findings.append("CI/CD automation")
-        if self.scan_result.structure.has_documentation:
+        if self.context.scan_result.structure.has_documentation:
             findings.append("documentation practices")
-        if self.metrics.modularity_score >= 6:
+        if self.context.metrics.modularity_score >= 6:
             findings.append("modular architecture")
 
         findings_text = ", ".join(findings) if findings else "basic project structure"
@@ -132,9 +115,9 @@ and requirements discovered in the existing system.
 The legacy codebase was analyzed to extract principles that should guide
 the modernized system. Analysis examined:
 
-- **Code Structure**: {len(self.scan_result.structure.source_dirs)} source directories
-- **Dependencies**: {self.metrics.total_dependencies} total packages
-- **Build System**: {", ".join(self.scan_result.tech_stack.build_tools) if self.scan_result.tech_stack.build_tools else "Standard"}
+- **Code Structure**: {len(self.context.scan_result.structure.source_dirs)} source directories
+- **Dependencies**: {self.context.metrics.total_dependencies} total packages
+- **Build System**: {", ".join(self.context.scan_result.tech_stack.build_tools) if self.context.scan_result.tech_stack.build_tools else "Standard"}
 - **Patterns Found**: {findings_text}
 
 **Extraction Method**: Automated analysis of project structure, dependencies,
@@ -166,7 +149,7 @@ These principles govern business logic and domain requirements.
     def _extract_data_integrity_principle(self) -> str:
         """Extract data integrity principle."""
         has_db = any("db" in str(f).lower() or "database" in str(f).lower()
-                     for f in self.scan_result.structure.config_files)
+                     for f in self.context.scan_result.structure.config_files)
 
         evidence_loc = "Configuration files" if has_db else "Project structure"
 
@@ -175,8 +158,8 @@ These principles govern business logic and domain requirements.
 **Evidence**: {evidence_loc} indicate data persistence layer
 
 **Source**:
-- Configuration: {", ".join(self.scan_result.structure.config_files[:3]) if self.scan_result.structure.config_files else "Standard"}
-- Data layer likely in: {", ".join(self.scan_result.structure.source_dirs) if self.scan_result.structure.source_dirs else "source code"}
+- Configuration: {", ".join(self.context.scan_result.structure.config_files[:3]) if self.context.scan_result.structure.config_files else "Standard"}
+- Data layer likely in: {", ".join(self.context.scan_result.structure.source_dirs) if self.context.scan_result.structure.source_dirs else "source code"}
 
 **Requirement**:
 - MUST preserve all data validation rules from legacy system
@@ -189,15 +172,15 @@ schemas to extract specific validation rules and constraints."""
 
     def _extract_ux_continuity_principle(self) -> str:
         """Extract UX continuity principle."""
-        has_frontend = any(f in str(self.scan_result.tech_stack.frameworks)
+        has_frontend = any(f in str(self.context.scan_result.tech_stack.frameworks)
                           for f in ["react", "vue", "angular"])
 
         return f"""### 2. User Experience Continuity
 
-**Evidence**: {"Frontend framework detected (" + ", ".join([f for f in self.scan_result.tech_stack.frameworks if f.lower() in ["react", "vue", "angular"]]) + ")" if has_frontend else "User-facing application"}
+**Evidence**: {"Frontend framework detected (" + ", ".join([f for f in self.context.scan_result.tech_stack.frameworks if f.lower() in ["react", "vue", "angular"]]) + ")" if has_frontend else "User-facing application"}
 
 **Source**:
-- Framework: {", ".join(self.scan_result.tech_stack.frameworks) if self.scan_result.tech_stack.frameworks else "Unknown"}
+- Framework: {", ".join(self.context.scan_result.tech_stack.frameworks) if self.context.scan_result.tech_stack.frameworks else "Unknown"}
 - Codebase structure suggests {self._infer_app_type()}
 
 **Requirement**:
@@ -213,10 +196,10 @@ patterns to identify critical user journeys that must be preserved."""
         """Extract domain-specific rules principle."""
         return f"""### 3. Domain-Specific Business Rules
 
-**Evidence**: Business logic in {self.metrics.lines_of_code:,} lines of code
+**Evidence**: Business logic in {self.context.metrics.lines_of_code:,} lines of code
 
 **Source**:
-- Primary codebase: {", ".join(self.scan_result.structure.source_dirs) if self.scan_result.structure.source_dirs else "source files"}
+- Primary codebase: {", ".join(self.context.scan_result.structure.source_dirs) if self.context.scan_result.structure.source_dirs else "source files"}
 - Business logic modules: **AI should examine code**
 
 **Requirement**:
@@ -254,7 +237,7 @@ These principles govern system architecture and design patterns.
 
     def _extract_modularity_principle(self) -> str:
         """Extract modularity principle."""
-        score = self.metrics.modularity_score
+        score = self.context.metrics.modularity_score
 
         if score >= 7:
             assessment = "GOOD - Preserve modular structure"
@@ -268,8 +251,8 @@ These principles govern system architecture and design patterns.
 **Evidence**: Modularity score: {score:.1f}/10 ({assessment})
 
 **Source**:
-- Directory structure: {len(self.scan_result.structure.source_dirs)} main directories
-- Code organization: {", ".join(self.scan_result.structure.source_dirs) if self.scan_result.structure.source_dirs else "Standard"}
+- Directory structure: {len(self.context.scan_result.structure.source_dirs)} main directories
+- Code organization: {", ".join(self.context.scan_result.structure.source_dirs) if self.context.scan_result.structure.source_dirs else "Standard"}
 
 **Current Pattern**: {self._describe_modularity_pattern()}
 
@@ -283,15 +266,15 @@ These principles govern system architecture and design patterns.
 
     def _extract_service_boundaries_principle(self) -> str:
         """Extract service boundaries principle."""
-        num_dirs = len(self.scan_result.structure.source_dirs)
+        num_dirs = len(self.context.scan_result.structure.source_dirs)
 
         return f"""### 2. Service/Component Boundaries
 
 **Evidence**: {num_dirs} primary source {"directories" if num_dirs != 1 else "directory"} identified
 
 **Source**:
-- Structure: {", ".join(self.scan_result.structure.source_dirs) if self.scan_result.structure.source_dirs else "Flat structure"}
-- Architecture score: {self.metrics.architecture_score:.1f}/10
+- Structure: {", ".join(self.context.scan_result.structure.source_dirs) if self.context.scan_result.structure.source_dirs else "Flat structure"}
+- Architecture score: {self.context.metrics.architecture_score:.1f}/10
 
 **Current Pattern**: {self._describe_architecture_pattern()}
 
@@ -307,14 +290,14 @@ to identify service boundaries and potential violations."""
     def _extract_api_design_principle(self) -> str:
         """Extract API design principle."""
         has_api = any("api" in str(d).lower() or "route" in str(d).lower() or "controller" in str(d).lower()
-                     for d in self.scan_result.structure.source_dirs)
+                     for d in self.context.scan_result.structure.source_dirs)
 
         return f"""### 3. API Design and Contracts
 
 **Evidence**: {"API layer detected in directory structure" if has_api else "Application structure suggests API usage"}
 
 **Source**:
-- Framework: {", ".join(self.scan_result.tech_stack.frameworks) if self.scan_result.tech_stack.frameworks else "Unknown"}
+- Framework: {", ".join(self.context.scan_result.tech_stack.frameworks) if self.context.scan_result.tech_stack.frameworks else "Unknown"}
 - Likely location: {self._infer_api_location()}
 
 **Current Pattern**: {self._describe_api_pattern()}
@@ -354,8 +337,8 @@ These principles govern code quality, testing, and operational excellence.
 
     def _extract_testing_principle(self) -> str:
         """Extract testing principle."""
-        has_tests = self.scan_result.structure.has_tests
-        coverage = self.metrics.test_coverage
+        has_tests = self.context.scan_result.structure.has_tests
+        coverage = self.context.metrics.test_coverage
 
         if coverage >= 80:
             target = "maintain"
@@ -372,7 +355,7 @@ These principles govern code quality, testing, and operational excellence.
 **Evidence**: {"Test infrastructure present" if has_tests else "No test infrastructure detected"} (Coverage: {coverage:.0f}%)
 
 **Source**:
-- Test directories: {", ".join(self.scan_result.structure.test_dirs) if self.scan_result.structure.test_dirs else "None found"}
+- Test directories: {", ".join(self.context.scan_result.structure.test_dirs) if self.context.scan_result.structure.test_dirs else "None found"}
 - Test framework: {"Detected" if has_tests else "Not detected"}
 
 **Current State**: {coverage:.0f}% test coverage
@@ -389,16 +372,16 @@ These principles govern code quality, testing, and operational excellence.
 
     def _extract_code_quality_principle(self) -> str:
         """Extract code quality principle."""
-        score = self.metrics.code_quality_score
+        score = self.context.metrics.code_quality_score
 
         return f"""### 2. Code Quality and Maintainability
 
 **Evidence**: Code quality score: {score:.1f}/10
 
 **Source**:
-- Documentation: {"Present" if self.scan_result.structure.has_documentation else "Limited"}
-- Code organization: {self.metrics.modularity_score:.1f}/10 modularity
-- Technical debt: {self.metrics.technical_debt_percentage:.0f}%
+- Documentation: {"Present" if self.context.scan_result.structure.has_documentation else "Limited"}
+- Code organization: {self.context.metrics.modularity_score:.1f}/10 modularity
+- Technical debt: {self.context.metrics.technical_debt_percentage:.0f}%
 
 **Current State**: {"Good code quality practices" if score >= 7 else "Code quality needs improvement"}
 
@@ -406,7 +389,7 @@ These principles govern code quality, testing, and operational excellence.
 - MUST follow consistent coding standards
 - MUST enforce linting in CI/CD pipeline
 - MUST require code reviews for all changes
-- {"SHOULD maintain documentation standards" if self.scan_result.structure.has_documentation else "MUST add comprehensive documentation"}
+- {"SHOULD maintain documentation standards" if self.context.scan_result.structure.has_documentation else "MUST add comprehensive documentation"}
 - SHOULD use static analysis tools
 
 **Target**: Achieve 8.5+/10 code quality score (currently {score:.1f}/10)
@@ -416,7 +399,7 @@ any linter configurations to extract specific quality standards."""
 
     def _extract_security_principle(self) -> str:
         """Extract security principle."""
-        vulnerable_count = sum(r.vulnerable_count for r in self.dependency_reports)
+        vulnerable_count = sum(r.vulnerable_count for r in self.context.dependency_reports)
 
         urgency = "CRITICAL" if vulnerable_count > 10 else "HIGH" if vulnerable_count > 0 else "MODERATE"
 
@@ -425,9 +408,9 @@ any linter configurations to extract specific quality standards."""
 **Evidence**: {vulnerable_count} vulnerable dependencies found (Severity: {urgency})
 
 **Source**:
-- Dependencies analyzed: {self.metrics.total_dependencies} total
+- Dependencies analyzed: {self.context.metrics.total_dependencies} total
 - Security scan results: {vulnerable_count} vulnerabilities
-- {"Outdated packages: " + str(self.metrics.outdated_dependencies) if self.metrics.outdated_dependencies > 0 else "All packages current"}
+- {"Outdated packages: " + str(self.context.metrics.outdated_dependencies) if self.context.metrics.outdated_dependencies > 0 else "All packages current"}
 
 **Current State**: {self._assess_security_posture()}
 
@@ -450,12 +433,12 @@ and encryption patterns in legacy code to extract security requirements."""
 
         return f"""### 4. Performance and Scalability
 
-**Evidence**: Project size: {self.metrics.lines_of_code:,} LOC ({size_category})
+**Evidence**: Project size: {self.context.metrics.lines_of_code:,} LOC ({size_category})
 
 **Source**:
-- Codebase size: {self.metrics.lines_of_code:,} lines
-- Architecture: {self.metrics.architecture_score:.1f}/10
-- {"CI/CD: Present" if self.scan_result.structure.has_ci_cd else "CI/CD: Not detected"}
+- Codebase size: {self.context.metrics.lines_of_code:,} lines
+- Architecture: {self.context.metrics.architecture_score:.1f}/10
+- {"CI/CD: Present" if self.context.scan_result.structure.has_ci_cd else "CI/CD: Not detected"}
 
 **Current State**: {self._assess_performance_baseline()}
 
@@ -522,7 +505,7 @@ especially for business logic and domain rules."""
 
     def _infer_app_type(self) -> str:
         """Infer application type from tech stack."""
-        frameworks = [f.lower() for f in self.scan_result.tech_stack.frameworks]
+        frameworks = [f.lower() for f in self.context.scan_result.tech_stack.frameworks]
 
         if any(f in frameworks for f in ["react", "vue", "angular"]):
             return "web application with modern frontend"
@@ -535,7 +518,7 @@ especially for business logic and domain rules."""
 
     def _describe_modularity_pattern(self) -> str:
         """Describe current modularity pattern."""
-        score = self.metrics.modularity_score
+        score = self.context.metrics.modularity_score
 
         if score >= 7:
             return "Well-organized with clear separation of concerns"
@@ -546,7 +529,7 @@ especially for business logic and domain rules."""
 
     def _get_modularity_action(self) -> str:
         """Get action for modularity improvement."""
-        score = self.metrics.modularity_score
+        score = self.context.metrics.modularity_score
 
         if score >= 7:
             return "Examine module interfaces and preserve boundaries in new system"
@@ -557,7 +540,7 @@ especially for business logic and domain rules."""
 
     def _describe_architecture_pattern(self) -> str:
         """Describe architecture pattern."""
-        num_dirs = len(self.scan_result.structure.source_dirs)
+        num_dirs = len(self.context.scan_result.structure.source_dirs)
 
         if num_dirs >= 5:
             return "Multi-service or layered architecture"
@@ -568,18 +551,18 @@ especially for business logic and domain rules."""
 
     def _infer_api_location(self) -> str:
         """Infer API location from structure."""
-        for dir_name in self.scan_result.structure.source_dirs:
+        for dir_name in self.context.scan_result.structure.source_dirs:
             if any(keyword in dir_name.lower() for keyword in ["api", "route", "controller", "endpoint"]):
                 return dir_name
 
-        if self.scan_result.structure.source_dirs:
-            return f"{self.scan_result.structure.source_dirs[0]} (likely contains API definitions)"
+        if self.context.scan_result.structure.source_dirs:
+            return f"{self.context.scan_result.structure.source_dirs[0]} (likely contains API definitions)"
 
         return "Source code (examine for route/endpoint definitions)"
 
     def _describe_api_pattern(self) -> str:
         """Describe API pattern from framework."""
-        frameworks = [f.lower() for f in self.scan_result.tech_stack.frameworks]
+        frameworks = [f.lower() for f in self.context.scan_result.tech_stack.frameworks]
 
         if "fastapi" in frameworks:
             return "FastAPI (async Python, OpenAPI built-in)"
@@ -596,14 +579,14 @@ especially for business logic and domain rules."""
 
     def _get_testing_action(self) -> str:
         """Get testing action."""
-        if self.scan_result.structure.has_tests:
+        if self.context.scan_result.structure.has_tests:
             return "Examine existing tests to extract testing patterns and coverage standards"
         else:
             return "Create comprehensive test strategy (unit, integration, E2E) from scratch"
 
     def _assess_security_posture(self) -> str:
         """Assess security posture."""
-        vulnerable = sum(r.vulnerable_count for r in self.dependency_reports)
+        vulnerable = sum(r.vulnerable_count for r in self.context.dependency_reports)
 
         if vulnerable == 0:
             return "Good - No known vulnerabilities"
@@ -614,7 +597,7 @@ especially for business logic and domain rules."""
 
     def _get_size_category(self) -> str:
         """Get project size category."""
-        loc = self.metrics.lines_of_code
+        loc = self.context.metrics.lines_of_code
 
         if loc < 10000:
             return "Small"

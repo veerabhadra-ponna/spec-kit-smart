@@ -13,13 +13,9 @@ from typing import List, Dict, Optional
 
 # Handle both relative and absolute imports
 try:
-    from .scanner import ScanResult
-    from .dependency_analyzer import DependencyReport
-    from .scoring_engine import ProjectMetrics
+    from .analysis_context import AnalysisContext
 except ImportError:
-    from scanner import ScanResult
-    from dependency_analyzer import DependencyReport
-    from scoring_engine import ProjectMetrics
+    from analysis_context import AnalysisContext
 
 
 @dataclass
@@ -54,30 +50,16 @@ class PromptGenerator:
         "8-checklist"
     ]
 
-    def __init__(
-        self,
-        scan_result: ScanResult,
-        dependency_reports: List[DependencyReport],
-        metrics: ProjectMetrics,
-        project_name: str,
-        output_dir: Path
-    ):
+    def __init__(self, context: AnalysisContext, output_dir: Path):
         """
         Initialize prompt generator.
 
         Args:
-            scan_result: Results from ProjectScanner
-            dependency_reports: Results from DependencyAnalyzer
-            metrics: ProjectMetrics from analysis
-            project_name: Name of the project being analyzed
+            context: Shared analysis context
             output_dir: Directory where prompts will be written
         """
-        self.scan_result = scan_result
-        self.dependency_reports = dependency_reports
-        self.metrics = metrics
-        self.project_name = project_name
+        self.context = context
         self.output_dir = output_dir
-        self.date_only = datetime.now().strftime("%Y-%m-%d")
 
         # Create stage-prompts directory
         self.prompts_dir = output_dir / "stage-prompts"
@@ -122,10 +104,10 @@ class PromptGenerator:
         constraints = self._extract_critical_constraints()
 
         return StagePromptContext(
-            project_name=self.project_name,
+            project_name=self.context.project_name,
             legacy_tech_stack=legacy_stack,
             proposed_tech_stack=proposed_stack,
-            analysis_date=self.date_only,
+            analysis_date=self.context.analysis_date,
             code_references=code_refs,
             key_findings=findings,
             critical_constraints=constraints
@@ -133,22 +115,22 @@ class PromptGenerator:
 
     def _format_legacy_stack(self) -> str:
         """Format legacy tech stack as readable string."""
-        parts = [self.scan_result.tech_stack.primary_language.title()]
+        parts = [self.context.scan_result.tech_stack.primary_language.title()]
 
-        if self.scan_result.tech_stack.runtime_version:
-            parts[0] += f" {self.scan_result.tech_stack.runtime_version}"
+        if self.context.scan_result.tech_stack.runtime_version:
+            parts[0] += f" {self.context.scan_result.tech_stack.runtime_version}"
 
-        if self.scan_result.tech_stack.frameworks:
-            parts.append(", ".join(self.scan_result.tech_stack.frameworks))
+        if self.context.scan_result.tech_stack.frameworks:
+            parts.append(", ".join(self.context.scan_result.tech_stack.frameworks))
 
-        if self.scan_result.tech_stack.package_manager:
-            parts.append(self.scan_result.tech_stack.package_manager)
+        if self.context.scan_result.tech_stack.package_manager:
+            parts.append(self.context.scan_result.tech_stack.package_manager)
 
         return ", ".join(parts)
 
     def _format_proposed_stack(self) -> str:
         """Format proposed tech stack with LTS versions."""
-        primary = self.scan_result.tech_stack.primary_language.lower()
+        primary = self.context.scan_result.tech_stack.primary_language.lower()
 
         # Map to proposed LTS versions
         lts_mapping = {
@@ -166,11 +148,11 @@ class PromptGenerator:
         proposed = lts_mapping.get(primary, f"{primary.title()} (latest stable)")
 
         # Add framework suggestions if applicable
-        if "react" in str(self.scan_result.tech_stack.frameworks).lower():
+        if "react" in str(self.context.scan_result.tech_stack.frameworks).lower():
             proposed += ", React 18+"
-        elif "vue" in str(self.scan_result.tech_stack.frameworks).lower():
+        elif "vue" in str(self.context.scan_result.tech_stack.frameworks).lower():
             proposed += ", Vue 3+"
-        elif "angular" in str(self.scan_result.tech_stack.frameworks).lower():
+        elif "angular" in str(self.context.scan_result.tech_stack.frameworks).lower():
             proposed += ", Angular 17+"
 
         return proposed
@@ -180,24 +162,24 @@ class PromptGenerator:
         refs = {}
 
         # Add structure-based references
-        if self.scan_result.structure.source_dirs:
-            refs["Source Code"] = ", ".join(self.scan_result.structure.source_dirs)
+        if self.context.scan_result.structure.source_dirs:
+            refs["Source Code"] = ", ".join(self.context.scan_result.structure.source_dirs)
 
-        if self.scan_result.structure.test_dirs:
-            refs["Tests"] = ", ".join(self.scan_result.structure.test_dirs)
+        if self.context.scan_result.structure.test_dirs:
+            refs["Tests"] = ", ".join(self.context.scan_result.structure.test_dirs)
 
-        if self.scan_result.structure.config_files:
-            refs["Configuration"] = ", ".join(self.scan_result.structure.config_files[:3])
+        if self.context.scan_result.structure.config_files:
+            refs["Configuration"] = ", ".join(self.context.scan_result.structure.config_files[:3])
 
         # Add package manager files
-        if self.scan_result.tech_stack.package_manager:
-            if "npm" in self.scan_result.tech_stack.package_manager.lower():
+        if self.context.scan_result.tech_stack.package_manager:
+            if "npm" in self.context.scan_result.tech_stack.package_manager.lower():
                 refs["Dependencies"] = "package.json"
-            elif "pip" in self.scan_result.tech_stack.package_manager.lower():
+            elif "pip" in self.context.scan_result.tech_stack.package_manager.lower():
                 refs["Dependencies"] = "requirements.txt, setup.py"
-            elif "maven" in self.scan_result.tech_stack.package_manager.lower():
+            elif "maven" in self.context.scan_result.tech_stack.package_manager.lower():
                 refs["Dependencies"] = "pom.xml"
-            elif "gradle" in self.scan_result.tech_stack.package_manager.lower():
+            elif "gradle" in self.context.scan_result.tech_stack.package_manager.lower():
                 refs["Dependencies"] = "build.gradle"
 
         return refs
@@ -207,28 +189,28 @@ class PromptGenerator:
         findings = []
 
         # Test coverage finding
-        if self.metrics.test_coverage < 60:
-            findings.append(f"Low test coverage ({self.metrics.test_coverage:.0f}%) - Modernization should improve this")
-        elif self.metrics.test_coverage >= 80:
-            findings.append(f"Good test coverage ({self.metrics.test_coverage:.0f}%) - Preserve testing practices")
+        if self.context.metrics.test_coverage < 60:
+            findings.append(f"Low test coverage ({self.context.metrics.test_coverage:.0f}%) - Modernization should improve this")
+        elif self.context.metrics.test_coverage >= 80:
+            findings.append(f"Good test coverage ({self.context.metrics.test_coverage:.0f}%) - Preserve testing practices")
 
         # Technical debt finding
-        if self.metrics.technical_debt_percentage > 40:
-            findings.append(f"High technical debt ({self.metrics.technical_debt_percentage:.0f}%) - Major refactoring opportunity")
+        if self.context.metrics.technical_debt_percentage > 40:
+            findings.append(f"High technical debt ({self.context.metrics.technical_debt_percentage:.0f}%) - Major refactoring opportunity")
 
         # Security finding
-        vulnerable_count = sum(r.vulnerable_count for r in self.dependency_reports)
+        vulnerable_count = sum(r.vulnerable_count for r in self.context.dependency_reports)
         if vulnerable_count > 0:
             findings.append(f"{vulnerable_count} vulnerable dependencies - MUST be addressed in modernization")
 
         # CI/CD finding
-        if self.scan_result.structure.has_ci_cd:
+        if self.context.scan_result.structure.has_ci_cd:
             findings.append("CI/CD pipeline exists - Preserve automation practices")
         else:
             findings.append("No CI/CD - Modernization should add automated deployment")
 
         # Documentation finding
-        if self.scan_result.structure.has_documentation:
+        if self.context.scan_result.structure.has_documentation:
             findings.append("Documentation present - Extract domain knowledge")
         else:
             findings.append("Limited documentation - Reverse engineer domain rules from code")
@@ -240,19 +222,19 @@ class PromptGenerator:
         constraints = []
 
         # Add size-based constraints
-        if self.metrics.lines_of_code > 50000:
-            constraints.append(f"Large codebase ({self.metrics.lines_of_code:,} LOC) - Incremental migration recommended")
+        if self.context.metrics.lines_of_code > 50000:
+            constraints.append(f"Large codebase ({self.context.metrics.lines_of_code:,} LOC) - Incremental migration recommended")
 
         # Add dependency constraints
-        if self.metrics.total_dependencies > 50:
-            constraints.append(f"Many dependencies ({self.metrics.total_dependencies}) - Careful upgrade planning needed")
+        if self.context.metrics.total_dependencies > 50:
+            constraints.append(f"Many dependencies ({self.context.metrics.total_dependencies}) - Careful upgrade planning needed")
 
         # Add framework constraints
-        if self.scan_result.tech_stack.frameworks:
-            constraints.append(f"Existing framework patterns ({', '.join(self.scan_result.tech_stack.frameworks)}) - Study before changing")
+        if self.context.scan_result.tech_stack.frameworks:
+            constraints.append(f"Existing framework patterns ({', '.join(self.context.scan_result.tech_stack.frameworks)}) - Study before changing")
 
         # Add architecture constraints
-        if self.metrics.modularity_score < 5:
+        if self.context.metrics.modularity_score < 5:
             constraints.append("Low modularity - May need significant restructuring")
 
         return constraints
@@ -308,7 +290,7 @@ Based on analysis, consider including these principles:
 
 ### 1. Testing Standards
 
-**Evidence**: Current test coverage is {self.metrics.test_coverage:.0f}%
+**Evidence**: Current test coverage is {self.context.metrics.test_coverage:.0f}%
 
 **Recommendation**:
 - MUST maintain minimum 80% test coverage for all new code
@@ -317,7 +299,7 @@ Based on analysis, consider including these principles:
 
 ### 2. Security First
 
-**Evidence**: {sum(r.vulnerable_count for r in self.dependency_reports)} vulnerable dependencies found
+**Evidence**: {sum(r.vulnerable_count for r in self.context.dependency_reports)} vulnerable dependencies found
 
 **Recommendation**:
 - MUST address security vulnerabilities within 48 hours
@@ -326,7 +308,7 @@ Based on analysis, consider including these principles:
 
 ### 3. Code Quality
 
-**Evidence**: Code quality score: {self.metrics.code_quality_score:.1f}/10
+**Evidence**: Code quality score: {self.context.metrics.code_quality_score:.1f}/10
 
 **Recommendation**:
 - MUST follow consistent code quality standards
@@ -335,7 +317,7 @@ Based on analysis, consider including these principles:
 
 ### 4. Documentation
 
-**Evidence**: {"Documentation present" if self.scan_result.structure.has_documentation else "Limited documentation"}
+**Evidence**: {"Documentation present" if self.context.scan_result.structure.has_documentation else "Limited documentation"}
 
 **Recommendation**:
 - MUST document all public APIs
@@ -396,12 +378,12 @@ The legacy system provides these capabilities (preserve in modernized version):
 
 Based on codebase analysis:
 
-- **Lines of Code**: {self.metrics.lines_of_code:,}
-- **File Count**: {self.scan_result.metrics.file_count}
-- **Languages**: {", ".join(self.scan_result.tech_stack.languages)}
-- **Frameworks**: {", ".join(self.scan_result.tech_stack.frameworks) if self.scan_result.tech_stack.frameworks else "None detected"}
+- **Lines of Code**: {self.context.metrics.lines_of_code:,}
+- **File Count**: {self.context.scan_result.metrics.file_count}
+- **Languages**: {", ".join(self.context.scan_result.tech_stack.languages)}
+- **Frameworks**: {", ".join(self.context.scan_result.tech_stack.frameworks) if self.context.scan_result.tech_stack.frameworks else "None detected"}
 
-**Source Directories**: {", ".join(self.scan_result.structure.source_dirs) if self.scan_result.structure.source_dirs else "Not detected"}
+**Source Directories**: {", ".join(self.context.scan_result.structure.source_dirs) if self.context.scan_result.structure.source_dirs else "Not detected"}
 
 **Recommendation**: Review each source directory to identify features and user workflows.
 
@@ -418,8 +400,8 @@ Create a functional specification for modernizing {ctx.project_name}.
 
 Legacy System Overview:
 - Current implementation: {ctx.legacy_tech_stack}
-- Size: {self.metrics.lines_of_code:,} lines of code
-- Structure: {", ".join(self.scan_result.structure.source_dirs[:3]) if self.scan_result.structure.source_dirs else "Standard layout"}
+- Size: {self.context.metrics.lines_of_code:,} lines of code
+- Structure: {", ".join(self.context.scan_result.structure.source_dirs[:3]) if self.context.scan_result.structure.source_dirs else "Standard layout"}
 
 Requirements:
 1. Preserve all existing functionality (see functional-spec.md for details)
@@ -512,7 +494,7 @@ These MUST be preserved exactly (check code before making changes):
 ### Pattern 3: Business Rules
 
 **If unclear**: Check legacy business logic in:
-{", ".join(self.scan_result.structure.source_dirs[:2]) if self.scan_result.structure.source_dirs else "source code"}
+{", ".join(self.context.scan_result.structure.source_dirs[:2]) if self.context.scan_result.structure.source_dirs else "source code"}
 
 ## Suggested Prompt
 
@@ -522,7 +504,7 @@ When running `/speckit.clarify`, use this guidance:
 Clarify ambiguities in the specification for {ctx.project_name} modernization.
 
 Legacy Code as Reference:
-- Location: {", ".join(self.scan_result.structure.source_dirs[:2]) if self.scan_result.structure.source_dirs else "project root"}
+- Location: {", ".join(self.context.scan_result.structure.source_dirs[:2]) if self.context.scan_result.structure.source_dirs else "project root"}
 - When unclear, refer to legacy implementation as source of truth
 - Preserve critical behaviors: {", ".join(ctx.critical_constraints[:2])}
 
@@ -556,11 +538,11 @@ Mark as CRITICAL any behavior related to: security, payments, data integrity, us
 ## Legacy Architecture Context
 
 **Current Structure**:
-- **Source**: {", ".join(self.scan_result.structure.source_dirs) if self.scan_result.structure.source_dirs else "Standard layout"}
-- **Tests**: {", ".join(self.scan_result.structure.test_dirs) if self.scan_result.structure.test_dirs else "No test directories"}
-- **CI/CD**: {"Present" if self.scan_result.structure.has_ci_cd else "Not detected"}
-- **Modularity Score**: {self.metrics.modularity_score:.1f}/10
-- **Architecture Score**: {self.metrics.architecture_score:.1f}/10
+- **Source**: {", ".join(self.context.scan_result.structure.source_dirs) if self.context.scan_result.structure.source_dirs else "Standard layout"}
+- **Tests**: {", ".join(self.context.scan_result.structure.test_dirs) if self.context.scan_result.structure.test_dirs else "No test directories"}
+- **CI/CD**: {"Present" if self.context.scan_result.structure.has_ci_cd else "Not detected"}
+- **Modularity Score**: {self.context.metrics.modularity_score:.1f}/10
+- **Architecture Score**: {self.context.metrics.architecture_score:.1f}/10
 
 ## Proposed Tech Stack with LTS
 
@@ -602,12 +584,12 @@ Target Tech Stack:
 
 Legacy Architecture:
 - Current: {ctx.legacy_tech_stack}
-- Modularity: {self.metrics.modularity_score:.1f}/10
-- {"Preserve: " + ", ".join(self.scan_result.structure.source_dirs[:2]) if self.scan_result.structure.source_dirs else "Standard structure"}
+- Modularity: {self.context.metrics.modularity_score:.1f}/10
+- {"Preserve: " + ", ".join(self.context.scan_result.structure.source_dirs[:2]) if self.context.scan_result.structure.source_dirs else "Standard structure"}
 
 Requirements:
-1. {"Add CI/CD pipeline" if not self.scan_result.structure.has_ci_cd else "Enhance existing CI/CD"}
-2. {"Improve test coverage from " + str(int(self.metrics.test_coverage)) + "% to 80%+" if self.metrics.test_coverage < 80 else "Maintain " + str(int(self.metrics.test_coverage)) + "% test coverage"}
+1. {"Add CI/CD pipeline" if not self.context.scan_result.structure.has_ci_cd else "Enhance existing CI/CD"}
+2. {"Improve test coverage from " + str(int(self.context.metrics.test_coverage)) + "% to 80%+" if self.context.metrics.test_coverage < 80 else "Maintain " + str(int(self.context.metrics.test_coverage)) + "% test coverage"}
 3. Address: {", ".join(ctx.critical_constraints[:2])}
 4. Migration approach: {self._recommend_migration_approach()}
 
@@ -641,7 +623,7 @@ Design for: maintainability, testability, security, and scalability.
 
 ## Complexity Hints from Analysis
 
-**Project Size**: {self.metrics.lines_of_code:,} lines of code
+**Project Size**: {self.context.metrics.lines_of_code:,} lines of code
 **Estimated Effort**: {self._estimate_task_breakdown_effort()}
 **Recommended Approach**: {self._recommend_task_breakdown_approach()}
 
@@ -653,7 +635,7 @@ Design for: maintainability, testability, security, and scalability.
 
 Suggested tasks:
 - [ ] Set up project structure with {ctx.proposed_tech_stack}
-- [ ] {"Migrate existing CI/CD" if self.scan_result.structure.has_ci_cd else "Set up CI/CD pipeline"}
+- [ ] {"Migrate existing CI/CD" if self.context.scan_result.structure.has_ci_cd else "Set up CI/CD pipeline"}
 - [ ] Configure linting and code quality tools
 - [ ] Set up test framework (target: 80%+ coverage)
 - [ ] Create development/staging/production environments
@@ -669,13 +651,13 @@ Breakdown by complexity:
 
 ### Phase 2: Testing & Quality (2-4 weeks)
 
-**Current Coverage**: {self.metrics.test_coverage:.0f}%
+**Current Coverage**: {self.context.metrics.test_coverage:.0f}%
 **Target Coverage**: 80%+
 
 Suggested tasks:
 - [ ] Write unit tests for all business logic
 - [ ] Write integration tests for all APIs
-- [ ] {"Migrate existing tests" if self.scan_result.structure.has_tests else "Create test suite from scratch"}
+- [ ] {"Migrate existing tests" if self.context.scan_result.structure.has_tests else "Create test suite from scratch"}
 - [ ] Set up test automation in CI/CD
 - [ ] Performance testing and optimization
 
@@ -705,7 +687,7 @@ When running `/speckit.tasks`, use this guidance:
 Break down modernization of {ctx.project_name} into concrete tasks.
 
 Project Context:
-- Size: {self.metrics.lines_of_code:,} lines of code
+- Size: {self.context.metrics.lines_of_code:,} lines of code
 - Complexity: {self._assess_overall_complexity()}
 - Recommended approach: {self._recommend_task_breakdown_approach()}
 
@@ -720,7 +702,7 @@ Prioritize:
 2. High-value user features
 3. Nice-to-have enhancements last
 
-Reference legacy code in: {", ".join(self.scan_result.structure.source_dirs[:2]) if self.scan_result.structure.source_dirs else "project root"}
+Reference legacy code in: {", ".join(self.context.scan_result.structure.source_dirs[:2]) if self.context.scan_result.structure.source_dirs else "project root"}
 ```
 
 ## Next Steps
@@ -751,7 +733,7 @@ Use the legacy codebase as validation reference:
 **Verify**: All legacy features are in the specification
 
 **Legacy Features**: Review code in:
-{", ".join(self.scan_result.structure.source_dirs) if self.scan_result.structure.source_dirs else "source directories"}
+{", ".join(self.context.scan_result.structure.source_dirs) if self.context.scan_result.structure.source_dirs else "source directories"}
 
 **Check**:
 - [ ] All API endpoints documented?
@@ -777,9 +759,9 @@ Use the legacy codebase as validation reference:
 **Verify**: Plan is technically sound
 
 **Legacy Constraints**:
-- Current architecture score: {self.metrics.architecture_score:.1f}/10
-- Current modularity: {self.metrics.modularity_score:.1f}/10
-- Current technical debt: {self.metrics.technical_debt_percentage:.0f}%
+- Current architecture score: {self.context.metrics.architecture_score:.1f}/10
+- Current modularity: {self.context.metrics.modularity_score:.1f}/10
+- Current technical debt: {self.context.metrics.technical_debt_percentage:.0f}%
 
 **Check**:
 - [ ] Migration approach matches project size?
@@ -795,10 +777,10 @@ Use the legacy codebase as validation reference:
 {self._format_legacy_gaps()}
 
 **Check**:
-- [ ] {"CI/CD pipeline added?" if not self.scan_result.structure.has_ci_cd else "CI/CD enhancements included?"}
-- [ ] {"Test coverage improvements planned?" if self.metrics.test_coverage < 80 else "Test coverage maintained?"}
-- [ ] Security vulnerabilities addressed? ({sum(r.vulnerable_count for r in self.dependency_reports)} found)
-- [ ] Technical debt reduction planned? ({self.metrics.technical_debt_percentage:.0f}% current)
+- [ ] {"CI/CD pipeline added?" if not self.context.scan_result.structure.has_ci_cd else "CI/CD enhancements included?"}
+- [ ] {"Test coverage improvements planned?" if self.context.metrics.test_coverage < 80 else "Test coverage maintained?"}
+- [ ] Security vulnerabilities addressed? ({sum(r.vulnerable_count for r in self.context.dependency_reports)} found)
+- [ ] Technical debt reduction planned? ({self.context.metrics.technical_debt_percentage:.0f}% current)
 
 ## Suggested Prompt
 
@@ -808,7 +790,7 @@ When running `/speckit.analyze`, use this guidance:
 Analyze the specification, plan, and tasks for {ctx.project_name} modernization.
 
 Validate against legacy system:
-- Legacy location: {", ".join(self.scan_result.structure.source_dirs[:2]) if self.scan_result.structure.source_dirs else "project root"}
+- Legacy location: {", ".join(self.context.scan_result.structure.source_dirs[:2]) if self.context.scan_result.structure.source_dirs else "project root"}
 - Reference: functional-spec.md for complete feature list
 
 Consistency Checks:
@@ -877,7 +859,7 @@ When implementing features, reference legacy code for behavior details:
 - Error handling (use modern patterns like try/catch)
 - Logging (use structured logging)
 - Configuration (use environment variables)
-- {"Testing (add comprehensive tests - currently " + str(int(self.metrics.test_coverage)) + "%)" if self.metrics.test_coverage < 80 else "Testing (maintain " + str(int(self.metrics.test_coverage)) + "% coverage)"}
+- {"Testing (add comprehensive tests - currently " + str(int(self.context.metrics.test_coverage)) + "%)" if self.context.metrics.test_coverage < 80 else "Testing (maintain " + str(int(self.context.metrics.test_coverage)) + "% coverage)"}
 
 ### 3. Reference Legacy for Edge Cases
 
@@ -905,18 +887,18 @@ When handling edge cases:
 4. **Performance Tests**: Match or exceed legacy performance
 
 **Current Legacy Metrics**:
-- Lines of code: {self.metrics.lines_of_code:,}
-- Test coverage: {self.metrics.test_coverage:.0f}%
-- File count: {self.scan_result.metrics.file_count}
+- Lines of code: {self.context.metrics.lines_of_code:,}
+- Test coverage: {self.context.metrics.test_coverage:.0f}%
+- File count: {self.context.scan_result.metrics.file_count}
 
 ## Code Quality Standards
 
 **Target Improvements**:
 
-- **Test Coverage**: {self.metrics.test_coverage:.0f}% → 80%+
-- **Code Quality**: {self.metrics.code_quality_score:.1f}/10 → 8.5+/10
-- **Documentation**: {self.metrics.documentation_quality:.1f}/10 → 8.0+/10
-- **Technical Debt**: {self.metrics.technical_debt_percentage:.0f}% → <20%
+- **Test Coverage**: {self.context.metrics.test_coverage:.0f}% → 80%+
+- **Code Quality**: {self.context.metrics.code_quality_score:.1f}/10 → 8.5+/10
+- **Documentation**: {self.context.metrics.documentation_quality:.1f}/10 → 8.0+/10
+- **Technical Debt**: {self.context.metrics.technical_debt_percentage:.0f}% → <20%
 
 ## Suggested Prompt
 
@@ -926,14 +908,14 @@ When running `/speckit.implement`, use this guidance:
 Implement modernization of {ctx.project_name} according to spec and plan.
 
 Legacy Code Reference:
-- Location: {", ".join(self.scan_result.structure.source_dirs[:2]) if self.scan_result.structure.source_dirs else "project root"}
+- Location: {", ".join(self.context.scan_result.structure.source_dirs[:2]) if self.context.scan_result.structure.source_dirs else "project root"}
 - Use for: Business logic, edge cases, validation rules
 - Preserve: Critical behaviors (security, payments, data integrity)
 - Modernize: Code style, error handling, testing, logging
 
 Implementation Standards:
-- Test coverage: 80%+ (currently {self.metrics.test_coverage:.0f}%)
-- Code quality: 8.5+/10 (currently {self.metrics.code_quality_score:.1f}/10)
+- Test coverage: 80%+ (currently {self.context.metrics.test_coverage:.0f}%)
+- Code quality: 8.5+/10 (currently {self.context.metrics.code_quality_score:.1f}/10)
 - Follow plan.md architecture decisions
 - Reference spec.md for requirements
 
@@ -975,9 +957,9 @@ For each feature:
 Compare against legacy system:
 
 **Legacy Baseline**:
-- Source: {", ".join(self.scan_result.structure.source_dirs) if self.scan_result.structure.source_dirs else "project root"}
-- Files: {self.scan_result.metrics.file_count}
-- Lines: {self.metrics.lines_of_code:,}
+- Source: {", ".join(self.context.scan_result.structure.source_dirs) if self.context.scan_result.structure.source_dirs else "project root"}
+- Files: {self.context.scan_result.metrics.file_count}
+- Lines: {self.context.metrics.lines_of_code:,}
 
 **Validation**:
 - [ ] All legacy features implemented?
@@ -1002,25 +984,25 @@ Verify critical behaviors match legacy:
 Verify modernization goals achieved:
 
 **Targets vs Legacy**:
-- Test coverage: 80%+ target (legacy: {self.metrics.test_coverage:.0f}%)
-- Code quality: 8.5+/10 target (legacy: {self.metrics.code_quality_score:.1f}/10)
-- Technical debt: <20% target (legacy: {self.metrics.technical_debt_percentage:.0f}%)
-- CI/CD: {"Enhance" if self.scan_result.structure.has_ci_cd else "Add new"} pipeline
+- Test coverage: 80%+ target (legacy: {self.context.metrics.test_coverage:.0f}%)
+- Code quality: 8.5+/10 target (legacy: {self.context.metrics.code_quality_score:.1f}/10)
+- Technical debt: <20% target (legacy: {self.context.metrics.technical_debt_percentage:.0f}%)
+- CI/CD: {"Enhance" if self.context.scan_result.structure.has_ci_cd else "Add new"} pipeline
 
 **Validation**:
 - [ ] Test coverage ≥ 80%?
 - [ ] All tests passing?
 - [ ] Code quality score ≥ 8.5?
-- [ ] {"CI/CD pipeline working?" if not self.scan_result.structure.has_ci_cd else "CI/CD enhancements deployed?"}
+- [ ] {"CI/CD pipeline working?" if not self.context.scan_result.structure.has_ci_cd else "CI/CD enhancements deployed?"}
 - [ ] Documentation complete?
-- [ ] Security vulnerabilities fixed? (legacy had {sum(r.vulnerable_count for r in self.dependency_reports)})
+- [ ] Security vulnerabilities fixed? (legacy had {sum(r.vulnerable_count for r in self.context.dependency_reports)})
 
 ### 4. Deployment Readiness
 
 **Legacy System Context**:
-- {"CI/CD: Present" if self.scan_result.structure.has_ci_cd else "CI/CD: Not detected"}
-- {"Tests: Present" if self.scan_result.structure.has_tests else "Tests: Not detected"}
-- Vulnerabilities: {sum(r.vulnerable_count for r in self.dependency_reports)}
+- {"CI/CD: Present" if self.context.scan_result.structure.has_ci_cd else "CI/CD: Not detected"}
+- {"Tests: Present" if self.context.scan_result.structure.has_tests else "Tests: Not detected"}
+- Vulnerabilities: {sum(r.vulnerable_count for r in self.context.dependency_reports)}
 
 **Validation**:
 - [ ] All environments configured (dev/staging/prod)?
@@ -1047,9 +1029,9 @@ When running `/speckit.checklist`, use this guidance:
 Create final validation checklist for {ctx.project_name} modernization.
 
 Legacy Baseline:
-- Location: {", ".join(self.scan_result.structure.source_dirs[:2]) if self.scan_result.structure.source_dirs else "project root"}
-- Metrics: {self.metrics.lines_of_code:,} LOC, {self.metrics.test_coverage:.0f}% coverage
-- Issues: {sum(r.vulnerable_count for r in self.dependency_reports)} vulnerabilities, {self.metrics.technical_debt_percentage:.0f}% tech debt
+- Location: {", ".join(self.context.scan_result.structure.source_dirs[:2]) if self.context.scan_result.structure.source_dirs else "project root"}
+- Metrics: {self.context.metrics.lines_of_code:,} LOC, {self.context.metrics.test_coverage:.0f}% coverage
+- Issues: {sum(r.vulnerable_count for r in self.context.dependency_reports)} vulnerabilities, {self.context.metrics.technical_debt_percentage:.0f}% tech debt
 
 Validation Categories:
 1. Feature completeness (all legacy features working)
@@ -1092,9 +1074,9 @@ Before marking complete:
 
     def _generate_readme(self) -> Path:
         """Generate README for stage-prompts directory."""
-        content = f"""# Stage Prompts for {self.project_name}
+        content = f"""# Stage Prompts for {self.context.project_name}
 
-**Generated**: {self.date_only}
+**Generated**: {self.context.analysis_date}
 **Purpose**: Guide spec-driven workflow with legacy code context
 
 ---
@@ -1279,8 +1261,8 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
 ---
 
 **Generated by**: Spec Kit Analyzer Phase 7 (Analysis-to-Spec Workflow Integration)
-**Analysis Date**: {self.date_only}
-**Project**: {self.project_name}
+**Analysis Date**: {self.context.analysis_date}
+**Project**: {self.context.project_name}
 """
 
         readme_path = self.prompts_dir / "README.md"
@@ -1315,16 +1297,16 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
 
     def _assess_migration_complexity(self) -> str:
         """Assess migration complexity."""
-        if self.metrics.lines_of_code > 100000:
+        if self.context.metrics.lines_of_code > 100000:
             return "HIGH"
-        elif self.metrics.lines_of_code > 20000:
+        elif self.context.metrics.lines_of_code > 20000:
             return "MEDIUM"
         else:
             return "LOW"
 
     def _estimate_migration_effort(self) -> str:
         """Estimate migration effort."""
-        loc = self.metrics.lines_of_code
+        loc = self.context.metrics.lines_of_code
         if loc < 10000:
             return "2-4 weeks"
         elif loc < 50000:
@@ -1334,9 +1316,9 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
 
     def _recommend_migration_approach(self) -> str:
         """Recommend migration approach."""
-        if self.metrics.lines_of_code > 50000 or self.metrics.technical_debt_percentage > 60:
+        if self.context.metrics.lines_of_code > 50000 or self.context.metrics.technical_debt_percentage > 60:
             return "Incremental (Strangler Fig pattern)"
-        elif self.metrics.technical_debt_percentage < 30 and self.scan_result.structure.has_tests:
+        elif self.context.metrics.technical_debt_percentage < 30 and self.context.scan_result.structure.has_tests:
             return "Big Bang (high test coverage supports full migration)"
         else:
             return "Phased (module by module)"
@@ -1345,13 +1327,13 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
         """Format good patterns from legacy."""
         patterns = []
 
-        if self.scan_result.structure.has_ci_cd:
+        if self.context.scan_result.structure.has_ci_cd:
             patterns.append("- CI/CD automation exists - preserve and enhance")
 
-        if self.metrics.test_coverage >= 60:
-            patterns.append(f"- Good test coverage ({self.metrics.test_coverage:.0f}%) - maintain or improve")
+        if self.context.metrics.test_coverage >= 60:
+            patterns.append(f"- Good test coverage ({self.context.metrics.test_coverage:.0f}%) - maintain or improve")
 
-        if self.scan_result.structure.has_documentation:
+        if self.context.scan_result.structure.has_documentation:
             patterns.append("- Documentation maintained - continue practice")
 
         if not patterns:
@@ -1363,17 +1345,17 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
         """Format anti-patterns from legacy."""
         patterns = []
 
-        if not self.scan_result.structure.has_tests:
+        if not self.context.scan_result.structure.has_tests:
             patterns.append("- No automated testing - add comprehensive test suite")
 
-        if self.metrics.test_coverage < 60:
-            patterns.append(f"- Low test coverage ({self.metrics.test_coverage:.0f}%) - increase to 80%+")
+        if self.context.metrics.test_coverage < 60:
+            patterns.append(f"- Low test coverage ({self.context.metrics.test_coverage:.0f}%) - increase to 80%+")
 
-        if not self.scan_result.structure.has_ci_cd:
+        if not self.context.scan_result.structure.has_ci_cd:
             patterns.append("- No CI/CD pipeline - add automated deployment")
 
-        if self.metrics.modularity_score < 5:
-            patterns.append(f"- Low modularity ({self.metrics.modularity_score:.1f}/10) - improve separation of concerns")
+        if self.context.metrics.modularity_score < 5:
+            patterns.append(f"- Low modularity ({self.context.metrics.modularity_score:.1f}/10) - improve separation of concerns")
 
         if not patterns:
             patterns.append("- None identified in automated analysis - manual code review recommended")
@@ -1384,19 +1366,19 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
         """Format modernization opportunities."""
         opportunities = []
 
-        vulnerable = sum(r.vulnerable_count for r in self.dependency_reports)
+        vulnerable = sum(r.vulnerable_count for r in self.context.dependency_reports)
         if vulnerable > 0:
             opportunities.append(f"- Security: Fix {vulnerable} vulnerable dependencies")
 
-        outdated = sum(r.outdated_count for r in self.dependency_reports)
+        outdated = sum(r.outdated_count for r in self.context.dependency_reports)
         if outdated > 0:
             opportunities.append(f"- Dependencies: Update {outdated} outdated packages")
 
-        if self.metrics.technical_debt_percentage > 40:
-            opportunities.append(f"- Technical Debt: Reduce from {self.metrics.technical_debt_percentage:.0f}% to <20%")
+        if self.context.metrics.technical_debt_percentage > 40:
+            opportunities.append(f"- Technical Debt: Reduce from {self.context.metrics.technical_debt_percentage:.0f}% to <20%")
 
-        if self.metrics.code_quality_score < 7:
-            opportunities.append(f"- Code Quality: Improve from {self.metrics.code_quality_score:.1f} to 8.5+")
+        if self.context.metrics.code_quality_score < 7:
+            opportunities.append(f"- Code Quality: Improve from {self.context.metrics.code_quality_score:.1f} to 8.5+")
 
         if not opportunities:
             opportunities.append("- General modernization: Latest LTS versions, modern patterns, best practices")
@@ -1405,25 +1387,25 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
 
     def _estimate_task_breakdown_effort(self) -> str:
         """Estimate effort for task breakdown."""
-        if self.metrics.lines_of_code < 10000:
+        if self.context.metrics.lines_of_code < 10000:
             return "Small project - 20-40 tasks"
-        elif self.metrics.lines_of_code < 50000:
+        elif self.context.metrics.lines_of_code < 50000:
             return "Medium project - 40-80 tasks"
         else:
             return "Large project - 80-150 tasks"
 
     def _recommend_task_breakdown_approach(self) -> str:
         """Recommend task breakdown approach."""
-        if self.metrics.modularity_score >= 7:
+        if self.context.metrics.modularity_score >= 7:
             return "Module-based (high modularity supports clean breakdown)"
-        elif self.scan_result.structure.source_dirs:
-            return f"Directory-based (organize by: {', '.join(self.scan_result.structure.source_dirs[:3])})"
+        elif self.context.scan_result.structure.source_dirs:
+            return f"Directory-based (organize by: {', '.join(self.context.scan_result.structure.source_dirs[:3])})"
         else:
             return "Feature-based (break down by user-facing functionality)"
 
     def _estimate_foundation_effort(self) -> str:
         """Estimate foundation setup effort."""
-        if self.scan_result.structure.has_ci_cd:
+        if self.context.scan_result.structure.has_ci_cd:
             return "1 week (migrate existing CI/CD)"
         else:
             return "1-2 weeks (create CI/CD from scratch)"
@@ -1435,10 +1417,10 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
     def _assess_overall_complexity(self) -> str:
         """Assess overall project complexity."""
         complexity_score = (
-            (self.metrics.lines_of_code / 10000) * 0.3 +
-            (self.metrics.technical_debt_percentage / 10) * 0.3 +
-            (10 - self.metrics.modularity_score) * 0.2 +
-            (self.metrics.total_dependencies / 50) * 0.2
+            (self.context.metrics.lines_of_code / 10000) * 0.3 +
+            (self.context.metrics.technical_debt_percentage / 10) * 0.3 +
+            (10 - self.context.metrics.modularity_score) * 0.2 +
+            (self.context.metrics.total_dependencies / 50) * 0.2
         )
 
         if complexity_score > 7:
@@ -1454,20 +1436,20 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
 
         # Check for security indicators
         if any("auth" in str(d).lower() or "security" in str(d).lower()
-               for d in self.scan_result.structure.config_files):
+               for d in self.context.scan_result.structure.config_files):
             behaviors.append("- **Authentication/Authorization**: Preserve exact security mechanisms")
 
         # Check for database/data indicators
         if any("db" in str(d).lower() or "database" in str(d).lower()
-               for d in self.scan_result.structure.config_files):
+               for d in self.context.scan_result.structure.config_files):
             behaviors.append("- **Data Integrity**: Preserve validation rules and constraints")
 
         # Check for payment/financial indicators
-        if self.scan_result.tech_stack.frameworks:
+        if self.context.scan_result.tech_stack.frameworks:
             behaviors.append("- **Business Logic**: Preserve core business rules and workflows")
 
         # Add test-based critical behaviors
-        if self.scan_result.structure.has_tests:
+        if self.context.scan_result.structure.has_tests:
             behaviors.append("- **Tested Behaviors**: All existing test cases must still pass")
 
         if not behaviors:
@@ -1479,18 +1461,18 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
         """Format legacy gaps that need addressing."""
         gaps = []
 
-        if not self.scan_result.structure.has_ci_cd:
+        if not self.context.scan_result.structure.has_ci_cd:
             gaps.append("- No CI/CD pipeline")
 
-        if self.metrics.test_coverage < 60:
-            gaps.append(f"- Low test coverage ({self.metrics.test_coverage:.0f}%)")
+        if self.context.metrics.test_coverage < 60:
+            gaps.append(f"- Low test coverage ({self.context.metrics.test_coverage:.0f}%)")
 
-        vulnerable = sum(r.vulnerable_count for r in self.dependency_reports)
+        vulnerable = sum(r.vulnerable_count for r in self.context.dependency_reports)
         if vulnerable > 0:
             gaps.append(f"- {vulnerable} security vulnerabilities")
 
-        if self.metrics.technical_debt_percentage > 40:
-            gaps.append(f"- High technical debt ({self.metrics.technical_debt_percentage:.0f}%)")
+        if self.context.metrics.technical_debt_percentage > 40:
+            gaps.append(f"- High technical debt ({self.context.metrics.technical_debt_percentage:.0f}%)")
 
         if not gaps:
             gaps.append("- None identified in automated analysis")
@@ -1499,14 +1481,14 @@ Each stage builds on analysis artifacts to ensure modernization preserves what w
 
     def _get_validation_hint(self) -> str:
         """Get hint for where to find validation code."""
-        if self.scan_result.structure.source_dirs:
-            return f"{self.scan_result.structure.source_dirs[0]} (look for validation, schema, or model files)"
+        if self.context.scan_result.structure.source_dirs:
+            return f"{self.context.scan_result.structure.source_dirs[0]} (look for validation, schema, or model files)"
         return "source code (look for validation, schema, or model files)"
 
     def _get_error_handling_hint(self) -> str:
         """Get hint for where to find error handling code."""
-        if self.scan_result.structure.source_dirs:
-            return f"{self.scan_result.structure.source_dirs[0]} (look for error, exception, or handler files)"
+        if self.context.scan_result.structure.source_dirs:
+            return f"{self.context.scan_result.structure.source_dirs[0]} (look for error, exception, or handler files)"
         return "source code (look for error, exception, or handler files)"
 
 

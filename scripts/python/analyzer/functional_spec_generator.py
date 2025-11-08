@@ -12,13 +12,9 @@ from typing import List
 
 # Handle both relative and absolute imports
 try:
-    from .scanner import ScanResult
-    from .dependency_analyzer import DependencyReport
-    from .scoring_engine import ProjectMetrics
+    from .analysis_context import AnalysisContext
 except ImportError:
-    from scanner import ScanResult
-    from dependency_analyzer import DependencyReport
-    from scoring_engine import ProjectMetrics
+    from analysis_context import AnalysisContext
 
 
 class FunctionalSpecGenerator:
@@ -29,27 +25,14 @@ class FunctionalSpecGenerator:
     criticality (CRITICAL/STANDARD/LEGACY QUIRKS).
     """
 
-    def __init__(
-        self,
-        scan_result: ScanResult,
-        dependency_reports: List[DependencyReport],
-        metrics: ProjectMetrics,
-        project_name: str
-    ):
+    def __init__(self, context: AnalysisContext):
         """
         Initialize functional spec generator.
 
         Args:
-            scan_result: Results from ProjectScanner
-            dependency_reports: Results from DependencyAnalyzer
-            metrics: ProjectMetrics from analysis
-            project_name: Name of the project
+            context: Shared analysis context
         """
-        self.scan_result = scan_result
-        self.dependency_reports = dependency_reports
-        self.metrics = metrics
-        self.project_name = project_name
-        self.date_only = datetime.now().strftime("%Y-%m-%d")
+        self.context = context
 
     def generate_functional_spec(self, output_path: Path) -> Path:
         """
@@ -97,8 +80,8 @@ class FunctionalSpecGenerator:
         """Build header section."""
         return f"""# Functional Specification (Legacy System)
 
-**Project**: {self.project_name}
-**Analysis Date**: {self.date_only}
+**Project**: {self.context.project_name}
+**Analysis Date**: {self.context.analysis_date}
 **Purpose**: Document WHAT the legacy system does for modernization
 
 ---
@@ -122,24 +105,24 @@ Use this document to:
 
 ### Technology Profile
 
-- **Primary Language**: {self.scan_result.tech_stack.primary_language.title()}
-- **Frameworks**: {", ".join(self.scan_result.tech_stack.frameworks) if self.scan_result.tech_stack.frameworks else "None detected"}
-- **Build Tools**: {", ".join(self.scan_result.tech_stack.build_tools) if self.scan_result.tech_stack.build_tools else "Standard"}
-- **Package Manager**: {self.scan_result.tech_stack.package_manager or "Not detected"}
+- **Primary Language**: {self.context.scan_result.tech_stack.primary_language.title()}
+- **Frameworks**: {", ".join(self.context.scan_result.tech_stack.frameworks) if self.context.scan_result.tech_stack.frameworks else "None detected"}
+- **Build Tools**: {", ".join(self.context.scan_result.tech_stack.build_tools) if self.context.scan_result.tech_stack.build_tools else "Standard"}
+- **Package Manager**: {self.context.scan_result.tech_stack.package_manager or "Not detected"}
 
 ### Size & Complexity
 
-- **Lines of Code**: {self.metrics.lines_of_code:,}
-- **File Count**: {self.scan_result.metrics.file_count}
-- **Languages**: {", ".join(self.scan_result.tech_stack.languages)}
-- **Dependencies**: {self.metrics.total_dependencies} packages
+- **Lines of Code**: {self.context.metrics.lines_of_code:,}
+- **File Count**: {self.context.scan_result.metrics.file_count}
+- **Languages**: {", ".join(self.context.scan_result.tech_stack.languages)}
+- **Dependencies**: {self.context.metrics.total_dependencies} packages
 
 ### Structure
 
-- **Source Directories**: {", ".join(self.scan_result.structure.source_dirs) if self.scan_result.structure.source_dirs else "Standard layout"}
-- **Test Coverage**: {self.metrics.test_coverage:.0f}%
-- **Has CI/CD**: {"Yes" if self.scan_result.structure.has_ci_cd else "No"}
-- **Has Documentation**: {"Yes" if self.scan_result.structure.has_documentation else "Limited"}
+- **Source Directories**: {", ".join(self.context.scan_result.structure.source_dirs) if self.context.scan_result.structure.source_dirs else "Standard layout"}
+- **Test Coverage**: {self.context.metrics.test_coverage:.0f}%
+- **Has CI/CD**: {"Yes" if self.context.scan_result.structure.has_ci_cd else "No"}
+- **Has Documentation**: {"Yes" if self.context.scan_result.structure.has_documentation else "Limited"}
 
 ---"""
 
@@ -180,7 +163,7 @@ Decision needed on whether to preserve for compatibility or fix.
 
         # Check for authentication/security
         has_auth = any("auth" in str(d).lower() or "security" in str(d).lower()
-                      for d in self.scan_result.structure.config_files + self.scan_result.structure.source_dirs)
+                      for d in self.context.scan_result.structure.config_files + self.context.scan_result.structure.source_dirs)
 
         if has_auth:
             features.append(self._format_feature(
@@ -194,7 +177,7 @@ Decision needed on whether to preserve for compatibility or fix.
 
         # Check for data persistence
         has_db = any("db" in str(f).lower() or "database" in str(f).lower() or "model" in str(f).lower()
-                    for f in self.scan_result.structure.config_files + self.scan_result.structure.source_dirs)
+                    for f in self.context.scan_result.structure.config_files + self.context.scan_result.structure.source_dirs)
 
         if has_db:
             features.append(self._format_feature(
@@ -207,10 +190,10 @@ Decision needed on whether to preserve for compatibility or fix.
             ))
 
         # Check for API endpoints
-        if self.scan_result.tech_stack.frameworks:
+        if self.context.scan_result.tech_stack.frameworks:
             features.append(self._format_feature(
                 "API Endpoints",
-                f"REST/GraphQL API using {', '.join(self.scan_result.tech_stack.frameworks)}",
+                f"REST/GraphQL API using {', '.join(self.context.scan_result.tech_stack.frameworks)}",
                 self._find_api_location(),
                 "CRITICAL",
                 ["Request/response formats", "Error handling", "Validation"],
@@ -242,29 +225,29 @@ Decision needed on whether to preserve for compatibility or fix.
         ))
 
         # Configuration
-        if self.scan_result.structure.config_files:
+        if self.context.scan_result.structure.config_files:
             features.append(self._format_feature(
                 "Configuration Management",
                 "Application settings and environment config",
-                ", ".join(self.scan_result.structure.config_files[:3]),
+                ", ".join(self.context.scan_result.structure.config_files[:3]),
                 "STANDARD",
                 ["Environment variables", "App settings", "Feature flags"],
                 "Migrate to env vars and modern config management"
             ))
 
         # Testing
-        if self.scan_result.structure.has_tests:
+        if self.context.scan_result.structure.has_tests:
             features.append(self._format_feature(
                 "Test Infrastructure",
-                f"Automated testing ({self.metrics.test_coverage:.0f}% coverage)",
-                ", ".join(self.scan_result.structure.test_dirs),
+                f"Automated testing ({self.context.metrics.test_coverage:.0f}% coverage)",
+                ", ".join(self.context.scan_result.structure.test_dirs),
                 "STANDARD",
                 ["Unit tests", "Integration tests", "Test utilities"],
                 "Maintain test coverage, upgrade test framework to modern version"
             ))
 
         # CI/CD
-        if self.scan_result.structure.has_ci_cd:
+        if self.context.scan_result.structure.has_ci_cd:
             features.append(self._format_feature(
                 "CI/CD Pipeline",
                 "Automated build and deployment",
@@ -281,7 +264,7 @@ Decision needed on whether to preserve for compatibility or fix.
         quirks = []
 
         # Outdated dependencies
-        outdated = self.metrics.outdated_dependencies
+        outdated = self.context.metrics.outdated_dependencies
         if outdated > 10:
             quirks.append(self._format_quirk(
                 "Many Outdated Dependencies",
@@ -293,10 +276,10 @@ Decision needed on whether to preserve for compatibility or fix.
             ))
 
         # Low test coverage
-        if self.metrics.test_coverage < 60:
+        if self.context.metrics.test_coverage < 60:
             quirks.append(self._format_quirk(
                 "Low Test Coverage",
-                f"Only {self.metrics.test_coverage:.0f}% of code is tested",
+                f"Only {self.context.metrics.test_coverage:.0f}% of code is tested",
                 "Entire codebase",
                 "Add comprehensive test suite (target: 80%+)",
                 "Risk of breaking untested code during migration",
@@ -304,10 +287,10 @@ Decision needed on whether to preserve for compatibility or fix.
             ))
 
         # High technical debt
-        if self.metrics.technical_debt_percentage > 40:
+        if self.context.metrics.technical_debt_percentage > 40:
             quirks.append(self._format_quirk(
                 "High Technical Debt",
-                f"{self.metrics.technical_debt_percentage:.0f}% of code is technical debt",
+                f"{self.context.metrics.technical_debt_percentage:.0f}% of code is technical debt",
                 "Throughout codebase",
                 "Refactor during migration",
                 "May indicate code smells, duplication, or poor patterns",
@@ -315,7 +298,7 @@ Decision needed on whether to preserve for compatibility or fix.
             ))
 
         # Vulnerable dependencies
-        vulnerable = sum(r.vulnerable_count for r in self.dependency_reports)
+        vulnerable = sum(r.vulnerable_count for r in self.context.dependency_reports)
         if vulnerable > 0:
             quirks.append(self._format_quirk(
                 "Security Vulnerabilities",
@@ -361,7 +344,7 @@ To document user workflows, AI should:
 - Password reset workflow
 
 #### Pattern 2: Core Business Operations
-- Main user tasks (based on {", ".join(self.scan_result.tech_stack.frameworks) if self.scan_result.tech_stack.frameworks else "application type"})
+- Main user tasks (based on {", ".join(self.context.scan_result.tech_stack.frameworks) if self.context.scan_result.tech_stack.frameworks else "application type"})
 - Data entry/modification
 - Report generation
 - Export/import operations
@@ -374,7 +357,7 @@ To document user workflows, AI should:
 
 ### AI Action Required
 
-**Examine**: {", ".join(self.scan_result.structure.source_dirs[:3]) if self.scan_result.structure.source_dirs else "Source code"}
+**Examine**: {", ".join(self.context.scan_result.structure.source_dirs[:3]) if self.context.scan_result.structure.source_dirs else "Source code"}
 
 **Document for each workflow**:
 1. **Entry Point**: How does user initiate?
@@ -388,7 +371,7 @@ To document user workflows, AI should:
 
     def _build_configuration_mapping(self) -> str:
         """Build configuration mapping section."""
-        configs = self.scan_result.structure.config_files
+        configs = self.context.scan_result.structure.config_files
 
         if not configs:
             config_list = "**No configuration files detected in automated scan**\n\nAI should search for: .env, config.*, settings.*, *.ini, *.yaml, *.toml files"
@@ -441,7 +424,7 @@ For each configuration file:
     def _build_data_models(self) -> str:
         """Build data models section."""
         has_db = any("db" in str(f).lower() or "model" in str(f).lower()
-                    for f in self.scan_result.structure.source_dirs)
+                    for f in self.context.scan_result.structure.source_dirs)
 
         return f"""## Data Models
 
@@ -656,7 +639,7 @@ examine the actual code to extract:
 
     def _find_auth_location(self) -> str:
         """Find likely location of auth code."""
-        for dir_name in self.scan_result.structure.source_dirs:
+        for dir_name in self.context.scan_result.structure.source_dirs:
             if any(keyword in dir_name.lower() for keyword in ["auth", "security", "user"]):
                 return dir_name
 
@@ -664,7 +647,7 @@ examine the actual code to extract:
 
     def _find_data_location(self) -> str:
         """Find likely location of data models."""
-        for dir_name in self.scan_result.structure.source_dirs:
+        for dir_name in self.context.scan_result.structure.source_dirs:
             if any(keyword in dir_name.lower() for keyword in ["model", "entity", "db", "database", "schema"]):
                 return dir_name
 
@@ -672,18 +655,18 @@ examine the actual code to extract:
 
     def _find_api_location(self) -> str:
         """Find likely location of API code."""
-        for dir_name in self.scan_result.structure.source_dirs:
+        for dir_name in self.context.scan_result.structure.source_dirs:
             if any(keyword in dir_name.lower() for keyword in ["api", "route", "controller", "endpoint"]):
                 return dir_name
 
-        if self.scan_result.structure.source_dirs:
-            return f"{self.scan_result.structure.source_dirs[0]} (likely contains routes/controllers)"
+        if self.context.scan_result.structure.source_dirs:
+            return f"{self.context.scan_result.structure.source_dirs[0]} (likely contains routes/controllers)"
 
         return "Examine source code for API routes or controllers"
 
     def _find_dependency_file(self) -> str:
         """Find dependency file."""
-        pkg_mgr = self.scan_result.tech_stack.package_manager
+        pkg_mgr = self.context.scan_result.tech_stack.package_manager
 
         if not pkg_mgr:
             return "package.json, requirements.txt, pom.xml, or similar"
@@ -737,21 +720,21 @@ examine the actual code to extract:
         """List known issues from analysis."""
         issues = []
 
-        if not self.scan_result.structure.has_tests:
+        if not self.context.scan_result.structure.has_tests:
             issues.append("- No automated test infrastructure")
 
-        if self.metrics.test_coverage < 60:
-            issues.append(f"- Low test coverage ({self.metrics.test_coverage:.0f}%)")
+        if self.context.metrics.test_coverage < 60:
+            issues.append(f"- Low test coverage ({self.context.metrics.test_coverage:.0f}%)")
 
-        vulnerable = sum(r.vulnerable_count for r in self.dependency_reports)
+        vulnerable = sum(r.vulnerable_count for r in self.context.dependency_reports)
         if vulnerable > 0:
             issues.append(f"- {vulnerable} vulnerable dependencies")
 
-        if self.metrics.outdated_dependencies > 10:
-            issues.append(f"- {self.metrics.outdated_dependencies} outdated packages")
+        if self.context.metrics.outdated_dependencies > 10:
+            issues.append(f"- {self.context.metrics.outdated_dependencies} outdated packages")
 
-        if self.metrics.technical_debt_percentage > 40:
-            issues.append(f"- High technical debt ({self.metrics.technical_debt_percentage:.0f}%)")
+        if self.context.metrics.technical_debt_percentage > 40:
+            issues.append(f"- High technical debt ({self.context.metrics.technical_debt_percentage:.0f}%)")
 
         if not issues:
             issues.append("- None identified in automated scan (AI examination may find more)")
