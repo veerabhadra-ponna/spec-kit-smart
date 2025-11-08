@@ -309,7 +309,7 @@ fi
 - Constitution is established once per repository, not per feature
 - Subsequent orchestrations skip this step if already established
 - Template file always exists, check content not file existence
-- `templates/recommended-constitution-template.md` is for reverse engineering flow (different use case)
+- `templates/reverse-engineering-constitution-template.md` is for analyzing existing codebases (reverse engineering workflow)
 
 ---
 

@@ -316,7 +316,7 @@ User Invokes Command
    ```bash
    if [ -f memory/constitution.md ]; then
      # Reuse existing ✓
-   elif [ -f templates/recommended-constitution-template.md ]; then
+   elif [ -f templates/reverse-engineering-constitution-template.md ]; then
      # Create from template
    else
      # Skip (optional)
@@ -909,7 +909,7 @@ fi
 
 **Template Files:**
 - `memory/constitution.md` - Always exists, may have placeholders
-- `templates/recommended-constitution-template.md` - For reverse engineering flow (different use case)
+- `templates/reverse-engineering-constitution-template.md` - For analyzing existing codebases (reverse engineering workflow)
 
 **Prompt Files:**
 - `templates/commands/constitution.md` - Fills placeholders
