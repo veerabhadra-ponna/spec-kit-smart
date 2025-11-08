@@ -166,7 +166,32 @@ Contact DevOps team for package access.
 
 ## Outline
 
-1. Run `{SCRIPT}` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
+1. **Setup & OS Detection**: Detect your operating system and run the appropriate setup script from repo root.   **Environment Variable Override (Optional)**:
+
+   First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
+   - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
+   - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
+   - If not set or `auto` → proceed with auto-detection below
+
+   **Auto-detect Operating System**:
+   - On Unix/Linux/macOS: Run `uname`. If successful → use bash script below
+   - On Windows: Check `$env:OS`. If "Windows_NT" → use PowerShell script below
+
+   **For Unix/Linux/macOS (bash)**:
+
+   ```bash
+   {SCRIPT_BASH}
+   ```
+
+   **For Windows (PowerShell)**:
+
+   ```powershell
+   {SCRIPT_POWERSHELL}
+   ```
+
+   Parse the JSON output for FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute.
+
+   For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
 2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
    - Scan all checklist files in the checklists/ directory
