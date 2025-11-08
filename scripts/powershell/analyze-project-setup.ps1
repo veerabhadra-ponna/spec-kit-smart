@@ -130,8 +130,9 @@ if ($pythonCmd) {
             "--json"
         )
 
-        # Run analyzer and tee output to log file (this works better than capturing to variable)
-        & $pythonCmd $analyzerArgs 2>&1 | Tee-Object -FilePath $logPath | Out-Null
+        # Run analyzer and tee output to log file
+        # Note: Don't use Out-Null as it can interfere with exit codes
+        & $pythonCmd $analyzerArgs 2>&1 | Tee-Object -FilePath $logPath | Out-Host
 
         # Capture exit code before Pop-Location resets it
         $analyzerExitCode = $LASTEXITCODE
