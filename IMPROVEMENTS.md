@@ -325,19 +325,41 @@ Using AI analysis of legacy code + user's modernization preferences, generate:
 
 ##### Task 2: Create Artifact Generation Templates
 
+**Reference**: Use structure from `tmp/Meta-Prompt - Universal Meta-Prompt to Gen
+BA_ARCH_EXEC_AIB_SPEC_JSON docs.md`
+
 - [ ] Create `templates/analysis/functional-spec-template.md`
-  - Template structure for BA document
-  - Sections: Features Inventory, User Workflows, Data Models, API Contracts
-  - Placeholders for AI to fill with actual legacy code analysis
+  - **Base structure**: Meta-prompt Section A (Business Analysis)
+  - **Adapt for legacy**: Add "Evidence" column with file:line references
+  - **Sections**:
+    - Executive Summary (WHAT/WHO/WHY extracted from code)
+    - Problem & Goals (current state KPIs from legacy)
+    - Personas & Journeys (from auth/user roles in code)
+    - Functional Requirements (extracted with evidence: file:line)
+    - Data Models (from DB schemas/migrations)
+    - Configuration Mapping (all config files)
+    - Known Quirks & Legacy Behaviors
+  - **Placeholders**: `<<EXTRACT_FEATURES_FROM>>`, `<<EXTRACT_DATA_MODELS>>`,
+    `<<EXTRACT_CONFIG>>`, etc.
 - [ ] Create `templates/analysis/technical-spec-template.md`
-  - Template structure for Architecture document
-  - Sections: Target Stack, Architecture Pattern, Component Design
-  - Placeholders for target stack (based on user preferences)
+  - **Base structure**: Meta-prompt Section B (Architecture)
+  - **Adapt for modernization**: Add "Legacy vs. Target" comparison
+  - **Sections**:
+    - Architectural Principles (extracted from legacy + new)
+    - Why This Pattern (legacy pattern → target pattern + rationale)
+    - Capabilities by Phase (50/30/15/5 with legacy features mapped)
+    - High-Level Architecture (phase-colored Mermaid from meta-prompt)
+    - Target Tech Stack (from user Q1-Q10 answers)
+    - NFR Targets (SLO/SLI based on legacy + improvements)
+    - Migration Path (strangler fig/big bang/hybrid)
+  - **Placeholders**: `<<USER_CHOICE_LANGUAGE>>`, `<<USER_CHOICE_DATABASE>>`,
+    `<<USER_CHOICE_DEPLOYMENT>>`, `<<LEGACY_PAIN_POINTS>>`, etc.
+  - **Mermaid**: Use meta-prompt phase colors + adapt pattern for target infra
 - [ ] Create `templates/analysis/stage-prompt-templates/`
   - 6 template files: constitution, specify, plan, clarify, tasks, implement
   - Structure: Legacy Context + Modernization Guidance + Ready-to-Paste Prompt
-  - Clarify & Implement prompts include: "Consult legacy app <<path>> as source of truth
-    if specification is underspecified, ambiguous, or requires further clarification"
+  - Clarify & Implement prompts include: "Consult legacy app <<path>> as source of
+    truth if specification is underspecified, ambiguous, or requires clarification"
 
 ##### Task 3: Update analyze-project Command
 
@@ -373,14 +395,29 @@ Python analyzer should NOT generate:
 
 ##### Task 6: Create Meta-Prompt Style Templates
 
-- [ ] Study meta-prompt template structure (already provided by user)
-- [ ] Adapt meta-prompt approach for legacy code analysis:
-  - Use AI knowledge base for LTS version recommendations
-  - Use structured templates with clear sections
-  - Use placeholders that AI fills based on code analysis
-  - Use evidence-based approach (file paths, line numbers)
-- [ ] Create `functional-spec-generator-prompt.md`
-- [ ] Create `technical-spec-generator-prompt.md`
+**Reference**: Study `tmp/Meta-Prompt - Universal Meta-Prompt to Gen
+BA_ARCH_EXEC_AIB_SPEC_JSON docs.md`
+
+- [ ] Analyze meta-prompt structure and adapt for legacy code analysis:
+  - **Section A (Business Analysis)** → `functional-spec-generator-prompt.md`
+  - **Section B (Architecture)** → `technical-spec-generator-prompt.md`
+  - **Mermaid patterns** → Adapt for target infrastructure (K8s, AWS, etc.)
+  - **Phase coloring (50/30/15/5)** → Map legacy features to phases
+  - **NFR measurability** → Convert legacy configs to SLO/SLI targets
+  - **R→C→T traceability** → Map legacy features to new components & tests
+  - **Determinism guardrails** → Use AI knowledge base for LTS (not hardcoded)
+- [ ] Create `functional-spec-generator-prompt.md` with:
+  - Instructions: "Use meta-prompt Section A structure"
+  - "Extract WHAT from legacy code, not HOW"
+  - "Every requirement needs Evidence: file:line"
+  - Examples from meta-prompt adapted for legacy analysis
+  - Placeholders AI fills: `<<EXTRACT_FEATURES>>`, `<<EXTRACT_PERSONAS>>`, etc.
+- [ ] Create `technical-spec-generator-prompt.md` with:
+  - Instructions: "Use meta-prompt Section B structure"
+  - "Fill `<<USER_CHOICE_X>>` placeholders from Q1-Q10 answers"
+  - "Use AI knowledge base for LTS versions (meta-prompt LTSGuidance approach)"
+  - "Generate phase-colored Mermaid matching target infrastructure"
+  - "Convert legacy NFRs to measurable SLO/SLI targets"
 
 ##### Task 7: Integration Testing
 
@@ -399,8 +436,13 @@ Python analyzer should NOT generate:
 - [ ] Document current issues with detailed examples
 - [ ] Design new interactive workflow (state machine diagram)
 - [ ] Create wireframes for questionnaires (modernization preferences)
-- [ ] Design template structure for functional-spec.md and technical-spec.md
-- [ ] Review meta-prompt template for inspiration
+- [ ] Study `tmp/Meta-Prompt - Universal Meta-Prompt...` thoroughly
+  - Understand Section A (Business Analysis) structure
+  - Understand Section B (Architecture) structure
+  - Study Mermaid patterns and phase coloring
+  - Study NFR measurability approach (SLO/SLI)
+- [ ] Design template structure for functional-spec.md (based on Section A)
+- [ ] Design template structure for technical-spec.md (based on Section B)
 - [ ] Get user approval on design before implementation
 
 ##### Week 3-4: Template Creation
