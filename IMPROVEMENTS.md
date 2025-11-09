@@ -213,11 +213,48 @@ MODERNIZATION PREFERENCES:
    - [E] ARM templates (Azure)
    - [F] None / Manual
    Your choice: ___
+
+7. Containerization:
+   Options:
+   - [A] Docker containers
+   - [B] Kubernetes (orchestration)
+   - [C] Docker + Kubernetes
+   - [D] No containerization
+   Your choice: ___
+
+8. Observability Stack:
+   Options:
+   - [A] ELK Stack (Elasticsearch, Logstash, Kibana)
+   - [B] Prometheus + Grafana
+   - [C] Azure Monitor / Application Insights
+   - [D] AWS CloudWatch
+   - [E] Google Cloud Operations
+   - [F] OpenTelemetry (vendor-neutral)
+   - [G] Other (specify)
+   Your choice: ___
+
+9. Security Requirements:
+   Options:
+   - [A] OAuth 2.0 / OpenID Connect
+   - [B] JWT tokens
+   - [C] SAML
+   - [D] API Keys
+   - [E] Mutual TLS
+   - [F] Keep current auth mechanism
+   Your choice: ___
+
+10. Testing Strategy:
+    Options:
+    - [A] Unit tests only
+    - [B] Unit + Integration tests
+    - [C] Unit + Integration + E2E tests (full coverage)
+    - [D] Minimal testing
+    Your choice: ___
 ```
 
 ##### Step 4: Deep Legacy Analysis
 
-Analyze legacy codebase thoroughly:
+**Scan ALL code files** to understand functionality. Analyze legacy codebase thoroughly:
 
 - Controllers, services, models, repositories
 - Configuration files (application.properties, XML configs)
@@ -227,6 +264,9 @@ Analyze legacy codebase thoroughly:
 - Security implementations (auth, authorization, encryption)
 - Integration points (external APIs, message queues)
 - Deployment scripts and infrastructure code
+- Containerization configs (Dockerfile, docker-compose.yml)
+- Observability configs (logging, monitoring, tracing)
+- Testing suites (unit, integration, E2E tests)
 
 ##### Step 5: Clarification Questions (If Needed)
 
@@ -256,13 +296,13 @@ Using AI analysis of legacy code + user's modernization preferences, generate:
 - ✅ `EXECUTIVE-SUMMARY.md` - High-level overview for stakeholders
 - ✅ `functional-spec.md` - BA document (WHAT system does) with REAL features
 - ✅ `technical-spec.md` - Architecture document (HOW to build) with target stack
-- ✅ Stage prompts for Toolkit workflow:
+- ✅ Stage prompts for Toolkit workflow (6 stages):
   - `constitution-prompt.md` - Principles for new system
   - `specify-prompt.md` - Requirements for specify stage (uses functional-spec.md)
   - `plan-prompt.md` - Architecture for plan stage (uses technical-spec.md)
-  - `clarify-prompt.md` - Clarification guidance
+  - `clarify-prompt.md` - Clarification guidance + "consult legacy app as source of truth"
   - `tasks-prompt.md` - Task breakdown guidance
-  - `implement-prompt.md` - Implementation guidance with legacy code references
+  - `implement-prompt.md` - Implementation guidance + "consult legacy app as source of truth"
 
 **Artifacts NOT Generated** (User Feedback):
 
@@ -294,8 +334,10 @@ Using AI analysis of legacy code + user's modernization preferences, generate:
   - Sections: Target Stack, Architecture Pattern, Component Design
   - Placeholders for target stack (based on user preferences)
 - [ ] Create `templates/analysis/stage-prompt-templates/`
-  - 6 template files for each Toolkit stage
+  - 6 template files: constitution, specify, plan, clarify, tasks, implement
   - Structure: Legacy Context + Modernization Guidance + Ready-to-Paste Prompt
+  - Clarify & Implement prompts include: "Consult legacy app <<path>> as source of truth
+    if specification is underspecified, ambiguous, or requires further clarification"
 
 ##### Task 3: Update analyze-project Command
 
