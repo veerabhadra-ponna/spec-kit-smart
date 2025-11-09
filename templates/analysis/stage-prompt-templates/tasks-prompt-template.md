@@ -16,12 +16,15 @@ Use legacy code analysis to estimate task complexity accurately.
 ### High Complexity Areas (from code analysis)
 
 <<FOR_EACH complex area>>
+
 **<<AREA_NAME>>** (e.g., "Payment Processing")
+
 - Files: <<list of files>>
 - LOC: <<N>> lines
 - Dependencies: <<list external deps>>
 - Complexity: <<cyclomatic complexity, nested levels>>
 - Estimated effort: <<HIGH>> (requires careful migration)
+
 <<END_FOR>>
 
 ### Medium Complexity Areas

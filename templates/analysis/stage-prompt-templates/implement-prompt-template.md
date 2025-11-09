@@ -10,7 +10,7 @@
 ⚠️ **IMPORTANT**: During implementation, when the specification is underspecified,
 ambiguous, or requires further clarification:
 
-**CONSULT THE LEGACY APPLICATION CODE AS THE SOURCE OF TRUTH**
+### CONSULT THE LEGACY APPLICATION CODE AS THE SOURCE OF TRUTH
 
 The legacy code shows the actual behavior that users depend on. Don't guess.
 
@@ -21,25 +21,32 @@ The legacy code shows the actual behavior that users depend on. Don't guess.
 ### Critical Components (preserve behavior exactly)
 
 <<FOR_EACH critical component>>
+
 **<<COMPONENT_NAME>>** (e.g., "Payment Processing")
+
 - Legacy file: <<src/payments/processor.js:156-234>>
 - Key logic:
+
   ```javascript
   // Retry logic: 3 attempts with exponential backoff
   // Idempotency: Check transaction ID before processing
   // Validation: Amount > 0, currency in [USD, EUR, GBP]
   ```
+
 - **MUST PRESERVE**: <<specific behaviors>>
 - Migration target: <<new component path>>
+
 <<END_FOR>>
 
 ### Configuration Values
 
 <<FOR_EACH config that affects behavior>>
+
 - <<CONFIG_NAME>>: <<value>>
   File: <<config/app.js:23>>
   Usage: <<where it's used>>
   Migration: <<keep | make configurable | change>>
+
 <<END_FOR>>
 
 ### Error Handling Patterns
@@ -52,10 +59,12 @@ The legacy code shows the actual behavior that users depend on. Don't guess.
 ### Data Validation Rules
 
 <<FOR_EACH validation rule>>
+
 - Field: <<field_name>>
   Rule: <<validation logic>>
   File: <<validators/input.js:line>>
   Preserve: <<yes/no>>
+
 <<END_FOR>>
 
 ---
@@ -65,6 +74,7 @@ The legacy code shows the actual behavior that users depend on. Don't guess.
 ### When to Check Legacy Code
 
 ✅ **DO check legacy code** for:
+
 - Edge cases not in requirements (null handling, empty arrays, etc.)
 - Error messages (users may depend on specific wording)
 - Timing/delays (debounce, throttle, retry intervals)
@@ -72,6 +82,7 @@ The legacy code shows the actual behavior that users depend on. Don't guess.
 - Business rules (validation, calculations, workflows)
 
 ❌ **DON'T blindly copy** legacy code:
+
 - Use modern patterns (async/await vs callbacks)
 - Fix anti-patterns (global state, tight coupling)
 - Improve naming (use descriptive variable names)

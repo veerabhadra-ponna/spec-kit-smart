@@ -394,7 +394,7 @@ Why modernize (inferred from code analysis):
 
 ---
 
-**END OF FUNCTIONAL SPECIFICATION**
+## END OF FUNCTIONAL SPECIFICATION
 
 This document serves as the "WHAT" for the modernization effort.
 For "HOW" (architecture, target stack, migration), see `technical-spec.md`.

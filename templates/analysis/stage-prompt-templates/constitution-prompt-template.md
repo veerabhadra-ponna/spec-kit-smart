@@ -140,4 +140,4 @@ For detailed technical specifications, see analysis/technical-spec.md.
 
 ---
 
-**END OF CONSTITUTION PROMPT**
+## END OF CONSTITUTION PROMPT

@@ -626,7 +626,7 @@ Map Requirements (from functional-spec.md) → Components → Tests:
 
 ---
 
-**END OF TECHNICAL SPECIFICATION**
+## END OF TECHNICAL SPECIFICATION
 
 This document defines HOW to build the modernized system.
 For WHAT the system does, see `functional-spec.md`.

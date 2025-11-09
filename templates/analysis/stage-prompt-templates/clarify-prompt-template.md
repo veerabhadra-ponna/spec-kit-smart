@@ -10,7 +10,7 @@
 ⚠️ **IMPORTANT**: When clarifying ambiguous requirements, specifications that are
 underspecified, or situations requiring further clarification:
 
-**CONSULT THE LEGACY APPLICATION CODE AS THE SOURCE OF TRUTH**
+### CONSULT THE LEGACY APPLICATION CODE AS THE SOURCE OF TRUTH
 
 Do not guess or assume. Check the actual implementation first.
 
@@ -19,22 +19,28 @@ Do not guess or assume. Check the actual implementation first.
 ## Legacy Code References (for Clarification)
 
 ### Authentication & Authorization
+
 - File: <<src/auth/login.js:34-89>>
 - Behavior: <<session-based, 30min timeout, cookie storage>>
 - Use this as reference for auth questions
 
 ### Business Logic (Critical Features)
+
 <<FOR_EACH critical feature>>
+
 - <<FEATURE_NAME>>
   File: <<path/to/file:line-range>>
   Key behavior: <<description>>
+
 <<END_FOR>>
 
 ### Configuration & Constants
+
 - File: <<config/app.js>>
 - Important settings: <<list key configs>>
 
 ### Data Validation Rules
+
 - File: <<validators/input.js>>
 - Schemas: <<list validation rules>>
 
@@ -52,6 +58,7 @@ Do not guess or assume. Check the actual implementation first.
 ❓ Question: "How should we handle session timeout?"
 
 ✅ Answer from legacy code:
+
 - Check: `src/auth/session.js:56`
 - Finding: Hardcoded 30 minutes
 - Decision: Preserve 30min timeout (or ask user if should make configurable)
