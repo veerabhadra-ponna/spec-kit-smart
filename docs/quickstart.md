@@ -14,14 +14,7 @@ Initialize your project depending on the coding agent you're using:
 pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME>
 ```
 
-Script type is auto-detected based on OS (Windows → PowerShell, Linux/Mac → Bash).
-
-Optional: Force specific script type:
-
-```bash
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME> --script ps  # Force PowerShell
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME> --script sh  # Force Bash
-```
+All packages include both Bash and PowerShell scripts. Your AI agent automatically uses the correct script type for your operating system.
 
 ### 2. Create the Spec
 

@@ -214,6 +214,10 @@ pip install specify-cli
 - Cleaner shell configuration
 - Works in corporate environments without UV approval
 
+**Cross-Platform Support:**
+
+All packages automatically include both Bash (`.sh`) and PowerShell (`.ps1`) scripts. Your AI agent's prompts intelligently select the correct script type based on your operating system - no manual configuration needed.
+
 ### 2. Establish project principles
 
 Launch your AI assistant in the project directory. The `/speckit.*` commands are available in the assistant.

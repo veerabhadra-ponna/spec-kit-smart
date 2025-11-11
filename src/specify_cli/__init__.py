@@ -875,7 +875,6 @@ def ensure_executable_scripts(project_path: Path, tracker: StepTracker | None = 
 def init(
     project_name: str = typer.Argument(None, help="Name for your new project directory (optional if using --here, or use '.' for current directory)"),
     ai_assistant: str = typer.Option(None, "--ai", help="AI assistant to use: claude, gemini, copilot, cursor-agent, qwen, opencode, codex, windsurf, kilocode, auggie, codebuddy, amp, or q"),
-    script_type: str = typer.Option(None, "--script", help="Script type to use: sh or ps"),
     ignore_agent_tools: bool = typer.Option(False, "--ignore-agent-tools", help="Skip checks for AI agent tools like Claude Code"),
     no_git: bool = typer.Option(False, "--no-git", help="Skip git repository initialization"),
     here: bool = typer.Option(False, "--here", help="Initialize project in the current directory instead of creating a new one"),
@@ -1004,19 +1003,8 @@ def init(
                 console.print(error_panel)
                 raise typer.Exit(1)
 
-    if script_type:
-        # Allow manual override if explicitly provided
-        if script_type not in SCRIPT_TYPE_CHOICES:
-            console.print(f"[red]Error:[/red] Invalid script type '{script_type}'. Choose from: {', '.join(SCRIPT_TYPE_CHOICES.keys())}")
-            raise typer.Exit(1)
-        selected_script = script_type
-    else:
-        # Auto-detect based on OS (no interactive prompt)
-        selected_script = "ps" if os.name == "nt" else "sh"
-        console.print(f"[dim]Auto-detected script type:[/dim] {selected_script} ({SCRIPT_TYPE_CHOICES[selected_script]})")
-
     console.print(f"[cyan]Selected AI assistant:[/cyan] {selected_ai}")
-    console.print(f"[cyan]Selected script type:[/cyan] {selected_script}")
+    console.print(f"[cyan]Package includes:[/cyan] Both Bash and PowerShell scripts (auto-selected by AI prompts)")
 
     tracker = StepTracker("Initialize Specify Project")
 
@@ -1026,8 +1014,6 @@ def init(
     tracker.complete("precheck", "ok")
     tracker.add("ai-select", "Select AI assistant")
     tracker.complete("ai-select", f"{selected_ai}")
-    tracker.add("script-detect", "Detect script type")
-    tracker.complete("script-detect", selected_script)
     for key, label in [
         ("fetch", "Fetch latest release"),
         ("download", "Download template"),
@@ -1051,7 +1037,7 @@ def init(
             local_ssl_context = ssl_context if verify else False
             local_client = httpx.Client(verify=local_ssl_context)
 
-            download_and_extract_template(project_path, selected_ai, selected_script, here, verbose=False, tracker=tracker, client=local_client, debug=debug, github_token=github_token)
+            download_and_extract_template(project_path, selected_ai, "sh", here, verbose=False, tracker=tracker, client=local_client, debug=debug, github_token=github_token)
 
             ensure_executable_scripts(project_path, tracker=tracker)
 
