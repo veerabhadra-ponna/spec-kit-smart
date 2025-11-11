@@ -768,17 +768,32 @@ The analyze-project feature analyzes **entire applications** for full modernizat
 
 **Senior Developer/Architect Analysis**:
 
+##### Design Constraint: AI-Driven Analysis (No Python Dependencies)
+
+**User Requirement**:
+- ❌ NO new Python modules (Python analyzer didn't perform well)
+- ❌ NO additional dependencies (end users may not have them installed)
+- ✅ AI agent performs ALL semantic analysis (like full app analysis)
+- ✅ Bash/PowerShell ONLY for orchestration/setup
+
+**Rationale**:
+- Current full app analysis proves AI can understand code semantics
+- AI already does: pattern recognition, abstraction assessment, impact analysis
+- Python was only used for basic metrics (not needed for concern analysis)
+- Simpler architecture, no dependency management issues
+
 ##### Current Architecture Strengths
 
-1. **Interactive Workflow** (Phase 8)
-   - 10-question modernization preference gathering
-   - Conditional logic for relevant questions
-   - Real content generation (not templates)
+1. **AI-Driven Workflow** (Phase 8)
+   - AI agent reads code, understands patterns, generates real analysis
+   - Interactive 10-question workflow
+   - Prompt engineering guides AI behavior
+   - No Python needed for semantic understanding
 
-2. **Comprehensive Analysis**
-   - Scanner.py detects tech stack, metrics, structure
-   - Dependency analyzer finds vulnerabilities
-   - Scoring engine calculates feasibility (0-100)
+2. **Lightweight Orchestration**
+   - Bash/PowerShell scripts for setup, file enumeration
+   - AI agent does heavy lifting (semantic analysis)
+   - No external tool dependencies
 
 3. **Corporate Guidelines Integration**
    - Checks compliance with organizational standards
@@ -839,86 +854,114 @@ $ARGUMENTS
    TARGET_IMPLEMENTATION: ___   (e.g., "Migrate to Okta", "PostgreSQL → MongoDB")
 ```
 
-**Extension Point 2: Scanner Module (scanner.py)**
+**Extension Point 2: AI Analysis Guidance (analyze-project.md Step 4)**
 
-Current: Scans entire codebase
+Current: AI analyzes entire codebase
 
-Proposed Enhancement: Add concern-specific filtering
+Proposed Enhancement: Add concern-specific analysis instructions
 
-```python
-class Scanner:
-    def scan_project(self, project_path, concern_filter=None):
-        """
-        Args:
-            concern_filter: Optional[ConcernFilter]
-                - concern_type: "auth" | "database" | "cache" | etc.
-                - patterns: List of file/import patterns to match
-        """
-        if concern_filter:
-            # Use heuristics to identify concern-specific files
-            # - File naming: auth*, login*, session*, jwt*
-            # - Imports: passport, jsonwebtoken, bcrypt, oauth
-            # - Decorators: @require_auth, @authenticated
-            # - Config files: auth.config.js, security.yml
+```markdown
+## Step 4: Deep Code Analysis
+
+**IF ANALYSIS_SCOPE = [A] Full Application:**
+   [Current behavior - analyze entire codebase]
+
+**IF ANALYSIS_SCOPE = [B] Cross-Cutting Concern:**
+
+### Concern-Specific Analysis Instructions
+
+You are analyzing ONLY the <<CONCERN_TYPE>> concern. Focus your analysis on:
+
+#### 1. Identify Concern-Specific Files
+
+Use these detection heuristics:
+
+**For Authentication/Authorization:**
+- File patterns: auth*, login*, session*, jwt*, passport*, oauth*, security*
+- Import patterns: jsonwebtoken, passport, bcrypt, oauth, jose
+- Decorator patterns: @authenticated, @require_auth, @authorize
+- Config files: auth.config.*, security.yml, passport.config.*
+
+**For Database/ORM Layer:**
+- File patterns: *repository*, *model*, *entity*, *dao*, db*, database*
+- Import patterns: sequelize, mongoose, typeorm, prisma, knex
+- Migrations: migrations/*, db/migrate/*
+- Config files: database.yml, ormconfig.*, knexfile.*
+
+**For Caching Layer:**
+- File patterns: *cache*, *redis*, *memcache*
+- Import patterns: redis, node-cache, memcached, ioredis
+- Decorator patterns: @Cacheable, @CacheEvict
+- Config files: redis.conf, cache.config.*
+
+[Similar patterns for other 5 concern types...]
+
+#### 2. Analyze Abstraction Level (HIGH/MEDIUM/LOW)
+
+**HIGH Abstraction Indicators:**
+- Single interface/contract (e.g., IAuthProvider, IRepository)
+- Dependency injection used throughout
+- No direct implementation imports in consumers
+- Example: All auth consumers import IAuthProvider, not JWTAuthProvider
+
+**MEDIUM Abstraction Indicators:**
+- Multiple entry points but consistent pattern
+- Some direct dependencies mixed with abstraction
+- Partial use of interfaces
+
+**LOW Abstraction Indicators:**
+- Implementation scattered across codebase
+- Direct imports of concrete classes everywhere
+- No interfaces or contracts defined
+- Example: passport.authenticate() called directly in 47 places
+
+Provide evidence with file:line references for your assessment.
+
+#### 3. Calculate Blast Radius
+
+Count and report:
+- **Files affected**: How many files import/use this concern
+- **LOC affected**: Approximate lines of code
+- **Percentage**: X% of total codebase
+- **Test impact**: How many test files need updating
+
+#### 4. Assess Coupling Degree (LOOSE/MODERATE/TIGHT)
+
+**LOOSE Coupling:**
+- Concern accessed only via interface
+- No circular dependencies
+- Easy to mock for testing
+
+**MODERATE Coupling:**
+- Some direct dependencies
+- Few circular references
+- Moderate test complexity
+
+**TIGHT Coupling:**
+- Direct implementation dependencies throughout
+- Circular dependencies present
+- Concern code mixed with business logic
+
+#### 5. Recommend Migration Strategy
+
+Based on abstraction level + blast radius + coupling:
+
+**IF** high_abstraction AND loose_coupling:
+   → STRANGLER_FIG (low risk, 2-4 weeks)
+
+**ELSE IF** medium_abstraction:
+   → ADAPTER_PATTERN (medium risk, 4-8 weeks)
+
+**ELSE IF** low_abstraction AND blast_radius < 20%:
+   → REFACTOR_FIRST (medium risk, 6-12 weeks)
+
+**ELSE**:
+   → BIG_BANG_WITH_FEATURE_FLAGS (high risk, 3-6 months)
+
+Explain your reasoning with evidence.
 ```
 
-**Extension Point 3: New Module - concern_analyzer.py**
-
-Proposed: Specialized analyzer for cross-cutting concerns
-
-```python
-class ConcernAnalyzer:
-    """Analyzes a specific cross-cutting concern for migration readiness."""
-
-    def analyze_abstraction_level(self, concern_code):
-        """
-        Returns: "HIGH" | "MEDIUM" | "LOW"
-
-        HIGH:
-            - Single entry point (e.g., AuthService interface)
-            - Dependency injection used
-            - Clean boundaries, no direct imports of implementation
-
-        MEDIUM:
-            - Multiple entry points but consistent pattern
-            - Some direct dependencies
-            - Mixed abstraction levels
-
-        LOW:
-            - Scattered across codebase
-            - Direct implementation dependencies everywhere
-            - No interfaces or contracts
-        """
-
-    def calculate_blast_radius(self, concern_code):
-        """
-        Returns:
-            files_affected: int
-            loc_affected: int
-            percentage_of_codebase: float
-        """
-
-    def assess_coupling_degree(self, concern_code):
-        """
-        Returns: "LOOSE" | "MODERATE" | "TIGHT"
-
-        Analyzes:
-            - Direct vs indirect dependencies
-            - Interface vs implementation coupling
-            - Cyclic dependencies
-        """
-
-    def recommend_migration_strategy(self, abstraction_level, blast_radius, coupling):
-        """
-        Returns:
-            strategy: "STRANGLER_FIG" | "ADAPTER_PATTERN" | "REFACTOR_FIRST" | "BIG_BANG"
-            phasing: List[Phase]
-            risk: "LOW" | "MEDIUM" | "HIGH"
-            effort_estimate: str (e.g., "2-4 weeks")
-        """
-```
-
-**Extension Point 4: New Templates**
+**Extension Point 3: New Templates (AI-Generated Content)**
 
 Proposed templates for concern-specific analysis:
 
@@ -1098,7 +1141,7 @@ Proposed templates for concern-specific analysis:
 
 ---
 
-#### 9.2 Implementation Tasks
+#### 9.2 Implementation Tasks (AI-Driven, No Python)
 
 ##### Task 1: Enhance analyze-project.md Prompt ✨ DESIGN COMPLETE
 
@@ -1107,171 +1150,143 @@ Proposed templates for concern-specific analysis:
 1. Add "ANALYSIS_SCOPE" question (Full App vs Cross-Cutting Concern)
 2. Add "CONCERN_TYPE" follow-up question (8 common concerns)
 3. Add "CURRENT_IMPLEMENTATION" and "TARGET_IMPLEMENTATION" inputs
-4. Modify Step 4 (Deep Analysis) to focus on concern-specific code if [B] chosen
+4. Add Step 4 concern-specific analysis instructions:
+   - Detection heuristics for 8 concern types
+   - Abstraction level assessment criteria (HIGH/MEDIUM/LOW)
+   - Blast radius calculation guidance
+   - Coupling degree assessment criteria
+   - Migration strategy decision tree
+5. Add Step 6 conditional artifact generation logic
 
-**Complexity**: MEDIUM (prompt template update)
+**Complexity**: MEDIUM (prompt template update with comprehensive guidance)
 
-**Estimated Effort**: 2-4 hours
+**Estimated Effort**: 4-6 hours
 
-##### Task 2: Create concern_analyzer.py Module ✨ DESIGN COMPLETE
+**No Python Code**: ✅ Pure prompt engineering
 
-**Purpose**: Specialized analyzer for cross-cutting concern migration
+##### Task 2: Create Concern-Specific Templates ✨ DESIGN COMPLETE
 
-**Functions**:
+**Templates to Create** (AI fills with real analysis):
 
-- `analyze_abstraction_level()` - HIGH/MEDIUM/LOW scoring
-- `calculate_blast_radius()` - Files/LOC affected
-- `assess_coupling_degree()` - LOOSE/MODERATE/TIGHT
-- `recommend_migration_strategy()` - Strategy selection algorithm
-- `detect_missing_abstractions()` - Gap analysis
-- `generate_refactoring_roadmap()` - Phased plan
+1. `templates/analysis/concern-analysis-template.md`
+   - Executive summary (concern, current, target, recommendation, risk, effort)
+   - Entry points table (with file:line evidence)
+   - Abstraction assessment (with rationale)
+   - Coupling analysis (with dependencies)
+   - Blast radius (files/LOC/percentage)
+   - Missing abstractions (gaps with evidence)
+   - Migration strategy (phased 50/30/15/5)
+   - Rollback strategy
+   - Impact on other concerns
+   - Testing strategy
 
-**Complexity**: HIGH (new module, complex algorithms)
+2. `templates/analysis/abstraction-recommendations-template.md`
+   - Current architecture gaps (with file:line)
+   - Recommended patterns (Repository, Strategy, Adapter, etc.)
+   - Refactoring roadmap (phased approach)
+   - Future-proofing guidance
 
-**Estimated Effort**: 2-3 weeks
-
-##### Task 3: Extend scanner.py for Concern Filtering ✨ DESIGN COMPLETE
-
-**Changes**:
-
-1. Add `concern_filter` parameter to `scan_project()`
-2. Implement heuristics for each concern type:
-   - **Auth**: Files matching `auth*`, `login*`, `session*`, imports like `passport`, `jwt`
-   - **Database**: Files with DB imports, ORM models, migration files
-   - **Cache**: Files with cache imports, `@Cacheable` decorators
-   - **Messaging**: Queue/topic files, message handlers
-   - **Logging**: Logger config, log middleware
-
-3. Build concern-specific dependency graph
-
-**Complexity**: MEDIUM (extend existing module)
-
-**Estimated Effort**: 1-2 weeks
-
-##### Task 4: Create New Templates ✨ DESIGN COMPLETE
-
-**Templates to Create**:
-
-1. `concern-analysis-template.md` (comprehensive concern assessment)
-2. `abstraction-recommendations-template.md` (refactoring guidance)
-3. `concern-migration-plan-template.md` (detailed phased rollout)
+3. `templates/analysis/concern-migration-plan-template.md`
+   - Detailed phased rollout plan
+   - Risk assessment with mitigation
+   - Rollback procedures
+   - Monitoring and success criteria
 
 **Complexity**: MEDIUM (template creation with clear structure)
 
-**Estimated Effort**: 1 week
-
-##### Task 5: Update Artifacts Generation ✨ DESIGN COMPLETE
-
-**Changes to analyze-project.md Step 6**:
-
-- If ANALYSIS_SCOPE = [A], generate existing artifacts (current behavior)
-- If ANALYSIS_SCOPE = [B], generate concern-specific artifacts:
-  - `concern-analysis.md` (instead of functional-spec.md)
-  - `abstraction-recommendations.md` (new)
-  - `concern-migration-plan.md` (instead of technical-spec.md)
-  - `stage-prompts/` adapted for concern migration
-
-**Complexity**: LOW (conditional artifact generation)
-
 **Estimated Effort**: 1-2 days
 
-##### Task 6: Integration Testing ⏳ FUTURE
+**No Python Code**: ✅ Pure markdown templates
+
+##### Task 3: Update Bash/PowerShell Scripts (Optional) ⏳ FUTURE
+
+**Optional Enhancement** (not required for MVP):
+
+- Add concern-type-specific file enumeration (optimization only)
+- Example: If concern=auth, enumerate auth* files first
+- Still lightweight, no heavy processing
+
+**Complexity**: LOW (simple file globbing)
+
+**Estimated Effort**: 2-3 hours
+
+**No Python Code**: ✅ Pure bash/PowerShell
+
+##### Task 4: Integration Testing ⏳ FUTURE
 
 - Test on real projects with different concern types
-- Validate abstraction detection accuracy
-- Validate migration strategy recommendations
+- Validate AI's abstraction detection accuracy
+- Validate AI's migration strategy recommendations
 - Ensure generated artifacts are actionable
+- Compare AI analysis quality vs Python analyzer
 
-**Complexity**: HIGH (requires diverse test cases)
+**Complexity**: MEDIUM (manual testing, qualitative assessment)
 
-**Estimated Effort**: 2-3 weeks
+**Estimated Effort**: 1-2 weeks
+
+**No Python Code**: ✅ AI-driven analysis only
 
 ---
 
-#### 9.3 Decision Algorithms
+#### 9.3 Decision Logic (AI-Guided, Embedded in Prompts)
 
-##### Algorithm 1: Abstraction Level Scoring
+**NO Python algorithms** - All decision logic is embedded in AI prompt instructions.
 
-```python
-def score_abstraction_level(concern_code):
-    """
-    Returns: "HIGH" | "MEDIUM" | "LOW"
-    """
-    score = 0
+##### Abstraction Level Assessment (Prompt Guidance)
 
-    # Check for single entry point (interface/class)
-    if has_single_interface(concern_code):
-        score += 40
-    elif has_multiple_consistent_entry_points(concern_code):
-        score += 20
+AI follows these criteria (from analyze-project.md Step 4):
 
-    # Check for dependency injection
-    if uses_dependency_injection(concern_code):
-        score += 30
-    elif has_factory_pattern(concern_code):
-        score += 15
+**HIGH Abstraction:**
+- Single interface/contract found
+- Dependency injection used throughout
+- No direct implementation imports in consumers
+- **AI evaluates** code patterns and assigns HIGH
 
-    # Check for clean boundaries
-    if no_direct_implementation_imports(concern_code):
-        score += 30
-    elif limited_direct_imports(concern_code):
-        score += 10
+**MEDIUM Abstraction:**
+- Multiple entry points but consistent pattern
+- Some direct dependencies mixed with abstraction
+- Partial use of interfaces
+- **AI evaluates** code patterns and assigns MEDIUM
 
-    # Classification
-    if score >= 70:
-        return "HIGH"
-    elif score >= 40:
-        return "MEDIUM"
-    else:
-        return "LOW"
+**LOW Abstraction:**
+- Implementation scattered across codebase
+- Direct imports of concrete classes everywhere
+- No interfaces or contracts defined
+- **AI evaluates** code patterns and assigns LOW
+
+**Evidence Required:** AI must provide file:line references for assessment
+
+##### Migration Strategy Selection (Prompt Guidance)
+
+AI follows this decision tree (from analyze-project.md Step 4):
+
+```
+IF abstraction=HIGH AND coupling=LOOSE:
+   → Recommend: STRANGLER_FIG
+   → Risk: LOW
+   → Effort: 2-4 weeks
+   → Rationale: Clean interfaces allow gradual replacement
+
+ELSE IF abstraction=MEDIUM:
+   → Recommend: ADAPTER_PATTERN
+   → Risk: MEDIUM
+   → Effort: 4-8 weeks
+   → Rationale: Add abstraction layer first, then migrate
+
+ELSE IF abstraction=LOW AND blast_radius<20%:
+   → Recommend: REFACTOR_FIRST
+   → Risk: MEDIUM
+   → Effort: 6-12 weeks
+   → Rationale: Small enough to refactor, then migrate
+
+ELSE (abstraction=LOW AND blast_radius>=20%):
+   → Recommend: BIG_BANG_WITH_FEATURE_FLAGS
+   → Risk: HIGH
+   → Effort: 3-6 months
+   → Rationale: Extensive changes required, use feature flags for safety
 ```
 
-##### Algorithm 2: Migration Strategy Selection
-
-```python
-def recommend_migration_strategy(abstraction_level, blast_radius, coupling_degree):
-    """
-    Returns: {
-        strategy: str,
-        phasing: List[Phase],
-        risk: str,
-        effort: str
-    }
-    """
-
-    # Decision tree
-    if abstraction_level == "HIGH" and coupling_degree == "LOOSE":
-        return {
-            "strategy": "STRANGLER_FIG",
-            "phasing": generate_strangler_fig_phases(),
-            "risk": "LOW",
-            "effort": "2-4 weeks"
-        }
-
-    elif abstraction_level == "MEDIUM":
-        return {
-            "strategy": "ADAPTER_PATTERN",
-            "phasing": generate_adapter_pattern_phases(),
-            "risk": "MEDIUM",
-            "effort": "4-8 weeks"
-        }
-
-    elif abstraction_level == "LOW" and blast_radius < 20:  # < 20% of codebase
-        return {
-            "strategy": "REFACTOR_FIRST",
-            "phasing": generate_refactor_first_phases(),
-            "risk": "MEDIUM",
-            "effort": "6-12 weeks"
-        }
-
-    else:  # LOW abstraction + HIGH blast radius
-        return {
-            "strategy": "BIG_BANG_WITH_FEATURE_FLAGS",
-            "phasing": generate_big_bang_phases(),
-            "risk": "HIGH",
-            "effort": "3-6 months"
-        }
-```
+**AI Applies Logic:** No hardcoded algorithms, AI interprets guidance and applies to specific codebase
 
 ---
 
@@ -1527,81 +1542,88 @@ Every concern migration should:
 
 ---
 
-#### 9.7 Implementation Plan (Phased Approach)
+#### 9.7 Implementation Plan (AI-Driven, No Python)
 
-##### Week 1-2: Foundation & Prompt Enhancement ⏳ NEXT
+**Total Timeline**: 1-2 weeks (vs 11 weeks with Python)
 
-- [ ] Update `templates/commands/analyze-project.md` with scope selection
-- [ ] Add concern type question with 8 common concerns
-- [ ] Add current/target implementation inputs
-- [ ] Modify deep analysis step for concern filtering
-- [ ] Test prompt flow with dummy responses
+##### Day 1-2: Prompt Enhancement ⏳ NEXT
+
+- [ ] Update `templates/commands/analyze-project.md`:
+  - [ ] Add "ANALYSIS_SCOPE" question (Full App vs Cross-Cutting Concern)
+  - [ ] Add "CONCERN_TYPE" follow-up (8 concern types)
+  - [ ] Add "CURRENT_IMPLEMENTATION" / "TARGET_IMPLEMENTATION" inputs
+  - [ ] Add Step 4 concern-specific analysis instructions:
+    - [ ] Detection heuristics for all 8 concern types
+    - [ ] Abstraction level assessment criteria
+    - [ ] Blast radius calculation guidance
+    - [ ] Coupling degree assessment criteria
+    - [ ] Migration strategy decision tree
+  - [ ] Add Step 6 conditional artifact generation logic
 
 **Deliverable**: Updated analyze-project.md with concern-specific workflow
 
-##### Week 3-5: Core Module Development ⏳ FUTURE
+**No Python**: ✅ Pure prompt engineering
 
-- [ ] Create `concern_analyzer.py` module
-- [ ] Implement abstraction level scoring algorithm
-- [ ] Implement blast radius calculation
-- [ ] Implement coupling degree assessment
-- [ ] Implement migration strategy recommendation engine
-- [ ] Add unit tests for all algorithms
+**Estimated Effort**: 4-6 hours
 
-**Deliverable**: concern_analyzer.py with 85%+ test coverage
+##### Day 3-4: Template Creation ⏳ NEXT
 
-##### Week 6-7: Scanner Extension ⏳ FUTURE
-
-- [ ] Extend `scanner.py` with concern_filter parameter
-- [ ] Implement heuristics for 8 concern types
-- [ ] Build concern-specific dependency graph
-- [ ] Add unit tests for filtering logic
-
-**Deliverable**: Extended scanner.py with concern detection
-
-##### Week 8: Template Creation ⏳ FUTURE
-
-- [ ] Create `concern-analysis-template.md`
-- [ ] Create `abstraction-recommendations-template.md`
-- [ ] Create `concern-migration-plan-template.md`
+- [ ] Create `templates/analysis/concern-analysis-template.md`
+- [ ] Create `templates/analysis/abstraction-recommendations-template.md`
+- [ ] Create `templates/analysis/concern-migration-plan-template.md`
 - [ ] Add examples and clear structure to all templates
 
 **Deliverable**: 3 new templates with comprehensive structure
 
-##### Week 9-10: Integration & Testing ⏳ FUTURE
+**No Python**: ✅ Pure markdown templates
 
-- [ ] Update artifact generation logic (analyze-project.md Step 6)
-- [ ] Test on 5 real projects with different concerns
-  - [ ] Auth migration (high abstraction)
-  - [ ] Database migration (low abstraction)
-  - [ ] Adding caching (greenfield)
-  - [ ] Message bus migration (medium abstraction)
-  - [ ] Logging migration (various)
-- [ ] Validate analysis accuracy
+**Estimated Effort**: 1-2 days
+
+##### Day 5-7: Testing & Iteration ⏳ FUTURE
+
+- [ ] Test on 3 real projects with different concerns:
+  - [ ] Auth migration (expect HIGH abstraction)
+  - [ ] Database migration (expect LOW abstraction)
+  - [ ] Adding caching (greenfield case)
+- [ ] Validate AI analysis quality
+- [ ] Iterate on prompt instructions based on findings
 - [ ] Collect user feedback
 
-**Deliverable**: Fully integrated concern analysis feature
+**Deliverable**: Validated concern analysis feature
 
-##### Week 11: Documentation ⏳ FUTURE
+**No Python**: ✅ AI-driven analysis validation
+
+**Estimated Effort**: 2-3 days
+
+##### Day 8-9: Documentation ⏳ FUTURE
 
 - [ ] Update `docs/reverse-engineering.md` with concern analysis section
-- [ ] Add examples for each concern type
-- [ ] Create video walkthrough (optional)
+- [ ] Add example walkthroughs for each concern type
 - [ ] Update README.md with new capability
+- [ ] Update IMPROVEMENTS.md status
 
 **Deliverable**: Complete documentation
 
+**No Python**: ✅ Documentation only
+
+**Estimated Effort**: 1-2 days
+
 ---
 
-#### 9.8 Quick Wins (Can Start Immediately)
+#### 9.8 Quick Wins (Can Start Today)
 
-**Week 1**:
+**Immediate Tasks** (2-4 hours):
 
-- [ ] Add "ANALYSIS_SCOPE" question to analyze-project.md (2 hours)
-- [ ] Add "CONCERN_TYPE" follow-up question (2 hours)
-- [ ] Draft concern-analysis-template.md structure (4 hours)
+- [ ] Add "ANALYSIS_SCOPE" question to analyze-project.md
+- [ ] Add "CONCERN_TYPE" follow-up question
+- [ ] Add detection heuristics for Auth concern (prototype)
 
-**Impact**: Users can start providing concern-specific inputs (manual analysis still required)
+**Impact**: Users can start selecting concern-specific analysis mode
+
+**Test Without Full Implementation**:
+- Run analyze-project with new questions
+- AI will attempt concern analysis with basic guidance
+- Iterate on prompt instructions based on results
 
 ---
 
@@ -1611,50 +1633,115 @@ Every concern migration should:
 
 - Phase 8 completion (✅ DONE - Interactive AI workflow)
 - Phase 8.1 completion (✅ DONE - Conditional questions)
-- Python 3.10+ (✅ EXISTING)
-- Scanner.py module (✅ EXISTING)
+- Bash/PowerShell scripts (✅ EXISTING - analyze-project.sh/.ps1)
+- AI agent (✅ EXISTING - Claude Code or compatible)
+- ❌ NO Python dependencies
+- ❌ NO external tools required
 
 **Risks**:
 
 | Risk | Probability | Impact | Mitigation |
 |------|------------|--------|------------|
-| Concern detection accuracy <90% | Medium | High | Add manual override, improve heuristics |
-| Abstraction scoring algorithm inaccurate | Medium | High | Test on diverse codebases, tune weights |
-| Migration strategy recommendations incorrect | Low | High | Include confidence score, show rationale |
-| Complexity overwhelms users | Low | Medium | Provide clear examples, step-by-step guidance |
+| AI concern detection accuracy <90% | Medium | High | Improve prompt heuristics, iterate based on feedback |
+| AI abstraction assessment subjective | Low | Medium | Require file:line evidence, test on diverse codebases |
+| AI migration recommendations inconsistent | Low | High | Embed decision tree in prompt, require rationale |
+| Users prefer full app analysis | Low | Low | Backward compatible, both modes available |
+| Prompt complexity overwhelms AI | Low | Medium | Break into clear sections, test with multiple AI models |
 
 ---
 
 #### 9.10 Future Enhancements (Post-v1.0)
 
-**Advanced Features**:
+**Advanced Features** (AI-driven, no code):
 
-- [ ] Machine learning for concern detection (train on labeled data)
-- [ ] Automated refactoring suggestions (generate code for missing abstractions)
-- [ ] Cost estimation (cloud costs for new providers)
-- [ ] Performance impact prediction (before/after benchmarks)
-- [ ] Security analysis (comparative security assessment)
-- [ ] Compliance checking (GDPR, SOX, HIPAA impact)
+- [ ] Interactive refactoring guidance (AI generates step-by-step refactoring tasks)
+- [ ] Cost estimation prompts (AI estimates cloud costs for new providers)
+- [ ] Performance impact analysis (AI analyzes before/after performance characteristics)
+- [ ] Security comparison analysis (AI compares security posture of old vs new)
+- [ ] Compliance impact assessment (GDPR, SOX, HIPAA considerations)
+- [ ] Team skill gap analysis (AI identifies training needs for new tech)
 
 **Additional Concern Types**:
 
-- [ ] Error handling/logging migration
-- [ ] Configuration management (hardcoded → env vars)
-- [ ] Secret management (code → vault)
+- [ ] Error handling/exception management
+- [ ] Configuration management (hardcoded → env vars → config service)
+- [ ] Secret management (code → vault/key management)
 - [ ] API versioning strategy
 - [ ] Rate limiting/throttling
 - [ ] Circuit breaker pattern
+- [ ] Service mesh integration
+- [ ] Feature flags/toggles
+
+**Prompt Enhancements**:
+
+- [ ] Multi-concern analysis (e.g., Auth + Database together)
+- [ ] Dependency analysis (identify concerns that depend on each other)
+- [ ] Migration sequencing (optimal order for migrating multiple concerns)
 
 ---
 
-**Status**: 📋 DESIGN PHASE COMPLETE - Ready for Implementation
+#### 9.11 Summary: AI-Driven Architecture (No Python)
+
+**Key Design Decisions**:
+
+1. **AI Does All Semantic Analysis**
+   - Pattern recognition (interfaces, DI, coupling)
+   - Abstraction quality assessment
+   - Blast radius calculation
+   - Strategy recommendation
+   - No Python code needed
+
+2. **Prompt Engineering is the Core**
+   - Detection heuristics embedded in prompts
+   - Decision trees embedded in prompts
+   - Assessment criteria embedded in prompts
+   - AI interprets and applies to specific codebase
+
+3. **Lightweight Orchestration**
+   - Bash/PowerShell for setup only
+   - No dependency installation
+   - No external tools required
+   - Works out of the box
+
+4. **Template-Driven Output**
+   - AI fills templates with real analysis
+   - Consistent structure across concerns
+   - Evidence-based (file:line references)
+   - Actionable recommendations
+
+**Benefits vs Python Approach**:
+
+| Aspect | Python Approach | AI-Driven Approach |
+|--------|----------------|-------------------|
+| **Implementation** | 2-3 weeks Python coding | 1-2 days prompt engineering |
+| **Dependencies** | Python 3.10+, packages | None |
+| **Maintenance** | Update Python code for new patterns | Update prompts (easier) |
+| **Flexibility** | Hardcoded algorithms | AI adapts to context |
+| **Accuracy** | Rule-based (brittle) | Semantic understanding (robust) |
+| **User Setup** | Install Python, packages | Zero setup |
+| **Error Handling** | Try/catch, fallbacks | AI graceful degradation |
+
+**Timeline Comparison**:
+
+- **Python Approach**: 11 weeks (3 weeks core module + 2 weeks scanner + 1 week templates + 2 weeks testing + 3 weeks integration)
+- **AI-Driven Approach**: 1-2 weeks (2 days prompts + 2 days templates + 3 days testing + 2 days docs)
+
+**Cost Comparison**:
+
+- **Python Approach**: ~640 hours implementation + ongoing maintenance
+- **AI-Driven Approach**: ~60 hours implementation + minimal maintenance
+
+---
+
+**Status**: 📋 DESIGN PHASE COMPLETE - AI-Driven, No Python Dependencies
 
 **Next Steps**:
 
-1. Review design with stakeholders
-2. Prioritize implementation tasks
-3. Start with Week 1-2 quick wins
-4. Iterate based on user feedback
+1. ✅ Design validated (user approved AI-driven approach)
+2. ⏳ Start Day 1-2 tasks (prompt enhancement)
+3. ⏳ Create templates (Day 3-4)
+4. ⏳ Test on real projects (Day 5-7)
+5. ⏳ Document and release (Day 8-9)
 
 ---
 
