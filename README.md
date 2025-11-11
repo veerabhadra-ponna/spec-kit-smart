@@ -172,8 +172,8 @@ pipx install git+https://github.company.com/yourorg/spec-kit-smart.git
 Then use the tool directly:
 
 ```bash
-ssd-toolkit init <PROJECT_NAME>
-ssd-toolkit check
+speckitsmart init <PROJECT_NAME>
+speckitsmart check
 ```
 
 To upgrade specify run:
@@ -188,10 +188,10 @@ Run directly without installing:
 
 ```bash
 # From public GitHub
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init <PROJECT_NAME>
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
 
 # From GitHub Enterprise
-pipx run --spec git+https://github.company.com/yourorg/spec-kit-smart.git ssd-toolkit init <PROJECT_NAME>
+pipx run --spec git+https://github.company.com/yourorg/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
 ```
 
 #### Option 3: From Corporate Artifactory (Enterprise)
@@ -666,7 +666,7 @@ The `specify` command supports the following options:
 | `init`      | Initialize a new Specify project from the latest template      |
 | `check`     | Check for installed tools (`git`, `claude`, `gemini`, `code`/`code-insiders`, `cursor-agent`, `windsurf`, `qwen`, `opencode`, `codex`) |
 
-### `ssd-toolkit init` Arguments & Options
+### `speckitsmart init` Arguments & Options
 
 | Argument/Option        | Type     | Description                                                                  |
 |------------------------|----------|------------------------------------------------------------------------------|
@@ -685,49 +685,49 @@ The `specify` command supports the following options:
 
 ```bash
 # Basic project initialization
-ssd-toolkit init my-project
+speckitsmart init my-project
 
 # Initialize with specific AI assistant
-ssd-toolkit init my-project --ai claude
+speckitsmart init my-project --ai claude
 
 # Initialize with Cursor support
-ssd-toolkit init my-project --ai cursor-agent
+speckitsmart init my-project --ai cursor-agent
 
 # Initialize with Windsurf support
-ssd-toolkit init my-project --ai windsurf
+speckitsmart init my-project --ai windsurf
 
 # Initialize with Amp support
-ssd-toolkit init my-project --ai amp
+speckitsmart init my-project --ai amp
 
 # Initialize with PowerShell scripts (Windows/cross-platform)
-ssd-toolkit init my-project --ai copilot --script ps
+speckitsmart init my-project --ai copilot --script ps
 
 # Initialize in current directory
-ssd-toolkit init . --ai copilot
+speckitsmart init . --ai copilot
 # or use the --here flag
-ssd-toolkit init --here --ai copilot
+speckitsmart init --here --ai copilot
 
 # Force merge into current (non-empty) directory without confirmation
-ssd-toolkit init . --force --ai copilot
-# or 
-ssd-toolkit init --here --force --ai copilot
+speckitsmart init . --force --ai copilot
+# or
+speckitsmart init --here --force --ai copilot
 
 # Skip git initialization
-ssd-toolkit init my-project --ai gemini --no-git
+speckitsmart init my-project --ai gemini --no-git
 
 # Enable debug output for troubleshooting
-ssd-toolkit init my-project --ai claude --debug
+speckitsmart init my-project --ai claude --debug
 
 # Use GitHub token for API requests (helpful for corporate environments)
-ssd-toolkit init my-project --ai claude --github-token ghp_your_token_here
+speckitsmart init my-project --ai claude --github-token ghp_your_token_here
 
 # Check system requirements
-ssd-toolkit check
+speckitsmart check
 ```
 
 ### Available Slash Commands
 
-After running `ssd-toolkit init`, your AI coding agent will have access to these slash commands for structured development:
+After running `speckitsmart init`, your AI coding agent will have access to these slash commands for structured development:
 
 #### Orchestration Commands
 
@@ -1418,19 +1418,19 @@ If you encounter issues with an agent, please open an issue so we can refine the
 You can use the Specify CLI to bootstrap your project, which will bring in the required artifacts in your environment. Run:
 
 ```bash
-ssd-toolkit init <project_name>
+speckitsmart init <project_name>
 ```
 
 Or initialize in the current directory:
 
 ```bash
-ssd-toolkit init .
+speckitsmart init .
 # or use the --here flag
-ssd-toolkit init --here
+speckitsmart init --here
 # Skip confirmation when the directory already has files
-ssd-toolkit init . --force
+speckitsmart init . --force
 # or
-ssd-toolkit init --here --force
+speckitsmart init --here --force
 ```
 
 ![Specify CLI bootstrapping a new project in the terminal](./media/specify_cli.gif)
@@ -1438,29 +1438,29 @@ ssd-toolkit init --here --force
 You will be prompted to select the AI agent you are using. You can also proactively specify it directly in the terminal:
 
 ```bash
-ssd-toolkit init <project_name> --ai claude
-ssd-toolkit init <project_name> --ai gemini
-ssd-toolkit init <project_name> --ai copilot
+speckitsmart init <project_name> --ai claude
+speckitsmart init <project_name> --ai gemini
+speckitsmart init <project_name> --ai copilot
 
 # Or in current directory:
-ssd-toolkit init . --ai claude
-ssd-toolkit init . --ai codex
+speckitsmart init . --ai claude
+speckitsmart init . --ai codex
 
 # or use --here flag
-ssd-toolkit init --here --ai claude
-ssd-toolkit init --here --ai codex
+speckitsmart init --here --ai claude
+speckitsmart init --here --ai codex
 
 # Force merge into a non-empty current directory
-ssd-toolkit init . --force --ai claude
+speckitsmart init . --force --ai claude
 
 # or
-ssd-toolkit init --here --force --ai claude
+speckitsmart init --here --force --ai claude
 ```
 
 The CLI will check if you have Claude Code, Gemini CLI, Cursor CLI, Qwen CLI, opencode, Codex CLI, or Amazon Q Developer CLI installed. If you do not, or you prefer to get the templates without checking for the right tools, use `--ignore-agent-tools` with your command:
 
 ```bash
-ssd-toolkit init <project_name> --ai claude --ignore-agent-tools
+speckitsmart init <project_name> --ai claude --ignore-agent-tools
 ```
 
 ### **STEP 1:** Establish project principles

@@ -13,15 +13,15 @@
 Specify CLI - Setup tool for SSD Toolkit projects
 
 Usage:
-    pipx run --spec specify-cli.py ssd-toolkit init <project-name>
-    pipx run --spec specify-cli.py ssd-toolkit init .
-    pipx run --spec specify-cli.py ssd-toolkit init --here
+    pipx run --spec specify-cli.py speckitsmart init <project-name>
+    pipx run --spec specify-cli.py speckitsmart init .
+    pipx run --spec specify-cli.py speckitsmart init --here
 
 Or install globally:
     pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
-    ssd-toolkit init <project-name>
-    ssd-toolkit init .
-    ssd-toolkit init --here
+    speckitsmart init <project-name>
+    speckitsmart init .
+    speckitsmart init --here
 """
 
 import os
@@ -364,7 +364,7 @@ class BannerGroup(TyperGroup):
 
 
 app = typer.Typer(
-    name="ssd-toolkit",
+    name="speckitsmart",
     help="Setup tool for SSD Toolkit spec-driven development projects",
     add_completion=False,
     invoke_without_command=True,
@@ -895,17 +895,17 @@ def init(
     6. Optionally set up AI assistant commands
     
     Examples:
-        ssd-toolkit init my-project
-        ssd-toolkit init my-project --ai claude
-        ssd-toolkit init my-project --ai copilot --no-git
-        ssd-toolkit init --ignore-agent-tools my-project
-        ssd-toolkit init . --ai claude         # Initialize in current directory
-        ssd-toolkit init .                     # Initialize in current directory (interactive AI selection)
-        ssd-toolkit init --here --ai claude    # Alternative syntax for current directory
-        ssd-toolkit init --here --ai codex
-        ssd-toolkit init --here --ai codebuddy
-        ssd-toolkit init --here
-        ssd-toolkit init --here --force  # Skip confirmation when current directory not empty
+        speckitsmart init my-project
+        speckitsmart init my-project --ai claude
+        speckitsmart init my-project --ai copilot --no-git
+        speckitsmart init --ignore-agent-tools my-project
+        speckitsmart init . --ai claude         # Initialize in current directory
+        speckitsmart init .                     # Initialize in current directory (interactive AI selection)
+        speckitsmart init --here --ai claude    # Alternative syntax for current directory
+        speckitsmart init --here --ai codex
+        speckitsmart init --here --ai codebuddy
+        speckitsmart init --here
+        speckitsmart init --here --force  # Skip confirmation when current directory not empty
     """
 
     show_banner()

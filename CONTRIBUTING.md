@@ -41,7 +41,7 @@ On [GitHub Codespaces](https://github.com/features/codespaces) it's even simpler
    # Install in editable mode
    pip install -e .
    ```
-1. Make sure the CLI works on your machine: `ssd-toolkit --help`
+1. Make sure the CLI works on your machine: `speckitsmart --help`
 1. Create a new branch: `git checkout -b my-branch-name`
 1. Make your change, add tests, and make sure everything still works
 1. Test the CLI functionality with a sample project if relevant
@@ -61,14 +61,14 @@ Here are a few things you can do that will increase the likelihood of your pull 
 
 When working on spec-kit:
 
-1. Test changes with the `ssd-toolkit` CLI commands (`/speckitsmart.specify`, `/speckitsmart.plan`, `/speckitsmart.tasks`) in your coding agent of choice
+1. Test changes with the `speckitsmart` CLI commands (`/speckitsmart.specify`, `/speckitsmart.plan`, `/speckitsmart.tasks`) in your coding agent of choice
 2. Verify templates are working correctly in `templates/` directory
 3. Test script functionality in the `scripts/` directory
 4. Ensure memory files (`memory/constitution.md`) are updated if major process changes are made
 
 ### Testing template and command changes locally
 
-Running `ssd-toolkit init` after installing with `pip install -e .` pulls released packages, which won't include your local changes.
+Running `speckitsmart init` after installing with `pip install -e .` pulls released packages, which won't include your local changes.
 To test your templates, commands, and other changes locally, follow these steps:
 
 1. **Create release packages**
@@ -126,7 +126,7 @@ When submitting AI-assisted contributions, please ensure they include:
 
 - **Clear disclosure of AI use** - You are transparent about AI use and degree to which you're using it for the contribution
 - **Human understanding and testing** - You've personally tested the changes and understand what they do
-- **Clear rationale** - You can explain why the change is needed and how it fits within Spec Kit's goals  
+- **Clear rationale** - You can explain why the change is needed and how it fits within Spec Kit's goals
 - **Concrete evidence** - Include test cases, scenarios, or examples that demonstrate the improvement
 - **Your own analysis** - Share your thoughts on the end-to-end developer experience
 

@@ -15,15 +15,15 @@
 The easiest way to get started is to initialize a new project:
 
 ```bash
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init <PROJECT_NAME>
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
 ```
 
 Or initialize in the current directory:
 
 ```bash
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init .
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init .
 # or use the --here flag
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init --here
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init --here
 ```
 
 ### Specify AI Agent
@@ -31,10 +31,10 @@ uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolk
 You can proactively specify your AI agent during initialization:
 
 ```bash
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init <project_name> --ai claude
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init <project_name> --ai gemini
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init <project_name> --ai copilot
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init <project_name> --ai codebuddy
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai claude
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai gemini
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai copilot
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai codebuddy
 ```
 
 ### Specify Script Type (Shell vs PowerShell)
@@ -50,8 +50,8 @@ Auto behavior:
 Force a specific script type:
 
 ```bash
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init <project_name> --script sh
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init <project_name> --script ps
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --script sh
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --script ps
 ```
 
 ### Ignore Agent Tools Check
@@ -59,7 +59,7 @@ uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolk
 If you prefer to get the templates without checking for the right tools:
 
 ```bash
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolkit init <project_name> --ai claude --ignore-agent-tools
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai claude --ignore-agent-tools
 ```
 
 ## Verification
@@ -67,7 +67,7 @@ uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git ssd-toolk
 After initialization, you should see the following commands available in your AI agent:
 
 - `/speckitsmart.specify` - Create specifications
-- `/speckitsmart.plan` - Generate implementation plans  
+- `/speckitsmart.plan` - Generate implementation plans
 - `/speckitsmart.tasks` - Break down into actionable tasks
 
 The `.specify/scripts` directory will contain both `.sh` and `.ps1` scripts.
