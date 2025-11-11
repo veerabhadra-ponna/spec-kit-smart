@@ -1,6 +1,6 @@
 # Local Development Guide
 
-This guide shows how to iterate on the `specify` CLI locally without publishing a release or committing to `main` first.
+This guide shows how to iterate on the `ssd-toolkit` CLI locally without publishing a release or committing to `main` first.
 
 > Scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants. The CLI auto-selects based on OS unless you pass `--script sh|ps`.
 
@@ -46,7 +46,7 @@ source .venv/bin/activate  # Linux/Mac/Git Bash
 pip install -e .
 
 # Now 'specify' entrypoint is available
-specify --help
+ssd-toolkit --help
 ```
 
 Re-running after code edits requires no reinstall because of editable mode.
@@ -57,10 +57,10 @@ Re-running after code edits requires no reinstall because of editable mode.
 
 ```bash
 # Run from local repository
-pipx run --spec /path/to/spec-kit-smart specify init test-project
+pipx run --spec /path/to/spec-kit-smart ssd-toolkit init test-project
 
 # Run from specific Git branch
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@feature-branch specify init test-project
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@feature-branch ssd-toolkit init test-project
 ```
 
 ### 4a. Absolute Path pipx (Run From Anywhere)
@@ -68,15 +68,15 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@feat
 If you're in another directory, use an absolute path:
 
 ```bash
-pipx run --spec /mnt/c/GitHub/spec-kit-smart specify --help
-pipx run --spec /mnt/c/GitHub/spec-kit-smart specify init demo-anywhere --ai copilot --ignore-agent-tools --script sh
+pipx run --spec /mnt/c/GitHub/spec-kit-smart ssd-toolkit --help
+pipx run --spec /mnt/c/GitHub/spec-kit-smart ssd-toolkit init demo-anywhere --ai copilot --ignore-agent-tools --script sh
 ```
 
 Set an environment variable for convenience:
 
 ```bash
 export SPEC_KIT_SRC=/mnt/c/GitHub/spec-kit-smart
-pipx run --spec "$SPEC_KIT_SRC" specify init demo-env --ai copilot --ignore-agent-tools --script ps
+pipx run --spec "$SPEC_KIT_SRC" ssd-toolkit init demo-env --ai copilot --ignore-agent-tools --script ps
 ```
 
 (Optional) Define a shell function:
@@ -134,8 +134,8 @@ Or copy only the modified CLI portion if you want a lighter sandbox.
 If you need to bypass TLS validation while experimenting:
 
 ```bash
-specify check --skip-tls
-specify init demo --skip-tls --ai gemini --ignore-agent-tools --script ps
+ssd-toolkit check --skip-tls
+ssd-toolkit init demo --skip-tls --ai gemini --ignore-agent-tools --script ps
 ```
 
 (Use only for local experimentation.)
@@ -145,7 +145,7 @@ specify init demo --skip-tls --ai gemini --ignore-agent-tools --script ps
 | Action | Command |
 |--------|---------|
 | Run CLI directly | `python -m src.specify_cli --help` |
-| Editable install | `pip install -e .` then `specify ...` |
+| Editable install | `pip install -e .` then `ssd-toolkit ...` |
 | Local pipx run | `pipx run --spec /path/to/repo specify ...` |
 | Git branch pipx | `pipx run --spec git+URL@branch specify ...` |
 | Build wheel | `python -m build` |

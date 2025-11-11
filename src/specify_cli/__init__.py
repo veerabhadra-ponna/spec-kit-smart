@@ -10,18 +10,18 @@
 # ]
 # ///
 """
-Specify CLI - Setup tool for Specify projects
+Specify CLI - Setup tool for SSD Toolkit projects
 
 Usage:
-    pipx run --spec specify-cli.py specify init <project-name>
-    pipx run --spec specify-cli.py specify init .
-    pipx run --spec specify-cli.py specify init --here
+    pipx run --spec specify-cli.py ssd-toolkit init <project-name>
+    pipx run --spec specify-cli.py ssd-toolkit init .
+    pipx run --spec specify-cli.py ssd-toolkit init --here
 
 Or install globally:
     pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
-    specify init <project-name>
-    specify init .
-    specify init --here
+    ssd-toolkit init <project-name>
+    ssd-toolkit init .
+    ssd-toolkit init --here
 """
 
 import os
@@ -364,8 +364,8 @@ class BannerGroup(TyperGroup):
 
 
 app = typer.Typer(
-    name="specify",
-    help="Setup tool for Specify spec-driven development projects",
+    name="ssd-toolkit",
+    help="Setup tool for SSD Toolkit spec-driven development projects",
     add_completion=False,
     invoke_without_command=True,
     cls=BannerGroup,
@@ -895,17 +895,17 @@ def init(
     6. Optionally set up AI assistant commands
     
     Examples:
-        specify init my-project
-        specify init my-project --ai claude
-        specify init my-project --ai copilot --no-git
-        specify init --ignore-agent-tools my-project
-        specify init . --ai claude         # Initialize in current directory
-        specify init .                     # Initialize in current directory (interactive AI selection)
-        specify init --here --ai claude    # Alternative syntax for current directory
-        specify init --here --ai codex
-        specify init --here --ai codebuddy
-        specify init --here
-        specify init --here --force  # Skip confirmation when current directory not empty
+        ssd-toolkit init my-project
+        ssd-toolkit init my-project --ai claude
+        ssd-toolkit init my-project --ai copilot --no-git
+        ssd-toolkit init --ignore-agent-tools my-project
+        ssd-toolkit init . --ai claude         # Initialize in current directory
+        ssd-toolkit init .                     # Initialize in current directory (interactive AI selection)
+        ssd-toolkit init --here --ai claude    # Alternative syntax for current directory
+        ssd-toolkit init --here --ai codex
+        ssd-toolkit init --here --ai codebuddy
+        ssd-toolkit init --here
+        ssd-toolkit init --here --force  # Skip confirmation when current directory not empty
     """
 
     show_banner()
