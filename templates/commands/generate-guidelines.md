@@ -283,6 +283,40 @@ Your choice: ___
 
 ---
 
+## Corporate Package Registry Configuration
+
+**Ask user for Artifactory/Nexus URL** (optional):
+
+```text
+CORPORATE PACKAGE REGISTRY:
+
+Does your organization use a corporate package registry (Artifactory, Nexus, etc.)?
+
+- [A] Yes - Provide registry URL for library whitelist validation
+- [B] No - Skip registry configuration
+
+Your choice: ___
+```
+
+**IF choice = [A]**:
+
+```text
+Please provide your corporate package registry URL:
+
+Registry URL: ___
+(e.g., https://artifactory.company.com/artifactory, https://nexus.company.com/repository)
+
+This URL will be included in the guideline file for library whitelist validation.
+```
+
+**Store ARTIFACTORY_URL** for inclusion in guideline Package Registry section.
+
+**IF choice = [B]**:
+
+Set ARTIFACTORY_URL = "Not configured" (or leave empty).
+
+---
+
 ## Update Mode Selection
 
 **Check if guideline file already exists** in `.guidelines/` directory:
@@ -651,9 +685,20 @@ Follow this execution flow with THREE distinct persona phases:
    ---
    ```
 
-8. **Write final guideline file**:
+8. **Write final guideline file** (use chunked generation if needed):
 
    **File path**: `.guidelines/{stack}-guidelines.md` (e.g., `.guidelines/java-guidelines.md`)
+
+   **⚠️ IMPORTANT - Chunked Generation**:
+
+   If the generated guideline file will exceed **1500 lines**, use chunked generation to prevent token limit errors (per AGENTS.md requirements):
+
+   - **Chunk 1** (Write tool): Header + version + Scaffolding + Package Registry + Mandatory Libraries
+   - **Chunk 2** (Edit tool, append): Banned Libraries + Architecture + Security
+   - **Chunk 3** (Edit tool, append): Coding Standards + Dependency Management + Testing
+   - **Chunk 4** (Edit tool, append): Build & Deployment + Observability + Non-Compliance
+
+   **For files < 1500 lines**: Write entire file at once with Write tool.
 
    **Structure** (follow existing guideline format):
 
@@ -681,7 +726,12 @@ Follow this execution flow with THREE distinct persona phases:
    ## Package Registry
 
    **MUST**:
-   - {Principle}
+   - Configure package manager with corporate repository
+   - All packages resolved through corporate registry only
+
+   **Registry URL**: {ARTIFACTORY_URL or "Not configured"}
+
+   **Rationale**: Using corporate registry ensures approved libraries and prevents supply chain attacks
 
    ---
 

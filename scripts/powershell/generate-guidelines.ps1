@@ -223,7 +223,7 @@ if ($projectDirs.Count -eq 0) {
         $projectFilesManifest = Join-Path $outputDir "$($proj.Name)-files.json"
 
         $projectFiles = Get-ChildItem -Path $proj.FullName -Recurse -File -ErrorAction SilentlyContinue | Where-Object {
-            $_.FullName -notmatch '[\\/](node_modules|bin|obj|target|build|dist|\.git|__pycache__|venv|\.venv)[\\/]' -and
+            $_.FullName -notmatch '[\\/](node_modules|bin|obj|target|build|dist|\.git|__pycache__|venv|\.venv)($|[\\/])' -and
             $_.Length -le 10MB
         }
 
