@@ -162,7 +162,11 @@ Choose your preferred installation method:
 Install once and use everywhere:
 
 ```bash
-uv tool install specify-cli --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
+# From public GitHub
+pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
+
+# From GitHub Enterprise (for corporate environments)
+pipx install git+https://github.company.com/yourorg/spec-kit-smart.git
 ```
 
 Then use the tool directly:
@@ -175,7 +179,7 @@ specify check
 To upgrade specify run:
 
 ```bash
-uv tool install specify-cli --force --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
+pipx install --force git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 ```
 
 #### Option 2: One-time Usage
@@ -183,15 +187,32 @@ uv tool install specify-cli --force --from git+https://github.com/veerabhadra-po
 Run directly without installing:
 
 ```bash
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME>
+# From public GitHub
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME>
+
+# From GitHub Enterprise
+pipx run --spec git+https://github.company.com/yourorg/spec-kit-smart.git specify init <PROJECT_NAME>
+```
+
+#### Option 3: From Corporate Artifactory (Enterprise)
+
+If your company uses Artifactory PyPI mirror:
+
+```bash
+# One-time configuration (usually done by IT)
+pip config set global.index-url https://artifactory.company.com/artifactory/api/pypi/pypi-virtual/simple
+
+# Install
+pip install specify-cli
 ```
 
 **Benefits of persistent installation:**
 
 - Tool stays installed and available in PATH
 - No need to create shell aliases
-- Better tool management with `uv tool list`, `uv tool upgrade`, `uv tool uninstall`
+- Better tool management with `pipx list`, `pipx upgrade`, `pipx uninstall`
 - Cleaner shell configuration
+- Works in corporate environments without UV approval
 
 ### 2. Establish project principles
 

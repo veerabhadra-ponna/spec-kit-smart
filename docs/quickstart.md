@@ -11,14 +11,16 @@ This guide will help you get started with Spec-Driven Development using Spec Kit
 Initialize your project depending on the coding agent you're using:
 
 ```bash
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME>
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME>
 ```
 
-Pick script type explicitly (optional):
+Script type is auto-detected based on OS (Windows → PowerShell, Linux/Mac → Bash).
+
+Optional: Force specific script type:
 
 ```bash
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME> --script ps  # Force PowerShell
-uvx --from git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME> --script sh  # Force POSIX shell
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME> --script ps  # Force PowerShell
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git specify init <PROJECT_NAME> --script sh  # Force Bash
 ```
 
 ### 2. Create the Spec

@@ -13,12 +13,12 @@
 Specify CLI - Setup tool for Specify projects
 
 Usage:
-    uvx specify-cli.py init <project-name>
-    uvx specify-cli.py init .
-    uvx specify-cli.py init --here
+    pipx run --spec specify-cli.py specify init <project-name>
+    pipx run --spec specify-cli.py specify init .
+    pipx run --spec specify-cli.py specify init --here
 
 Or install globally:
-    uv tool install --from specify-cli.py specify-cli
+    pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
     specify init <project-name>
     specify init .
     specify init --here
@@ -157,15 +157,21 @@ SCRIPT_TYPE_CHOICES = {"sh": "POSIX Shell (bash/zsh)", "ps": "PowerShell"}
 CLAUDE_LOCAL_PATH = Path.home() / ".claude" / "local" / "claude"
 
 BANNER = """
-███████╗██████╗ ███████╗ ██████╗██╗███████╗██╗   ██╗
-██╔════╝██╔══██╗██╔════╝██╔════╝██║██╔════╝╚██╗ ██╔╝
-███████╗██████╔╝█████╗  ██║     ██║█████╗   ╚████╔╝ 
-╚════██║██╔═══╝ ██╔══╝  ██║     ██║██╔══╝    ╚██╔╝  
-███████║██║     ███████╗╚██████╗██║██║        ██║   
-╚══════╝╚═╝     ╚══════╝ ╚═════╝╚═╝╚═╝        ╚═╝   
+███████╗██████╗ ███████╗ ██████╗    ██╗  ██╗██╗████████╗
+██╔════╝██╔══██╗██╔════╝██╔════╝    ██║ ██╔╝██║╚══██╔══╝
+███████╗██████╔╝█████╗  ██║         █████╔╝ ██║   ██║
+╚════██║██╔═══╝ ██╔══╝  ██║         ██╔═██╗ ██║   ██║
+███████║██║     ███████╗╚██████╗    ██║  ██╗██║   ██║
+╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝  ╚═╝╚═╝   ╚═╝
+███████╗███╗   ███╗ █████╗ ██████╗ ████████╗
+██╔════╝████╗ ████║██╔══██╗██╔══██╗╚══██╔══╝
+███████╗██╔████╔██║███████║██████╔╝   ██║
+╚════██║██║╚██╔╝██║██╔══██║██╔══██╗   ██║
+███████║██║ ╚═╝ ██║██║  ██║██║  ██║   ██║
+╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝
 """
 
-TAGLINE = "GitHub Spec Kit - Spec-Driven Development Toolkit"
+TAGLINE = "Enterprise Spec-Driven Development Toolkit"
 class StepTracker:
     """Track and render hierarchical steps without emojis, similar to Claude Code tree output.
     Supports live auto-refresh via an attached refresh callback.
@@ -559,8 +565,9 @@ def merge_json_files(existing_path: Path, new_content: dict, verbose: bool = Fal
     return merged
 
 def download_template_from_github(ai_assistant: str, download_dir: Path, *, script_type: str = "sh", verbose: bool = True, show_progress: bool = True, client: httpx.Client = None, debug: bool = False, github_token: str = None) -> Tuple[Path, dict]:
-    repo_owner = "github"
-    repo_name = "spec-kit"
+    # Changed to spec-kit-smart fork (unified packages with both sh and ps)
+    repo_owner = "veerabhadra-ponna"
+    repo_name = "spec-kit-smart"
     if client is None:
         client = httpx.Client(verify=ssl_context)
 
@@ -591,7 +598,9 @@ def download_template_from_github(ai_assistant: str, download_dir: Path, *, scri
         raise typer.Exit(1)
 
     assets = release_data.get("assets", [])
-    pattern = f"spec-kit-template-{ai_assistant}-{script_type}"
+    # Unified packages don't have -sh or -ps suffix, just version
+    # Pattern: spec-kit-template-{agent}-{version}.zip
+    pattern = f"spec-kit-template-{ai_assistant}-"
     matching_assets = [
         asset for asset in assets
         if pattern in asset["name"] and asset["name"].endswith(".zip")
@@ -996,17 +1005,15 @@ def init(
                 raise typer.Exit(1)
 
     if script_type:
+        # Allow manual override if explicitly provided
         if script_type not in SCRIPT_TYPE_CHOICES:
             console.print(f"[red]Error:[/red] Invalid script type '{script_type}'. Choose from: {', '.join(SCRIPT_TYPE_CHOICES.keys())}")
             raise typer.Exit(1)
         selected_script = script_type
     else:
-        default_script = "ps" if os.name == "nt" else "sh"
-
-        if sys.stdin.isatty():
-            selected_script = select_with_arrows(SCRIPT_TYPE_CHOICES, "Choose script type (or press Enter)", default_script)
-        else:
-            selected_script = default_script
+        # Auto-detect based on OS (no interactive prompt)
+        selected_script = "ps" if os.name == "nt" else "sh"
+        console.print(f"[dim]Auto-detected script type:[/dim] {selected_script} ({SCRIPT_TYPE_CHOICES[selected_script]})")
 
     console.print(f"[cyan]Selected AI assistant:[/cyan] {selected_ai}")
     console.print(f"[cyan]Selected script type:[/cyan] {selected_script}")
@@ -1019,8 +1026,8 @@ def init(
     tracker.complete("precheck", "ok")
     tracker.add("ai-select", "Select AI assistant")
     tracker.complete("ai-select", f"{selected_ai}")
-    tracker.add("script-select", "Select script type")
-    tracker.complete("script-select", selected_script)
+    tracker.add("script-detect", "Detect script type")
+    tracker.complete("script-detect", selected_script)
     for key, label in [
         ("fetch", "Fetch latest release"),
         ("download", "Download template"),
