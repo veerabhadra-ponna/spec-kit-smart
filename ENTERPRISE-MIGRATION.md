@@ -18,11 +18,11 @@ This document outlines all changes needed to:
 
 ## 1. Change Installation from UV to pip/pipx
 
-### Files to Modify:
+### Files to Modify
 
 #### A. `README.md`
 
-**Lines 164-194: Installation section**
+##### Lines 164-194: Installation section
 
 **Current:**
 ```markdown
@@ -123,7 +123,7 @@ pip install -e .
 specify --help
 ```
 
-**Lines 62-63: Testing template changes locally**
+##### Lines 62-63: Testing template changes locally
 
 **Current:**
 ```markdown
@@ -137,7 +137,7 @@ Running `specify init` after installing with `pip install -e .` pulls released p
 
 #### C. `docs/local-development.md`
 
-**Lines 34-49: Environment setup**
+##### Lines 34-49: Environment setup
 
 **Current:**
 ```bash
@@ -169,7 +169,7 @@ pip install -e .
 specify --help
 ```
 
-**Lines 50-53: Direct invocation**
+##### Lines 50-53: Direct invocation
 
 **Current:**
 ```markdown
@@ -218,7 +218,7 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git spec
 
 #### E. `.devcontainer/post-create.sh`
 
-**Lines 86-89: Remove UV installation**
+##### Lines 86-89: Remove UV installation
 
 **Current:**
 ```bash
@@ -236,7 +236,7 @@ echo "✅ Done"
 
 #### F. `src/specify_cli/__init__.py` (Documentation in docstrings)
 
-**Lines 13-24: Module docstring examples**
+##### Lines 13-24: Module docstring examples
 
 **Current:**
 ```python
@@ -280,7 +280,7 @@ Or install globally:
 
 ### File: `src/specify_cli/__init__.py`
 
-**Lines 159-168: Banner and tagline**
+#### Lines 159-168: Banner and tagline
 
 **Current:**
 ```python
@@ -328,7 +328,7 @@ TAGLINE = "Spec-Driven Development for Corporate Teams"
 ```
 
 **To generate custom ASCII art:**
-1. Visit: https://patorjk.com/software/taag/
+1. Visit: <https://patorjk.com/software/taag/>
 2. Enter text: "SPEC KIT SMART"
 3. Choose font: "ANSI Shadow" (current style) or "Big", "Standard", etc.
 4. Copy output and paste into `BANNER` variable
@@ -339,7 +339,7 @@ TAGLINE = "Spec-Driven Development for Corporate Teams"
 
 ### File: `src/specify_cli/__init__.py`
 
-**Lines 998-1010: Script selection logic**
+#### Lines 998-1010: Script selection logic
 
 **Current:**
 ```python
@@ -377,7 +377,7 @@ else:
 - Users can still override with `--script ps/sh` if needed
 - Shows brief message: "Auto-detected script type: sh (POSIX Shell)"
 
-**Lines 1022-1023: Remove script selection from tracker**
+##### Lines 1022-1023: Remove script selection from tracker
 
 **Current:**
 ```python
@@ -395,7 +395,8 @@ tracker.complete("script-detect", selected_script)
 
 ## 4. Fix Package Download Pattern (Unified Packages)
 
-### Issue:
+### Issue
+
 Current code downloads from `github/spec-kit` (original repo) and expects separate `-sh` or `-ps` packages. Your fork:
 - Uses unified packages (one package with both sh and ps)
 - Hosted at `veerabhadra-ponna/spec-kit-smart`
@@ -403,7 +404,7 @@ Current code downloads from `github/spec-kit` (original repo) and expects separa
 
 ### File: `src/specify_cli/__init__.py`
 
-**Lines 561-598: Download function**
+#### Lines 561-598: Download function
 
 **Current:**
 ```python
@@ -496,11 +497,11 @@ specify init myproject --ai claude
 
 ## 5. Package Structure Verification
 
-### Current Package (Unified) - Already Correct!
+### Current Package (Unified) - Already Correct
 
 Looking at `.github/workflows/scripts/create-release-packages.sh`:
 
-**Lines 139-159: Package structure**
+#### Lines 139-159: Package structure
 ```bash
 # Copy base structure with BOTH script directories
 SPEC_DIR="$base_dir/.specify"
@@ -556,7 +557,7 @@ project-root/
 
 ## 6. Testing the Changes
 
-### After making all changes:
+### After making all changes
 
 1. **Test banner display:**
 ```bash
@@ -699,19 +700,21 @@ Before releasing changes:
 uv tool uninstall specify-cli
 ```
 
-**Step 2: Install with pipx**
+#### Step 2: Install with pipx
+
 ```bash
 pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 ```
 
-**Step 3: Verify**
+#### Step 3: Verify
+
 ```bash
 specify --help  # Should show new "SPEC KIT SMART" banner
 ```
 
-### For corporate environments:
+### For corporate environments
 
-**Step 1: Fork to internal GitHub Enterprise**
+#### Step 1: Fork to internal GitHub Enterprise
 ```bash
 # Clone public repo
 git clone https://github.com/veerabhadra-ponna/spec-kit-smart.git
@@ -722,20 +725,22 @@ git remote add enterprise https://github.company.com/yourorg/spec-kit-internal.g
 git push enterprise main
 ```
 
-**Step 2: Create releases on internal GitHub**
+#### Step 2: Create releases on internal GitHub
+
 ```bash
 # Trigger release workflow on your fork
 # Workflow will create packages from your fork automatically
 ```
 
-**Step 3: Configure environment (optional)**
+#### Step 3: Configure environment (optional)
+
 ```bash
 export SPECKIT_REPO_OWNER=yourorg
 export SPECKIT_REPO_NAME=spec-kit-internal
 export GITHUB_API_URL=https://github.company.com/api/v3
 ```
 
-**Step 4: Install**
+#### Step 4: Install
 ```bash
 pipx install git+https://github.company.com/yourorg/spec-kit-internal.git
 ```
@@ -758,4 +763,4 @@ pipx install git+https://github.company.com/yourorg/spec-kit-internal.git
 
 ---
 
-**End of Enterprise Migration Guide**
+## End of Enterprise Migration Guide
