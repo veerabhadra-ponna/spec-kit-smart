@@ -734,6 +734,930 @@ Example:
 
 ---
 
+### Phase 9 - Cross-Cutting Concern Analysis (HIGH PRIORITY) 🔴
+
+**Status**: 📋 DESIGN PHASE - Ready for Implementation
+
+**User Requirement** (2025-11-11):
+
+Extend analyze-project to support **targeted cross-cutting concern migration** in addition to full application modernization.
+
+**Business Context**:
+
+Modern applications need to migrate specific cross-cutting concerns without rewriting the entire app:
+
+- **Auth migration**: Custom JWT → Okta/Auth0/Azure AD
+- **Database migration**: RDBMS → NoSQL (PostgreSQL → MongoDB)
+- **Caching**: Add/replace caching layer (Memcached → Redis)
+- **Messaging**: Migrate message bus (TIBCO → Kafka, RabbitMQ → Azure Service Bus)
+- **Observability**: Custom logging → ELK/Prometheus/DataDog
+
+**Current Gap**:
+
+The analyze-project feature analyzes **entire applications** for full modernization. It cannot:
+
+- ❌ Analyze only authentication code while ignoring other features
+- ❌ Assess abstraction quality of a specific concern
+- ❌ Recommend migration strategies for isolated concerns
+- ❌ Provide concern-specific impact analysis
+- ❌ Check if proper abstractions exist for easy swapping
+
+---
+
+#### 9.1 Architecture Assessment & Design
+
+**Senior Developer/Architect Analysis**:
+
+##### Current Architecture Strengths
+
+1. **Interactive Workflow** (Phase 8)
+   - 10-question modernization preference gathering
+   - Conditional logic for relevant questions
+   - Real content generation (not templates)
+
+2. **Comprehensive Analysis**
+   - Scanner.py detects tech stack, metrics, structure
+   - Dependency analyzer finds vulnerabilities
+   - Scoring engine calculates feasibility (0-100)
+
+3. **Corporate Guidelines Integration**
+   - Checks compliance with organizational standards
+   - Multi-stack support (React+Java, Node+Python)
+
+4. **Extensible Template System**
+   - functional-spec-template.md (WHAT system does)
+   - technical-spec-template.md (HOW to build)
+   - stage-prompts/ for Toolkit workflow integration
+
+##### Extension Points for Cross-Cutting Concerns
+
+**Extension Point 1: Scope Selection (analyze-project.md:60-85)**
+
+Current:
+
+```text
+## User Input & Interactive Mode
+
+$ARGUMENTS
+
+**IF** `$ARGUMENTS` is empty or contains the literal text "$ARGUMENTS":
+   Please provide the following information:
+   PROJECT_PATH: /path/to/existing/project
+```
+
+Proposed Enhancement:
+
+```text
+## User Input & Interactive Mode
+
+$ARGUMENTS
+
+**IF** `$ARGUMENTS` is empty:
+   Please provide the following information:
+
+   PROJECT_PATH: /path/to/existing/project
+
+   ANALYSIS_SCOPE:
+   - [A] Full Application Modernization (entire codebase)
+   - [B] Cross-Cutting Concern Migration (specific area)
+   Your choice: ___
+
+   **IF CHOICE = [B]**, ask follow-up:
+
+   CONCERN_TYPE:
+   - [1] Authentication/Authorization
+   - [2] Database/ORM Layer
+   - [3] Caching Layer
+   - [4] Message Bus/Queue
+   - [5] Logging/Observability
+   - [6] API Gateway/Routing
+   - [7] File Storage/CDN
+   - [8] Other (specify)
+   Your choice: ___
+
+   CURRENT_IMPLEMENTATION: ___  (detected from code, user confirms)
+   TARGET_IMPLEMENTATION: ___   (e.g., "Migrate to Okta", "PostgreSQL → MongoDB")
+```
+
+**Extension Point 2: Scanner Module (scanner.py)**
+
+Current: Scans entire codebase
+
+Proposed Enhancement: Add concern-specific filtering
+
+```python
+class Scanner:
+    def scan_project(self, project_path, concern_filter=None):
+        """
+        Args:
+            concern_filter: Optional[ConcernFilter]
+                - concern_type: "auth" | "database" | "cache" | etc.
+                - patterns: List of file/import patterns to match
+        """
+        if concern_filter:
+            # Use heuristics to identify concern-specific files
+            # - File naming: auth*, login*, session*, jwt*
+            # - Imports: passport, jsonwebtoken, bcrypt, oauth
+            # - Decorators: @require_auth, @authenticated
+            # - Config files: auth.config.js, security.yml
+```
+
+**Extension Point 3: New Module - concern_analyzer.py**
+
+Proposed: Specialized analyzer for cross-cutting concerns
+
+```python
+class ConcernAnalyzer:
+    """Analyzes a specific cross-cutting concern for migration readiness."""
+
+    def analyze_abstraction_level(self, concern_code):
+        """
+        Returns: "HIGH" | "MEDIUM" | "LOW"
+
+        HIGH:
+            - Single entry point (e.g., AuthService interface)
+            - Dependency injection used
+            - Clean boundaries, no direct imports of implementation
+
+        MEDIUM:
+            - Multiple entry points but consistent pattern
+            - Some direct dependencies
+            - Mixed abstraction levels
+
+        LOW:
+            - Scattered across codebase
+            - Direct implementation dependencies everywhere
+            - No interfaces or contracts
+        """
+
+    def calculate_blast_radius(self, concern_code):
+        """
+        Returns:
+            files_affected: int
+            loc_affected: int
+            percentage_of_codebase: float
+        """
+
+    def assess_coupling_degree(self, concern_code):
+        """
+        Returns: "LOOSE" | "MODERATE" | "TIGHT"
+
+        Analyzes:
+            - Direct vs indirect dependencies
+            - Interface vs implementation coupling
+            - Cyclic dependencies
+        """
+
+    def recommend_migration_strategy(self, abstraction_level, blast_radius, coupling):
+        """
+        Returns:
+            strategy: "STRANGLER_FIG" | "ADAPTER_PATTERN" | "REFACTOR_FIRST" | "BIG_BANG"
+            phasing: List[Phase]
+            risk: "LOW" | "MEDIUM" | "HIGH"
+            effort_estimate: str (e.g., "2-4 weeks")
+        """
+```
+
+**Extension Point 4: New Templates**
+
+Proposed templates for concern-specific analysis:
+
+1. **concern-analysis-template.md**
+
+```markdown
+# Cross-Cutting Concern Analysis: <<CONCERN_TYPE>>
+
+## Executive Summary
+
+**Concern**: <<e.g., Authentication/Authorization>>
+**Current**: <<e.g., Custom JWT implementation>>
+**Target**: <<e.g., Migrate to Okta>>
+**Recommendation**: <<STRANGLER_FIG | ADAPTER_PATTERN | etc.>>
+**Risk**: <<LOW/MEDIUM/HIGH>>
+**Effort**: <<2-4 weeks>>
+
+## Current Implementation Analysis
+
+### Entry Points (file:line references)
+
+| Entry Point | Type | Usage Count | Evidence |
+|-------------|------|-------------|----------|
+| AuthService.authenticate() | Interface | 47 callsites | src/auth/AuthService.ts:23 |
+| verifyToken() | Direct function | 12 callsites | src/middleware/auth.js:45 |
+
+### Abstraction Assessment
+
+**Level**: <<HIGH/MEDIUM/LOW>>
+
+**Rationale**:
+- <<Evidence 1>> (file:line)
+- <<Evidence 2>> (file:line)
+
+### Coupling Analysis
+
+**Degree**: <<LOOSE/MODERATE/TIGHT>>
+
+**Dependencies**:
+- Database: User table (tight coupling - schema changes needed)
+- API: 23 endpoints depend on auth middleware
+- Frontend: 15 components check auth state
+
+### Blast Radius
+
+- Files affected: <<N>> files (<<X>>% of codebase)
+- LOC affected: <<M>> lines
+- Tests to update: <<T>> test files
+
+## Missing Abstractions
+
+**What's Missing**:
+1. <<Abstraction 1>>: <<Why needed>> (file:line showing problem)
+2. <<Abstraction 2>>: <<Why needed>> (file:line showing problem)
+
+**Recommended Abstractions**:
+- Create IAuthProvider interface
+- Extract TokenService for token management
+- Add AuthContext for dependency injection
+
+## Migration Strategy
+
+**Approach**: <<STRANGLER_FIG>>
+
+**Phasing** (50/30/15/5):
+
+### Phase 1 (50% value): Core Migration
+- Week 1-2: Implement OktaAuthProvider with IAuthProvider interface
+- Week 3: Dual-auth mode (support both JWT and Okta)
+- Week 4: Route 10% traffic to Okta (canary)
+
+### Phase 2 (30% value): Rollout
+- Week 5: Route 50% traffic to Okta
+- Week 6: Full cutover with feature flag
+
+### Phase 3 (15% value): Cleanup
+- Week 7: Remove legacy JWT code
+- Week 8: Update tests and documentation
+
+### Phase 4 (5% value): Future-Proofing
+- Add abstraction layer for easy provider swapping
+- Document migration lessons learned
+
+## Rollback Strategy
+
+- Feature flag: `USE_OKTA_AUTH` (instant rollback)
+- Database: No schema changes (rollback safe)
+- API: Backward compatible tokens during transition
+
+## Impact on Other Concerns
+
+| Concern | Impact | Mitigation |
+|---------|--------|------------|
+| Database | None | Auth tokens in separate table |
+| Caching | Session cache keys change | Update cache prefix |
+| Logging | Auth events format changes | Update log parsers |
+
+## Testing Strategy
+
+- Unit tests: Update 47 auth-related tests
+- Integration tests: Add Okta mock server
+- E2E tests: Test both auth flows during transition
+
+## Success Criteria
+
+- ✅ Zero downtime during migration
+- ✅ 100% feature parity with legacy auth
+- ✅ < 5% performance degradation
+- ✅ Instant rollback capability
+
+---
+
+## Appendix: Detailed Evidence
+
+### File-by-File Analysis
+...
+```
+
+2. **abstraction-recommendations-template.md**
+
+```markdown
+# Abstraction Recommendations: <<CONCERN_TYPE>>
+
+## Current Architecture Gaps
+
+### Gap 1: <<Gap Name>>
+**Problem**: <<Description with file:line>>
+**Impact**: <<Why this makes migration harder>>
+**Recommendation**: <<How to fix>>
+
+## Recommended Abstraction Patterns
+
+### Pattern 1: Repository Pattern (for Database concern)
+**Why**: Isolates data access logic
+**Implementation**:
+- Create IRepository<T> interface
+- Implement PostgresRepository and MongoRepository
+- Swap at runtime via dependency injection
+
+### Pattern 2: Strategy Pattern (for Auth concern)
+**Why**: Allows swapping auth providers
+**Implementation**:
+- Create IAuthProvider interface
+- Implement JWTProvider, OktaProvider, Auth0Provider
+- Select via configuration
+
+## Refactoring Roadmap
+
+### Phase 1: Extract Interfaces (1-2 weeks)
+- [ ] Define IAuthProvider interface
+- [ ] Define ITokenService interface
+- [ ] Add dependency injection container
+
+### Phase 2: Migrate to Interfaces (2-3 weeks)
+- [ ] Update all callsites to use interfaces
+- [ ] Remove direct implementation dependencies
+- [ ] Add integration tests
+
+### Phase 3: Implement New Provider (1-2 weeks)
+- [ ] Create OktaAuthProvider implementing IAuthProvider
+- [ ] Add configuration management
+- [ ] Test side-by-side with legacy
+
+## Future-Proofing
+
+**Design for Change**:
+- Use interfaces, not concrete classes
+- Inject dependencies, don't hardcode
+- Config-driven provider selection
+- Feature flags for gradual rollout
+
+**Next Migration Will Be Easy**:
+- Okta → Auth0: Just implement Auth0Provider
+- PostgreSQL → MongoDB: Just implement MongoRepository
+- Redis → Memcached: Just implement MemcachedCache
+```
+
+---
+
+#### 9.2 Implementation Tasks
+
+##### Task 1: Enhance analyze-project.md Prompt ✨ DESIGN COMPLETE
+
+**Changes**:
+
+1. Add "ANALYSIS_SCOPE" question (Full App vs Cross-Cutting Concern)
+2. Add "CONCERN_TYPE" follow-up question (8 common concerns)
+3. Add "CURRENT_IMPLEMENTATION" and "TARGET_IMPLEMENTATION" inputs
+4. Modify Step 4 (Deep Analysis) to focus on concern-specific code if [B] chosen
+
+**Complexity**: MEDIUM (prompt template update)
+
+**Estimated Effort**: 2-4 hours
+
+##### Task 2: Create concern_analyzer.py Module ✨ DESIGN COMPLETE
+
+**Purpose**: Specialized analyzer for cross-cutting concern migration
+
+**Functions**:
+
+- `analyze_abstraction_level()` - HIGH/MEDIUM/LOW scoring
+- `calculate_blast_radius()` - Files/LOC affected
+- `assess_coupling_degree()` - LOOSE/MODERATE/TIGHT
+- `recommend_migration_strategy()` - Strategy selection algorithm
+- `detect_missing_abstractions()` - Gap analysis
+- `generate_refactoring_roadmap()` - Phased plan
+
+**Complexity**: HIGH (new module, complex algorithms)
+
+**Estimated Effort**: 2-3 weeks
+
+##### Task 3: Extend scanner.py for Concern Filtering ✨ DESIGN COMPLETE
+
+**Changes**:
+
+1. Add `concern_filter` parameter to `scan_project()`
+2. Implement heuristics for each concern type:
+   - **Auth**: Files matching `auth*`, `login*`, `session*`, imports like `passport`, `jwt`
+   - **Database**: Files with DB imports, ORM models, migration files
+   - **Cache**: Files with cache imports, `@Cacheable` decorators
+   - **Messaging**: Queue/topic files, message handlers
+   - **Logging**: Logger config, log middleware
+
+3. Build concern-specific dependency graph
+
+**Complexity**: MEDIUM (extend existing module)
+
+**Estimated Effort**: 1-2 weeks
+
+##### Task 4: Create New Templates ✨ DESIGN COMPLETE
+
+**Templates to Create**:
+
+1. `concern-analysis-template.md` (comprehensive concern assessment)
+2. `abstraction-recommendations-template.md` (refactoring guidance)
+3. `concern-migration-plan-template.md` (detailed phased rollout)
+
+**Complexity**: MEDIUM (template creation with clear structure)
+
+**Estimated Effort**: 1 week
+
+##### Task 5: Update Artifacts Generation ✨ DESIGN COMPLETE
+
+**Changes to analyze-project.md Step 6**:
+
+- If ANALYSIS_SCOPE = [A], generate existing artifacts (current behavior)
+- If ANALYSIS_SCOPE = [B], generate concern-specific artifacts:
+  - `concern-analysis.md` (instead of functional-spec.md)
+  - `abstraction-recommendations.md` (new)
+  - `concern-migration-plan.md` (instead of technical-spec.md)
+  - `stage-prompts/` adapted for concern migration
+
+**Complexity**: LOW (conditional artifact generation)
+
+**Estimated Effort**: 1-2 days
+
+##### Task 6: Integration Testing ⏳ FUTURE
+
+- Test on real projects with different concern types
+- Validate abstraction detection accuracy
+- Validate migration strategy recommendations
+- Ensure generated artifacts are actionable
+
+**Complexity**: HIGH (requires diverse test cases)
+
+**Estimated Effort**: 2-3 weeks
+
+---
+
+#### 9.3 Decision Algorithms
+
+##### Algorithm 1: Abstraction Level Scoring
+
+```python
+def score_abstraction_level(concern_code):
+    """
+    Returns: "HIGH" | "MEDIUM" | "LOW"
+    """
+    score = 0
+
+    # Check for single entry point (interface/class)
+    if has_single_interface(concern_code):
+        score += 40
+    elif has_multiple_consistent_entry_points(concern_code):
+        score += 20
+
+    # Check for dependency injection
+    if uses_dependency_injection(concern_code):
+        score += 30
+    elif has_factory_pattern(concern_code):
+        score += 15
+
+    # Check for clean boundaries
+    if no_direct_implementation_imports(concern_code):
+        score += 30
+    elif limited_direct_imports(concern_code):
+        score += 10
+
+    # Classification
+    if score >= 70:
+        return "HIGH"
+    elif score >= 40:
+        return "MEDIUM"
+    else:
+        return "LOW"
+```
+
+##### Algorithm 2: Migration Strategy Selection
+
+```python
+def recommend_migration_strategy(abstraction_level, blast_radius, coupling_degree):
+    """
+    Returns: {
+        strategy: str,
+        phasing: List[Phase],
+        risk: str,
+        effort: str
+    }
+    """
+
+    # Decision tree
+    if abstraction_level == "HIGH" and coupling_degree == "LOOSE":
+        return {
+            "strategy": "STRANGLER_FIG",
+            "phasing": generate_strangler_fig_phases(),
+            "risk": "LOW",
+            "effort": "2-4 weeks"
+        }
+
+    elif abstraction_level == "MEDIUM":
+        return {
+            "strategy": "ADAPTER_PATTERN",
+            "phasing": generate_adapter_pattern_phases(),
+            "risk": "MEDIUM",
+            "effort": "4-8 weeks"
+        }
+
+    elif abstraction_level == "LOW" and blast_radius < 20:  # < 20% of codebase
+        return {
+            "strategy": "REFACTOR_FIRST",
+            "phasing": generate_refactor_first_phases(),
+            "risk": "MEDIUM",
+            "effort": "6-12 weeks"
+        }
+
+    else:  # LOW abstraction + HIGH blast radius
+        return {
+            "strategy": "BIG_BANG_WITH_FEATURE_FLAGS",
+            "phasing": generate_big_bang_phases(),
+            "risk": "HIGH",
+            "effort": "3-6 months"
+        }
+```
+
+---
+
+#### 9.4 Example User Scenarios
+
+##### Scenario 1: Auth Migration (High Abstraction) ✅ IDEAL CASE
+
+**User Input**:
+
+```text
+ANALYSIS_SCOPE: [B] Cross-Cutting Concern Migration
+CONCERN_TYPE: [1] Authentication/Authorization
+CURRENT_IMPLEMENTATION: Custom JWT with PassportJS
+TARGET_IMPLEMENTATION: Migrate to Okta
+```
+
+**AI Analysis Result**:
+
+```text
+Detected Auth Implementation:
+- Entry Point: src/auth/AuthService.ts (single interface)
+- Pattern: Clean interface, dependency injection used
+- Abstraction Level: HIGH
+- Files Affected: 15 files import IAuthProvider interface
+- Blast Radius: 8% of codebase
+- Coupling: LOOSE (no direct dependencies on JWT implementation)
+
+Recommendation:
+- Strategy: STRANGLER_FIG
+- Risk: LOW
+- Effort: 2-3 weeks
+
+Phasing:
+- P1 (50%): Implement OktaAuthProvider with IAuthProvider interface (Week 1-2)
+- P2 (30%): Canary rollout (10% → 50% → 100%) with feature flag (Week 3)
+- P3 (15%): Remove legacy JWT code (Week 4)
+- P4 (5%): Documentation and future-proofing
+
+Rollback: Feature flag `USE_OKTA_AUTH` allows instant rollback
+```
+
+##### Scenario 2: Database Migration (Low Abstraction) ⚠️ COMPLEX CASE
+
+**User Input**:
+
+```text
+ANALYSIS_SCOPE: [B] Cross-Cutting Concern Migration
+CONCERN_TYPE: [2] Database/ORM Layer
+CURRENT_IMPLEMENTATION: PostgreSQL with raw SQL queries
+TARGET_IMPLEMENTATION: Migrate to MongoDB
+```
+
+**AI Analysis Result**:
+
+```text
+Detected Database Implementation:
+- Entry Points: 47 files with direct SQL queries (no ORM, no repository pattern)
+- Pattern: Raw SQL scattered throughout services and controllers
+- Abstraction Level: LOW
+- Files Affected: 47 files (68% of codebase)
+- Blast Radius: 80% of codebase (includes tests)
+- Coupling: TIGHT (direct SQL in business logic)
+
+Recommendation:
+- Strategy: REFACTOR_FIRST + STRANGLER_FIG
+- Risk: HIGH
+- Effort: 3-6 months
+
+Missing Abstractions:
+1. No IRepository interface
+2. No data access layer
+3. No domain models (anemic data classes)
+
+Phasing:
+- P1 (40%): Extract data access layer with IRepository interface (Month 1-2)
+  - Create Repository pattern for each entity
+  - Migrate services to use repositories
+  - Add integration tests
+- P2 (40%): Implement dual-write (Postgres + Mongo) (Month 3-4)
+  - Implement MongoRepository for each entity
+  - Add schema mapping layer
+  - Sync data bidirectionally
+- P3 (15%): Gradual read cutover (Month 5)
+  - Route reads to Mongo with Postgres fallback
+  - Monitor data consistency
+  - Fix schema mismatches
+- P4 (5%): Decommission Postgres (Month 6)
+  - Remove Postgres repositories
+  - Clean up migration code
+
+Rollback: Dual-write allows rollback until P4 complete
+Critical: Schema mapping required (Postgres relational → Mongo document)
+```
+
+##### Scenario 3: Adding Caching (Greenfield) ✨ NEW FEATURE
+
+**User Input**:
+
+```text
+ANALYSIS_SCOPE: [B] Cross-Cutting Concern Migration
+CONCERN_TYPE: [3] Caching Layer
+CURRENT_IMPLEMENTATION: None (no caching detected)
+TARGET_IMPLEMENTATION: Add Redis caching layer
+```
+
+**AI Analysis Result**:
+
+```text
+Detected Caching Implementation:
+- Entry Points: None (no caching currently)
+- Hot Paths Identified: 12 endpoints with direct DB queries on every request
+  - getUserProfile() - 1.2s average (file:line)
+  - getProductList() - 800ms average (file:line)
+  - searchOrders() - 2.1s average (file:line)
+
+Recommendation:
+- Strategy: DECORATOR_PATTERN + GRADUAL_ROLLOUT
+- Risk: LOW (additive change, no breaking changes)
+- Effort: 2-4 weeks
+
+Phasing:
+- P1 (20%): Create caching abstraction (Week 1)
+  - Define ICacheService interface
+  - Implement RedisCacheService
+  - Add cache configuration
+- P2 (60%): Add @Cacheable decorator to hot paths (Week 2-3)
+  - Start with getUserProfile (highest impact)
+  - Add cache invalidation on updates
+  - Monitor cache hit rates
+- P3 (15%): Tune and expand (Week 4)
+  - Adjust TTLs based on hit rate data
+  - Add caching to more endpoints
+  - Implement cache warming for critical data
+- P4 (5%): Documentation and monitoring
+  - Add cache metrics dashboard
+  - Document caching strategy
+
+Rollback: Feature flag `ENABLE_REDIS_CACHE` allows instant disable
+No data migration needed (cache is ephemeral)
+```
+
+---
+
+#### 9.5 Design Principles
+
+**Principle 1: Concern Identification via Multiple Signals**
+
+Use layered detection:
+
+1. **Naming Patterns**: Files/classes with concern keywords (auth*, cache*, db*, queue*)
+2. **Import Analysis**: Libraries used (jsonwebtoken, mongoose, redis, kafka-node)
+3. **Decorator/Annotation Patterns**: @Authenticated, @Transactional, @Cacheable
+4. **Configuration Files**: auth.config.js, database.yml, redis.conf
+5. **Call Graph Analysis**: Which functions call the concern's functions?
+
+**Principle 2: Abstraction Quality Assessment**
+
+Three-level taxonomy:
+
+- **HIGH Abstraction**:
+  - Single interface/contract
+  - Dependency injection used
+  - No direct implementation imports
+  - Easy to swap implementations
+
+- **MEDIUM Abstraction**:
+  - Multiple entry points but consistent
+  - Some direct dependencies
+  - Mixed abstraction levels
+  - Requires adapter layer
+
+- **LOW Abstraction**:
+  - Scattered across codebase
+  - Direct implementation dependencies
+  - No interfaces or contracts
+  - Requires refactoring before migration
+
+**Principle 3: Risk-Based Strategy Selection**
+
+Migration strategy based on abstraction + coupling + blast radius:
+
+```
+IF high_abstraction AND loose_coupling THEN
+    strategy = STRANGLER_FIG (low risk, incremental)
+ELSE IF medium_abstraction THEN
+    strategy = ADAPTER_PATTERN (moderate risk, add abstraction layer first)
+ELSE IF low_abstraction AND small_blast_radius (<20%) THEN
+    strategy = REFACTOR_FIRST (moderate risk, worth refactoring)
+ELSE
+    strategy = BIG_BANG_WITH_FEATURE_FLAGS (high risk, extensive changes)
+END IF
+```
+
+**Principle 4: Phased Rollout with Rollback Points**
+
+Every migration strategy includes:
+
+- **Dual-running phase**: Old and new implementations coexist
+- **Feature flags**: Instant rollback capability
+- **Canary rollout**: Gradual traffic shifting (10% → 50% → 100%)
+- **Monitoring**: Metrics to detect regressions
+- **Rollback triggers**: Automated rollback on error rate spike
+
+**Principle 5: Future-Proofing via Abstraction**
+
+Every concern migration should:
+
+- Add missing abstractions (interfaces, contracts)
+- Use dependency injection
+- Make provider selection config-driven
+- Document migration lessons learned
+- Ensure next migration is easier
+
+---
+
+#### 9.6 Success Criteria
+
+##### Functional Requirements
+
+- ✅ User can select "Cross-Cutting Concern" scope
+- ✅ User can specify concern type (8 common concerns)
+- ✅ AI detects concern-specific code accurately (>90% precision)
+- ✅ AI assesses abstraction level (HIGH/MEDIUM/LOW)
+- ✅ AI calculates blast radius (files/LOC affected)
+- ✅ AI recommends migration strategy with rationale
+- ✅ AI identifies missing abstractions with evidence
+- ✅ AI generates actionable phased rollout plan
+
+##### Artifact Quality
+
+- ✅ `concern-analysis.md` contains real analysis (not template)
+  - File:line references for all findings
+  - Evidence-based abstraction assessment
+  - Accurate blast radius calculation
+
+- ✅ `abstraction-recommendations.md` provides actionable refactoring guidance
+  - Clear gap identification with evidence
+  - Recommended patterns with rationale
+  - Phased refactoring roadmap
+
+- ✅ `concern-migration-plan.md` includes detailed strategy
+  - Risk assessment with mitigation
+  - Phased rollout (50/30/15/5 value delivery)
+  - Rollback procedures
+  - Testing strategy
+
+##### Integration
+
+- ✅ Seamless integration with existing analyze-project workflow
+- ✅ Backward compatible (full app analysis still works)
+- ✅ Generated artifacts feed into Toolkit workflow
+- ✅ Corporate guidelines checking for concern-specific code
+
+---
+
+#### 9.7 Implementation Plan (Phased Approach)
+
+##### Week 1-2: Foundation & Prompt Enhancement ⏳ NEXT
+
+- [ ] Update `templates/commands/analyze-project.md` with scope selection
+- [ ] Add concern type question with 8 common concerns
+- [ ] Add current/target implementation inputs
+- [ ] Modify deep analysis step for concern filtering
+- [ ] Test prompt flow with dummy responses
+
+**Deliverable**: Updated analyze-project.md with concern-specific workflow
+
+##### Week 3-5: Core Module Development ⏳ FUTURE
+
+- [ ] Create `concern_analyzer.py` module
+- [ ] Implement abstraction level scoring algorithm
+- [ ] Implement blast radius calculation
+- [ ] Implement coupling degree assessment
+- [ ] Implement migration strategy recommendation engine
+- [ ] Add unit tests for all algorithms
+
+**Deliverable**: concern_analyzer.py with 85%+ test coverage
+
+##### Week 6-7: Scanner Extension ⏳ FUTURE
+
+- [ ] Extend `scanner.py` with concern_filter parameter
+- [ ] Implement heuristics for 8 concern types
+- [ ] Build concern-specific dependency graph
+- [ ] Add unit tests for filtering logic
+
+**Deliverable**: Extended scanner.py with concern detection
+
+##### Week 8: Template Creation ⏳ FUTURE
+
+- [ ] Create `concern-analysis-template.md`
+- [ ] Create `abstraction-recommendations-template.md`
+- [ ] Create `concern-migration-plan-template.md`
+- [ ] Add examples and clear structure to all templates
+
+**Deliverable**: 3 new templates with comprehensive structure
+
+##### Week 9-10: Integration & Testing ⏳ FUTURE
+
+- [ ] Update artifact generation logic (analyze-project.md Step 6)
+- [ ] Test on 5 real projects with different concerns
+  - [ ] Auth migration (high abstraction)
+  - [ ] Database migration (low abstraction)
+  - [ ] Adding caching (greenfield)
+  - [ ] Message bus migration (medium abstraction)
+  - [ ] Logging migration (various)
+- [ ] Validate analysis accuracy
+- [ ] Collect user feedback
+
+**Deliverable**: Fully integrated concern analysis feature
+
+##### Week 11: Documentation ⏳ FUTURE
+
+- [ ] Update `docs/reverse-engineering.md` with concern analysis section
+- [ ] Add examples for each concern type
+- [ ] Create video walkthrough (optional)
+- [ ] Update README.md with new capability
+
+**Deliverable**: Complete documentation
+
+---
+
+#### 9.8 Quick Wins (Can Start Immediately)
+
+**Week 1**:
+
+- [ ] Add "ANALYSIS_SCOPE" question to analyze-project.md (2 hours)
+- [ ] Add "CONCERN_TYPE" follow-up question (2 hours)
+- [ ] Draft concern-analysis-template.md structure (4 hours)
+
+**Impact**: Users can start providing concern-specific inputs (manual analysis still required)
+
+---
+
+#### 9.9 Dependencies & Risks
+
+**Dependencies**:
+
+- Phase 8 completion (✅ DONE - Interactive AI workflow)
+- Phase 8.1 completion (✅ DONE - Conditional questions)
+- Python 3.10+ (✅ EXISTING)
+- Scanner.py module (✅ EXISTING)
+
+**Risks**:
+
+| Risk | Probability | Impact | Mitigation |
+|------|------------|--------|------------|
+| Concern detection accuracy <90% | Medium | High | Add manual override, improve heuristics |
+| Abstraction scoring algorithm inaccurate | Medium | High | Test on diverse codebases, tune weights |
+| Migration strategy recommendations incorrect | Low | High | Include confidence score, show rationale |
+| Complexity overwhelms users | Low | Medium | Provide clear examples, step-by-step guidance |
+
+---
+
+#### 9.10 Future Enhancements (Post-v1.0)
+
+**Advanced Features**:
+
+- [ ] Machine learning for concern detection (train on labeled data)
+- [ ] Automated refactoring suggestions (generate code for missing abstractions)
+- [ ] Cost estimation (cloud costs for new providers)
+- [ ] Performance impact prediction (before/after benchmarks)
+- [ ] Security analysis (comparative security assessment)
+- [ ] Compliance checking (GDPR, SOX, HIPAA impact)
+
+**Additional Concern Types**:
+
+- [ ] Error handling/logging migration
+- [ ] Configuration management (hardcoded → env vars)
+- [ ] Secret management (code → vault)
+- [ ] API versioning strategy
+- [ ] Rate limiting/throttling
+- [ ] Circuit breaker pattern
+
+---
+
+**Status**: 📋 DESIGN PHASE COMPLETE - Ready for Implementation
+
+**Next Steps**:
+
+1. Review design with stakeholders
+2. Prioritize implementation tasks
+3. Start with Week 1-2 quick wins
+4. Iterate based on user feedback
+
+---
+
 ### Phase 6 - Production Readiness (v1.0.0-alpha → v1.0.0)
 
 **Goal**: Move from EXPERIMENTAL to PRODUCTION-READY status
