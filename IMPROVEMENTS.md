@@ -855,7 +855,7 @@ $ARGUMENTS
    TARGET_IMPLEMENTATION: ___   (e.g., "Migrate to Okta", "VM → OpenShift", "AWS → Azure")
 ```
 
-**Extension Point 2: AI Analysis Guidance (analyze-project.md Step 4)**
+#### Extension Point 2: AI Analysis Guidance (analyze-project.md Step 4)
 
 Current: AI analyzes entire codebase
 
@@ -962,7 +962,7 @@ Based on abstraction level + blast radius + coupling:
 Explain your reasoning with evidence.
 ```
 
-**Extension Point 3: New Templates (AI-Generated Content)**
+#### Extension Point 3: New Templates (AI-Generated Content)
 
 Proposed templates for concern-specific analysis:
 
@@ -1081,7 +1081,7 @@ Proposed templates for concern-specific analysis:
 ...
 ```
 
-2. **abstraction-recommendations-template.md**
+#### File 2: abstraction-recommendations-template.md
 
 ```markdown
 # Abstraction Recommendations: <<CONCERN_TYPE>>
@@ -1261,7 +1261,7 @@ AI follows these criteria (from analyze-project.md Step 4):
 
 AI follows this decision tree (from analyze-project.md Step 4):
 
-```
+```text
 IF abstraction=HIGH AND coupling=LOOSE:
    → Recommend: STRANGLER_FIG
    → Risk: LOW
@@ -1433,7 +1433,7 @@ No data migration needed (cache is ephemeral)
 
 #### 9.5 Design Principles
 
-**Principle 1: Concern Identification via Multiple Signals**
+##### Principle 1: Concern Identification via Multiple Signals
 
 Use layered detection:
 
@@ -1443,7 +1443,7 @@ Use layered detection:
 4. **Configuration Files**: auth.config.js, database.yml, redis.conf
 5. **Call Graph Analysis**: Which functions call the concern's functions?
 
-**Principle 2: Abstraction Quality Assessment**
+##### Principle 2: Abstraction Quality Assessment
 
 Three-level taxonomy:
 
@@ -1465,11 +1465,11 @@ Three-level taxonomy:
   - No interfaces or contracts
   - Requires refactoring before migration
 
-**Principle 3: Risk-Based Strategy Selection**
+##### Principle 3: Risk-Based Strategy Selection
 
 Migration strategy based on abstraction + coupling + blast radius:
 
-```
+```text
 IF high_abstraction AND loose_coupling THEN
     strategy = STRANGLER_FIG (low risk, incremental)
 ELSE IF medium_abstraction THEN
@@ -1481,7 +1481,7 @@ ELSE
 END IF
 ```
 
-**Principle 4: Phased Rollout with Rollback Points**
+##### Principle 4: Phased Rollout with Rollback Points
 
 Every migration strategy includes:
 
@@ -1491,7 +1491,7 @@ Every migration strategy includes:
 - **Monitoring**: Metrics to detect regressions
 - **Rollback triggers**: Automated rollback on error rate spike
 
-**Principle 5: Future-Proofing via Abstraction**
+##### Principle 5: Future-Proofing via Abstraction
 
 Every concern migration should:
 
