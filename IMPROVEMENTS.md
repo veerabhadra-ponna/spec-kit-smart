@@ -847,11 +847,12 @@ $ARGUMENTS
    - [5] Logging/Observability
    - [6] API Gateway/Routing
    - [7] File Storage/CDN
-   - [8] Other (specify)
+   - [8] Deployment/Infrastructure
+   - [9] Other (specify)
    Your choice: ___
 
    CURRENT_IMPLEMENTATION: ___  (detected from code, user confirms)
-   TARGET_IMPLEMENTATION: ___   (e.g., "Migrate to Okta", "PostgreSQL → MongoDB")
+   TARGET_IMPLEMENTATION: ___   (e.g., "Migrate to Okta", "VM → OpenShift", "AWS → Azure")
 ```
 
 **Extension Point 2: AI Analysis Guidance (analyze-project.md Step 4)**
