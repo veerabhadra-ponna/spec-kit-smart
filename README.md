@@ -1093,21 +1093,24 @@ Corporate Guidelines enable you to specify:
 
 The command uses a **three-persona AI analysis workflow**:
 
-**Phase 1: Document Analysis (Standards Architect)**
+##### Phase 1: Document Analysis (Standards Architect)
+
 - Extracts explicit principles from corporate PDFs, Markdown, Word docs
 - Identifies MUST/SHOULD/MAY/NEVER requirements using RFC 2119 keywords
 - Categorizes by guideline sections (Security, Architecture, Testing, etc.)
 - Records source references (document:page) for traceability
 - Flags conflicts between documents for user clarification
 
-**Phase 2: Code Analysis (Code Archeologist)**
+##### Phase 2: Code Analysis (Code Archeologist)
+
 - Reverse-engineers implicit patterns from 3+ reference projects
 - Calculates consensus confidence (ALL projects = MUST, MOST = SHOULD, SOME = ask user)
 - Extracts architecture patterns, naming conventions, dependency choices
 - Identifies mandatory libraries (3/3 projects use it = corporate standard)
 - Converts patterns to principles (NO code examples, version-agnostic)
 
-**Phase 3: Synthesis & Conflict Resolution (Technical Writer)**
+##### Phase 3: Synthesis & Conflict Resolution (Technical Writer)
+
 - Merges document principles + code patterns
 - Prompts user to resolve conflicts (docs vs code, old vs new)
 - Applies RFC 2119 severity based on source + consensus
