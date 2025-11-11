@@ -22,6 +22,42 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+# Show help if requested
+if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
+    cat <<EOF
+Usage: $(basename "$0") <artifactory-url> <library-name> [api-key]
+
+Query Artifactory for library availability.
+
+Arguments:
+  artifactory-url    URL of the Artifactory instance (e.g., https://artifactory.company.com/api)
+  library-name       Name of the library to check (e.g., axios, lodash, jackson-databind)
+  api-key           Optional API key for authentication (or set ARTIFACTORY_API_KEY env var)
+
+Exit Codes:
+  0  Library found (prints download URL)
+  1  Library not found (not whitelisted)
+  2  Authentication error
+  3  API error (network, timeout, etc.)
+  4  Artifactory URL not configured (skip check)
+
+Examples:
+  # Check if axios is available
+  $(basename "$0") https://artifactory.company.com/api axios
+
+  # With API key
+  $(basename "$0") https://artifactory.company.com/api axios YOUR_API_KEY
+
+  # Using environment variable for API key
+  export ARTIFACTORY_API_KEY=YOUR_API_KEY
+  $(basename "$0") https://artifactory.company.com/api axios
+
+  # Skip validation if URL not configured
+  $(basename "$0") "Not configured" axios
+EOF
+    exit 0
+fi
+
 # Parse arguments
 ARTIFACTORY_URL="${1:-}"
 LIBRARY_NAME="${2:-}"
