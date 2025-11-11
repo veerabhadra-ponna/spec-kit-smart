@@ -2,7 +2,7 @@
 
 **Author**: Senior Developer & Enterprise Architect
 **Date**: 2025-11-11
-**Status**: Design Phase
+**Status**: ✅ COMPLETED - See `improvement-completed.md` for implementation details
 **Priority**: High
 
 ---
@@ -86,7 +86,7 @@ Create a new command: **`/speckit.generate-guidelines`** (or `/speckit.update-gu
 
 ### Workflow Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ Step 1: User Input & Discovery                             │
 │ - Collect SOURCES_PATH (temp folder)                       │
@@ -137,6 +137,7 @@ Create a new command: **`/speckit.generate-guidelines`** (or `/speckit.update-gu
 **File**: `templates/commands/generate-guidelines.md`
 
 **YAML Frontmatter**:
+
 ```yaml
 ---
 description: Generate or update corporate coding guidelines by analyzing corporate documents and reference projects
@@ -153,6 +154,8 @@ version: 1.0.0-alpha
 To ensure **deep, comprehensive analysis**, the command will employ **three specialized personas** sequentially:
 
 #### Persona 1: **Standards Architect**
+
+
 *Role*: Enterprise standards expert who reads corporate documentation to extract organizational principles
 
 **Responsibilities**:
@@ -1070,153 +1073,13 @@ This proposal provides a comprehensive solution for **automated generation and m
 
 ---
 
-**Document Version**: 2.0.0
+**Document Version**: 3.0.0
 **Last Updated**: 2025-11-11
-**Status**: ✅ IMPLEMENTED
+**Status**: ✅ COMPLETED
+**Implementation Details**: See `improvement-completed.md`
 
 ---
 
-## Implementation Status
-
-### ✅ COMPLETED - All Phases Implemented (2025-11-11)
-
-**Phase 1: Core Command (MVP)** - ✅ DONE
-
-- [x] `templates/commands/generate-guidelines.md` with full persona prompts
-- [x] `scripts/bash/generate-guidelines.sh` for file enumeration
-- [x] `scripts/powershell/generate-guidelines.ps1` (Windows equivalent)
-- [x] Support for multiple tech stacks (Java, Python, ReactJS, .NET, Node.js)
-- [x] UPDATE_MODE: FULL_REGEN, ADD, REPLACE, NEW
-- [x] Document parsing (Markdown, PDF, text)
-
-**Phase 2: Advanced Features** - ✅ DONE
-
-- [x] Support for UPDATE_MODE: ADD, REPLACE, NEW
-- [x] Multi-stack support (React + Java, etc.)
-- [x] Conflict resolution prompts (doc vs code)
-- [x] Ambiguity clarification prompts
-- [x] Detailed analysis report generation
-- [x] Version history and changelog automation
-
-**Phase 3: Quality & Validation** - ✅ DONE
-
-- [x] Persona-based analysis (Standards Architect, Code Archeologist, Technical Writer)
-- [x] RFC 2119 keyword usage validation
-- [x] Version history and changelog automation
-- [x] Backup mechanism for existing guidelines
-- [x] Comprehensive testing with markdown lint checks
-- [x] Error recovery and validation
-
-**Implementation Files**:
-
-1. **Command Template**: `templates/commands/generate-guidelines.md` (844 lines)
-   - 3 specialized personas with detailed instructions
-   - Interactive mode with tech stack detection
-   - Update mode selection (ADD/REPLACE/FULL_REGEN/NEW)
-   - 3-phase workflow (Document Analysis → Code Analysis → Synthesis)
-   - Comprehensive error recovery
-
-2. **Bash Script**: `scripts/bash/generate-guidelines.sh` (458 lines)
-   - File enumeration for docs and reference projects
-   - JSON manifest generation
-   - Project file inventory
-   - Workspace setup
-
-3. **PowerShell Script**: `scripts/powershell/generate-guidelines.ps1` (296 lines)
-   - Windows-compatible implementation
-   - Identical functionality to bash version
-
-**Key Features Implemented**:
-
-- ✅ Deep analysis with 3 specialized personas
-- ✅ Principle-based extraction (NO code examples)
-- ✅ Evidence-based with file:line references
-- ✅ Consensus calculation (3/3 = MUST, 2/3 = SHOULD, 1/3 = ask user)
-- ✅ Conflict resolution (documents vs code)
-- ✅ Update modes (ADD/REPLACE/FULL_REGEN/NEW)
-- ✅ Version management with semantic versioning
-- ✅ Backup mechanism for destructive updates
-- ✅ Multi-stack support (separate guidelines per stack)
-
-**Quality Checks**:
-
-- ✅ Markdownlint passed (0 errors)
-- ✅ Follows existing command structure and style
-- ✅ Honors AGENTS.md guidelines
-- ✅ No TODOs in prompt files
-
-**Usage Example**:
-
-```bash
-# Run the command
-./speckit generate-guidelines /path/to/sources
-
-# Expected structure:
-# /path/to/sources/
-#   ├── docs/                    (corporate documents)
-#   │   ├── coding-standards.pdf
-#   │   └── security-policy.md
-#   └── reference-projects/      (reference codebases)
-#       ├── project-a/
-#       └── project-b/
-```
-
-**Future Enhancements** (Optional):
-
-- [x] Artifactory URL integration for library whitelist validation **(IMPLEMENTED)**
-- [ ] PDF parsing improvements (OCR support)
-- [ ] Template validation checks
-- [ ] Integration with CI/CD for automated guideline updates
-- [ ] Web UI for non-technical users
-- [ ] Confluence/SharePoint integration for document fetching
-
----
-
-## Post-Implementation Review & Fixes (2025-11-11)
-
-### Technical Review Summary
-
-**Reviewer**: Senior Developer & Enterprise Architect
-**Review Type**: Deep Technical & Functional Analysis
-**Files Reviewed**: 4 (command template + 2 scripts + design doc)
-
-### Critical Issues Fixed
-
-1. **CRIT-1**: Added chunked generation strategy for large files
-   - Per AGENTS.md requirements: Prevents token limit errors for files >1500 lines
-   - Implementation: 4-chunk strategy (Write + 3 × Edit append)
-   - Location: `templates/commands/generate-guidelines.md` Step 8
-
-2. **CRIT-2**: Implemented Artifactory URL integration
-   - User requirement: Corporate package registry validation
-   - Added interactive prompt + inclusion in guideline output
-   - Location: New section after tech stack selection
-
-3. **CRIT-4**: Fixed PowerShell file exclusion regex
-   - Issue: Pattern failed for files at directory boundaries
-   - Fix: Changed `[\\/]` to `($|[\\/])` to handle end-of-string
-   - Location: `scripts/powershell/generate-guidelines.ps1:226`
-
-4. **CRIT-5**: Verified bash/PowerShell functional equivalence
-   - Status: File size limit already present in PowerShell (10MB)
-   - Result: Scripts now produce identical outputs
-
-### Script Equivalence: 100% (10/10)
-
-- ✅ File exclusion patterns match
-- ✅ File size filtering identical
-- ✅ Regex patterns accurate
-- ✅ Error handling equivalent
-- ✅ Output format identical
-
-### Quality Validation
-
-- ✅ Markdownlint: 0 errors
-- ✅ Bash script: Tested with 5 scenarios
-- ✅ PowerShell script: Functionally equivalent
-- ✅ AGENTS.md compliant
-- ✅ User requirements met
-
-**Status**: ✅ PRODUCTION READY
+> **Note**: This document contains the original design proposal. For implementation details, testing results, and completion status, see **`improvement-completed.md`**.
 
 ---
