@@ -329,7 +329,7 @@ Comprehensive analysis with AI-driven interactive workflow:
   - `clarify-prompt.md` - Clarification guidance with legacy code references
   - `tasks-prompt.md` - Task breakdown guidance
   - `implement-prompt.md` - Implementation guidance with legacy code references
-  - _Note: Use `functional-spec.md` and `technical-spec.md` directly instead of separate specify/plan prompts_
+  - *Note: Use `functional-spec.md` and `technical-spec.md` directly instead of separate specify/plan prompts*
 
 **Decision Support:**
 
