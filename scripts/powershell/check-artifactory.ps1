@@ -24,10 +24,53 @@ param(
     [string]$LibraryName = "",
 
     [Parameter(Mandatory=$false, Position=2)]
-    [string]$ApiKey = ""
+    [string]$ApiKey = "",
+
+    [switch]$Help
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Show help if requested
+if ($Help) {
+    Write-Output @"
+Usage: $($MyInvocation.MyCommand.Name) <artifactory-url> <library-name> [api-key]
+       $($MyInvocation.MyCommand.Name) -ArtifactoryUrl <url> -LibraryName <name> [-ApiKey <key>]
+
+Query Artifactory for library availability.
+
+Parameters:
+  ArtifactoryUrl    URL of the Artifactory instance (e.g., https://artifactory.company.com/api)
+  LibraryName       Name of the library to check (e.g., axios, lodash, jackson-databind)
+  ApiKey           Optional API key for authentication (or set ARTIFACTORY_API_KEY env var)
+  -Help            Show this help message
+
+Exit Codes:
+  0  Library found (prints download URL)
+  1  Library not found (not whitelisted)
+  2  Authentication error
+  3  API error (network, timeout, etc.)
+  4  Artifactory URL not configured (skip check)
+
+Examples:
+  # Check if axios is available
+  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios
+
+  # With API key
+  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios YOUR_API_KEY
+
+  # Using named parameters
+  .\$($MyInvocation.MyCommand.Name) -ArtifactoryUrl https://artifactory.company.com/api -LibraryName axios
+
+  # Using environment variable for API key
+  `$env:ARTIFACTORY_API_KEY = "YOUR_API_KEY"
+  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios
+
+  # Skip validation if URL not configured
+  .\$($MyInvocation.MyCommand.Name) "Not configured" axios
+"@
+    exit 0
+}
 
 # Get from environment if not provided
 if ($ArtifactoryUrl -eq "" -and $env:ARTIFACTORY_URL) {
