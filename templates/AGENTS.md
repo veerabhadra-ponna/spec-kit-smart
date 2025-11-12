@@ -86,12 +86,12 @@ Problem → Action
 
 | Command | Output | Description |
 |---------|--------|-------------|
-| `/speckit.specify` | spec.md | Create spec from description |
-| `/speckit.clarify` | Updated spec.md | Resolve ambiguities |
-| `/speckit.plan` | plan.md + design docs | Generate architecture |
-| `/speckit.tasks` | tasks.md | Generate task list |
-| `/speckit.implement` | Code + tests | Execute tasks |
-| `/speckit.resume` | Restored context | Resume from state/tasks |
+| `/speckitsmart.specify` | spec.md | Create spec from description |
+| `/speckitsmart.clarify` | Updated spec.md | Resolve ambiguities |
+| `/speckitsmart.plan` | plan.md + design docs | Generate architecture |
+| `/speckitsmart.tasks` | tasks.md | Generate task list |
+| `/speckitsmart.implement` | Code + tests | Execute tasks |
+| `/speckitsmart.resume` | Restored context | Resume from state/tasks |
 
 **Command Failure:** REPORT error → CHECK prerequisites → RETRY 1× (transient) → ESCALATE (persistent)
 

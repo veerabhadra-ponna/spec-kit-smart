@@ -634,4 +634,4 @@ Based on:
 1. Review this analysis with stakeholders
 2. Choose upgrade path (inline/greenfield/hybrid)
 3. If inline: Use generated upgrade plan
-4. If greenfield: Use recommended constitution and spec to start new project with `/speckit.orchestrate`
+4. If greenfield: Use recommended constitution and spec to start new project with `/speckitsmart.orchestrate`

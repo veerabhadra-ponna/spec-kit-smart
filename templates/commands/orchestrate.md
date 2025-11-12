@@ -116,7 +116,7 @@ If user input contains multiple components, you will pass the appropriate extrac
 
 ## Workflow State Management
 
-### State File: `.speckit-state.json`
+### State File: `.speckitsmart-state.json`
 
 This file tracks orchestration progress in the repository root. Structure:
 
@@ -157,9 +157,9 @@ This file tracks orchestration progress in the repository root. Structure:
 
 ```bash
 # Check if state file exists
-if [ -f .speckit-state.json ]; then
+if [ -f .speckitsmart-state.json ]; then
   # Parse and display current state
-  cat .speckit-state.json
+  cat .speckitsmart-state.json
 fi
 ```
 
@@ -176,7 +176,7 @@ fi
 
 ```bash
 # On successful completion or user abort
-rm -f .speckit-state.json
+rm -f .speckitsmart-state.json
 ```
 
 ## Execution Flow
@@ -202,7 +202,7 @@ Optional phases in brackets are skippable based on user preference or context.
 1. **Check for existing state:**
 
    ```bash
-   if [ -f .speckit-state.json ]; then
+   if [ -f .speckitsmart-state.json ]; then
      echo "Found existing workflow state."
      echo "Options:"
      echo "  1. Resume existing workflow"
@@ -309,7 +309,7 @@ fi
 ```bash
 # After constitution phase completes (if constitution was created/updated)
 if [ "$constitution_action" = "created" ]; then
-  git add memory/constitution.md .speckit-state.json
+  git add memory/constitution.md .speckitsmart-state.json
   git commit -m "chore: establish project constitution
 
 - Initialize constitution with principles
@@ -392,7 +392,7 @@ Next phase: Clarification (optional)
 
 ```bash
 # After specify phase completes, commit the specification
-git add specs/$feature_dir/ .speckit-state.json
+git add specs/$feature_dir/ .speckitsmart-state.json
 git commit -m "feat: add specification for $feature_name
 
 - Create feature specification
@@ -457,7 +457,7 @@ fi
 ```bash
 # After clarify phase completes (if not skipped), commit the updates
 if [ "$clarify_status" = "completed" ]; then
-  git add specs/$feature_dir/spec.md .speckit-state.json
+  git add specs/$feature_dir/spec.md .speckitsmart-state.json
   git commit -m "docs: clarify specification for $feature_name
 
 - Resolve ambiguities and clarification points
@@ -541,7 +541,7 @@ Next phase: Task generation
 
 ```bash
 # After plan phase completes, commit all planning artifacts
-git add specs/$feature_dir/ .speckit-state.json
+git add specs/$feature_dir/ .speckitsmart-state.json
 git commit -m "docs: add implementation plan for $feature_name
 
 - Create technical implementation plan
@@ -617,7 +617,7 @@ Next phase: Analysis (optional quality check)
 
 ```bash
 # After tasks phase completes, commit the task breakdown
-git add specs/$feature_dir/tasks.md .speckit-state.json
+git add specs/$feature_dir/tasks.md .speckitsmart-state.json
 git commit -m "docs: generate task breakdown for $feature_name
 
 - Create executable task list across implementation phases
@@ -677,7 +677,7 @@ git commit -m "docs: generate task breakdown for $feature_name
 ```bash
 # After analyze phase completes (if not skipped), commit the analysis results
 if [ "$analyze_status" = "completed" ]; then
-  git add specs/$feature_dir/analysis.md .speckit-state.json
+  git add specs/$feature_dir/analysis.md .speckitsmart-state.json
   git commit -m "docs: add consistency analysis for $feature_name
 
 - Validate specification and plan consistency
@@ -837,7 +837,7 @@ echo "Cleaning up workflow state..."
 **Remove state file:**
 
 ```bash
-rm -f .speckit-state.json
+rm -f .speckitsmart-state.json
 echo "✓ Workflow state cleared"
 ```
 
@@ -850,12 +850,12 @@ When invoked with `--resume` or when resuming from state:
 1. **Load state file:**
 
    ```bash
-   if [ ! -f .speckit-state.json ]; then
+   if [ ! -f .speckitsmart-state.json ]; then
      echo "ERROR: No workflow state found. Nothing to resume."
      exit 1
    fi
 
-   state=$(cat .speckit-state.json)
+   state=$(cat .speckitsmart-state.json)
    current_phase=$(echo "$state" | jq -r '.current_phase')
    feature_dir=$(echo "$state" | jq -r '.feature_dir')
    ```
@@ -948,7 +948,7 @@ echo "To resume after fixing the issue:"
 echo "  /speckitsmart.resume"
 echo ""
 echo "To start over:"
-echo "  rm .speckit-state.json"
+echo "  rm .speckitsmart-state.json"
 echo "  /speckitsmart.orchestrate <feature-description>"
 ```
 
@@ -1055,7 +1055,7 @@ The orchestrator simply chains them together with state management.
 
 **Workflow:**
 
-1. Loads .speckit-state.json
+1. Loads .speckitsmart-state.json
 1. Shows progress summary (28/42 tasks completed)
 1. Asks to continue from task T029
 1. Resumes implementation
@@ -1065,7 +1065,7 @@ The orchestrator simply chains them together with state management.
 
 ## State File Persistence
 
-The `.speckit-state.json` file should be:
+The `.speckitsmart-state.json` file should be:
 
 - ✓ **Committed to git** (allows team collaboration)
 - ✓ **Updated after every phase** (crash recovery)
@@ -1076,7 +1076,7 @@ Add to `.gitignore` if you prefer local-only state:
 
 ```text
 # Optional: Keep workflow state local
-.speckit-state.json
+.speckitsmart-state.json
 ```
 
 ---
@@ -1135,7 +1135,7 @@ Add to `.gitignore` if you prefer local-only state:
 
   ┌─────────────────────────────────────────┐
   │  At any point, state is saved to:       │
-  │  .speckit-state.json                    │
+  │  .speckitsmart-state.json                    │
   │                                         │
   │  Resume with: /speckitsmart.resume           │
   └─────────────────────────────────────────┘
