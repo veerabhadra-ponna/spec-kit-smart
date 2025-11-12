@@ -4,6 +4,7 @@
 **Status**: ✅ COMPLETED & PRODUCTION READY
 **Completion Date**: 2025-11-11
 **Implementation Time**: 1 day (all 3 phases)
+**Design Document**: See `improvement-archive-guideline-generation.md`
 
 ---
 
@@ -11,7 +12,7 @@
 
 Successfully implemented a comprehensive command for **generating and updating corporate coding guidelines** by analyzing corporate documentation and reference projects. The solution enables organizations to extract principles from their highest-quality codebases and standardize them as reusable, principle-based guidelines.
 
-**Command**: `/speckit.generate-guidelines`
+**Command**: `/speckitsmart.generate-guidelines`
 
 ---
 
