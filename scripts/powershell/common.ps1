@@ -87,6 +87,8 @@ function Test-FeatureBranch {
     return $true
 }
 
+# DEPRECATED: This function doesn't handle branch prefixes correctly.
+# Use Find-FeatureDirByPrefix instead.
 function Get-FeatureDir {
     param([string]$RepoRoot, [string]$Branch)
     Join-Path $RepoRoot "specs" $Branch
@@ -104,7 +106,16 @@ function Find-FeatureDirByPrefix {
     $specsDir = Join-Path $RepoRoot "specs"
 
     # Extract the last part of branch name (after last '/' or '\')
-    $folderName = $BranchName.Split(@('/', '\'))[-1]
+    # Filter out empty strings to handle edge cases
+    $parts = $BranchName.Split(@('/', '\')) | Where-Object { $_ -ne '' }
+    if ($parts.Count -gt 0) {
+        $folderName = $parts[-1]
+    } else {
+        $folderName = $BranchName
+    }
+
+    # Ensure folder name doesn't contain any slashes (defensive check)
+    $folderName = $folderName -replace '[/\\]', '-'
 
     # Return specs/folder_name path
     return (Join-Path $specsDir $folderName)
