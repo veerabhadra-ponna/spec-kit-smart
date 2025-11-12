@@ -10,7 +10,7 @@
 # ]
 # ///
 """
-Specify CLI - Setup tool for SSD Toolkit projects
+Specify CLI - Setup tool for Spec Kit Smart projects
 
 Usage:
     pipx run --spec specify-cli.py speckitsmart init <project-name>
@@ -365,7 +365,7 @@ class BannerGroup(TyperGroup):
 
 app = typer.Typer(
     name="speckitsmart",
-    help="Setup tool for SSD Toolkit spec-driven development projects",
+    help="Setup tool for Spec Kit Smart spec-driven development projects",
     add_completion=False,
     invoke_without_command=True,
     cls=BannerGroup,

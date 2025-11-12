@@ -37,23 +37,6 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git spec
 pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai codebuddy
 ```
 
-### Specify Script Type (Shell vs PowerShell)
-
-All automation scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants.
-
-Auto behavior:
-
-- Windows default: `ps`
-- Other OS default: `sh`
-- Interactive mode: you'll be prompted unless you pass `--script`
-
-Force a specific script type:
-
-```bash
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --script sh
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --script ps
-```
-
 ### Ignore Agent Tools Check
 
 If you prefer to get the templates without checking for the right tools:
