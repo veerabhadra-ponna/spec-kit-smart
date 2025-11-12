@@ -45,7 +45,7 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 **The Solution:** Single-command orchestration with automatic state persistence and zero-context-loss resumption.
 
 - **One-Command Workflow** - `/speckitsmart.orchestrate <feature-description>` runs the entire spec-driven process from constitution to implementation
-- **Automatic State Persistence** - Saves progress to `.speckit-state.json` with phase tracking, task completion counts, and checkpoint data
+- **Automatic State Persistence** - Saves progress to `.speckitsmart-state.json` with phase tracking, task completion counts, and checkpoint data
 - **Seamless Resumption** - `/speckitsmart.resume` restores full context after interruptions, chat limits, or end-of-day shutdowns
 - **Flexible Execution Modes** - Interactive (ask before each phase), auto-spec (automated planning with manual implementation), or full-auto
 
@@ -799,7 +799,7 @@ Run the entire workflow from feature description to implementation with one comm
 
 #### 2. **State Persistence**
 
-The orchestrator saves progress to `.speckit-state.json`, enabling:
+The orchestrator saves progress to `.speckitsmart-state.json`, enabling:
 
 - Resumption after chat token limits
 - Cross-session continuity
@@ -915,7 +915,7 @@ Loads state, shows progress (e.g., 28/47 tasks), identifies next task, and conti
 
 ### State Management
 
-The orchestrator creates `.speckit-state.json` in your repository root:
+The orchestrator creates `.speckitsmart-state.json` in your repository root:
 
 ```json
 {
@@ -939,7 +939,7 @@ The orchestrator creates `.speckit-state.json` in your repository root:
 }
 ```
 
-**Should you commit `.speckit-state.json`?**
+**Should you commit `.speckitsmart-state.json`?**
 
 - ✅ **Yes** if you want cross-machine resumption or team collaboration
 - ❌ **Add to .gitignore** if you prefer local-only state
@@ -956,7 +956,7 @@ The orchestrator creates `.speckit-state.json` in your repository root:
 
 - **Commit frequently** during long workflows
 - **Review before implementation** using interactive or auto-spec mode
-- **Commit `.speckit-state.json`** for cross-machine work
+- **Commit `.speckitsmart-state.json`** for cross-machine work
 - **Use `/speckitsmart.resume`** after token limits or errors
 
 ### Progress Visualization
@@ -1010,7 +1010,7 @@ To resume after fixing the issue:
   /speckitsmart.resume
 
 To start over:
-  rm .speckit-state.json
+  rm .speckitsmart-state.json
   /speckitsmart.orchestrate <feature-description>
 ```
 
@@ -1034,7 +1034,7 @@ flowchart TD
     Implement[Implement] -->|State saved| Done
     Done([Done])
 
-    State[.speckit-state.json]
+    State[.speckitsmart-state.json]
     Constitution -.-> State
     Specify -.-> State
     Clarify -.-> State

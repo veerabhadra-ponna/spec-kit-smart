@@ -81,8 +81,6 @@ check_feature_branch() {
     return 0
 }
 
-get_feature_dir() { echo "$1/specs/$2"; }
-
 # Find feature directory - extract folder name from branch name
 # Splits branch name by '/' or '\' and takes the last part
 # Example: "feature/C12345-6789-new-app" → "C12345-6789-new-app"
@@ -94,6 +92,10 @@ find_feature_dir_by_prefix() {
     # Extract the last part of branch name (after last '/' or '\')
     local folder_name="${branch_name##*/}"     # Remove everything up to last /
     folder_name="${folder_name##*\\}"          # Remove everything up to last \
+
+    # Ensure folder name doesn't contain any slashes (defensive check)
+    folder_name="${folder_name//\//\-}"        # Replace / with -
+    folder_name="${folder_name//\\/\-}"        # Replace \ with -
 
     # Return specs/folder_name path
     echo "$specs_dir/$folder_name"
