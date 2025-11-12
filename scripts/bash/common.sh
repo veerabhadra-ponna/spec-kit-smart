@@ -81,10 +81,6 @@ check_feature_branch() {
     return 0
 }
 
-# DEPRECATED: This function doesn't handle branch prefixes correctly.
-# Use find_feature_dir_by_prefix instead.
-get_feature_dir() { echo "$1/specs/$2"; }
-
 # Find feature directory - extract folder name from branch name
 # Splits branch name by '/' or '\' and takes the last part
 # Example: "feature/C12345-6789-new-app" → "C12345-6789-new-app"

@@ -87,13 +87,6 @@ function Test-FeatureBranch {
     return $true
 }
 
-# DEPRECATED: This function doesn't handle branch prefixes correctly.
-# Use Find-FeatureDirByPrefix instead.
-function Get-FeatureDir {
-    param([string]$RepoRoot, [string]$Branch)
-    Join-Path $RepoRoot "specs" $Branch
-}
-
 # Find feature directory - extract folder name from branch name
 # Splits branch name by '/' or '\' and takes the last part
 # Example: "feature/C12345-6789-new-app" → "C12345-6789-new-app"
