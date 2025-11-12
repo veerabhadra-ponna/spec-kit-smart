@@ -76,7 +76,7 @@ Organizations typically have:
 
 ### Overview
 
-Create a new command: **`/speckit.generate-guidelines`** (or `/speckit.update-guidelines`)
+Create a new command: **`/speckitsmart.generate-guidelines`** (or `/speckitsmart.update-guidelines`)
 
 **Command File**: `templates/commands/generate-guidelines.md`
 
