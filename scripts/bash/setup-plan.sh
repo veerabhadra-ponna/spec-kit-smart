@@ -32,7 +32,12 @@ if [[ "$OS" == "windows" ]]; then
                 ;;
         esac
     done
-    exec pwsh -File "$SCRIPT_DIR/../powershell/setup-plan.ps1" "${ps_args[@]}"
+    # Safe array expansion (handles empty array with set -u)
+    if [[ ${#ps_args[@]} -eq 0 ]]; then
+        exec pwsh -File "$SCRIPT_DIR/../powershell/setup-plan.ps1"
+    else
+        exec pwsh -File "$SCRIPT_DIR/../powershell/setup-plan.ps1" "${ps_args[@]}"
+    fi
 fi
 
 # Parse command line arguments
