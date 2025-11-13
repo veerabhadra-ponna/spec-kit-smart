@@ -254,44 +254,25 @@ Generate tasks with standard best practices and public libraries.
 
 ## Outline
 
-1. **Setup & OS Detection**: Detect your operating system and run the appropriate setup script from repo root.
-
-   **Use centralized OS detection** from `common.sh` / `common.ps1`:
+1. **Setup & OS Detection**: Run the appropriate setup script from repo root.
 
    **For Unix/Linux/macOS (bash)**:
 
    ```bash
-   source scripts/bash/common.sh
-   OS=$(detect_os)
-
-   if [[ "$OS" == "unix" ]]; then
-       {SCRIPT_BASH}
-   else
-       # Windows detected, use PowerShell instead
-       pwsh -File scripts/powershell/check-prerequisites.ps1 -Json
-       exit $?
-   fi
+   {SCRIPT_BASH}
    ```
 
    **For Windows (PowerShell)**:
 
    ```powershell
-   . scripts/powershell/common.ps1
-   $OS = Get-DetectedOS
-
-   if ($OS -eq "windows") {
-       {SCRIPT_POWERSHELL}
-   } else {
-       # Unix detected, use bash instead
-       bash scripts/bash/check-prerequisites.sh --json
-       exit $LASTEXITCODE
-   }
+   {SCRIPT_POWERSHELL}
    ```
 
-   **How detection works** (handled automatically by `detect_os()` / `Get-DetectedOS`):
-   1. Config file (.specify/config.json osEnv) takes priority
-   2. Falls back to SPEC_KIT_PLATFORM environment variable
-   3. Falls back to OS auto-detection (uname / $env:OS)
+   **OS Detection** (handled automatically by scripts):
+   - Scripts auto-detect OS and self-correct if needed
+   - Config (.specify/config.json osEnv) is honored automatically
+   - Detection priority: config file → env var (SPEC_KIT_PLATFORM) → auto-detect
+   - If bash is run on Windows, it automatically redirects to PowerShell (and vice versa)
 
    Parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute.
 

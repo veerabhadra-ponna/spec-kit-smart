@@ -3,6 +3,20 @@
 
 set -e
 
+# Script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Auto-detect OS and redirect if needed
+source "$SCRIPT_DIR/common.sh"
+
+OS=$(detect_os)
+if [[ "$OS" == "windows" ]]; then
+    # Running bash on Windows - redirect to PowerShell
+    exec pwsh -File "$SCRIPT_DIR/../powershell/create-new-feature.ps1" "$@"
+fi
+
+# Continue with bash implementation for Unix/Linux/macOS
+
 JSON_MODE=false
 SHORT_NAME=""
 BRANCH_NUMBER=""

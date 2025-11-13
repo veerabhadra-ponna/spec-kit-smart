@@ -12,6 +12,20 @@
 
 set -euo pipefail
 
+# Script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Auto-detect OS and redirect if needed
+source "$SCRIPT_DIR/common.sh"
+
+OS=$(detect_os)
+if [[ "$OS" == "windows" ]]; then
+    # Running bash on Windows - redirect to PowerShell
+    exec pwsh -File "$SCRIPT_DIR/../powershell/analyze-project.ps1" "$@"
+fi
+
+# Continue with bash implementation for Unix/Linux/macOS
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -22,9 +36,6 @@ NC='\033[0m' # No Color
 # Default values
 OUTPUT_DIR=""
 PROJECT_PATH=""
-
-# Script directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # Functions

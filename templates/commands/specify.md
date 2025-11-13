@@ -224,21 +224,10 @@ Given that feature description, do this:
 
    d. **OS Detection & Script Execution**:
 
-   **Use centralized OS detection** from `common.sh` / `common.ps1`:
-
    **For Unix/Linux/macOS (bash)**:
 
    ```bash
-   source scripts/bash/common.sh
-   OS=$(detect_os)
-
-   if [[ "$OS" == "unix" ]]; then
-       {SCRIPT_BASH} --json --number N+1 --jira-number "C12345-7890" --short-name "your-short-name" "Feature description"
-   else
-       # Windows detected, use PowerShell instead
-       pwsh -File {SCRIPT_POWERSHELL} -Json -Number N+1 -JiraNumber "C12345-7890" -ShortName "your-short-name" "Feature description"
-       exit $?
-   fi
+   {SCRIPT_BASH} --json --number N+1 --jira-number "C12345-7890" --short-name "your-short-name" "Feature description"
    ```
 
    Example:
@@ -250,16 +239,7 @@ Given that feature description, do this:
    **For Windows (PowerShell)**:
 
    ```powershell
-   . scripts/powershell/common.ps1
-   $OS = Get-DetectedOS
-
-   if ($OS -eq "windows") {
-       {SCRIPT_POWERSHELL} -Json -Number N+1 -JiraNumber "C12345-7890" -ShortName "your-short-name" "Feature description"
-   } else {
-       # Unix detected, use bash instead
-       bash {SCRIPT_BASH} --json --number N+1 --jira-number "C12345-7890" --short-name "your-short-name" "Feature description"
-       exit $LASTEXITCODE
-   }
+   {SCRIPT_POWERSHELL} -Json -Number N+1 -JiraNumber "C12345-7890" -ShortName "your-short-name" "Feature description"
    ```
 
    Example:
@@ -268,10 +248,11 @@ Given that feature description, do this:
    {SCRIPT_POWERSHELL} -Json -Number 5 -JiraNumber "C12345-7890" -ShortName "user-auth" "Add user authentication"
    ```
 
-   **How detection works** (handled automatically by `detect_os()` / `Get-DetectedOS`):
-   1. Config file (.specify/config.json osEnv) takes priority
-   2. Falls back to SPEC_KIT_PLATFORM environment variable
-   3. Falls back to OS auto-detection (uname / $env:OS)
+   **OS Detection** (handled automatically by scripts):
+   - Scripts auto-detect OS and self-correct if needed
+   - Config (.specify/config.json osEnv) is honored automatically
+   - Detection priority: config file → env var (SPEC_KIT_PLATFORM) → auto-detect
+   - If bash is run on Windows, it automatically redirects to PowerShell (and vice versa)
 
       Pass the calculated number (N+1), jira-number, short-name, and feature description to the appropriate script
 
