@@ -170,6 +170,24 @@ $ARGUMENTS
 
 ---
 
+## Configuration Loading
+
+Configuration is **automatically loaded** by scripts when they run.
+
+**How it works:**
+
+- Scripts read `.specify/config.json` if it exists
+- Config settings:
+  - `enableCheckArtifactory` (boolean): Controls whether Artifactory validation runs (default: false)
+  - `osEnv` (string): Override OS detection ("windows", "unix", "auto") (default: "auto")
+- These values are exported as environment variables that you can check:
+  - `$SPEC_KIT_OS_ENV` - OS override from config
+  - `$SPEC_KIT_CHECK_ARTIFACTORY` - Whether to check artifactory ("true" or "false")
+
+**You don't need to manually load config** - scripts handle everything automatically.
+
+---
+
 ## Corporate Guidelines
 
 **DURING analysis**, check for and apply corporate guidelines to the target project:
@@ -233,16 +251,7 @@ When documenting findings:
 
 **CRITICAL**: This command analyzes an **EXISTING** project, not one managed by Spec Kit. Do NOT modify the target project directory structure.
 
-1. **Setup & OS Detection**: Parse arguments from interactive mode or $ARGUMENTS. Detect your operating system and run the appropriate setup script from repo root.   **Environment Variable Override (Optional)**:
-
-   First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
-   - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
-   - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-   - If not set or `auto` → proceed with auto-detection below
-
-   **Auto-detect Operating System**:
-   - Unix/Linux/macOS: Run `uname`. If successful → use bash
-   - Windows: Check `$env:OS`. If "Windows_NT" → use PowerShell
+1. **Setup & OS Detection**: Parse arguments from interactive mode or $ARGUMENTS. Run the appropriate setup script from repo root.
 
    **For Unix/Linux/macOS (bash)**:
 
@@ -255,6 +264,12 @@ When documenting findings:
    ```powershell
    {SCRIPT_POWERSHELL}
    ```
+
+   **OS Detection** (handled automatically by scripts):
+   - Scripts auto-detect OS and self-correct if needed
+   - Config (.specify/config.json osEnv) is honored automatically
+   - Detection priority: config file → env var (SPEC_KIT_PLATFORM) → auto-detect
+   - If bash is run on Windows, it automatically redirects to PowerShell (and vice versa)
 
    **Script arguments**:
    - `$1`: PROJECT_PATH (absolute path to project being analyzed)
@@ -296,7 +311,7 @@ When documenting findings:
    **IF ANALYSIS_SCOPE = [A]** (Full Application Modernization):
 
    Ask user about target modernization stack with progressive 10 questions (5 initial + conditional remaining).
-   
+
    **IF ANALYSIS_SCOPE = [B]** (Cross-Cutting Concern Migration):
 
    SKIP the 10 modernization questions - we already have TARGET_IMPLEMENTATION from earlier.
@@ -674,7 +689,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
 **Total**: 23 files, 3,456 LOC (~8% of codebase)
 ```
 
-   #### Step 4.B.2: Assess Abstraction Level
+#### Step 4.B.2: Assess Abstraction Level
 
    Analyze how well the concern is abstracted from the rest of the codebase.
 
@@ -704,11 +719,11 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    ```
 
    **Analysis checklist**:
-   - [ ] Are there interface/contract definitions?
-   - [ ] Is dependency injection used?
-   - [ ] Are configuration values externalized?
-   - [ ] Can the implementation be swapped without changing consumers?
-   - [ ] Are there direct imports of implementation classes?
+- [ ] Are there interface/contract definitions?
+- [ ] Is dependency injection used?
+- [ ] Are configuration values externalized?
+- [ ] Can the implementation be swapped without changing consumers?
+- [ ] Are there direct imports of implementation classes?
 
    **Output**:
 
@@ -731,7 +746,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    - LOW: Major refactoring required (2-4 months total)
    ```
 
-   #### Step 4.B.3: Calculate Blast Radius
+#### Step 4.B.3: Calculate Blast Radius
 
    Determine how much of the codebase would be affected by migrating this concern.
 
@@ -785,7 +800,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    | [file:line] | [COUNT] | [Controller/Service/etc] | [HIGH/MED/LOW] |
    ```
 
-   #### Step 4.B.4: Analyze Coupling Degree
+#### Step 4.B.4: Analyze Coupling Degree
 
    Assess how tightly coupled the concern is to the rest of the system.
 
@@ -835,7 +850,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    - [Evidence 2 with file:line references]
    ```
 
-   #### Step 4.B.5: Recommend Migration Strategy
+#### Step 4.B.5: Recommend Migration Strategy
 
    Based on abstraction level + blast radius + coupling, recommend one of four strategies:
 
@@ -908,7 +923,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    - **Value**: [Benefit to business]
    ```
 
-   #### Step 4.B.6: Abstraction Improvement Recommendations (if LOW abstraction)
+#### Step 4.B.6: Abstraction Improvement Recommendations (if LOW abstraction)
 
    **IF abstraction level = LOW OR MEDIUM**:
 
@@ -956,7 +971,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    After refactoring, next migration will be [STRANGLER_FIG/ADAPTER_PATTERN] with [LOW/MEDIUM] risk.
    ```
 
-   **END OF STEP 4.B**
+   END OF STEP 4.B
 
    ---
 
@@ -981,6 +996,20 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    ```
 
 5B. **Validate Proposed Libraries Against Artifactory (Optional)**:
+
+   **CRITICAL: Check $SPEC_KIT_CHECK_ARTIFACTORY environment variable FIRST**:
+
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"false"` (default):
+  - **SKIP this entire step (5B) silently**
+  - Do NOT log or mention that Artifactory check is disabled
+  - Do NOT run any validation scripts
+  - Proceed directly to Step 6 (Generate Artifacts)
+  - Treat this feature as if it does not exist
+
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"true"`:
+  - Proceed with validation workflow below
+
+   ---
 
    **Purpose**: Check if proposed target stack libraries are whitelisted in corporate Artifactory/Nexus before generating technical spec.
 

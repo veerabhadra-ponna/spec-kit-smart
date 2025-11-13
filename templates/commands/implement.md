@@ -78,6 +78,24 @@ $ARGUMENTS
    Parse and use the provided notes.
    Continue with implementation logic in the Corporate Guidelines section below.
 
+## Configuration Loading
+
+Configuration is **automatically loaded** by scripts when they run.
+
+**How it works:**
+
+- Scripts read `.specify/config.json` if it exists
+- Config settings:
+  - `enableCheckArtifactory` (boolean): Controls whether Artifactory validation runs (default: false)
+  - `osEnv` (string): Override OS detection ("windows", "unix", "auto") (default: "auto")
+- These values are exported as environment variables that you can check:
+  - `$SPEC_KIT_OS_ENV` - OS override from config
+  - `$SPEC_KIT_CHECK_ARTIFACTORY` - Whether to check artifactory ("true" or "false")
+
+**You don't need to manually load config** - scripts handle everything automatically.
+
+---
+
 ## Corporate Guidelines
 
 **BEFORE writing any code**, check for and load corporate guidelines:
@@ -176,6 +194,20 @@ Contact DevOps team for package access.
 ```
 
 ## Library Validation Against Artifactory
+
+**CRITICAL: Check $SPEC_KIT_CHECK_ARTIFACTORY environment variable FIRST**:
+
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"false"` (default):
+  - **SKIP this entire section silently**
+  - Do NOT log or mention that Artifactory check is disabled
+  - Do NOT run any validation scripts
+  - Proceed directly with package installation without validation
+  - Treat this feature as if it does not exist
+
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"true"`:
+  - Proceed with validation workflow below
+
+---
 
 **BEFORE adding any new external dependency** (npm install, pip install, maven dependency, etc.), validate it against corporate Artifactory/Nexus:
 
@@ -366,18 +398,7 @@ This validation step works in conjunction with Corporate Guidelines (section abo
 
 ## Outline
 
-1. **Setup & OS Detection**: Detect your operating system and run the appropriate setup script from repo root.
-
-   **Step 1: Check SPEC_KIT_PLATFORM Environment Variable**:
-
-   First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
-   - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
-   - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-   - If not set or `auto` → proceed to Step 2 (auto-detection)
-
-   **Step 2: Auto-detect Operating System** (only if SPEC_KIT_PLATFORM not set):
-   - On Unix/Linux/macOS: Run `uname`. If successful → use bash script below
-   - On Windows: Check `$env:OS`. If "Windows_NT" → use PowerShell script below
+1. **Setup & OS Detection**: Run the appropriate setup script from repo root.
 
    **For Unix/Linux/macOS (bash)**:
 
@@ -390,6 +411,12 @@ This validation step works in conjunction with Corporate Guidelines (section abo
    ```powershell
    {SCRIPT_POWERSHELL}
    ```
+
+   **OS Detection** (handled automatically by scripts):
+   - Scripts auto-detect OS and self-correct if needed
+   - Config (.specify/config.json osEnv) is honored automatically
+   - Detection priority: config file → env var (SPEC_KIT_PLATFORM) → auto-detect
+   - If bash is run on Windows, it automatically redirects to PowerShell (and vice versa)
 
    Parse the JSON output for FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute.
 

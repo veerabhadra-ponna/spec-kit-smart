@@ -26,6 +26,29 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Auto-detect OS and redirect if needed
+. "$PSScriptRoot/common.ps1"
+
+$OS = Get-DetectedOS
+if ($OS -eq "unix") {
+    # Running PowerShell on Unix - redirect to bash
+    $bashScript = Join-Path $PSScriptRoot "../bash/check-prerequisites.sh"
+
+    # Convert PowerShell switches to bash arguments
+    $bashArgs = @()
+    if ($Json) { $bashArgs += "--json" }
+    if ($RequireTasks) { $bashArgs += "--require-tasks" }
+    if ($IncludeTasks) { $bashArgs += "--include-tasks" }
+    if ($PathsOnly) { $bashArgs += "--paths-only" }
+    if ($Help) { $bashArgs += "--help" }
+    if ($Arguments) { $bashArgs += $Arguments }
+
+    & bash $bashScript @bashArgs
+    exit $LASTEXITCODE
+}
+
+# Continue with PowerShell implementation for Windows
+
 # Show help if requested
 if ($Help) {
     Write-Output "Usage: check-prerequisites.ps1 [OPTIONS]"

@@ -128,6 +128,95 @@ CONTRACTS_DIR='$feature_dir/contracts'
 EOF
 }
 
-check_file() { [[ -f "$1" ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
-check_dir() { [[ -d "$1" && -n $(ls -A "$1" 2>/dev/null) ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
+check_file() { [[ -f "$1" ]] && echo "  [OK] $2" || echo "  [X] $2"; }
+check_dir() { [[ -d "$1" && -n $(ls -A "$1" 2>/dev/null) ]] && echo "  [OK] $2" || echo "  [X] $2"; }
+
+# Load Spec Kit configuration from .specify/config.json
+# Sets environment variables:
+#   SPEC_KIT_OS_ENV - OS override from config ("windows", "unix", "auto")
+#   SPEC_KIT_CHECK_ARTIFACTORY - Whether to check artifactory ("true" or "false")
+load_spec_kit_config() {
+    local repo_root=$(get_repo_root)
+    local config_file="$repo_root/.specify/config.json"
+
+    # Defaults
+    export SPEC_KIT_OS_ENV="auto"
+    export SPEC_KIT_CHECK_ARTIFACTORY="false"
+
+    # Try to read config if exists
+    if [[ -f "$config_file" ]]; then
+        if command -v jq &> /dev/null; then
+            # Use jq if available (preferred)
+            local os_env=$(jq -r '.osEnv // "auto"' "$config_file" 2>/dev/null)
+            local check_art=$(jq -r '.enableCheckArtifactory // false' "$config_file" 2>/dev/null)
+
+            # Validate osEnv value
+            if [[ "$os_env" == "windows" || "$os_env" == "unix" || "$os_env" == "auto" ]]; then
+                export SPEC_KIT_OS_ENV="$os_env"
+            else
+                echo "WARNING: Invalid osEnv value in .specify/config.json: \"$os_env\"" >&2
+                echo "Valid values: \"windows\", \"unix\", \"auto\"" >&2
+                echo "Falling back to \"auto\" (OS auto-detection)" >&2
+                export SPEC_KIT_OS_ENV="auto"
+            fi
+
+            export SPEC_KIT_CHECK_ARTIFACTORY="$check_art"
+        else
+            # Fallback without jq - use grep/sed for simple JSON parsing
+            local os_env=$(grep -o '"osEnv"[[:space:]]*:[[:space:]]*"[^"]*"' "$config_file" 2>/dev/null | sed 's/.*"\([^"]*\)".*/\1/')
+            local check_art=$(grep -o '"enableCheckArtifactory"[[:space:]]*:[[:space:]]*[a-z]*' "$config_file" 2>/dev/null | sed 's/.*:[[:space:]]*//')
+
+            # Validate and set osEnv
+            if [[ "$os_env" == "windows" || "$os_env" == "unix" || "$os_env" == "auto" ]]; then
+                export SPEC_KIT_OS_ENV="$os_env"
+            elif [[ -n "$os_env" ]]; then
+                echo "WARNING: Invalid osEnv value in .specify/config.json: \"$os_env\"" >&2
+                echo "Valid values: \"windows\", \"unix\", \"auto\"" >&2
+                echo "Falling back to \"auto\" (OS auto-detection)" >&2
+            fi
+
+            # Set check_artifactory
+            if [[ "$check_art" == "true" ]]; then
+                export SPEC_KIT_CHECK_ARTIFACTORY="true"
+            fi
+        fi
+    fi
+}
+
+# Detect operating system using config priority:
+# 1. Config file (.specify/config.json osEnv)
+# 2. Environment variable (SPEC_KIT_PLATFORM)
+# 3. Auto-detection (uname or $OS check)
+# Returns: "windows" or "unix"
+detect_os() {
+    # Load config if not already loaded
+    if [[ -z "${SPEC_KIT_OS_ENV:-}" ]]; then
+        load_spec_kit_config
+    fi
+
+    # Priority 1: Config file override
+    if [[ "$SPEC_KIT_OS_ENV" == "windows" ]]; then
+        echo "windows"
+        return
+    elif [[ "$SPEC_KIT_OS_ENV" == "unix" ]]; then
+        echo "unix"
+        return
+    fi
+
+    # Priority 2: Environment variable override
+    if [[ "${SPEC_KIT_PLATFORM:-}" == "windows" ]]; then
+        echo "windows"
+        return
+    elif [[ "${SPEC_KIT_PLATFORM:-}" == "unix" ]]; then
+        echo "unix"
+        return
+    fi
+
+    # Priority 3: Auto-detect
+    if command -v uname &> /dev/null; then
+        echo "unix"
+    else
+        echo "windows"
+    fi
+}
 

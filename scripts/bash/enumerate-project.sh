@@ -12,6 +12,17 @@
 
 set -euo pipefail
 
+# Get script directory and load common functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
+
+# Auto-detect OS and redirect if needed
+OS=$(detect_os)
+if [[ "$OS" == "windows" ]]; then
+    # Redirect to PowerShell with all arguments
+    exec pwsh -File "$SCRIPT_DIR/../powershell/enumerate-project.ps1" "$@"
+fi
+
 # Script metadata
 SCRIPT_VERSION="1.0.2"
 SCRIPT_NAME="enumerate-project.sh"

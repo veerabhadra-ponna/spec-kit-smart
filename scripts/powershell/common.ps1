@@ -159,3 +159,80 @@ function Test-DirHasFiles {
     }
 }
 
+# Load Spec Kit configuration from .specify/config.json
+# Sets environment variables:
+#   SPEC_KIT_OS_ENV - OS override from config ("windows", "unix", "auto")
+#   SPEC_KIT_CHECK_ARTIFACTORY - Whether to check artifactory ("true" or "false")
+function Load-SpecKitConfig {
+    $repoRoot = Get-RepoRoot
+    $configFile = Join-Path $repoRoot ".specify\config.json"
+
+    # Defaults
+    $env:SPEC_KIT_OS_ENV = "auto"
+    $env:SPEC_KIT_CHECK_ARTIFACTORY = "false"
+
+    # Try to read config if exists
+    if (Test-Path $configFile) {
+        try {
+            $config = Get-Content $configFile -Raw | ConvertFrom-Json
+
+            # Get osEnv with default
+            $osEnv = if ($config.PSObject.Properties.Name -contains "osEnv") { $config.osEnv } else { "auto" }
+            $checkArt = if ($config.PSObject.Properties.Name -contains "enableCheckArtifactory") { $config.enableCheckArtifactory } else { $false }
+
+            # Validate osEnv value
+            if ($osEnv -eq "windows" -or $osEnv -eq "unix" -or $osEnv -eq "auto") {
+                $env:SPEC_KIT_OS_ENV = $osEnv
+            } else {
+                Write-Warning "WARNING: Invalid osEnv value in .specify/config.json: `"$osEnv`""
+                Write-Warning "Valid values: `"windows`", `"unix`", `"auto`""
+                Write-Warning "Falling back to `"auto`" (OS auto-detection)"
+                $env:SPEC_KIT_OS_ENV = "auto"
+            }
+
+            # Set check_artifactory
+            if ($checkArt -eq $true) {
+                $env:SPEC_KIT_CHECK_ARTIFACTORY = "true"
+            } else {
+                $env:SPEC_KIT_CHECK_ARTIFACTORY = "false"
+            }
+        } catch {
+            # JSON parsing failed, use defaults
+            Write-Warning "Failed to parse .specify/config.json: $($_.Exception.Message)"
+        }
+    }
+}
+
+# Detect operating system using config priority:
+# 1. Config file (.specify/config.json osEnv)
+# 2. Environment variable (SPEC_KIT_PLATFORM)
+# 3. Auto-detection ($env:OS check)
+# Returns: "windows" or "unix"
+function Get-DetectedOS {
+    # Load config if not already loaded
+    if (-not $env:SPEC_KIT_OS_ENV) {
+        Load-SpecKitConfig
+    }
+
+    # Priority 1: Config file override
+    if ($env:SPEC_KIT_OS_ENV -eq "windows") {
+        return "windows"
+    } elseif ($env:SPEC_KIT_OS_ENV -eq "unix") {
+        return "unix"
+    }
+
+    # Priority 2: Environment variable override
+    if ($env:SPEC_KIT_PLATFORM -eq "windows") {
+        return "windows"
+    } elseif ($env:SPEC_KIT_PLATFORM -eq "unix") {
+        return "unix"
+    }
+
+    # Priority 3: Auto-detect
+    if ($env:OS -eq "Windows_NT") {
+        return "windows"
+    } else {
+        return "unix"
+    }
+}
+

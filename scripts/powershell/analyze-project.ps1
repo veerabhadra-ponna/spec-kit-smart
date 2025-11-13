@@ -24,6 +24,26 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Auto-detect OS and redirect if needed
+. "$PSScriptRoot/common.ps1"
+
+$OS = Get-DetectedOS
+if ($OS -eq "unix") {
+    # Running PowerShell on Unix - redirect to bash
+    $bashScript = Join-Path $PSScriptRoot "../bash/analyze-project.sh"
+
+    # Forward all arguments to bash
+    $bashArgs = @()
+    if ($Project -and $Project -ne ".") { $bashArgs += $Project }
+    if ($Output) { $bashArgs += "--output"; $bashArgs += $Output }
+    if ($Help) { $bashArgs += "--help" }
+
+    & bash $bashScript @bashArgs
+    exit $LASTEXITCODE
+}
+
+# Continue with PowerShell implementation for Windows
+
 # Script directory
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = (Resolve-Path (Join-Path $scriptDir "../..")).Path

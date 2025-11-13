@@ -21,6 +21,18 @@
 
 set -e
 
+# Auto-detect OS and redirect if needed
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
+
+OS=$(detect_os)
+if [[ "$OS" == "windows" ]]; then
+    # Running bash on Windows - redirect to PowerShell
+    exec pwsh -File "$SCRIPT_DIR/../powershell/check-prerequisites.ps1" "$@"
+fi
+
+# Continue with bash implementation for Unix/Linux/macOS
+
 # Parse command line arguments
 JSON_MODE=false
 REQUIRE_TASKS=false

@@ -45,6 +45,19 @@ $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $ScriptDir 'common.ps1')
 
+# Detect OS and redirect if needed
+$OS = Get-DetectedOS
+if ($OS -eq "unix") {
+    $bashScript = Join-Path $ScriptDir "../bash/update-agent-context.sh"
+    $bashArgs = @()
+
+    # Convert PowerShell parameters to bash arguments
+    if ($AgentType) { $bashArgs += $AgentType }
+
+    & bash $bashScript @bashArgs
+    exit $LASTEXITCODE
+}
+
 # Acquire environment paths
 $envData = Get-FeaturePathsEnv
 $REPO_ROOT     = $envData.REPO_ROOT

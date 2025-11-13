@@ -151,33 +151,7 @@ When making technology choices:
 
 **IMPORTANT**: This command does NOT create the specs directory - that was already created by `/specify` command. NEVER create or move directories.
 
-1. **Setup & OS Detection**: Detect your operating system and run the appropriate setup script from repo root.
-
-   **Step 1: Check SPEC_KIT_PLATFORM Environment Variable**:
-
-   First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
-   - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
-   - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-   - If not set or `auto` → proceed to Step 2 (auto-detection)
-
-   **Step 2: Auto-detect Operating System** (only if SPEC_KIT_PLATFORM not set):
-
-   On Unix/Linux/macOS, run:
-
-   ```bash
-   uname
-   ```
-
-   If successful, you're on a Unix-like system → Use bash scripts below
-
-   On Windows, check:
-
-   ```powershell
-   $env:OS
-   $IsWindows
-   ```
-
-   If `$env:OS` equals "Windows_NT" or `$IsWindows` is true → Use PowerShell scripts below
+1. **Setup & OS Detection**: Run the appropriate setup script from repo root.
 
    **For Unix/Linux/macOS (bash)**:
 
@@ -190,6 +164,12 @@ When making technology choices:
    ```powershell
    {SCRIPT_POWERSHELL}
    ```
+
+   **OS Detection** (handled automatically by scripts):
+   - Scripts auto-detect OS and self-correct if needed
+   - Config (.specify/config.json osEnv) is honored automatically
+   - Detection priority: config file → env var (SPEC_KIT_PLATFORM) → auto-detect
+   - If bash is run on Windows, it automatically redirects to PowerShell (and vice versa)
 
    Parse the JSON output for: FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH
 

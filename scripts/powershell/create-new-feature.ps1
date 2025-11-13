@@ -12,6 +12,31 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
+# Load common functions and detect OS
+. "$PSScriptRoot/common.ps1"
+$OS = Get-DetectedOS
+
+# If Unix detected, redirect to bash script with argument conversion
+if ($OS -eq "unix") {
+    $bashScript = Join-Path $PSScriptRoot "../bash/create-new-feature.sh"
+    $bashArgs = @()
+
+    # Convert PowerShell parameters to bash flags
+    if ($Json) { $bashArgs += "--json" }
+    if ($ShortName) { $bashArgs += "--short-name"; $bashArgs += $ShortName }
+    if ($Number -ne 0) { $bashArgs += "--number"; $bashArgs += $Number.ToString() }
+    if ($JiraNumber) { $bashArgs += "--jira-number"; $bashArgs += $JiraNumber }
+    if ($Help) { $bashArgs += "--help" }
+
+    # Add feature description (remaining arguments)
+    if ($FeatureDescription -and $FeatureDescription.Count -gt 0) {
+        $bashArgs += ($FeatureDescription -join ' ')
+    }
+
+    & bash $bashScript @bashArgs
+    exit $LASTEXITCODE
+}
+
 # Show help if requested (BEFORE any validation)
 if ($Help) {
     Write-Host "Usage: ./create-new-feature.ps1 [-Json] [-ShortName <name>] [-Number N] [-JiraNumber <jira>] <feature description>"

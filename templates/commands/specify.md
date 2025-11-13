@@ -224,40 +224,35 @@ Given that feature description, do this:
 
    d. **OS Detection & Script Execution**:
 
-   **Step 1: Check SPEC_KIT_PLATFORM Environment Variable**:
+   **For Unix/Linux/macOS (bash)**:
 
-   First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
-   - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
-   - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-   - If not set or `auto` → proceed to Step 2 (auto-detection)
+   ```bash
+   {SCRIPT_BASH} --json --number N+1 --jira-number "C12345-7890" --short-name "your-short-name" "Feature description"
+   ```
 
-   **Step 2: Auto-detect Operating System** (only if SPEC_KIT_PLATFORM not set):
-   - On Unix/Linux/macOS: Run `uname`. If successful → use bash script below
-   - On Windows: Check `$env:OS`. If "Windows_NT" → use PowerShell script below
+   Example:
 
-      **For Unix/Linux/macOS (bash)**:
+   ```bash
+   {SCRIPT_BASH} --json --number 5 --jira-number "C12345-7890" --short-name "user-auth" "Add user authentication"
+   ```
 
-      ```bash
-      {SCRIPT_BASH} --json --number N+1 --jira-number "C12345-7890" --short-name "your-short-name" "Feature description"
-      ```
+   **For Windows (PowerShell)**:
 
-      Example:
+   ```powershell
+   {SCRIPT_POWERSHELL} -Json -Number N+1 -JiraNumber "C12345-7890" -ShortName "your-short-name" "Feature description"
+   ```
 
-      ```bash
-      {SCRIPT_BASH} --json --number 5 --jira-number "C12345-7890" --short-name "user-auth" "Add user authentication"
-      ```
+   Example:
 
-      **For Windows (PowerShell)**:
+   ```powershell
+   {SCRIPT_POWERSHELL} -Json -Number 5 -JiraNumber "C12345-7890" -ShortName "user-auth" "Add user authentication"
+   ```
 
-      ```powershell
-      {SCRIPT_POWERSHELL} -Json -Number N+1 -JiraNumber "C12345-7890" -ShortName "your-short-name" "Feature description"
-      ```
-
-      Example:
-
-      ```powershell
-      {SCRIPT_POWERSHELL} -Json -Number 5 -JiraNumber "C12345-7890" -ShortName "user-auth" "Add user authentication"
-      ```
+   **OS Detection** (handled automatically by scripts):
+   - Scripts auto-detect OS and self-correct if needed
+   - Config (.specify/config.json osEnv) is honored automatically
+   - Detection priority: config file → env var (SPEC_KIT_PLATFORM) → auto-detect
+   - If bash is run on Windows, it automatically redirects to PowerShell (and vice versa)
 
       Pass the calculated number (N+1), jira-number, short-name, and feature description to the appropriate script
 

@@ -25,6 +25,23 @@ $ErrorActionPreference = 'Stop'
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = (Resolve-Path (Join-Path $scriptDir "../..")).Path
 
+# Load common functions and detect OS
+. (Join-Path $scriptDir "common.ps1")
+$OS = Get-DetectedOS
+
+# If Unix detected, redirect to bash script
+if ($OS -eq "unix") {
+    $bashScript = Join-Path $scriptDir "../bash/generate-guidelines.sh"
+    $bashArgs = @()
+
+    # Convert PowerShell parameters to bash arguments
+    if ($Sources) { $bashArgs += $Sources }
+    if ($Help) { $bashArgs += "--help" }
+
+    & bash $bashScript @bashArgs
+    exit $LASTEXITCODE
+}
+
 # Output directory (fixed location)
 $outputDir = Join-Path $repoRoot ".guidelines-analysis"
 
@@ -42,14 +59,14 @@ if ($Help -or $Sources -eq "") {
     Write-Output ""
     Write-Output "Expected structure:"
     Write-Output "  SOURCES_PATH\"
-    Write-Output "    ├── docs\"
-    Write-Output "    │   ├── security-guidelines.pdf"
-    Write-Output "    │   ├── coding-standards.md"
-    Write-Output "    │   └── ..."
-    Write-Output "    └── reference-projects\"
-    Write-Output "        ├── project-a\"
-    Write-Output "        ├── project-b\"
-    Write-Output "        └── ..."
+    Write-Output "    +-- docs\"
+    Write-Output "    |   +-- security-guidelines.pdf"
+    Write-Output "    |   +-- coding-standards.md"
+    Write-Output "    |   +-- ..."
+    Write-Output "    +-- reference-projects\"
+    Write-Output "        +-- project-a\"
+    Write-Output "        +-- project-b\"
+    Write-Output "        +-- ..."
     Write-Output ""
     Write-Output "Examples:"
     Write-Output "  # Generate guidelines from temp folder"
