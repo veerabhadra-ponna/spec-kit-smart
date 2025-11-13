@@ -28,30 +28,28 @@ $ErrorActionPreference = 'Stop'
 
 # Show help if requested
 if ($Help) {
-    Write-Output @"
-Usage: check-prerequisites.ps1 [OPTIONS]
-
-Consolidated prerequisite checking for Spec-Driven Development workflow.
-
-OPTIONS:
-  -Json               Output in JSON format
-  -RequireTasks       Require tasks.md to exist (for implementation phase)
-  -IncludeTasks       Include tasks.md in AVAILABLE_DOCS list
-  -PathsOnly          Only output path variables (no prerequisite validation)
-  -Arguments          Optional user description (for consistency with setup-plan)
-  -Help, -h           Show this help message
-
-EXAMPLES:
-  # Check task prerequisites (plan.md required)
-  .\check-prerequisites.ps1 -Json
-  
-  # Check implementation prerequisites (plan.md + tasks.md required)
-  .\check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
-  
-  # Get feature paths only (no validation)
-  .\check-prerequisites.ps1 -PathsOnly
-
-"@
+    Write-Output "Usage: check-prerequisites.ps1 [OPTIONS]"
+    Write-Output ""
+    Write-Output "Consolidated prerequisite checking for Spec-Driven Development workflow."
+    Write-Output ""
+    Write-Output "OPTIONS:"
+    Write-Output "  -Json               Output in JSON format"
+    Write-Output "  -RequireTasks       Require tasks.md to exist (for implementation phase)"
+    Write-Output "  -IncludeTasks       Include tasks.md in AVAILABLE_DOCS list"
+    Write-Output "  -PathsOnly          Only output path variables (no prerequisite validation)"
+    Write-Output "  -Arguments          Optional user description (for consistency with setup-plan)"
+    Write-Output "  -Help, -h           Show this help message"
+    Write-Output ""
+    Write-Output "EXAMPLES:"
+    Write-Output "  # Check task prerequisites (plan.md required)"
+    Write-Output "  .\check-prerequisites.ps1 -Json"
+    Write-Output "  "
+    Write-Output "  # Check implementation prerequisites (plan.md + tasks.md required)"
+    Write-Output "  .\check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks"
+    Write-Output "  "
+    Write-Output "  # Get feature paths only (no validation)"
+    Write-Output "  .\check-prerequisites.ps1 -PathsOnly"
+    Write-Output ""
     exit 0
 }
 
