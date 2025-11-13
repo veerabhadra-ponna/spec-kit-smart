@@ -80,25 +80,19 @@ $ARGUMENTS
 
 ## Configuration Loading
 
-**BEFORE proceeding with any workflow steps**, check for general configuration:
+Configuration is **automatically loaded** by the `common.sh` / `common.ps1` utility functions.
 
-1. **Check for config file**: Look for `.specify/config.json` in repository root
-2. **IF config file exists**:
-   - Read and parse the JSON configuration
-   - Extract settings:
-     - `enableCheckArtifactory` (boolean): Controls whether Artifactory validation runs (default: false if missing)
-     - `osEnv` (string): Override OS detection ("windows", "unix", "auto") (default: "auto" if missing)
-   - Validate `osEnv` value:
-     - **IF valid** ("windows", "unix", "auto"): Use the configured value
-     - **IF invalid** (any other value): Display warning and fall back to "auto"
-       ```text
-       ⚠️ Warning: Invalid osEnv value in .specify/config.json: "[value]"
-       Valid values: "windows", "unix", "auto"
-       Falling back to "auto" (OS auto-detection)
-       ```
-3. **IF config file missing**: Use defaults (enableCheckArtifactory=false, osEnv="auto")
+**How it works:**
 
-**Store these config values** for use throughout the workflow (Steps 1, Library Validation).
+- The `load_spec_kit_config()` (bash) or `Load-SpecKitConfig` (PowerShell) function reads `.specify/config.json` if it exists
+- Config settings:
+  - `enableCheckArtifactory` (boolean): Controls whether Artifactory validation runs (default: false)
+  - `osEnv` (string): Override OS detection ("windows", "unix", "auto") (default: "auto")
+- These values are exported as environment variables:
+  - `$SPEC_KIT_OS_ENV` - OS override from config
+  - `$SPEC_KIT_CHECK_ARTIFACTORY` - Whether to check artifactory ("true" or "false")
+
+**You don't need to manually load config** - just use the `detect_os()` / `Get-DetectedOS` function for OS detection (Step 1).
 
 ---
 
@@ -201,16 +195,16 @@ Contact DevOps team for package access.
 
 ## Library Validation Against Artifactory
 
-**CRITICAL: Check enableCheckArtifactory config setting FIRST**:
+**CRITICAL: Check $SPEC_KIT_CHECK_ARTIFACTORY environment variable FIRST**:
 
-- **IF** `enableCheckArtifactory` is `false` (from Configuration Loading section):
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"false"` (default):
   - **SKIP this entire section silently**
   - Do NOT log or mention that Artifactory check is disabled
   - Do NOT run any validation scripts
   - Proceed directly with package installation without validation
   - Treat this feature as if it does not exist
 
-- **IF** `enableCheckArtifactory` is `true`:
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"true"`:
   - Proceed with validation workflow below
 
 ---
@@ -406,33 +400,42 @@ This validation step works in conjunction with Corporate Guidelines (section abo
 
 1. **Setup & OS Detection**: Detect your operating system and run the appropriate setup script from repo root.
 
-   **Step 1: Check Config File Override** (from Configuration Loading section):
-
-   - If `osEnv` from config is "windows" → use PowerShell scripts (skip further detection)
-   - If `osEnv` from config is "unix" → use bash scripts (skip further detection)
-   - If `osEnv` from config is "auto" or missing → proceed to Step 2
-
-   **Step 2: Check SPEC_KIT_PLATFORM Environment Variable**:
-
-   - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
-   - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-   - If not set or `auto` → proceed to Step 3
-
-   **Step 3: Auto-detect Operating System** (only if previous steps didn't determine OS):
-   - On Unix/Linux/macOS: Run `uname`. If successful → use bash script below
-   - On Windows: Check `$env:OS`. If "Windows_NT" → use PowerShell script below
+   **Use centralized OS detection** from `common.sh` / `common.ps1`:
 
    **For Unix/Linux/macOS (bash)**:
 
    ```bash
-   {SCRIPT_BASH}
+   source scripts/bash/common.sh
+   OS=$(detect_os)
+
+   if [[ "$OS" == "unix" ]]; then
+       {SCRIPT_BASH}
+   else
+       # Windows detected, use PowerShell instead
+       pwsh -File scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
+       exit $?
+   fi
    ```
 
    **For Windows (PowerShell)**:
 
    ```powershell
-   {SCRIPT_POWERSHELL}
+   . scripts/powershell/common.ps1
+   $OS = Get-DetectedOS
+
+   if ($OS -eq "windows") {
+       {SCRIPT_POWERSHELL}
+   } else {
+       # Unix detected, use bash instead
+       bash scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
+       exit $LASTEXITCODE
+   }
    ```
+
+   **How detection works** (handled automatically by `detect_os()` / `Get-DetectedOS`):
+   1. Config file (.specify/config.json osEnv) takes priority
+   2. Falls back to SPEC_KIT_PLATFORM environment variable
+   3. Falls back to OS auto-detection (uname / $env:OS)
 
    Parse the JSON output for FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute.
 

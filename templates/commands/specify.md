@@ -224,40 +224,54 @@ Given that feature description, do this:
 
    d. **OS Detection & Script Execution**:
 
-   **Step 1: Check SPEC_KIT_PLATFORM Environment Variable**:
+   **Use centralized OS detection** from `common.sh` / `common.ps1`:
 
-   First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
-   - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
-   - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-   - If not set or `auto` → proceed to Step 2 (auto-detection)
+   **For Unix/Linux/macOS (bash)**:
 
-   **Step 2: Auto-detect Operating System** (only if SPEC_KIT_PLATFORM not set):
-   - On Unix/Linux/macOS: Run `uname`. If successful → use bash script below
-   - On Windows: Check `$env:OS`. If "Windows_NT" → use PowerShell script below
+   ```bash
+   source scripts/bash/common.sh
+   OS=$(detect_os)
 
-      **For Unix/Linux/macOS (bash)**:
+   if [[ "$OS" == "unix" ]]; then
+       {SCRIPT_BASH} --json --number N+1 --jira-number "C12345-7890" --short-name "your-short-name" "Feature description"
+   else
+       # Windows detected, use PowerShell instead
+       pwsh -File {SCRIPT_POWERSHELL} -Json -Number N+1 -JiraNumber "C12345-7890" -ShortName "your-short-name" "Feature description"
+       exit $?
+   fi
+   ```
 
-      ```bash
-      {SCRIPT_BASH} --json --number N+1 --jira-number "C12345-7890" --short-name "your-short-name" "Feature description"
-      ```
+   Example:
 
-      Example:
+   ```bash
+   {SCRIPT_BASH} --json --number 5 --jira-number "C12345-7890" --short-name "user-auth" "Add user authentication"
+   ```
 
-      ```bash
-      {SCRIPT_BASH} --json --number 5 --jira-number "C12345-7890" --short-name "user-auth" "Add user authentication"
-      ```
+   **For Windows (PowerShell)**:
 
-      **For Windows (PowerShell)**:
+   ```powershell
+   . scripts/powershell/common.ps1
+   $OS = Get-DetectedOS
 
-      ```powershell
-      {SCRIPT_POWERSHELL} -Json -Number N+1 -JiraNumber "C12345-7890" -ShortName "your-short-name" "Feature description"
-      ```
+   if ($OS -eq "windows") {
+       {SCRIPT_POWERSHELL} -Json -Number N+1 -JiraNumber "C12345-7890" -ShortName "your-short-name" "Feature description"
+   } else {
+       # Unix detected, use bash instead
+       bash {SCRIPT_BASH} --json --number N+1 --jira-number "C12345-7890" --short-name "your-short-name" "Feature description"
+       exit $LASTEXITCODE
+   }
+   ```
 
-      Example:
+   Example:
 
-      ```powershell
-      {SCRIPT_POWERSHELL} -Json -Number 5 -JiraNumber "C12345-7890" -ShortName "user-auth" "Add user authentication"
-      ```
+   ```powershell
+   {SCRIPT_POWERSHELL} -Json -Number 5 -JiraNumber "C12345-7890" -ShortName "user-auth" "Add user authentication"
+   ```
+
+   **How detection works** (handled automatically by `detect_os()` / `Get-DetectedOS`):
+   1. Config file (.specify/config.json osEnv) takes priority
+   2. Falls back to SPEC_KIT_PLATFORM environment variable
+   3. Falls back to OS auto-detection (uname / $env:OS)
 
       Pass the calculated number (N+1), jira-number, short-name, and feature description to the appropriate script
 

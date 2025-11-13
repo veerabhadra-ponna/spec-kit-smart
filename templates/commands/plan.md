@@ -153,43 +153,42 @@ When making technology choices:
 
 1. **Setup & OS Detection**: Detect your operating system and run the appropriate setup script from repo root.
 
-   **Step 1: Check SPEC_KIT_PLATFORM Environment Variable**:
-
-   First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
-   - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
-   - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-   - If not set or `auto` → proceed to Step 2 (auto-detection)
-
-   **Step 2: Auto-detect Operating System** (only if SPEC_KIT_PLATFORM not set):
-
-   On Unix/Linux/macOS, run:
-
-   ```bash
-   uname
-   ```
-
-   If successful, you're on a Unix-like system → Use bash scripts below
-
-   On Windows, check:
-
-   ```powershell
-   $env:OS
-   $IsWindows
-   ```
-
-   If `$env:OS` equals "Windows_NT" or `$IsWindows` is true → Use PowerShell scripts below
+   **Use centralized OS detection** from `common.sh` / `common.ps1`:
 
    **For Unix/Linux/macOS (bash)**:
 
    ```bash
-   {SCRIPT_BASH}
+   source scripts/bash/common.sh
+   OS=$(detect_os)
+
+   if [[ "$OS" == "unix" ]]; then
+       {SCRIPT_BASH}
+   else
+       # Windows detected, use PowerShell instead
+       pwsh -File scripts/powershell/check-prerequisites.ps1 -Json
+       exit $?
+   fi
    ```
 
    **For Windows (PowerShell)**:
 
    ```powershell
-   {SCRIPT_POWERSHELL}
+   . scripts/powershell/common.ps1
+   $OS = Get-DetectedOS
+
+   if ($OS -eq "windows") {
+       {SCRIPT_POWERSHELL}
+   } else {
+       # Unix detected, use bash instead
+       bash scripts/bash/check-prerequisites.sh --json
+       exit $LASTEXITCODE
+   }
    ```
+
+   **How detection works** (handled automatically by `detect_os()` / `Get-DetectedOS`):
+   1. Config file (.specify/config.json osEnv) takes priority
+   2. Falls back to SPEC_KIT_PLATFORM environment variable
+   3. Falls back to OS auto-detection (uname / $env:OS)
 
    Parse the JSON output for: FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH
 
