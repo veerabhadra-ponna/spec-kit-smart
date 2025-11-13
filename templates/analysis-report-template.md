@@ -62,6 +62,10 @@
 
 ### 1.3 Codebase Metrics
 
+- [Component 1]: [Description]
+- [Component 2]: [Description]
+- [Component 3]: [Description]
+
 - **Total Lines of Code**: [NUMBER]
 - **Number of Files**: [NUMBER]
 - **Test Coverage**: [PERCENTAGE]%
@@ -599,6 +603,9 @@ Based on:
 - [Link to community resources]
 
 ### 14.2 Tools Recommended
+
+- [Tool 1]: [Purpose]
+- [Tool 2]: [Purpose]
 
 ### 14.3 Further Reading
 
