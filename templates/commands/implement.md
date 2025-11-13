@@ -78,6 +78,30 @@ $ARGUMENTS
    Parse and use the provided notes.
    Continue with implementation logic in the Corporate Guidelines section below.
 
+## Configuration Loading
+
+**BEFORE proceeding with any workflow steps**, check for general configuration:
+
+1. **Check for config file**: Look for `.specify/config.json` in repository root
+2. **IF config file exists**:
+   - Read and parse the JSON configuration
+   - Extract settings:
+     - `enableCheckArtifactory` (boolean): Controls whether Artifactory validation runs (default: false if missing)
+     - `osEnv` (string): Override OS detection ("windows", "unix", "auto") (default: "auto" if missing)
+   - Validate `osEnv` value:
+     - **IF valid** ("windows", "unix", "auto"): Use the configured value
+     - **IF invalid** (any other value): Display warning and fall back to "auto"
+       ```text
+       ⚠️ Warning: Invalid osEnv value in .specify/config.json: "[value]"
+       Valid values: "windows", "unix", "auto"
+       Falling back to "auto" (OS auto-detection)
+       ```
+3. **IF config file missing**: Use defaults (enableCheckArtifactory=false, osEnv="auto")
+
+**Store these config values** for use throughout the workflow (Steps 1, Library Validation).
+
+---
+
 ## Corporate Guidelines
 
 **BEFORE writing any code**, check for and load corporate guidelines:
@@ -176,6 +200,20 @@ Contact DevOps team for package access.
 ```
 
 ## Library Validation Against Artifactory
+
+**CRITICAL: Check enableCheckArtifactory config setting FIRST**:
+
+- **IF** `enableCheckArtifactory` is `false` (from Configuration Loading section):
+  - **SKIP this entire section silently**
+  - Do NOT log or mention that Artifactory check is disabled
+  - Do NOT run any validation scripts
+  - Proceed directly with package installation without validation
+  - Treat this feature as if it does not exist
+
+- **IF** `enableCheckArtifactory` is `true`:
+  - Proceed with validation workflow below
+
+---
 
 **BEFORE adding any new external dependency** (npm install, pip install, maven dependency, etc.), validate it against corporate Artifactory/Nexus:
 
@@ -368,14 +406,19 @@ This validation step works in conjunction with Corporate Guidelines (section abo
 
 1. **Setup & OS Detection**: Detect your operating system and run the appropriate setup script from repo root.
 
-   **Step 1: Check SPEC_KIT_PLATFORM Environment Variable**:
+   **Step 1: Check Config File Override** (from Configuration Loading section):
 
-   First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
+   - If `osEnv` from config is "windows" → use PowerShell scripts (skip further detection)
+   - If `osEnv` from config is "unix" → use bash scripts (skip further detection)
+   - If `osEnv` from config is "auto" or missing → proceed to Step 2
+
+   **Step 2: Check SPEC_KIT_PLATFORM Environment Variable**:
+
    - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
    - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-   - If not set or `auto` → proceed to Step 2 (auto-detection)
+   - If not set or `auto` → proceed to Step 3
 
-   **Step 2: Auto-detect Operating System** (only if SPEC_KIT_PLATFORM not set):
+   **Step 3: Auto-detect Operating System** (only if previous steps didn't determine OS):
    - On Unix/Linux/macOS: Run `uname`. If successful → use bash script below
    - On Windows: Check `$env:OS`. If "Windows_NT" → use PowerShell script below
 

@@ -170,6 +170,30 @@ $ARGUMENTS
 
 ---
 
+## Configuration Loading
+
+**BEFORE proceeding with any workflow steps**, check for general configuration:
+
+1. **Check for config file**: Look for `.specify/config.json` in repository root
+2. **IF config file exists**:
+   - Read and parse the JSON configuration
+   - Extract settings:
+     - `enableCheckArtifactory` (boolean): Controls whether Artifactory validation runs (default: false if missing)
+     - `osEnv` (string): Override OS detection ("windows", "unix", "auto") (default: "auto" if missing)
+   - Validate `osEnv` value:
+     - **IF valid** ("windows", "unix", "auto"): Use the configured value
+     - **IF invalid** (any other value): Display warning and fall back to "auto"
+       ```text
+       ⚠️ Warning: Invalid osEnv value in .specify/config.json: "[value]"
+       Valid values: "windows", "unix", "auto"
+       Falling back to "auto" (OS auto-detection)
+       ```
+3. **IF config file missing**: Use defaults (enableCheckArtifactory=false, osEnv="auto")
+
+**Store these config values** for use throughout the workflow (Steps 1, 5B).
+
+---
+
 ## Corporate Guidelines
 
 **DURING analysis**, check for and apply corporate guidelines to the target project:
@@ -233,14 +257,22 @@ When documenting findings:
 
 **CRITICAL**: This command analyzes an **EXISTING** project, not one managed by Spec Kit. Do NOT modify the target project directory structure.
 
-1. **Setup & OS Detection**: Parse arguments from interactive mode or $ARGUMENTS. Detect your operating system and run the appropriate setup script from repo root.   **Environment Variable Override (Optional)**:
+1. **Setup & OS Detection**: Parse arguments from interactive mode or $ARGUMENTS. Detect your operating system and run the appropriate setup script from repo root.
 
-   First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
+   **Step 1: Check Config File Override** (from Configuration Loading section):
+
+   - If `osEnv` from config is "windows" → use PowerShell scripts (skip further detection)
+   - If `osEnv` from config is "unix" → use bash scripts (skip further detection)
+   - If `osEnv` from config is "auto" or missing → proceed to Step 2
+
+   **Step 2: Check Environment Variable Override**:
+
    - If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
    - If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-   - If not set or `auto` → proceed with auto-detection below
+   - If not set or `auto` → proceed to Step 3
 
-   **Auto-detect Operating System**:
+   **Step 3: Auto-detect Operating System**:
+
    - Unix/Linux/macOS: Run `uname`. If successful → use bash
    - Windows: Check `$env:OS`. If "Windows_NT" → use PowerShell
 
@@ -296,7 +328,7 @@ When documenting findings:
    **IF ANALYSIS_SCOPE = [A]** (Full Application Modernization):
 
    Ask user about target modernization stack with progressive 10 questions (5 initial + conditional remaining).
-   
+
    **IF ANALYSIS_SCOPE = [B]** (Cross-Cutting Concern Migration):
 
    SKIP the 10 modernization questions - we already have TARGET_IMPLEMENTATION from earlier.
@@ -674,7 +706,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
 **Total**: 23 files, 3,456 LOC (~8% of codebase)
 ```
 
-   #### Step 4.B.2: Assess Abstraction Level
+#### Step 4.B.2: Assess Abstraction Level
 
    Analyze how well the concern is abstracted from the rest of the codebase.
 
@@ -704,11 +736,11 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    ```
 
    **Analysis checklist**:
-   - [ ] Are there interface/contract definitions?
-   - [ ] Is dependency injection used?
-   - [ ] Are configuration values externalized?
-   - [ ] Can the implementation be swapped without changing consumers?
-   - [ ] Are there direct imports of implementation classes?
+- [ ] Are there interface/contract definitions?
+- [ ] Is dependency injection used?
+- [ ] Are configuration values externalized?
+- [ ] Can the implementation be swapped without changing consumers?
+- [ ] Are there direct imports of implementation classes?
 
    **Output**:
 
@@ -731,7 +763,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    - LOW: Major refactoring required (2-4 months total)
    ```
 
-   #### Step 4.B.3: Calculate Blast Radius
+#### Step 4.B.3: Calculate Blast Radius
 
    Determine how much of the codebase would be affected by migrating this concern.
 
@@ -785,7 +817,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    | [file:line] | [COUNT] | [Controller/Service/etc] | [HIGH/MED/LOW] |
    ```
 
-   #### Step 4.B.4: Analyze Coupling Degree
+#### Step 4.B.4: Analyze Coupling Degree
 
    Assess how tightly coupled the concern is to the rest of the system.
 
@@ -835,7 +867,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    - [Evidence 2 with file:line references]
    ```
 
-   #### Step 4.B.5: Recommend Migration Strategy
+#### Step 4.B.5: Recommend Migration Strategy
 
    Based on abstraction level + blast radius + coupling, recommend one of four strategies:
 
@@ -908,7 +940,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    - **Value**: [Benefit to business]
    ```
 
-   #### Step 4.B.6: Abstraction Improvement Recommendations (if LOW abstraction)
+#### Step 4.B.6: Abstraction Improvement Recommendations (if LOW abstraction)
 
    **IF abstraction level = LOW OR MEDIUM**:
 
@@ -956,7 +988,7 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    After refactoring, next migration will be [STRANGLER_FIG/ADAPTER_PATTERN] with [LOW/MEDIUM] risk.
    ```
 
-   **END OF STEP 4.B**
+   END OF STEP 4.B
 
    ---
 
@@ -981,6 +1013,20 @@ Use detection heuristics based on CONCERN_TYPE (from earlier question) to locate
    ```
 
 5B. **Validate Proposed Libraries Against Artifactory (Optional)**:
+
+   **CRITICAL: Check enableCheckArtifactory config setting FIRST**:
+
+- **IF** `enableCheckArtifactory` is `false` (from Configuration Loading section):
+  - **SKIP this entire step (5B) silently**
+  - Do NOT log or mention that Artifactory check is disabled
+  - Do NOT run any validation scripts
+  - Proceed directly to Step 6 (Generate Artifacts)
+  - Treat this feature as if it does not exist
+
+- **IF** `enableCheckArtifactory` is `true`:
+  - Proceed with validation workflow below
+
+   ---
 
    **Purpose**: Check if proposed target stack libraries are whitelisted in corporate Artifactory/Nexus before generating technical spec.
 
