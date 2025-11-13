@@ -9,8 +9,30 @@ source "$SCRIPT_DIR/common.sh"
 # Auto-detect OS and redirect if needed
 OS=$(detect_os)
 if [[ "$OS" == "windows" ]]; then
-    # Redirect to PowerShell with all arguments
-    exec pwsh -File "$SCRIPT_DIR/../powershell/setup-plan.ps1" "$@"
+    # Convert bash arguments to PowerShell parameters
+    ps_args=()
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --json)
+                ps_args+=("-Json")
+                shift
+                ;;
+            --arguments)
+                ps_args+=("-Arguments")
+                ps_args+=("$2")
+                shift 2
+                ;;
+            --help|-h)
+                ps_args+=("-Help")
+                shift
+                ;;
+            *)
+                echo "ERROR: Unknown option '$1'" >&2
+                exit 1
+                ;;
+        esac
+    done
+    exec pwsh -File "$SCRIPT_DIR/../powershell/setup-plan.ps1" "${ps_args[@]}"
 fi
 
 # Parse command line arguments

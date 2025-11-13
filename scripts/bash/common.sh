@@ -128,8 +128,8 @@ CONTRACTS_DIR='$feature_dir/contracts'
 EOF
 }
 
-check_file() { [[ -f "$1" ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
-check_dir() { [[ -d "$1" && -n $(ls -A "$1" 2>/dev/null) ]] && echo "  ✓ $2" || echo "  ✗ $2"; }
+check_file() { [[ -f "$1" ]] && echo "  [OK] $2" || echo "  [X] $2"; }
+check_dir() { [[ -d "$1" && -n $(ls -A "$1" 2>/dev/null) ]] && echo "  [OK] $2" || echo "  [X] $2"; }
 
 # Load Spec Kit configuration from .specify/config.json
 # Sets environment variables:
@@ -154,7 +154,7 @@ load_spec_kit_config() {
             if [[ "$os_env" == "windows" || "$os_env" == "unix" || "$os_env" == "auto" ]]; then
                 export SPEC_KIT_OS_ENV="$os_env"
             else
-                echo "⚠️ Warning: Invalid osEnv value in .specify/config.json: \"$os_env\"" >&2
+                echo "WARNING: Invalid osEnv value in .specify/config.json: \"$os_env\"" >&2
                 echo "Valid values: \"windows\", \"unix\", \"auto\"" >&2
                 echo "Falling back to \"auto\" (OS auto-detection)" >&2
                 export SPEC_KIT_OS_ENV="auto"
@@ -170,7 +170,7 @@ load_spec_kit_config() {
             if [[ "$os_env" == "windows" || "$os_env" == "unix" || "$os_env" == "auto" ]]; then
                 export SPEC_KIT_OS_ENV="$os_env"
             elif [[ -n "$os_env" ]]; then
-                echo "⚠️ Warning: Invalid osEnv value in .specify/config.json: \"$os_env\"" >&2
+                echo "WARNING: Invalid osEnv value in .specify/config.json: \"$os_env\"" >&2
                 echo "Valid values: \"windows\", \"unix\", \"auto\"" >&2
                 echo "Falling back to \"auto\" (OS auto-detection)" >&2
             fi

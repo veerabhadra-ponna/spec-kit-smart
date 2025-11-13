@@ -184,7 +184,7 @@ function Load-SpecKitConfig {
             if ($osEnv -eq "windows" -or $osEnv -eq "unix" -or $osEnv -eq "auto") {
                 $env:SPEC_KIT_OS_ENV = $osEnv
             } else {
-                Write-Warning "⚠️ Warning: Invalid osEnv value in .specify/config.json: `"$osEnv`""
+                Write-Warning "WARNING: Invalid osEnv value in .specify/config.json: `"$osEnv`""
                 Write-Warning "Valid values: `"windows`", `"unix`", `"auto`""
                 Write-Warning "Falling back to `"auto`" (OS auto-detection)"
                 $env:SPEC_KIT_OS_ENV = "auto"

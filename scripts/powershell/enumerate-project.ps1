@@ -26,6 +26,26 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Load common functions and detect OS
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+. (Join-Path $ScriptDir "common.ps1")
+$OS = Get-DetectedOS
+
+# If Unix detected, redirect to bash script
+if ($OS -eq "unix") {
+    $bashScript = Join-Path $ScriptDir "../bash/enumerate-project.sh"
+    $bashArgs = @()
+
+    # Convert PowerShell parameters to bash arguments
+    if ($Project) { $bashArgs += "--project"; $bashArgs += $Project }
+    if ($Output) { $bashArgs += "--output"; $bashArgs += $Output }
+    if ($MaxSize -ne 10485760) { $bashArgs += "--max-size"; $bashArgs += $MaxSize.ToString() }
+    if ($Help) { $bashArgs += "--help" }
+
+    & bash $bashScript @bashArgs
+    exit $LASTEXITCODE
+}
+
 # Script metadata
 $SCRIPT_VERSION = "1.0.2"
 $SCRIPT_NAME = "enumerate-project.ps1"
