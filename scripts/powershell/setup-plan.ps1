@@ -10,6 +10,24 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# Load common functions and detect OS
+. "$PSScriptRoot/common.ps1"
+$OS = Get-DetectedOS
+
+# If Unix detected, redirect to bash script
+if ($OS -eq "unix") {
+    $bashScript = Join-Path $PSScriptRoot "../bash/setup-plan.sh"
+    $bashArgs = @()
+
+    # Convert PowerShell parameters to bash arguments
+    if ($Json) { $bashArgs += "--json" }
+    if ($Arguments) { $bashArgs += "--arguments"; $bashArgs += $Arguments }
+    if ($Help) { $bashArgs += "--help" }
+
+    & bash $bashScript @bashArgs
+    exit $LASTEXITCODE
+}
+
 # Show help if requested
 if ($Help) {
     Write-Output "Usage: ./setup-plan.ps1 [-Json] [-Arguments <description>] [-Help]"
@@ -18,9 +36,6 @@ if ($Help) {
     Write-Output "  -Help         Show this help message"
     exit 0
 }
-
-# Load common functions
-. "$PSScriptRoot/common.ps1"
 
 # Get all paths and variables from common functions
 $paths = Get-FeaturePathsEnv

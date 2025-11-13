@@ -52,6 +52,13 @@ set -o pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/common.sh"
 
+# Auto-detect OS and redirect if needed
+OS=$(detect_os)
+if [[ "$OS" == "windows" ]]; then
+    # Redirect to PowerShell with all arguments
+    exec pwsh -File "$SCRIPT_DIR/../powershell/update-agent-context.ps1" "$@"
+fi
+
 # Get all paths and variables from common functions
 eval $(get_feature_paths)
 
@@ -91,7 +98,7 @@ log_info() {
 }
 
 log_success() {
-    echo "✓ $1"
+    echo "[OK] $1"
 }
 
 log_error() {

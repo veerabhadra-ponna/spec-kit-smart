@@ -2,6 +2,17 @@
 
 set -e
 
+# Get script directory and load common functions
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/common.sh"
+
+# Auto-detect OS and redirect if needed
+OS=$(detect_os)
+if [[ "$OS" == "windows" ]]; then
+    # Redirect to PowerShell with all arguments
+    exec pwsh -File "$SCRIPT_DIR/../powershell/setup-plan.ps1" "$@"
+fi
+
 # Parse command line arguments
 JSON_MODE=false
 ARGUMENTS=""
@@ -33,10 +44,6 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
-
-# Get script directory and load common functions
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/common.sh"
 
 # Get all paths and variables from common functions
 eval $(get_feature_paths)

@@ -26,6 +26,16 @@ SOURCES_PATH=""
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
+# Load common functions for OS detection
+source "$SCRIPT_DIR/common.sh"
+
+# Auto-detect OS and redirect if needed
+OS=$(detect_os)
+if [[ "$OS" == "windows" ]]; then
+    # Redirect to PowerShell with all arguments
+    exec pwsh -File "$SCRIPT_DIR/../powershell/generate-guidelines.ps1" "$@"
+fi
+
 # Output directory (fixed location)
 OUTPUT_DIR="$REPO_ROOT/.guidelines-analysis"
 
@@ -38,19 +48,19 @@ print_header() {
 }
 
 print_success() {
-    echo -e "${GREEN}✓ $1${NC}"
+    echo -e "${GREEN}[OK] $1${NC}"
 }
 
 print_error() {
-    echo -e "${RED}✗ $1${NC}"
+    echo -e "${RED}[X] $1${NC}"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠ $1${NC}"
+    echo -e "${YELLOW}[WARNING] $1${NC}"
 }
 
 print_info() {
-    echo -e "${BLUE}ℹ $1${NC}"
+    echo -e "${BLUE}[INFO] $1${NC}"
 }
 
 usage() {
@@ -64,14 +74,14 @@ Arguments:
 
 Expected structure:
   SOURCES_PATH/
-    ├── docs/
-    │   ├── security-guidelines.pdf
-    │   ├── coding-standards.md
-    │   └── ...
-    └── reference-projects/
-        ├── project-a/
-        ├── project-b/
-        └── ...
+    +-- docs/
+    |   +-- security-guidelines.pdf
+    |   +-- coding-standards.md
+    |   +-- ...
+    +-- reference-projects/
+        +-- project-a/
+        +-- project-b/
+        +-- ...
 
 Examples:
   # Generate guidelines from temp folder
