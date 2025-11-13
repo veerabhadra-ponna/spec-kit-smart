@@ -33,33 +33,31 @@ $SCAN_START = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
 
 # Show help if requested
 if ($Help) {
-    Write-Output @"
-Usage: $SCRIPT_NAME -Project PATH [OPTIONS]
-
-Enumerate all files in a project directory for AI analysis.
-
-Required Parameters:
-  -Project PATH        Path to project root directory
-
-Optional Parameters:
-  -Output FILE         Output JSON file (default: stdout)
-  -MaxSize BYTES       Maximum file size to include (default: 10485760 = 10MB)
-  -Help               Show this help message
-
-Output Format:
-  JSON object with project structure, file metadata, and statistics
-
-Examples:
-  # Scan current directory, output to stdout
-  .\$SCRIPT_NAME -Project .
-
-  # Scan project, save to file
-  .\$SCRIPT_NAME -Project C:\path\to\legacy -Output manifest.json
-
-  # Scan with custom size limit (50MB)
-  .\$SCRIPT_NAME -Project . -Output manifest.json -MaxSize 52428800
-
-"@
+    Write-Output "Usage: $SCRIPT_NAME -Project PATH [OPTIONS]"
+    Write-Output ""
+    Write-Output "Enumerate all files in a project directory for AI analysis."
+    Write-Output ""
+    Write-Output "Required Parameters:"
+    Write-Output "  -Project PATH        Path to project root directory"
+    Write-Output ""
+    Write-Output "Optional Parameters:"
+    Write-Output "  -Output FILE         Output JSON file (default: stdout)"
+    Write-Output "  -MaxSize BYTES       Maximum file size to include (default: 10485760 = 10MB)"
+    Write-Output "  -Help               Show this help message"
+    Write-Output ""
+    Write-Output "Output Format:"
+    Write-Output "  JSON object with project structure, file metadata, and statistics"
+    Write-Output ""
+    Write-Output "Examples:"
+    Write-Output "  # Scan current directory, output to stdout"
+    Write-Output "  .\$SCRIPT_NAME -Project ."
+    Write-Output ""
+    Write-Output "  # Scan project, save to file"
+    Write-Output "  .\$SCRIPT_NAME -Project C:\path\to\legacy -Output manifest.json"
+    Write-Output ""
+    Write-Output "  # Scan with custom size limit (50MB)"
+    Write-Output "  .\$SCRIPT_NAME -Project . -Output manifest.json -MaxSize 52428800"
+    Write-Output ""
     exit 0
 }
 
@@ -92,14 +90,14 @@ $ShowProgress = $Output -ne "" -and [Console]::IsErrorRedirected -eq $false
 function Write-Progress-Info {
     param([string]$Message)
     if ($ShowProgress) {
-        Write-Host "ℹ $Message" -ForegroundColor Blue
+        Write-Host "[INFO] $Message" -ForegroundColor Blue
     }
 }
 
 function Write-Progress-Success {
     param([string]$Message)
     if ($ShowProgress) {
-        Write-Host "✓ $Message" -ForegroundColor Green
+        Write-Host "[OK] $Message" -ForegroundColor Green
     }
 }
 

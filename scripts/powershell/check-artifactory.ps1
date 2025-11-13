@@ -33,42 +33,41 @@ $ErrorActionPreference = 'Stop'
 
 # Show help if requested
 if ($Help) {
-    Write-Output @"
-Usage: $($MyInvocation.MyCommand.Name) <artifactory-url> <library-name> [api-key]
-       $($MyInvocation.MyCommand.Name) -ArtifactoryUrl <url> -LibraryName <name> [-ApiKey <key>]
-
-Query Artifactory for library availability.
-
-Parameters:
-  ArtifactoryUrl    URL of the Artifactory instance (e.g., https://artifactory.company.com/api)
-  LibraryName       Name of the library to check (e.g., axios, lodash, jackson-databind)
-  ApiKey           Optional API key for authentication (or set ARTIFACTORY_API_KEY env var)
-  -Help            Show this help message
-
-Exit Codes:
-  0  Library found (prints download URL)
-  1  Library not found (not whitelisted)
-  2  Authentication error
-  3  API error (network, timeout, etc.)
-  4  Artifactory URL not configured (skip check)
-
-Examples:
-  # Check if axios is available
-  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios
-
-  # With API key
-  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios YOUR_API_KEY
-
-  # Using named parameters
-  .\$($MyInvocation.MyCommand.Name) -ArtifactoryUrl https://artifactory.company.com/api -LibraryName axios
-
-  # Using environment variable for API key
-  `$env:ARTIFACTORY_API_KEY = "YOUR_API_KEY"
-  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios
-
-  # Skip validation if URL not configured
-  .\$($MyInvocation.MyCommand.Name) "Not configured" axios
-"@
+    Write-Output "Usage: $($MyInvocation.MyCommand.Name) <artifactory-url> <library-name> [api-key]"
+    Write-Output "       $($MyInvocation.MyCommand.Name) -ArtifactoryUrl <url> -LibraryName <name> [-ApiKey <key>]"
+    Write-Output ""
+    Write-Output "Query Artifactory for library availability."
+    Write-Output ""
+    Write-Output "Parameters:"
+    Write-Output "  ArtifactoryUrl    URL of the Artifactory instance (e.g., https://artifactory.company.com/api)"
+    Write-Output "  LibraryName       Name of the library to check (e.g., axios, lodash, jackson-databind)"
+    Write-Output "  ApiKey           Optional API key for authentication (or set ARTIFACTORY_API_KEY env var)"
+    Write-Output "  -Help            Show this help message"
+    Write-Output ""
+    Write-Output "Exit Codes:"
+    Write-Output "  0  Library found (prints download URL)"
+    Write-Output "  1  Library not found (not whitelisted)"
+    Write-Output "  2  Authentication error"
+    Write-Output "  3  API error (network, timeout, etc.)"
+    Write-Output "  4  Artifactory URL not configured (skip check)"
+    Write-Output ""
+    Write-Output "Examples:"
+    Write-Output "  # Check if axios is available"
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios"
+    Write-Output ""
+    Write-Output "  # With API key"
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios YOUR_API_KEY"
+    Write-Output ""
+    Write-Output "  # Using named parameters"
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) -ArtifactoryUrl https://artifactory.company.com/api -LibraryName axios"
+    Write-Output ""
+    Write-Output "  # Using environment variable for API key"
+    Write-Output "  `$env:ARTIFACTORY_API_KEY = `"YOUR_API_KEY`""
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios"
+    Write-Output ""
+    Write-Output "  # Skip validation if URL not configured"
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) `"Not configured`" axios"
+    Write-Output ""
     exit 0
 }
 
@@ -90,16 +89,16 @@ function Print-Status {
 
     switch ($Status) {
         "FOUND" {
-            Write-Host "✅ FOUND: $Message" -ForegroundColor Green
+            Write-Host "[OK] FOUND: $Message" -ForegroundColor Green
         }
         "NOT_FOUND" {
-            Write-Host "❌ NOT FOUND: $Message" -ForegroundColor Yellow
+            Write-Host "[X] NOT FOUND: $Message" -ForegroundColor Yellow
         }
         "SKIPPED" {
-            Write-Host "⊘ SKIPPED: $Message" -ForegroundColor Yellow
+            Write-Host "[SKIP] SKIPPED: $Message" -ForegroundColor Yellow
         }
         "ERROR" {
-            Write-Host "⚠️  ERROR: $Message" -ForegroundColor Red
+            Write-Host "[WARNING] ERROR: $Message" -ForegroundColor Red
         }
     }
 }
