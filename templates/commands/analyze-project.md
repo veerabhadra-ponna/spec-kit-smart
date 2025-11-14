@@ -10,8 +10,6 @@ status: EXPERIMENTAL
 version: 1.2.0-alpha
 ---
 
-
-
 ## ⚠️ MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
@@ -551,229 +549,105 @@ When documenting findings:
 
    **Store responses** for use in artifact generation (functional-spec.md, technical-spec.md).
 
-   ---
+4. **Deep Analysis Workflow (MANDATORY: ALWAYS START WITH FULL ANALYSIS)**:
 
-   ### Phase 1: Concrete Scanning Process
-
-   **Scan ALL code files** using the `file-manifest.json` to understand functionality.
-
-   **⚠️ CRITICAL**: This is NOT abstract "scanning" - follow these CONCRETE steps:
+   **CRITICAL INSTRUCTION**: Regardless of ANALYSIS_SCOPE choice, you MUST ALWAYS execute Step 4.A first to generate the Project Analysis Report. This provides essential context for all downstream decisions.
 
    ---
 
-   **Step 1.1: Categorize ALL Files from Manifest**
+   ### Step 4.A - Project Analysis Report (⚠️ MANDATORY CHECKPOINT)
 
-   Read `file-manifest.json` and group files into categories:
+   **⚠️ HARD STOP**: Do NOT proceed to Step 4.B, Step 5, or Step 6 until analysis-report.md is COMPLETE with all 9 phases.
 
-   ```markdown
-   **Controllers/Routes** (API endpoints, request handlers):
-   - Patterns: *Controller.*, *controller.*, */controllers/*, *Route.*, */routes/*, *endpoint.*
-   - Examples: UserController.java, auth.controller.ts, routes/api.js
+   This step creates the comprehensive Project Analysis Report that provides context for all decisions.
 
-   **Services/Business Logic** (core functionality):
-   - Patterns: *Service.*, *service.*, */services/*, *Manager.*, *Handler.*, *Processor.*
-   - Examples: AuthService.ts, PaymentProcessor.java, email-service.js
+   ---
 
-   **Models/Entities** (data structures):
-   - Patterns: *Model.*, *model.*, */models/*, *Entity.*, */entities/*, *Schema.*
-   - Examples: User.model.ts, ProductEntity.java, schema.prisma
+   #### Phase 0: Upfront Estimation & User Warning
 
-   **Repositories/DAOs** (data access):
-   - Patterns: *Repository.*, */repositories/*, *Dao.*, *DataAccess.*
-   - Examples: UserRepository.ts, OrderDao.java
+   **BEFORE starting analysis**, calculate scope and warn user:
 
-   **Configurations** (app settings):
-   - Patterns: *.config.*, *settings.*, *.env*, application.*, appsettings.*, web.config, *.properties, *.yml, *.yaml (in config directories)
-   - Examples: database.config.ts, appsettings.json, application.yml
+   **Step 0.1**: Load `file-manifest.json` and count files by category:
 
-   **Security/Auth** (authentication, authorization):
-   - Patterns: *auth.*, *security.*, *Auth*, *Guard.*, *Policy.*, */auth/*, */security/*, *jwt.*, *passport.*
-   - Examples: AuthGuard.ts, security-config.java, jwt-strategy.ts
-
-   **Middleware** (request/response processing):
-   - Patterns: *middleware.*, */middleware/*, *interceptor.*, *filter.*
-   - Examples: auth.middleware.ts, LoggingInterceptor.java
-
-   **Utilities/Helpers** (shared functions):
-   - Patterns: *util.*, *helper.*, */utils/*, */helpers/*, */lib/*, */common/*
-   - Examples: date-utils.ts, StringHelper.java
-
-   **Tests** (unit, integration, e2e):
-   - Patterns: *.test.*, *.spec.*, */tests/*, */__tests__/*, */e2e/*
-   - Examples: user.service.test.ts, AuthController.spec.java
-
-   **Infrastructure** (deployment, containers):
-   - Patterns: Dockerfile, docker-compose.*, *.tf, */k8s/*, */helm/*, */ansible/*, Jenkinsfile, *.yml (in .github/workflows, .gitlab-ci)
-   - Examples: Dockerfile, main.tf, deployment.yaml
+   ```javascript
+   Categories to count:
+   - Controllers/Routes: files matching *controller*, *route*, */controllers/*, */routes/*
+   - Services/Business Logic: files matching *service*, */services/*, *manager*, *handler*
+   - Models/Data: files matching *model*, *entity*, *schema*, */models/*, */entities/*
+   - Repositories/DAOs: files matching *repository*, *dao*, */repositories/*
+   - Configurations: files matching *.config.*, *settings*, *.env*, *.properties, *.yml, *.json (in config dirs)
+   - Security/Auth: files matching *auth*, *security*, *guard*, *policy*, */auth/*, */security/*
+   - Middleware: files matching *middleware*, */middleware/*
+   - Utilities/Helpers: files matching *util*, *helper*, */utils/*, */helpers/*
+   - Tests: files matching *.test.*, *.spec.*, */tests/*, */__tests__/*
    ```
 
-   **Output**: List of files in each category (store for next steps).
+   **Step 0.2**: Calculate analysis scope:
 
-   ---
-
-   **Step 1.2: Read and Extract from EVERY File**
-
-   **CRITICAL**: Do NOT just read 30 files. Read EVERY file in EACH category above.
-
-   **For EACH file in EACH category**, extract the following:
-
-   **From Controllers/Routes**:
-   - Feature name + description + file:line reference
-   - API endpoints: HTTP method, path, purpose (e.g., "POST /api/users - Create new user")
-   - Request/response formats (DTOs, validation rules)
-   - Dependencies: services called, models used
-   - Auth requirements (public vs protected endpoints)
-   - Error handling patterns
-
-   **From Services**:
-   - Business workflows + file:line
-   - External integrations (APIs called, message queues used)
-   - Data transformations
-   - Business rules and validation logic
-   - Transaction boundaries
-   - Dependencies on repositories, utilities
-
-   **From Models/Entities**:
-   - Entity relationships (one-to-many, many-to-many)
-   - Data types and constraints
-   - Validation rules (required fields, format validations)
-   - Computed properties or methods
-   - Database mappings (table names, column names)
-
-   **From Repositories/DAOs**:
-   - Database operations (CRUD patterns)
-   - Query complexity (simple vs complex joins)
-   - Raw SQL vs ORM usage
-   - Caching strategies
-   - Transaction handling
-
-   **From Configurations**:
-   - Database connection strings (anonymized)
-   - API keys/secrets (note presence, don't expose values)
-   - Environment-specific configs
-   - Feature flags
-   - Third-party service integrations
-   - Port numbers, timeouts, retry policies
-
-   **From Security/Auth**:
-   - Authentication mechanisms (JWT, OAuth, sessions)
-   - Authorization patterns (RBAC, ABAC, claims-based)
-   - Password hashing algorithms
-   - Token expiration settings
-   - CORS configurations
-   - Rate limiting rules
-
-   **From Middleware**:
-   - Request processing logic
-   - Response transformations
-   - Logging patterns
-   - Error handling strategies
-   - Performance optimizations (caching, compression)
-
-   **From Utilities/Helpers**:
-   - Shared functionality patterns
-   - Data transformations
-   - Validation libraries
-   - Date/time handling
-   - String manipulation
-   - Cryptographic functions
-
-   **From Tests**:
-   - Test coverage areas
-   - Testing frameworks used
-   - Mocking strategies
-   - Integration test patterns
-   - E2E test scenarios
-
-   **From Infrastructure**:
-   - Deployment targets (Docker, Kubernetes, VMs)
-   - Environment configurations
-   - CI/CD pipelines
-   - Infrastructure as Code patterns
-   - Scaling strategies
-
-   ---
-
-   **Step 1.3: Categorize Features by Criticality**
-
-   **For each extracted feature**, assign criticality:
-
-   ```markdown
-   **CRITICAL** (Must preserve exactly):
-   - Core business logic that generates revenue
-   - Compliance/regulatory requirements
-   - Security implementations
-   - Data integrity constraints
-   - Financial calculations
-   - User authentication/authorization
+   ```javascript
+   Total important files = Controllers + Services + Models + Repositories + Configs + Security + Middleware + Utilities
    
-   **STANDARD** (Preserve but can modernize):
-   - Common CRUD operations
-   - Standard API endpoints
-   - Typical validation rules
-   - Regular business workflows
-   - Reporting features
+   Chunk estimation:
+   - Phase 1 (Discovery): 1 chunk (configs + dependencies)
+   - Phase 2 (Codebase Analysis): 1 chunk per 50 files or 1 per category (whichever results in more chunks)
+   - Phases 3-9: 1 chunk each
    
-   **LEGACY QUIRKS** (Consider modernizing):
-   - Workarounds for old library bugs
-   - Deprecated API usage
-   - Technical debt patterns
-   - Hardcoded values
-   - Legacy compatibility code
+   Total chunks = 2 + ceil(important_files / 50) + 7
+   
+   Time estimation:
+   - Small project (<50 files): 5-10 minutes, 3-5 chunks
+   - Medium project (50-150 files): 15-25 minutes, 6-10 chunks
+   - Large project (150-300 files): 30-50 minutes, 11-18 chunks
+   - Very large project (300-500 files): 60-90 minutes, 19-25 chunks
+   - Extremely large project (>500 files): 90+ minutes, 25+ chunks
    ```
 
-   ---
-
-   **Step 1.4: Expected Output Volume (Quality Check)**
-
-   After completing Steps 1.1-1.3, verify you have extracted:
-
-   ```markdown
-   ✓ 50-200 feature descriptions with file:line references
-   ✓ 20-50 technical debt items categorized by severity
-   ✓ 10-30 security findings with risk scores
-   ✓ Architecture patterns identified (MVC, microservices, layered, etc.)
-   ✓ All configuration values documented
-   ✓ All external dependencies mapped
-   ✓ Test coverage analysis complete
-   ```
-
-   **IF** you don't have this volume → You haven't scanned deeply enough. Return to Step 1.2 and extract more details.
-
-   ---
-
-   **Examples of Good vs Bad Extraction**:
-
-   ```markdown
-   ❌ BAD: "User management feature"
-   ✅ GOOD: "User registration with email verification (src/auth/RegisterController.ts:45-89)
-             - POST /api/auth/register
-             - Validates email format (RFC 5322), password strength (min 8 chars, 1 uppercase, 1 number)
-             - Sends verification email via SendGridService (src/services/EmailService.ts:23)
-             - Stores user with bcrypt-hashed password (cost factor: 10)
-             - Returns JWT token (24h expiration) on successful registration"
-
-   ❌ BAD: "Database queries"
-   ✅ GOOD: "User lookup by email (src/repositories/UserRepository.ts:67-82)
-             - Raw SQL query with parameterized values (SQL injection safe)
-             - Single SELECT with WHERE clause on indexed email column
-             - Returns User entity or null
-             - Used by: AuthService.login(), UserService.findByEmail()
-             - Performance: ~5ms avg query time (production metrics)"
-
-   ❌ BAD: "Authentication mechanism"
-   ✅ GOOD: "JWT-based authentication (src/auth/JwtStrategy.ts:12-45)
-             - RS256 algorithm with 2048-bit key
-             - Token payload: userId, email, roles, iat, exp
-             - Access token: 15 min expiration
-             - Refresh token: 7 day expiration (src/auth/RefreshTokenService.ts:34)
-             - Token validation on every protected route via AuthGuard middleware
-             - Blacklist support using Redis cache (expired tokens stored for 7 days)"
-   ```
-
-   These examples show the level of detail expected for EVERY feature.
+   **Step 0.3**: Display estimation to user:
 
    ```text
+   ⚠️ ANALYSIS SCOPE DETECTED
+
+   Project Size:
+   - Total files: [COUNT]
+   - Important files to analyze: [COUNT]
+     • Controllers/Routes: [COUNT]
+     • Services: [COUNT]
+     • Models: [COUNT]
+     • Configs: [COUNT]
+     • Security: [COUNT]
+     • Other: [COUNT]
+
+   Analysis Plan:
+   - Chunks needed: [COUNT]
+   - Estimated time: [TIME RANGE]
+   - Expected report size: [SIZE RANGE] lines
+   - Coverage: COMPREHENSIVE (all important files)
+
+   ⚠️ This is FULL DEPTH analysis (not sampling).
+   ```
+
+   **Step 0.4**: Confirmation for extremely large projects:
+
+   **IF** project requires >20 chunks (typically >300 files or >60 minutes):
+
+   ```text
+   ⚠️ LARGE PROJECT DETECTED
+
+   This project requires:
+   - [COUNT] chunks
+   - [TIME] minutes (estimated)
+   - ~[SIZE] lines of analysis output
+
+   This is a VERY comprehensive analysis that will take significant time.
+
+   Options:
+   [A] Proceed with full analysis ([TIME] min) - RECOMMENDED for complete insights
+   [B] Narrow scope (specify which categories to analyze: controllers only, services only, etc.)
+   [C] Use sampling mode (analyze 20% of files for quick overview - NOT comprehensive)
+   [D] Cancel and review project scope
+
+   Your choice: ___
+   ```
 
    **Handle user response**:
    - **[A]**: Proceed with full analysis (continue to Phase 1)
@@ -791,7 +665,7 @@ When documenting findings:
 
    ---
 
-   ### Phase 1: Begin Scanning Process
+   #### Phase 1: Concrete Scanning Process
 
    **Scan ALL code files** using the `file-manifest.json` to understand functionality.
 
@@ -1349,7 +1223,7 @@ When documenting findings:
 
    **Resume Logic** (if generation interrupted):
 
-   ```text
+   ```markdown
    **IF** analysis-report.md exists BUT is incomplete:
    
    1. Check `.analysis/.checkpoints/` directory
@@ -1357,15 +1231,13 @@ When documenting findings:
    3. Resume from next chunk
    4. Display to user:
       ```
-
       ⚠️ RESUMING INTERRUPTED ANALYSIS
-
+      
       Last completed: Chunk [N] (Phase [X.Y])
       Resuming from: Chunk [N+1] (Phase [X+1.Y])
-
+      
       Continuing analysis...
-
-      ```text
+      ```
    5. Continue chunk generation from resume point
    ```
 
@@ -1846,7 +1718,7 @@ When documenting findings:
 
    ---
 
-4. **Ask Clarification Questions (If Needed)**:
+5. **Ask Clarification Questions (If Needed)**:
 
    After deep analysis (Steps 4.A and 4.B if applicable), if there are ambiguities, ask user for clarification:
 
@@ -1870,15 +1742,15 @@ When documenting findings:
 
    **CRITICAL: Check $SPEC_KIT_CHECK_ARTIFACTORY environment variable FIRST**:
 
-- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"false"` (default):
-  - **SKIP this entire step (5B) silently**
-  - Do NOT log or mention that Artifactory check is disabled
-  - Do NOT run any validation scripts
-  - Proceed directly to Step 6 (Generate Artifacts)
-  - Treat this feature as if it does not exist
+   - **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"false"` (default):
+     - **SKIP this entire step (5B) silently**
+     - Do NOT log or mention that Artifactory check is disabled
+     - Do NOT run any validation scripts
+     - Proceed directly to Step 6 (Generate Artifacts)
+     - Treat this feature as if it does not exist
 
-- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"true"`:
-  - Proceed with validation workflow below
+   - **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"true"`:
+     - Proceed with validation workflow below
 
    ---
 
@@ -1959,19 +1831,19 @@ When documenting findings:
 
    **Error Handling**:
 
-- If check-artifactory script not found: SKIP validation, add note to technical-spec
-- If Artifactory URL not configured: SKIP validation (exit 4 from script)
-- If authentication fails: WARN user, proceed with incomplete results
+   - If check-artifactory script not found: SKIP validation, add note to technical-spec
+   - If Artifactory URL not configured: SKIP validation (exit 4 from script)
+   - If authentication fails: WARN user, proceed with incomplete results
 
    **Note**: This step is optional and gracefully skipped if:
 
-- No corporate guidelines exist
-- Artifactory URL not configured
-- Validation scripts not available
+   - No corporate guidelines exist
+   - Artifactory URL not configured
+   - Validation scripts not available
 
    ---
 
-1. **Generate Artifacts**:
+6. **Generate Artifacts**:
 
    **⚠️ PREREQUISITE CHECK (from Step 4.A)**:
 
@@ -2434,7 +2306,7 @@ When documenting findings:
 
    ---
 
-1. **Final Report**: Summarize key findings, state primary recommendation with confidence score, list next steps, provide artifact file paths
+7. **Final Report**: Summarize key findings, state primary recommendation with confidence score, list next steps, provide artifact file paths
 
    **Summary should include**:
    - Legacy stack detected
@@ -2576,3 +2448,30 @@ When documenting findings:
   [C] Staged analysis (analyze category by category across multiple sessions)
   [D] Focus on specific areas (choose which categories to analyze)
   ```
+
+---
+
+## Version History
+
+**v1.2.0-alpha (v4) - 2025-11-14**
+- ✅ Completion-based chunking (not size-based)
+- ✅ No file count limits (analyze ALL important files)
+- ✅ Upfront estimation with time warnings
+- ✅ Hard checkpoints with verification gates
+- ✅ Concrete scanning process (4-step methodology)
+- ✅ Progress communication (mandatory real-time updates)
+- ✅ Section-by-section chunking for ALL large artifacts
+- ✅ Checkpoint/resume mechanism for reliability
+- ✅ Recovery instructions for verification failures
+- ✅ Confirmation prompts for extremely large projects
+- ✅ Examples of good vs bad extraction
+- ✅ Dependency graph enforcement (artifacts require analysis-report.md)
+
+**v1.1.0-alpha (v3) - Previous**
+- Fixed Python dependency (pure PS/Bash)
+- Project Analysis Report always generated first (intent, not enforced)
+- Cross-Cutting Concern as add-on
+
+**v1.0.0-alpha - Initial**
+- Basic analysis workflow
+- Python enumeration
