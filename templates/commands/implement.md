@@ -286,6 +286,7 @@ Execute appropriate script based on OS:
 **If exit code 1 (❌ Not Whitelisted)**:
 - **DO NOT** install the library
 - Display warning to user:
+
   ```text
   ⚠️  Library Validation Failed
 
@@ -300,6 +301,7 @@ Execute appropriate script based on OS:
 
   Recommendation: Check corporate guidelines for approved alternatives.
   ```
+
 - Ask user for decision
 - Document the issue in `.guidelines-todo.md` if user chooses option B
 

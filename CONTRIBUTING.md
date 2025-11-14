@@ -32,6 +32,7 @@ On [GitHub Codespaces](https://github.com/features/codespaces) it's even simpler
 
 1. Fork and clone the repository
 1. Configure and install the dependencies:
+
    ```bash
    # Create virtual environment
    python -m venv .venv
@@ -41,6 +42,7 @@ On [GitHub Codespaces](https://github.com/features/codespaces) it's even simpler
    # Install in editable mode
    pip install -e .
    ```
+
 1. Make sure the CLI works on your machine: `speckitsmart --help`
 1. Create a new branch: `git checkout -b my-branch-name`
 1. Make your change, add tests, and make sure everything still works

@@ -135,7 +135,7 @@
 - Connection pooling and keep-alive
 - Request deduplication for idempotent operations
 
-**Recommended Base Library**: 
+**Recommended Base Library**:
 - `undici` (Node.js 18+): Fast, standards-compliant HTTP/1.1 client
 - `axios` 1.x: Battle-tested, large ecosystem (slower than undici)
 
@@ -190,7 +190,7 @@
 
 ### Database - NoSQL (MongoDB)
 
-**SHOULD** use: 
+**SHOULD** use:
 - **Mongoose 8.x**: Schema-based ODM with validation, middleware, plugins (recommended)
 - **MongoDB Native Driver 6.x**: Low-level driver for performance-critical scenarios
 - **Prisma with MongoDB connector**: Type-safe MongoDB access
@@ -216,7 +216,7 @@
 
 ### Database - Redis (Caching, Sessions)
 
-**MUST** use: 
+**MUST** use:
 - **ioredis 5.x**: Feature-rich Redis client with Cluster, Sentinel, TypeScript support (recommended)
 - **redis 4.x**: Official Node Redis client (simpler API)
 
@@ -254,7 +254,7 @@
 - Never log PII, secrets, passwords, tokens, credit card numbers, SSNs
 - Export logs to corporate logging platform (Elasticsearch, Splunk, Azure Monitor, AWS CloudWatch)
 
-**Recommended Logger**: 
+**Recommended Logger**:
 - **Pino 8.x**: Ultra-fast JSON logger, child loggers, transport streams (recommended)
 - **Winston 3.x**: Feature-rich, multiple transports (slower than Pino)
 
@@ -405,7 +405,7 @@
 
 **SHOULD** use: Domain/feature-based organization for better cohesion
 
-```
+```text
 src/
 ├── features/
 │   ├── auth/
@@ -434,7 +434,7 @@ src/
 
 **MAY** use: Traditional layered architecture for simple applications
 
-```
+```text
 src/
 ├── routes/          # Route definitions
 ├── controllers/     # Request/response handling

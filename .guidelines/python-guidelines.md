@@ -530,7 +530,7 @@ async def create_user(user: UserCreate):
 
 **SHOULD** use: Domain/feature-based organization for better cohesion
 
-```
+```text
 src/
 ├── domain/
 │   ├── users/
@@ -559,7 +559,7 @@ src/
 
 **MAY** use: Traditional layered architecture for simple applications
 
-```
+```text
 src/
 ├── api/
 │   ├── routes/

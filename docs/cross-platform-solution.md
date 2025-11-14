@@ -55,7 +55,8 @@ scripts/powershell/setup-plan.ps1 -Json
 - Use `scripts/powershell/` for Windows systems
 
 Parse the JSON output for: FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH
-```
+
+```markdown
 
 #### Layer 2: Environment Variable Override (Fallback)
 
@@ -186,7 +187,8 @@ If `$env:OS` equals "Windows_NT" or `$IsWindows` is true → Use PowerShell scri
 ```
 
 Parse the JSON output for: FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH
-```
+
+```markdown
 
 ### Step 2: Update Build Script
 
@@ -337,7 +339,6 @@ export SPEC_KIT_PLATFORM=unix
 
 # Force PowerShell scripts
 export SPEC_KIT_PLATFORM=windows
-```
 ```
 
 ## Compatibility
