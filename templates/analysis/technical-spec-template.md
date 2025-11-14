@@ -106,7 +106,7 @@ From analysis of the legacy codebase:
 Map legacy features (from functional-spec.md) to modernization phases:
 
 | Phase | Scope | Value % | Features (from Legacy) | Risks | Exit Criteria |
-|-------|-------|--------:|----------------------|-------|---------------|
+| ------- | ------- | --------: | ---------------------- | ------- | --------------- |
 | **P1** | Core MVP | 50 | <<CRITICAL features from FR-CRIT-*>> | <<Risk>> | <<Criteria>> |
 | **P2** | Extended | 30 | <<STANDARD features from FR-STD-*>> | <<Risk>> | <<Criteria>> |
 | **P3** | Enhanced | 15 | <<Nice-to-have features>> | <<Risk>> | <<Criteria>> |
@@ -182,7 +182,7 @@ graph TB
 ### Legacy vs. Target Comparison
 
 | Aspect | Legacy | Target | Improvement |
-|--------|--------|--------|-------------|
+| -------- | -------- | -------- | ------------- |
 | Deployment | <<VM/bare metal>> | <<Kubernetes cluster>> | Auto-scaling, self-healing |
 | Database | <<Oracle 11g>> | <<PostgreSQL 16 LTS>> | Open source, modern features |
 | Caching | <<Memcached 1.4>> | <<Redis 7.x>> | Persistence, pub/sub |
@@ -244,7 +244,7 @@ Map legacy code to modernized components:
 ### Example Endpoint (Modernized)
 
 | Method | Path | Auth | Request Schema | Response Schema | Errors |
-|--------|------|------|----------------|-----------------|--------|
+| -------- | ------ | ------ | ---------------- | ----------------- | -------- |
 | GET | `/api/v1/users` | Bearer token | - | UserListResponse | 401, 429, 500 |
 | POST | `/api/v1/users` | Bearer token | UserInput | User | 400, 401, 409, 429, 500 |
 
@@ -314,7 +314,7 @@ CREATE TYPE user_role AS ENUM ('admin', 'user', 'guest');
 ### Data Migration Strategy
 
 | Phase | Approach | Rollback Plan |
-|-------|----------|---------------|
+| ------- | ---------- | --------------- |
 | P1 | Dual-write (legacy + new) | Stop writing to new, keep legacy |
 | P2 | Read from new, fallback to legacy | Switch read back to legacy |
 | P3 | Decommission legacy | Restore from backups |
@@ -326,7 +326,7 @@ CREATE TYPE user_role AS ENUM ('admin', 'user', 'guest');
 ### Summary Table
 
 | Component | Legacy | User Choice | LTS Version | EOL Date | Rationale |
-|-----------|--------|-------------|-------------|----------|-----------|
+| ----------- | -------- | ------------- | ------------- | ---------- | ----------- |
 | Language | <<Java 8>> | <<USER_CHOICE_LANGUAGE>> | <<Java 21 LTS>> | 2028-09 | Latest LTS, performance, features |
 | Database | <<Oracle 11g>> | <<USER_CHOICE_DATABASE>> | <<PostgreSQL 16>> | 2028-11 | Open source, JSONB, better perf |
 | Message Bus | <<TIBCO EMS>> | <<USER_CHOICE_MESSAGE_BUS>> | <<Kafka 3.x>> | Active | Industry standard, scalable |
@@ -375,7 +375,7 @@ CREATE TYPE user_role AS ENUM ('admin', 'user', 'guest');
 **Validation Results** (if Artifactory configured):
 
 | Library | Category | Status | Version | Notes |
-|---------|----------|--------|---------|-------|
+| --------- | ---------- | -------- | --------- | ------- |
 | <<spring-boot-starter-web>> | External | ✅ Approved | 3.2.0 | Found in Artifactory |
 | <<jackson-databind>> | External | ✅ Approved | 2.15.3 | Found in Artifactory |
 | <<@acmecorp/auth-client>> | Corporate | ✅ Approved | 2.1.0 | Internal package |
@@ -403,7 +403,7 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 ### Performance
 
 | Metric | Legacy | Target | Measurement | SLI |
-|--------|--------|--------|-------------|-----|
+| -------- | -------- | -------- | ------------- | ----- |
 | API Response (p95) | <<1.5s>> | **< 500ms** | Prometheus histogram | 95% of requests < 500ms |
 | API Response (p99) | <<3s>> | **< 1s** | Prometheus histogram | 99% of requests < 1s |
 | Throughput | <<100 req/min>> | **1000 req/min** | Prometheus counter | Sustained load test |
@@ -414,7 +414,7 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 ### Availability
 
 | Metric | Legacy | Target | Measurement |
-|--------|--------|--------|-------------|
+| -------- | -------- | -------- | ------------- |
 | Uptime SLA | <<99%>> | **99.9%** | Uptime monitor (Datadog/Pingdom) |
 | Error Rate | <<2%>> | **< 0.1%** | Prometheus error counter |
 | MTTR | <<2 hours>> | **< 15 minutes** | Incident tracking |
@@ -424,7 +424,7 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 ### Scalability
 
 | Metric | Legacy | Target | Approach |
-|--------|--------|--------|----------|
+| -------- | -------- | -------- | ---------- |
 | Horizontal Scaling | Manual | **Auto (HPA)** | Kubernetes HPA based on CPU/memory |
 | Max Load | <<1000 users>> | **10,000 users** | Load testing + auto-scaling |
 | Resource Efficiency | <<50% CPU idle>> | **70-80% utilization** | Right-sizing + auto-scaling |
@@ -432,7 +432,7 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 ### Security
 
 | Metric | Legacy | Target | Implementation |
-|--------|--------|--------|----------------|
+| -------- | -------- | -------- | ---------------- |
 | Auth Token Lifetime | 30min session | **15min access token** | OAuth 2.0 / JWT |
 | Encryption at Rest | <<None>> | **AES-256** | Database encryption |
 | Encryption in Transit | <<TLS 1.0>> | **TLS 1.3** | Ingress/ALB config |
@@ -441,7 +441,7 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 ### Observability
 
 | Aspect | Legacy | Target | Tool |
-|--------|--------|--------|------|
+| -------- | -------- | -------- | ------ |
 | Logs | Text files | **Structured (JSON)** | <<USER_CHOICE_OBSERVABILITY>> |
 | Metrics | <<None>> | **RED (Rate/Errors/Duration)** | Prometheus |
 | Tracing | <<None>> | **Distributed tracing** | OpenTelemetry + Jaeger |
@@ -455,7 +455,7 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 ### SLO Table
 
 | Service | SLI | Target SLO | Error Budget (monthly) | Alert Threshold |
-|---------|-----|------------|----------------------|-----------------|
+| --------- | ----- | ------------ | ---------------------- | ----------------- |
 | API | Response time p95 < 500ms | 99.5% | 21 minutes downtime | 98% threshold |
 | API | Error rate | < 0.1% | 43 requests | 0.5% spike |
 | DB | Query time p95 < 100ms | 99% | 7 hours slow | 95% threshold |
@@ -490,7 +490,7 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 ### Threat Model
 
 | Threat | Legacy Mitigation | Target Mitigation | Priority |
-|--------|------------------|------------------|----------|
+| -------- | ------------------ | ------------------ | ---------- |
 | SQL Injection | <<ORM only>> | **Parameterized queries + ORM** | HIGH |
 | XSS | <<Template escaping>> | **CSP + Content escaping** | HIGH |
 | CSRF | <<None>> | **SameSite cookies + CSRF tokens** | HIGH |
@@ -567,7 +567,7 @@ From legacy analysis (functional-spec.md §6):
 ### Data Migration Detailed Plan
 
 | Phase | Data | Approach | Validation | Rollback |
-|-------|------|----------|-----------|----------|
+| ------- | ------ | ---------- | ----------- | ---------- |
 | P1 | <<Core entities>> | Dual-write | Reconciliation job | Stop new writes |
 | P2 | <<All entities>> | Backfill historical | Data integrity checks | Restore from backup |
 | P3 | <<Cleanup>> | Delete from legacy | Archive verification | Restore from archive |
@@ -579,7 +579,7 @@ From legacy analysis (functional-spec.md §6):
 ### Top Risks (Prioritized)
 
 | Risk | Probability | Impact | Mitigation | Owner |
-|------|------------|--------|------------|-------|
+| ------ | ------------ | -------- | ------------ | ------- |
 | Data migration corruption | Medium | CRITICAL | Reconciliation + rollback plan | Data Team |
 | Performance regression | Medium | HIGH | Load testing + canary rollout | Platform Team |
 | Feature gap discovery | High | MEDIUM | Comprehensive functional spec review | Product |
@@ -608,7 +608,7 @@ From legacy analysis (functional-spec.md §6):
 Map Requirements (from functional-spec.md) → Components → Tests:
 
 | Requirement ID | Requirement | Component | Test ID | Test Type |
-|----------------|-------------|-----------|---------|-----------|
+| ---------------- | ------------- | ----------- | --------- | ----------- |
 | FR-CRIT-001 | <<Feature name>> | <<Auth Service>> | T-001 | Unit + E2E |
 | FR-CRIT-002 | <<Feature name>> | <<Core Service>> | T-002 | Integration |
 | FR-STD-001 | <<Feature name>> | <<Integration Service>> | T-003 | E2E |

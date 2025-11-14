@@ -155,7 +155,7 @@ Execution steps:
        - Then render all options as a Markdown table:
 
        | Option | Description |
-       |--------|-------------|
+       | -------- | ------------- |
        | A | Option A description |
        | B | Option B description |
        | C | Option C description (add D/E as needed up to 5) |

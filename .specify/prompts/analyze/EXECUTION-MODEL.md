@@ -303,7 +303,7 @@ Manual test with 2-stage chain:
 ### vs. Monolithic Prompt
 
 | Aspect | Monolithic | Chained | Winner |
-|--------|------------|---------|--------|
+| -------- | ------------ | --------- | -------- |
 | Completion Rate | 60% | 95% | ✅ Chained |
 | Attention Quality | Diluted | Fresh per stage | ✅ Chained |
 | Recovery | Restart from scratch | Resume from stage | ✅ Chained |
@@ -316,7 +316,7 @@ Manual test with 2-stage chain:
 Alternative: `/analyze-init`, `/analyze-scope`, etc. (7 commands)
 
 | Aspect | Separate Commands | Chained | Winner |
-|--------|-------------------|---------|--------|
+| -------- | ------------------- | --------- | -------- |
 | User Experience | Manual invocation | Automatic | ✅ Chained |
 | State Persistence | Between sessions | In memory | ✅ Separate |
 | Flexibility | High | Medium | ⚠️ Separate |

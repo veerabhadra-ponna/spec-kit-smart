@@ -528,7 +528,7 @@ Continuing analysis...
 ## Key Improvements Over Monolithic Approach
 
 | Metric | Monolithic | Chained | Improvement |
-|--------|------------|---------|-------------|
+| -------- | ------------ | --------- | ------------- |
 | **Completion Rate** | 60% | 95% | +58% |
 | **File Analysis Coverage** | 70% | 95% | +36% |
 | **Pattern Extraction** | 60% | 90% | +50% |

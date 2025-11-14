@@ -501,7 +501,7 @@ File pattern detection heuristics by concern type:
 
 ```markdown
 | File Path | Type | Evidence | LOC | Criticality |
-|-----------|------|----------|-----|-------------|
+| ----------- | ------ | ---------- | ----- | ------------- |
 | src/auth/AuthService.ts:15 | Core Implementation | Exports authenticate(), uses jsonwebtoken | 247 | CRITICAL |
 ...
 **Total**: [COUNT] files, [COUNT] LOC (~X% of codebase)
@@ -586,7 +586,7 @@ Metrics to calculate:
 
 **Key Consumers** (Top 10 by usage):
 | File Path | Usage Count | Type | Impact |
-|-----------|-------------|------|--------|
+| ----------- | ------------- | ------ | -------- |
 | [file:line] | [COUNT] | [Controller/Service/etc] | [HIGH/MED/LOW] |
 ```text
 

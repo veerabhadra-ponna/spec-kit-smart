@@ -114,7 +114,7 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 ### How This Fork Differs from the Original
 
 | Feature | Original Spec Kit | This Fork (Enterprise) |
-|---------|------------------|------------------------|
+| --------- | ------------------ | ------------------------ |
 | **Target Audience** | Individual developers, greenfield projects | **Corporate teams, legacy modernization** |
 | **Platform Support** | Bash scripts (Unix/Linux/macOS) | **Bash + PowerShell (Windows + Unix)** |
 | **Workflow Management** | Manual command execution | **Orchestrator + auto-resume** |
@@ -269,12 +269,12 @@ flowchart TD
     Start([Start New Feature]) --> Constitution
     Constitution[🏛️ Constitution - REQUIRED] --> Specify
     Specify[📝 Specify - REQUIRED] --> Clarify
-    Clarify[❓ Clarify - OPTIONAL] -->|Recommended| Plan
-    Clarify -.->|Skip if clear| Plan
+    Clarify[❓ Clarify - OPTIONAL] --> | Recommended | Plan
+    Clarify -.-> | Skip if clear | Plan
     Plan[🏗️ Plan - REQUIRED] --> Tasks
     Tasks[📋 Tasks - REQUIRED] --> Analyze
-    Analyze[🔍 Analyze - OPTIONAL] -->|Recommended| Implement
-    Analyze -.->|Skip if confident| Implement
+    Analyze[🔍 Analyze - OPTIONAL] --> | Recommended | Implement
+    Analyze -.-> | Skip if confident | Implement
     Implement[⚙️ Implement - REQUIRED] --> Checklist
     Checklist[✅ Checklist - OPTIONAL] --> Done
     Done([✅ Feature Complete])
@@ -607,7 +607,7 @@ Want to see Spec Kit in action? Watch our [video overview](https://www.youtube.c
 ## 🤖 Supported AI Agents
 
 | Agent                                                     | Support | Notes                                             |
-|-----------------------------------------------------------|---------|---------------------------------------------------|
+| ----------------------------------------------------------- | --------- | --------------------------------------------------- |
 | [Claude Code](https://www.anthropic.com/claude-code)      | ✅ |                                                   |
 | [GitHub Copilot](https://code.visualstudio.com/)          | ✅ |                                                   |
 | [Gemini CLI](https://github.com/google-gemini/gemini-cli) | ✅ |                                                   |
@@ -662,14 +662,14 @@ The `specify` command supports the following options:
 ### Commands
 
 | Command     | Description                                                    |
-|-------------|----------------------------------------------------------------|
+| ------------- | ---------------------------------------------------------------- |
 | `init`      | Initialize a new Specify project from the latest template      |
 | `check`     | Check for installed tools (`git`, `claude`, `gemini`, `code`/`code-insiders`, `cursor-agent`, `windsurf`, `qwen`, `opencode`, `codex`) |
 
 ### `speckitsmart init` Arguments & Options
 
 | Argument/Option        | Type     | Description                                                                  |
-|------------------------|----------|------------------------------------------------------------------------------|
+| ------------------------ | ---------- | ------------------------------------------------------------------------------ |
 | `<project-name>`       | Argument | Name for your new project directory (optional if using `--here`, or use `.` for current directory) |
 | `--ai`                 | Option   | AI assistant to use: `claude`, `gemini`, `copilot`, `cursor-agent`, `qwen`, `opencode`, `codex`, `windsurf`, `kilocode`, `auggie`, `roo`, `codebuddy`, `amp`, or `q` |
 | `--script`             | Option   | Script variant to use: `sh` (bash/zsh) or `ps` (PowerShell)                 |
@@ -734,7 +734,7 @@ After running `speckitsmart init`, your AI coding agent will have access to thes
 **NEW**: Simplified workflow management and context restoration:
 
 | Command                  | Description                                                           |
-|--------------------------|-----------------------------------------------------------------------|
+| -------------------------- | ----------------------------------------------------------------------- |
 | `/speckitsmart.orchestrate`  | **Orchestrate the complete workflow** from feature description to implementation in a single command. Manages state, phase transitions, and provides interactive or automatic execution modes. |
 | `/speckitsmart.resume`       | **Restore context and resume work** after chat limit or interruption. Loads all artifacts and continues from exact stopping point with zero context loss. |
 
@@ -755,7 +755,7 @@ See [Orchestrator Workflow Guide](#-orchestrator-workflow) for detailed usage.
 Essential commands for the Spec-Driven Development workflow (can be used individually or via orchestrator):
 
 | Command                  | Description                                                           |
-|--------------------------|-----------------------------------------------------------------------|
+| -------------------------- | ----------------------------------------------------------------------- |
 | `/speckitsmart.constitution`  | Create or update project governing principles and development guidelines |
 | `/speckitsmart.specify`       | Define what you want to build (requirements and user stories)        |
 | `/speckitsmart.plan`          | Create technical implementation plans with your chosen tech stack     |
@@ -767,7 +767,7 @@ Essential commands for the Spec-Driven Development workflow (can be used individ
 Additional commands for enhanced quality and validation:
 
 | Command                      | Description                                                           |
-|------------------------------|-----------------------------------------------------------------------|
+| ------------------------------ | ----------------------------------------------------------------------- |
 | `/speckitsmart.clarify`           | Clarify underspecified areas (recommended before `/speckitsmart.plan`; formerly `/quizme`) |
 | `/speckitsmart.analyze`           | Cross-artifact consistency & coverage analysis (run after `/speckitsmart.tasks`, before `/speckitsmart.implement`) |
 | `/speckitsmart.checklist`         | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
@@ -776,7 +776,7 @@ Additional commands for enhanced quality and validation:
 ### Environment Variables
 
 | Variable         | Description                                                                                    |
-|------------------|------------------------------------------------------------------------------------------------|
+| ------------------ | ------------------------------------------------------------------------------------------------ |
 | `SPECIFY_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches. **Must be set in the context of the agent you're working with prior to using `/speckitsmart.plan` or follow-up commands.** |
 
 ## 🎭 Orchestrator Workflow
@@ -810,19 +810,19 @@ The orchestrator saves progress to `.speckitsmart-state.json`, enabling:
 ```mermaid
 graph LR
     subgraph Interactive["Interactive Mode"]
-        I1[Constitution] -->|Ask| I2[Specify]
-        I2 -->|Ask| I3[Clarify]
-        I3 -->|Ask| I4[Plan]
-        I4 -->|Ask| I5[Tasks]
-        I5 -->|Ask| I6[Analyze]
-        I6 -->|Ask| I7[Implement]
+        I1[Constitution] --> | Ask | I2[Specify]
+        I2 --> | Ask | I3[Clarify]
+        I3 --> | Ask | I4[Plan]
+        I4 --> | Ask | I5[Tasks]
+        I5 --> | Ask | I6[Analyze]
+        I6 --> | Ask | I7[Implement]
     end
 
     subgraph AutoSpec["Auto-Spec Mode"]
         A1[Constitution] --> A2[Specify]
         A2 --> A3[Plan]
         A3 --> A4[Tasks]
-        A4 -->|PAUSE| A5[Implement]
+        A4 --> | PAUSE | A5[Implement]
     end
 
     subgraph FullAuto["Full Auto Mode"]
@@ -897,8 +897,8 @@ flowchart TD
     Tasks --> Identify[Identify Resume Point]
     Identify --> Summary[Show Summary]
     Summary --> Confirm{Resume?}
-    Confirm -->|Yes| Continue[Continue Implementation]
-    Confirm -->|No| Cancel[Cancel]
+    Confirm --> | Yes | Continue[Continue Implementation]
+    Confirm --> | No | Cancel[Cancel]
     Continue --> Done[Complete Tasks]
 
     style NewChat fill:#e8eaf6,stroke:#333,stroke-width:2px
@@ -1021,17 +1021,17 @@ Simply fix the issue (e.g., `npm install stripe`) and run `/speckitsmart.resume`
 ```mermaid
 flowchart TD
     Start([/speckitsmart.orchestrate]) --> Constitution
-    Constitution[Constitution] -->|State saved| Specify
-    Constitution -.->|If missing| CreateConst[Create constitution]
+    Constitution[Constitution] --> | State saved | Specify
+    Constitution -.-> | If missing | CreateConst[Create constitution]
     CreateConst --> Specify
-    Specify[Specify] -->|State saved| Clarify
-    Clarify[Clarify] -->|State saved| Plan
-    Clarify -.->|Optional| Plan
-    Plan[Plan] -->|State saved| Tasks
-    Tasks[Tasks] -->|State saved| Analyze
-    Analyze[Analyze] -->|State saved| Implement
-    Analyze -.->|Optional| Implement
-    Implement[Implement] -->|State saved| Done
+    Specify[Specify] --> | State saved | Clarify
+    Clarify[Clarify] --> | State saved | Plan
+    Clarify -.-> | Optional | Plan
+    Plan[Plan] --> | State saved | Tasks
+    Tasks[Tasks] --> | State saved | Analyze
+    Analyze[Analyze] --> | State saved | Implement
+    Analyze -.-> | Optional | Implement
+    Implement[Implement] --> | State saved | Done
     Done([Done])
 
     State[.speckitsmart-state.json]
@@ -1269,7 +1269,7 @@ The Corporate Guidelines system was implemented in four phases:
 **New Tools:**
 
 | Tool | Script | Purpose |
-|------|--------|---------|
+| ------ | -------- | --------- |
 | **Compliance Checker** | `check-guidelines-compliance.sh` | Validate project against guidelines with severity levels (CRITICAL/HIGH/MEDIUM/LOW) |
 | **Diff Tool** | `diff-guidelines.sh` | Compare project guidelines vs templates, identify outdated sections |
 | **Auto-Fix Tool** | `autofix-guidelines.sh` | Automatically fix common violations (security, structure, config) |
@@ -1293,7 +1293,7 @@ The Corporate Guidelines system was implemented in four phases:
 **Auto-Fix Violations:**
 
 ```bash
-./scripts/bash/autofix-guidelines.sh [--dry-run] [--fixes=security|structure|config]
+./scripts/bash/autofix-guidelines.sh [--dry-run] [--fixes=security | structure | config]
 ```
 
 Fixes: `.env` in `.gitignore`, `.env.example`, `.npmrc`, architecture folders, docs.
@@ -1301,7 +1301,7 @@ Fixes: `.env` in `.gitignore`, `.env.example`, `.npmrc`, architecture folders, d
 **Analytics Dashboard:**
 
 ```bash
-./scripts/bash/guidelines-analytics.sh [--save-history] [--output=json|csv]
+./scripts/bash/guidelines-analytics.sh [--save-history] [--output=json | csv]
 ```
 
 Shows compliance score (0-100), violations, historical trends, and recommendations.
@@ -1323,11 +1323,11 @@ When making decisions, AI prompts follow this priority order:
 
 ```mermaid
 graph TD
-    A[Constitution] -->|HIGHEST| B{Guidelines?}
-    B -->|Yes| C[Corporate Guidelines]
-    B -->|No| D[Spec Kit Defaults]
-    C -->|MEDIUM| E[Final Decision]
-    D -->|LOWEST| E
+    A[Constitution] --> | HIGHEST | B{Guidelines?}
+    B --> | Yes | C[Corporate Guidelines]
+    B --> | No | D[Spec Kit Defaults]
+    C --> | MEDIUM | E[Final Decision]
+    D --> | LOWEST | E
 
     style A fill:#ff9999,stroke:#333,stroke-width:2px
     style C fill:#ffff99,stroke:#333,stroke-width:2px
@@ -1363,7 +1363,7 @@ Spec-Driven Development is a structured process that emphasizes:
 ## 🌟 Development Phases
 
 | Phase | Focus | Key Activities |
-|-------|-------|----------------|
+| ------- | ------- | ---------------- |
 | **0-to-1 Development** ("Greenfield") | Generate from scratch | Start with high-level requirements, generate specifications, plan implementation steps, build production-ready applications |
 | **Creative Exploration** | Parallel implementations | Explore diverse solutions, support multiple technology stacks & architectures, experiment with UX patterns |
 | **Iterative Enhancement** ("Brownfield") | Brownfield modernization | Add features iteratively, modernize legacy systems, adapt processes |

@@ -81,7 +81,7 @@ Abstraction Assessment for {concern_type}:
 
 Current Implementation: {current_implementation}
 Abstraction Score: {score}/10
-Abstraction Level: {LOW|MEDIUM|HIGH}
+Abstraction Level: {LOW | MEDIUM | HIGH}
 
 Touch Points Identified:
 - {package/file}: {count} usages ({type of usage})
@@ -93,7 +93,7 @@ Abstraction Patterns Found:
 - ✗ {negative pattern}
 ...
 
-Migration Complexity: {LOW|MEDIUM|HIGH}
+Migration Complexity: {LOW | MEDIUM | HIGH}
 ```text
 
 ---
@@ -148,9 +148,9 @@ Configuration Impact: {count} files
 Test Impact: {count} tests
 
 Total Affected Files: {total} out of {project_total}
-Blast Radius: {percentage}% ({SMALL|MEDIUM|LARGE|CRITICAL})
+Blast Radius: {percentage}% ({SMALL | MEDIUM | LARGE | CRITICAL})
 
-Risk Level: {LOW|MEDIUM|HIGH|VERY HIGH}
+Risk Level: {LOW | MEDIUM | HIGH | VERY HIGH}
 ```text
 
 ---
@@ -162,7 +162,7 @@ Based on abstraction level and blast radius, recommend migration approach.
 ### Decision Matrix
 
 | Abstraction | Blast Radius | Recommended Strategy |
-|-------------|--------------|----------------------|
+| ------------- | -------------- | ---------------------- |
 | HIGH | SMALL | **Direct Replacement** - Swap implementation directly |
 | HIGH | MEDIUM/LARGE | **Phased Migration** - Gradual rollout with feature flags |
 | MEDIUM | SMALL | **Refactor Then Replace** - Improve abstractions first |

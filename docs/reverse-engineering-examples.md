@@ -769,7 +769,7 @@ Please help refactor this component.
 ## Common Workflows Quick Reference
 
 | Scenario | Analysis Depth | Follow-up Command | Estimated Time |
-|----------|----------------|-------------------|----------------|
+| ---------- | ---------------- | ------------------- | ---------------- |
 | Quick health check | QUICK | None (just review) | 30 min |
 | Security audit | STANDARD (SECURITY focus) | Fix critical CVEs | 1 day |
 | LTS upgrade | STANDARD (ALL) | Follow upgrade-plan.md | 1-4 weeks |

@@ -234,7 +234,7 @@ Optional phases in brackets are skippable based on user preference or context.
      "version": "1.0",
      "current_phase": "constitution",
      "completed_phases": [],
-     "workflow_mode": "interactive|auto-spec|full-auto",
+     "workflow_mode": "interactive | auto-spec | full-auto",
      "started_at": "<timestamp>",
      "user_preferences": { ... }
    }
@@ -289,10 +289,10 @@ fi
 {
   "checkpoints": {
     "constitution": {
-      "status": "completed|completed-existing",
+      "status": "completed | completed-existing",
       "timestamp": "<timestamp>",
       "file": "memory/constitution.md",
-      "action": "created|reused-existing",
+      "action": "created | reused-existing",
       "has_placeholders": false
     }
   },
@@ -443,7 +443,7 @@ fi
   "completed_phases": ["constitution", "specify", "clarify"],
   "checkpoints": {
     "clarify": {
-      "status": "completed|skipped",
+      "status": "completed | skipped",
       "timestamp": "<timestamp>",
       "clarifications_resolved": 5
     }
@@ -658,7 +658,7 @@ git commit -m "docs: generate task breakdown for $feature_name
   "completed_phases": ["constitution", "specify", "clarify", "plan", "tasks", "analyze"],
   "checkpoints": {
     "analyze": {
-      "status": "completed|skipped",
+      "status": "completed | skipped",
       "timestamp": "<timestamp>",
       "findings": {
         "critical": 0,

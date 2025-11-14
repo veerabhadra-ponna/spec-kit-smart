@@ -328,7 +328,7 @@ class AnalysisCheckpoint:
 ## Dependency Matrix
 
 | Phase | Depends On | Blocks |
-|-------|-----------|--------|
+| ------- | ----------- | -------- |
 | Phase 1 | None | Phase 2, 3, 4, 5 |
 | Phase 2 | Phase 1 | None |
 | Phase 3 | Phase 1 | None |
@@ -342,7 +342,7 @@ class AnalysisCheckpoint:
 ## Timeline & Milestones
 
 | Milestone | Target Date | Status |
-|-----------|------------|--------|
+| ----------- | ------------ | -------- |
 | Phase 1 Start | TBD | NOT STARTED |
 | Phase 1 Complete | TBD + 6 weeks | NOT STARTED |
 | Phase 2 Complete | TBD + 9 weeks | NOT STARTED |
@@ -378,7 +378,7 @@ class AnalysisCheckpoint:
 ## Risk Assessment
 
 | Risk | Probability | Impact | Mitigation |
-|------|-------------|--------|------------|
+| ------ | ------------- | -------- | ------------ |
 | Tool dependencies unavailable | MEDIUM | HIGH | Graceful degradation, alternative tools |
 | Large codebase performance | MEDIUM | MEDIUM | Incremental analysis (Phase 3) |
 | Language-specific edge cases | HIGH | MEDIUM | Extensive testing, community feedback |

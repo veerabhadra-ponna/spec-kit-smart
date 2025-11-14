@@ -36,7 +36,7 @@ For detailed requirements, see functional-spec.md.
 ## Stage Prompts Available
 
 | File | Toolkit Stage | Purpose |
-|------|---------------|---------|
+| ------ | --------------- | --------- |
 | `constitution-prompt.md` | /speckit.constitution | Extract principles from legacy |
 | ~~`specify-prompt.md`~~ | /speckit.specify | **Use `functional-spec.md` directly** |
 | ~~`plan-prompt.md`~~ | /speckit.plan | **Use `technical-spec.md` directly** |

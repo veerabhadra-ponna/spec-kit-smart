@@ -1425,7 +1425,7 @@ When documenting findings:
    ```markdown
    ### 1.1 Identified Concern Files
    | File Path | Type | Evidence | LOC | Criticality |
-   |-----------|------|----------|-----|-------------|
+   | ----------- | ------ | ---------- | ----- | ------------- |
    | src/auth/AuthService.ts:15 | Core Implementation | Exports authenticate(), uses jsonwebtoken | 247 | CRITICAL |
    | src/middleware/authGuard.ts:8 | Middleware | Uses AuthService, applies @require_auth decorator | 89 | STANDARD |
    | config/auth.config.ts:1 | Configuration | JWT secret, token expiration settings | 34 | STANDARD |
@@ -1541,7 +1541,7 @@ When documenting findings:
 
    **Key Consumers** (Top 10 by usage):
    | File Path | Usage Count | Type | Impact |
-   |-----------|-------------|------|--------|
+   | ----------- | ------------- | ------ | -------- |
    | [file:line] | [COUNT] | [Controller/Service/etc] | [HIGH/MED/LOW] |
    ```
 

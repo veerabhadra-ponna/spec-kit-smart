@@ -917,7 +917,7 @@ Proposed templates for concern-specific analysis:
 ### Entry Points (file:line references)
 
 | Entry Point | Type | Usage Count | Evidence |
-|-------------|------|-------------|----------|
+| ------------- | ------ | ------------- | ---------- |
 | AuthService.authenticate() | Interface | 47 callsites | src/auth/AuthService.ts:23 |
 | verifyToken() | Direct function | 12 callsites | src/middleware/auth.js:45 |
 
@@ -987,7 +987,7 @@ Proposed templates for concern-specific analysis:
 ## Impact on Other Concerns
 
 | Concern | Impact | Mitigation |
-|---------|--------|------------|
+| --------- | -------- | ------------ |
 | Database | None | Auth tokens in separate table |
 | Caching | Session cache keys change | Update cache prefix |
 | Logging | Auth events format changes | Update log parsers |
@@ -1586,7 +1586,7 @@ Every concern migration should:
 **Risks**:
 
 | Risk | Probability | Impact | Mitigation |
-|------|------------|--------|------------|
+| ------ | ------------ | -------- | ------------ |
 | AI concern detection accuracy <90% | Medium | High | Improve prompt heuristics, iterate based on feedback |
 | AI abstraction assessment subjective | Low | Medium | Require file:line evidence, test on diverse codebases |
 | AI migration recommendations inconsistent | Low | High | Embed decision tree in prompt, require rationale |
@@ -1657,7 +1657,7 @@ Every concern migration should:
 **Benefits vs Python Approach**:
 
 | Aspect | Python Approach | AI-Driven Approach |
-|--------|----------------|-------------------|
+| -------- | ---------------- | ------------------- |
 | **Implementation** | 2-3 weeks Python coding | 1-2 days prompt engineering |
 | **Dependencies** | Python 3.10+, packages | None |
 | **Maintenance** | Update Python code for new patterns | Update prompts (easier) |

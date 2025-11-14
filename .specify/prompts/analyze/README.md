@@ -7,7 +7,7 @@ This directory contains the **chained prompt workflow** for the `analyze-project
 ## Benefits
 
 | Metric | Monolithic | Chained | Improvement |
-|--------|------------|---------|-------------|
+| -------- | ------------ | --------- | ------------- |
 | **Completion Rate** | 60% | 95% | +58% |
 | **File Analysis Coverage** | 70% | 95% | +36% |
 | **Pattern Extraction** | 60% | 90% | +50% |
@@ -58,7 +58,7 @@ Each stage:
   "timestamp": "2025-11-14T10:00:00Z",
   "stages_complete": ["stage1", "stage2", ...],
   "project_path": "/path/to/project",
-  "analysis_scope": "A|B",
+  "analysis_scope": "A | B",
   "tech_stack": {...},
   "patterns_found": {...},
   "dependencies": {...},

@@ -39,7 +39,7 @@ Based on file analysis, set these flags:
 
 ### Questions
 
-**Question 1: Target Language/Framework**
+#### Question 1: Target Language/Framework
 
 ```text
 Current: {detected language/framework}
@@ -50,7 +50,7 @@ Options:
 Your choice: ___
 ```text
 
-**Question 2: Target Database**
+#### Question 2: Target Database
 
 ```text
 Current: {detected or "Unknown"}
@@ -62,7 +62,7 @@ Options:
 Your choice: ___
 ```text
 
-**Question 3: Message Bus/Queue [CONDITIONAL]**
+#### Question 3: Message Bus/Queue [CONDITIONAL]
 
 **IF** `!HAS_MESSAGE_BUS`:
 
@@ -95,7 +95,7 @@ Options:
 Your choice: ___
 ```text
 
-**Question 4: Package Manager**
+#### Question 4: Package Manager
 
 ```text
 Current: {detected}
@@ -106,7 +106,7 @@ Options:
 Your choice: ___
 ```text
 
-**Question 5: Deployment Target**
+#### Question 5: Deployment Target
 
 ```text
 Current: {detected or "Unknown"}
@@ -123,7 +123,7 @@ Your choice: ___
 
 **Set** `IS_TRADITIONAL_DEPLOYMENT = (answer == "A")`
 
-**Question 6: Infrastructure as Code [CONDITIONAL]**
+#### Question 6: Infrastructure as Code [CONDITIONAL]
 
 **IF** `IS_TRADITIONAL_DEPLOYMENT`:
 
@@ -146,7 +146,7 @@ Options:
 Your choice: ___
 ```text
 
-**Question 7: Containerization Strategy [CONDITIONAL]**
+#### Question 7: Containerization Strategy [CONDITIONAL]
 
 **IF** `IS_TRADITIONAL_DEPLOYMENT`:
 
@@ -168,7 +168,7 @@ Options:
 Your choice: ___
 ```text
 
-**Question 8: Observability Stack [CONDITIONAL]**
+#### Question 8: Observability Stack [CONDITIONAL]
 
 **IF** `!HAS_OBSERVABILITY`:
 
@@ -198,7 +198,7 @@ Options:
 Your choice: ___
 ```text
 
-**Question 9: Security & Authentication**
+#### Question 9: Security & Authentication
 
 ```text
 Current: {detected auth mechanism}
@@ -212,7 +212,7 @@ Options:
 Your choice: ___
 ```text
 
-**Question 10: Testing Strategy**
+#### Question 10: Testing Strategy
 
 ```text
 Current: {detected test coverage}%
@@ -293,7 +293,7 @@ Calculate complexity scores using scoring matrices.
 
 ```text
 Complexity Score = {calculated_score}
-Complexity Rating = {LOW|MEDIUM|HIGH|VERY HIGH}
+Complexity Rating = {LOW | MEDIUM | HIGH | VERY HIGH}
 ```text
 
 ---

@@ -68,7 +68,7 @@
 **Critical Rules:**
 
 | DO | DON'T |
-|----|-------|
+| ---- | ------- |
 | Stop & emit `CLARIFICATION NEEDED` when unclear | Commit secrets/API keys/credentials |
 | Follow Constitution at all times | Modify `.specify/` during implementation |
 | Run formatters → linters → tests before commit | Add requirements not in specs |
@@ -109,7 +109,7 @@ Problem → Action
 **Core Functions Available:**
 
 | Function | Description | Bash | PowerShell |
-|----------|-------------|------|------------|
+| ---------- | ------------- | ------ | ------------ |
 | Repository root detection | Gets project root (git or fallback) | `get_repo_root()` | `Get-RepoRoot` |
 | Git detection | Checks if git is available | `has_git()` | `Test-HasGit` |
 | Branch detection | Gets current branch or feature | `get_current_branch()` | `Get-CurrentBranch` |
@@ -137,7 +137,7 @@ Problem → Action
 **Workflow Commands:**
 
 | Command | Output | Description |
-|---------|--------|-------------|
+| --------- | -------- | ------------- |
 | `/speckitsmart.specify` | spec.md | Create spec from description |
 | `/speckitsmart.clarify` | Updated spec.md | Resolve ambiguities |
 | `/speckitsmart.plan` | plan.md + design docs | Generate architecture |
@@ -184,7 +184,7 @@ project-root/
 **Scope Decision:**
 
 | Ambiguity Type | Action |
-|----------------|--------|
+| ---------------- | -------- |
 | Fundamental (affects architecture) | STOP ALL WORK, WAIT |
 | Isolated (affects one module) | STOP blocked tasks, CONTINUE others |
 | Detail (affects one function) | CONTINUE, emit clarification for later |
@@ -316,7 +316,7 @@ project-root/
 ### 5.3 Contract, Data Model & Quickstart Compliance
 
 | Document | Verification Required |
-|----------|----------------------|
+| ---------- | ---------------------- |
 | contracts/ | Compare endpoints to definitions, validate schemas exactly, test error responses, verify auth |
 | data-model.md | Verify migrations/models/validation/relationships match schemas |
 | quickstart.md | Follow steps exactly, verify outputs, test edge cases |
@@ -346,7 +346,7 @@ project-root/
 ### 6.1 Specification Violations
 
 | Trigger | Response | Recovery |
-|---------|----------|----------|
+| --------- | ---------- | ---------- |
 | Spec ambiguous/contradictory | STOP (per §4.1 scope table) → CLARIFICATION NEEDED → WAIT | Human updates spec → re-read → validate → resume |
 | Spec incomplete | Same as ambiguous | Same as ambiguous |
 
@@ -355,7 +355,7 @@ project-root/
 ### 6.2 Constitutional Violations
 
 | Trigger | Response | Recovery |
-|---------|----------|----------|
+| --------- | ---------- | ---------- |
 | Spec conflicts Constitution | STOP all → FLAG (article, requirement, conflict) → WAIT | Human updates spec OR adds plan.md justification |
 | Constitution article ambiguous | STOP → CONSTITUTION AMBIGUITY (article, question, situation, interpretations) → WAIT | Human clarifies (constitution.md note or message) → proceed |
 
@@ -364,7 +364,7 @@ project-root/
 **Test/Build Failures:**
 
 | Error Type | Response | Recovery |
-|------------|----------|----------|
+| ------------ | ---------- | ---------- |
 | Obvious (syntax, imports, typos) | Auto-fix max 2× | Fix + retest + resume (if ≤2 attempts) |
 | Ambiguous (logic, assertions) | Mark `[F]`, WAIT | Human diagnosis + fix + retest |
 | Spec issue (requirements wrong) | CLARIFICATION NEEDED | Human updates spec + regenerate |
@@ -411,7 +411,7 @@ project-root/
 **Regeneration Strategy:**
 
 | Spec Change | Strategy | Action |
-|-------------|----------|--------|
+| ------------- | ---------- | -------- |
 | Requirements added | Incremental | Add new code, keep existing |
 | Requirements modified | Selective | Regen affected functions/classes only |
 | Architecture changed | Full | Regen entire modules from scratch |
@@ -461,7 +461,7 @@ project-root/
 ## 10. Glossary
 
 | Term | Definition |
-|------|------------|
+| ------ | ------------ |
 | **Acceptance Criteria** | Measurable conditions for user story completion (spec.md) |
 | **Acceptance Scenario** | Given-When-Then test case defining success criteria |
 | **Atomic Commit** | Single logical change implementing 1 story/scenario |

@@ -114,14 +114,14 @@ Required:
       "name": "{package}",
       "current": "{version}",
       "latest": "{version}",
-      "type": "major|minor|patch"
+      "type": "major | minor | patch"
     }
   ],
   "vulnerable": [
     {
       "name": "{package}",
       "version": "{version}",
-      "severity": "CRITICAL|HIGH|MEDIUM|LOW",
+      "severity": "CRITICAL | HIGH | MEDIUM | LOW",
       "cve": "{CVE-YYYY-XXXXX}",
       "description": "{description}",
       "remediation": "{fix version or mitigation}"
@@ -174,7 +174,7 @@ Required:
     },
     "complexity": {
       "score": {0-100},
-      "rating": "LOW|MEDIUM|HIGH|VERY HIGH"
+      "rating": "LOW | MEDIUM | HIGH | VERY HIGH"
     },
     "feasibility": {
       "inline_upgrade": {percentage},
@@ -263,7 +263,7 @@ Generate 4 stage prompt files:
 
 ## Current Implementation
 - Type: {current_implementation}
-- Abstraction Level: {LOW|MEDIUM|HIGH}
+- Abstraction Level: {LOW | MEDIUM | HIGH}
 - Abstraction Score: {score}/10
 
 ## Touch Points Analysis

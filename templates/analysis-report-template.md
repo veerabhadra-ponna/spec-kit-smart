@@ -140,7 +140,7 @@
 **Critical Issues**:
 
 | Issue | Impact | Location | Effort to Fix |
-|-------|--------|----------|---------------|
+| ------- | -------- | ---------- | --------------- |
 | [Issue 1] | HIGH/MEDIUM/LOW | [File/Component] | [DAYS/WEEKS/MONTHS] |
 | [Issue 2] | HIGH/MEDIUM/LOW | [File/Component] | [DAYS/WEEKS/MONTHS] |
 
@@ -163,7 +163,7 @@
 **Severity Levels**: 🔴 CRITICAL | 🟠 HIGH | 🟡 MEDIUM | 🟢 LOW
 
 | Issue | Severity | Description | Remediation |
-|-------|----------|-------------|-------------|
+| ------- | ---------- | ------------- | ------------- |
 | [Issue 1] | 🔴 | [Description] | [Fix steps] |
 | [Issue 2] | 🟠 | [Description] | [Fix steps] |
 
@@ -201,7 +201,7 @@
 ### 4.1 Outdated Dependencies
 
 | Package | Current Version | Latest LTS | Latest Stable | Security Issues | Breaking Changes |
-|---------|----------------|------------|---------------|-----------------|------------------|
+| --------- | ---------------- | ------------ | --------------- | ----------------- | ------------------ |
 | [package-1] | [x.y.z] | [x.y.z] | [x.y.z] | 🔴 YES / 🟢 NO | 🔴 YES / 🟢 NO |
 | [package-2] | [x.y.z] | [x.y.z] | [x.y.z] | 🔴 YES / 🟢 NO | 🔴 YES / 🟢 NO |
 
@@ -210,7 +210,7 @@
 **Critical Vulnerabilities** (CVE/CVSS):
 
 | Package | Vulnerability | CVSS Score | Fix Version | Exploit Available |
-|---------|---------------|------------|-------------|-------------------|
+| --------- | --------------- | ------------ | ------------- | ------------------- |
 | [package] | [CVE-XXXX-XXXX] | [0-10] | [version] | YES/NO |
 
 ### 4.3 Deprecated Dependencies
@@ -233,7 +233,7 @@
 ### 5.1 Runtime Versions
 
 | Runtime | Current Version | LTS Version | EOL Date | Upgrade Priority |
-|---------|----------------|-------------|----------|------------------|
+| --------- | ---------------- | ------------- | ---------- | ------------------ |
 | Node.js | [version] | [version] | [date] | HIGH/MEDIUM/LOW |
 | Python | [version] | [version] | [date] | HIGH/MEDIUM/LOW |
 | .NET | [version] | [version] | [date] | HIGH/MEDIUM/LOW |
@@ -286,7 +286,7 @@ Target: [version]
 **Immediate Actions Required**:
 
 | Priority | Package | Action | Effort |
-|----------|---------|--------|--------|
+| ---------- | --------- | -------- | -------- |
 | 🔴 CRITICAL | [package] | Upgrade to [version] | [HOURS] |
 | 🟠 HIGH | [package] | Upgrade to [version] | [HOURS] |
 
@@ -317,7 +317,7 @@ Target: [version]
 **Recommended Technology Updates**:
 
 | Current | Recommended | Rationale | Migration Effort |
-|---------|-------------|-----------|------------------|
+| --------- | ------------- | ----------- | ------------------ |
 | [Tech 1] | [New Tech 1] | [Why upgrade] | [EFFORT] |
 | [Tech 2] | [New Tech 2] | [Why upgrade] | [EFFORT] |
 
@@ -361,7 +361,7 @@ Target: [version]
 **Factors**:
 
 | Factor | Weight | Score | Weighted Score | Notes |
-|--------|--------|-------|----------------|-------|
+| -------- | -------- | ------- | ---------------- | ------- |
 | Code Quality | 20% | [0-10] | [calc] | [Notes] |
 | Test Coverage | 15% | [0-10] | [calc] | [Notes] |
 | Dependency Health | 20% | [0-10] | [calc] | [Notes] |
@@ -452,7 +452,7 @@ Final score = (Weighted sum) * 10 (max 100)
 **Factors**:
 
 | Factor | Weight | Score | Weighted Score | Notes |
-|--------|--------|-------|----------------|-------|
+| -------- | -------- | ------- | ---------------- | ------- |
 | Requirements Clarity | 20% | [0-10] | [calc] | [Notes] |
 | Technical Debt Level | 20% | [0-10] | [calc] | [Notes] |
 | Business Continuity | 15% | [0-10] | [calc] | [Notes] |
@@ -488,7 +488,7 @@ Based on:
 ### 9.1 Inline Upgrade vs Greenfield Comparison
 
 | Criteria | Inline Upgrade | Greenfield Rewrite | Winner |
-|----------|----------------|--------------------| -------|
+| ---------- | ---------------- | -------------------- | ------- |
 | **Time to Complete** | [TIMEFRAME] | [TIMEFRAME] | [INLINE/GREENFIELD] |
 | **Cost** | [ESTIMATE] | [ESTIMATE] | [INLINE/GREENFIELD] |
 | **Risk Level** | [LOW/MED/HIGH] | [LOW/MED/HIGH] | [INLINE/GREENFIELD] |
@@ -554,14 +554,14 @@ Based on:
 ### 11.1 Upgrade Risks
 
 | Risk | Probability | Impact | Mitigation Strategy |
-|------|-------------|--------|---------------------|
+| ------ | ------------- | -------- | --------------------- |
 | [Risk 1] | HIGH/MED/LOW | HIGH/MED/LOW | [Strategy] |
 | [Risk 2] | HIGH/MED/LOW | HIGH/MED/LOW | [Strategy] |
 
 ### 11.2 Rewrite Risks
 
 | Risk | Probability | Impact | Mitigation Strategy |
-|------|-------------|--------|---------------------|
+| ------ | ------------- | -------- | --------------------- |
 | [Risk 1] | HIGH/MED/LOW | HIGH/MED/LOW | [Strategy] |
 | [Risk 2] | HIGH/MED/LOW | HIGH/MED/LOW | [Strategy] |
 

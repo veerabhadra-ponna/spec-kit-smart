@@ -148,7 +148,7 @@ Specify generates agent-specific command files and directories. Each agent uses 
 ### Current Supported Agents
 
 | Agent | Directory | Format | CLI Tool | Description |
-|-------|-----------|---------|----------|-------------|
+| ------- | ----------- | --------- | ---------- | ------------- |
 | **Claude Code** | `.claude/commands/` | Markdown | `claude` | Anthropic's Claude Code CLI |
 | **Gemini CLI** | `.gemini/commands/` | TOML | `gemini` | Google's Gemini CLI |
 | **GitHub Copilot** | `.github/prompts/` | Markdown | N/A (IDE-based) | GitHub Copilot in VS Code |
