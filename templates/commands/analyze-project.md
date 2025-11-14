@@ -1231,13 +1231,15 @@ When documenting findings:
    3. Resume from next chunk
    4. Display to user:
       ```
+
       ⚠️ RESUMING INTERRUPTED ANALYSIS
-      
+
       Last completed: Chunk [N] (Phase [X.Y])
       Resuming from: Chunk [N+1] (Phase [X+1.Y])
-      
+
       Continuing analysis...
-      ```
+
+      ```text
    5. Continue chunk generation from resume point
    ```
 
@@ -1742,15 +1744,15 @@ When documenting findings:
 
    **CRITICAL: Check $SPEC_KIT_CHECK_ARTIFACTORY environment variable FIRST**:
 
-   - **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"false"` (default):
-     - **SKIP this entire step (5B) silently**
-     - Do NOT log or mention that Artifactory check is disabled
-     - Do NOT run any validation scripts
-     - Proceed directly to Step 6 (Generate Artifacts)
-     - Treat this feature as if it does not exist
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"false"` (default):
+  - **SKIP this entire step (5B) silently**
+  - Do NOT log or mention that Artifactory check is disabled
+  - Do NOT run any validation scripts
+  - Proceed directly to Step 6 (Generate Artifacts)
+  - Treat this feature as if it does not exist
 
-   - **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"true"`:
-     - Proceed with validation workflow below
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"true"`:
+  - Proceed with validation workflow below
 
    ---
 
@@ -1831,19 +1833,19 @@ When documenting findings:
 
    **Error Handling**:
 
-   - If check-artifactory script not found: SKIP validation, add note to technical-spec
-   - If Artifactory URL not configured: SKIP validation (exit 4 from script)
-   - If authentication fails: WARN user, proceed with incomplete results
+- If check-artifactory script not found: SKIP validation, add note to technical-spec
+- If Artifactory URL not configured: SKIP validation (exit 4 from script)
+- If authentication fails: WARN user, proceed with incomplete results
 
    **Note**: This step is optional and gracefully skipped if:
 
-   - No corporate guidelines exist
-   - Artifactory URL not configured
-   - Validation scripts not available
+- No corporate guidelines exist
+- Artifactory URL not configured
+- Validation scripts not available
 
    ---
 
-6. **Generate Artifacts**:
+1. **Generate Artifacts**:
 
    **⚠️ PREREQUISITE CHECK (from Step 4.A)**:
 
@@ -2306,7 +2308,7 @@ When documenting findings:
 
    ---
 
-7. **Final Report**: Summarize key findings, state primary recommendation with confidence score, list next steps, provide artifact file paths
+1. **Final Report**: Summarize key findings, state primary recommendation with confidence score, list next steps, provide artifact file paths
 
    **Summary should include**:
    - Legacy stack detected
@@ -2453,7 +2455,8 @@ When documenting findings:
 
 ## Version History
 
-**v1.2.0-alpha (v4) - 2025-11-14**
+### v1.2.0-alpha (v4) - 2025-11-14
+
 - ✅ Completion-based chunking (not size-based)
 - ✅ No file count limits (analyze ALL important files)
 - ✅ Upfront estimation with time warnings
@@ -2467,11 +2470,13 @@ When documenting findings:
 - ✅ Examples of good vs bad extraction
 - ✅ Dependency graph enforcement (artifacts require analysis-report.md)
 
-**v1.1.0-alpha (v3) - Previous**
+### v1.1.0-alpha (v3) - Previous
+
 - Fixed Python dependency (pure PS/Bash)
 - Project Analysis Report always generated first (intent, not enforced)
 - Cross-Cutting Concern as add-on
 
-**v1.0.0-alpha - Initial**
+### v1.0.0-alpha - Initial
+
 - Basic analysis workflow
 - Python enumeration
