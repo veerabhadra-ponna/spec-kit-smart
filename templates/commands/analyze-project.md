@@ -1845,7 +1845,8 @@ When documenting findings:
 
    ---
 
-1. **Generate Artifacts**:
+<!-- markdownlint-disable-next-line MD029 -->
+6. **Generate Artifacts**:
 
    **⚠️ PREREQUISITE CHECK (from Step 4.A)**:
 
@@ -2308,7 +2309,8 @@ When documenting findings:
 
    ---
 
-1. **Final Report**: Summarize key findings, state primary recommendation with confidence score, list next steps, provide artifact file paths
+<!-- markdownlint-disable-next-line MD029 -->
+7. **Final Report**: Summarize key findings, state primary recommendation with confidence score, list next steps, provide artifact file paths
 
    **Summary should include**:
    - Legacy stack detected
