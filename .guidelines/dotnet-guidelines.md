@@ -74,7 +74,7 @@
 
 **MUST** use: `YOUR_ORG.AspNetCore.Starter` package
 **Includes**: Security, logging, monitoring, health checks, exception handling, CORS, rate limiting, distributed tracing
-**Integration**: 
+**Integration**:
 
 - Register services via `builder.Services.AddYourOrgServices()`
 - Apply middleware via `app.UseYourOrgMiddleware()`

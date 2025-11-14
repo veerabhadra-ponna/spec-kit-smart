@@ -507,7 +507,7 @@ function App() {
 
 **SHOULD** use: Feature/domain-based organization
 
-```
+```text
 src/
 ├── app/                     # Next.js App Router
 │   ├── (auth)/              # Route groups
@@ -541,7 +541,7 @@ src/
 
 ### Project Structure - Vite/SPA
 
-```
+```text
 src/
 ├── features/
 │   ├── auth/
@@ -610,7 +610,7 @@ function useUser() {
 - Co-locate tests, styles, types with components
 - Use named exports (avoid default exports for better refactoring)
 
-```
+```text
 components/
 ├── UserCard/
 │   ├── UserCard.tsx

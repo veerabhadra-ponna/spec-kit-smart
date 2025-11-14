@@ -551,10 +551,9 @@ When documenting findings:
 
    **Store responses** for use in artifact generation (functional-spec.md, technical-spec.md).
 
-
    ---
 
-   #### Phase 1: Concrete Scanning Process
+   ### Phase 1: Concrete Scanning Process
 
    **Scan ALL code files** using the `file-manifest.json` to understand functionality.
 
@@ -774,7 +773,7 @@ When documenting findings:
 
    These examples show the level of detail expected for EVERY feature.
 
-   ```
+   ```text
 
    **Handle user response**:
    - **[A]**: Proceed with full analysis (continue to Phase 1)
@@ -792,7 +791,7 @@ When documenting findings:
 
    ---
 
-   #### Phase 1: Concrete Scanning Process
+   ### Phase 1: Begin Scanning Process
 
    **Scan ALL code files** using the `file-manifest.json` to understand functionality.
 
@@ -1044,12 +1043,14 @@ When documenting findings:
    **After generation**:
    - Write Chunk 1 to file using `create_file` tool
    - **MANDATORY**: Display progress update:
-     ```
+
+     ```text
      ✓ Chunk 1/[TOTAL] complete: Phase 1 (Project Discovery)
        - Analyzed: [COUNT] configuration files
        - Identified: [TECH STACK SUMMARY]
        - Lines generated: [COUNT]
      ```
+
    - Create checkpoint: Write `.analysis/.checkpoints/phase-1-complete` marker file
 
    ---
@@ -1074,13 +1075,15 @@ When documenting findings:
    **After generation**:
    - Append Chunk 2 to file using `str_replace` tool (append mode)
    - **MANDATORY**: Display progress update:
-     ```
+
+     ```text
      ✓ Chunk 2/[TOTAL] complete: Phase 2.1 (Controllers & Endpoints)
        - Analyzed: [COUNT] controller files
        - Documented: [COUNT] API endpoints
        - Features extracted: [COUNT]
        - Lines generated: [COUNT]
      ```
+
    - Create checkpoint: `.analysis/.checkpoints/phase-2-1-complete`
 
    ---
@@ -1106,13 +1109,15 @@ When documenting findings:
    **After generation**:
    - Append Chunk 3 using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ Chunk 3/[TOTAL] complete: Phase 2.2 (Services & Business Logic)
        - Analyzed: [COUNT] service files
        - Workflows documented: [COUNT]
        - Integrations found: [COUNT]
        - Lines generated: [COUNT]
      ```
+
    - Create checkpoint: `.analysis/.checkpoints/phase-2-2-complete`
 
    ---
@@ -1138,13 +1143,15 @@ When documenting findings:
    **After generation**:
    - Append Chunk 4 using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ Chunk 4/[TOTAL] complete: Phase 2.3 (Data Layer)
        - Analyzed: [COUNT] model files
        - Entities documented: [COUNT]
        - Relationships mapped: [COUNT]
        - Lines generated: [COUNT]
      ```
+
    - Create checkpoint: `.analysis/.checkpoints/phase-2-3-complete`
 
    ---
@@ -1169,11 +1176,13 @@ When documenting findings:
    **After generation**:
    - Append Chunk 5 using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ Chunk 5/[TOTAL] complete: Phase 3 (Positive Findings)
        - Good patterns found: [COUNT]
        - Lines generated: [COUNT]
      ```
+
    - Create checkpoint: `.analysis/.checkpoints/phase-3-complete`
 
    ---
@@ -1208,12 +1217,14 @@ When documenting findings:
    **After generation**:
    - Append Chunk 6 using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ Chunk 6/[TOTAL] complete: Phase 4 (Negative Findings)
        - Technical debt items: [COUNT]
        - Security issues: [COUNT]
        - Lines generated: [COUNT]
      ```
+
    - Create checkpoint: `.analysis/.checkpoints/phase-4-complete`
 
    ---
@@ -1243,11 +1254,13 @@ When documenting findings:
    **After generation**:
    - Append Chunk 7 using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ Chunk 7/[TOTAL] complete: Phase 5 (Upgrade Paths)
        - Upgrade paths evaluated: [COUNT]
        - Lines generated: [COUNT]
      ```
+
    - Create checkpoint: `.analysis/.checkpoints/phase-5-complete`
 
    ---
@@ -1273,12 +1286,14 @@ When documenting findings:
    **After generation**:
    - Append Chunk 8 using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ Chunk 8/[TOTAL] complete: Phases 6-7 (Modernization + Feasibility)
        - Recommendations: [COUNT]
        - Feasibility scores calculated
        - Lines generated: [COUNT]
      ```
+
    - Create checkpoint: `.analysis/.checkpoints/phase-6-7-complete`
 
    ---
@@ -1304,7 +1319,8 @@ When documenting findings:
    **After generation**:
    - Append Chunk 9 using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ Chunk 9/[TOTAL] complete: Phases 8-9 (Decision + Recommendations)
        - Decision matrix complete
        - Primary recommendation: [SUMMARY]
@@ -1315,6 +1331,7 @@ When documenting findings:
         Total chunks: 9
         Time taken: [ESTIMATE]
      ```
+
    - Create checkpoint: `.analysis/.checkpoints/all-phases-complete`
 
    ---
@@ -1332,7 +1349,7 @@ When documenting findings:
 
    **Resume Logic** (if generation interrupted):
 
-   ```markdown
+   ```text
    **IF** analysis-report.md exists BUT is incomplete:
    
    1. Check `.analysis/.checkpoints/` directory
@@ -1340,13 +1357,15 @@ When documenting findings:
    3. Resume from next chunk
    4. Display to user:
       ```
+
       ⚠️ RESUMING INTERRUPTED ANALYSIS
-      
+
       Last completed: Chunk [N] (Phase [X.Y])
       Resuming from: Chunk [N+1] (Phase [X+1.Y])
-      
+
       Continuing analysis...
-      ```
+
+      ```text
    5. Continue chunk generation from resume point
    ```
 
@@ -1528,6 +1547,7 @@ When documenting findings:
    - Apply intelligent pattern matching for custom concerns
 
    **Output**:
+
    ```markdown
    ### 1.1 Identified Concern Files
    | File Path | Type | Evidence | LOC | Criticality |
@@ -1826,7 +1846,7 @@ When documenting findings:
 
    ---
 
-5. **Ask Clarification Questions (If Needed)**:
+4. **Ask Clarification Questions (If Needed)**:
 
    After deep analysis (Steps 4.A and 4.B if applicable), if there are ambiguities, ask user for clarification:
 
@@ -1850,15 +1870,15 @@ When documenting findings:
 
    **CRITICAL: Check $SPEC_KIT_CHECK_ARTIFACTORY environment variable FIRST**:
 
-   - **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"false"` (default):
-     - **SKIP this entire step (5B) silently**
-     - Do NOT log or mention that Artifactory check is disabled
-     - Do NOT run any validation scripts
-     - Proceed directly to Step 6 (Generate Artifacts)
-     - Treat this feature as if it does not exist
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"false"` (default):
+  - **SKIP this entire step (5B) silently**
+  - Do NOT log or mention that Artifactory check is disabled
+  - Do NOT run any validation scripts
+  - Proceed directly to Step 6 (Generate Artifacts)
+  - Treat this feature as if it does not exist
 
-   - **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"true"`:
-     - Proceed with validation workflow below
+- **IF** `$SPEC_KIT_CHECK_ARTIFACTORY` is `"true"`:
+  - Proceed with validation workflow below
 
    ---
 
@@ -1896,6 +1916,7 @@ When documenting findings:
       - `errors`: Validation failures (network, auth, etc.) ⚠️
 
    6. **Display Results to User**:
+
       ```text
       Library Availability Check (Artifactory):
 
@@ -1919,6 +1940,7 @@ When documenting findings:
    7. **User Action (if any failures)**:
       - If all libraries approved or Artifactory not configured: Proceed to step 6
       - If any libraries not whitelisted: Ask user for decision:
+
         ```text
         Some proposed libraries are not whitelisted in Artifactory:
         - some-random-library:1.0.0
@@ -1937,19 +1959,19 @@ When documenting findings:
 
    **Error Handling**:
 
-   - If check-artifactory script not found: SKIP validation, add note to technical-spec
-   - If Artifactory URL not configured: SKIP validation (exit 4 from script)
-   - If authentication fails: WARN user, proceed with incomplete results
+- If check-artifactory script not found: SKIP validation, add note to technical-spec
+- If Artifactory URL not configured: SKIP validation (exit 4 from script)
+- If authentication fails: WARN user, proceed with incomplete results
 
    **Note**: This step is optional and gracefully skipped if:
 
-   - No corporate guidelines exist
-   - Artifactory URL not configured
-   - Validation scripts not available
+- No corporate guidelines exist
+- Artifactory URL not configured
+- Validation scripts not available
 
    ---
 
-6. **Generate Artifacts**:
+1. **Generate Artifacts**:
 
    **⚠️ PREREQUISITE CHECK (from Step 4.A)**:
 
@@ -2037,7 +2059,8 @@ When documenting findings:
 
    **After generation**:
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ EXECUTIVE-SUMMARY.md complete
        - Extracted from: analysis-report.md
        - Lines: [COUNT]
@@ -2057,10 +2080,11 @@ When documenting findings:
    - Sections: 1 (Introduction), 2 (Executive Summary), 3 (Scope)
    - Content: Project overview, high-level purpose, what's in/out of scope
    - Completion: All 3 sections complete, no placeholders
-   
+
    **After Chunk 1**:
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ functional-spec.md Chunk 1/5 complete: Introduction + Summary + Scope
        - Lines: [COUNT]
      ```
@@ -2070,11 +2094,12 @@ When documenting findings:
    - Content: All CRITICAL features from analysis-report.md Phase 2
    - Every feature MUST have file:line reference
    - Completion: All CRITICAL features documented with evidence
-   
+
    **After Chunk 2**:
    - Append to file using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ functional-spec.md Chunk 2/5 complete: User Stories (CRITICAL)
        - Features: [COUNT]
        - Lines: [COUNT]
@@ -2084,11 +2109,12 @@ When documenting findings:
    - Sections: 4.2 (User Stories - STANDARD), 5 (Business Rules)
    - Content: STANDARD features + validation rules
    - Completion: All STANDARD features + rules documented
-   
+
    **After Chunk 3**:
    - Append using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ functional-spec.md Chunk 3/5 complete: STANDARD Features + Rules
        - Features: [COUNT]
        - Lines: [COUNT]
@@ -2098,11 +2124,12 @@ When documenting findings:
    - Sections: 6 (Non-Functional Requirements), 7 (Data Requirements)
    - Content: Performance, security, scalability, data entities
    - Completion: NFRs defined, data models documented
-   
+
    **After Chunk 4**:
    - Append using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ functional-spec.md Chunk 4/5 complete: NFRs + Data
        - Lines: [COUNT]
      ```
@@ -2111,11 +2138,12 @@ When documenting findings:
    - Sections: 8 (Acceptance Criteria), 9 (Assumptions), 10 (Constraints)
    - Content: Testing criteria, assumptions, limitations
    - Completion: All sections complete, no placeholders
-   
+
    **After Chunk 5**:
    - Append using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✅ functional-spec.md COMPLETE (5/5 chunks)
         - Total features: [COUNT]
         - Total lines: [COUNT]
@@ -2135,10 +2163,11 @@ When documenting findings:
    - Sections: 1 (Introduction), 2 (Architecture Overview), 3 (Legacy vs Target)
    - Content: System architecture, comparison tables, Mermaid diagrams
    - Completion: Architecture patterns documented, comparison complete
-   
+
    **After Chunk 1**:
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ technical-spec.md Chunk 1/5 complete: Architecture + Comparison
        - Diagrams: [COUNT]
        - Lines: [COUNT]
@@ -2148,11 +2177,12 @@ When documenting findings:
    - Sections: 4 (Target Tech Stack), 5 (Data Architecture)
    - Content: User's chosen stack (from 10 questions), database design, ORM
    - Completion: All tech choices documented, data layer designed
-   
+
    **After Chunk 2**:
    - Append using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ technical-spec.md Chunk 2/5 complete: Tech Stack + Data
        - Lines: [COUNT]
      ```
@@ -2161,11 +2191,12 @@ When documenting findings:
    - Sections: 6 (API Design), 7 (Integration Architecture)
    - Content: REST/GraphQL design, external APIs, message queues
    - Completion: API contracts defined, integrations documented
-   
+
    **After Chunk 3**:
    - Append using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ technical-spec.md Chunk 3/5 complete: API + Integrations
        - Endpoints: [COUNT]
        - Lines: [COUNT]
@@ -2175,11 +2206,12 @@ When documenting findings:
    - Sections: 8 (Security), 9 (Deployment Strategy)
    - Content: User's chosen auth (Q9), deployment target (Q5), IaC (Q6), containers (Q7)
    - Completion: Security measures defined, deployment plan complete
-   
+
    **After Chunk 4**:
    - Append using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ technical-spec.md Chunk 4/5 complete: Security + Deployment
        - Lines: [COUNT]
      ```
@@ -2188,11 +2220,12 @@ When documenting findings:
    - Sections: 10 (Testing), 11 (Observability), 12 (Migration Risks)
    - Content: User's testing choice (Q10), observability stack (Q8), risk mitigation
    - Completion: All sections complete, no placeholders
-   
+
    **After Chunk 5**:
    - Append using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✅ technical-spec.md COMPLETE (5/5 chunks)
         - Total lines: [COUNT]
      ```
@@ -2227,7 +2260,8 @@ When documenting findings:
 
    **After generating all 4 files**:
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✅ stage-prompts/ COMPLETE (4 files)
         - constitution-prompt.md
         - clarify-prompt.md
@@ -2302,10 +2336,11 @@ When documenting findings:
    - Sections: 1 (Introduction), 2 (Context from analysis-report.md), 3 (Identified Files)
    - Content: Concern overview, reference to analysis-report.md, all concern files with evidence
    - Completion: Context clear, all files identified with file:line refs
-   
+
    **After Chunk 1**:
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ concern-analysis.md Chunk 1/3 complete: Intro + Files
        - Files identified: [COUNT]
        - Lines: [COUNT]
@@ -2315,11 +2350,12 @@ When documenting findings:
    - Sections: 4 (Abstraction Assessment), 5 (Blast Radius), 6 (Coupling Analysis)
    - Content: All findings from Step 4.B.2, 4.B.3, 4.B.4
    - Completion: All metrics calculated, evidence provided
-   
+
    **After Chunk 2**:
    - Append using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ concern-analysis.md Chunk 2/3 complete: Analysis Metrics
        - Abstraction score: [SCORE]
        - Blast radius: [PERCENT]%
@@ -2330,11 +2366,12 @@ When documenting findings:
    - Sections: 7 (Recommended Strategy), 8 (Risks), 9 (Recommendations)
    - Content: Strategy from Step 4.B.5, risk analysis, next steps
    - Completion: All sections complete, no placeholders
-   
+
    **After Chunk 3**:
    - Append using `str_replace`
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✅ concern-analysis.md COMPLETE (3/3 chunks)
         - Strategy: [APPROACH]
         - Total lines: [COUNT]
@@ -2355,7 +2392,8 @@ When documenting findings:
 
    **After generation**:
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ abstraction-recommendations.md complete
        - Lines: [COUNT]
      ```
@@ -2367,13 +2405,14 @@ When documenting findings:
    **Chunk 1: Strategy + Phasing**
    - Sections: Migration approach, 50/30/15/5 phases
    - Content: Detailed from Step 4.B.5
-   
+
    **Chunk 2: Risks + Testing + Rollback** (if needed)
    - Sections: Risk mitigation, testing strategy, rollback plan
-   
+
    **After generation**:
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✅ concern-migration-plan.md COMPLETE
         - Phases: 4
         - Lines: [COUNT]
@@ -2387,14 +2426,15 @@ When documenting findings:
 
    **After generation**:
    - **MANDATORY**: Display progress:
-     ```
+
+     ```text
      ✓ EXECUTIVE-SUMMARY.md complete
        - Lines: [COUNT]
      ```
 
    ---
 
-7. **Final Report**: Summarize key findings, state primary recommendation with confidence score, list next steps, provide artifact file paths
+1. **Final Report**: Summarize key findings, state primary recommendation with confidence score, list next steps, provide artifact file paths
 
    **Summary should include**:
    - Legacy stack detected
@@ -2498,7 +2538,8 @@ When documenting findings:
 
 - Display: "❌ Chunk [N] generation failed: [ERROR]"
 - Offer options:
-  ```
+
+  ```text
   Recovery Options:
   [A] Retry chunk [N]
   [B] Skip chunk [N] and continue (not recommended)
@@ -2514,7 +2555,8 @@ When documenting findings:
 
 - Display: "❌ Failed to generate [ARTIFACT]: [ERROR]"
 - Offer options:
-  ```
+
+  ```text
   Recovery Options:
   [A] Retry [ARTIFACT] generation
   [B] Skip [ARTIFACT] (not recommended)
@@ -2524,7 +2566,8 @@ When documenting findings:
 **If extremely large project (>500 files, >90 minutes)**:
 
 - After scope detection (Phase 0), offer alternative approaches:
-  ```
+
+  ```text
   ⚠️ EXTREMELY LARGE PROJECT
 
   Options:
@@ -2533,5 +2576,3 @@ When documenting findings:
   [C] Staged analysis (analyze category by category across multiple sessions)
   [D] Focus on specific areas (choose which categories to analyze)
   ```
-
-

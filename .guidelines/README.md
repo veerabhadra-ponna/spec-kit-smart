@@ -107,16 +107,16 @@ The system automatically detects specific frameworks within each stack:
 
 1. **Explicit Path Mapping** (`stack-mapping.json` paths)
    - Example: `frontend/**/*.ts` → React guidelines
-   
+
 2. **Framework-Specific Markers**
    - Example: `next.config.js` → Next.js-specific React guidelines
-   
+
 3. **Dependency Analysis** (`package.json`, `requirements.txt`, `pom.xml`)
    - Example: `"react": "^18.0.0"` → React guidelines
-   
+
 4. **File Extension**
    - Example: `*.tsx` → React (if no conflicting path)
-   
+
 5. **Directory Convention**
    - Example: `frontend/` → React, `backend/` → Backend stack
 
@@ -286,7 +286,7 @@ Guidelines specify **target versions**:
 }
 ```
 
-3. Update `README.md` with stack information
+1. Update `README.md` with stack information
 
 ### Custom Path Mappings
 
@@ -316,7 +316,7 @@ Edit `stack-mapping.json` to add project-specific paths:
 
 **Decision Tree**:
 
-```
+```text
 1. Is there a Constitution? 
    → YES: Load constitution (highest priority)
    → NO: Continue
@@ -349,7 +349,7 @@ Edit `stack-mapping.json` to add project-specific paths:
 
 **Example Adaptation**:
 
-```
+```text
 Guideline Principle:
 "MUST use async/await for all I/O operations"
 
@@ -382,7 +382,7 @@ When a guideline cannot be followed:
 **Workaround**: Wrapped axios with retry logic and logging
 ```
 
-2. **Mark in code** with tracking comment:
+1. **Mark in code** with tracking comment:
 
 ```typescript
 // TODO: GUIDELINE-VIOLATION - Ticket #TECH-1234
@@ -390,8 +390,8 @@ When a guideline cannot be followed:
 import axios from 'axios';
 ```
 
-3. **Create ticket** for resolution (target: next sprint)
-4. **Schedule review** within 30 days
+1. **Create ticket** for resolution (target: next sprint)
+1. **Schedule review** within 30 days
 
 ---
 
@@ -593,20 +593,20 @@ Guidelines cover complex scenarios:
 
 ### External Standards
 
-- **OWASP Top 10**: https://owasp.org/www-project-top-ten/
-- **WCAG 2.1**: https://www.w3.org/WAI/WCAG21/quickref/
-- **GDPR**: https://gdpr.eu/
-- **RFC 2119** (Requirement Levels): https://www.rfc-editor.org/rfc/rfc2119
-- **OpenTelemetry**: https://opentelemetry.io/
-- **12-Factor App**: https://12factor.net/
+- **OWASP Top 10**: <https://owasp.org/www-project-top-ten/>
+- **WCAG 2.1**: <https://www.w3.org/WAI/WCAG21/quickref/>
+- **GDPR**: <https://gdpr.eu/>
+- **RFC 2119** (Requirement Levels): <https://www.rfc-editor.org/rfc/rfc2119>
+- **OpenTelemetry**: <https://opentelemetry.io/>
+- **12-Factor App**: <https://12factor.net/>
 
 ### Framework Documentation
 
-- **React**: https://react.dev/
-- **Next.js**: https://nextjs.org/docs
-- **Spring Boot**: https://spring.io/projects/spring-boot
-- **FastAPI**: https://fastapi.tiangolo.com/
-- **.NET**: https://learn.microsoft.com/en-us/dotnet/
+- **React**: <https://react.dev/>
+- **Next.js**: <https://nextjs.org/docs>
+- **Spring Boot**: <https://spring.io/projects/spring-boot>
+- **FastAPI**: <https://fastapi.tiangolo.com/>
+- **.NET**: <https://learn.microsoft.com/en-us/dotnet/>
 
 ---
 
@@ -661,9 +661,9 @@ Copyright © 2025 Your Organization. All rights reserved.
 ## Support
 
 **Questions?** Contact the Architecture Team:
-- **Email**: architecture@yourorg.com
+- **Email**: <architecture@yourorg.com>
 - **Slack**: #guidelines-support
-- **Wiki**: https://wiki.yourorg.com/guidelines
+- **Wiki**: <https://wiki.yourorg.com/guidelines>
 
 **Issues?** File a ticket:
 - **Jira Project**: GUIDELINES
