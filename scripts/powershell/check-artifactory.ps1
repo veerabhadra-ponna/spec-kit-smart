@@ -29,17 +29,15 @@ param(
     [Parameter(Mandatory=$false, Position=3)]
     [string]$Repos = "",
 
-    [switch]$Help,
-
-    [switch]$Debug
+    [switch]$Help
 )
 
 $ErrorActionPreference = 'Stop'
 
-# Check for DEBUG environment variable if -Debug not passed
-if (-not $Debug -and $env:DEBUG -eq "true") {
-    $Debug = $true
-}
+# Use PowerShell's built-in debug mechanism
+# When -Debug is passed, $DebugPreference is set to 'Continue'
+# Also check DEBUG environment variable for compatibility
+$IsDebugEnabled = ($DebugPreference -eq 'Continue') -or ($env:DEBUG -eq "true")
 
 # Show help if requested
 if ($Help) {
@@ -157,7 +155,7 @@ if ($Repos -ne "") {
 }
 
 # Debug output
-if ($Debug) {
+if ($IsDebugEnabled) {
     Write-Host "DEBUG: Artifactory URL: $ArtifactoryUrl" -ForegroundColor Cyan
     Write-Host "DEBUG: Library Name: $LibraryName" -ForegroundColor Cyan
     Write-Host "DEBUG: Repositories: $(if ($Repos) { $Repos } else { 'all' })" -ForegroundColor Cyan
@@ -174,7 +172,7 @@ try {
     # Try Bearer token first (modern method, supports all token types)
     $usedBearerAuth = $false
     if ($ApiKey -ne "") {
-        if ($Debug) {
+        if ($IsDebugEnabled) {
             Write-Host "DEBUG: Attempting authentication with Bearer token..." -ForegroundColor Cyan
         }
         $headers["Authorization"] = "Bearer $ApiKey"
@@ -196,7 +194,7 @@ try {
 
         # If Bearer auth failed with 401/403, try legacy X-JFrog-Art-Api header
         if ($usedBearerAuth -and ($statusCode -eq 401 -or $statusCode -eq 403)) {
-            if ($Debug) {
+            if ($IsDebugEnabled) {
                 Write-Host "DEBUG: Bearer auth failed, trying legacy X-JFrog-Art-Api header..." -ForegroundColor Cyan
             }
 
@@ -217,7 +215,7 @@ try {
     }
 
     # Debug output
-    if ($Debug) {
+    if ($IsDebugEnabled) {
         Write-Host "DEBUG: HTTP Code: $httpCode" -ForegroundColor Cyan
         Write-Host "DEBUG: Response Body: $body" -ForegroundColor Cyan
     }
@@ -284,7 +282,7 @@ try {
         exit 3
     } else {
         Print-Status "ERROR" "Artifactory API returned HTTP $statusCode"
-        if ($Debug) {
+        if ($IsDebugEnabled) {
             Write-Host "  Response: $body" -ForegroundColor Red
         }
         exit 3
