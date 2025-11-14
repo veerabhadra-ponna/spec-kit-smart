@@ -76,7 +76,7 @@ Evaluate how well the current implementation is abstracted from business logic.
 
 ### Output
 
-```
+```text
 Abstraction Assessment for {concern_type}:
 
 Current Implementation: {current_implementation}
@@ -94,7 +94,7 @@ Abstraction Patterns Found:
 ...
 
 Migration Complexity: {LOW|MEDIUM|HIGH}
-```
+```text
 
 ---
 
@@ -124,11 +124,11 @@ Determine how many files would be affected by migration.
 
 ### Formula
 
-```
+```text
 Total Affected Files = Direct + Indirect + Config + Tests
 
 Blast Radius % = (Total Affected / Total Project Files) * 100
-```
+```text
 
 ### Classification
 
@@ -139,7 +139,7 @@ Blast Radius % = (Total Affected / Total Project Files) * 100
 
 ### Output
 
-```
+```text
 Blast Radius Analysis:
 
 Direct Impact: {count} files ({list key files})
@@ -151,7 +151,7 @@ Total Affected Files: {total} out of {project_total}
 Blast Radius: {percentage}% ({SMALL|MEDIUM|LARGE|CRITICAL})
 
 Risk Level: {LOW|MEDIUM|HIGH|VERY HIGH}
-```
+```text
 
 ---
 
@@ -199,7 +199,7 @@ Based on abstraction level and blast radius, recommend migration approach.
 
 ### Output
 
-```
+```text
 Migration Strategy: {RECOMMENDED_STRATEGY}
 
 Justification:
@@ -236,7 +236,7 @@ Phase 4 - Cleanup (5%):
 - Duration: {weeks/months}
 
 Total Estimated Timeline: {total_timeline}
-```
+```text
 
 ---
 
@@ -266,7 +266,7 @@ Identify and categorize risks.
 
 ### Output
 
-```
+```text
 Risk Assessment:
 
 HIGH Risks:
@@ -279,7 +279,7 @@ MEDIUM Risks:
 
 LOW Risks:
 - {risk}: {description} (Mitigation: {mitigation})
-```
+```text
 
 ---
 
@@ -315,7 +315,7 @@ Estimate development effort for migration.
 
 ### Output
 
-```
+```text
 Effort Estimation:
 
 Development Effort:
@@ -329,7 +329,7 @@ Total: {total_weeks} weeks ({total_days} person-days)
 
 Team Size Recommendation: {developers} developers
 Calendar Duration: {months} months (with {team_size} team)
-```
+```text
 
 ---
 
@@ -337,7 +337,7 @@ Calendar Duration: {months} months (with {team_size} team)
 
 Define how to measure migration success.
 
-```
+```text
 Success Criteria:
 
 Functional:
@@ -361,7 +361,7 @@ Business:
 - [ ] Zero customer-reported issues
 - [ ] No service interruptions
 - [ ] Team trained on new system
-```
+```text
 
 ---
 
@@ -409,16 +409,16 @@ Business:
     }
   }
 }
-```
+```text
 
 ---
 
 ## Completion Marker
 
-```
+```text
 STAGE_COMPLETE:CROSS_CUTTING
 STATE_PATH: .analysis/.state/05b-cross-cutting.json
-```
+```text
 
 ---
 

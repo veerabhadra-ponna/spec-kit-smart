@@ -48,13 +48,13 @@ Based on OS (from state.config.osEnv or auto-detect):
 
 ```bash
 scripts/bash/analyze-project.sh "{project_path}"
-```
+```text
 
 **For Windows**:
 
 ```powershell
 scripts/powershell/analyze-project.ps1 "{project_path}"
-```
+```text
 
 **Note**: Scripts handle OS detection automatically. If bash runs on Windows, it redirects to PowerShell (and vice versa).
 
@@ -84,7 +84,7 @@ Extract from script output:
   "project_name": "myapp",
   "analysis_timestamp": "20251114-103045"
 }
-```
+```text
 
 ---
 
@@ -118,7 +118,7 @@ Read the generated `file-manifest.json`.
     ...
   ]
 }
-```
+```text
 
 ---
 
@@ -246,7 +246,7 @@ Scan configuration files for versions:
     }
   }
 }
-```
+```text
 
 ---
 
@@ -290,7 +290,7 @@ Analyze project structure to classify:
     "service_count": 4
   }
 }
-```
+```text
 
 ---
 
@@ -325,7 +325,7 @@ Find main entry points and key architectural elements:
     "user-service": "src/main/java/com/app/user/UserApplication.java"
   }
 }
-```
+```text
 
 ---
 
@@ -343,7 +343,7 @@ Based on detected tech stack, load applicable guidelines from state.guidelines.
     "nodejs-guidelines.md"
   ]
 }
-```
+```text
 
 **Match to detected stack**:
 - If `tech_stack.primary = "java"` → Load `java-guidelines.md`
@@ -378,7 +378,7 @@ Based on detected tech stack, load applicable guidelines from state.guidelines.
     }
   }
 }
-```
+```text
 
 **If no guidelines match**:
 
@@ -387,7 +387,7 @@ Based on detected tech stack, load applicable guidelines from state.guidelines.
   "guidelines_loaded": {},
   "guidelines_note": "No corporate guidelines found for detected tech stack. Using industry best practices."
 }
-```
+```text
 
 ---
 
@@ -454,7 +454,7 @@ Merge with previous state and add structure analysis data:
     }
   }
 }
-```
+```text
 
 ---
 
@@ -462,10 +462,10 @@ Merge with previous state and add structure analysis data:
 
 When structure analysis is complete, output:
 
-```
+```text
 STAGE_COMPLETE:STRUCTURE
 STATE_PATH: .analysis/.state/03-structure.json
-```
+```text
 
 Save the state JSON to `.analysis/.state/03-structure.json`.
 
@@ -496,7 +496,7 @@ Save the state JSON to `.analysis/.state/03-structure.json`.
 
 ## Example Execution
 
-```
+```text
 === Stage 3: Structure Analysis ===
 
 Previous state loaded from: .analysis/.state/02-scope.json
@@ -538,7 +538,7 @@ STAGE_COMPLETE:STRUCTURE
 STATE_PATH: .analysis/.state/03-structure.json
 
 Next stage: 04-file-analysis.md
-```
+```text
 
 ---
 

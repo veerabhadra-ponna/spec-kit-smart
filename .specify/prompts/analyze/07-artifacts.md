@@ -90,7 +90,7 @@ Required:
 1. {immediate action 1}
 2. {immediate action 2}
 3. {immediate action 3}
-```
+```text
 
 **Progress**: `✓ Generated: EXECUTIVE-SUMMARY.md`
 
@@ -135,7 +135,7 @@ Required:
   ],
   "license_issues": []
 }
-```
+```text
 
 **Progress**: `✓ Generated: dependency-audit.json`
 
@@ -183,7 +183,7 @@ Required:
     }
   }
 }
-```
+```text
 
 **Progress**: `✓ Generated: metrics-summary.json`
 
@@ -277,7 +277,7 @@ Generate 4 stage prompt files:
 
 ## Migration Readiness
 {assessment of readiness for migration}
-```
+```text
 
 **Progress**: `✓ Generated: abstraction-assessment.md`
 
@@ -333,7 +333,7 @@ Generate 4 stage prompt files:
 
 ## Post-Rollback Actions
 {cleanup and next steps}
-```
+```text
 
 **Progress**: `✓ Generated: rollback-procedure.md`
 
@@ -343,7 +343,7 @@ Generate 4 stage prompt files:
 
 Display completion summary with all file paths:
 
-```
+```text
 === Analysis Complete ===
 
 Generated Artifacts:
@@ -374,7 +374,7 @@ All files saved to: {analysis_dir}
 
 Total Artifacts: {count}
 Analysis Duration: {duration}
-```
+```text
 
 ---
 
@@ -400,20 +400,20 @@ Analysis Duration: {duration}
   "total_artifacts": 9,
   "analysis_complete": true
 }
-```
+```text
 
 ---
 
 ## Completion Marker
 
-```
+```text
 STAGE_COMPLETE:ARTIFACTS
 STATE_PATH: .analysis/.state/07-artifacts.json
 
 === ANALYSIS CHAIN COMPLETE ===
 Chain ID: {chain_id}
 All stages successfully completed.
-```
+```text
 
 ---
 

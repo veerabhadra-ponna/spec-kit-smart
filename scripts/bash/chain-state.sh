@@ -179,6 +179,33 @@ validate_state() {
 
 # Main command dispatcher
 case "${1:-}" in
+    --help|-h|help)
+        cat <<EOF
+Usage: chain-state.sh <command> [args]
+
+Commands:
+  generate-id              Generate unique chain ID
+  init                     Initialize state directory
+  save <stage> <json>      Save state for stage
+  load <stage>             Load state for stage
+  load-latest              Load latest state
+  last-stage               Get last completed stage
+  is-complete <stage>      Check if stage is complete
+  chain-id                 Get chain ID from latest state
+  init-state <chain_id>    Create initial state
+  merge <old> <new>        Merge state objects
+  mark-complete <state> <stage>  Mark stage as complete
+  validate <json>          Validate state schema
+
+Examples:
+  chain-state.sh generate-id
+  chain-state.sh init
+  chain-state.sh save 01-init '{"chain_id":"abc123",...}'
+  chain-state.sh load 01-init
+  chain-state.sh last-stage
+EOF
+        exit 0
+        ;;
     generate-id)
         generate_chain_id
         ;;

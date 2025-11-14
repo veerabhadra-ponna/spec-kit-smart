@@ -24,11 +24,11 @@ This command orchestrates a **chained prompt workflow** for project analysis. In
 
 ## Chain Architecture
 
-```
+```text
 [INIT] → [SCOPE] → [STRUCTURE] → [ANALYZE] → [BRANCH] → [REPORT] → [ARTIFACTS]
    ↓         ↓          ↓            ↓           ↓          ↓           ↓
  State    State      State        State       State      State      Complete
-```
+```text
 
 ### Stages
 
@@ -97,7 +97,7 @@ You should start execution from Stage 1.
 
 # Verify state
 ./scripts/bash/chain-state.sh load {stage-name}
-```
+```text
 
 ---
 
@@ -127,18 +127,18 @@ You should start execution from Stage 1.
    ./scripts/bash/chain-state.sh save 01-init '{...your generated state JSON...}'
    ```
 
-6. When complete, output: `STAGE_COMPLETE:INIT`
+1. When complete, output: `STAGE_COMPLETE:INIT`
 
-7. **Proceed immediately to Stage 2**
+2. **Proceed immediately to Stage 2**
 
 **Task**: Initialize environment, load AGENTS.md, load config, detect guidelines
 
 **Expected Output**:
 
-```
+```text
 STAGE_COMPLETE:INIT
 STATE_PATH: .analysis/.state/01-init.json
-```
+```text
 
 **State includes**:
 - `agents_md` - AGENTS.md status
@@ -163,23 +163,23 @@ STATE_PATH: .analysis/.state/01-init.json
    ./scripts/bash/chain-state.sh load 01-init
    ```
 
-3. Execute ALL instructions in the stage prompt:
+1. Execute ALL instructions in the stage prompt:
    - Get PROJECT_PATH from user (or use from bootstrap state)
    - Ask for ANALYSIS_SCOPE (A or B)
    - If B, ask for concern details
    - Run estimation
 
-4. Generate updated state JSON merging previous state
+2. Generate updated state JSON merging previous state
 
-5. Save state:
+3. Save state:
 
    ```bash
    ./scripts/bash/chain-state.sh save 02-scope '{...your state JSON...}'
    ```
 
-6. When complete, output: `STAGE_COMPLETE:SCOPE`
+4. When complete, output: `STAGE_COMPLETE:SCOPE`
 
-7. **Proceed immediately to Stage 3**
+5. **Proceed immediately to Stage 3**
 
 **State must include**:
 - All fields from Stage 1 (merged)
@@ -256,10 +256,10 @@ Load and execute: `.specify/prompts/analyze/04-file-analysis.md`
 
 **Expected Output**:
 
-```
+```text
 STAGE_COMPLETE:FILE_ANALYSIS
 STATE_PATH: .analysis/.state/04-file-analysis.json
-```
+```text
 
 **State includes**:
 - `files_analyzed` - Count and breakdown
@@ -286,10 +286,10 @@ Load and execute: `.specify/prompts/analyze/05a-full-app.md`
 
 **Expected Output**:
 
-```
+```text
 STAGE_COMPLETE:FULL_APP
 STATE_PATH: .analysis/.state/05a-full-app.json
-```
+```text
 
 **State includes**:
 - `modernization_preferences` - 10 question responses
@@ -310,10 +310,10 @@ Load and execute: `.specify/prompts/analyze/05b-cross-cutting.md`
 
 **Expected Output**:
 
-```
+```text
 STAGE_COMPLETE:CROSS_CUTTING
 STATE_PATH: .analysis/.state/05b-cross-cutting.json
-```
+```text
 
 **State includes**:
 - `concern_analysis` - Abstraction, blast radius
@@ -356,10 +356,10 @@ Load and execute: `.specify/prompts/analyze/06-report-generation.md`
 
 **Expected Output**:
 
-```
+```text
 STAGE_COMPLETE:REPORT
 STATE_PATH: .analysis/.state/06-report.json
-```
+```text
 
 **State includes**:
 - `report_generated` - true
@@ -396,12 +396,12 @@ Load and execute: `.specify/prompts/analyze/07-artifacts.md`
 
 **Expected Output**:
 
-```
+```text
 STAGE_COMPLETE:ARTIFACTS
 STATE_PATH: .analysis/.state/07-artifacts.json
 
 === ANALYSIS CHAIN COMPLETE ===
-```
+```text
 
 **State includes**:
 - `artifacts_generated` - List of all generated files
@@ -414,7 +414,7 @@ STATE_PATH: .analysis/.state/07-artifacts.json
 
 When all stages complete, display:
 
-```
+```text
 === ANALYSIS CHAIN COMPLETE ===
 
 Chain ID: {chain_id}
@@ -443,7 +443,7 @@ Next Steps:
    {IF scope = B}: Review concern-migration-plan.md
 4. Share findings with stakeholders
 5. Plan implementation using stage prompts or migration plan
-```
+```text
 
 ---
 
@@ -453,29 +453,33 @@ Next Steps:
 
 1. **Check last completed checkpoint**:
 
-   ```
+   ```bash
+
    ls -la .analysis/.state/
-   ```
-
-2. **Identify last completed stage** from filename (e.g., `04-file-analysis.json`)
-
-3. **Resume from next stage**:
 
    ```
+
+1. **Identify last completed stage** from filename (e.g., `04-file-analysis.json`)
+
+2. **Resume from next stage**:
+
+   ```text
+
    Last completed: 04-file-analysis.json
    Resume from: Stage 5 (Branch execution)
+
    ```
 
-4. **Load state** and continue chain execution
+3. **Load state** and continue chain execution
 
 **Example**:
 
-```
+```text
 ℹ Analysis interrupted. Resuming from Stage 5...
 Loading state from: .analysis/.state/04-file-analysis.json
 Chain ID: a3f7c8d1
 Continuing analysis...
-```
+```text
 
 ---
 
@@ -500,7 +504,7 @@ Continuing analysis...
 
 ## State File Locations
 
-```
+```text
 .analysis/
 ├── .state/
 │   ├── 01-init.json
@@ -517,7 +521,7 @@ Continuing analysis...
     ├── functional-spec.md (or concern-migration-plan.md)
     ├── technical-spec.md (or abstraction-assessment.md)
     └── ... (other artifacts)
-```
+```text
 
 ---
 

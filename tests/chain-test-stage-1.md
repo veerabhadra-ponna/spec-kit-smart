@@ -36,7 +36,7 @@ Generate this JSON:
   "test_data": "Hello from Stage 1",
   "counter": 1
 }
-```
+```text
 
 ### Step 3: Save State
 
@@ -52,7 +52,7 @@ cd /home/user/spec-kit-smart
   "test_data": "Hello from Stage 1",
   "counter": 1
 }'
-```
+```text
 
 ### Step 4: Verify State Saved
 
@@ -61,16 +61,16 @@ Load the state back to verify:
 ```bash
 cd /home/user/spec-kit-smart
 ./scripts/bash/chain-state.sh load test-stage-1
-```
+```text
 
 ### Step 5: Output Completion Marker
 
 Output:
 
-```
+```text
 STAGE_COMPLETE:TEST_STAGE_1
 STATE_PATH: .analysis/.state/test-stage-1.json
-```
+```text
 
 ## Success Criteria
 

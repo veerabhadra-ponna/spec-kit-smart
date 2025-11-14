@@ -16,11 +16,11 @@ This directory contains the **chained prompt workflow** for the `analyze-project
 
 ## Architecture
 
-```
+```text
 [INIT] → [SCOPE] → [STRUCTURE] → [ANALYZE] → [BRANCH] → [REPORT] → [ARTIFACTS]
    ↓         ↓          ↓            ↓           ↓          ↓           ↓
  State    State      State        State       State      State      Complete
-```
+```text
 
 ## Stage Files
 
@@ -64,11 +64,11 @@ Each stage:
   "dependencies": {...},
   ...
 }
-```
+```text
 
 ### State Files Location
 
-```
+```text
 .analysis/
 ├── .state/
 │   ├── 01-init.json
@@ -81,7 +81,7 @@ Each stage:
 │   └── latest.json
 └── {project}-{timestamp}/
     └── ... (generated artifacts)
-```
+```text
 
 ## Execution Flow
 
@@ -261,21 +261,21 @@ Each stage:
    ./scripts/bash/chain-state.sh last-stage
    ```
 
-2. **Load state and resume**:
+1. **Load state and resume**:
 
    ```bash
    ./scripts/bash/chain-state.sh load {last-stage}
    ```
 
-3. **Continue from next stage** with loaded state
+2. **Continue from next stage** with loaded state
 
 **Example**:
 
-```
+```text
 Last completed: 04-file-analysis
 Resume from: Stage 5 (Branch execution)
 Chain ID: a3f7c8d1
-```
+```text
 
 ## State Management Scripts
 
@@ -306,7 +306,7 @@ Chain ID: a3f7c8d1
 
 # Validate state
 ./scripts/bash/chain-state.sh validate '{"chain_id":"abc123",...}'
-```
+```text
 
 ### PowerShell Script
 
@@ -335,7 +335,7 @@ Chain ID: a3f7c8d1
 
 # Validate state
 ./scripts/powershell/ChainState.ps1 validate '{"chain_id":"abc123",...}'
-```
+```text
 
 ## Why This Works
 
@@ -390,21 +390,21 @@ To test the chain implementation:
    ./scripts/bash/chain-state.sh init
    ```
 
-2. **Generate chain ID**:
+1. **Generate chain ID**:
 
    ```bash
    CHAIN_ID=$(./scripts/bash/chain-state.sh generate-id)
    echo "Chain ID: $CHAIN_ID"
    ```
 
-3. **Create initial state**:
+2. **Create initial state**:
 
    ```bash
    INIT_STATE=$(./scripts/bash/chain-state.sh init-state "$CHAIN_ID")
    ./scripts/bash/chain-state.sh save 01-init "$INIT_STATE"
    ```
 
-4. **Verify state**:
+3. **Verify state**:
 
    ```bash
    ./scripts/bash/chain-state.sh validate "$INIT_STATE"
@@ -425,7 +425,7 @@ To revert to monolithic if needed:
 cd templates/commands
 mv analyze-project.md analyze-project-chain.md
 mv analyze-project-monolithic.md analyze-project.md
-```
+```text
 
 ## Version History
 

@@ -48,13 +48,13 @@ Display prompt:
 
 ```text
 PROJECT_PATH: /path/to/existing/project
-```
+```text
 
 **Example**:
 
 ```text
 PROJECT_PATH: /home/user/my-legacy-app
-```
+```text
 
 **Validation**:
 - Path must exist
@@ -85,7 +85,7 @@ What type of analysis do you need?
       → Suitable for: auth migration, database swap, caching layer, etc.
 
 Your choice: ___
-```
+```text
 
 **Validation**:
 
@@ -144,7 +144,7 @@ Examples: "Custom JWT with bcrypt", "Oracle 11g with raw SQL", "Memcached 1.4"
 TARGET_IMPLEMENTATION: ___
 (What do you want to migrate to?)
 Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AWS"
-```
+```text
 
 **Store responses** in state as `concern_details`:
 - `type` - The concern type name (map number to name)
@@ -153,7 +153,7 @@ Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AW
 
 **Concern type mapping**:
 
-```
+```text
 1 → "Authentication/Authorization"
 2 → "Database/ORM Layer"
 3 → "Caching Layer"
@@ -163,7 +163,7 @@ Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AW
 7 → "File Storage/CDN"
 8 → "Deployment/Infrastructure"
 9 → "Other" (use user-provided text)
-```
+```text
 
 **IF CHOICE = [A]** (Full Application):
 - Skip this step
@@ -183,13 +183,13 @@ Based on OS (from config or auto-detect):
 
 ```bash
 scripts/bash/enumerate-project.sh "{project_path}" --estimate-only
-```
+```text
 
 **For Windows**:
 
 ```powershell
 scripts/powershell/enumerate-project.ps1 "{project_path}" -EstimateOnly
-```
+```text
 
 **Note**: For single quotes in args like "I'm Groot", use escape syntax: `'I'\''m Groot'` (or double-quote: `"I'm Groot"`).
 
@@ -209,11 +209,11 @@ The script will output (or you should scan):
 
 Use this formula:
 
-```
+```text
 Important files = controllers + services + models + repositories + configs + security + middleware + utils
 
 Estimated minutes = ceiling(important_files / 10) + 10
-```
+```text
 
 **Time ranges**:
 - **Small** (<50 files): 5-10 minutes
@@ -240,7 +240,7 @@ File Categories:
 Estimated Analysis Time: {estimated_minutes} minutes ({time_range})
 
 ⚠️ This is a {size_category} project.
-```
+```text
 
 ### 4.5: Warning for Large Projects
 
@@ -264,7 +264,7 @@ Do you want to proceed?
 - [N] No, cancel
 
 Your choice: ___
-```
+```text
 
 **IF** user chooses [N]:
 - Output: "Analysis cancelled by user"
@@ -304,7 +304,7 @@ Generate JSON state object merging previous state with new data:
     "size_category": "large"
   }
 }
-```
+```text
 
 **OR for Full Application (scope = A)**:
 
@@ -332,7 +332,7 @@ Generate JSON state object merging previous state with new data:
     "size_category": "medium"
   }
 }
-```
+```text
 
 ---
 
@@ -340,10 +340,10 @@ Generate JSON state object merging previous state with new data:
 
 When scope definition is complete, output:
 
-```
+```text
 STAGE_COMPLETE:SCOPE
 STATE_PATH: .analysis/.state/02-scope.json
-```
+```text
 
 Save the state JSON to `.analysis/.state/02-scope.json`.
 
@@ -375,7 +375,7 @@ Save the state JSON to `.analysis/.state/02-scope.json`.
 
 ## Example Execution
 
-```
+```text
 === Stage 2: Scope Definition ===
 
 Previous state loaded from: .analysis/.state/01-init.json
@@ -435,7 +435,7 @@ STAGE_COMPLETE:SCOPE
 STATE_PATH: .analysis/.state/02-scope.json
 
 Next stage: 03-structure.md
-```
+```text
 
 ---
 

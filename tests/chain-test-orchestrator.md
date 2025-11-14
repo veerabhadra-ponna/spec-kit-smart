@@ -29,7 +29,7 @@ First, ensure we're in the correct directory and initialize state management:
 ```bash
 cd /home/user/spec-kit-smart
 ./scripts/bash/chain-state.sh init
-```
+```text
 
 You should see: `✓ Initialized state directory: .analysis/.state`
 
@@ -109,7 +109,7 @@ if [[ "$stages_complete" == "2" ]]; then
 else
     echo "❌ TEST FAILED: stages_complete count incorrect (expected 2, got $stages_complete)"
 fi
-```
+```text
 
 ---
 
@@ -141,7 +141,7 @@ After test completes, clean up test files:
 ```bash
 cd /home/user/spec-kit-smart
 rm -f .analysis/.state/test-stage-*.json
-```
+```text
 
 ---
 

@@ -13,6 +13,30 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
+# Handle --help
+if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "-h" ]] || [[ "${1:-}" == "help" ]]; then
+    cat <<EOF
+Usage: $(basename "$0") <report_file>
+
+Verification gate for Stage 6 analysis report.
+
+Checks:
+  - All 9 phases present
+  - Minimum 3,000 lines
+  - 50+ file:line references
+  - No placeholders (TODO, TBD)
+  - Severity ratings present
+
+Examples:
+  $(basename "$0") .analysis/myproject-20251114/analysis-report.md
+
+Exit codes:
+  0 - All checks passed
+  1 - One or more checks failed
+EOF
+    exit 0
+fi
+
 # Report file from argument
 REPORT_FILE="${1:-}"
 

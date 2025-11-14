@@ -90,7 +90,7 @@ Check for `.specify/config.json` in the repository root.
   "enableCheckArtifactory": false,
   "osEnv": "auto"
 }
-```
+```text
 
 **Configuration options:**
 - `enableCheckArtifactory` (boolean): Controls whether Artifactory validation runs (default: false)
@@ -120,22 +120,22 @@ Check for guideline files in `/.guidelines/` directory:
 
 **Output example:**
 
-```
+```text
 ✓ Found corporate guidelines:
   - java-guidelines.md
   - reactjs-guidelines.md
   - nodejs-guidelines.md
-```
+```text
 
 ### Step 4: Initialize Analysis Directory
 
 Create the analysis output directory structure:
 
-```
+```text
 .analysis/
 ├── .state/           # State files for chain execution
 └── [project-name]-[timestamp]/  # Analysis output directory (created later)
-```
+```text
 
 Create `.analysis/.state/` directory if it doesn't exist.
 
@@ -173,7 +173,7 @@ Generate a JSON state object with the following structure:
     "nodejs-guidelines.md"
   ]
 }
-```
+```text
 
 ---
 
@@ -181,10 +181,10 @@ Generate a JSON state object with the following structure:
 
 When initialization is complete, output:
 
-```
+```text
 STAGE_COMPLETE:INIT
 STATE_PATH: .analysis/.state/01-init.json
-```
+```text
 
 Save the state JSON to `.analysis/.state/01-init.json`.
 
@@ -211,7 +211,7 @@ Save the state JSON to `.analysis/.state/01-init.json`.
 
 ## Example Execution
 
-```
+```text
 === Stage 1: Initialization ===
 
 Checking for AGENTS.md...
@@ -237,7 +237,7 @@ STAGE_COMPLETE:INIT
 STATE_PATH: .analysis/.state/01-init.json
 
 Next stage: 02-scope.md
-```
+```text
 
 ---
 

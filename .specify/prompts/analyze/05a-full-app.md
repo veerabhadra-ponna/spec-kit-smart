@@ -41,18 +41,18 @@ Based on file analysis, set these flags:
 
 **Question 1: Target Language/Framework**
 
-```
+```text
 Current: {detected language/framework}
 Options:
 - [A] {Same language, latest LTS version}
 - [B] {Alternative popular option}
 - [C] Other (please specify)
 Your choice: ___
-```
+```text
 
 **Question 2: Target Database**
 
-```
+```text
 Current: {detected or "Unknown"}
 Options:
 - [A] {Same database vendor, latest version}
@@ -60,13 +60,13 @@ Options:
 - [C] MongoDB {latest stable}
 - [D] Other (please specify)
 Your choice: ___
-```
+```text
 
 **Question 3: Message Bus/Queue [CONDITIONAL]**
 
 **IF** `!HAS_MESSAGE_BUS`:
 
-```
+```text
 [OPTIONAL - Not detected in legacy code]
 Since your legacy app doesn't use message queues, you can skip this.
 However, modernization could benefit from async messaging.
@@ -79,11 +79,11 @@ Options:
 - [E] Cloud-native (Azure Service Bus / AWS SQS)
 - [F] Other
 Your choice (or press Enter to skip): ___
-```
+```text
 
 **ELSE**:
 
-```
+```text
 Current: {detected}
 Options:
 - [A] Keep current
@@ -93,22 +93,22 @@ Options:
 - [E] Cloud-native (Azure Service Bus / AWS SQS)
 - [F] Other
 Your choice: ___
-```
+```text
 
 **Question 4: Package Manager**
 
-```
+```text
 Current: {detected}
 Options:
 - [A] Keep current
 - [B] {Alternative for stack}
 - [C] Other
 Your choice: ___
-```
+```text
 
 **Question 5: Deployment Target**
 
-```
+```text
 Current: {detected or "Unknown"}
 Options:
 - [A] Dedicated server (traditional VM/bare metal)
@@ -119,7 +119,7 @@ Options:
 - [F] OpenShift
 - [G] Other
 Your choice: ___
-```
+```text
 
 **Set** `IS_TRADITIONAL_DEPLOYMENT = (answer == "A")`
 
@@ -127,14 +127,14 @@ Your choice: ___
 
 **IF** `IS_TRADITIONAL_DEPLOYMENT`:
 
-```
+```text
 [SKIPPED - Not applicable for traditional deployment]
 IaC is typically used with cloud deployments.
-```
+```text
 
 **ELSE**:
 
-```
+```text
 Options:
 - [A] Terraform
 - [B] Helm charts (for Kubernetes)
@@ -144,20 +144,20 @@ Options:
 - [F] None / Manual deployment
 - [G] Other
 Your choice: ___
-```
+```text
 
 **Question 7: Containerization Strategy [CONDITIONAL]**
 
 **IF** `IS_TRADITIONAL_DEPLOYMENT`:
 
-```
+```text
 [SKIPPED - Not applicable for traditional deployment]
 Containerization requires cloud/container platforms.
-```
+```text
 
 **ELSE**:
 
-```
+```text
 Options:
 - [A] Docker with custom images
 - [B] Docker with official base images
@@ -166,13 +166,13 @@ Options:
 - [E] Container registry: Private (Azure ACR / AWS ECR)
 - [F] Other
 Your choice: ___
-```
+```text
 
 **Question 8: Observability Stack [CONDITIONAL]**
 
 **IF** `!HAS_OBSERVABILITY`:
 
-```
+```text
 [OPTIONAL - Not detected in legacy code]
 Options:
 - [A] None / Keep simple
@@ -182,11 +182,11 @@ Options:
 - [E] Datadog / New Relic / APM SaaS
 - [F] Other
 Your choice (or press Enter to skip): ___
-```
+```text
 
 **ELSE**:
 
-```
+```text
 Current: {detected}
 Options:
 - [A] Keep current
@@ -196,11 +196,11 @@ Options:
 - [E] Datadog / New Relic
 - [F] Other
 Your choice: ___
-```
+```text
 
 **Question 9: Security & Authentication**
 
-```
+```text
 Current: {detected auth mechanism}
 Options:
 - [A] Keep current (modernize implementation)
@@ -210,11 +210,11 @@ Options:
 - [E] Custom JWT (modernized)
 - [F] Other
 Your choice: ___
-```
+```text
 
 **Question 10: Testing Strategy**
 
-```
+```text
 Current: {detected test coverage}%
 Target Test Coverage:
 - [A] Maintain current level
@@ -229,7 +229,7 @@ Test Framework Preference:
 - [C] Switch to {alternative framework}
 - [D] Add E2E testing (Cypress / Playwright / Selenium)
 Your choice: ___
-```
+```text
 
 **Store all responses** in state as `modernization_preferences`.
 
@@ -291,10 +291,10 @@ Calculate complexity scores using scoring matrices.
 
 ### Calculate Scores
 
-```
+```text
 Complexity Score = {calculated_score}
 Complexity Rating = {LOW|MEDIUM|HIGH|VERY HIGH}
-```
+```text
 
 ---
 
@@ -304,14 +304,14 @@ Calculate three feasibility scores:
 
 ### 3.1: Inline Upgrade Feasibility
 
-```
+```text
 Formula:
 Inline_Score = 100 - (Complexity_Score * 0.7) - (Tech_Debt_Score * 0.3)
 
 Where:
 - Complexity_Score = from Step 2 (0-100)
 - Tech_Debt_Score = normalized from tech debt items (0-100)
-```
+```text
 
 **Rating**:
 - 70-100%: **HIGHLY FEASIBLE** - Recommended approach
@@ -321,7 +321,7 @@ Where:
 
 ### 3.2: Greenfield Rewrite Feasibility
 
-```
+```text
 Formula:
 Rewrite_Score = (Complexity_Score * 0.5) + (Tech_Debt_Score * 0.3) + (Coverage_Gap * 0.2)
 
@@ -329,7 +329,7 @@ Where:
 - Complexity_Score = from Step 2 (0-100)
 - Tech_Debt_Score = normalized (0-100)
 - Coverage_Gap = (100 - test_coverage_percentage)
-```
+```text
 
 **Rating**:
 - 70-100%: **RECOMMENDED** - Rewrite is justified
@@ -339,12 +339,12 @@ Where:
 
 ### 3.3: Hybrid Approach Feasibility
 
-```
+```text
 Formula:
 Hybrid_Score = 100 - abs(Inline_Score - Rewrite_Score)
 
 Rationale: Hybrid works best when inline and rewrite are equally viable
-```
+```text
 
 **Rating**:
 - 70-100%: **VIABLE** - Good candidate for phased approach
@@ -416,16 +416,16 @@ Based on scores, generate prioritized recommendations:
     "long_term_goals": [...]
   }
 }
-```
+```text
 
 ---
 
 ## Completion Marker
 
-```
+```text
 STAGE_COMPLETE:FULL_APP
 STATE_PATH: .analysis/.state/05a-full-app.json
-```
+```text
 
 ---
 

@@ -55,12 +55,12 @@ Complete sections:
 
 **Progress Display**:
 
-```
+```text
 ✓ Chunk 1/9 complete: Phase 1 (Project Discovery)
   - Analyzed: {count} configuration files
   - Identified: {tech stack summary}
   - Lines generated: {count}
-```
+```text
 
 ### Chunk 2: Phase 2.1 - Controllers & API Endpoints
 
@@ -73,12 +73,12 @@ Complete **Section 2.1: Controllers Analysis**:
 
 **Progress Display**:
 
-```
+```text
 ✓ Chunk 2/9 complete: Phase 2.1 (Controllers)
   - Analyzed: {count} controller files
   - Documented: {count} API endpoints
   - Lines generated: {count}
-```
+```text
 
 ### Chunk 3: Phase 2.2 - Services & Business Logic
 
@@ -91,12 +91,12 @@ Complete **Section 2.2: Services Analysis**:
 
 **Progress Display**:
 
-```
+```text
 ✓ Chunk 3/9 complete: Phase 2.2 (Services)
   - Analyzed: {count} service files
   - Documented: {count} business workflows
   - Lines generated: {count}
-```
+```text
 
 ### Chunk 4: Phase 2.3 - Data Layer
 
@@ -109,12 +109,12 @@ Complete **Section 2.3: Data Models & Repositories**:
 
 **Progress Display**:
 
-```
+```text
 ✓ Chunk 4/9 complete: Phase 2.3 (Data Layer)
   - Analyzed: {count} model files, {count} repositories
   - Documented: {count} entities, {count} relationships
   - Lines generated: {count}
-```
+```text
 
 ### Chunk 5: Phase 3 - Positive Findings
 
@@ -126,11 +126,11 @@ Complete **Section 3: What's Working Well**:
 
 **Progress Display**:
 
-```
+```text
 ✓ Chunk 5/9 complete: Phase 3 (Positive Findings)
   - Documented: {count} positive findings
   - Lines generated: {count}
-```
+```text
 
 ### Chunk 6: Phase 4 - Technical Debt & Issues
 
@@ -145,12 +145,12 @@ Complete **Section 4: Technical Debt**:
 
 **Progress Display**:
 
-```
+```text
 ✓ Chunk 6/9 complete: Phase 4 (Technical Debt)
   - Tech debt items: {count}
   - Security findings: {count}
   - Lines generated: {count}
-```
+```text
 
 ### Chunk 7: Phase 5 - Upgrade Path Analysis
 
@@ -166,11 +166,11 @@ Complete **Section 5: Upgrade Paths**:
 
 **Progress Display**:
 
-```
+```text
 ✓ Chunk 7/9 complete: Phase 5 (Upgrade Paths)
   - Upgrade paths documented: {count}
   - Lines generated: {count}
-```
+```text
 
 ### Chunk 8: Phases 6-7 - Modernization & Feasibility
 
@@ -189,12 +189,12 @@ Complete **Sections 6 & 7**:
 
 **Progress Display**:
 
-```
+```text
 ✓ Chunk 8/9 complete: Phases 6-7 (Modernization & Feasibility)
   - Recommendations: {count}
   - Feasibility scores calculated
   - Lines generated: {count}
-```
+```text
 
 ### Chunk 9: Phases 8-9 - Decision Matrix & Final Recommendations
 
@@ -214,12 +214,12 @@ Complete **Sections 8 & 9**:
 
 **Progress Display**:
 
-```
+```text
 ✓ Chunk 9/9 complete: Phases 8-9 (Decision Matrix & Recommendations)
   - Decision matrix complete
   - Primary recommendation: {approach}
   - Lines generated: {count}
-```
+```text
 
 ---
 
@@ -275,16 +275,16 @@ Complete **Sections 8 & 9**:
   },
   "verification_passed": true
 }
-```
+```text
 
 ---
 
 ## Completion Marker
 
-```
+```text
 STAGE_COMPLETE:REPORT
 STATE_PATH: .analysis/.state/06-report.json
-```
+```text
 
 ---
 

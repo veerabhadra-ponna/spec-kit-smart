@@ -14,7 +14,7 @@ This document explains **how the chained prompt architecture actually executes**
 
 ```bash
 /analyze-project /path/to/project
-```
+```text
 
 ### 2. Script Execution (Pre-AI)
 
@@ -22,7 +22,7 @@ The bash/PowerShell script runs FIRST:
 
 ```bash
 scripts/bash/analyze-project.sh /path/to/project
-```
+```text
 
 **Script Actions**:
 1. Validates project path
@@ -41,7 +41,7 @@ Claude Code loads: `templates/commands/analyze-project.md` (master orchestration
 
 **AI then executes sequentially**:
 
-```
+```text
 FOR each stage in [01-init, 02-scope, 03-structure, 04-file-analysis, 05-branch, 06-report, 07-artifacts]:
     1. AI uses Read tool → Load `.specify/prompts/analyze/{stage}.md`
     2. AI reads ENTIRE stage prompt
@@ -52,11 +52,11 @@ FOR each stage in [01-init, 02-scope, 03-structure, 04-file-analysis, 05-branch,
     7. AI outputs completion marker: `STAGE_COMPLETE:{STAGE}`
     8. AI proceeds to next stage
 ENDFOR
-```
+```text
 
 ### 4. State Flow Diagram
 
-```
+```text
 Bootstrap State (from script)
     ↓
 Stage 1: AI loads 00-bootstrap.json
@@ -78,7 +78,7 @@ Stage 7: AI loads 06-report.json
          AI saves 07-artifacts.json
     ↓
 COMPLETE
-```
+```text
 
 ## Critical Dependencies
 
@@ -100,7 +100,7 @@ COMPLETE
 
 ### State Files
 
-```
+```text
 .analysis/
 ├── .state/
 │   ├── 00-bootstrap.json      # Created by setup script
@@ -115,7 +115,7 @@ COMPLETE
 │   └── latest.json             # Symlink/copy to latest state
 └── {project}-{timestamp}/
     └── ... (analysis artifacts)
-```
+```text
 
 ### State Schema
 
@@ -145,7 +145,7 @@ AI uses these Bash commands throughout execution:
 
 # Get last completed stage (for recovery)
 ./scripts/bash/chain-state.sh last-stage
-```
+```text
 
 ## Dynamic Branching
 
@@ -159,7 +159,7 @@ if (state.analysis_scope === "A") {
     // Load and execute: 05b-cross-cutting.md
     // Cross-cutting concern migration
 }
-```
+```text
 
 **Implementation**:
 - Master prompt contains explicit conditional instructions
@@ -176,7 +176,7 @@ AI must run:
 
 ```bash
 ./scripts/bash/verify-analysis-report.sh {report-file}
-```
+```text
 
 **Checks**:
 - All 9 phases present
@@ -207,7 +207,7 @@ if [[ "$last_stage" != "none" ]]; then
     # Determine next stage
     # Resume from there
 fi
-```
+```text
 
 ### State Corruption
 
@@ -220,7 +220,7 @@ If state file is corrupted:
 # If validation fails:
 # - Restore from previous stage
 # - Re-execute current stage
-```
+```text
 
 ## Performance Characteristics
 
@@ -254,7 +254,7 @@ If state file is corrupted:
 ```bash
 # Test state management functions
 ./tests/integration-test-chain.sh
-```
+```text
 
 **Coverage**:
 - Chain ID generation
@@ -271,7 +271,7 @@ Manual test with 2-stage chain:
 
 ```bash
 # See: tests/chain-test-orchestrator.md
-```
+```text
 
 **Validates**:
 - AI can load stage prompts

@@ -31,7 +31,7 @@ Use the Bash tool to load state:
 ```bash
 cd /home/user/spec-kit-smart
 ./scripts/bash/chain-state.sh load test-stage-1
-```
+```text
 
 ### Step 2: Verify State
 
@@ -65,7 +65,7 @@ Result:
   "test_data_2": "Hello from Stage 2",
   "counter": 2
 }
-```
+```text
 
 ### Step 4: Save Updated State
 
@@ -82,7 +82,7 @@ cd /home/user/spec-kit-smart
   "test_data_2": "Hello from Stage 2",
   "counter": 2
 }'
-```
+```text
 
 ### Step 5: Verify State Persistence
 
@@ -95,17 +95,17 @@ echo "=== Stage 1 State ==="
 echo ""
 echo "=== Stage 2 State ==="
 ./scripts/bash/chain-state.sh load test-stage-2
-```
+```text
 
 ### Step 6: Output Completion Marker
 
 Output:
 
-```
+```text
 STAGE_COMPLETE:TEST_STAGE_2
 STATE_PATH: .analysis/.state/test-stage-2.json
 CHAIN_TEST_SUCCESS: Both stages completed successfully
-```
+```text
 
 ## Success Criteria
 

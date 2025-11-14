@@ -131,23 +131,23 @@ For EACH category, scan 15-20% of files and extract:
 
 **MANDATORY**: Output progress EVERY 10 files:
 
-```
+```text
 [Phase 1 - Category Scan]
 ✓ 10/120 core files scanned (Controllers)
 ✓ 20/120 core files scanned (Controllers)
 ✓ 30/120 core files scanned (Services)
 ...
-```
+```text
 
 **Example output after scanning**:
 
-```
+```text
 ✓ Scanned src/controllers/UserController.java
   Found: Auth[JWT], API[REST], Validation[Bean Validation]
 
 ✓ Scanned src/services/UserService.java
   Found: Business Logic[User Management], DB[JPA Repository], Cache[Redis]
-```
+```text
 
 ---
 
@@ -190,7 +190,7 @@ For each priority area, extract **detailed** information:
 
 **Example output**:
 
-```
+```text
 Authentication System Analysis:
 - Type: Custom JWT implementation
 - User Storage: PostgreSQL (users table)
@@ -202,7 +202,7 @@ Authentication System Analysis:
   * No rate limiting on /api/auth/login (HIGH risk)
   * JWT secret in application.properties (MEDIUM risk)
   * Missing CSRF protection (MEDIUM risk)
-```
+```text
 
 #### Database Deep Dive
 
@@ -219,7 +219,7 @@ Authentication System Analysis:
 
 **Example output**:
 
-```
+```text
 Database Layer Analysis:
 - ORM: Hibernate/JPA
 - Entities: 12 (User, Order, Product, Category, etc.)
@@ -233,7 +233,7 @@ Database Layer Analysis:
   * Missing index on orders.user_id (MEDIUM)
   * Eager loading for Order.items (MEDIUM)
 - Migrations: Flyway (23 migration scripts)
-```
+```text
 
 #### API Endpoints Deep Dive
 
@@ -248,7 +248,7 @@ Database Layer Analysis:
 
 **Example output**:
 
-```
+```text
 API Surface Analysis:
 Total Endpoints: 47
 
@@ -271,20 +271,20 @@ API Issues:
 - Inconsistent error responses
 - Missing rate limiting
 - No API documentation
-```
+```text
 
 ### Step 2.3: Progress Reporting
 
 **MANDATORY**: Output progress EVERY 10 files:
 
-```
+```text
 [Phase 2 - Deep Dive]
 ✓ 10/45 security files analyzed
 ✓ 20/45 security files analyzed
 ✓ Auth flow complete: Custom JWT with bcrypt
 ✓ 10/25 database files analyzed
 ...
-```
+```text
 
 ---
 
@@ -339,7 +339,7 @@ Scan and document:
 
 **Example output**:
 
-```
+```text
 Configuration Analysis:
 
 Database:
@@ -365,7 +365,7 @@ Security:
 - CORS: Allowed origins: http://localhost:3000
 - Session: 24h timeout, HTTP-only cookies
 - Rate Limit: 100 req/min per IP (not enforced)
-```
+```text
 
 ---
 
@@ -393,7 +393,7 @@ Identify:
 
 **Example output**:
 
-```
+```text
 Test Coverage Analysis:
 
 Frameworks:
@@ -418,7 +418,7 @@ Gaps:
 - Low security test coverage
 - Missing integration tests for external APIs
 - No performance/load tests
-```
+```text
 
 ---
 
@@ -432,33 +432,33 @@ Run dependency audit in parallel with file analysis.
 
 ```bash
 mvn dependency:tree -DoutputFile=deps.txt
-```
+```text
 
 **Java (Gradle)**:
 
 ```bash
 gradle dependencies > deps.txt
-```
+```text
 
 **Node.js**:
 
 ```bash
 npm audit --json > npm-audit.json
 npm list --depth=0 > deps.txt
-```
+```text
 
 **.NET**:
 
 ```bash
 dotnet list package --vulnerable --include-transitive > deps.txt
-```
+```text
 
 **Python**:
 
 ```bash
 pip list --format=json > deps.json
 safety check --json > safety-audit.json
-```
+```text
 
 ### Step 2: Analyze Dependencies
 
@@ -471,7 +471,7 @@ safety check --json > safety-audit.json
 
 **Example output**:
 
-```
+```text
 Dependency Audit:
 
 Total: 145 dependencies
@@ -493,7 +493,7 @@ Vulnerable: 5 packages (CRITICAL: 1, HIGH: 2, MEDIUM: 2)
 Deprecated:
 - Moment.js (use date-fns or Luxon)
 - Request (use axios or node-fetch)
-```
+```text
 
 ---
 
@@ -575,7 +575,7 @@ Generate comprehensive patterns object:
     }
   }
 }
-```
+```text
 
 ---
 
@@ -607,7 +607,7 @@ Track analysis completeness:
     }
   }
 }
-```
+```text
 
 ---
 
@@ -632,7 +632,7 @@ Track analysis completeness:
     "license_issues": []
   }
 }
-```
+```text
 
 ---
 
@@ -682,7 +682,7 @@ Merge with previous state and add file analysis data:
     "security_findings": 18
   }
 }
-```
+```text
 
 ---
 
@@ -690,10 +690,10 @@ Merge with previous state and add file analysis data:
 
 When file analysis is complete and quality gates pass, output:
 
-```
+```text
 STAGE_COMPLETE:FILE_ANALYSIS
 STATE_PATH: .analysis/.state/04-file-analysis.json
-```
+```text
 
 Save the state JSON to `.analysis/.state/04-file-analysis.json`.
 
@@ -720,7 +720,7 @@ Save the state JSON to `.analysis/.state/04-file-analysis.json`.
 
 ## Example Execution
 
-```
+```text
 === Stage 4: Deep File Analysis ===
 
 Previous state loaded from: .analysis/.state/03-structure.json
@@ -799,7 +799,7 @@ STATE_PATH: .analysis/.state/04-file-analysis.json
 Next stage: Branching based on analysis_scope
   - If scope = A: 05a-full-app.md
   - If scope = B: 05b-cross-cutting.md
-```
+```text
 
 ---
 
