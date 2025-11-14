@@ -27,7 +27,7 @@ If user selects [B], follow-up questions gather:
 
 ### Critical Instructions & Patterns
 
-```
+```text
 VALIDATION PATTERNS:
 - User must choose [A] or [B] - invalid selections are rejected with re-prompt
 - If [B]: Ask 3 follow-up questions immediately (CONCERN_TYPE, CURRENT_IMPL, TARGET_IMPL)
@@ -36,7 +36,7 @@ VALIDATION PATTERNS:
 SCOPE DECISION TREE:
 Choice [A] → Proceed to Modernization Preferences (Step 3)
 Choice [B] → Capture concern details → Skip to Step 4.B after 4.A complete
-```
+```text
 
 ### Content Extraction for Prompt Chaining
 
@@ -82,12 +82,12 @@ This section outlines the complete workflow structure with conditional logic for
 
 **Conditional Logic Patterns**:
 
-```
+```text
 Q3 (Message Bus): Skip if HAS_MESSAGE_BUS = false
 Q6 (IaC): Skip if Q5 answer = [A] (Dedicated server)
 Q7 (Containers): Skip if Q5 answer = [A] (Dedicated server)
 Q8 (Observability): Skip if HAS_OBSERVABILITY = false
-```
+```text
 
 **Detection Flags**:
 - `HAS_MESSAGE_BUS` - auto-detect Kafka, RabbitMQ, Azure SB, AWS SQS, Redis PubSub
@@ -96,12 +96,12 @@ Q8 (Observability): Skip if HAS_OBSERVABILITY = false
 
 ### Critical Instructions & Patterns
 
-```
+```text
 MANDATORY: Store all 10 responses for later use in artifact generation
 CONDITIONAL BRANCHING: Skip Questions 6-7 if user selects "Dedicated server"
 VALIDATION: All questions require valid answer before proceeding
 DETECTION: Pre-calculate HAS_MESSAGE_BUS and HAS_OBSERVABILITY before asking
-```
+```text
 
 ---
 
@@ -117,7 +117,7 @@ This is the concrete analysis approach for Phase 0 through Phase 2 generation. I
 
 Step 0.1: Count files by category from manifest
 
-```
+```text
 - Controllers/Routes
 - Services/Business Logic
 - Models/Data
@@ -127,7 +127,7 @@ Step 0.1: Count files by category from manifest
 - Middleware
 - Utilities/Helpers
 - Tests
-```
+```text
 
 Step 0.2: Calculate chunks needed
 
@@ -139,7 +139,7 @@ Chunk estimation:
 - Phase 2 (Codebase Analysis): 1 chunk per 50 files or 1 per category (max)
 - Phases 3-9: 1 chunk each
 - Total chunks = 2 + ceil(important_files / 50) + 7
-```
+```text
 
 Step 0.3: Display scope estimation with time range
 - Small project (<50 files): 5-10 min, 3-5 chunks
@@ -177,11 +177,11 @@ For each category, extract specific details:
 
 Step 1.3: Categorize features by criticality
 
-```
+```text
 CRITICAL - Must preserve exactly
 STANDARD - Preserve but can modernize
 LEGACY QUIRKS - Consider modernizing
-```
+```text
 
 Step 1.4: Expected output volume (quality check)
 - ✓ 50-200 feature descriptions with file:line references
@@ -194,7 +194,7 @@ Step 1.4: Expected output volume (quality check)
 
 **Examples of Good vs Bad Extraction** (Lines 857-886)
 
-```
+```text
 ❌ BAD: "User management feature"
 ✅ GOOD: "User registration with email verification (src/auth/RegisterController.ts:45-89)
          - POST /api/auth/register
@@ -202,11 +202,11 @@ Step 1.4: Expected output volume (quality check)
          - Sends verification email via SendGridService
          - Stores user with bcrypt-hashed password (cost factor: 10)
          - Returns JWT token (24h expiration)"
-```
+```text
 
 ### Critical Instructions & Patterns
 
-```
+```text
 MANDATORY EXTRACTION PATTERNS:
 1. File:line references for EVERY finding
 2. Full depth analysis (not sampling - read EVERY file)
@@ -218,7 +218,7 @@ QUALITY GATES:
 - If output volume < expected → Return to Step 1.2 for more details
 - All findings must be specific, evidenced, and actionable
 - All files must be read (no sampling allowed)
-```
+```text
 
 ---
 
@@ -238,7 +238,7 @@ Generates comprehensive 9-phase Project Analysis Report in 9 logical chunks (com
 
 **Chunk 1: Phase 1 - Project Discovery** (Completion: All config files analyzed)
 
-```
+```text
 - Section 1.1: Technology Stack (from file analysis)
 - Section 1.2: System Architecture (inferred from structure)
 - Section 1.3: Project Statistics (LOC, file counts)
@@ -258,54 +258,54 @@ Progress Display:
   - Analyzed: [COUNT] configuration files
   - Identified: [TECH STACK SUMMARY]
   - Lines generated: [COUNT]
-```
+```text
 
 **Chunk 2: Phase 2.1 - Controllers & API Endpoints**
 
-```
+```text
 Complete Section 2.1: Controllers Analysis
 - EVERY controller file analyzed
 - EVERY API endpoint documented (method, path, purpose)
 - File:line references for all findings
 - Auth requirements clear for each endpoint
 - NO placeholders
-```
+```text
 
 **Chunk 3: Phase 2.2 - Services & Business Logic**
 
-```
+```text
 Complete Section 2.2: Services Analysis
 - EVERY service file analyzed
 - Business workflows documented with evidence
 - External integrations identified
 - Transaction patterns clear
 - NO placeholders
-```
+```text
 
 **Chunk 4: Phase 2.3 - Data Layer**
 
-```
+```text
 Complete Section 2.3: Data Models & Repositories
 - EVERY model/entity file analyzed
 - Relationships documented (with cardinality)
 - Validation rules extracted
 - Database operations categorized
 - NO placeholders
-```
+```text
 
 **Chunk 5: Phase 3 - Positive Findings**
 
-```
+```text
 - Section 3.1: What's Working Well
 - 10-30 positive findings with file:line references
 - Evidence-based (not generic praise)
 - Specific examples of good practices
 - NO placeholders
-```
+```text
 
 **Chunk 6: Phase 4 - Negative Findings / Technical Debt**
 
-```
+```text
 - Section 4.1: Technical Debt (HIGH/MEDIUM/LOW severity)
 - Section 4.2: Security Vulnerabilities (with CVE references)
 - Section 4.3: Code Quality Issues (smells, duplication, complexity)
@@ -313,11 +313,11 @@ Complete Section 2.3: Data Models & Repositories
 - 20-50 technical debt items categorized
 - 10-30 security findings with risk scores
 - NO placeholders
-```
+```text
 
 **Chunk 7: Phase 5 - Upgrade Path Analysis**
 
-```
+```text
 - Section 5.1: Runtime/Framework Upgrades (Current → Latest LTS)
 - Section 5.2: Dependency Upgrades (outdated packages, security patches)
 - Section 5.3: Database Migration Paths (schema changes, data migration)
@@ -326,11 +326,11 @@ Complete Section 2.3: Data Models & Repositories
 - Effort estimates provided (hours/days/weeks)
 - Risk assessment for each path
 - NO placeholders
-```
+```text
 
 **Chunk 8: Phases 6-7 - Modernization & Feasibility**
 
-```
+```text
 - Section 6: Modernization Recommendations
   - Quick wins (low effort, high value)
   - Strategic improvements
@@ -342,11 +342,11 @@ Complete Section 2.3: Data Models & Repositories
 - Recommendations prioritized by value/effort
 - Feasibility scores calculated with transparent formulas
 - NO placeholders
-```
+```text
 
 **Chunk 9: Phases 8-9 - Decision Matrix & Final Recommendations**
 
-```
+```text
 - Section 8: Decision Matrix
   - Comparison table: Time, Cost, Risk, Business Disruption
   - Scoring for each approach
@@ -359,7 +359,7 @@ Complete Section 2.3: Data Models & Repositories
 - Primary recommendation stated with confidence
 - Roadmaps provided with milestones
 - NO placeholders
-```
+```text
 
 ### Phase 3: Checkpoint & Resume Mechanism (Lines 1213-1244)
 
@@ -367,7 +367,7 @@ After each chunk completion:
 
 ```bash
 echo "{ \"chunk\": N, \"phase\": \"X.Y\", \"timestamp\": \"$(date -Iseconds)\" }" > .analysis/.checkpoints/chunk-N-complete.json
-```
+```text
 
 **Resume Logic** (if interrupted):
 1. Check `.analysis/.checkpoints/` for last completed checkpoint
@@ -381,7 +381,7 @@ echo "{ \"chunk\": N, \"phase\": \"X.Y\", \"timestamp\": \"$(date -Iseconds)\" }
 
 Verification Checklist:
 
-```
+```text
 - [ ] File exists at expected path
 - [ ] All 9 phase headers present (Phase 1-9)
 - [ ] Quality checks:
@@ -398,7 +398,7 @@ Verification Checklist:
       [ ] Feature descriptions: 50-200 with evidence
       [ ] Technical debt items: 20-50 categorized
       [ ] Security findings: 10-30 with risk scores
-```
+```text
 
 **If ANY checkbox fails**:
 - Identify incomplete sections
@@ -410,7 +410,7 @@ Verification Checklist:
 
 ### Critical Instructions & Patterns
 
-```
+```text
 COMPLETION-BASED CHUNKING:
 - Generate complete logical phases/sections
 - Do NOT split based on line counts
@@ -428,7 +428,7 @@ NO PLACEHOLDERS ALLOWED:
 - Every estimate must be calculated (not "TBD")
 - Every severity must be justified
 - No "coming soon" or "will be analyzed later"
-```
+```text
 
 ---
 
@@ -446,7 +446,7 @@ Only executed if ANALYSIS_SCOPE = [B]. Provides deep-dive analysis of a specific
 
 File pattern detection heuristics by concern type:
 
-```
+```text
 [1] AUTHENTICATION/AUTHORIZATION:
 - Patterns: auth*, login*, session*, jwt*, passport*, oauth*, security*, *guard*, *policy*
 - Imports: jsonwebtoken, passport, bcrypt, oauth, jose, spring-security, ASP.NET Identity
@@ -495,7 +495,7 @@ File pattern detection heuristics by concern type:
 [9] OTHER (User-Specified):
 - Semantic understanding based on user description
 - Pattern and import matching for custom concerns
-```
+```text
 
 **Output Table Format**:
 
@@ -505,13 +505,13 @@ File pattern detection heuristics by concern type:
 | src/auth/AuthService.ts:15 | Core Implementation | Exports authenticate(), uses jsonwebtoken | 247 | CRITICAL |
 ...
 **Total**: [COUNT] files, [COUNT] LOC (~X% of codebase)
-```
+```text
 
 **Step 4.B.2: Assess Abstraction Level**
 
 Scoring 0-10:
 
-```
+```text
 HIGH (8-10): Interface/contract defines all operations, DI used, config externalized,
              no direct coupling, easy to swap (hours of work)
 
@@ -520,7 +520,7 @@ MEDIUM (4-7): Some interfaces exist, mix of DI and direct instantiation, some ha
 
 LOW (0-3): No interfaces, direct instantiation everywhere, heavy hardcoding,
            tight coupling, very difficult to swap (months of refactoring)
-```
+```text
 
 **Analysis Checklist**:
 - [ ] Are there interface/contract definitions?
@@ -548,19 +548,19 @@ LOW (0-3): No interfaces, direct instantiation everywhere, heavy hardcoding,
 - HIGH: Can swap implementation directly (1-2 weeks)
 - MEDIUM: Need interface extraction first (4-6 weeks total)
 - LOW: Major refactoring required (2-4 months total)
-```
+```text
 
 **Step 4.B.3: Calculate Blast Radius**
 
 Metrics to calculate:
 
-```
+```text
 1. Direct usage count: How many files directly import/use the concern?
 2. Lines of code: Total LOC in concern files + consumer files
 3. Percentage of codebase: (Concern LOC + Consumer LOC) / Total Project LOC * 100
 4. Criticality distribution: CRITICAL vs STANDARD vs LOW priority files affected
 5. Test coverage: Do tests exist? Will tests need major rewrites?
-```
+```text
 
 **Output Section**:
 
@@ -588,13 +588,13 @@ Metrics to calculate:
 | File Path | Usage Count | Type | Impact |
 |-----------|-------------|------|--------|
 | [file:line] | [COUNT] | [Controller/Service/etc] | [HIGH/MED/LOW] |
-```
+```text
 
 **Step 4.B.4: Analyze Coupling Degree**
 
 Scoring 0-10:
 
-```
+```text
 LOOSE (8-10): Communication via interfaces only, no circular deps, clear module boundaries,
               minimal shared state, independent deployment possible
 
@@ -603,7 +603,7 @@ MODERATE (4-7): Some interface usage, some direct deps, few circular deps,
 
 TIGHT (0-3): Extensive direct dependencies, circular deps present, no module boundaries,
              extensive shared state, cannot deploy independently
-```
+```text
 
 **Output Section**:
 
@@ -624,13 +624,13 @@ TIGHT (0-3): Extensive direct dependencies, circular deps present, no module bou
 **Evidence**:
 - [Evidence 1 with file:line references]
 - [Evidence 2 with file:line references]
-```
+```text
 
 **Step 4.B.5: Recommend Migration Strategy**
 
 Decision tree logic:
 
-```
+```text
 IF high_abstraction AND loose_coupling:
    → STRANGLER_FIG (Recommended)
       Low risk, 2-4 weeks effort
@@ -657,7 +657,7 @@ ELSE:
       Low abstraction + large blast radius = significant refactoring
       Use feature flags for gradual rollout
       Extensive testing required
-```
+```text
 
 **Output Section**:
 
@@ -685,7 +685,7 @@ ELSE:
 ### Phase 2 (30% value) - [Timeline]
 ### Phase 3 (15% value) - [Timeline]
 ### Phase 4 (5% value) - [Timeline]
-```
+```text
 
 **Step 4.B.6: Abstraction Improvement Recommendations (if LOW/MEDIUM abstraction)**
 
@@ -729,11 +729,11 @@ Provide specific guidance on improving abstractions before migration:
 
 **Future Migration Benefit**:
 After refactoring, next migration will be [STRANGLER_FIG/ADAPTER_PATTERN] with [LOW/MEDIUM] risk.
-```
+```text
 
 ### Critical Instructions & Patterns
 
-```
+```text
 PREREQUISITE: Step 4.A (analysis-report.md) must be COMPLETE before starting 4.B
 
 REUSE FROM ANALYSIS-REPORT:
@@ -758,7 +758,7 @@ EVIDENCE REQUIREMENT:
 - ALL findings must include file:line references
 - Specific counts (not estimates)
 - Actionable recommendations tied to assessment
-```
+```text
 
 ---
 
@@ -811,11 +811,11 @@ If analysis-report.md missing/incomplete → STOP, RETURN to Step 4.A, DO NOT pr
 
 **Progress Display**:
 
-```
+```text
 ✓ EXECUTIVE-SUMMARY.md complete
   - Extracted from: analysis-report.md
   - Lines: [COUNT]
-```
+```text
 
 #### 2. **functional-spec.md** (2,000-4,000 lines - 5 chunks)
 
@@ -830,10 +830,10 @@ If analysis-report.md missing/incomplete → STOP, RETURN to Step 4.A, DO NOT pr
 - Content: Project overview, high-level purpose, in/out of scope
 - Completion: All 3 sections complete, no placeholders
 
-```
+```text
 Progress: ✓ functional-spec.md Chunk 1/5 complete: Introduction + Summary + Scope
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 2: User Stories (Part 1) - CRITICAL Features**
 - Section 4.1: User Stories - CRITICAL
@@ -841,11 +841,11 @@ Progress: ✓ functional-spec.md Chunk 1/5 complete: Introduction + Summary + Sc
 - Every feature MUST have file:line reference
 - Completion: All CRITICAL features documented with evidence
 
-```
+```text
 Progress: ✓ functional-spec.md Chunk 2/5 complete: User Stories (CRITICAL)
           - Features: [COUNT]
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 3: User Stories (Part 2) - STANDARD Features + Business Rules**
 - Section 4.2: User Stories - STANDARD
@@ -853,11 +853,11 @@ Progress: ✓ functional-spec.md Chunk 2/5 complete: User Stories (CRITICAL)
 - Content: STANDARD features + validation rules
 - Completion: All STANDARD features + rules documented
 
-```
+```text
 Progress: ✓ functional-spec.md Chunk 3/5 complete: STANDARD Features + Rules
           - Features: [COUNT]
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 4: NFRs + Data Requirements**
 - Section 6: Non-Functional Requirements
@@ -865,10 +865,10 @@ Progress: ✓ functional-spec.md Chunk 3/5 complete: STANDARD Features + Rules
 - Content: Performance, security, scalability, data entities
 - Completion: NFRs defined, data models documented
 
-```
+```text
 Progress: ✓ functional-spec.md Chunk 4/5 complete: NFRs + Data
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 5: Acceptance Criteria + Assumptions + Constraints**
 - Section 8: Acceptance Criteria
@@ -877,11 +877,11 @@ Progress: ✓ functional-spec.md Chunk 4/5 complete: NFRs + Data
 - Content: Testing criteria, assumptions, limitations
 - Completion: All sections complete, no placeholders
 
-```
+```text
 Progress: ✅ functional-spec.md COMPLETE (5/5 chunks)
           - Total features: [COUNT]
           - Total lines: [COUNT]
-```
+```text
 
 #### 3. **technical-spec.md** (2,000-3,000 lines - 5 chunks)
 
@@ -896,11 +896,11 @@ Progress: ✅ functional-spec.md COMPLETE (5/5 chunks)
 - Content: System architecture, comparison tables, Mermaid diagrams
 - Completion: Architecture patterns documented, comparison complete
 
-```
+```text
 Progress: ✓ technical-spec.md Chunk 1/5 complete: Architecture + Comparison
           - Diagrams: [COUNT]
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 2: Target Tech Stack + Data Architecture**
 - Section 4: Target Tech Stack
@@ -909,10 +909,10 @@ Progress: ✓ technical-spec.md Chunk 1/5 complete: Architecture + Comparison
 - Include user's answers from modernization preference questions
 - Completion: All tech choices documented, data layer designed
 
-```
+```text
 Progress: ✓ technical-spec.md Chunk 2/5 complete: Tech Stack + Data
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 3: API Design + Integration Points**
 - Section 6: API Design
@@ -920,11 +920,11 @@ Progress: ✓ technical-spec.md Chunk 2/5 complete: Tech Stack + Data
 - Content: REST/GraphQL design, external APIs, message queues
 - Completion: API contracts defined, integrations documented
 
-```
+```text
 Progress: ✓ technical-spec.md Chunk 3/5 complete: API + Integrations
           - Endpoints: [COUNT]
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 4: Security + Authentication + Deployment**
 - Section 8: Security
@@ -932,10 +932,10 @@ Progress: ✓ technical-spec.md Chunk 3/5 complete: API + Integrations
 - Content: User's chosen auth (Q9), deployment target (Q5), IaC (Q6), containers (Q7)
 - Completion: Security measures defined, deployment plan complete
 
-```
+```text
 Progress: ✓ technical-spec.md Chunk 4/5 complete: Security + Deployment
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 5: Testing Strategy + Observability + Migration Risks**
 - Section 10: Testing Strategy
@@ -944,10 +944,10 @@ Progress: ✓ technical-spec.md Chunk 4/5 complete: Security + Deployment
 - Content: User's testing choice (Q10), observability stack (Q8), risk mitigation
 - Completion: All sections complete, no placeholders
 
-```
+```text
 Progress: ✅ technical-spec.md COMPLETE (5/5 chunks)
           - Total lines: [COUNT]
-```
+```text
 
 #### 4. **stage-prompts/** (4 files - Generate individually)
 
@@ -977,13 +977,13 @@ Progress: ✅ technical-spec.md COMPLETE (5/5 chunks)
 
 **Progress Display**:
 
-```
+```text
 ✅ stage-prompts/ COMPLETE (4 files)
    - constitution-prompt.md
    - clarify-prompt.md
    - tasks-prompt.md
    - implement-prompt.md
-```
+```text
 
 **ARTIFACTS NOT GENERATED**:
 - ❌ recommended-constitution.md (replaced by constitution-prompt.md)
@@ -1014,11 +1014,11 @@ Progress: ✅ technical-spec.md COMPLETE (5/5 chunks)
 - Content: Concern overview, reference to analysis-report.md, all concern files with evidence
 - Completion: Context clear, all files identified with file:line refs
 
-```
+```text
 Progress: ✓ concern-analysis.md Chunk 1/3 complete: Intro + Files
           - Files identified: [COUNT]
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 2: Abstraction + Blast Radius + Coupling**
 - Section 4: Abstraction Assessment (from Step 4.B.2)
@@ -1027,12 +1027,12 @@ Progress: ✓ concern-analysis.md Chunk 1/3 complete: Intro + Files
 - Content: All findings with file:line evidence
 - Completion: All metrics calculated, evidence provided
 
-```
+```text
 Progress: ✓ concern-analysis.md Chunk 2/3 complete: Analysis Metrics
           - Abstraction score: [SCORE]
           - Blast radius: [PERCENT]%
           - Lines: [COUNT]
-```
+```text
 
 **Chunk 3: Migration Strategy + Risks + Recommendations**
 - Section 7: Recommended Strategy (from Step 4.B.5)
@@ -1041,11 +1041,11 @@ Progress: ✓ concern-analysis.md Chunk 2/3 complete: Analysis Metrics
 - Content: Strategy, risk analysis, action items
 - Completion: All sections complete, no placeholders
 
-```
+```text
 Progress: ✅ concern-analysis.md COMPLETE (3/3 chunks)
           - Strategy: [APPROACH]
           - Total lines: [COUNT]
-```
+```text
 
 #### 2. **abstraction-recommendations.md** (As needed)
 
@@ -1062,10 +1062,10 @@ Progress: ✅ concern-analysis.md COMPLETE (3/3 chunks)
 
 **Progress Display**:
 
-```
+```text
 ✓ abstraction-recommendations.md complete
   - Lines: [COUNT]
-```
+```text
 
 #### 3. **concern-migration-plan.md** (1-2 chunks)
 
@@ -1083,11 +1083,11 @@ Progress: ✅ concern-analysis.md COMPLETE (3/3 chunks)
 
 **Progress Display**:
 
-```
+```text
 ✅ concern-migration-plan.md COMPLETE
    - Phases: 4
    - Lines: [COUNT]
-```
+```text
 
 #### 4. **EXECUTIVE-SUMMARY.md** (1 chunk)
 
@@ -1102,10 +1102,10 @@ Progress: ✅ concern-analysis.md COMPLETE (3/3 chunks)
 
 **Progress Display**:
 
-```
+```text
 ✓ EXECUTIVE-SUMMARY.md complete
   - Lines: [COUNT]
-```
+```text
 
 **SUPPORTING FILES** (Optional):
 - `concern-files-inventory.json` - List of all concern-related files with metadata
@@ -1180,7 +1180,7 @@ ANALYSIS COMPLETE
 **Files Analyzed**: [COUNT]
 **Total Output**: [SIZE] lines across [COUNT] artifacts
 ═══════════════════════════════════════════════════════════
-```
+```text
 
 ### Critical Information for Prompt Chaining
 
@@ -1197,7 +1197,7 @@ ANALYSIS COMPLETE
 
 ### Data Flow Between Sections
 
-```
+```text
 Section 1 (User Input)
   → Capture PROJECT_PATH, ANALYSIS_SCOPE, CONCERN_TYPE (if [B])
   ↓
@@ -1223,11 +1223,11 @@ Section 7 (Artifact Generation)
   ↓
 Section 8 (Final Report)
   → Summarize findings, list artifacts, next steps
-```
+```text
 
 ### Critical Prerequisites
 
-```
+```text
 Step 4.A → Step 4.B:
   - BEFORE starting 4.B, Step 4.A must be COMPLETE
   - analysis-report.md must PASS verification gate
@@ -1241,7 +1241,7 @@ Step 4.A OR 4.B → Step 6:
 Step 3 → Step 4:
   - Modernization preferences from 10 questions must be STORED
   - Used during artifact generation (technical-spec.md, stage-prompts)
-```
+```text
 
 ---
 
@@ -1279,21 +1279,21 @@ Step 3 → Step 4:
 
 After each chunk:
 
-```
+```text
 ✓ [ARTIFACT] Chunk [N]/[TOTAL] complete: [PHASE/SECTION NAME]
   - [Key metric 1]: [VALUE]
   - [Key metric 2]: [VALUE]
   - Lines generated: [COUNT]
-```
+```text
 
 After all chunks:
 
-```
+```text
 ✅ [ARTIFACT] COMPLETE ([N]/[N] chunks)
    - [Summary metric 1]: [VALUE]
    - [Summary metric 2]: [VALUE]
    - Total lines: [COUNT]
-```
+```text
 
 ---
 

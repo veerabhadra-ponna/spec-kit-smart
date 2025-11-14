@@ -10,17 +10,54 @@ Version: 1.0.0
 #>
 
 param(
-    [Parameter(Mandatory=$true, Position=0)]
+    [Parameter(Mandatory=$false, Position=0)]
     [string]$Command,
 
     [Parameter(Position=1)]
     [string]$Arg1,
 
     [Parameter(Position=2)]
-    [string]$Arg2
+    [string]$Arg2,
+
+    [switch]$Help
 )
 
 $ErrorActionPreference = "Stop"
+
+# Handle -Help
+if ($Help -or $Command -eq "help" -or $Command -eq "--help" -or $Command -eq "-h") {
+    Write-Host @"
+Usage: ChainState.ps1 <command> [args]
+
+Commands:
+  generate-id              Generate unique chain ID
+  init                     Initialize state directory
+  save <stage> <json>      Save state for stage
+  load <stage>             Load state for stage
+  load-latest              Load latest state
+  last-stage               Get last completed stage
+  is-complete <stage>      Check if stage is complete
+  chain-id                 Get chain ID from latest state
+  init-state <chain_id>    Create initial state
+  merge <old> <new>        Merge state objects
+  mark-complete <state> <stage>  Mark stage as complete
+  validate <json>          Validate state schema
+
+Examples:
+  ChainState.ps1 generate-id
+  ChainState.ps1 init
+  ChainState.ps1 save 01-init '{"chain_id":"abc123",...}'
+  ChainState.ps1 load 01-init
+  ChainState.ps1 last-stage
+"@
+    exit 0
+}
+
+# Command is required if not showing help
+if ([string]::IsNullOrEmpty($Command)) {
+    Write-Error "Command is required. Use -Help for usage information."
+    exit 1
+}
 
 # State directory
 $StateDir = ".analysis/.state"

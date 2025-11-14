@@ -9,15 +9,47 @@ Enforces quality checks before proceeding to Stage 7
 Path to the analysis report file
 
 .EXAMPLE
-.\verify-analysis-report.ps1 .analysis/myproject-20251114/analysis-report.md
+.\Verify-AnalysisReport.ps1 .analysis/myproject-20251114/analysis-report.md
 #>
 
 param(
-    [Parameter(Mandatory=$true, Position=0)]
-    [string]$ReportFile
+    [Parameter(Mandatory=$false, Position=0)]
+    [string]$ReportFile,
+
+    [switch]$Help
 )
 
 $ErrorActionPreference = "Stop"
+
+# Handle -Help
+if ($Help) {
+    Write-Host @"
+Usage: Verify-AnalysisReport.ps1 <report_file>
+
+Verification gate for Stage 6 analysis report.
+
+Checks:
+  - All 9 phases present
+  - Minimum 3,000 lines
+  - 50+ file:line references
+  - No placeholders (TODO, TBD)
+  - Severity ratings present
+
+Examples:
+  Verify-AnalysisReport.ps1 .analysis/myproject-20251114/analysis-report.md
+
+Exit codes:
+  0 - All checks passed
+  1 - One or more checks failed
+"@
+    exit 0
+}
+
+# ReportFile is required if not showing help
+if ([string]::IsNullOrEmpty($ReportFile)) {
+    Write-Error "ReportFile is required. Use -Help for usage information."
+    exit 1
+}
 
 Write-Host "=== Analysis Report Verification Gate ===" -ForegroundColor Blue
 Write-Host "Report: $ReportFile"
