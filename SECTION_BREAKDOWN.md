@@ -81,6 +81,7 @@ This section outlines the complete workflow structure with conditional logic for
   10. Testing Strategy
 
 **Conditional Logic Patterns**:
+
 ```
 Q3 (Message Bus): Skip if HAS_MESSAGE_BUS = false
 Q6 (IaC): Skip if Q5 answer = [A] (Dedicated server)
@@ -115,6 +116,7 @@ This is the concrete analysis approach for Phase 0 through Phase 2 generation. I
 **Phase 0: Upfront Estimation & User Warning** (Lines 566-664)
 
 Step 0.1: Count files by category from manifest
+
 ```
 - Controllers/Routes
 - Services/Business Logic
@@ -128,6 +130,7 @@ Step 0.1: Count files by category from manifest
 ```
 
 Step 0.2: Calculate chunks needed
+
 ```javascript
 Total important files = Controllers + Services + Models + Repositories + Configs + Security + Middleware + Utilities
 
@@ -173,6 +176,7 @@ For each category, extract specific details:
 - **Infrastructure**: deployment targets, environment configs, CI/CD, IaC patterns, scaling
 
 Step 1.3: Categorize features by criticality
+
 ```
 CRITICAL - Must preserve exactly
 STANDARD - Preserve but can modernize
@@ -189,6 +193,7 @@ Step 1.4: Expected output volume (quality check)
 - ✓ Test coverage analysis complete
 
 **Examples of Good vs Bad Extraction** (Lines 857-886)
+
 ```
 ❌ BAD: "User management feature"
 ✅ GOOD: "User registration with email verification (src/auth/RegisterController.ts:45-89)
@@ -232,6 +237,7 @@ Generates comprehensive 9-phase Project Analysis Report in 9 logical chunks (com
 - Checkpoint markers created after each chunk
 
 **Chunk 1: Phase 1 - Project Discovery** (Completion: All config files analyzed)
+
 ```
 - Section 1.1: Technology Stack (from file analysis)
 - Section 1.2: System Architecture (inferred from structure)
@@ -255,6 +261,7 @@ Progress Display:
 ```
 
 **Chunk 2: Phase 2.1 - Controllers & API Endpoints**
+
 ```
 Complete Section 2.1: Controllers Analysis
 - EVERY controller file analyzed
@@ -265,6 +272,7 @@ Complete Section 2.1: Controllers Analysis
 ```
 
 **Chunk 3: Phase 2.2 - Services & Business Logic**
+
 ```
 Complete Section 2.2: Services Analysis
 - EVERY service file analyzed
@@ -275,6 +283,7 @@ Complete Section 2.2: Services Analysis
 ```
 
 **Chunk 4: Phase 2.3 - Data Layer**
+
 ```
 Complete Section 2.3: Data Models & Repositories
 - EVERY model/entity file analyzed
@@ -285,6 +294,7 @@ Complete Section 2.3: Data Models & Repositories
 ```
 
 **Chunk 5: Phase 3 - Positive Findings**
+
 ```
 - Section 3.1: What's Working Well
 - 10-30 positive findings with file:line references
@@ -294,6 +304,7 @@ Complete Section 2.3: Data Models & Repositories
 ```
 
 **Chunk 6: Phase 4 - Negative Findings / Technical Debt**
+
 ```
 - Section 4.1: Technical Debt (HIGH/MEDIUM/LOW severity)
 - Section 4.2: Security Vulnerabilities (with CVE references)
@@ -305,6 +316,7 @@ Complete Section 2.3: Data Models & Repositories
 ```
 
 **Chunk 7: Phase 5 - Upgrade Path Analysis**
+
 ```
 - Section 5.1: Runtime/Framework Upgrades (Current → Latest LTS)
 - Section 5.2: Dependency Upgrades (outdated packages, security patches)
@@ -317,6 +329,7 @@ Complete Section 2.3: Data Models & Repositories
 ```
 
 **Chunk 8: Phases 6-7 - Modernization & Feasibility**
+
 ```
 - Section 6: Modernization Recommendations
   - Quick wins (low effort, high value)
@@ -332,6 +345,7 @@ Complete Section 2.3: Data Models & Repositories
 ```
 
 **Chunk 9: Phases 8-9 - Decision Matrix & Final Recommendations**
+
 ```
 - Section 8: Decision Matrix
   - Comparison table: Time, Cost, Risk, Business Disruption
@@ -350,6 +364,7 @@ Complete Section 2.3: Data Models & Repositories
 ### Phase 3: Checkpoint & Resume Mechanism (Lines 1213-1244)
 
 After each chunk completion:
+
 ```bash
 echo "{ \"chunk\": N, \"phase\": \"X.Y\", \"timestamp\": \"$(date -Iseconds)\" }" > .analysis/.checkpoints/chunk-N-complete.json
 ```
@@ -365,6 +380,7 @@ echo "{ \"chunk\": N, \"phase\": \"X.Y\", \"timestamp\": \"$(date -Iseconds)\" }
 **HARD STOP before proceeding to Step 4.B or Step 6**
 
 Verification Checklist:
+
 ```
 - [ ] File exists at expected path
 - [ ] All 9 phase headers present (Phase 1-9)
@@ -482,6 +498,7 @@ File pattern detection heuristics by concern type:
 ```
 
 **Output Table Format**:
+
 ```markdown
 | File Path | Type | Evidence | LOC | Criticality |
 |-----------|------|----------|-----|-------------|
@@ -493,6 +510,7 @@ File pattern detection heuristics by concern type:
 **Step 4.B.2: Assess Abstraction Level**
 
 Scoring 0-10:
+
 ```
 HIGH (8-10): Interface/contract defines all operations, DI used, config externalized,
              no direct coupling, easy to swap (hours of work)
@@ -512,6 +530,7 @@ LOW (0-3): No interfaces, direct instantiation everywhere, heavy hardcoding,
 - [ ] Are there direct imports of implementation classes?
 
 **Output Section**:
+
 ```markdown
 ### Abstraction Level Assessment
 
@@ -534,6 +553,7 @@ LOW (0-3): No interfaces, direct instantiation everywhere, heavy hardcoding,
 **Step 4.B.3: Calculate Blast Radius**
 
 Metrics to calculate:
+
 ```
 1. Direct usage count: How many files directly import/use the concern?
 2. Lines of code: Total LOC in concern files + consumer files
@@ -543,6 +563,7 @@ Metrics to calculate:
 ```
 
 **Output Section**:
+
 ```markdown
 ### Blast Radius Analysis
 
@@ -572,6 +593,7 @@ Metrics to calculate:
 **Step 4.B.4: Analyze Coupling Degree**
 
 Scoring 0-10:
+
 ```
 LOOSE (8-10): Communication via interfaces only, no circular deps, clear module boundaries,
               minimal shared state, independent deployment possible
@@ -584,6 +606,7 @@ TIGHT (0-3): Extensive direct dependencies, circular deps present, no module bou
 ```
 
 **Output Section**:
+
 ```markdown
 ### Coupling Degree Analysis
 
@@ -606,6 +629,7 @@ TIGHT (0-3): Extensive direct dependencies, circular deps present, no module bou
 **Step 4.B.5: Recommend Migration Strategy**
 
 Decision tree logic:
+
 ```
 IF high_abstraction AND loose_coupling:
    → STRANGLER_FIG (Recommended)
@@ -636,6 +660,7 @@ ELSE:
 ```
 
 **Output Section**:
+
 ```markdown
 ### Migration Strategy Recommendation
 
@@ -785,6 +810,7 @@ If analysis-report.md missing/incomplete → STOP, RETURN to Step 4.A, DO NOT pr
 - ✓ No placeholders
 
 **Progress Display**:
+
 ```
 ✓ EXECUTIVE-SUMMARY.md complete
   - Extracted from: analysis-report.md
@@ -950,6 +976,7 @@ Progress: ✅ technical-spec.md COMPLETE (5/5 chunks)
 - Reference technical-spec.md for patterns
 
 **Progress Display**:
+
 ```
 ✅ stage-prompts/ COMPLETE (4 files)
    - constitution-prompt.md
@@ -1034,6 +1061,7 @@ Progress: ✅ concern-analysis.md COMPLETE (3/3 chunks)
   - Generate in 1 chunk
 
 **Progress Display**:
+
 ```
 ✓ abstraction-recommendations.md complete
   - Lines: [COUNT]
@@ -1054,6 +1082,7 @@ Progress: ✅ concern-analysis.md COMPLETE (3/3 chunks)
 - Rollback procedures
 
 **Progress Display**:
+
 ```
 ✅ concern-migration-plan.md COMPLETE
    - Phases: 4
@@ -1072,6 +1101,7 @@ Progress: ✅ concern-analysis.md COMPLETE (3/3 chunks)
 - Reference key metrics from analysis-report.md
 
 **Progress Display**:
+
 ```
 ✓ EXECUTIVE-SUMMARY.md complete
   - Lines: [COUNT]
@@ -1248,6 +1278,7 @@ Step 3 → Step 4:
 ### Progress Display Pattern
 
 After each chunk:
+
 ```
 ✓ [ARTIFACT] Chunk [N]/[TOTAL] complete: [PHASE/SECTION NAME]
   - [Key metric 1]: [VALUE]
@@ -1256,6 +1287,7 @@ After each chunk:
 ```
 
 After all chunks:
+
 ```
 ✅ [ARTIFACT] COMPLETE ([N]/[N] chunks)
    - [Summary metric 1]: [VALUE]
