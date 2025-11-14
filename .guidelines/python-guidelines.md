@@ -860,7 +860,7 @@ app.add_middleware(
 
 - Pattern matching (match/case) - Python 3.10+
 - Structural pattern matching
-- Union types with `|` operator - Python 3.10+
+- Union types with ` | ` operator - Python 3.10+
 - `TypedDict` for dictionary typing
 - `dataclasses` or Pydantic models for data structures
 - Context managers (`with` statement)

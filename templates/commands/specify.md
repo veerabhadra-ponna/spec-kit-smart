@@ -365,7 +365,7 @@ Given that feature description, do this:
            **Suggested Answers**:
            
            | Option | Answer | Implications |
-           |--------|--------|--------------|
+           | -------- | -------- | -------------- |
            | A      | [First suggested answer] | [What this means for the feature] |
            | B      | [Second suggested answer] | [What this means for the feature] |
            | C      | [Third suggested answer] | [What this means for the feature] |
@@ -376,8 +376,8 @@ Given that feature description, do this:
 
         4. **CRITICAL - Table Formatting**: Ensure markdown tables are properly formatted:
            - Use consistent spacing with pipes aligned
-           - Each cell should have spaces around content: `| Content |` not `|Content|`
-           - Header separator must have at least 3 dashes: `|--------|`
+           - Each cell should have spaces around content: ` | Content | ` not ` | Content | `
+           - Header separator must have at least 3 dashes: ` | -------- | `
            - Test that the table renders correctly in markdown preview
         5. Number questions sequentially (Q1, Q2, Q3 - max 3 total)
         6. Present all questions together before waiting for responses

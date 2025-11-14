@@ -474,7 +474,7 @@
 ### Identified Risks
 
 | Risk ID | Risk Description | Probability | Impact | Mitigation Strategy | Owner |
-|---------|------------------|-------------|--------|---------------------|-------|
+| --------- | ------------------ | ------------- | -------- | --------------------- | ------- |
 | R1 | <<e.g., "Breaking authentication for existing users">> | HIGH / MEDIUM / LOW | HIGH / MEDIUM / LOW | <<Strategy>> | <<TBD>> |
 | R2 | <<e.g., "Performance degradation during migration">> | MEDIUM | MEDIUM | <<Strategy>> | <<TBD>> |
 | R3 | <<e.g., "Cost overruns for new service">> | LOW | MEDIUM | <<Strategy>> | <<TBD>> |
@@ -547,7 +547,7 @@
 ### Testing Timeline
 
 | Week | Test Type | Environment | Pass Criteria |
-|------|-----------|-------------|---------------|
+| ------ | ----------- | ------------- | --------------- |
 | 1-2 | Unit | Dev | 90% coverage, all tests pass |
 | 3 | Integration | Dev | All critical paths pass |
 | 4 | E2E | Staging | All user journeys pass |
@@ -612,7 +612,7 @@
 ### Alerting Rules
 
 | Alert | Condition | Severity | Action |
-|-------|-----------|----------|--------|
+| ------- | ----------- | ---------- | -------- |
 | <<Alert 1>> | <<e.g., "Error rate > 1%">> | CRITICAL | Rollback immediately |
 | <<Alert 2>> | <<e.g., "Latency p95 > 500ms">> | HIGH | Investigate, prepare rollback |
 | <<Alert 3>> | <<e.g., "Cost > $X/day">> | MEDIUM | Optimize configuration |
@@ -916,7 +916,7 @@
 ### Appendix C: Contacts
 
 | Role | Name | Email | Slack |
-|------|------|-------|-------|
+| ------ | ------ | ------- | ------- |
 | Technical Lead | <<TBD>> | <<email>> | @<<handle>> |
 | Product Owner | <<TBD>> | <<email>> | @<<handle>> |
 | Operations Lead | <<TBD>> | <<email>> | @<<handle>> |

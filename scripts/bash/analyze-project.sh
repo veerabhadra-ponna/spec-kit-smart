@@ -275,6 +275,44 @@ show_summary() {
     print_success "🤖 Ready for AI analysis!"
 }
 
+initialize_chain_state() {
+    print_header "Initializing Chain State"
+
+    # Initialize state directory
+    "$SCRIPT_DIR/chain-state.sh" init
+
+    # Generate chain ID
+    CHAIN_ID=$("$SCRIPT_DIR/chain-state.sh" generate-id)
+    print_success "Chain ID: $CHAIN_ID"
+
+    # Create bootstrap state with project info
+    local timestamp=$(date -Iseconds)
+    local bootstrap_state=$(cat <<EOF
+{
+  "chain_id": "$CHAIN_ID",
+  "start_time": "$timestamp",
+  "timestamp": "$timestamp",
+  "stage": "bootstrap",
+  "stages_complete": [],
+  "project_path": "$PROJECT_PATH",
+  "project_name": "$PROJECT_NAME",
+  "analysis_dir": "$OUTPUT_DIR",
+  "manifest_path": "$OUTPUT_DIR/file-manifest.json"
+}
+EOF
+)
+
+    # Save bootstrap state
+    "$SCRIPT_DIR/chain-state.sh" save 00-bootstrap "$bootstrap_state"
+
+    # Export chain ID for AI to use
+    echo ""
+    print_success "Chain state initialized"
+    print_info "Chain ID: $CHAIN_ID"
+    print_info "State directory: .analysis/.state/"
+    echo ""
+}
+
 # Main script
 
 main() {
@@ -315,6 +353,7 @@ main() {
     setup_output_directory
     run_enumeration
     create_analysis_workspace
+    initialize_chain_state
     show_summary
 
     exit 0

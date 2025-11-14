@@ -61,7 +61,7 @@ Priority order when making decisions:
 ### Supported Stacks (v2.0)
 
 | Stack | Version | Frameworks | Status |
-|-------|---------|------------|--------|
+| ------- | --------- | ------------ | -------- |
 | **React** | 18+ | Next.js 14+, Vite 5+, Remix | ✅ Active |
 | **Java** | 21 LTS | Spring Boot 3.2+, Quarkus, Micronaut | ✅ Active |
 | **.NET** | 8 LTS | ASP.NET Core, Blazor, gRPC | ✅ Active |
@@ -249,7 +249,7 @@ Configuration files include:
 Guidelines specify **target versions**:
 
 | Stack | Target Version | LTS Until | Next LTS |
-|-------|---------------|-----------|----------|
+| ------- | --------------- | ----------- | ---------- |
 | Java | 21 LTS | Sep 2028 | Sep 2025 (Java 23 LTS) |
 | .NET | 8 LTS | Nov 2026 | Nov 2025 (.NET 10 LTS) |
 | Node.js | 20 LTS | Apr 2026 | Oct 2024 (Node.js 22 LTS) |
@@ -265,7 +265,7 @@ Guidelines specify **target versions**:
 **Find and replace** across all `*-guidelines.md` files:
 
 | Placeholder | Replace With |
-|-------------|--------------|
+| ------------- | -------------- |
 | `@YOUR_ORG` | Your organization's package scope (e.g., `@acmecorp`) |
 | `YOUR_ORG` | Your organization name (e.g., `acmecorp`) |
 | `YOUR_DOMAIN` | Your organization domain (e.g., `acmecorp.com`) |

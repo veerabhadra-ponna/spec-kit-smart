@@ -66,7 +66,7 @@ Based on analysis of the legacy codebase, the system serves these objectives:
 ### KPIs/Metrics (Extracted from Code)
 
 | Metric | Current Implementation | Evidence |
-|--------|----------------------|----------|
+| -------- | ---------------------- | ---------- |
 | <<Metric name>> | <<How it's tracked>> | <<file:line>> |
 | <<Response time>> | <<Hardcoded timeout/config>> | <<file:line>> |
 | <<Throughput>> | <<Rate limit/throttle config>> | <<file:line>> |
@@ -80,7 +80,7 @@ Based on analysis of the legacy codebase, the system serves these objectives:
 <<Extract from authentication, authorization, RBAC, user roles>>
 
 | Persona | Evidence | Permissions/Capabilities |
-|---------|----------|-------------------------|
+| --------- | ---------- | ------------------------- |
 | <<Admin>> | <<auth.js:45-67>> | <<Full access, user management, etc.>> |
 | <<User>> | <<auth.js:89-102>> | <<Read/write own data, limited access>> |
 | <<Guest>> | <<auth.js:115-120>> | <<Read-only public data>> |
@@ -111,7 +111,7 @@ journey
 ### In Scope (Features Found in Legacy Code)
 
 | Feature/Capability | Evidence (file:line) | Criticality |
-|-------------------|---------------------|-------------|
+| ------------------- | --------------------- | ------------- |
 | <<Feature 1>> | <<path/to/file:123>> | CRITICAL |
 | <<Feature 2>> | <<path/to/file:456>> | STANDARD |
 | <<Feature 3>> | <<path/to/file:789>> | STANDARD |
@@ -119,7 +119,7 @@ journey
 ### Out of Scope (Not Found in Legacy Code)
 
 | Capability | Rationale |
-|-----------|-----------|
+| ----------- | ----------- |
 | <<Feature X>> | No evidence in codebase; may be external/deprecated |
 | <<Feature Y>> | Only mentioned in comments, no implementation |
 
@@ -206,7 +206,7 @@ These constraints are derived from code evidence and must be preserved:
 ### Performance (Extracted from Config/Code)
 
 | Metric | Current Target | Evidence | Notes |
-|--------|---------------|----------|-------|
+| -------- | --------------- | ---------- | ------- |
 | Response time | p95 < <<X>>ms | <<config.js:23>> | Hardcoded timeout |
 | Throughput | <<Y>> req/min | <<rate-limiter.js:45>> | Per-user limit |
 | Batch size | <<Z>> records | <<batch-processor.js:67>> | Max batch |
@@ -214,7 +214,7 @@ These constraints are derived from code evidence and must be preserved:
 ### Availability & Reliability
 
 | Metric | Current Implementation | Evidence |
-|--------|----------------------|----------|
+| -------- | ---------------------- | ---------- |
 | Uptime | <<SLA/config>> | <<deploy/config.yaml:12>> |
 | Retry logic | <<3 attempts, exp backoff>> | <<http-client.js:89-102>> |
 | Circuit breaker | <<Threshold: 5 failures>> | <<circuit-breaker.js:34>> |
@@ -222,7 +222,7 @@ These constraints are derived from code evidence and must be preserved:
 ### Security (Current Implementation)
 
 | Aspect | Implementation | Evidence |
-|--------|---------------|----------|
+| -------- | --------------- | ---------- |
 | Authentication | <<Session-based, 30min timeout>> | <<auth/session.js:45>> |
 | Authorization | <<Role-based (admin/user/guest)>> | <<auth/rbac.js:23-67>> |
 | Encryption | <<AES-256-CBC for PII>> | <<crypto/encrypt.js:12>> |
@@ -231,7 +231,7 @@ These constraints are derived from code evidence and must be preserved:
 ### Accessibility, Privacy, Localization
 
 | Aspect | Current State | Evidence |
-|--------|--------------|----------|
+| -------- | -------------- | ---------- |
 | A11y | <<WCAG level/none>> | <<frontend analysis>> |
 | Privacy | <<PII masking in logs>> | <<logger.js:56>> |
 | I18n | <<EN only / multi-lang>> | <<i18n/locales/>> |
@@ -247,7 +247,7 @@ These constraints are derived from code evidence and must be preserved:
 **Evidence**: <<migrations/001_create_users.sql>> or <<models/User.js>>
 
 | Field | Type | Constraints | PII | Notes |
-|-------|------|-------------|-----|-------|
+| ------- | ------ | ------------- | ----- | ------- |
 | id | UUID | PRIMARY KEY | No | Auto-generated |
 | email | VARCHAR(255) | UNIQUE, NOT NULL | Yes | Encrypted |
 | password_hash | VARCHAR(255) | NOT NULL | Yes | bcrypt |
@@ -270,7 +270,7 @@ These constraints are derived from code evidence and must be preserved:
 ## 9. Configuration Mapping (All Config Files)
 
 | Config File | Purpose | Key Settings | Migration Strategy |
-|-------------|---------|--------------|-------------------|
+| ------------- | --------- | -------------- | ------------------- |
 | `.env.example` | Env var template | DB_URL, API_KEY, etc. | Keep, update keys |
 | `config/app.js` | App settings | PORT, LOG_LEVEL, TIMEOUT | Migrate to env vars |
 | `config/database.yml` | DB connection | host, port, credentials | Use connection string |
@@ -286,7 +286,7 @@ These constraints are derived from code evidence and must be preserved:
 ### REST Endpoints
 
 | Method | Path | Purpose | Auth Required | Request | Response | Evidence |
-|--------|------|---------|--------------|---------|----------|----------|
+| -------- | ------ | --------- | -------------- | --------- | ---------- | ---------- |
 | GET | `/api/users` | List users | Yes (admin) | Query params | User[] | <<routes/users.js:23>> |
 | POST | `/api/users` | Create user | Yes (admin) | UserInput | User | <<routes/users.js:45>> |
 | GET | `/api/users/:id` | Get user | Yes | - | User | <<routes/users.js:67>> |
@@ -302,7 +302,7 @@ These constraints are derived from code evidence and must be preserved:
 ## 11. Integration Points (External Systems)
 
 | External System | Purpose | Protocol | Auth Method | Evidence |
-|----------------|---------|----------|-------------|----------|
+| ---------------- | --------- | ---------- | ------------- | ---------- |
 | <<Payment Gateway>> | Process payments | REST API | API Key | <<services/payment.js:34>> |
 | <<Email Service>> | Send notifications | SMTP | Username/Password | <<services/email.js:56>> |
 | <<Analytics>> | Track events | HTTP POST | Bearer token | <<services/analytics.js:78>> |
@@ -332,7 +332,7 @@ These constraints are derived from code evidence and must be preserved:
 ### Risks (Identified from Code Analysis)
 
 | Risk | Evidence | Impact | Mitigation |
-|------|----------|--------|------------|
+| ------ | ---------- | -------- | ------------ |
 | <<Missing input validation>> | <<file:line>> | HIGH | Add validation layer |
 | <<Hardcoded credentials>> | <<file:line>> | CRITICAL | Move to secrets manager |
 | <<Race condition in concurrent writes>> | <<file:line>> | MEDIUM | Add locking mechanism |

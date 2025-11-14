@@ -658,7 +658,7 @@ Each principle includes:
 **Stakeholder-friendly comparison** table:
 
 | Criteria | Inline Upgrade | Greenfield Rewrite | Hybrid |
-|----------|----------------|--------------------|--------|
+| ---------- | ---------------- | -------------------- | -------- |
 | Time | X weeks | Y months | Z months |
 | Cost | $$ | $$$ | $$$ |
 | Risk | Medium | High | Medium |

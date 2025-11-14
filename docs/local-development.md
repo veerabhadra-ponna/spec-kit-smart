@@ -2,7 +2,7 @@
 
 This guide shows how to iterate on the `speckitsmart` CLI locally without publishing a release or committing to `main` first.
 
-> Scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants. The CLI auto-selects based on OS unless you pass `--script sh|ps`.
+> Scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants. The CLI auto-selects based on OS unless you pass `--script sh | ps`.
 
 ## 1. Clone and Switch Branches
 
@@ -143,7 +143,7 @@ speckitsmart init demo --skip-tls --ai gemini --ignore-agent-tools --script ps
 ## 10. Rapid Edit Loop Summary
 
 | Action | Command |
-|--------|---------|
+| -------- | --------- |
 | Run CLI directly | `python -m src.specify_cli --help` |
 | Editable install | `pip install -e .` then `speckitsmart ...` |
 | Local pipx run | `pipx run --spec /path/to/repo specify ...` |
@@ -161,7 +161,7 @@ rm -rf .venv dist build *.egg-info
 ## 12. Common Issues
 
 | Symptom | Fix |
-|---------|-----|
+| --------- | ----- |
 | `ModuleNotFoundError: typer` | Run `pip install -e .` after activating venv |
 | Scripts not executable (Linux) | Re-run init or `chmod +x scripts/*.sh` |
 | Git step skipped | You passed `--no-git` or Git not installed |

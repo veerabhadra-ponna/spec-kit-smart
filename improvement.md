@@ -371,7 +371,7 @@ When prioritizing improvements, we consider:
 ### Scoring Matrix
 
 | Feature | Impact | Value | Effort | Score | Priority |
-|---------|--------|-------|--------|-------|----------|
+| --------- | -------- | ------- | -------- | ------- | ---------- |
 | Release Automation | HIGH | HIGH | LOW | 9.0 | HIGH |
 | CLI Testing | HIGH | HIGH | MEDIUM | 8.5 | HIGH |
 | Spec Validation | MEDIUM | HIGH | LOW | 8.0 | MEDIUM-HIGH |

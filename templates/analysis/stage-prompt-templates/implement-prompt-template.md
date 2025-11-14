@@ -94,7 +94,7 @@ The legacy code shows the actual behavior that users depend on. Don't guess.
 ## Code Migration Map
 
 | Legacy File/Module | Target File/Module | Notes |
-|-------------------|-------------------|-------|
+| ------------------- | ------------------- | ------- |
 | <<src/auth/>> | <<services/auth-service/>> | Modernize session → JWT, keep 30min lifetime |
 | <<src/payments/>> | <<services/payment-service/>> | CRITICAL: Preserve exact retry logic |
 | <<src/db/>> | <<data/repositories/>> | Replace ORM but keep query logic |

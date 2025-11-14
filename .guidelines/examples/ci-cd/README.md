@@ -102,7 +102,7 @@ cp Jenkinsfile /path/to/your/repo/
 All CI/CD configurations support these environment variables:
 
 | Variable | Description | Default |
-|----------|-------------|---------|
+| ---------- | ------------- | --------- |
 | `COMPLIANCE_THRESHOLD` | Minimum compliance score (0-100) | 75 |
 | `FAIL_ON_CRITICAL` | Fail build on CRITICAL violations | true |
 | `FAIL_ON_HIGH` | Fail build on HIGH violations | false |
@@ -183,12 +183,12 @@ graph LR
     A[Create PR] --> B[CI Triggered]
     B --> C[Run Compliance Check]
     C --> D{Violations?}
-    D -->|CRITICAL| E[Block Merge]
-    D -->|HIGH/MEDIUM| F[Warn Developer]
-    D -->|None| G[Allow Merge]
+    D --> | CRITICAL | E[Block Merge]
+    D --> | HIGH/MEDIUM | F[Warn Developer]
+    D --> | None | G[Allow Merge]
     F --> H[Auto-Fix Available?]
-    H -->|Yes| I[Apply Fixes]
-    H -->|No| J[Manual Fix Required]
+    H --> | Yes | I[Apply Fixes]
+    H --> | No | J[Manual Fix Required]
     I --> K[Commit Fixes]
     K --> C
 ```

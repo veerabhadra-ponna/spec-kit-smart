@@ -11,7 +11,7 @@
 ## Executive Summary
 
 | Attribute | Value |
-|-----------|-------|
+| ----------- | ------- |
 | **Concern Type** | <<CONCERN_TYPE>> |
 | **Current** | <<CURRENT_IMPLEMENTATION>> |
 | **Target** | <<TARGET_IMPLEMENTATION>> |
@@ -40,7 +40,7 @@
 ### 1.1 Identified Concern Files
 
 | File Path | Type | Evidence | LOC | Criticality |
-|-----------|------|----------|-----|-------------|
+| ----------- | ------ | ---------- | ----- | ------------- |
 | <<file:line>> | <<TYPE>> | <<EVIDENCE>> | <<LOC>> | <<CRITICAL / STANDARD>> |
 | <<file:line>> | <<TYPE>> | <<EVIDENCE>> | <<LOC>> | <<CRITICAL / STANDARD>> |
 | <<file:line>> | <<TYPE>> | <<EVIDENCE>> | <<LOC>> | <<CRITICAL / STANDARD>> |
@@ -63,7 +63,7 @@
 Analysis of where and how this concern is used throughout the codebase:
 
 | Entry Point | Type | Usage Count | Evidence (file:line) | Criticality |
-|-------------|------|-------------|----------------------|-------------|
+| ------------- | ------ | ------------- | ---------------------- | ------------- |
 | <<FunctionName>>() | Interface/Service | <<N>> callsites | <<file:line>> | CRITICAL / STANDARD |
 | <<DecoratorName>> | Decorator | <<N>> usages | <<file:line>> | CRITICAL / STANDARD |
 | ... | ... | ... | ... | ... |
@@ -134,7 +134,7 @@ Analysis of where and how this concern is used throughout the codebase:
 ### 2.1 Impact Metrics
 
 | Metric | Value | Assessment |
-|--------|-------|------------|
+| -------- | ------- | ------------ |
 | **Files Affected** | <<N>> files | <<Small (<20 files) / Medium (20-50) / Large (>50)>> |
 | **LOC Affected** | <<M>> lines | <<X%>> of total codebase (<<Total LOC>> lines) |
 | **Consumer Callsites** | <<Count>> callsites | <<Focused (<50) / Moderate (50-150) / Widespread (>150)>> |
@@ -148,7 +148,7 @@ Analysis of where and how this concern is used throughout the codebase:
 Files that heavily depend on this concern (high risk for migration):
 
 | File | Callsites | Criticality | Reason | Evidence (file:line) |
-|------|-----------|-------------|--------|----------------------|
+| ------ | ----------- | ------------- | -------- | ---------------------- |
 | <<file>> | <<N>> calls | CRITICAL | <<e.g., "All user endpoints require auth">> | <<file:line>> |
 | <<file>> | <<M>> calls | CRITICAL | <<Reason>> | <<file:line>> |
 | <<file>> | <<K>> calls | STANDARD | <<Reason>> | <<file:line>> |
@@ -159,7 +159,7 @@ Files that heavily depend on this concern (high risk for migration):
 Mapping concern usage to business capabilities:
 
 | Business Function | Affected Files | Impact | Mitigation Required |
-|-------------------|----------------|--------|---------------------|
+| ------------------- | ---------------- | -------- | --------------------- |
 | <<e.g., User Authentication>> | <<N>> files | HIGH / MEDIUM / LOW | <<e.g., "Comprehensive E2E testing required">> |
 | <<e.g., API Authorization>> | <<M>> files | HIGH / MEDIUM / LOW | <<Mitigation strategy>> |
 | ... | ... | ... | ... |
@@ -235,14 +235,14 @@ Mapping concern usage to business capabilities:
 ### 4.1 Configuration Files
 
 | Config File | Purpose | Values | Evidence (file:line) |
-|-------------|---------|--------|----------------------|
+| ------------- | --------- | -------- | ---------------------- |
 | <<file>> | <<e.g., "JWT secret, token expiration">> | <<Key config values>> | <<file:line>> |
 | ... | ... | ... | ... |
 
 ### 4.2 Environment Dependencies
 
 | Environment Aspect | Current | Target | Migration Impact |
-|-------------------|---------|--------|------------------|
+| ------------------- | --------- | -------- | ------------------ |
 | **Runtime Version** | <<e.g., Node 16>> | <<e.g., Node 20>> | <<NONE / LOW / MEDIUM / HIGH>> |
 | **External Services** | <<e.g., "None (self-contained)">> | <<e.g., "Okta SaaS">> | NEW dependency |
 | **Infrastructure** | <<Current setup>> | <<Target setup>> | <<Impact description>> |
@@ -256,7 +256,7 @@ Mapping concern usage to business capabilities:
 <<List technical debt items found in current implementation>>:
 
 | Issue | Severity | Evidence (file:line) | Impact on Migration |
-|-------|----------|----------------------|---------------------|
+| ------- | ---------- | ---------------------- | --------------------- |
 | <<e.g., "Hardcoded secrets in code">> | HIGH / MEDIUM / LOW | <<file:line>> | <<Impact>> |
 | <<e.g., "No interface abstraction">> | HIGH / MEDIUM / LOW | <<file:line>> | <<Impact>> |
 | ... | ... | ... | ... |
@@ -264,7 +264,7 @@ Mapping concern usage to business capabilities:
 ### 5.2 Migration Risks
 
 | Risk | Probability | Impact | Mitigation Strategy |
-|------|-------------|--------|---------------------|
+| ------ | ------------- | -------- | --------------------- |
 | <<e.g., "Breaking existing auth flows">> | HIGH / MEDIUM / LOW | HIGH / MEDIUM / LOW | <<Strategy>> |
 | <<e.g., "Performance degradation">> | HIGH / MEDIUM / LOW | HIGH / MEDIUM / LOW | <<Strategy>> |
 | ... | ... | ... | ... |
@@ -288,7 +288,7 @@ Mapping concern usage to business capabilities:
 ### 6.1 Existing Test Coverage
 
 | Test Type | Count | Coverage | Quality |
-|-----------|-------|----------|---------|
+| ----------- | ------- | ---------- | --------- |
 | **Unit Tests** | <<N>> tests | <<X%>> | <<GOOD / ADEQUATE / POOR>> |
 | **Integration Tests** | <<M>> tests | <<Y%>> | <<GOOD / ADEQUATE / POOR>> |
 | **E2E Tests** | <<K>> tests | <<Z%>> | <<GOOD / ADEQUATE / POOR>> |
@@ -335,7 +335,7 @@ Mapping concern usage to business capabilities:
 ### 7.2 New Dependencies Required
 
 | Dependency | Purpose | Version | License | Security Scan |
-|------------|---------|---------|---------|---------------|
+| ------------ | --------- | --------- | --------- | --------------- |
 | <<package-name>> | <<Purpose>> | <<Version>> | <<License>> | ✅ PASS / ⚠️ REVIEW / ❌ FAIL |
 | ... | ... | ... | ... | ... |
 
@@ -385,7 +385,7 @@ Mapping concern usage to business capabilities:
 ### 9.2 Alternative Approaches (Considered but Not Recommended)
 
 | Approach | Pros | Cons | Why Not Chosen |
-|----------|------|------|----------------|
+| ---------- | ------ | ------ | ---------------- |
 | <<Strategy>> | <<Pros>> | <<Cons>> | <<Reason>> |
 | ... | ... | ... | ... |
 
@@ -422,7 +422,7 @@ Mapping concern usage to business capabilities:
 <<Complete list of all concern-related files with metadata>>
 
 | # | File Path | Type | LOC | Last Modified | Owner/Team |
-|---|-----------|------|-----|---------------|------------|
+| --- | ----------- | ------ | ----- | --------------- | ------------ |
 | 1 | <<file>> | <<Type>> | <<LOC>> | <<Date>> | <<Team>> |
 | 2 | ... | ... | ... | ... | ... |
 

@@ -26,7 +26,7 @@ Spec-Driven Development is a structured process that emphasizes:
 ## Development Phases
 
 | Phase | Focus | Key Activities |
-|-------|-------|----------------|
+| ------- | ------- | ---------------- |
 | **0-to-1 Development** ("Greenfield") | Generate from scratch | Start with high-level requirements, generate specifications, plan implementation steps, build production-ready applications |
 | **Creative Exploration** | Parallel implementations | Explore diverse solutions, support multiple technology stacks & architectures, experiment with UX patterns |
 | **Iterative Enhancement** ("Brownfield") | Brownfield modernization | Add features iteratively, modernize legacy systems, adapt processes |

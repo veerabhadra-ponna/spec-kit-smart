@@ -239,8 +239,8 @@ Parse the JSON output for: FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH
         script_powershell=$(awk '/^[[:space:]]*powershell:[[:space:]]*/ {...}')
 
         # Replace placeholders
-        body=$(sed "s|{SCRIPT_BASH}|${script_bash}|g" "$template")
-        body=$(sed "s|{SCRIPT_POWERSHELL}|${script_powershell}|g" "$body")
+        body=$(sed "s | {SCRIPT_BASH} | ${script_bash} | g" "$template")
+        body=$(sed "s | {SCRIPT_POWERSHELL} | ${script_powershell} | g" "$body")
 
         # Keep scripts section in frontmatter for AI reference
         # Don't remove it anymore
