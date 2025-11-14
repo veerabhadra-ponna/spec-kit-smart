@@ -84,6 +84,7 @@ Search in the following locations:
 Check for `.specify/config.json` in the repository root.
 
 **Expected structure:**
+
 ```json
 {
   "enableCheckArtifactory": false,
@@ -118,6 +119,7 @@ Check for guideline files in `/.guidelines/` directory:
 - Note: Files will be loaded in later stages based on detected tech stack
 
 **Output example:**
+
 ```
 ✓ Found corporate guidelines:
   - java-guidelines.md

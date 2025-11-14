@@ -40,6 +40,7 @@ Based on file analysis, set these flags:
 ### Questions
 
 **Question 1: Target Language/Framework**
+
 ```
 Current: {detected language/framework}
 Options:
@@ -50,6 +51,7 @@ Your choice: ___
 ```
 
 **Question 2: Target Database**
+
 ```
 Current: {detected or "Unknown"}
 Options:
@@ -63,6 +65,7 @@ Your choice: ___
 **Question 3: Message Bus/Queue [CONDITIONAL]**
 
 **IF** `!HAS_MESSAGE_BUS`:
+
 ```
 [OPTIONAL - Not detected in legacy code]
 Since your legacy app doesn't use message queues, you can skip this.
@@ -79,6 +82,7 @@ Your choice (or press Enter to skip): ___
 ```
 
 **ELSE**:
+
 ```
 Current: {detected}
 Options:
@@ -92,6 +96,7 @@ Your choice: ___
 ```
 
 **Question 4: Package Manager**
+
 ```
 Current: {detected}
 Options:
@@ -102,6 +107,7 @@ Your choice: ___
 ```
 
 **Question 5: Deployment Target**
+
 ```
 Current: {detected or "Unknown"}
 Options:
@@ -120,12 +126,14 @@ Your choice: ___
 **Question 6: Infrastructure as Code [CONDITIONAL]**
 
 **IF** `IS_TRADITIONAL_DEPLOYMENT`:
+
 ```
 [SKIPPED - Not applicable for traditional deployment]
 IaC is typically used with cloud deployments.
 ```
 
 **ELSE**:
+
 ```
 Options:
 - [A] Terraform
@@ -141,12 +149,14 @@ Your choice: ___
 **Question 7: Containerization Strategy [CONDITIONAL]**
 
 **IF** `IS_TRADITIONAL_DEPLOYMENT`:
+
 ```
 [SKIPPED - Not applicable for traditional deployment]
 Containerization requires cloud/container platforms.
 ```
 
 **ELSE**:
+
 ```
 Options:
 - [A] Docker with custom images
@@ -161,6 +171,7 @@ Your choice: ___
 **Question 8: Observability Stack [CONDITIONAL]**
 
 **IF** `!HAS_OBSERVABILITY`:
+
 ```
 [OPTIONAL - Not detected in legacy code]
 Options:
@@ -174,6 +185,7 @@ Your choice (or press Enter to skip): ___
 ```
 
 **ELSE**:
+
 ```
 Current: {detected}
 Options:
@@ -187,6 +199,7 @@ Your choice: ___
 ```
 
 **Question 9: Security & Authentication**
+
 ```
 Current: {detected auth mechanism}
 Options:
@@ -200,6 +213,7 @@ Your choice: ___
 ```
 
 **Question 10: Testing Strategy**
+
 ```
 Current: {detected test coverage}%
 Target Test Coverage:
@@ -344,18 +358,21 @@ Rationale: Hybrid works best when inline and rewrite are equally viable
 Based on scores, generate prioritized recommendations:
 
 ### Quick Wins (Low Effort, High Value)
+
 - Update dependencies to latest LTS versions
 - Add missing indexes to database
 - Implement caching for frequently accessed data
 - Fix critical security vulnerabilities
 
 ### Strategic Improvements (Medium Effort, High Value)
+
 - Migrate to {target framework} {version}
 - Implement automated testing to reach {target coverage}%
 - Add observability stack (logging, metrics, tracing)
 - Refactor high-complexity modules
 
 ### Long-term Goals (High Effort, High Value)
+
 - Migrate to {target deployment platform}
 - Implement {containerization strategy}
 - Migrate to {target database}

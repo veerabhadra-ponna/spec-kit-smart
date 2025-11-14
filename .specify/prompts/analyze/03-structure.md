@@ -45,11 +45,13 @@ You should have:
 Based on OS (from state.config.osEnv or auto-detect):
 
 **For Unix/Linux/macOS**:
+
 ```bash
 scripts/bash/analyze-project.sh "{project_path}"
 ```
 
 **For Windows**:
+
 ```powershell
 scripts/powershell/analyze-project.ps1 "{project_path}"
 ```
@@ -74,6 +76,7 @@ Extract from script output:
 - `TIMESTAMP` - Analysis timestamp
 
 **Store these in state**:
+
 ```json
 {
   "analysis_dir": ".analysis/myapp-20251114-103045/",
@@ -90,6 +93,7 @@ Extract from script output:
 Read the generated `file-manifest.json`.
 
 **Expected structure**:
+
 ```json
 {
   "project_path": "/home/user/legacy-app",
@@ -276,6 +280,7 @@ Analyze project structure to classify:
 - Indicators: `pom.xml` with `<packaging>jar</packaging>`, `package.json` with `"main"` or `"exports"`
 
 **Example classification**:
+
 ```json
 {
   "project_type": "microservices",
@@ -311,6 +316,7 @@ Find main entry points and key architectural elements:
 - `app.py`, `wsgi.py`, `main.py`
 
 **Map entry points**:
+
 ```json
 {
   "entry_points": {
@@ -328,6 +334,7 @@ Find main entry points and key architectural elements:
 Based on detected tech stack, load applicable guidelines from state.guidelines.
 
 **From state** (loaded in Stage 1):
+
 ```json
 {
   "guidelines": [
@@ -353,6 +360,7 @@ Based on detected tech stack, load applicable guidelines from state.guidelines.
    - Compliance rules
 
 **Store guideline summaries**:
+
 ```json
 {
   "guidelines_loaded": {
@@ -373,6 +381,7 @@ Based on detected tech stack, load applicable guidelines from state.guidelines.
 ```
 
 **If no guidelines match**:
+
 ```json
 {
   "guidelines_loaded": {},

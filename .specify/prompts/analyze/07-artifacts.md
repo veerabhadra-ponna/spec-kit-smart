@@ -34,9 +34,9 @@ Required:
 
 ### Full Application Artifacts (Scope = A)
 
-4. **functional-spec.md** (2-3 chunks)
-5. **technical-spec.md** (2-3 chunks)
-6. **stage-prompts/** (4 files)
+1. **functional-spec.md** (2-3 chunks)
+2. **technical-spec.md** (2-3 chunks)
+3. **stage-prompts/** (4 files)
    - stage-1-dependencies.md
    - stage-2-framework.md
    - stage-3-database.md
@@ -44,9 +44,9 @@ Required:
 
 ### Cross-Cutting Concern Artifacts (Scope = B)
 
-4. **abstraction-assessment.md** (1 chunk)
-5. **concern-migration-plan.md** (2-3 chunks)
-6. **rollback-procedure.md** (1 chunk)
+1. **abstraction-assessment.md** (1 chunk)
+2. **concern-migration-plan.md** (2-3 chunks)
+3. **rollback-procedure.md** (1 chunk)
 
 ---
 
@@ -57,6 +57,7 @@ Required:
 **Purpose**: C-level summary for stakeholders
 
 **Content**:
+
 ```markdown
 # Executive Summary: {Project Name}
 
@@ -100,6 +101,7 @@ Required:
 **Purpose**: Machine-readable dependency audit results
 
 **Content**:
+
 ```json
 {
   "audit_date": "2025-11-14T11:30:00Z",
@@ -144,6 +146,7 @@ Required:
 **Purpose**: Key metrics for tracking and reporting
 
 **Content**:
+
 ```json
 {
   "project": "{project_name}",
@@ -254,6 +257,7 @@ Generate 4 stage prompt files:
 **Purpose**: Detailed abstraction analysis for the concern
 
 **Content**:
+
 ```markdown
 # Abstraction Assessment: {Concern Type}
 
@@ -310,6 +314,7 @@ Generate 4 stage prompt files:
 **Purpose**: Detailed rollback procedure in case of issues
 
 **Content**:
+
 ```markdown
 # Rollback Procedure: {Concern Type} Migration
 

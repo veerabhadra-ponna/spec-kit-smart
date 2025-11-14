@@ -25,9 +25,11 @@ This directory contains the **chained prompt workflow** for the `analyze-project
 ## Stage Files
 
 ### State Schema
+
 - **00-state-schema.json** - JSON schema for state validation
 
 ### Stage Prompts
+
 1. **01-init.md** (~200 lines) - Initialization & setup
 2. **02-scope.md** (~350 lines) - User input & estimation
 3. **03-structure.md** (~300 lines) - Project structure analysis
@@ -254,11 +256,13 @@ Each stage:
 **IF** analysis is interrupted:
 
 1. **Check last completed stage**:
+
    ```bash
    ./scripts/bash/chain-state.sh last-stage
    ```
 
 2. **Load state and resume**:
+
    ```bash
    ./scripts/bash/chain-state.sh load {last-stage}
    ```
@@ -266,6 +270,7 @@ Each stage:
 3. **Continue from next stage** with loaded state
 
 **Example**:
+
 ```
 Last completed: 04-file-analysis
 Resume from: Stage 5 (Branch execution)
@@ -279,6 +284,7 @@ Chain ID: a3f7c8d1
 **Location**: `scripts/bash/chain-state.sh`
 
 **Commands**:
+
 ```bash
 # Generate unique chain ID
 ./scripts/bash/chain-state.sh generate-id
@@ -307,6 +313,7 @@ Chain ID: a3f7c8d1
 **Location**: `scripts/powershell/ChainState.ps1`
 
 **Commands**:
+
 ```powershell
 # Generate unique chain ID
 ./scripts/powershell/ChainState.ps1 generate-id
@@ -377,24 +384,28 @@ Clear stage boundaries provide **transparency** to users on where they are in th
 To test the chain implementation:
 
 1. **Initialize state**:
+
    ```bash
    cd /path/to/spec-kit-smart
    ./scripts/bash/chain-state.sh init
    ```
 
 2. **Generate chain ID**:
+
    ```bash
    CHAIN_ID=$(./scripts/bash/chain-state.sh generate-id)
    echo "Chain ID: $CHAIN_ID"
    ```
 
 3. **Create initial state**:
+
    ```bash
    INIT_STATE=$(./scripts/bash/chain-state.sh init-state "$CHAIN_ID")
    ./scripts/bash/chain-state.sh save 01-init "$INIT_STATE"
    ```
 
 4. **Verify state**:
+
    ```bash
    ./scripts/bash/chain-state.sh validate "$INIT_STATE"
    ```
@@ -409,6 +420,7 @@ The new chained version is:
 - `.specify/prompts/analyze/` (individual stage prompts)
 
 To revert to monolithic if needed:
+
 ```bash
 cd templates/commands
 mv analyze-project.md analyze-project-chain.md

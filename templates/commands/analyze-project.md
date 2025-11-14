@@ -68,27 +68,36 @@ Example: `a3f7c8d1`
 
 **You are now executing the chained analysis workflow.**
 
-### Initialize Chain
+The setup script has already initialized the state directory and created bootstrap state.
+You should start execution from Stage 1.
 
-1. Generate chain ID:
-   ```
-   chain_id = random 8-character hex string
-   ```
+---
 
-2. Create state directory:
-   ```
-   mkdir -p .analysis/.state
-   ```
+## How to Execute Each Stage
 
-3. Initialize state:
-   ```json
-   {
-     "chain_id": "{chain_id}",
-     "start_time": "{ISO-8601 timestamp}",
-     "stages_complete": [],
-     "current_stage": null
-   }
-   ```
+**CRITICAL**: Follow this pattern for EVERY stage:
+
+1. **Load Stage Prompt**: Use Read tool to load `.specify/prompts/analyze/{stage}.md`
+2. **Read ENTIRE File**: Read all instructions in the stage prompt
+3. **Execute ALL Steps**: Follow every step in sequence
+4. **Load Previous State**: Use Bash tool to load state from previous stage
+5. **Generate New State**: Create updated state JSON with new data
+6. **Save State**: Use Bash tool to save state via chain-state.sh
+7. **Output Completion**: Output the completion marker
+8. **Proceed to Next Stage**: Move to the next stage
+
+**Example Bash Commands You'll Use**:
+
+```bash
+# Load previous state
+./scripts/bash/chain-state.sh load {previous-stage}
+
+# Save new state (replace {stage-name} and {json})
+./scripts/bash/chain-state.sh save {stage-name} '{...json...}'
+
+# Verify state
+./scripts/bash/chain-state.sh load {stage-name}
+```
 
 ---
 
@@ -96,11 +105,36 @@ Example: `a3f7c8d1`
 
 ### STAGE 1: Initialization
 
-Load and execute: `.specify/prompts/analyze/01-init.md`
+**Your Task**: Load and execute the initialization stage.
+
+**Steps**:
+
+1. Use the **Read** tool to load: `.specify/prompts/analyze/01-init.md`
+
+2. Read the ENTIRE file carefully
+
+3. Execute ALL instructions in that file:
+   - Check for AGENTS.md
+   - Load configuration
+   - Detect corporate guidelines
+   - Load bootstrap state from previous script execution
+
+4. Generate state JSON as specified in the stage prompt
+
+5. Save state using:
+
+   ```bash
+   ./scripts/bash/chain-state.sh save 01-init '{...your generated state JSON...}'
+   ```
+
+6. When complete, output: `STAGE_COMPLETE:INIT`
+
+7. **Proceed immediately to Stage 2**
 
 **Task**: Initialize environment, load AGENTS.md, load config, detect guidelines
 
 **Expected Output**:
+
 ```
 STAGE_COMPLETE:INIT
 STATE_PATH: .analysis/.state/01-init.json
@@ -117,50 +151,85 @@ STATE_PATH: .analysis/.state/01-init.json
 
 ### STAGE 2: Scope Definition
 
-Load and execute: `.specify/prompts/analyze/02-scope.md`
+**Your Task**: Load and execute the scope definition stage.
 
-**Input State**: `.analysis/.state/01-init.json`
+**Steps**:
 
-**Task**: Get project path, analysis scope (A or B), concern details (if B), run estimation
+1. Use the **Read** tool to load: `.specify/prompts/analyze/02-scope.md`
 
-**Expected Output**:
-```
-STAGE_COMPLETE:SCOPE
-STATE_PATH: .analysis/.state/02-scope.json
-```
+2. Load previous state:
 
-**State includes**:
+   ```bash
+   ./scripts/bash/chain-state.sh load 01-init
+   ```
+
+3. Execute ALL instructions in the stage prompt:
+   - Get PROJECT_PATH from user (or use from bootstrap state)
+   - Ask for ANALYSIS_SCOPE (A or B)
+   - If B, ask for concern details
+   - Run estimation
+
+4. Generate updated state JSON merging previous state
+
+5. Save state:
+
+   ```bash
+   ./scripts/bash/chain-state.sh save 02-scope '{...your state JSON...}'
+   ```
+
+6. When complete, output: `STAGE_COMPLETE:SCOPE`
+
+7. **Proceed immediately to Stage 3**
+
+**State must include**:
+- All fields from Stage 1 (merged)
 - `project_path` - Project being analyzed
 - `analysis_scope` - "A" or "B"
 - `concern_details` - If scope = B
 - `estimation` - File counts and time estimate
 
-**Action**: ✅ Save state and proceed to Stage 3
-
 ---
 
 ### STAGE 3: Structure Analysis
 
-Load and execute: `.specify/prompts/analyze/03-structure.md`
+**Your Task**: Load and execute the structure analysis stage.
 
-**Input State**: `.analysis/.state/02-scope.json`
+**Steps**:
 
-**Task**: Run enumeration script, detect tech stack, identify project type, map entry points
+1. Use the **Read** tool to load: `.specify/prompts/analyze/03-structure.md`
 
-**Expected Output**:
-```
-STAGE_COMPLETE:STRUCTURE
-STATE_PATH: .analysis/.state/03-structure.json
-```
+2. Load previous state:
 
-**State includes**:
+   ```bash
+   ./scripts/bash/chain-state.sh load 02-scope
+   ```
+
+3. Execute ALL instructions (enumeration already done by script):
+   - Read file-manifest.json
+   - Detect tech stack
+   - Determine project type
+   - Identify entry points
+   - Load applicable corporate guidelines
+
+4. Generate updated state JSON
+
+5. Save state:
+
+   ```bash
+   ./scripts/bash/chain-state.sh save 03-structure '{...state JSON...}'
+   ```
+
+6. When complete, output: `STAGE_COMPLETE:STRUCTURE`
+
+7. **Proceed immediately to Stage 4**
+
+**State must include**:
+- All previous fields (merged)
 - `manifest_path` - Path to file-manifest.json
 - `tech_stack` - Detected technologies
 - `project_type` - monolith/microservices/etc.
 - `structure` - Services, entry points
 - `guidelines_loaded` - Loaded corporate guidelines
-
-**Action**: ✅ Save state and proceed to Stage 4
 
 ---
 
@@ -186,6 +255,7 @@ Load and execute: `.specify/prompts/analyze/04-file-analysis.md`
 - Complete dependency audit
 
 **Expected Output**:
+
 ```
 STAGE_COMPLETE:FILE_ANALYSIS
 STATE_PATH: .analysis/.state/04-file-analysis.json
@@ -204,7 +274,7 @@ STATE_PATH: .analysis/.state/04-file-analysis.json
 
 **CRITICAL**: Load the correct branch based on `analysis_scope` from state.
 
-#### IF analysis_scope = "A" (Full Application):
+#### IF analysis_scope = "A" (Full Application)
 
 Load and execute: `.specify/prompts/analyze/05a-full-app.md`
 
@@ -215,6 +285,7 @@ Load and execute: `.specify/prompts/analyze/05a-full-app.md`
 - Generate modernization recommendations
 
 **Expected Output**:
+
 ```
 STAGE_COMPLETE:FULL_APP
 STATE_PATH: .analysis/.state/05a-full-app.json
@@ -225,7 +296,7 @@ STATE_PATH: .analysis/.state/05a-full-app.json
 - `scoring` - Complexity and feasibility scores
 - `recommendations` - Prioritized recommendations
 
-#### IF analysis_scope = "B" (Cross-Cutting Concern):
+#### IF analysis_scope = "B" (Cross-Cutting Concern)
 
 Load and execute: `.specify/prompts/analyze/05b-cross-cutting.md`
 
@@ -238,6 +309,7 @@ Load and execute: `.specify/prompts/analyze/05b-cross-cutting.md`
 - Effort estimation
 
 **Expected Output**:
+
 ```
 STAGE_COMPLETE:CROSS_CUTTING
 STATE_PATH: .analysis/.state/05b-cross-cutting.json
@@ -283,6 +355,7 @@ Load and execute: `.specify/prompts/analyze/06-report-generation.md`
 - [ ] Primary recommendation with confidence score
 
 **Expected Output**:
+
 ```
 STAGE_COMPLETE:REPORT
 STATE_PATH: .analysis/.state/06-report.json
@@ -322,6 +395,7 @@ Load and execute: `.specify/prompts/analyze/07-artifacts.md`
 - rollback-procedure.md
 
 **Expected Output**:
+
 ```
 STAGE_COMPLETE:ARTIFACTS
 STATE_PATH: .analysis/.state/07-artifacts.json
@@ -378,6 +452,7 @@ Next Steps:
 **IF** analysis is interrupted at any stage:
 
 1. **Check last completed checkpoint**:
+
    ```
    ls -la .analysis/.state/
    ```
@@ -385,6 +460,7 @@ Next Steps:
 2. **Identify last completed stage** from filename (e.g., `04-file-analysis.json`)
 
 3. **Resume from next stage**:
+
    ```
    Last completed: 04-file-analysis.json
    Resume from: Stage 5 (Branch execution)
@@ -393,6 +469,7 @@ Next Steps:
 4. **Load state** and continue chain execution
 
 **Example**:
+
 ```
 ℹ Analysis interrupted. Resuming from Stage 5...
 Loading state from: .analysis/.state/04-file-analysis.json

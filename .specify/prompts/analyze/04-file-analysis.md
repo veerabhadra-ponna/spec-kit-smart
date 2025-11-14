@@ -189,6 +189,7 @@ For each priority area, extract **detailed** information:
 - Security vulnerabilities (SQL injection, XSS, CSRF)
 
 **Example output**:
+
 ```
 Authentication System Analysis:
 - Type: Custom JWT implementation
@@ -217,6 +218,7 @@ Authentication System Analysis:
 - Database migrations (Flyway, Liquibase, etc.)
 
 **Example output**:
+
 ```
 Database Layer Analysis:
 - ORM: Hibernate/JPA
@@ -245,6 +247,7 @@ Database Layer Analysis:
 - Versioning strategy
 
 **Example output**:
+
 ```
 API Surface Analysis:
 Total Endpoints: 47
@@ -335,6 +338,7 @@ Scan and document:
 - Cookie settings
 
 **Example output**:
+
 ```
 Configuration Analysis:
 
@@ -388,6 +392,7 @@ Identify:
 - Gaps in coverage
 
 **Example output**:
+
 ```
 Test Coverage Analysis:
 
@@ -424,27 +429,32 @@ Run dependency audit in parallel with file analysis.
 ### Step 1: Generate Dependency Tree
 
 **Java (Maven)**:
+
 ```bash
 mvn dependency:tree -DoutputFile=deps.txt
 ```
 
 **Java (Gradle)**:
+
 ```bash
 gradle dependencies > deps.txt
 ```
 
 **Node.js**:
+
 ```bash
 npm audit --json > npm-audit.json
 npm list --depth=0 > deps.txt
 ```
 
 **.NET**:
+
 ```bash
 dotnet list package --vulnerable --include-transitive > deps.txt
 ```
 
 **Python**:
+
 ```bash
 pip list --format=json > deps.json
 safety check --json > safety-audit.json
@@ -460,6 +470,7 @@ safety check --json > safety-audit.json
 - License issues
 
 **Example output**:
+
 ```
 Dependency Audit:
 

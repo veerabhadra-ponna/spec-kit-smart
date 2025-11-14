@@ -152,6 +152,7 @@ Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AW
 - `target` - Target implementation
 
 **Concern type mapping**:
+
 ```
 1 → "Authentication/Authorization"
 2 → "Database/ORM Layer"
@@ -179,11 +180,13 @@ Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AW
 Based on OS (from config or auto-detect):
 
 **For Unix/Linux/macOS**:
+
 ```bash
 scripts/bash/enumerate-project.sh "{project_path}" --estimate-only
 ```
 
 **For Windows**:
+
 ```powershell
 scripts/powershell/enumerate-project.ps1 "{project_path}" -EstimateOnly
 ```
