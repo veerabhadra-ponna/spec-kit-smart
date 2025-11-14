@@ -49,10 +49,10 @@ generate_commands() {
     file_content=$(tr -d '\r' < "$template")
 
     # Extract description from YAML frontmatter
-    description=$(printf '%s\n' "$file_content" | awk '/^description:/ {sub(/^description:[[:space:]]*/, ""); print; exit}')
+    description=$(awk '/^description:/ {sub(/^description:[[:space:]]*/, ""); print; exit}' <<< "$file_content")
 
     # Extract BOTH bash and powershell script commands from YAML frontmatter
-    script_bash=$(printf '%s\n' "$file_content" | awk '
+    script_bash=$(awk '
       /^scripts:$/ { in_scripts=1; next }
       in_scripts && /^[[:space:]]*bash:[[:space:]]*/ {
         sub(/^[[:space:]]*bash:[[:space:]]*/, "")
@@ -60,9 +60,9 @@ generate_commands() {
         exit
       }
       in_scripts && /^[a-zA-Z]/ { in_scripts=0 }
-    ')
+    ' <<< "$file_content")
 
-    script_powershell=$(printf '%s\n' "$file_content" | awk '
+    script_powershell=$(awk '
       /^scripts:$/ { in_scripts=1; next }
       in_scripts && /^[[:space:]]*powershell:[[:space:]]*/ {
         sub(/^[[:space:]]*powershell:[[:space:]]*/, "")
@@ -70,14 +70,14 @@ generate_commands() {
         exit
       }
       in_scripts && /^[a-zA-Z]/ { in_scripts=0 }
-    ')
+    ' <<< "$file_content")
 
     if [[ -z $script_bash && -z $script_powershell ]]; then
       echo "Warning: no script commands found in $template" >&2
     fi
 
     # Extract agent_script commands from YAML frontmatter if present
-    agent_script_bash=$(printf '%s\n' "$file_content" | awk '
+    agent_script_bash=$(awk '
       /^agent_scripts:$/ { in_agent_scripts=1; next }
       in_agent_scripts && /^[[:space:]]*bash:[[:space:]]*/ {
         sub(/^[[:space:]]*bash:[[:space:]]*/, "")
@@ -85,9 +85,9 @@ generate_commands() {
         exit
       }
       in_agent_scripts && /^[a-zA-Z]/ { in_agent_scripts=0 }
-    ')
+    ' <<< "$file_content")
 
-    agent_script_powershell=$(printf '%s\n' "$file_content" | awk '
+    agent_script_powershell=$(awk '
       /^agent_scripts:$/ { in_agent_scripts=1; next }
       in_agent_scripts && /^[[:space:]]*powershell:[[:space:]]*/ {
         sub(/^[[:space:]]*powershell:[[:space:]]*/, "")
@@ -95,28 +95,28 @@ generate_commands() {
         exit
       }
       in_agent_scripts && /^[a-zA-Z]/ { in_agent_scripts=0 }
-    ')
+    ' <<< "$file_content")
 
     # Replace {SCRIPT_BASH} and {SCRIPT_POWERSHELL} placeholders
-    body=$(printf '%s\n' "$file_content" | sed "s|{SCRIPT_BASH}|${script_bash}|g" | sed "s|{SCRIPT_POWERSHELL}|${script_powershell}|g")
+    body=$(sed "s|{SCRIPT_BASH}|${script_bash}|g" <<< "$file_content" | sed "s|{SCRIPT_POWERSHELL}|${script_powershell}|g")
 
     # Replace {AGENT_SCRIPT_BASH} and {AGENT_SCRIPT_POWERSHELL} placeholders if found
     if [[ -n $agent_script_bash ]]; then
-      body=$(printf '%s\n' "$body" | sed "s|{AGENT_SCRIPT_BASH}|${agent_script_bash}|g")
+      body=$(sed "s|{AGENT_SCRIPT_BASH}|${agent_script_bash}|g" <<< "$body")
     fi
     if [[ -n $agent_script_powershell ]]; then
-      body=$(printf '%s\n' "$body" | sed "s|{AGENT_SCRIPT_POWERSHELL}|${agent_script_powershell}|g")
+      body=$(sed "s|{AGENT_SCRIPT_POWERSHELL}|${agent_script_powershell}|g" <<< "$body")
     fi
 
     # Keep the scripts: and agent_scripts: sections in frontmatter for AI reference
     # (Don't remove them anymore)
 
     # Apply other substitutions
-    body=$(printf '%s\n' "$body" | sed "s/{ARGS}/$arg_format/g" | sed "s/__AGENT__/$agent/g" | rewrite_paths)
+    body=$(sed "s/{ARGS}/$arg_format/g" <<< "$body" | sed "s/__AGENT__/$agent/g" | rewrite_paths)
 
     case $ext in
       toml)
-        body=$(printf '%s\n' "$body" | sed 's/\\/\\\\/g')
+        body=$(sed 's/\\/\\\\/g' <<< "$body")
         { echo "description = \"$description\""; echo; echo "prompt = \"\"\""; echo "$body"; echo "\"\"\""; } > "$output_dir/speckitsmart.$name.$ext" ;;
       md)
         echo "$body" > "$output_dir/speckitsmart.$name.$ext" ;;
