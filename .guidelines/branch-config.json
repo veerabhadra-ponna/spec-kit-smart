@@ -1,6 +1,7 @@
 {
   "version": "1.0",
-  "branch_pattern": "feature/<num>-<jira>-<shortname>",
+  "branch_pattern_exmaple": "feature/<num>-<jira>-<shortname>",
+  "branch_pattern": "feature/<jira>-<shortname>",
   "branch_prefix": "feature/",
   "number_format": {
     "digits": 3,
