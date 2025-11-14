@@ -4,8 +4,8 @@
 # check-artifactory.ps1 - Query Artifactory for library availability
 #
 # Usage:
-#   ./check-artifactory.ps1 <artifactory-url> <library-name> [api-key]
-#   ./check-artifactory.ps1 -ArtifactoryUrl <url> -LibraryName <name> [-ApiKey <key>]
+#   ./check-artifactory.ps1 <artifactory-url> <library-name> [api-key] [repos]
+#   ./check-artifactory.ps1 -ArtifactoryUrl <url> -LibraryName <name> [-ApiKey <key>] [-Repos <repos>]
 #
 # Returns:
 #   Exit 0: Library found (prints download URL)
@@ -26,23 +26,44 @@ param(
     [Parameter(Mandatory=$false, Position=2)]
     [string]$ApiKey = "",
 
+    [Parameter(Mandatory=$false, Position=3)]
+    [string]$Repos = "",
+
     [switch]$Help
 )
 
 $ErrorActionPreference = 'Stop'
 
+# Use PowerShell's built-in debug mechanism
+# When -Debug is passed, $DebugPreference is set to 'Continue'
+# Also check DEBUG environment variable for compatibility
+$IsDebugEnabled = ($DebugPreference -eq 'Continue') -or ($env:DEBUG -eq "true")
+
 # Show help if requested
 if ($Help) {
-    Write-Output "Usage: $($MyInvocation.MyCommand.Name) <artifactory-url> <library-name> [api-key]"
-    Write-Output "       $($MyInvocation.MyCommand.Name) -ArtifactoryUrl <url> -LibraryName <name> [-ApiKey <key>]"
+    Write-Output "Usage: $($MyInvocation.MyCommand.Name) <artifactory-url> <library-name> [api-key] [repos]"
+    Write-Output "       $($MyInvocation.MyCommand.Name) -ArtifactoryUrl <url> -LibraryName <name> [-ApiKey <key>] [-Repos <repos>]"
     Write-Output ""
     Write-Output "Query Artifactory for library availability."
     Write-Output ""
     Write-Output "Parameters:"
-    Write-Output "  ArtifactoryUrl    URL of the Artifactory instance (e.g., https://artifactory.company.com/api)"
+    Write-Output "  ArtifactoryUrl    URL of the Artifactory instance"
+    Write-Output "                    Examples:"
+    Write-Output "                      - https://artifactory.company.com/artifactory"
+    Write-Output "                      - https://artifactory.company.com"
+    Write-Output "                    Note: Include /artifactory path if your installation requires it"
     Write-Output "  LibraryName       Name of the library to check (e.g., axios, lodash, jackson-databind)"
-    Write-Output "  ApiKey           Optional API key for authentication (or set ARTIFACTORY_API_KEY env var)"
+    Write-Output "  ApiKey           Optional API key/token for authentication (or set ARTIFACTORY_API_KEY env var)"
+    Write-Output "                    Supports: Bearer tokens (recommended), API keys, Reference tokens"
+    Write-Output "  Repos            Optional comma-separated list of repositories to search"
+    Write-Output "                    Example: libs-release,libs-snapshot"
+    Write-Output "                    If omitted, searches all repositories"
     Write-Output "  -Help            Show this help message"
+    Write-Output "  -Debug           Enable verbose debug output"
+    Write-Output ""
+    Write-Output "Environment Variables:"
+    Write-Output "  ARTIFACTORY_API_KEY  API key/token for authentication"
+    Write-Output "  DEBUG                Set to 'true' to enable verbose debug output"
     Write-Output ""
     Write-Output "Exit Codes:"
     Write-Output "  0  Library found (prints download URL)"
@@ -52,18 +73,24 @@ if ($Help) {
     Write-Output "  4  Artifactory URL not configured (skip check)"
     Write-Output ""
     Write-Output "Examples:"
-    Write-Output "  # Check if axios is available"
-    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios"
+    Write-Output "  # Check if axios is available (all repositories)"
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/artifactory axios"
     Write-Output ""
-    Write-Output "  # With API key"
-    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios YOUR_API_KEY"
+    Write-Output "  # Search in specific repositories"
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/artifactory axios `"`" `"libs-release,npm-local`""
+    Write-Output ""
+    Write-Output "  # With Bearer token (recommended)"
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/artifactory axios YOUR_BEARER_TOKEN"
     Write-Output ""
     Write-Output "  # Using named parameters"
-    Write-Output "  .\$($MyInvocation.MyCommand.Name) -ArtifactoryUrl https://artifactory.company.com/api -LibraryName axios"
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) -ArtifactoryUrl https://artifactory.company.com/artifactory -LibraryName axios"
     Write-Output ""
-    Write-Output "  # Using environment variable for API key"
-    Write-Output "  `$env:ARTIFACTORY_API_KEY = `"YOUR_API_KEY`""
-    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/api axios"
+    Write-Output "  # Using environment variable for token"
+    Write-Output "  `$env:ARTIFACTORY_API_KEY = `"YOUR_TOKEN`""
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) https://artifactory.company.com/artifactory axios"
+    Write-Output ""
+    Write-Output "  # With debug output"
+    Write-Output "  .\$($MyInvocation.MyCommand.Name) -ArtifactoryUrl https://artifactory.company.com/artifactory -LibraryName axios -Debug"
     Write-Output ""
     Write-Output "  # Skip validation if URL not configured"
     Write-Output "  .\$($MyInvocation.MyCommand.Name) `"Not configured`" axios"
@@ -116,25 +143,82 @@ if ($ArtifactoryUrl -eq "" -or $ArtifactoryUrl -eq "Not configured" -or $Artifac
     exit 4
 }
 
-# Build API endpoint
-$apiEndpoint = "${ArtifactoryUrl}/api/search/artifact?name=${LibraryName}"
+# Normalize URL - remove trailing /api if present
+$ArtifactoryUrl = $ArtifactoryUrl.TrimEnd('/api')
+$ArtifactoryUrl = $ArtifactoryUrl.TrimEnd('/')
+
+# Build API endpoint with optional repos parameter
+if ($Repos -ne "") {
+    $apiEndpoint = "${ArtifactoryUrl}/api/search/artifact?name=${LibraryName}&repos=${Repos}"
+} else {
+    $apiEndpoint = "${ArtifactoryUrl}/api/search/artifact?name=${LibraryName}"
+}
+
+# Debug output
+if ($IsDebugEnabled) {
+    Write-Host "DEBUG: Artifactory URL: $ArtifactoryUrl" -ForegroundColor Cyan
+    Write-Host "DEBUG: Library Name: $LibraryName" -ForegroundColor Cyan
+    Write-Host "DEBUG: Repositories: $(if ($Repos) { $Repos } else { 'all' })" -ForegroundColor Cyan
+    Write-Host "DEBUG: API Endpoint: $apiEndpoint" -ForegroundColor Cyan
+    Write-Host "DEBUG: Using Auth: $(if ($ApiKey) { 'yes' } else { 'no' })" -ForegroundColor Cyan
+}
 
 try {
-    # Prepare headers
-    $headers = @{}
+    # Prepare headers with X-Result-Detail to get downloadUri directly
+    $headers = @{
+        "X-Result-Detail" = "info"
+    }
+
+    # Try Bearer token first (modern method, supports all token types)
+    $usedBearerAuth = $false
     if ($ApiKey -ne "") {
-        $headers["X-JFrog-Art-Api"] = $ApiKey
+        if ($IsDebugEnabled) {
+            Write-Host "DEBUG: Attempting authentication with Bearer token..." -ForegroundColor Cyan
+        }
+        $headers["Authorization"] = "Bearer $ApiKey"
+        $usedBearerAuth = $true
     }
 
     # Query Artifactory with timeout
-    $response = Invoke-WebRequest -Uri $apiEndpoint `
-        -Headers $headers `
-        -TimeoutSec 5 `
-        -UseBasicParsing `
-        -ErrorAction Stop
+    try {
+        $response = Invoke-WebRequest -Uri $apiEndpoint `
+            -Headers $headers `
+            -TimeoutSec 5 `
+            -UseBasicParsing `
+            -ErrorAction Stop
 
-    $httpCode = $response.StatusCode
-    $body = $response.Content
+        $httpCode = $response.StatusCode
+        $body = $response.Content
+    } catch {
+        $statusCode = $_.Exception.Response.StatusCode.value__
+
+        # If Bearer auth failed with 401/403, try legacy X-JFrog-Art-Api header
+        if ($usedBearerAuth -and ($statusCode -eq 401 -or $statusCode -eq 403)) {
+            if ($IsDebugEnabled) {
+                Write-Host "DEBUG: Bearer auth failed, trying legacy X-JFrog-Art-Api header..." -ForegroundColor Cyan
+            }
+
+            $headers.Remove("Authorization")
+            $headers["X-JFrog-Art-Api"] = $ApiKey
+
+            $response = Invoke-WebRequest -Uri $apiEndpoint `
+                -Headers $headers `
+                -TimeoutSec 5 `
+                -UseBasicParsing `
+                -ErrorAction Stop
+
+            $httpCode = $response.StatusCode
+            $body = $response.Content
+        } else {
+            throw
+        }
+    }
+
+    # Debug output
+    if ($IsDebugEnabled) {
+        Write-Host "DEBUG: HTTP Code: $httpCode" -ForegroundColor Cyan
+        Write-Host "DEBUG: Response Body: $body" -ForegroundColor Cyan
+    }
 
     # Handle successful response
     if ($httpCode -eq 200) {
@@ -178,14 +262,29 @@ try {
 } catch {
     $statusCode = $_.Exception.Response.StatusCode.value__
 
-    if ($statusCode -eq 401 -or $statusCode -eq 403) {
-        Print-Status "ERROR" "Authentication failed. Check ARTIFACTORY_API_KEY environment variable"
+    if ($statusCode -eq 401) {
+        Print-Status "ERROR" "Authentication failed (401 Unauthorized). Check your API key/token."
+        Write-Host "  Hint: Ensure you're using a valid Bearer token or API key" -ForegroundColor Red
+        Write-Host "  Set ARTIFACTORY_API_KEY environment variable or pass as 3rd argument" -ForegroundColor Red
         exit 2
+    } elseif ($statusCode -eq 403) {
+        Print-Status "ERROR" "Access forbidden (403 Forbidden). Check permissions for this repository."
+        Write-Host "  Your credentials are valid but lack permission to access this resource" -ForegroundColor Red
+        exit 2
+    } elseif ($statusCode -eq 404) {
+        Print-Status "ERROR" "API endpoint not found (404). Verify ARTIFACTORY_URL path is correct."
+        Write-Host "  Expected format: https://artifactory.company.com/artifactory" -ForegroundColor Red
+        Write-Host "  Some installations require /artifactory in the path, others don't" -ForegroundColor Red
+        exit 3
     } elseif ($null -eq $statusCode -or $statusCode -eq 0) {
         Print-Status "ERROR" "Network error or timeout (Artifactory may be unreachable)"
+        Write-Host "  Check network connectivity and Artifactory URL" -ForegroundColor Red
         exit 3
     } else {
         Print-Status "ERROR" "Artifactory API returned HTTP $statusCode"
+        if ($IsDebugEnabled) {
+            Write-Host "  Response: $body" -ForegroundColor Red
+        }
         exit 3
     }
 }
