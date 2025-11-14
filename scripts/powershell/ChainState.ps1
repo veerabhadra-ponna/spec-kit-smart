@@ -60,13 +60,28 @@ function Save-State {
         [string]$StateJson
     )
 
+    # Validate JSON format before saving (prevent injection)
+    try {
+        $null = $StateJson | ConvertFrom-Json -ErrorAction Stop
+    } catch {
+        Write-Error "❌ ERROR: Invalid JSON format - cannot save state: $_"
+        return
+    }
+
+    # Validate state schema (check required fields)
+    if (-not (Test-StateValid -StateJson $StateJson)) {
+        Write-Error "❌ ERROR: State validation failed - cannot save"
+        return
+    }
+
     $stateFile = Join-Path $StateDir "$StageName.json"
 
-    $StateJson | Out-File -FilePath $stateFile -Encoding utf8 -Force
+    # Write validated JSON safely (re-format to ensure clean output)
+    $StateJson | ConvertFrom-Json | ConvertTo-Json -Depth 10 | Out-File -FilePath $stateFile -Encoding utf8 -Force
 
     # Also save as latest
     $latestFile = Join-Path $StateDir "latest.json"
-    $StateJson | Out-File -FilePath $latestFile -Encoding utf8 -Force
+    $StateJson | ConvertFrom-Json | ConvertTo-Json -Depth 10 | Out-File -FilePath $latestFile -Encoding utf8 -Force
 
     Write-Host "✓ State saved: $stateFile"
 }

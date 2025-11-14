@@ -171,6 +171,7 @@ echo "------------------------------"
 
 bootstrap='{
   "chain_id": "'$CHAIN_ID'",
+  "timestamp": "'$(date -Iseconds)'",
   "stage": "bootstrap",
   "project_path": "/test/project",
   "analysis_dir": "/test/analysis"

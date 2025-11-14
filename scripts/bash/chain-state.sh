@@ -29,12 +29,25 @@ save_state() {
     local stage_name="$1"
     local state_json="$2"
 
+    # Validate JSON format before saving (prevent injection)
+    if ! echo "${state_json}" | jq empty 2>/dev/null; then
+        echo "❌ ERROR: Invalid JSON format - cannot save state" >&2
+        return 1
+    fi
+
+    # Validate state schema (check required fields)
+    if ! validate_state "${state_json}"; then
+        echo "❌ ERROR: State validation failed - cannot save" >&2
+        return 1
+    fi
+
     local state_file="${STATE_DIR}/${stage_name}.json"
 
-    echo "${state_json}" > "${state_file}"
+    # Write validated JSON safely using jq
+    echo "${state_json}" | jq . > "${state_file}"
 
     # Also save as latest
-    echo "${state_json}" > "${STATE_DIR}/latest.json"
+    echo "${state_json}" | jq . > "${STATE_DIR}/latest.json"
 
     echo "✓ State saved: ${state_file}"
 }
