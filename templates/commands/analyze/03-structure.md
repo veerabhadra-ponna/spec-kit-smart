@@ -28,7 +28,7 @@ You should have:
 
 ## Task
 
-1. Run enumeration script to generate file manifest
+1. Load bootstrap state (analysis_dir, manifest_path already created)
 2. Detect technology stack from project files
 3. Determine project type (monolith, microservices, etc.)
 4. Identify entry points and key architectural elements
@@ -36,53 +36,63 @@ You should have:
 
 ---
 
-## Step 1: Run Enumeration Script
+## Step 1: Load Bootstrap State
 
-**CRITICAL**: This analyzes an **EXISTING** project. Do NOT modify the target project directory structure.
+**CRITICAL**: The enumeration script was ALREADY run during bootstrap. Do NOT run it again.
 
-### 1.1: Determine Script to Run
+**Why**: The setup script (analyze-project.sh/ps1) was executed at the very beginning and already:
+- Created the analysis workspace directory
+- Generated the file-manifest.json
+- Saved all paths to bootstrap state (00-bootstrap.json)
 
-Based on OS (from state.config.osEnv or auto-detect):
+Running it again would create a SECOND directory with a different timestamp, causing artifacts to be split across two locations.
 
-**For Unix/Linux/macOS**:
+### 1.1: Load Paths from Bootstrap State
 
-```bash
-scripts/bash/analyze-project.sh "{project_path}"
-```text
+Load state from: `.analysis/.state/00-bootstrap.json`
 
-**For Windows**:
+**Bootstrap state contains**:
+- `chain_id` - Analysis chain identifier
+- `analysis_dir` - Analysis workspace directory (already created)
+- `manifest_path` - Path to file-manifest.json (already generated)
+- `project_path` - Project being analyzed
+- `project_name` - Project name
 
-```powershell
-scripts/powershell/analyze-project.ps1 "{project_path}"
-```text
-
-**Note**: Scripts handle OS detection automatically. If bash runs on Windows, it redirects to PowerShell (and vice versa).
-
-### 1.2: Script Workflow
-
-The script performs these tasks:
-1. Creates analysis workspace directory: `.analysis/{PROJECT-NAME}-{TIMESTAMP}/`
-2. Runs `enumerate-project` to scan all files
-3. Generates `file-manifest.json` with complete project inventory
-4. Creates analysis template stub (`analysis-report.md`)
-5. Outputs workspace location and file paths
-
-### 1.3: Parse Script Output
-
-Extract from script output:
-- `ANALYSIS_DIR` - Path to analysis workspace (e.g., `.analysis/myapp-20251114-103045/`)
-- `MANIFEST_PATH` - Path to file-manifest.json (e.g., `.analysis/myapp-20251114-103045/file-manifest.json`)
-- `PROJECT_NAME` - Derived project name
-- `TIMESTAMP` - Analysis timestamp
-
-**Store these in state**:
+**Example bootstrap state**:
 
 ```json
 {
-  "analysis_dir": ".analysis/myapp-20251114-103045/",
-  "manifest_path": ".analysis/myapp-20251114-103045/file-manifest.json",
-  "project_name": "myapp",
-  "analysis_timestamp": "20251114-103045"
+  "chain_id": "a3f7c8d1",
+  "start_time": "2025-11-15T06:35:36Z",
+  "timestamp": "2025-11-15T06:35:36Z",
+  "stage": "bootstrap",
+  "stages_complete": [],
+  "project_path": "/home/user/my-app",
+  "project_name": "my-app",
+  "analysis_dir": "/home/user/my-app/.analysis/my-app-2025-11-15-143536/",
+  "manifest_path": "/home/user/my-app/.analysis/my-app-2025-11-15-143536/file-manifest.json"
+}
+```text
+
+### 1.2: Extract Values for Current State
+
+Extract these values from bootstrap state and merge into current state:
+
+- `analysis_dir` - Use as-is
+- `manifest_path` - Use as-is
+- `project_name` - Use as-is
+- `analysis_timestamp` - Extract from analysis_dir (the timestamp portion)
+
+**Merge into state**:
+
+```json
+{
+  ...previous_state_from_02-scope,
+  "analysis_dir": ".analysis/my-app-2025-11-15-143536/",
+  "manifest_path": ".analysis/my-app-2025-11-15-143536/file-manifest.json",
+  "project_name": "my-app",
+  "analysis_timestamp": "2025-11-15-143536",
+  "manifest_generated": true
 }
 ```text
 
@@ -473,13 +483,14 @@ Save the state JSON to `.analysis/.state/03-structure.json`.
 
 ## Error Handling
 
-**If enumeration script fails**:
-- Output: "❌ Error running enumeration script: {error}"
-- Attempt manual file scanning as fallback
-- Continue with partial data
+**If bootstrap state not found**:
+- Output: "❌ Error: Bootstrap state not found at .analysis/.state/00-bootstrap.json"
+- This means setup script was not run properly
+- Abort and instruct user to run analyze-project.sh/ps1 first
 
-**If file-manifest.json not found**:
-- Output: "❌ File manifest not generated"
+**If file-manifest.json not found at bootstrap path**:
+- Output: "❌ File manifest not found at {manifest_path from bootstrap}"
+- This means enumeration failed during bootstrap
 - Fallback to manual directory scanning
 - Generate minimal manifest
 
@@ -503,12 +514,13 @@ Previous state loaded from: .analysis/.state/02-scope.json
 Chain ID: a3f7c8d1
 Project: /home/user/legacy-app
 
-Running enumeration script...
-✓ Executed: scripts/bash/analyze-project.sh "/home/user/legacy-app"
+Loading bootstrap state...
+✓ Bootstrap state: .analysis/.state/00-bootstrap.json
 
-Parsing script output...
-✓ Analysis workspace: .analysis/legacy-app-20251114-102045/
-✓ File manifest: .analysis/legacy-app-20251114-102045/file-manifest.json
+Extracting paths from bootstrap...
+✓ Analysis workspace: .analysis/legacy-app-2025-11-14-102045/
+✓ File manifest: .analysis/legacy-app-2025-11-14-102045/file-manifest.json
+✓ Project name: legacy-app
 
 Reading file manifest...
 ✓ Loaded 245 files
