@@ -208,7 +208,7 @@ Required:
 
 **After Chunk 1**: Display progress:
 
-```
+```text
 ✓ functional-spec.md Chunk 1/5 complete: Introduction + Summary + Scope
   - Lines: [COUNT]
 ```
@@ -222,7 +222,7 @@ Required:
 
 **After Chunk 2**: Append using `str_replace`, display progress:
 
-```
+```text
 ✓ functional-spec.md Chunk 2/5 complete: User Stories (CRITICAL)
   - Features: [COUNT]
   - Lines: [COUNT]
@@ -236,7 +236,7 @@ Required:
 
 **After Chunk 3**: Append using `str_replace`, display progress:
 
-```
+```text
 ✓ functional-spec.md Chunk 3/5 complete: STANDARD Features + Rules
   - Features: [COUNT]
   - Lines: [COUNT]
@@ -250,7 +250,7 @@ Required:
 
 **After Chunk 4**: Append using `str_replace`, display progress:
 
-```
+```text
 ✓ functional-spec.md Chunk 4/5 complete: NFRs + Data
   - Lines: [COUNT]
 ```
@@ -263,7 +263,7 @@ Required:
 
 **After Chunk 5**: Append using `str_replace`, display progress:
 
-```
+```text
 ✅ functional-spec.md COMPLETE (5/5 chunks)
    - Total features: [COUNT]
    - Total lines: [COUNT]
@@ -291,7 +291,7 @@ Required:
 
 **After Chunk 1**: Display progress:
 
-```
+```text
 ✓ technical-spec.md Chunk 1/5 complete: Architecture + Comparison
   - Diagrams: [COUNT]
   - Lines: [COUNT]
@@ -305,7 +305,7 @@ Required:
 
 **After Chunk 2**: Append using `str_replace`, display progress:
 
-```
+```text
 ✓ technical-spec.md Chunk 2/5 complete: Tech Stack + Data
   - Lines: [COUNT]
 ```
@@ -318,7 +318,7 @@ Required:
 
 **After Chunk 3**: Append using `str_replace`, display progress:
 
-```
+```text
 ✓ technical-spec.md Chunk 3/5 complete: API + Integrations
   - Endpoints: [COUNT]
   - Lines: [COUNT]
@@ -332,7 +332,7 @@ Required:
 
 **After Chunk 4**: Append using `str_replace`, display progress:
 
-```
+```text
 ✓ technical-spec.md Chunk 4/5 complete: Security + Deployment
   - Lines: [COUNT]
 ```
@@ -345,7 +345,7 @@ Required:
 
 **After Chunk 5**: Append using `str_replace`, display progress:
 
-```
+```text
 ✅ technical-spec.md COMPLETE (5/5 chunks)
    - Total lines: [COUNT]
 ```
@@ -448,7 +448,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **After Chunk 1**: Display progress:
 
-```
+```text
 ✓ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
   - Approach: [APPROACH]
   - Phases: [COUNT]
@@ -463,7 +463,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **After Chunk 2**: Append using `str_replace`, display progress:
 
-```
+```text
 ✓ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
   - Setup steps: [COUNT]
   - Code changes: [COUNT]
@@ -478,7 +478,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **After Chunk 3**: Append using `str_replace`, display progress:
 
-```
+```text
 ✅ concern-migration-plan.md COMPLETE (3/3 chunks)
    - Total lines: [COUNT]
 ```
@@ -521,7 +521,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 Display completion summary with all file paths:
 
-```
+```text
 === Analysis Complete ===
 
 Generated Artifacts:
@@ -585,7 +585,7 @@ Analysis Duration: {duration}
 
 ## Completion Marker
 
-```
+```text
 STAGE_COMPLETE:ARTIFACTS
 STATE_PATH: .analysis/.state/07-artifacts.json
 
