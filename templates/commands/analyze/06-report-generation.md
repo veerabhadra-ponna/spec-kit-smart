@@ -47,7 +47,11 @@ Attempting to generate the full report in one operation WILL result in:
 
 ## Chunking Strategy
 
-**CRITICAL**: The analysis-report.md will be **3,000-8,000 lines** depending on project size.
+**CRITICAL**: The analysis-report.md size will vary based on project complexity:
+
+- **Small projects** (< 5,000 LOC): **1,000-2,500 lines**
+- **Medium projects** (5,000-50,000 LOC): **3,000-8,000 lines**
+- **Large projects** (> 50,000 LOC): **5,000-15,000 lines**
 
 **⚠️ COMPLETION-BASED CHUNKING (NOT size-based)**:
 
@@ -548,11 +552,22 @@ Read analysis-report.md and verify:
       - [ ] No placeholders (TODO, TBD, "will be analyzed", "coming soon")
       - [ ] All tables properly formatted (Markdown)
       - [ ] All code blocks have syntax highlighting
-- [ ] Completeness:
-      - [ ] Total lines: 3,000+ (minimum for comprehensive analysis)
-      - [ ] Feature descriptions: 50-200 with evidence
-      - [ ] Technical debt items: 20-50 categorized
-      - [ ] Security findings: 10-30 with risk scores
+- [ ] Completeness (verify based on project size/complexity):
+      - [ ] **Small projects (< 5,000 LOC)**:
+            - Total lines: 1,000+ (minimum for comprehensive analysis)
+            - Feature descriptions: 10-50 with evidence
+            - Technical debt items: 5-20 categorized
+            - Security findings: 3-10 with risk scores
+      - [ ] **Medium projects (5,000-50,000 LOC)**:
+            - Total lines: 3,000+ (minimum for comprehensive analysis)
+            - Feature descriptions: 50-200 with evidence
+            - Technical debt items: 20-50 categorized
+            - Security findings: 10-30 with risk scores
+      - [ ] **Large projects (> 50,000 LOC)**:
+            - Total lines: 5,000+ (minimum for comprehensive analysis)
+            - Feature descriptions: 100-500 with evidence
+            - Technical debt items: 50-150 categorized
+            - Security findings: 30-100 with risk scores
 
 ---
 
