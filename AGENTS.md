@@ -109,13 +109,16 @@ Estimated size: ~2400 lines. I'll generate in 4 chunks:
 
 **Required checks:**
 
-1. **Markdownlint**: `npx markdownlint-cli2 "**/*.md"` (configured via `.markdownlint-cli2.jsonc`)
+1. **Markdown lint**: Run GitHub workflow `.github/workflows/lint.yml` to check for markdown errors
+   - Command: `act -j markdownlint` (using act to run GitHub Actions locally)
+   - Or: Push to feature branch and check GitHub Actions results
+   - Config: Uses default markdownlint-cli2 rules (no custom config)
 2. **Spell check**: Review for typos/grammar
 3. **Test scripts**: If modifying bash/PowerShell, test locally with `--help`
 
 **Checklist:**
 
-- [ ] Ran markdownlint and fixed errors
+- [ ] Ran lint.yml workflow and fixed markdown errors
 - [ ] No TODOs in prompt files (use IMPROVEMENTS.md)
 - [ ] Tested script changes
 - [ ] Clear commit message
@@ -267,9 +270,14 @@ Consider native patterns, ensure SDD compatibility, document requirements, updat
 
 ## Markdown Style Guide
 
-Uses markdownlint-cli2 (config: `.markdownlint-cli2.jsonc`). Key rules: ATX headers, asterisk emphasis, 2-space indents. Disabled: MD013 (line length), MD033 (HTML), MD041, MD051.
+Uses markdownlint-cli2 with default rules (enforced via GitHub Actions `.github/workflows/lint.yml`).
 
-**Commands**: `npx markdownlint-cli2 "**/*.md"` (check), add `--fix` (auto-fix)
+**Key rules**: ATX headers, asterisk emphasis, 2-space indents, language specifiers for code blocks, proper table formatting
+
+**Checking lint errors**:
+- Run locally: `act -j markdownlint` (requires act CLI)
+- Or push to branch and check GitHub Actions results
+- Auto-fix where possible: `npx markdownlint-cli2 --fix "**/*.md"`
 
 **Best Practices**: Blank lines around blocks, specify code languages, dashes for lists, ~100 char prose (except long commands/URLs)
 

@@ -158,7 +158,13 @@ build_unified() {
     find scripts -maxdepth 1 -type f -exec cp {} "$SPEC_DIR/scripts/" \; 2>/dev/null || true
   fi
 
-  [[ -d templates ]] && { mkdir -p "$SPEC_DIR/templates"; find templates -type f -not -path "templates/commands/*" -not -name "vscode-settings.json" -exec cp --parents {} "$SPEC_DIR"/ \; ; echo "Copied templates -> .specify/templates"; }
+  [[ -d templates ]] && {
+    mkdir -p "$SPEC_DIR/templates"
+    # Copy all templates including commands (for reference and chained prompts)
+    # Exclude vscode-settings.json (IDE-specific) and monolithic backup files
+    find templates -type f -not -name "vscode-settings.json" -not -name "*-monolithic.md" -exec cp --parents {} "$SPEC_DIR"/ \;
+    echo "Copied templates (including commands) -> .specify/templates"
+  }
 
   # Copy AGENTS.md to package root for easy agent access
   [[ -f templates/AGENTS.md ]] && { cp templates/AGENTS.md "$base_dir/AGENTS.md"; echo "Copied AGENTS.md -> package root"; }
