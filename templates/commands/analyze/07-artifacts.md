@@ -99,63 +99,43 @@ Required:
 
 ### Artifact 2: dependency-audit.md
 
-**Purpose**: Dependency audit results in markdown format
+**Purpose**: Machine-readable dependency audit results
 
 **Content**:
 
-```markdown
-# Dependency Audit: {Project Name}
-
-**Audit Date**: {date}
-**Project**: {project_name}
-
-## Summary
-
-- **Total Dependencies**: {total}
-- **Direct Dependencies**: {direct}
-- **Transitive Dependencies**: {transitive}
-
-## Outdated Dependencies
-
-| Package | Current Version | Latest Version | Update Type |
-|---------|----------------|----------------|-------------|
-| {package} | {version} | {version} | major/minor/patch |
-
-## Vulnerable Dependencies
-
-### CRITICAL
-
-| Package | Version | CVE | Description | Remediation |
-|---------|---------|-----|-------------|-------------|
-| {package} | {version} | {CVE-YYYY-XXXXX} | {description} | {fix version or mitigation} |
-
-### HIGH
-
-| Package | Version | CVE | Description | Remediation |
-|---------|---------|-----|-------------|-------------|
-| {package} | {version} | {CVE-YYYY-XXXXX} | {description} | {fix version or mitigation} |
-
-### MEDIUM
-
-| Package | Version | CVE | Description | Remediation |
-|---------|---------|-----|-------------|-------------|
-| {package} | {version} | {CVE-YYYY-XXXXX} | {description} | {fix version or mitigation} |
-
-### LOW
-
-| Package | Version | CVE | Description | Remediation |
-|---------|---------|-----|-------------|-------------|
-| {package} | {version} | {CVE-YYYY-XXXXX} | {description} | {fix version or mitigation} |
-
-## Deprecated Dependencies
-
-| Package | Replacement |
-|---------|-------------|
-| {package} | {suggested alternative} |
-
-## License Issues
-
-{List any license compatibility issues or missing licenses}
+```json
+{
+  "audit_date": "2025-11-14T11:30:00Z",
+  "project": "{project_name}",
+  "total_dependencies": {total},
+  "direct_dependencies": {direct},
+  "transitive_dependencies": {transitive},
+  "outdated": [
+    {
+      "name": "{package}",
+      "current": "{version}",
+      "latest": "{version}",
+      "type": "major | minor | patch"
+    }
+  ],
+  "vulnerable": [
+    {
+      "name": "{package}",
+      "version": "{version}",
+      "severity": "CRITICAL | HIGH | MEDIUM | LOW",
+      "cve": "{CVE-YYYY-XXXXX}",
+      "description": "{description}",
+      "remediation": "{fix version or mitigation}"
+    }
+  ],
+  "deprecated": [
+    {
+      "name": "{package}",
+      "replacement": "{suggested alternative}"
+    }
+  ],
+  "license_issues": []
+}
 ```
 
 **Progress**: `✓ Generated: dependency-audit.md`
@@ -164,62 +144,46 @@ Required:
 
 ### Artifact 3: metrics-summary.md
 
-**Purpose**: Key metrics for tracking and reporting in markdown format
+**Purpose**: Key metrics for tracking and reporting
 
 **Content**:
 
-```markdown
-# Metrics Summary: {Project Name}
-
-**Analysis Date**: {date}
-**Project**: {project_name}
-
-## Code Metrics
-
-| Metric | Value |
-|--------|-------|
-| Total Lines of Code | {count} |
-| Total Files | {count} |
-
-### Languages
-
-| Language | Lines of Code |
-|----------|---------------|
-| Java | {lines} |
-| JavaScript | {lines} |
-
-## Quality Metrics
-
-| Metric | Score | Rating |
-|--------|-------|--------|
-| Test Coverage | {percentage}% | {rating} |
-| Technical Debt | {score}/10 | {rating} |
-| Security | {score}/10 | {rating} |
-| Maintainability | {score}/10 | {rating} |
-
-## Dependencies
-
-| Metric | Count |
-|--------|-------|
-| Total Dependencies | {count} |
-| Outdated | {count} |
-| Vulnerable | {count} |
-| Critical Vulnerabilities | {count} |
-
-## Complexity
-
-- **Score**: {0-100}/100
-- **Rating**: LOW | MEDIUM | HIGH | VERY HIGH
-
-## Feasibility Assessment
-
-| Approach | Feasibility Score |
-|----------|------------------|
-| Inline Upgrade | {percentage}% |
-| Greenfield Rewrite | {percentage}% |
-| Hybrid Approach | {percentage}% |
-
-**Recommended Approach**: {approach based on highest score}
+```json
+{
+  "project": "{project_name}",
+  "analysis_date": "2025-11-14T11:30:00Z",
+  "metrics": {
+    "code": {
+      "total_lines": {count},
+      "total_files": {count},
+      "languages": {
+        "java": {lines},
+        "javascript": {lines}
+      }
+    },
+    "quality": {
+      "test_coverage": {percentage},
+      "tech_debt_score": {score},
+      "security_score": {score},
+      "maintainability_score": {score}
+    },
+    "dependencies": {
+      "total": {count},
+      "outdated": {count},
+      "vulnerable": {count},
+      "critical_vulns": {count}
+    },
+    "complexity": {
+      "score": {0-100},
+      "rating": "LOW | MEDIUM | HIGH | VERY HIGH"
+    },
+    "feasibility": {
+      "inline_upgrade": {percentage},
+      "greenfield_rewrite": {percentage},
+      "hybrid_approach": {percentage}
+    }
+  }
+}
 ```
 
 **Progress**: `✓ Generated: metrics-summary.md`
