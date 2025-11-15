@@ -450,7 +450,7 @@ class LicenseAnalyzer:
 **Recommendation**: Modularize templates
 
 ```bash
-templates/analysis/
+templates/analyze/
 ├── report-header.md
 ├── report-executive-summary.md
 ├── report-tech-stack.md
@@ -462,7 +462,7 @@ templates/analysis/
 └── report-footer.md
 
 # Compose final report from modules
-cat templates/analysis/report-*.md > final-report.md
+cat templates/analyze/report-*.md > final-report.md
 ```text
 
 **Impact**: High cost, slow generation, difficult customization

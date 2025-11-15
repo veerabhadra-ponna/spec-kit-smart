@@ -1101,7 +1101,7 @@ Proposed templates for concern-specific analysis:
 
 **Templates to Create** (AI fills with real analysis):
 
-1. `templates/analysis/concern-analysis-template.md`
+1. `templates/analyze/concern-analysis-template.md`
    - Executive summary (concern, current, target, recommendation, risk, effort)
    - Entry points table (with file:line evidence)
    - Abstraction assessment (with rationale)
@@ -1113,13 +1113,13 @@ Proposed templates for concern-specific analysis:
    - Impact on other concerns
    - Testing strategy
 
-2. `templates/analysis/abstraction-recommendations-template.md`
+2. `templates/analyze/abstraction-recommendations-template.md`
    - Current architecture gaps (with file:line)
    - Recommended patterns (Repository, Strategy, Adapter, etc.)
    - Refactoring roadmap (phased approach)
    - Future-proofing guidance
 
-3. `templates/analysis/concern-migration-plan-template.md`
+3. `templates/analyze/concern-migration-plan-template.md`
    - Detailed phased rollout plan
    - Risk assessment with mitigation
    - Rollback procedures
@@ -1503,9 +1503,9 @@ Every concern migration should:
 
 ##### Day 3-4: Template Creation ✅ COMPLETE
 
-- [x] Create `templates/analysis/concern-analysis-template.md` (comprehensive 10-section template)
-- [x] Create `templates/analysis/abstraction-recommendations-template.md` (conditional HIGH/MEDIUM/LOW guidance)
-- [x] Create `templates/analysis/concern-migration-plan-template.md` (detailed phased migration with 4 strategies)
+- [x] Create `templates/analyze/concern-analysis-template.md` (comprehensive 10-section template)
+- [x] Create `templates/analyze/abstraction-recommendations-template.md` (conditional HIGH/MEDIUM/LOW guidance)
+- [x] Create `templates/analyze/concern-migration-plan-template.md` (detailed phased migration with 4 strategies)
 - [x] Add examples and clear structure to all templates
 
 **Deliverable**: ✅ 3 new templates with comprehensive structure

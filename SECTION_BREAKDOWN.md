@@ -821,7 +821,7 @@ If analysis-report.md missing/incomplete → STOP, RETURN to Step 4.A, DO NOT pr
 
 **Source**: Extract features from analysis-report.md Phase 1-2
 
-**Template**: `templates/analysis/functional-spec-template.md`
+**Template**: `templates/analyze/functional-spec-template.md`
 
 **Chunk 1: Introduction + Summary + Scope**
 - Section 1: Introduction
@@ -887,7 +887,7 @@ Progress: ✅ functional-spec.md COMPLETE (5/5 chunks)
 
 **Source**: analysis-report.md Phase 5-6 + user's modernization preferences (from 10 questions)
 
-**Template**: `templates/analysis/technical-spec-template.md`
+**Template**: `templates/analyze/technical-spec-template.md`
 
 **Chunk 1: Architecture Overview + Legacy vs Target Comparison**
 - Section 1: Introduction
@@ -951,7 +951,7 @@ Progress: ✅ technical-spec.md COMPLETE (5/5 chunks)
 
 #### 4. **stage-prompts/** (4 files - Generate individually)
 
-**Source**: Templates from `templates/analysis/stage-prompt-templates/`
+**Source**: Templates from `templates/analyze/stage-prompt-templates/`
 
 **Files to generate**:
 
@@ -1005,7 +1005,7 @@ Progress: ✅ technical-spec.md COMPLETE (5/5 chunks)
 
 **Source**: Analysis from Step 4.B + analysis-report.md context
 
-**Template**: `templates/analysis/concern-analysis-template.md`
+**Template**: `templates/analyze/concern-analysis-template.md`
 
 **Chunk 1: Introduction + Context + File Identification**
 - Section 1: Introduction
