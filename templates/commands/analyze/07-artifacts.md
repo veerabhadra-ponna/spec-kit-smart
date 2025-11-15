@@ -29,8 +29,8 @@ Required:
 ### Common Artifacts (Both A and B)
 
 1. **EXECUTIVE-SUMMARY.md** (1 chunk)
-2. **dependency-audit.json** (1 chunk)
-3. **metrics-summary.json** (1 chunk)
+2. **dependency-audit.md** (1 chunk)
+3. **metrics-summary.md** (1 chunk)
 4. **analysis-report.md** (from Stage 6)
 
 ### Full Application Artifacts (Scope = A)
@@ -91,100 +91,136 @@ Required:
 1. {immediate action 1}
 2. {immediate action 2}
 3. {immediate action 3}
-```text
+```
 
 **Progress**: `✓ Generated: EXECUTIVE-SUMMARY.md`
 
 ---
 
-### Artifact 2: dependency-audit.json
+### Artifact 2: dependency-audit.md
 
-**Purpose**: Machine-readable dependency audit results
+**Purpose**: Dependency audit results in markdown format
 
 **Content**:
 
-```json
-{
-  "audit_date": "2025-11-14T11:30:00Z",
-  "project": "{project_name}",
-  "total_dependencies": {total},
-  "direct_dependencies": {direct},
-  "transitive_dependencies": {transitive},
-  "outdated": [
-    {
-      "name": "{package}",
-      "current": "{version}",
-      "latest": "{version}",
-      "type": "major | minor | patch"
-    }
-  ],
-  "vulnerable": [
-    {
-      "name": "{package}",
-      "version": "{version}",
-      "severity": "CRITICAL | HIGH | MEDIUM | LOW",
-      "cve": "{CVE-YYYY-XXXXX}",
-      "description": "{description}",
-      "remediation": "{fix version or mitigation}"
-    }
-  ],
-  "deprecated": [
-    {
-      "name": "{package}",
-      "replacement": "{suggested alternative}"
-    }
-  ],
-  "license_issues": []
-}
+```markdown
+# Dependency Audit: {Project Name}
+
+**Audit Date**: {date}
+**Project**: {project_name}
+
+## Summary
+
+- **Total Dependencies**: {total}
+- **Direct Dependencies**: {direct}
+- **Transitive Dependencies**: {transitive}
+
+## Outdated Dependencies
+
+| Package | Current Version | Latest Version | Update Type |
+|---------|----------------|----------------|-------------|
+| {package} | {version} | {version} | major/minor/patch |
+
+## Vulnerable Dependencies
+
+### CRITICAL
+
+| Package | Version | CVE | Description | Remediation |
+|---------|---------|-----|-------------|-------------|
+| {package} | {version} | {CVE-YYYY-XXXXX} | {description} | {fix version or mitigation} |
+
+### HIGH
+
+| Package | Version | CVE | Description | Remediation |
+|---------|---------|-----|-------------|-------------|
+| {package} | {version} | {CVE-YYYY-XXXXX} | {description} | {fix version or mitigation} |
+
+### MEDIUM
+
+| Package | Version | CVE | Description | Remediation |
+|---------|---------|-----|-------------|-------------|
+| {package} | {version} | {CVE-YYYY-XXXXX} | {description} | {fix version or mitigation} |
+
+### LOW
+
+| Package | Version | CVE | Description | Remediation |
+|---------|---------|-----|-------------|-------------|
+| {package} | {version} | {CVE-YYYY-XXXXX} | {description} | {fix version or mitigation} |
+
+## Deprecated Dependencies
+
+| Package | Replacement |
+|---------|-------------|
+| {package} | {suggested alternative} |
+
+## License Issues
+
+{List any license compatibility issues or missing licenses}
 ```
 
-**Progress**: `✓ Generated: dependency-audit.json`
+**Progress**: `✓ Generated: dependency-audit.md`
 
 ---
 
 ### Artifact 3: metrics-summary.md
 
-**Purpose**: Key metrics for tracking and reporting
+**Purpose**: Key metrics for tracking and reporting in markdown format
 
 **Content**:
 
-```json
-{
-  "project": "{project_name}",
-  "analysis_date": "2025-11-14T11:30:00Z",
-  "metrics": {
-    "code": {
-      "total_lines": {count},
-      "total_files": {count},
-      "languages": {
-        "java": {lines},
-        "javascript": {lines}
-      }
-    },
-    "quality": {
-      "test_coverage": {percentage},
-      "tech_debt_score": {score},
-      "security_score": {score},
-      "maintainability_score": {score}
-    },
-    "dependencies": {
-      "total": {count},
-      "outdated": {count},
-      "vulnerable": {count},
-      "critical_vulns": {count}
-    },
-    "complexity": {
-      "score": {0-100},
-      "rating": "LOW | MEDIUM | HIGH | VERY HIGH"
-    },
-    "feasibility": {
-      "inline_upgrade": {percentage},
-      "greenfield_rewrite": {percentage},
-      "hybrid_approach": {percentage}
-    }
-  }
-}
-```text
+```markdown
+# Metrics Summary: {Project Name}
+
+**Analysis Date**: {date}
+**Project**: {project_name}
+
+## Code Metrics
+
+| Metric | Value |
+|--------|-------|
+| Total Lines of Code | {count} |
+| Total Files | {count} |
+
+### Languages
+
+| Language | Lines of Code |
+|----------|---------------|
+| Java | {lines} |
+| JavaScript | {lines} |
+
+## Quality Metrics
+
+| Metric | Score | Rating |
+|--------|-------|--------|
+| Test Coverage | {percentage}% | {rating} |
+| Technical Debt | {score}/10 | {rating} |
+| Security | {score}/10 | {rating} |
+| Maintainability | {score}/10 | {rating} |
+
+## Dependencies
+
+| Metric | Count |
+|--------|-------|
+| Total Dependencies | {count} |
+| Outdated | {count} |
+| Vulnerable | {count} |
+| Critical Vulnerabilities | {count} |
+
+## Complexity
+
+- **Score**: {0-100}/100
+- **Rating**: LOW | MEDIUM | HIGH | VERY HIGH
+
+## Feasibility Assessment
+
+| Approach | Feasibility Score |
+|----------|------------------|
+| Inline Upgrade | {percentage}% |
+| Greenfield Rewrite | {percentage}% |
+| Hybrid Approach | {percentage}% |
+
+**Recommended Approach**: {approach based on highest score}
+```
 
 **Progress**: `✓ Generated: metrics-summary.md`
 
@@ -208,7 +244,7 @@ Required:
 
 **After Chunk 1**: Display progress:
 
-```text
+```
 ✓ functional-spec.md Chunk 1/5 complete: Introduction + Summary + Scope
   - Lines: [COUNT]
 ```
@@ -222,7 +258,7 @@ Required:
 
 **After Chunk 2**: Append using `str_replace`, display progress:
 
-```text
+```
 ✓ functional-spec.md Chunk 2/5 complete: User Stories (CRITICAL)
   - Features: [COUNT]
   - Lines: [COUNT]
@@ -236,7 +272,7 @@ Required:
 
 **After Chunk 3**: Append using `str_replace`, display progress:
 
-```text
+```
 ✓ functional-spec.md Chunk 3/5 complete: STANDARD Features + Rules
   - Features: [COUNT]
   - Lines: [COUNT]
@@ -250,7 +286,7 @@ Required:
 
 **After Chunk 4**: Append using `str_replace`, display progress:
 
-```text
+```
 ✓ functional-spec.md Chunk 4/5 complete: NFRs + Data
   - Lines: [COUNT]
 ```
@@ -263,7 +299,7 @@ Required:
 
 **After Chunk 5**: Append using `str_replace`, display progress:
 
-```text
+```
 ✅ functional-spec.md COMPLETE (5/5 chunks)
    - Total features: [COUNT]
    - Total lines: [COUNT]
@@ -291,7 +327,7 @@ Required:
 
 **After Chunk 1**: Display progress:
 
-```text
+```
 ✓ technical-spec.md Chunk 1/5 complete: Architecture + Comparison
   - Diagrams: [COUNT]
   - Lines: [COUNT]
@@ -305,7 +341,7 @@ Required:
 
 **After Chunk 2**: Append using `str_replace`, display progress:
 
-```text
+```
 ✓ technical-spec.md Chunk 2/5 complete: Tech Stack + Data
   - Lines: [COUNT]
 ```
@@ -318,7 +354,7 @@ Required:
 
 **After Chunk 3**: Append using `str_replace`, display progress:
 
-```text
+```
 ✓ technical-spec.md Chunk 3/5 complete: API + Integrations
   - Endpoints: [COUNT]
   - Lines: [COUNT]
@@ -332,7 +368,7 @@ Required:
 
 **After Chunk 4**: Append using `str_replace`, display progress:
 
-```text
+```
 ✓ technical-spec.md Chunk 4/5 complete: Security + Deployment
   - Lines: [COUNT]
 ```
@@ -345,7 +381,7 @@ Required:
 
 **After Chunk 5**: Append using `str_replace`, display progress:
 
-```text
+```
 ✅ technical-spec.md COMPLETE (5/5 chunks)
    - Total lines: [COUNT]
 ```
@@ -419,7 +455,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 ## Migration Readiness
 {assessment of readiness for migration}
-```text
+```
 
 **Instructions**:
 1. Read template: `.specify/templates/analyze/concern-analysis-template.md`
@@ -448,7 +484,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **After Chunk 1**: Display progress:
 
-```text
+```
 ✓ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
   - Approach: [APPROACH]
   - Phases: [COUNT]
@@ -463,7 +499,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **After Chunk 2**: Append using `str_replace`, display progress:
 
-```text
+```
 ✓ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
   - Setup steps: [COUNT]
   - Code changes: [COUNT]
@@ -478,7 +514,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **After Chunk 3**: Append using `str_replace`, display progress:
 
-```text
+```
 ✅ concern-migration-plan.md COMPLETE (3/3 chunks)
    - Total lines: [COUNT]
 ```
@@ -511,7 +547,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 ## Post-Rollback Actions
 {cleanup and next steps}
-```text
+```
 
 **Progress**: `✓ Generated: rollback-procedure.md`
 
@@ -521,7 +557,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 Display completion summary with all file paths:
 
-```text
+```
 === Analysis Complete ===
 
 Generated Artifacts:
@@ -552,7 +588,7 @@ All files saved to: {analysis_dir}
 
 Total Artifacts: {count}
 Analysis Duration: {duration}
-```text
+```
 
 ---
 
@@ -579,20 +615,20 @@ Analysis Duration: {duration}
   "total_artifacts": 10,
   "analysis_complete": true
 }
-```text
+```
 
 ---
 
 ## Completion Marker
 
-```text
+```
 STAGE_COMPLETE:ARTIFACTS
 STATE_PATH: .analysis/.state/07-artifacts.json
 
 === ANALYSIS CHAIN COMPLETE ===
 Chain ID: {chain_id}
 All stages successfully completed.
-```text
+```
 
 ---
 
