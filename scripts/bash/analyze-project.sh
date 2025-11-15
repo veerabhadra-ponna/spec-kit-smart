@@ -151,7 +151,8 @@ setup_output_directory() {
 
     if [ -z "$OUTPUT_DIR" ]; then
         TIMESTAMP=$(date +%Y-%m-%d-%H%M%S)
-        OUTPUT_DIR="$PROJECT_PATH/.analysis/$PROJECT_NAME-$TIMESTAMP"
+        # Always create .analysis folder at repo root for consistency
+        OUTPUT_DIR="$REPO_ROOT/.analysis/$PROJECT_NAME-$TIMESTAMP"
     fi
 
     mkdir -p "$OUTPUT_DIR"

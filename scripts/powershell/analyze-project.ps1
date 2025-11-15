@@ -112,7 +112,8 @@ Write-Host "====================================== " -ForegroundColor Blue
 
 if ($Output -eq "") {
     $timestamp = Get-Date -Format "yyyy-MM-dd-HHmmss"
-    $Output = Join-Path $Project ".analysis\$projectName-$timestamp"
+    # Always create .analysis folder at repo root for consistency
+    $Output = Join-Path $repoRoot ".analysis\$projectName-$timestamp"
 }
 
 New-Item -ItemType Directory -Path $Output -Force | Out-Null
