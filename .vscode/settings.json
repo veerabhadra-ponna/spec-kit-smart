@@ -84,7 +84,6 @@
       "python *",
 
       // Validation scripts
-      "scripts/validate-guidelines.py*",
       "scripts/python/analyzer/__main__.py*",
 
       // Python analyzer modules
