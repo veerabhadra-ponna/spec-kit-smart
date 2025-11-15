@@ -191,30 +191,82 @@ Required:
 
 ### Artifact 4A (Scope = A): functional-spec.md
 
-**Purpose**: Functional specification for modernized application
+**Purpose**: Functional specification for modernized application (WHAT system does)
+
+**Source**: Extract features from analysis-report.md
 
 **Template**: Read `.specify/templates/analyze/functional-spec-template.md` for structure
 
-**Content Structure** (2-3 chunks):
-- Chunk 1: User Stories & Features
-  - All identified features as user stories
-  - Acceptance criteria
-  - Priority levels
+**Chunking Strategy** (Generate in 5 chunks):
 
-- Chunk 2: Business Rules & Workflows
-  - Business logic documentation
-  - Workflow diagrams
-  - Data flows
+#### Chunk 1: Introduction + Summary + Scope
 
-- Chunk 3: Non-Functional Requirements
-  - Performance requirements
-  - Security requirements
-  - Compliance requirements
+- Sections: 1 (Introduction), 2 (Executive Summary), 3 (Scope)
+- Content: Project overview, high-level purpose, what's in/out of scope
+- Completion: All 3 sections complete, no placeholders
 
-**Instructions**:
-1. Read template: `.specify/templates/analyze/functional-spec-template.md`
-2. Fill in all sections using data from analysis-report.md
-3. Ensure comprehensive feature coverage with file:line references
+**After Chunk 1**: Display progress:
+
+```text
+✓ functional-spec.md Chunk 1/5 complete: Introduction + Summary + Scope
+  - Lines: [COUNT]
+```
+
+#### Chunk 2: User Stories (Part 1) - CRITICAL Features
+
+- Section: 4.1 (User Stories - CRITICAL)
+- Content: All CRITICAL features from analysis-report.md
+- Every feature MUST have file:line reference
+- Completion: All CRITICAL features documented with evidence
+
+**After Chunk 2**: Append using `str_replace`, display progress:
+
+```text
+✓ functional-spec.md Chunk 2/5 complete: User Stories (CRITICAL)
+  - Features: [COUNT]
+  - Lines: [COUNT]
+```
+
+#### Chunk 3: User Stories (Part 2) - STANDARD Features + Business Rules
+
+- Sections: 4.2 (User Stories - STANDARD), 5 (Business Rules)
+- Content: STANDARD features + validation rules
+- Completion: All STANDARD features + rules documented
+
+**After Chunk 3**: Append using `str_replace`, display progress:
+
+```text
+✓ functional-spec.md Chunk 3/5 complete: STANDARD Features + Rules
+  - Features: [COUNT]
+  - Lines: [COUNT]
+```
+
+#### Chunk 4: NFRs + Data Requirements
+
+- Sections: 6 (Non-Functional Requirements), 7 (Data Requirements)
+- Content: Performance, security, scalability, data entities
+- Completion: NFRs defined, data models documented
+
+**After Chunk 4**: Append using `str_replace`, display progress:
+
+```text
+✓ functional-spec.md Chunk 4/5 complete: NFRs + Data
+  - Lines: [COUNT]
+```
+
+#### Chunk 5: Acceptance Criteria + Assumptions + Constraints
+
+- Sections: 8 (Acceptance Criteria), 9 (Assumptions), 10 (Constraints)
+- Content: Testing criteria, assumptions, limitations
+- Completion: All sections complete, no placeholders
+
+**After Chunk 5**: Append using `str_replace`, display progress:
+
+```text
+✅ functional-spec.md COMPLETE (5/5 chunks)
+   - Total features: [COUNT]
+   - Total lines: [COUNT]
+```
 
 **Progress**: `✓ Generated: functional-spec.md ({lines} lines, {chunks} chunks)`
 
@@ -222,30 +274,80 @@ Required:
 
 ### Artifact 5A (Scope = A): technical-spec.md
 
-**Purpose**: Technical specification for modernized implementation
+**Purpose**: Technical specification for modernized implementation (HOW to build)
+
+**Source**: analysis-report.md + user's modernization preferences (from 10 questions)
 
 **Template**: Read `.specify/templates/analyze/technical-spec-template.md` for structure
 
-**Content Structure** (2-3 chunks):
-- Chunk 1: Architecture & Design
-  - Target architecture
-  - Component diagrams
-  - Technology stack decisions
+**Chunking Strategy** (Generate in 5 chunks):
 
-- Chunk 2: API Specifications
-  - All API endpoints
-  - Request/response schemas
-  - Authentication/authorization
+#### Chunk 1: Architecture Overview + Legacy vs Target Comparison
 
-- Chunk 3: Data Models & Infrastructure
-  - Database schema
-  - Entity relationships
-  - Infrastructure requirements
+- Sections: 1 (Introduction), 2 (Architecture Overview), 3 (Legacy vs Target)
+- Content: System architecture, comparison tables, Mermaid diagrams
+- Completion: Architecture patterns documented, comparison complete
 
-**Instructions**:
-1. Read template: `.specify/templates/analyze/technical-spec-template.md`
-2. Fill in all sections using data from analysis-report.md
-3. Provide detailed technical specifications with code examples
+**After Chunk 1**: Display progress:
+
+```text
+✓ technical-spec.md Chunk 1/5 complete: Architecture + Comparison
+  - Diagrams: [COUNT]
+  - Lines: [COUNT]
+```
+
+#### Chunk 2: Target Tech Stack + Data Architecture
+
+- Sections: 4 (Target Tech Stack), 5 (Data Architecture)
+- Content: User's chosen stack (from 10 questions), database design, ORM
+- Completion: All tech choices documented, data layer designed
+
+**After Chunk 2**: Append using `str_replace`, display progress:
+
+```text
+✓ technical-spec.md Chunk 2/5 complete: Tech Stack + Data
+  - Lines: [COUNT]
+```
+
+#### Chunk 3: API Design + Integration Points
+
+- Sections: 6 (API Design), 7 (Integration Architecture)
+- Content: REST/GraphQL design, external APIs, message queues
+- Completion: API contracts defined, integrations documented
+
+**After Chunk 3**: Append using `str_replace`, display progress:
+
+```text
+✓ technical-spec.md Chunk 3/5 complete: API + Integrations
+  - Endpoints: [COUNT]
+  - Lines: [COUNT]
+```
+
+#### Chunk 4: Security + Authentication + Deployment
+
+- Sections: 8 (Security), 9 (Deployment Strategy)
+- Content: User's chosen auth (Q9), deployment target (Q5), IaC (Q6), containers (Q7)
+- Completion: Security measures defined, deployment plan complete
+
+**After Chunk 4**: Append using `str_replace`, display progress:
+
+```text
+✓ technical-spec.md Chunk 4/5 complete: Security + Deployment
+  - Lines: [COUNT]
+```
+
+#### Chunk 5: Testing Strategy + Observability + Migration Risks
+
+- Sections: 10 (Testing), 11 (Observability), 12 (Migration Risks)
+- Content: User's testing choice (Q10), observability stack (Q8), risk mitigation
+- Completion: All sections complete, no placeholders
+
+**After Chunk 5**: Append using `str_replace`, display progress:
+
+```text
+✅ technical-spec.md COMPLETE (5/5 chunks)
+   - Total lines: [COUNT]
+```
 
 **Progress**: `✓ Generated: technical-spec.md ({lines} lines, {chunks} chunks)`
 
@@ -329,32 +431,56 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 ### Artifact 5B (Scope = B): concern-migration-plan.md
 
-**Purpose**: Detailed migration plan for the specific concern
+**Purpose**: Step-by-step migration strategy for the specific concern
+
+**Source**: Recommended strategy from Stage 5B + TARGET_IMPLEMENTATION
 
 **Template**: Read `.specify/templates/analyze/concern-migration-plan-template.md` for structure
 
-**Content Structure** (2-3 chunks):
-- Chunk 1: Migration Strategy
-  - Chosen approach and justification
-  - Phased plan (50/30/15/5)
-  - Timeline and milestones
+**Chunking Strategy** (Generate in 3 chunks):
 
-- Chunk 2: Technical Implementation
-  - Setup steps
-  - Code changes required
-  - Testing strategy
-  - Rollback procedures
+#### Chunk 1: Migration Strategy + Phasing
 
-- Chunk 3: Operational Plan
-  - Deployment strategy
-  - Monitoring and alerting
-  - Success criteria
-  - Post-migration tasks
+- Sections: 1 (Executive Summary), 2 (Migration Strategy), 3 (Phased Plan)
+- Content: Chosen approach, justification, 50/30/15/5 phasing, timeline
+- Completion: Strategy documented, phases defined with milestones
 
-**Instructions**:
-1. Read template: `.specify/templates/analyze/concern-migration-plan-template.md`
-2. Fill in all sections using migration plan from Stage 5B
-3. Provide detailed step-by-step migration guide
+**After Chunk 1**: Display progress:
+
+```text
+✓ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
+  - Approach: [APPROACH]
+  - Phases: [COUNT]
+  - Lines: [COUNT]
+```
+
+#### Chunk 2: Technical Implementation + Testing
+
+- Sections: 4 (Setup Steps), 5 (Code Changes), 6 (Testing Strategy)
+- Content: Environment setup, required code changes, test plan, rollback procedures
+- Completion: Implementation steps detailed, testing strategy complete
+
+**After Chunk 2**: Append using `str_replace`, display progress:
+
+```text
+✓ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
+  - Setup steps: [COUNT]
+  - Code changes: [COUNT]
+  - Lines: [COUNT]
+```
+
+#### Chunk 3: Deployment + Operations + Success Criteria
+
+- Sections: 7 (Deployment Strategy), 8 (Monitoring), 9 (Success Criteria), 10 (Post-Migration)
+- Content: Deployment approach, monitoring/alerting, success metrics, post-migration tasks
+- Completion: All sections complete, operational plan ready
+
+**After Chunk 3**: Append using `str_replace`, display progress:
+
+```text
+✅ concern-migration-plan.md COMPLETE (3/3 chunks)
+   - Total lines: [COUNT]
+```
 
 **Progress**: `✓ Generated: concern-migration-plan.md ({lines} lines, {chunks} chunks)`
 
