@@ -97,24 +97,24 @@ if [ -z "$FEATURE_DESCRIPTION" ]; then
     exit 1
 fi
 
-# Load branch configuration from .guidelines/branch-config.json
+# Load branch configuration from .specify/config.json
 # Function to load configuration with fallback to defaults
 load_branch_config() {
-    local config_file=".guidelines/branch-config.json"
+    local config_file=".specify/config.json"
 
     # Check if jq is available and config file exists
     if command -v jq >/dev/null 2>&1 && [ -f "$config_file" ]; then
-        # Parse JSON using jq
-        BRANCH_PREFIX=$(jq -r '.branch_prefix // "feature/"' "$config_file")
-        BRANCH_PATTERN=$(jq -r '.branch_pattern // "feature/<num>-<jira>-<shortname>"' "$config_file")
-        JIRA_REQUIRED=$(jq -r 'if .jira.required == false then "false" else "true" end' "$config_file")
-        JIRA_REGEX=$(jq -r '.jira.regex // "^C[0-9]{5}-[0-9]{4}$"' "$config_file")
-        JIRA_FORMAT=$(jq -r '.jira.format // "C12345-7890"' "$config_file")
-        NUMBER_DIGITS=$(jq -r '.number_format.digits // 3' "$config_file")
-        NUMBER_ZERO_PADDED=$(jq -r 'if .number_format.zero_padded == false then "false" else "true" end' "$config_file")
-        SEPARATOR=$(jq -r '.separator // "-"' "$config_file")
-        DIR_INCLUDES_PREFIX=$(jq -r 'if .directory.includes_prefix == true then "true" else "false" end' "$config_file")
-        DIR_BASE_PATH=$(jq -r '.directory.base_path // "specs"' "$config_file")
+        # Parse JSON using jq with new nested structure
+        BRANCH_PREFIX=$(jq -r '.branching.prefix // "feature/"' "$config_file")
+        BRANCH_PATTERN=$(jq -r '.branching.pattern // "feature/<num>-<jira>-<shortname>"' "$config_file")
+        JIRA_REQUIRED=$(jq -r 'if .branching.jira.required == false then "false" else "true" end' "$config_file")
+        JIRA_REGEX=$(jq -r '.branching.jira.regex // "^C[0-9]{5}-[0-9]{4}$"' "$config_file")
+        JIRA_FORMAT=$(jq -r '.branching.jira.format // "C12345-7890"' "$config_file")
+        NUMBER_DIGITS=$(jq -r '.branching.number_format.digits // 3' "$config_file")
+        NUMBER_ZERO_PADDED=$(jq -r 'if .branching.number_format.zero_padded == false then "false" else "true" end' "$config_file")
+        SEPARATOR=$(jq -r '.branching.separator // "-"' "$config_file")
+        DIR_INCLUDES_PREFIX=$(jq -r 'if .branching.directory.includes_prefix == true then "true" else "false" end' "$config_file")
+        DIR_BASE_PATH=$(jq -r '.branching.directory.base_path // "specs"' "$config_file")
     else
         # Fallback to defaults (current behavior)
         BRANCH_PREFIX="feature/"

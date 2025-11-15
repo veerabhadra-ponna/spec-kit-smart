@@ -146,9 +146,9 @@ load_spec_kit_config() {
     # Try to read config if exists
     if [[ -f "$config_file" ]]; then
         if command -v jq &> /dev/null; then
-            # Use jq if available (preferred)
-            local os_env=$(jq -r '.osEnv // "auto"' "$config_file" 2>/dev/null)
-            local check_art=$(jq -r '.enableCheckArtifactory // false' "$config_file" 2>/dev/null)
+            # Use jq if available (preferred) - read from nested workflow structure
+            local os_env=$(jq -r '.workflow.osEnv // "auto"' "$config_file" 2>/dev/null)
+            local check_art=$(jq -r '.workflow.enableCheckArtifactory // false' "$config_file" 2>/dev/null)
 
             # Validate osEnv value
             if [[ "$os_env" == "windows" || "$os_env" == "unix" || "$os_env" == "auto" ]]; then

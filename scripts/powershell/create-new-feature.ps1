@@ -54,24 +54,24 @@ if ($Help) {
     exit 0
 }
 
-# Load branch configuration from .guidelines/branch-config.json
+# Load branch configuration from .specify/config.json
 function Load-BranchConfig {
-    $configPath = ".guidelines/branch-config.json"
+    $configPath = ".specify/config.json"
 
     if (Test-Path $configPath) {
         try {
             $config = Get-Content $configPath -Raw | ConvertFrom-Json
             return @{
-                BranchPrefix = if ($config.branch_prefix) { $config.branch_prefix } else { "feature/" }
-                BranchPattern = if ($config.branch_pattern) { $config.branch_pattern } else { "feature/<num>-<jira>-<shortname>" }
-                JiraRequired = if ($null -ne $config.jira.required) { $config.jira.required } else { $true }
-                JiraRegex = if ($config.jira.regex) { $config.jira.regex } else { "^C[0-9]{5}-[0-9]{4}$" }
-                JiraFormat = if ($config.jira.format) { $config.jira.format } else { "C12345-7890" }
-                NumberDigits = if ($config.number_format.digits) { $config.number_format.digits } else { 3 }
-                NumberZeroPadded = if ($null -ne $config.number_format.zero_padded) { $config.number_format.zero_padded } else { $true }
-                Separator = if ($config.separator) { $config.separator } else { "-" }
-                DirIncludesPrefix = if ($null -ne $config.directory.includes_prefix) { $config.directory.includes_prefix } else { $false }
-                DirBasePath = if ($config.directory.base_path) { $config.directory.base_path } else { "specs" }
+                BranchPrefix = if ($config.branching.prefix) { $config.branching.prefix } else { "feature/" }
+                BranchPattern = if ($config.branching.pattern) { $config.branching.pattern } else { "feature/<num>-<jira>-<shortname>" }
+                JiraRequired = if ($null -ne $config.branching.jira.required) { $config.branching.jira.required } else { $true }
+                JiraRegex = if ($config.branching.jira.regex) { $config.branching.jira.regex } else { "^C[0-9]{5}-[0-9]{4}$" }
+                JiraFormat = if ($config.branching.jira.format) { $config.branching.jira.format } else { "C12345-7890" }
+                NumberDigits = if ($config.branching.number_format.digits) { $config.branching.number_format.digits } else { 3 }
+                NumberZeroPadded = if ($null -ne $config.branching.number_format.zero_padded) { $config.branching.number_format.zero_padded } else { $true }
+                Separator = if ($config.branching.separator) { $config.branching.separator } else { "-" }
+                DirIncludesPrefix = if ($null -ne $config.branching.directory.includes_prefix) { $config.branching.directory.includes_prefix } else { $false }
+                DirBasePath = if ($config.branching.directory.base_path) { $config.branching.directory.base_path } else { "specs" }
             }
         } catch {
             Write-Warning "Failed to parse branch config, using defaults: $_"

@@ -102,12 +102,12 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 
 **The Solution:** Configurable branch patterns with optional Jira integration.
 
-- **JSON-Based Configuration** - `branch-config.json` defines custom patterns, prefixes, and Jira format
+- **JSON-Based Configuration** - `.specify/config.json` defines custom patterns, prefixes, and Jira format
 - **Flexible Jira Support** - Optional Jira integration for teams that use it, skippable for teams that don't
 - **Regex Validation** - Enforce company-specific ticket formats (e.g., `C12345-7890`)
 - **Backward Compatible** - Works with existing projects without requiring migration
 
-**Real-World Use Case:** Company uses Jira tickets in branch names (`feature/001-PROJ-1234-user-auth`). Configure once in `branch-config.json`, and all feature branches follow the standard automatically.
+**Real-World Use Case:** Company uses Jira tickets in branch names (`feature/001-PROJ-1234-user-auth`). Configure once in `.specify/config.json`, and all feature branches follow the standard automatically.
 
 ---
 
@@ -1214,7 +1214,7 @@ The Corporate Guidelines system was implemented in four phases:
 
 **Completed Features:**
 
-- JSON-based branch configuration (`branch-config.json`)
+- JSON-based unified configuration (`.specify/config.json`)
 - Customizable branch patterns and prefixes
 - Configurable Jira format with regex validation
 - Optional Jira support for teams without ticket systems
@@ -1340,7 +1340,7 @@ graph TD
 ### Quick Start (Guidelines)
 
 1. Customize guidelines: Edit `.guidelines/*.md` files
-2. Configure branch naming: Edit `.guidelines/branch-config.json` (optional)
+2. Configure branch naming and workflow: Edit `.specify/config.json` (optional)
 3. Check compliance: `./scripts/bash/check-guidelines-compliance.sh`
 4. Auto-fix issues: `./scripts/bash/autofix-guidelines.sh`
 5. Set up CI/CD: Copy templates from `.guidelines/examples/ci-cd/`
