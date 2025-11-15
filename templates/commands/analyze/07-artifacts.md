@@ -193,6 +193,8 @@ Required:
 
 **Purpose**: Functional specification for modernized application
 
+**Template**: Read `.specify/templates/analyze/functional-spec-template.md` for structure
+
 **Content Structure** (2-3 chunks):
 - Chunk 1: User Stories & Features
   - All identified features as user stories
@@ -209,6 +211,11 @@ Required:
   - Security requirements
   - Compliance requirements
 
+**Instructions**:
+1. Read template: `.specify/templates/analyze/functional-spec-template.md`
+2. Fill in all sections using data from analysis-report.md
+3. Ensure comprehensive feature coverage with file:line references
+
 **Progress**: `✓ Generated: functional-spec.md ({lines} lines, {chunks} chunks)`
 
 ---
@@ -216,6 +223,8 @@ Required:
 ### Artifact 5A (Scope = A): technical-spec.md
 
 **Purpose**: Technical specification for modernized implementation
+
+**Template**: Read `.specify/templates/analyze/technical-spec-template.md` for structure
 
 **Content Structure** (2-3 chunks):
 - Chunk 1: Architecture & Design
@@ -233,6 +242,11 @@ Required:
   - Entity relationships
   - Infrastructure requirements
 
+**Instructions**:
+1. Read template: `.specify/templates/analyze/technical-spec-template.md`
+2. Fill in all sections using data from analysis-report.md
+3. Provide detailed technical specifications with code examples
+
 **Progress**: `✓ Generated: technical-spec.md ({lines} lines, {chunks} chunks)`
 
 ---
@@ -241,12 +255,26 @@ Required:
 
 **Purpose**: Staged implementation prompts for AI-assisted migration
 
+**Templates**: Read from `.specify/templates/analyze/stage-prompt-templates/`
+
 Generate 4 stage prompt files:
 
 **stage-1-dependencies.md**: Update dependencies to latest LTS
+- Template: `.specify/templates/analyze/stage-prompt-templates/clarify-prompt-template.md` (adapt for dependencies)
+
 **stage-2-framework.md**: Migrate to target framework
+- Template: `.specify/templates/analyze/stage-prompt-templates/implement-prompt-template.md` (adapt for framework)
+
 **stage-3-database.md**: Migrate database if applicable
+- Template: `.specify/templates/analyze/stage-prompt-templates/plan-prompt-template.md` (adapt for database)
+
 **stage-4-deployment.md**: Update deployment configuration
+- Template: `.specify/templates/analyze/stage-prompt-templates/specify-prompt-template.md` (adapt for deployment)
+
+**Instructions**:
+1. Read all templates from `.specify/templates/analyze/stage-prompt-templates/`
+2. Adapt each template to the specific stage task
+3. Include file:line references and specific code snippets
 
 **Progress**: `✓ Generated: stage-prompts/ (4 files)`
 
@@ -255,6 +283,8 @@ Generate 4 stage prompt files:
 ### Artifact 4B (Scope = B): abstraction-assessment.md
 
 **Purpose**: Detailed abstraction analysis for the concern
+
+**Template**: Read `.specify/templates/analyze/concern-analysis-template.md` for structure
 
 **Content**:
 
@@ -279,6 +309,11 @@ Generate 4 stage prompt files:
 {assessment of readiness for migration}
 ```text
 
+**Instructions**:
+1. Read template: `.specify/templates/analyze/concern-analysis-template.md`
+2. Fill in all sections using data from Stage 5B
+3. Provide detailed analysis with code references
+
 **Progress**: `✓ Generated: abstraction-assessment.md`
 
 ---
@@ -286,6 +321,8 @@ Generate 4 stage prompt files:
 ### Artifact 5B (Scope = B): concern-migration-plan.md
 
 **Purpose**: Detailed migration plan for the specific concern
+
+**Template**: Read `.specify/templates/analyze/concern-migration-plan-template.md` for structure
 
 **Content Structure** (2-3 chunks):
 - Chunk 1: Migration Strategy
@@ -304,6 +341,11 @@ Generate 4 stage prompt files:
   - Monitoring and alerting
   - Success criteria
   - Post-migration tasks
+
+**Instructions**:
+1. Read template: `.specify/templates/analyze/concern-migration-plan-template.md`
+2. Fill in all sections using migration plan from Stage 5B
+3. Provide detailed step-by-step migration guide
 
 **Progress**: `✓ Generated: concern-migration-plan.md ({lines} lines, {chunks} chunks)`
 
