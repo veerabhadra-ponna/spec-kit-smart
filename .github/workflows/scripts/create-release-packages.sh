@@ -168,6 +168,13 @@ build_unified() {
     echo "Copied templates -> .specify/templates"
   }
 
+  # Copy chained prompts to .specify/prompts/ (workflow orchestration, not user commands)
+  [[ -d templates/commands/analyze ]] && {
+    mkdir -p "$SPEC_DIR/prompts/analyze"
+    cp -r templates/commands/analyze/* "$SPEC_DIR/prompts/analyze/"
+    echo "Copied analyze prompts -> .specify/prompts/analyze"
+  }
+
   # Copy AGENTS.md to package root for easy agent access
   [[ -f templates/AGENTS.md ]] && { cp templates/AGENTS.md "$base_dir/AGENTS.md"; echo "Copied AGENTS.md -> package root"; }
 
@@ -179,149 +186,52 @@ build_unified() {
   case $agent in
     claude)
       mkdir -p "$base_dir/.claude/commands"
-      generate_commands claude md "\$ARGUMENTS" "$base_dir/.claude/commands"
-      # Copy chained prompts (analyze folder) to commands subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.claude/commands/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.claude/commands/analysis/"
-        echo "Copied analyze prompts -> .claude/commands/analysis"
-      }
-      ;;
+      generate_commands claude md "\$ARGUMENTS" "$base_dir/.claude/commands" ;;
     gemini)
       mkdir -p "$base_dir/.gemini/commands"
       generate_commands gemini toml "{{args}}" "$base_dir/.gemini/commands"
-      [[ -f agent_templates/gemini/GEMINI.md ]] && cp agent_templates/gemini/GEMINI.md "$base_dir/GEMINI.md"
-      # Copy chained prompts (analyze folder) to commands subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.gemini/commands/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.gemini/commands/analysis/"
-        echo "Copied analyze prompts -> .gemini/commands/analysis"
-      }
-      ;;
+      [[ -f agent_templates/gemini/GEMINI.md ]] && cp agent_templates/gemini/GEMINI.md "$base_dir/GEMINI.md" ;;
     copilot)
       mkdir -p "$base_dir/.github/prompts"
       generate_commands copilot prompt.md "\$ARGUMENTS" "$base_dir/.github/prompts"
-      # Copy chained prompts (analyze folder) to agent-specific prompts directory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.github/prompts/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.github/prompts/analysis/"
-        echo "Copied analyze prompts -> .github/prompts/analysis"
-      }
       # Create VS Code workspace settings
       mkdir -p "$base_dir/.vscode"
       [[ -f templates/vscode-settings.json ]] && cp templates/vscode-settings.json "$base_dir/.vscode/settings.json"
       ;;
     cursor-agent)
       mkdir -p "$base_dir/.cursor/commands"
-      generate_commands cursor-agent md "\$ARGUMENTS" "$base_dir/.cursor/commands"
-      # Copy chained prompts (analyze folder) to commands subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.cursor/commands/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.cursor/commands/analysis/"
-        echo "Copied analyze prompts -> .cursor/commands/analysis"
-      }
-      ;;
+      generate_commands cursor-agent md "\$ARGUMENTS" "$base_dir/.cursor/commands" ;;
     qwen)
       mkdir -p "$base_dir/.qwen/commands"
       generate_commands qwen toml "{{args}}" "$base_dir/.qwen/commands"
-      [[ -f agent_templates/qwen/QWEN.md ]] && cp agent_templates/qwen/QWEN.md "$base_dir/QWEN.md"
-      # Copy chained prompts (analyze folder) to commands subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.qwen/commands/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.qwen/commands/analysis/"
-        echo "Copied analyze prompts -> .qwen/commands/analysis"
-      }
-      ;;
+      [[ -f agent_templates/qwen/QWEN.md ]] && cp agent_templates/qwen/QWEN.md "$base_dir/QWEN.md" ;;
     opencode)
       mkdir -p "$base_dir/.opencode/command"
-      generate_commands opencode md "\$ARGUMENTS" "$base_dir/.opencode/command"
-      # Copy chained prompts (analyze folder) to command subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.opencode/command/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.opencode/command/analysis/"
-        echo "Copied analyze prompts -> .opencode/command/analysis"
-      }
-      ;;
+      generate_commands opencode md "\$ARGUMENTS" "$base_dir/.opencode/command" ;;
     windsurf)
       mkdir -p "$base_dir/.windsurf/workflows"
-      generate_commands windsurf md "\$ARGUMENTS" "$base_dir/.windsurf/workflows"
-      # Copy chained prompts (analyze folder) to workflows subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.windsurf/workflows/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.windsurf/workflows/analysis/"
-        echo "Copied analyze prompts -> .windsurf/workflows/analysis"
-      }
-      ;;
+      generate_commands windsurf md "\$ARGUMENTS" "$base_dir/.windsurf/workflows" ;;
     codex)
       mkdir -p "$base_dir/.codex/prompts"
-      generate_commands codex md "\$ARGUMENTS" "$base_dir/.codex/prompts"
-      # Copy chained prompts (analyze folder) to agent-specific prompts directory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.codex/prompts/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.codex/prompts/analysis/"
-        echo "Copied analyze prompts -> .codex/prompts/analysis"
-      }
-      ;;
+      generate_commands codex md "\$ARGUMENTS" "$base_dir/.codex/prompts" ;;
     kilocode)
       mkdir -p "$base_dir/.kilocode/workflows"
-      generate_commands kilocode md "\$ARGUMENTS" "$base_dir/.kilocode/workflows"
-      # Copy chained prompts (analyze folder) to workflows subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.kilocode/workflows/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.kilocode/workflows/analysis/"
-        echo "Copied analyze prompts -> .kilocode/workflows/analysis"
-      }
-      ;;
+      generate_commands kilocode md "\$ARGUMENTS" "$base_dir/.kilocode/workflows" ;;
     auggie)
       mkdir -p "$base_dir/.augment/commands"
-      generate_commands auggie md "\$ARGUMENTS" "$base_dir/.augment/commands"
-      # Copy chained prompts (analyze folder) to commands subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.augment/commands/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.augment/commands/analysis/"
-        echo "Copied analyze prompts -> .augment/commands/analysis"
-      }
-      ;;
+      generate_commands auggie md "\$ARGUMENTS" "$base_dir/.augment/commands" ;;
     roo)
       mkdir -p "$base_dir/.roo/commands"
-      generate_commands roo md "\$ARGUMENTS" "$base_dir/.roo/commands"
-      # Copy chained prompts (analyze folder) to commands subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.roo/commands/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.roo/commands/analysis/"
-        echo "Copied analyze prompts -> .roo/commands/analysis"
-      }
-      ;;
+      generate_commands roo md "\$ARGUMENTS" "$base_dir/.roo/commands" ;;
     codebuddy)
       mkdir -p "$base_dir/.codebuddy/commands"
-      generate_commands codebuddy md "\$ARGUMENTS" "$base_dir/.codebuddy/commands"
-      # Copy chained prompts (analyze folder) to commands subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.codebuddy/commands/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.codebuddy/commands/analysis/"
-        echo "Copied analyze prompts -> .codebuddy/commands/analysis"
-      }
-      ;;
+      generate_commands codebuddy md "\$ARGUMENTS" "$base_dir/.codebuddy/commands" ;;
     amp)
       mkdir -p "$base_dir/.agents/commands"
-      generate_commands amp md "\$ARGUMENTS" "$base_dir/.agents/commands"
-      # Copy chained prompts (analyze folder) to commands subdirectory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.agents/commands/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.agents/commands/analysis/"
-        echo "Copied analyze prompts -> .agents/commands/analysis"
-      }
-      ;;
+      generate_commands amp md "\$ARGUMENTS" "$base_dir/.agents/commands" ;;
     q)
       mkdir -p "$base_dir/.amazonq/prompts"
-      generate_commands q md "\$ARGUMENTS" "$base_dir/.amazonq/prompts"
-      # Copy chained prompts (analyze folder) to agent-specific prompts directory
-      [[ -d templates/commands/analyze ]] && {
-        mkdir -p "$base_dir/.amazonq/prompts/analysis"
-        cp -r templates/commands/analyze/* "$base_dir/.amazonq/prompts/analysis/"
-        echo "Copied analyze prompts -> .amazonq/prompts/analysis"
-      }
-      ;;
+      generate_commands q md "\$ARGUMENTS" "$base_dir/.amazonq/prompts" ;;
   esac
   ( cd "$base_dir" && zip -r "../spec-kit-template-${agent}-${NEW_VERSION}.zip" . )
   echo "Created $GENRELEASES_DIR/spec-kit-template-${agent}-${NEW_VERSION}.zip"
