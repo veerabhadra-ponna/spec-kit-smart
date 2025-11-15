@@ -29,8 +29,8 @@ Required:
 ### Common Artifacts (Both A and B)
 
 1. **EXECUTIVE-SUMMARY.md** (1 chunk)
-2. **dependency-audit.md** (1 chunk)
-3. **metrics-summary.md** (1 chunk)
+2. **dependency-audit.json** (1 chunk)
+3. **metrics-summary.json** (1 chunk)
 4. **analysis-report.md** (from Stage 6)
 
 ### Full Application Artifacts (Scope = A)
@@ -97,7 +97,7 @@ Required:
 
 ---
 
-### Artifact 2: dependency-audit.md
+### Artifact 2: dependency-audit.json
 
 **Purpose**: Machine-readable dependency audit results
 
@@ -136,9 +136,9 @@ Required:
   ],
   "license_issues": []
 }
-```text
+```
 
-**Progress**: `✓ Generated: dependency-audit.md`
+**Progress**: `✓ Generated: dependency-audit.json`
 
 ---
 
