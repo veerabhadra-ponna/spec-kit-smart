@@ -42,6 +42,8 @@ generate_commands() {
   mkdir -p "$output_dir"
   for template in templates/commands/*.md; do
     [[ -f "$template" ]] || continue
+    # Skip monolithic backup files
+    [[ "$template" == *-monolithic.md ]] && continue
     local name description script_bash script_powershell agent_script_bash agent_script_powershell body
     name=$(basename "$template" .md)
 
@@ -160,10 +162,17 @@ build_unified() {
 
   [[ -d templates ]] && {
     mkdir -p "$SPEC_DIR/templates"
-    # Copy all templates including commands (for reference and chained prompts)
-    # Exclude vscode-settings.json (IDE-specific) and monolithic backup files
-    find templates -type f -not -name "vscode-settings.json" -not -name "*-monolithic.md" -exec cp --parents {} "$SPEC_DIR"/ \;
-    echo "Copied templates (including commands) -> .specify/templates"
+    # Copy templates but exclude commands folder (commands are agent-specific)
+    # Also exclude vscode-settings.json (IDE-specific) and monolithic backup files
+    find templates -type f -not -path "templates/commands/*" -not -name "vscode-settings.json" -not -name "*-monolithic.md" -exec cp --parents {} "$SPEC_DIR"/ \;
+    echo "Copied templates -> .specify/templates"
+  }
+
+  # Copy chained prompts to .specify/prompts/ (workflow orchestration, not user commands)
+  [[ -d templates/commands/analyze ]] && {
+    mkdir -p "$SPEC_DIR/prompts/analyze"
+    cp -r templates/commands/analyze/* "$SPEC_DIR/prompts/analyze/"
+    echo "Copied analyze prompts -> .specify/prompts/analyze"
   }
 
   # Copy AGENTS.md to package root for easy agent access

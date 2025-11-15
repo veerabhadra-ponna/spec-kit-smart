@@ -1878,16 +1878,16 @@ When documenting findings:
 
    - ✅ **EXECUTIVE-SUMMARY.md** - High-level overview for stakeholders
    - ✅ **functional-spec.md** - BA document (WHAT system does) with REAL features extracted from code
-     - Use template: `templates/analysis/functional-spec-template.md`
+     - Use template: `templates/analyze/functional-spec-template.md`
      - Include evidence with `file:line` references for all features
      - Categorize by criticality (CRITICAL/STANDARD/QUIRKS)
    - ✅ **technical-spec.md** - Architecture document (HOW to build) with user's chosen target stack
-     - Use template: `templates/analysis/technical-spec-template.md`
+     - Use template: `templates/analyze/technical-spec-template.md`
      - Include "Legacy vs. Target" comparisons
      - Use phase-colored Mermaid diagrams (50/30/15/5 phasing)
      - Reference user's choices from modernization questions (deployment, IaC, observability, etc.)
    - ✅ **stage-prompts/** (4 files) - Guidance for Toolkit workflow stages
-     - Use templates from `templates/analysis/stage-prompt-templates/`
+     - Use templates from `templates/analyze/stage-prompt-templates/`
      - `constitution-prompt.md` - Principles for new system
      - `clarify-prompt.md` - **CRITICAL**: Include "consult legacy app <<path>> as source of truth"
      - `tasks-prompt.md` - Task breakdown guidance
@@ -1947,7 +1947,7 @@ When documenting findings:
 
    **Source**: Extract features from analysis-report.md Phase 1-2
 
-   **Template**: `templates/analysis/functional-spec-template.md`
+   **Template**: `templates/analyze/functional-spec-template.md`
 
    **⚠️ CHUNKING STRATEGY**:
 
@@ -2030,7 +2030,7 @@ When documenting findings:
 
    **Source**: analysis-report.md Phase 5-6 + user's modernization preferences
 
-   **Template**: `templates/analysis/technical-spec-template.md`
+   **Template**: `templates/analyze/technical-spec-template.md`
 
    **⚠️ CHUNKING STRATEGY**:
 
@@ -2109,7 +2109,7 @@ When documenting findings:
 
    #### stage-prompts/ (4 files - Generate individually)
 
-   **Source**: Templates from `templates/analysis/stage-prompt-templates/`
+   **Source**: Templates from `templates/analyze/stage-prompt-templates/`
 
    **Files to generate**:
 
@@ -2155,7 +2155,7 @@ When documenting findings:
    **REQUIRED ARTIFACTS**:
 
    - ✅ **concern-analysis.md** - Detailed analysis of the selected concern
-     - Use template: `templates/analysis/concern-analysis-template.md`
+     - Use template: `templates/analyze/concern-analysis-template.md`
      - Include all findings from Step 4.B analysis:
        - Identified concern files (file:line evidence) from Step 4.B.1
        - Abstraction level assessment from Step 4.B.2
@@ -2165,7 +2165,7 @@ When documenting findings:
      - **Critical**: All findings must include `file:line` references
 
    - ✅ **abstraction-recommendations.md** - Guidance on improving abstractions (if needed)
-     - Use template: `templates/analysis/abstraction-recommendations-template.md`
+     - Use template: `templates/analyze/abstraction-recommendations-template.md`
      - **IF abstraction_level = LOW or MEDIUM** (from Step 4.B.2):
        - Include detailed refactoring roadmap from Step 4.B.6
        - Interface/contract definitions to create
@@ -2176,7 +2176,7 @@ When documenting findings:
        - Best practices for future migrations
 
    - ✅ **concern-migration-plan.md** - Step-by-step migration strategy
-     - Use template: `templates/analysis/concern-migration-plan-template.md`
+     - Use template: `templates/analyze/concern-migration-plan-template.md`
      - Include recommended migration strategy from Step 4.B.5
      - Detailed phasing (50/30/15/5 value delivery)
      - Effort estimates and risk assessment
@@ -2373,13 +2373,13 @@ When documenting findings:
 
 **Note**: Detailed workflow steps, scoring rubrics, and artifact structures are documented in the template files:
 
-- `templates/analysis-report-template.md` - Analysis report structure
-- `templates/analysis/functional-spec-template.md` - Functional specification template
-- `templates/analysis/technical-spec-template.md` - Technical specification template
-- `templates/analysis/concern-analysis-template.md` - Cross-cutting concern analysis template
-- `templates/analysis/abstraction-recommendations-template.md` - Abstraction improvement guidance
-- `templates/analysis/concern-migration-plan-template.md` - Migration plan template
-- `templates/analysis/stage-prompt-templates/` - Stage-specific prompt templates (4 files: constitution, clarify, tasks, implement)
+- `templates/analyze-report-template.md` - Analysis report structure
+- `templates/analyze/functional-spec-template.md` - Functional specification template
+- `templates/analyze/technical-spec-template.md` - Technical specification template
+- `templates/analyze/concern-analysis-template.md` - Cross-cutting concern analysis template
+- `templates/analyze/abstraction-recommendations-template.md` - Abstraction improvement guidance
+- `templates/analyze/concern-migration-plan-template.md` - Migration plan template
+- `templates/analyze/stage-prompt-templates/` - Stage-specific prompt templates (4 files: constitution, clarify, tasks, implement)
 
 ---
 
