@@ -253,28 +253,37 @@ Required:
 
 ### Artifact 6A (Scope = A): stage-prompts/
 
-**Purpose**: Staged implementation prompts for AI-assisted migration
+**Purpose**: Staged implementation prompts for Spec Kit workflow integration
 
 **Templates**: Read from `.specify/templates/analyze/stage-prompt-templates/`
 
-Generate 4 stage prompt files:
+Generate 4 stage prompt files for Spec Kit workflow:
 
-**stage-1-dependencies.md**: Update dependencies to latest LTS
-- Template: `.specify/templates/analyze/stage-prompt-templates/clarify-prompt-template.md` (adapt for dependencies)
+**constitution-prompt.md**: Extract project principles from legacy code
+- Template: `.specify/templates/analyze/stage-prompt-templates/constitution-prompt-template.md`
+- Fill with: Project values, coding standards, architecture decisions extracted from analysis
+- Purpose: Use with `/speckit.constitution` command
 
-**stage-2-framework.md**: Migrate to target framework
-- Template: `.specify/templates/analyze/stage-prompt-templates/implement-prompt-template.md` (adapt for framework)
+**clarify-prompt.md**: Use legacy code as source of truth for clarifications
+- Template: `.specify/templates/analyze/stage-prompt-templates/clarify-prompt-template.md`
+- Fill with: Legacy code references (file:line), ambiguity resolution patterns, critical behaviors
+- Purpose: Use with `/speckit.clarify` command when specs are unclear
 
-**stage-3-database.md**: Migrate database if applicable
-- Template: `.specify/templates/analyze/stage-prompt-templates/plan-prompt-template.md` (adapt for database)
+**tasks-prompt.md**: Break down implementation with legacy complexity awareness
+- Template: `.specify/templates/analyze/stage-prompt-templates/tasks-prompt-template.md`
+- Fill with: Legacy feature complexity scores, migration task breakdowns, effort estimates
+- Purpose: Use with `/speckit.tasks` command
 
-**stage-4-deployment.md**: Update deployment configuration
-- Template: `.specify/templates/analyze/stage-prompt-templates/specify-prompt-template.md` (adapt for deployment)
+**implement-prompt.md**: Reference legacy code during implementation
+- Template: `.specify/templates/analyze/stage-prompt-templates/implement-prompt-template.md`
+- Fill with: Legacy code patterns (with file:line), must-preserve behaviors, edge cases
+- Purpose: Use with `/speckit.implement` command
 
 **Instructions**:
-1. Read all templates from `.specify/templates/analyze/stage-prompt-templates/`
-2. Adapt each template to the specific stage task
-3. Include file:line references and specific code snippets
+1. Read all 4 templates from `.specify/templates/analyze/stage-prompt-templates/`
+2. Fill each template with specific data from analysis-report.md
+3. Include file:line references for all legacy code examples
+4. Mark CRITICAL behaviors that must be preserved exactly
 
 **Progress**: `✓ Generated: stage-prompts/ (4 files)`
 
@@ -401,10 +410,10 @@ Full Application:
   ✓ functional-spec.md
   ✓ technical-spec.md
   ✓ stage-prompts/
-    - stage-1-dependencies.md
-    - stage-2-framework.md
-    - stage-3-database.md
-    - stage-4-deployment.md
+    - constitution-prompt.md
+    - clarify-prompt.md
+    - tasks-prompt.md
+    - implement-prompt.md
 
 {IF scope = B}
 Cross-Cutting Concern:
@@ -431,13 +440,13 @@ Analysis Duration: {duration}
   "artifacts_generated": [
     "EXECUTIVE-SUMMARY.md",
     "dependency-audit.json",
-    "metrics-summary.json",
+    "metrics-summary.md",
     "functional-spec.md",
     "technical-spec.md",
-    "stage-prompts/stage-1-dependencies.md",
-    "stage-prompts/stage-2-framework.md",
-    "stage-prompts/stage-3-database.md",
-    "stage-prompts/stage-4-deployment.md"
+    "stage-prompts/constitution-prompt.md",
+    "stage-prompts/clarify-prompt.md",
+    "stage-prompts/tasks-prompt.md",
+    "stage-prompts/implement-prompt.md"
   ],
   "total_artifacts": 9,
   "analysis_complete": true

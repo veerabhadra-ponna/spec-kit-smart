@@ -39,196 +39,231 @@ Based on file analysis, set these flags:
 
 ### Questions
 
-#### Question 1: Target Language/Framework
+Ask the following questions interactively:
 
 ```text
-Current: {detected language/framework}
-Options:
-- [A] {Same language, latest LTS version}
-- [B] {Alternative popular option}
-- [C] Other (please specify)
-Your choice: ___
+MODERNIZATION PREFERENCES:
+
+Based on detected legacy stack, please answer the following:
+
+1. Target Language/Framework:
+   Current: [detected language/framework]
+   Options:
+   - [A] [Same language, latest LTS version]
+   - [B] [Alternative popular option]
+   - [C] Other (please specify)
+   Your choice: ___
+
+2. Target Database:
+   Current: [detected or "Unknown - please specify"]
+   Options:
+   - [A] [Same database vendor, latest version]
+   - [B] PostgreSQL [latest LTS]
+   - [C] MongoDB [latest stable]
+   - [D] Other (please specify)
+   Your choice: ___
 ```text
 
-#### Question 2: Target Database
+3. Message Bus/Queue [CONDITIONAL]:
+   Current: [detected or "None detected"]
 
-```text
-Current: {detected or "Unknown"}
-Options:
-- [A] {Same database vendor, latest version}
-- [B] PostgreSQL {latest LTS}
-- [C] MongoDB {latest stable}
-- [D] Other (please specify)
-Your choice: ___
-```text
+   **IF** `!HAS_MESSAGE_BUS` (no message queue detected):
+      Mark as **[OPTIONAL - Not detected in legacy code]**
+      Add educational note:
+      ```
+      Since your legacy app doesn't use message queues, you can skip this.
+      However, modernization could benefit from async messaging for:
+      - Background job processing
+      - Event-driven architecture
+      - Decoupling services
 
-#### Question 3: Message Bus/Queue [CONDITIONAL]
+      Options:
+      - [A] None / Not needed - Keep simple
+      - [B] Apache Kafka - Industry standard, high throughput
+      - [C] RabbitMQ - Feature-rich, easier learning curve
+      - [D] Redis Pub/Sub - Lightweight, good if already using Redis
+      - [E] Cloud-native (Azure Service Bus / AWS SQS / Google Pub/Sub)
+      - [F] Other (please specify)
+      Your choice (or press Enter to skip): ___
+      ```
 
-**IF** `!HAS_MESSAGE_BUS`:
+   **ELSE** (message queue detected):
+      ```
+      Options:
+      - [A] Keep current ([detected message bus])
+      - [B] Apache Kafka
+      - [C] RabbitMQ
+      - [D] Redis Pub/Sub
+      - [E] Cloud-native (Azure Service Bus / AWS SQS / Google Pub/Sub)
+      - [F] Other (please specify)
+      Your choice: ___
+      ```
 
-```text
-[OPTIONAL - Not detected in legacy code]
-Since your legacy app doesn't use message queues, you can skip this.
-However, modernization could benefit from async messaging.
+4. Package Manager:
+   Current: [detected]
+   Options:
+   - [A] Keep current ([detected])
+   - [B] [Alternative for stack]
+   - [C] Other (please specify)
+   Your choice: ___
 
-Options:
-- [A] None / Not needed
-- [B] Apache Kafka
-- [C] RabbitMQ
-- [D] Redis Pub/Sub
-- [E] Cloud-native (Azure Service Bus / AWS SQS)
-- [F] Other
-Your choice (or press Enter to skip): ___
-```text
+5. Deployment Target:
+   Current: [detected or "Unknown"]
+   Options:
+   - [A] Dedicated server (traditional VM/bare metal)
+   - [B] Kubernetes (cloud-agnostic container orchestration)
+   - [C] Azure (App Service, AKS, Container Apps, Container Instances)
+   - [D] AWS (ECS, EKS, Elastic Beanstalk, Lambda)
+   - [E] Google Cloud Platform (GKE, Cloud Run, App Engine)
+   - [F] OpenShift (enterprise Kubernetes distribution)
+   - [G] Other (please specify)
+   Your choice: ___
 
-**ELSE**:
-
-```text
-Current: {detected}
-Options:
-- [A] Keep current
-- [B] Apache Kafka
-- [C] RabbitMQ
-- [D] Redis Pub/Sub
-- [E] Cloud-native (Azure Service Bus / AWS SQS)
-- [F] Other
-Your choice: ___
-```text
-
-#### Question 4: Package Manager
-
-```text
-Current: {detected}
-Options:
-- [A] Keep current
-- [B] {Alternative for stack}
-- [C] Other
-Your choice: ___
-```text
-
-#### Question 5: Deployment Target
-
-```text
-Current: {detected or "Unknown"}
-Options:
-- [A] Dedicated server (traditional VM/bare metal)
-- [B] Kubernetes
-- [C] Azure (App Service, AKS, Container Apps)
-- [D] AWS (ECS, EKS, Elastic Beanstalk)
-- [E] Google Cloud Platform (GKE, Cloud Run)
-- [F] OpenShift
-- [G] Other
-Your choice: ___
+   **Store choice**:
+   - Set `IS_TRADITIONAL_DEPLOYMENT = true` if user selects **[A]** (Dedicated server)
+   - Set `IS_TRADITIONAL_DEPLOYMENT = false` if user selects **[B], [C], [D], [E], [F]** (any cloud/container platform)
+   - If user selects **[G] Other**, ask clarifying question: "Is this a cloud/container platform (Kubernetes, Docker, etc.)?"
+     - If yes → Set `IS_TRADITIONAL_DEPLOYMENT = false`
+     - If no → Set `IS_TRADITIONAL_DEPLOYMENT = true`
 ```text
 
-**Set** `IS_TRADITIONAL_DEPLOYMENT = (answer == "A")`
+6. Infrastructure as Code (IaC) [CONDITIONAL - Based on Q5 Answer]:
 
-#### Question 6: Infrastructure as Code [CONDITIONAL]
+   **CRITICAL LOGIC: Check the user's answer to Question 5 above.**
 
-**IF** `IS_TRADITIONAL_DEPLOYMENT`:
+   **IF user selected [A] "Dedicated server" in Question 5**:
+      Display this message and SKIP to Question 8:
+      ```
+      [SKIPPED - Not applicable for traditional deployment]
 
-```text
-[SKIPPED - Not applicable for traditional deployment]
-IaC is typically used with cloud deployments.
-```text
+      Note: Infrastructure as Code is typically used with cloud deployments.
+      For traditional deployments, consider:
+      - Deployment scripts (bash/PowerShell)
+      - Configuration management (Ansible, Puppet, Chef)
+      - Windows DSC (for Windows Server)
 
-**ELSE**:
+      If you migrate to cloud in the future, IaC becomes relevant.
+      ```
 
-```text
-Options:
-- [A] Terraform
-- [B] Helm charts (for Kubernetes)
-- [C] Azure ARM/Bicep (if Azure)
-- [D] AWS CloudFormation (if AWS)
-- [E] Ansible / Puppet / Chef
-- [F] None / Manual deployment
-- [G] Other
-Your choice: ___
-```text
+   **ELSE IF user selected [B], [C], [D], [E], or [F] in Question 5** (Kubernetes, Azure, AWS, GCP, OpenShift):
+      **ASK this question**:
+      ```
+      Infrastructure as Code (IaC):
+      Options:
+      - [A] Terraform (cloud-agnostic)
+      - [B] Helm charts (for Kubernetes)
+      - [C] Azure ARM templates / Bicep (if chose Azure)
+      - [D] AWS CloudFormation (if chose AWS)
+      - [E] Google Cloud Deployment Manager (if chose GCP)
+      - [F] Ansible / Puppet / Chef
+      - [G] None / Manual deployment
+      - [H] Other (please specify)
+      Your choice: ___
+      ```
 
-#### Question 7: Containerization Strategy [CONDITIONAL]
+   **ELSE IF user selected [G] "Other" in Question 5**:
+      - If they answered "yes" to the clarifying question (is cloud/container platform) → **ASK this question** (same as above)
+      - If they answered "no" → **SKIP to Question 8** (same skip message as [A])
 
-**IF** `IS_TRADITIONAL_DEPLOYMENT`:
+7. Containerization Strategy [CONDITIONAL - Based on Q5 Answer]:
 
-```text
-[SKIPPED - Not applicable for traditional deployment]
-Containerization requires cloud/container platforms.
-```text
+   **CRITICAL LOGIC: Check the user's answer to Question 5 above.**
 
-**ELSE**:
+   **IF user selected [A] "Dedicated server" in Question 5**:
+      Display this message and SKIP to Question 8:
+      ```
+      [SKIPPED - Not applicable for traditional deployment]
 
-```text
-Options:
-- [A] Docker with custom images
-- [B] Docker with official base images
-- [C] Buildpacks / Cloud-native buildpacks
-- [D] Container registry: DockerHub
-- [E] Container registry: Private (Azure ACR / AWS ECR)
-- [F] Other
-Your choice: ___
-```text
+      Note: Containerization requires migrating away from traditional servers.
+      Benefits of containerization:
+      - Consistent environments (dev/test/prod)
+      - Easier scaling and orchestration
+      - Cloud portability
 
-#### Question 8: Observability Stack [CONDITIONAL]
+      This becomes relevant if you choose cloud deployment in the future.
+      ```
 
-**IF** `!HAS_OBSERVABILITY`:
+   **ELSE IF user selected [B], [C], [D], [E], or [F] in Question 5** (Kubernetes, Azure, AWS, GCP, OpenShift):
+      **ASK this question**:
+      ```
+      Containerization Strategy:
+      Options:
+      - [A] Docker containers only
+      - [B] Docker + Kubernetes orchestration
+      - [C] Docker + Docker Compose (development)
+      - [D] No containerization
+      - [E] Other (please specify)
+      Your choice: ___
+      ```
 
-```text
-[OPTIONAL - Not detected in legacy code]
-Options:
-- [A] None / Keep simple
-- [B] ELK Stack (Elasticsearch, Logstash, Kibana)
-- [C] Prometheus + Grafana
-- [D] Cloud-native (Azure Monitor / AWS CloudWatch)
-- [E] Datadog / New Relic / APM SaaS
-- [F] Other
-Your choice (or press Enter to skip): ___
-```text
-
-**ELSE**:
-
-```text
-Current: {detected}
-Options:
-- [A] Keep current
-- [B] ELK Stack
-- [C] Prometheus + Grafana
-- [D] Cloud-native (Azure Monitor / AWS CloudWatch)
-- [E] Datadog / New Relic
-- [F] Other
-Your choice: ___
+   **ELSE IF user selected [G] "Other" in Question 5**:
+      - If they answered "yes" to the clarifying question (is cloud/container platform) → **ASK this question** (same as above)
+      - If they answered "no" → **SKIP to Question 8** (same skip message as [A])
 ```text
 
-#### Question 9: Security & Authentication
+8. Observability Stack [CONDITIONAL]:
+   Current: [detected or "None detected"]
 
-```text
-Current: {detected auth mechanism}
-Options:
-- [A] Keep current (modernize implementation)
-- [B] OAuth 2.0 / OpenID Connect
-- [C] Azure AD / Okta / Auth0
-- [D] AWS Cognito
-- [E] Custom JWT (modernized)
-- [F] Other
-Your choice: ___
-```text
+   **IF** `!HAS_OBSERVABILITY` (no structured logging/monitoring detected):
+      Mark as **[OPTIONAL - Not detected in legacy code]**
+      Add educational note:
+      ```
+      No structured observability stack detected in legacy code.
+      Modern observability includes:
+      - Structured logging (JSON logs, log aggregation)
+      - Metrics collection (application and infrastructure)
+      - Distributed tracing (request flow across services)
+      - Dashboards and alerting
 
-#### Question 10: Testing Strategy
+      Options:
+      - [A] ELK Stack (Elasticsearch, Logstash, Kibana) - Self-hosted
+      - [B] Prometheus + Grafana - Cloud-native, Kubernetes-friendly
+      - [C] Azure Monitor / Application Insights (if chose Azure)
+      - [D] AWS CloudWatch + X-Ray (if chose AWS)
+      - [E] Google Cloud Operations (if chose GCP)
+      - [F] OpenTelemetry (vendor-neutral, future-proof)
+      - [G] Datadog / New Relic (commercial SaaS, turnkey)
+      - [H] Basic logging only (not recommended for production)
+      - [I] Other (please specify)
+      Your choice (or press Enter to skip): ___
+      ```
 
-```text
-Current: {detected test coverage}%
-Target Test Coverage:
-- [A] Maintain current level
-- [B] 70%+ (industry standard)
-- [C] 80%+ (high quality)
-- [D] 90%+ (mission critical)
-Your choice: ___
+   **ELSE** (observability stack detected):
+      ```
+      Options:
+      - [A] Keep current ([detected stack])
+      - [B] ELK Stack (Elasticsearch, Logstash, Kibana)
+      - [C] Prometheus + Grafana
+      - [D] Azure Monitor / Application Insights
+      - [E] AWS CloudWatch + X-Ray
+      - [F] Google Cloud Operations
+      - [G] OpenTelemetry (vendor-neutral)
+      - [H] Datadog / New Relic (commercial SaaS)
+      - [I] Other (please specify)
+      Your choice: ___
+      ```
 
-Test Framework Preference:
-- [A] Keep current frameworks
-- [B] Modernize to latest versions
-- [C] Switch to {alternative framework}
-- [D] Add E2E testing (Cypress / Playwright / Selenium)
-Your choice: ___
+9. Security & Authentication:
+   Current: [detected from code or "Unknown"]
+   Options:
+   - [A] OAuth 2.0 / OpenID Connect
+   - [B] JWT tokens
+   - [C] SAML 2.0
+   - [D] API Keys
+   - [E] Mutual TLS (mTLS)
+   - [F] Keep current auth mechanism
+   - [G] Other (please specify)
+   Your choice: ___
+
+10. Testing Strategy:
+    Current: [detected test coverage or "No tests detected"]
+    Target:
+    - [A] Unit tests only (minimum viable)
+    - [B] Unit + Integration tests
+    - [C] Unit + Integration + E2E tests (comprehensive)
+    - [D] Unit + Integration + E2E + Contract tests (full suite)
+    - [E] Minimal testing (not recommended)
+    Your choice: ___
 ```text
 
 **Store all responses** in state as `modernization_preferences`.

@@ -171,39 +171,57 @@ Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AW
 
 ---
 
-## Step 4: Run Estimation
+## Step 4: Load File Counts and Calculate Estimation
 
-**CRITICAL**: This analysis analyzes an **EXISTING** project. Do NOT modify the target project directory structure.
+**CRITICAL**: File enumeration was already done during bootstrap. Do NOT run enumerate scripts again.
 
-### 4.1: Determine Script to Run
+### 4.1: Load Bootstrap State
 
-Based on OS (from config or auto-detect):
-
-**For Unix/Linux/macOS**:
+Load the bootstrap state that was created by the setup script:
 
 ```bash
-scripts/bash/enumerate-project.sh "{project_path}" --estimate-only
-```text
+# Load from: .analysis/.state/00-bootstrap.json
+```
 
-**For Windows**:
+**Bootstrap state contains**:
+- `analysis_dir` - Analysis workspace path
+- `manifest_path` - Path to file-manifest.json (already generated)
 
-```powershell
-scripts/powershell/enumerate-project.ps1 "{project_path}" -EstimateOnly
-```text
+### 4.2: Read File Manifest and Count Categories
 
-**Note**: For single quotes in args like "I'm Groot", use escape syntax: `'I'\''m Groot'` (or double-quote: `"I'm Groot"`).
+Read the file-manifest.json from the bootstrap `manifest_path`.
 
-### 4.2: Parse Enumeration Output
+**Count files by category**:
+- Core application files (controllers, services, models, repositories, configs, security, middleware, utils)
+- Tests
+- Configuration files
+- Documentation
+- CI/CD files
+- Dependencies/vendor
 
-The script will output (or you should scan):
-- Total files count
-- File categories breakdown:
-  - Core application files (controllers, services, models, repositories, etc.)
-  - Tests
-  - Configuration files
-  - Documentation
-  - CI/CD files
-  - Dependencies/vendor
+**Parse file-manifest.json structure**:
+
+```json
+{
+  "statistics": {
+    "total_files": 245,
+    "total_size_bytes": 1234567
+  },
+  "files": [...]
+}
+```
+
+Use the file list to categorize:
+
+- Controllers/Routes: files matching `*controller*`, `*route*`, `*/controllers/*`, `*/routes/*`
+- Services: files matching `*service*`, `*/services/*`, `*manager*`, `*handler*`
+- Models: files matching `*model*`, `*entity*`, `*/models/*`, `*/entities/*`
+- Repositories: files matching `*repository*`, `*dao*`, `*/repositories/*`
+- Configs: files matching `*.config.*`, `*settings*`, `*.env*`, `*.yml`, `*.json` (in config dirs)
+- Security: files matching `*auth*`, `*security*`, `*/auth/*`, `*/security/*`
+- Middleware: files matching `*middleware*`, `*/middleware/*`
+- Utils: files matching `*util*`, `*helper*`, `*/utils/*`, `*/helpers/*`
+- Tests: files matching `*.test.*`, `*.spec.*`, `*/tests/*`, `*/__tests__/*`
 
 ### 4.3: Calculate Time Estimate
 
