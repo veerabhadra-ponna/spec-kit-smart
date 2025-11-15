@@ -29,18 +29,19 @@ Required:
 ### Common Artifacts (Both A and B)
 
 1. **EXECUTIVE-SUMMARY.md** (1 chunk)
-2. **dependency-audit.json** (1 chunk)
-3. **metrics-summary.json** (1 chunk)
+2. **dependency-audit.md** (1 chunk)
+3. **metrics-summary.md** (1 chunk)
+4. **analysis-report.md** (from Stage 6)
 
 ### Full Application Artifacts (Scope = A)
 
 1. **functional-spec.md** (2-3 chunks)
 2. **technical-spec.md** (2-3 chunks)
 3. **stage-prompts/** (4 files)
-   - stage-1-dependencies.md
-   - stage-2-framework.md
-   - stage-3-database.md
-   - stage-4-deployment.md
+   - constitution-prompt.md
+   - clarify-prompt.md
+   - tasks-prompt.md
+   - implement-prompt.md
 
 ### Cross-Cutting Concern Artifacts (Scope = B)
 
@@ -96,7 +97,7 @@ Required:
 
 ---
 
-### Artifact 2: dependency-audit.json
+### Artifact 2: dependency-audit.md
 
 **Purpose**: Machine-readable dependency audit results
 
@@ -137,11 +138,11 @@ Required:
 }
 ```text
 
-**Progress**: `✓ Generated: dependency-audit.json`
+**Progress**: `✓ Generated: dependency-audit.md`
 
 ---
 
-### Artifact 3: metrics-summary.json
+### Artifact 3: metrics-summary.md
 
 **Purpose**: Key metrics for tracking and reporting
 
@@ -185,7 +186,7 @@ Required:
 }
 ```text
 
-**Progress**: `✓ Generated: metrics-summary.json`
+**Progress**: `✓ Generated: metrics-summary.md`
 
 ---
 
@@ -565,8 +566,9 @@ Analysis Duration: {duration}
   "stages_complete": [..., "artifact_generation"],
   "artifacts_generated": [
     "EXECUTIVE-SUMMARY.md",
-    "dependency-audit.json",
+    "dependency-audit.md",
     "metrics-summary.md",
+    "analysis-report.md",
     "functional-spec.md",
     "technical-spec.md",
     "stage-prompts/constitution-prompt.md",
@@ -574,7 +576,7 @@ Analysis Duration: {duration}
     "stage-prompts/tasks-prompt.md",
     "stage-prompts/implement-prompt.md"
   ],
-  "total_artifacts": 9,
+  "total_artifacts": 10,
   "analysis_complete": true
 }
 ```text
