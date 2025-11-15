@@ -109,19 +109,23 @@ Estimated size: ~2400 lines. I'll generate in 4 chunks:
 
 **Required checks:**
 
-1. **Markdown lint**: Run GitHub workflow `.github/workflows/lint.yml` to check for markdown errors
-   - Command: `act -j markdownlint` (using act to run GitHub Actions locally)
-   - Or: Push to feature branch and check GitHub Actions results
-   - Config: Uses default markdownlint-cli2 rules (no custom config)
+1. **Markdown lint**: MUST run exact same check as GitHub workflow before commit
+   - **Command**: `npx markdownlint-cli2 '**/*.md'`
+   - **Expected result**: `Summary: 0 error(s)` (REQUIRED - commit only if 0 errors)
+   - **Configuration**: Automatically uses `.markdownlint.json` in repo root
+   - **Workflow**: `.github/workflows/lint.yml` runs same command on push/PR
+   - **Auto-fix**: `npx markdownlint-cli2 --fix '**/*.md'` (fix where possible, then recheck)
 2. **Spell check**: Review for typos/grammar
 3. **Test scripts**: If modifying bash/PowerShell, test locally with `--help`
 
 **Checklist:**
 
-- [ ] Ran lint.yml workflow and fixed markdown errors
+- [ ] Ran `npx markdownlint-cli2 '**/*.md'` and got 0 errors
 - [ ] No TODOs in prompt files (use IMPROVEMENTS.md)
 - [ ] Tested script changes
 - [ ] Clear commit message
+
+**CRITICAL**: The markdown lint check MUST show `Summary: 0 error(s)` before committing. This ensures your changes will pass GitHub Actions workflow and not block release.
 
 ### Corporate Guidelines System
 
@@ -270,16 +274,20 @@ Consider native patterns, ensure SDD compatibility, document requirements, updat
 
 ## Markdown Style Guide
 
-Uses markdownlint-cli2 with default rules (enforced via GitHub Actions `.github/workflows/lint.yml`).
+Uses markdownlint-cli2 with configuration in `.markdownlint.json` (enforced via GitHub Actions `.github/workflows/lint.yml`).
 
-**Key rules**: ATX headers, asterisk emphasis, 2-space indents, language specifiers for code blocks, proper table formatting
+**Configuration** (`.markdownlint.json`):
+- ATX-style headings (MD003)
+- Asterisk emphasis (MD049, MD050)
+- 2-space indents (MD007)
+- Disabled: MD013 (line length), MD033 (HTML), MD041 (first line heading), MD051 (link fragments), MD060 (table alignment)
 
 **Checking lint errors**:
-- Run locally: `act -j markdownlint` (requires act CLI)
-- Or push to branch and check GitHub Actions results
-- Auto-fix where possible: `npx markdownlint-cli2 --fix "**/*.md"`
+- **Local check**: `npx markdownlint-cli2 '**/*.md'` (MUST return 0 errors before commit)
+- **Auto-fix**: `npx markdownlint-cli2 --fix '**/*.md'` (then recheck)
+- **Workflow**: `.github/workflows/lint.yml` runs same command on push/PR
 
-**Best Practices**: Blank lines around blocks, specify code languages, dashes for lists, ~100 char prose (except long commands/URLs)
+**Best Practices**: Blank lines around blocks, specify code languages for fenced blocks, use dashes for unordered lists, ~100 char prose (except long commands/URLs)
 
 ---
 
