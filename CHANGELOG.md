@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Stack mapping configuration (`stack-mapping.json`) with path-based guideline application
   - Intelligent guideline precedence rules (explicit > extension > convention > auto-detect)
   - Version management for guideline files and configurations
-  - Guideline validation tool (`scripts/validate-guidelines.py`)
+  - Guideline validation via bash/PowerShell scripts
   - Token optimization for multi-stack projects (summary loading, on-demand details)
   - Updated `/specify tasks` command to support multi-stack task generation
   - Updated `/specify analyze` command to support multi-stack compliance checking

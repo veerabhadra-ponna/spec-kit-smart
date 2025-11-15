@@ -140,7 +140,7 @@ Spec Kit supports corporate development guidelines via `/.guidelines/` directory
 
 **For contributors:** Guidelines are templates with `@YOUR_ORG` placeholders. Never commit actual corporate info.
 
-**Implementation:** All phases complete (Phases 1-3). Validation: `python3 scripts/validate-guidelines.py`
+**Implementation:** All phases complete (Phases 1-3).
 
 **See:** `.guidelines/README.md` for complete documentation and customization guide.
 

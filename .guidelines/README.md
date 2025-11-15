@@ -50,8 +50,8 @@ Priority order when making decisions:
 ├── nodejs-guidelines.md         # Node.js 20/22 LTS, TypeScript 5+, Express/Fastify
 ├── python-guidelines.md         # Python 3.11/3.12, FastAPI, Django 5, Flask 3
 │
-└── # Configuration (Optional)
-    └── branch-config.json       # Branch naming (handled by scripts)
+└── # Configuration moved to .specify/config.json
+    # Branch naming and workflow settings now in .specify/config.json
 ```
 
 ---

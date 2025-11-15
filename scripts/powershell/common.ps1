@@ -176,9 +176,9 @@ function Load-SpecKitConfig {
         try {
             $config = Get-Content $configFile -Raw | ConvertFrom-Json
 
-            # Get osEnv with default
-            $osEnv = if ($config.PSObject.Properties.Name -contains "osEnv") { $config.osEnv } else { "auto" }
-            $checkArt = if ($config.PSObject.Properties.Name -contains "enableCheckArtifactory") { $config.enableCheckArtifactory } else { $false }
+            # Get osEnv and checkArt from nested workflow structure with defaults
+            $osEnv = if ($config.workflow -and $config.workflow.PSObject.Properties.Name -contains "osEnv") { $config.workflow.osEnv } else { "auto" }
+            $checkArt = if ($config.workflow -and $config.workflow.PSObject.Properties.Name -contains "enableCheckArtifactory") { $config.workflow.enableCheckArtifactory } else { $false }
 
             # Validate osEnv value
             if ($osEnv -eq "windows" -or $osEnv -eq "unix" -or $osEnv -eq "auto") {
