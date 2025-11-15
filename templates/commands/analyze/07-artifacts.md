@@ -527,8 +527,8 @@ Generated Artifacts:
 
 Common:
   ✓ EXECUTIVE-SUMMARY.md
-  ✓ dependency-audit.json
-  ✓ metrics-summary.json
+  ✓ dependency-audit.md
+  ✓ metrics-summary.md
   ✓ analysis-report.md (from Stage 6)
 
 {IF scope = A}
