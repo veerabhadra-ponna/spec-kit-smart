@@ -97,7 +97,7 @@ Required:
 
 ---
 
-### Artifact 2: dependency-audit.md
+### Artifact 2: dependency-audit.json
 
 **Purpose**: Machine-readable dependency audit results
 
@@ -138,11 +138,11 @@ Required:
 }
 ```text
 
-**Progress**: `✓ Generated: dependency-audit.md`
+**Progress**: `✓ Generated: dependency-audit.json`
 
 ---
 
-### Artifact 3: metrics-summary.md
+### Artifact 3: metrics-summary.json
 
 **Purpose**: Key metrics for tracking and reporting
 
@@ -186,7 +186,7 @@ Required:
 }
 ```text
 
-**Progress**: `✓ Generated: metrics-summary.md`
+**Progress**: `✓ Generated: metrics-summary.json`
 
 ---
 
@@ -206,12 +206,34 @@ Required:
 - Content: Project overview, high-level purpose, what's in/out of scope
 - Completion: All 3 sections complete, no placeholders
 
-**After Chunk 1**: Display progress:
+**After Chunk 1 Generation**:
 
-```text
-✓ functional-spec.md Chunk 1/5 complete: Introduction + Summary + Scope
-  - Lines: [COUNT]
-```
+1. **Write to file** using Write tool:
+   - File path: `.analysis/{project}-{timestamp}/functional-spec.md`
+   - Content: Complete sections 1-3
+
+2. **Create checkpoint marker**:
+   - Create directory: `.analysis/.checkpoints/` (if not exists)
+   - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-1-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "functional-spec.md",
+       "chunk": 1,
+       "total_chunks": 5,
+       "sections": "Introduction + Summary + Scope",
+       "timestamp": "2025-11-15T10:30:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ functional-spec.md Chunk 1/5 complete: Introduction + Summary + Scope
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 2: User Stories (Part 1) - CRITICAL Features
 
@@ -220,13 +242,35 @@ Required:
 - Every feature MUST have file:line reference
 - Completion: All CRITICAL features documented with evidence
 
-**After Chunk 2**: Append using `str_replace`, display progress:
+**After Chunk 2 Generation**:
 
-```text
-✓ functional-spec.md Chunk 2/5 complete: User Stories (CRITICAL)
-  - Features: [COUNT]
-  - Lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Read existing functional-spec.md
+   - Append Section 4.1 content to the end
+   - Use str_replace to append (not overwrite)
+
+2. **Create checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-2-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "functional-spec.md",
+       "chunk": 2,
+       "total_chunks": 5,
+       "sections": "User Stories (CRITICAL)",
+       "timestamp": "2025-11-15T10:45:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ functional-spec.md Chunk 2/5 complete: User Stories (CRITICAL)
+     - Features: [COUNT]
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 3: User Stories (Part 2) - STANDARD Features + Business Rules
 
@@ -234,13 +278,33 @@ Required:
 - Content: STANDARD features + validation rules
 - Completion: All STANDARD features + rules documented
 
-**After Chunk 3**: Append using `str_replace`, display progress:
+**After Chunk 3 Generation**:
 
-```text
-✓ functional-spec.md Chunk 3/5 complete: STANDARD Features + Rules
-  - Features: [COUNT]
-  - Lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Append Sections 4.2 & 5 content to functional-spec.md
+
+2. **Create checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-3-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "functional-spec.md",
+       "chunk": 3,
+       "total_chunks": 5,
+       "sections": "STANDARD Features + Rules",
+       "timestamp": "2025-11-15T11:00:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ functional-spec.md Chunk 3/5 complete: STANDARD Features + Rules
+     - Features: [COUNT]
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 4: NFRs + Data Requirements
 
@@ -248,12 +312,32 @@ Required:
 - Content: Performance, security, scalability, data entities
 - Completion: NFRs defined, data models documented
 
-**After Chunk 4**: Append using `str_replace`, display progress:
+**After Chunk 4 Generation**:
 
-```text
-✓ functional-spec.md Chunk 4/5 complete: NFRs + Data
-  - Lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Append Sections 6 & 7 content to functional-spec.md
+
+2. **Create checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-4-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "functional-spec.md",
+       "chunk": 4,
+       "total_chunks": 5,
+       "sections": "NFRs + Data",
+       "timestamp": "2025-11-15T11:15:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ functional-spec.md Chunk 4/5 complete: NFRs + Data
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 5: Acceptance Criteria + Assumptions + Constraints
 
@@ -261,13 +345,37 @@ Required:
 - Content: Testing criteria, assumptions, limitations
 - Completion: All sections complete, no placeholders
 
-**After Chunk 5**: Append using `str_replace`, display progress:
+**After Chunk 5 Generation**:
 
-```text
-✅ functional-spec.md COMPLETE (5/5 chunks)
-   - Total features: [COUNT]
-   - Total lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Append Sections 8, 9 & 10 content to functional-spec.md
+
+2. **Create final checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/functional-spec-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "functional-spec.md",
+       "chunk": 5,
+       "total_chunks": 5,
+       "sections": "Acceptance Criteria + Assumptions + Constraints",
+       "timestamp": "2025-11-15T11:30:00Z",
+       "status": "complete",
+       "all_chunks_complete": true
+     }
+     ```
+
+3. **MANDATORY - Display progress and final summary**:
+
+   ```text
+   ✓ functional-spec.md Chunk 5/5 complete: Acceptance + Assumptions + Constraints
+     - Lines: [COUNT]
+
+   ✅ functional-spec.md COMPLETE (5/5 chunks)
+      Total features: [COUNT]
+      Total lines: [COUNT]
+   ```
 
 **Progress**: `✓ Generated: functional-spec.md ({lines} lines, {chunks} chunks)`
 
@@ -289,13 +397,35 @@ Required:
 - Content: System architecture, comparison tables, Mermaid diagrams
 - Completion: Architecture patterns documented, comparison complete
 
-**After Chunk 1**: Display progress:
+**After Chunk 1 Generation**:
 
-```text
-✓ technical-spec.md Chunk 1/5 complete: Architecture + Comparison
-  - Diagrams: [COUNT]
-  - Lines: [COUNT]
-```
+1. **Write to file** using Write tool:
+   - File path: `.analysis/{project}-{timestamp}/technical-spec.md`
+   - Content: Complete sections 1-3
+
+2. **Create checkpoint marker**:
+   - Create directory: `.analysis/.checkpoints/` (if not exists)
+   - Write JSON file: `.analysis/.checkpoints/technical-spec-chunk-1-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "technical-spec.md",
+       "chunk": 1,
+       "total_chunks": 5,
+       "sections": "Architecture + Comparison",
+       "timestamp": "2025-11-15T10:30:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ technical-spec.md Chunk 1/5 complete: Architecture + Comparison
+     - Diagrams: [COUNT]
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 2: Target Tech Stack + Data Architecture
 
@@ -303,12 +433,34 @@ Required:
 - Content: User's chosen stack (from 10 questions), database design, ORM
 - Completion: All tech choices documented, data layer designed
 
-**After Chunk 2**: Append using `str_replace`, display progress:
+**After Chunk 2 Generation**:
 
-```text
-✓ technical-spec.md Chunk 2/5 complete: Tech Stack + Data
-  - Lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Read existing technical-spec.md
+   - Append Sections 4 & 5 content to the end
+   - Use str_replace to append (not overwrite)
+
+2. **Create checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/technical-spec-chunk-2-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "technical-spec.md",
+       "chunk": 2,
+       "total_chunks": 5,
+       "sections": "Tech Stack + Data",
+       "timestamp": "2025-11-15T10:45:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ technical-spec.md Chunk 2/5 complete: Tech Stack + Data
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 3: API Design + Integration Points
 
@@ -316,13 +468,33 @@ Required:
 - Content: REST/GraphQL design, external APIs, message queues
 - Completion: API contracts defined, integrations documented
 
-**After Chunk 3**: Append using `str_replace`, display progress:
+**After Chunk 3 Generation**:
 
-```text
-✓ technical-spec.md Chunk 3/5 complete: API + Integrations
-  - Endpoints: [COUNT]
-  - Lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Append Sections 6 & 7 content to technical-spec.md
+
+2. **Create checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/technical-spec-chunk-3-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "technical-spec.md",
+       "chunk": 3,
+       "total_chunks": 5,
+       "sections": "API + Integrations",
+       "timestamp": "2025-11-15T11:00:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ technical-spec.md Chunk 3/5 complete: API + Integrations
+     - Endpoints: [COUNT]
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 4: Security + Authentication + Deployment
 
@@ -330,12 +502,32 @@ Required:
 - Content: User's chosen auth (Q9), deployment target (Q5), IaC (Q6), containers (Q7)
 - Completion: Security measures defined, deployment plan complete
 
-**After Chunk 4**: Append using `str_replace`, display progress:
+**After Chunk 4 Generation**:
 
-```text
-✓ technical-spec.md Chunk 4/5 complete: Security + Deployment
-  - Lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Append Sections 8 & 9 content to technical-spec.md
+
+2. **Create checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/technical-spec-chunk-4-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "technical-spec.md",
+       "chunk": 4,
+       "total_chunks": 5,
+       "sections": "Security + Deployment",
+       "timestamp": "2025-11-15T11:15:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ technical-spec.md Chunk 4/5 complete: Security + Deployment
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 5: Testing Strategy + Observability + Migration Risks
 
@@ -343,12 +535,36 @@ Required:
 - Content: User's testing choice (Q10), observability stack (Q8), risk mitigation
 - Completion: All sections complete, no placeholders
 
-**After Chunk 5**: Append using `str_replace`, display progress:
+**After Chunk 5 Generation**:
 
-```text
-✅ technical-spec.md COMPLETE (5/5 chunks)
-   - Total lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Append Sections 10, 11 & 12 content to technical-spec.md
+
+2. **Create final checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/technical-spec-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "technical-spec.md",
+       "chunk": 5,
+       "total_chunks": 5,
+       "sections": "Testing + Observability + Risks",
+       "timestamp": "2025-11-15T11:30:00Z",
+       "status": "complete",
+       "all_chunks_complete": true
+     }
+     ```
+
+3. **MANDATORY - Display progress and final summary**:
+
+   ```text
+   ✓ technical-spec.md Chunk 5/5 complete: Testing + Observability + Risks
+     - Lines: [COUNT]
+
+   ✅ technical-spec.md COMPLETE (5/5 chunks)
+      Total lines: [COUNT]
+   ```
 
 **Progress**: `✓ Generated: technical-spec.md ({lines} lines, {chunks} chunks)`
 
@@ -446,14 +662,36 @@ Generate 4 stage prompt files for Spec Kit workflow:
 - Content: Chosen approach, justification, 50/30/15/5 phasing, timeline
 - Completion: Strategy documented, phases defined with milestones
 
-**After Chunk 1**: Display progress:
+**After Chunk 1 Generation**:
 
-```text
-✓ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
-  - Approach: [APPROACH]
-  - Phases: [COUNT]
-  - Lines: [COUNT]
-```
+1. **Write to file** using Write tool:
+   - File path: `.analysis/{project}-{timestamp}/concern-migration-plan.md`
+   - Content: Complete sections 1-3
+
+2. **Create checkpoint marker**:
+   - Create directory: `.analysis/.checkpoints/` (if not exists)
+   - Write JSON file: `.analysis/.checkpoints/concern-migration-plan-chunk-1-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "concern-migration-plan.md",
+       "chunk": 1,
+       "total_chunks": 3,
+       "sections": "Strategy + Phasing",
+       "timestamp": "2025-11-15T10:30:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
+     - Approach: [APPROACH]
+     - Phases: [COUNT]
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 2: Technical Implementation + Testing
 
@@ -461,14 +699,36 @@ Generate 4 stage prompt files for Spec Kit workflow:
 - Content: Environment setup, required code changes, test plan, rollback procedures
 - Completion: Implementation steps detailed, testing strategy complete
 
-**After Chunk 2**: Append using `str_replace`, display progress:
+**After Chunk 2 Generation**:
 
-```text
-✓ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
-  - Setup steps: [COUNT]
-  - Code changes: [COUNT]
-  - Lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Read existing concern-migration-plan.md
+   - Append Sections 4, 5 & 6 content to the end
+   - Use str_replace to append (not overwrite)
+
+2. **Create checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/concern-migration-plan-chunk-2-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "concern-migration-plan.md",
+       "chunk": 2,
+       "total_chunks": 3,
+       "sections": "Implementation + Testing",
+       "timestamp": "2025-11-15T10:45:00Z",
+       "status": "complete"
+     }
+     ```
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
+     - Setup steps: [COUNT]
+     - Code changes: [COUNT]
+     - Lines: [COUNT]
+   ```
 
 #### Chunk 3: Deployment + Operations + Success Criteria
 
@@ -476,12 +736,36 @@ Generate 4 stage prompt files for Spec Kit workflow:
 - Content: Deployment approach, monitoring/alerting, success metrics, post-migration tasks
 - Completion: All sections complete, operational plan ready
 
-**After Chunk 3**: Append using `str_replace`, display progress:
+**After Chunk 3 Generation**:
 
-```text
-✅ concern-migration-plan.md COMPLETE (3/3 chunks)
-   - Total lines: [COUNT]
-```
+1. **Append to file** using Edit tool (str_replace):
+   - Append Sections 7, 8, 9 & 10 content to concern-migration-plan.md
+
+2. **Create final checkpoint marker**:
+   - Write JSON file: `.analysis/.checkpoints/concern-migration-plan-complete.json`
+   - Content:
+
+     ```json
+     {
+       "artifact": "concern-migration-plan.md",
+       "chunk": 3,
+       "total_chunks": 3,
+       "sections": "Deployment + Operations + Success",
+       "timestamp": "2025-11-15T11:00:00Z",
+       "status": "complete",
+       "all_chunks_complete": true
+     }
+     ```
+
+3. **MANDATORY - Display progress and final summary**:
+
+   ```text
+   ✓ concern-migration-plan.md Chunk 3/3 complete: Deployment + Operations + Success
+     - Lines: [COUNT]
+
+   ✅ concern-migration-plan.md COMPLETE (3/3 chunks)
+      Total lines: [COUNT]
+   ```
 
 **Progress**: `✓ Generated: concern-migration-plan.md ({lines} lines, {chunks} chunks)`
 
@@ -528,8 +812,8 @@ Generated Artifacts:
 
 Common:
   ✓ EXECUTIVE-SUMMARY.md
-  ✓ dependency-audit.md
-  ✓ metrics-summary.md
+  ✓ dependency-audit.json
+  ✓ metrics-summary.json
   ✓ analysis-report.md (from Stage 6)
 
 {IF scope = A}
@@ -566,8 +850,8 @@ Analysis Duration: {duration}
   "stages_complete": [..., "artifact_generation"],
   "artifacts_generated": [
     "EXECUTIVE-SUMMARY.md",
-    "dependency-audit.md",
-    "metrics-summary.md",
+    "dependency-audit.json",
+    "metrics-summary.json",
     "analysis-report.md",
     "functional-spec.md",
     "technical-spec.md",
