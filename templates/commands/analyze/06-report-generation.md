@@ -21,6 +21,30 @@ Load state from either:
 
 ---
 
+## ⚠️ MANDATORY CHUNKING REQUIREMENT
+
+🛑 **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
+
+**DO NOT generate the entire report in one operation.**
+
+**DO NOT create all sections at once.**
+
+**DO NOT skip the chunking strategy below.**
+
+**YOU MUST generate the report in 9 separate chunks as specified below.**
+
+Attempting to generate the full report in one operation WILL result in:
+
+- Incomplete sections due to token limits
+- Missing file:line references
+- Placeholder content (TODO, TBD)
+- Verification failures
+- Wasted time and compute resources
+
+**If you are about to say "I'll create it in one operation" → STOP and read the chunking strategy below.**
+
+---
+
 ## Chunking Strategy
 
 **CRITICAL**: The analysis-report.md will be **3,000-8,000 lines** depending on project size.
@@ -93,6 +117,24 @@ ls .analysis/.checkpoints/
 ## Report Structure (9 Phases)
 
 Generate report in `.analysis/{project}-{timestamp}/analysis-report.md`
+
+**⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
+
+1. Generate ONLY Chunk 1 first (Phase 1)
+2. Wait for Chunk 1 completion
+3. THEN generate Chunk 2 (Phase 2.1)
+4. Continue sequentially through all 9 chunks
+
+**DO NOT**:
+
+- ❌ Generate multiple chunks in one response
+- ❌ Generate all phases at once
+- ❌ Skip checkpoint creation
+- ❌ Skip progress display
+
+**IF** you find yourself generating more than one chunk at a time → **STOP IMMEDIATELY**
+
+---
 
 ### Chunk 1: Phase 1 - Project Discovery
 
