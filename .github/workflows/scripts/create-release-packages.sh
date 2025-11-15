@@ -138,6 +138,9 @@ build_unified() {
   SPEC_DIR="$base_dir/.specify"
   mkdir -p "$SPEC_DIR"
 
+  # Copy .specify/config.json if it exists
+  [[ -f .specify/config.json ]] && { cp .specify/config.json "$SPEC_DIR/"; echo "Copied .specify/config.json"; }
+
   [[ -d memory ]] && { cp -r memory "$SPEC_DIR/"; echo "Copied memory -> .specify"; }
   [[ -d .guidelines ]] && { cp -r .guidelines "$base_dir/"; echo "Copied .guidelines -> package root"; }
 

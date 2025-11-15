@@ -2,5 +2,5 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "General purpose configuration for Spec Kit workflows",
   "enableCheckArtifactory": false,
-  "osEnv": "auto"
+  "osEnv": "windows"
 }
