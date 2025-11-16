@@ -110,26 +110,51 @@ Check `plan.md` for tech stack (or scan project files if plan.md doesn't exist):
 - **Node.js**: Express, Fastify, backend JavaScript/TypeScript
 - **Python**: Django, Flask, FastAPI
 
-### 2. Load Guidelines
+### 2. Detect Guideline Profile
 
-Check for guideline files in `/.guidelines/` directory:
+**Check `.specify/config.json` for project profile**:
 
-- `reactjs-guidelines.md` - React coding standards
-- `java-guidelines.md` - Java coding standards
-- `dotnet-guidelines.md` - .NET coding standards
-- `nodejs-guidelines.md` - Node.js coding standards
-- `python-guidelines.md` - Python coding standards
+```json
+{
+  "project": {
+    "guidelineProfile": "corporate" // or "personal"
+  }
+}
+```
+
+- **corporate**: Internal/proprietary projects, use corporate libraries and standards
+- **personal**: Open-source/public projects, use community packages and free services
+
+**IF** no profile specified, default to "personal" (more permissive)
+
+### 3. Load Guidelines (Profile-Based Architecture v3.0)
+
+Guidelines are now organized as base + profile overrides:
+
+**For each detected tech stack, load**:
+
+1. **Base guideline**: `/.guidelines/base/{stack}-base.md` (universal best practices)
+2. **Profile override**: `/.guidelines/profiles/{profile}/{stack}-overrides.md` (project-specific requirements)
+
+**Example for React**:
+
+- Read `/.guidelines/base/reactjs-base.md` (security, testing, architecture - universal)
+- Read `/.guidelines/profiles/corporate/reactjs-overrides.md` (corporate libraries, registries) **OR**
+- Read `/.guidelines/profiles/personal/reactjs-overrides.md` (public packages, free services)
+
+**Legacy Support**: If base/profiles don't exist, fall back to `/.guidelines/{stack}-guidelines.md`
 
 **IF** guideline files exist for detected tech stack:
 
-1. **Read** the applicable guideline files in FULL
-2. **Apply** during ALL code generation:
-   - Import ONLY corporate libraries (never banned libraries)
+1. **Read** BOTH base guideline AND profile override in FULL
+2. **Profile overrides take precedence** over base for conflicting directives
+3. **Apply** during ALL code generation:
+   - **Corporate profile**: Import ONLY corporate libraries (@YOUR_ORG/*), use corporate registry
+   - **Personal profile**: Use recommended community packages, free-tier services
    - Follow coding standards (naming, structure, patterns)
-   - Use correct corporate packages (@YOUR_ORG/package-name)
    - Apply security requirements (input validation, secrets management)
    - Follow testing standards
-3. **Priority**: Constitution > Corporate Guidelines > Spec Kit Defaults
+4. **Priority**: Constitution > Profile Override > Base Guideline > Spec Kit Defaults
 
 **IF** guidelines do NOT exist:
 

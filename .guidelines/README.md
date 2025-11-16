@@ -1,9 +1,48 @@
-# Corporate Guidelines System
+# Corporate Guidelines System (Profile-Based Architecture)
 
-**Version**: 2.0  
-**Last Updated**: 2025-01-15
+**Version**: 3.0 (Profile-Based)
+**Last Updated**: 2025-11-16
+**Architecture**: Base + Profile Overrides
 
-Corporate/organizational guidelines for AI agents implementing Spec-Driven Development with modern technology stacks, cloud-native architectures, and industry best practices.
+Guidelines for AI agents implementing Spec-Driven Development with modern technology stacks, supporting both **corporate/enterprise** and **personal/open-source** projects.
+
+---
+
+## 🆕 What's New in v3.0: Profile-Based Architecture
+
+### Overview
+
+Guidelines are now organized using a **base + profile override** architecture, eliminating duplication while supporting both corporate and personal projects:
+
+- **Base Guidelines** (`base/`): Universal best practices (security, testing, architecture) - ~85-90% of content
+- **Profile Overrides** (`profiles/`): Project-specific requirements (packages, registries, deployment) - ~10-15% of content
+
+### Profiles
+
+1. **Corporate Profile** (`profiles/corporate/`)
+   - Internal/proprietary projects
+   - Corporate package registries (@YOUR_ORG/*)
+   - Enterprise authentication & monitoring
+   - Audit & compliance requirements
+   - Use when: Building internal tools, commercial products, regulated applications
+
+2. **Personal Profile** (`profiles/personal/`)
+   - Open-source/public projects
+   - Public npm/PyPI/Maven packages
+   - Free-tier services (Vercel, Supabase, Clerk)
+   - Community recommendations
+   - Use when: Personal projects, OSS libraries, learning projects, portfolio work
+
+### How It Works
+
+When implementing code:
+
+1. **Profile is detected** from `.specify/config.json` → `.guidelines-profile` file → package.json markers → filesystem markers
+2. **Base guideline** is loaded (e.g., `base/reactjs-base.md`)
+3. **Profile override** is loaded (e.g., `profiles/corporate/reactjs-overrides.md` or `profiles/personal/reactjs-overrides.md`)
+4. **Composition**: Base principles + Profile specifics = Final guideline
+
+**Priority**: Constitution > Profile Override > Base Guideline > Spec Kit Defaults
 
 ---
 
@@ -29,10 +68,11 @@ This guidelines system provides technology-stack-specific best practices, securi
 Priority order when making decisions:
 
 1. **Constitution** (`/memory/constitution.md`) - **HIGHEST PRIORITY**
-2. **Corporate Guidelines** (this directory) - **MEDIUM PRIORITY**
-3. **Spec Kit Defaults** - **LOWEST PRIORITY**
+2. **Profile Override** (`profiles/corporate/` or `profiles/personal/`) - **HIGH PRIORITY**
+3. **Base Guideline** (`base/`) - **MEDIUM PRIORITY**
+4. **Spec Kit Defaults** - **LOWEST PRIORITY**
 
-**Rule**: Constitution always wins. If constitution says "MUST use PostgreSQL" but guidelines suggest MySQL, use PostgreSQL.
+**Rule**: Constitution always wins. Profile overrides extend/override base guidelines. If constitution says "MUST use PostgreSQL", that overrides all guidelines.
 
 ---
 
@@ -40,18 +80,55 @@ Priority order when making decisions:
 
 ```text
 .guidelines/
-├── README.md                    # This file - system documentation
-├── stack-mapping.json           # Multi-stack detection and routing
+├── README.md                          # This file - system documentation
+├── stack-mapping.json                 # Multi-stack detection, profile routing (v3.0)
 │
-├── # Language-Specific Guidelines (Principle-Based)
-├── reactjs-guidelines.md        # React 18+, Next.js 14+, TypeScript 5+
-├── java-guidelines.md           # Java 21 LTS, Spring Boot 3.2+
-├── dotnet-guidelines.md         # .NET 8 LTS, C# 12, ASP.NET Core
-├── nodejs-guidelines.md         # Node.js 20/22 LTS, TypeScript 5+, Express/Fastify
-├── python-guidelines.md         # Python 3.11/3.12, FastAPI, Django 5, Flask 3
+├── base/                              # Universal best practices (shared across all projects)
+│   ├── reactjs-base.md                # React security, testing, architecture
+│   ├── nodejs-base.md                 # Node.js patterns, performance
+│   ├── java-base.md                   # Java standards, SOLID principles
+│   ├── python-base.md                 # Python best practices, PEPs
+│   └── dotnet-base.md                 # .NET conventions, async patterns
 │
-└── # Configuration moved to .specify/config.json
-    # Branch naming and workflow settings now in .specify/config.json
+├── profiles/                          # Project-type specific overrides
+│   ├── corporate/                     # Corporate/Enterprise projects
+│   │   ├── profile.json               # Profile metadata
+│   │   ├── reactjs-overrides.md       # Corporate packages, registries
+│   │   ├── nodejs-overrides.md        # Internal npm registry, auth
+│   │   ├── java-overrides.md          # Corporate Maven artifacts
+│   │   ├── python-overrides.md        # Internal PyPI, compliance
+│   │   └── dotnet-overrides.md        # NuGet feeds, AD integration
+│   │
+│   └── personal/                      # Personal/Open-Source projects
+│       ├── profile.json               # Profile metadata
+│       ├── reactjs-overrides.md       # Public npm, Vercel, Supabase
+│       ├── nodejs-overrides.md        # Free hosting, OSS tools
+│       ├── java-overrides.md          # Maven Central, GitHub Actions
+│       ├── python-overrides.md        # PyPI, Render, Railway
+│       └── dotnet-overrides.md        # NuGet.org, Azure free tier
+│
+├── archive/                           # Legacy v2.0 guidelines (deprecated)
+│   ├── reactjs-guidelines.md          # Moved from root
+│   ├── nodejs-guidelines.md
+│   ├── java-guidelines.md
+│   ├── python-guidelines.md
+│   └── dotnet-guidelines.md
+│
+└── examples/                          # CI/CD and configuration examples
+    └── ci-cd/
+```
+
+### Configuration
+
+Profile selection is configured in `.specify/config.json`:
+
+```json
+{
+  "project": {
+    "type": "personal",                 // or "corporate"
+    "guidelineProfile": "personal"      // or "corporate"
+  }
+}
 ```
 
 ---
