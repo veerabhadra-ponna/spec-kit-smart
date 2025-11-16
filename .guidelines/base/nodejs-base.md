@@ -1,9 +1,11 @@
 # Node.js Base Guidelines
 
 **Tech Stack**: Node.js 20/22 LTS, TypeScript 5+, Express/Fastify/NestJS, Backend Services, APIs
-**Auto-detected from**: `package.json` with backend dependencies (express, fastify, koa, hapi)
-**Version**: 3.0 (Profile-Based Architecture)
+**Auto-detected from**: `package.json` with backend dependencies
+**Version**: 3.0 (Profile-Based Architecture - Principle-Based)
 **Last Updated**: 2025-11-16
+
+> **Philosophy**: These guidelines define WHAT and WHY, not HOW. They remain version-agnostic and adaptable across framework versions.
 
 ---
 
@@ -11,559 +13,367 @@
 
 **MUST**:
 
-- Use Node.js 20 LTS (Active until April 2026) or Node.js 22 LTS (Active until April 2027)
-- Use TypeScript 5.3+ for all new projects
-- Target ES2022 or ESNext in `tsconfig.json`
+- Use Node.js LTS versions (20 LTS or 22 LTS)
+- Use TypeScript for all new projects
+- Target ES2022 or ESNext for modern JavaScript features
 
-**SHOULD**:
-
-- Upgrade to Node.js 22 LTS when infrastructure supports it
-- Use native Node.js test runner for simple cases
-- Leverage new features (native fetch, test runner, watch mode)
-
-**Rationale**: LTS provides 3 years active support + 18 months maintenance; TypeScript ensures type safety and maintainability
+**Rationale**: LTS versions provide 3 years active support plus 18 months maintenance. TypeScript ensures type safety, better tooling, and maintainability.
 
 ---
 
 ## Framework Selection
 
+**Principle**: Choose framework based on project requirements, team expertise, and performance needs
+
 **Options**:
 
-- **Express 4.x/5.x**: Most popular, largest ecosystem, traditional middleware
-- **Fastify 4.x**: High performance (3x faster), schema validation, plugin architecture
-- **NestJS 10.x**: TypeScript-first, Angular-inspired, DI, great for large teams
-- **Koa 2.x**: Minimalist, async/await-first (smaller ecosystem)
-- **Hapi 21.x**: Configuration-driven, enterprise features
+- **Express**: Most popular, largest ecosystem, traditional middleware approach
+- **Fastify**: High performance (3x faster than Express), schema validation, plugin architecture
+- **NestJS**: TypeScript-first, dependency injection, Angular-inspired, ideal for large teams
+- **Koa**: Minimalist, async/await-first design
+- **Hapi**: Configuration-driven, enterprise features
 
-**Recommendation**: Fastify for new high-performance APIs, NestJS for large applications, Express for standard projects
+**Recommendation**: Use Fastify for performance-critical APIs, NestJS for enterprise applications with large teams, Express for standard projects with rich ecosystem needs.
+
+**Rationale**: Different frameworks excel in different scenarios. Performance, developer experience, and ecosystem maturity should guide selection.
 
 ---
 
-## Architecture
-
-### Project Structure (Express/Fastify)
-
-```text
-src/
-├── controllers/         # Request handlers
-├── services/            # Business logic
-├── repositories/        # Data access layer
-├── middleware/          # Custom middleware
-├── models/              # Data models/schemas
-├── routes/              # Route definitions
-├── config/              # Configuration
-├── utils/               # Utilities
-├── types/               # TypeScript types
-└── server.ts            # Entry point
-```
-
-### Project Structure (NestJS)
-
-```text
-src/
-├── modules/
-│   ├── users/
-│   │   ├── users.controller.ts
-│   │   ├── users.service.ts
-│   │   ├── users.module.ts
-│   │   └── dto/
-│   └── auth/
-├── common/              # Shared code
-│   ├── guards/
-│   ├── interceptors/
-│   ├── filters/
-│   └── pipes/
-├── config/
-└── main.ts
-```
+## Architecture Principles
 
 ### Separation of Concerns
 
-**MUST**:
+**MUST** maintain clear boundaries:
 
-- Controllers handle HTTP requests/responses only
-- Services contain business logic
-- Repositories handle data access
-- Models define data structures
-- Middleware handles cross-cutting concerns
+- **Controllers**: Handle HTTP requests/responses only, no business logic
+- **Services**: Contain business logic, orchestrate operations
+- **Repositories**: Handle data access, abstract database operations
+- **Models**: Define data structures and validation rules
+- **Middleware**: Handle cross-cutting concerns (logging, authentication, error handling)
+
+**Rationale**: Clear separation improves testability, maintainability, and allows independent evolution of each layer.
+
+### Project Structure
+
+**MUST** organize by feature/domain rather than technical layer:
+
+**Benefits**:
+
+- Related code stays together
+- Easy to locate functionality
+- Clear module boundaries
+- Scalable for large applications
+- Supports microservices extraction
+
+**Rationale**: Domain-driven organization scales better than layered organization as applications grow.
 
 ---
 
-## Security
+## Security Principles
 
 ### Input Validation
 
 **MUST**:
 
-- Validate all inputs with Zod, Joi, or class-validator
+- Validate ALL inputs (request body, query parameters, headers, path parameters)
+- Use schema validation libraries (Zod, Joi, class-validator)
 - Sanitize inputs to prevent injection attacks
-- Use parameterized queries (SQL injection prevention)
-- Validate request body, query params, headers
+- Fail fast with clear error messages
 
-**Example (Zod)**:
+**NEVER**:
 
-```typescript
-import { z } from 'zod';
+- Trust user input
+- Skip validation for "internal" APIs
+- Use client-side validation only
 
-const userSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  age: z.number().min(18).max(120)
-});
-
-app.post('/users', async (req, res) => {
-  const validated = userSchema.parse(req.body);
-  // Use validated data
-});
-```
-
-### Environment Variables
-
-**MUST**:
-
-- Never hardcode secrets in code
-- Use `.env` files (gitignored) for local development
-- Validate environment variables at startup
-- Use different `.env` files per environment
-
-**Validation Example**:
-
-```typescript
-import { z } from 'zod';
-
-const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']),
-  PORT: z.string().transform(Number),
-  DATABASE_URL: z.string().url(),
-  JWT_SECRET: z.string().min(32)
-});
-
-export const env = envSchema.parse(process.env);
-```
+**Rationale**: Input validation is the first line of defense against attacks. Runtime validation catches issues TypeScript cannot.
 
 ### Authentication & Authorization
 
 **MUST**:
 
-- Use JWT or session-based authentication
-- Store tokens securely (httpOnly cookies for browsers)
+- Implement authentication for protected endpoints
+- Use industry-standard protocols (JWT, OAuth 2.0, OpenID Connect)
+- Store passwords using strong hashing (bcrypt, argon2)
 - Implement role-based access control (RBAC)
-- Use bcrypt/argon2 for password hashing (never plain text)
+- Use httpOnly, secure, sameSite cookies for tokens
 
-**JWT Example**:
+**NEVER**:
 
-```typescript
-import jwt from 'jsonwebtoken';
+- Store passwords in plain text
+- Use weak hashing algorithms (MD5, SHA1)
+- Store tokens in localStorage (XSS vulnerability)
+- Implement custom cryptography
 
-function generateToken(userId: string) {
-  return jwt.sign({ userId }, env.JWT_SECRET, {
-    expiresIn: '7d'
-  });
-}
+**Rationale**: Security is non-negotiable. Using proven patterns prevents common vulnerabilities.
 
-function verifyToken(token: string) {
-  return jwt.verify(token, env.JWT_SECRET);
-}
-```
+### Secrets Management
+
+**MUST**:
+
+- Use environment variables for secrets
+- Never commit secrets to version control
+- Validate environment variables at startup
+- Use different secrets per environment
+- Rotate secrets regularly
+
+**Rationale**: Hardcoded secrets lead to breaches. Environment-based configuration enables secure deployment.
 
 ### Rate Limiting
 
-**MUST** implement rate limiting:
+**MUST** implement:
 
-```typescript
-import rateLimit from 'express-rate-limit';
+- Per-IP rate limiting
+- Per-user rate limiting
+- Different limits for different endpoints
+- Clear error messages when limits exceeded
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: 'Too many requests, please try again later'
-});
-
-app.use('/api/', limiter);
-```
-
-### CORS
-
-**MUST** configure CORS properly:
-
-```typescript
-import cors from 'cors';
-
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(','),
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
-}));
-```
+**Rationale**: Rate limiting prevents abuse, DoS attacks, and ensures fair resource usage.
 
 ---
 
-## Database
+## Database Principles
 
 ### ORM Selection
 
-**Recommended**:
+**MUST** choose based on requirements:
 
-- **Prisma 5.x**: Type-safe, excellent DX, migrations (recommended)
-- **TypeORM 0.3.x**: Mature, Active Record or Data Mapper
-- **Drizzle ORM**: Lightweight, SQL-like, performant
-- **Mongoose 8.x**: For MongoDB, schema-based ODM
+- **Prisma**: Type-safe, excellent developer experience, automatic migrations
+- **TypeORM**: Mature, supports multiple databases, Active Record or Data Mapper patterns
+- **Drizzle**: Lightweight, SQL-like syntax, performant
+- **Mongoose**: MongoDB-specific, schema-based, rich plugin ecosystem
 
-**Best Practices**:
+**Rationale**: ORMs provide type safety, prevent SQL injection, and improve developer productivity.
+
+### Data Access Patterns
+
+**MUST**:
+
+- Use parameterized queries (never string concatenation)
+- Implement transactions for multi-step operations
+- Use connection pooling
+- Include audit fields (createdAt, updatedAt, createdBy, updatedBy)
+- Implement soft deletes for sensitive data
+
+**SHOULD**:
 
 - Use migrations for schema changes
-- Never run raw SQL without parameterization
-- Include audit fields (createdAt, updatedAt)
-- Use transactions for multi-step operations
+- Version your database schema
+- Test migrations in staging before production
 
-**Prisma Example**:
+**Rationale**: These patterns prevent security issues, ensure data integrity, and enable safe schema evolution.
 
-```typescript
-// schema.prisma
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  posts     Post[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+---
 
-// Usage
-const user = await prisma.user.create({
-  data: { email: 'user@example.com', name: 'John' }
-});
-```
+## Error Handling Principles
 
-### Connection Pooling
+### Centralized Error Handling
 
 **MUST**:
 
-- Configure connection pools
-- Set min/max connections
-- Handle connection errors gracefully
-- Use connection retry logic
+- Implement global error handler
+- Use custom error classes for different error types
+- Log errors with context
+- Return appropriate HTTP status codes
+- Hide internal details in production
+
+**NEVER**:
+
+- Expose stack traces in production
+- Return database errors directly to clients
+- Silently swallow errors
+
+**Rationale**: Centralized handling ensures consistent error responses and prevents information leakage.
+
+### Error Classification
+
+**MUST** distinguish:
+
+- **Operational Errors**: Expected errors (validation, not found, unauthorized)
+- **Programming Errors**: Bugs (null reference, type errors)
+- **Infrastructure Errors**: Database down, network failures
+
+**Rationale**: Different error types require different handling strategies.
 
 ---
 
-## Error Handling
+## Logging Principles
 
-### Global Error Handler
+### Structured Logging
 
-**MUST** implement centralized error handling:
+**MUST**:
 
-```typescript
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-
-  if (err instanceof ValidationError) {
-    return res.status(400).json({ error: err.message });
-  }
-
-  if (err instanceof UnauthorizedError) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
-  res.status(500).json({
-    error: 'Internal server error',
-    ...(env.NODE_ENV === 'development' && { details: err.message })
-  });
-});
-```
-
-### Custom Error Classes
-
-```typescript
-class AppError extends Error {
-  constructor(
-    public statusCode: number,
-    public message: string,
-    public isOperational = true
-  ) {
-    super(message);
-    Error.captureStackTrace(this, this.constructor);
-  }
-}
-
-class ValidationError extends AppError {
-  constructor(message: string) {
-    super(400, message);
-  }
-}
-```
-
----
-
-## Logging
-
-**MUST** use structured logging:
-
-**Recommended Libraries**:
-
-- **Pino**: Fast, structured logging (recommended)
-- **Winston**: Feature-rich, transports, formatters
-- **Bunyan**: Structured logging (older)
-
-**Pino Example**:
-
-```typescript
-import pino from 'pino';
-
-const logger = pino({
-  level: env.LOG_LEVEL || 'info',
-  transport: env.NODE_ENV === 'development' ? {
-    target: 'pino-pretty'
-  } : undefined
-});
-
-logger.info({ userId: '123' }, 'User logged in');
-logger.error({ err }, 'Database connection failed');
-```
-
-**Best Practices**:
-
+- Use structured logging (JSON format)
+- Include correlation IDs for request tracing
 - Log at appropriate levels (debug, info, warn, error, fatal)
-- Include context (userId, requestId, timestamp)
-- Never log sensitive data (passwords, tokens, PII)
-- Use correlation IDs for request tracing
+- Include relevant context (userId, requestId, operation)
+
+**NEVER**:
+
+- Log sensitive data (passwords, tokens, PII, credit cards)
+- Use console.log in production
+- Log excessive information in hot paths
+
+**Rationale**: Structured logs enable efficient searching, filtering, and analysis. Correlation IDs enable distributed tracing.
+
+### Log Levels
+
+**Guidelines**:
+
+- **debug**: Development debugging, verbose details
+- **info**: Normal operations, significant events
+- **warn**: Warning conditions, degraded performance
+- **error**: Error conditions requiring attention
+- **fatal**: Critical errors causing shutdown
+
+**Rationale**: Appropriate log levels enable effective filtering and alerting.
 
 ---
 
-## Testing
+## Testing Principles
 
-### Unit Testing
+### Test Pyramid
 
-**MUST** use:
+**MUST** implement:
 
-- **Vitest** (recommended, fast)
-- **Jest** (popular, mature)
+- **Unit Tests**: Test individual functions/classes (70% of tests)
+- **Integration Tests**: Test API endpoints, database interactions (20% of tests)
+- **E2E Tests**: Test critical user flows (10% of tests)
 
-**Example**:
+**Target**: 80%+ code coverage on critical paths
 
-```typescript
-import { describe, it, expect } from 'vitest';
+**Rationale**: Test pyramid balances speed, confidence, and maintenance cost.
 
-describe('UserService', () => {
-  it('should create user', async () => {
-    const user = await userService.create({
-      email: 'test@example.com'
-    });
-
-    expect(user).toHaveProperty('id');
-    expect(user.email).toBe('test@example.com');
-  });
-});
-```
-
-### Integration Testing
-
-**Test API endpoints**:
-
-```typescript
-import supertest from 'supertest';
-import { app } from './app';
-
-const request = supertest(app);
-
-describe('POST /users', () => {
-  it('should create user', async () => {
-    const response = await request
-      .post('/users')
-      .send({ email: 'test@example.com', password: 'secret123' })
-      .expect(201);
-
-    expect(response.body).toHaveProperty('id');
-  });
-});
-```
-
----
-
-## Performance
-
-### Async/Await Best Practices
+### Testing Practices
 
 **MUST**:
 
-- Use async/await over callbacks
-- Handle errors with try/catch
-- Avoid blocking the event loop
+- Test behavior, not implementation
+- Use descriptive test names
+- Follow AAA pattern (Arrange, Act, Assert)
+- Mock external dependencies
+- Test error cases and edge cases
+
+**Rationale**: Well-tested code reduces bugs, enables refactoring, and serves as documentation.
+
+---
+
+## Performance Principles
+
+### Async Operations
+
+**MUST**:
+
+- Use async/await for I/O operations
+- Never block the event loop
+- Handle Promise rejections
 - Use Promise.all() for parallel operations
 
-**Example**:
+**Rationale**: Non-blocking I/O is Node.js's strength. Blocking operations degrade performance.
 
-```typescript
-// ❌ Bad - sequential
-const user = await getUser(id);
-const posts = await getPosts(user.id);
-const comments = await getComments(user.id);
+### Caching Strategy
 
-// ✅ Good - parallel
-const [user, posts, comments] = await Promise.all([
-  getUser(id),
-  getPosts(id),
-  getComments(id)
-]);
-```
+**SHOULD** implement caching for:
 
-### Caching
+- Frequently accessed data
+- Expensive computations
+- External API responses
 
-**SHOULD** implement caching:
+**Options**:
 
-- **Redis**: Distributed caching
-- **Node-cache**: In-memory caching
-- **HTTP caching**: ETags, Cache-Control headers
+- In-memory caching (node-cache)
+- Distributed caching (Redis)
+- HTTP caching (ETags, Cache-Control)
+
+**Rationale**: Caching reduces load, improves response times, and lowers costs.
 
 ### Connection Pooling
 
-**MUST** configure properly:
+**MUST**:
 
-```typescript
-// Database connection pool
-const pool = {
-  min: 2,
-  max: 10,
-  idleTimeoutMillis: 30000
-};
-```
+- Configure database connection pools
+- Set appropriate min/max connections
+- Handle connection errors gracefully
+- Monitor pool utilization
+
+**Rationale**: Connection pooling improves performance and prevents resource exhaustion.
 
 ---
 
-## API Design
+## API Design Principles
 
-### RESTful Best Practices
+### RESTful Conventions
 
 **MUST**:
 
-- Use proper HTTP methods (GET, POST, PUT, PATCH, DELETE)
+- Use appropriate HTTP methods (GET, POST, PUT, PATCH, DELETE)
 - Use plural resource names (`/users`, not `/user`)
-- Use HTTP status codes correctly
+- Use correct HTTP status codes
 - Version APIs (`/v1/users`)
+- Implement pagination for collections
 
-**Status Codes**:
+**Rationale**: RESTful conventions improve API discoverability and client integration.
 
-- 200: Success
-- 201: Created
-- 204: No Content
-- 400: Bad Request
-- 401: Unauthorized
-- 403: Forbidden
-- 404: Not Found
-- 500: Internal Server Error
+### Response Format
 
-### Request/Response Format
+**MUST**:
 
-**MUST** use consistent format:
+- Return consistent response structure
+- Include metadata (timestamps, pagination info)
+- Use clear error messages
+- Follow JSON:API or similar specification
 
-```typescript
-// Success
-{
-  "data": { ... },
-  "meta": {
-    "timestamp": "2025-11-16T00:00:00Z"
-  }
-}
-
-// Error
-{
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid email format",
-    "details": { ... }
-  }
-}
-```
+**Rationale**: Consistent responses simplify client implementation.
 
 ---
 
-## Deployment
+## Deployment Principles
 
 ### Process Management
 
-**MUST** use:
+**MUST**:
 
-- **PM2**: Production process manager
-- **Docker**: Containerization
-- **systemd**: Linux service management
+- Use process manager (PM2, systemd, Docker, Kubernetes)
+- Implement graceful shutdown
+- Handle SIGTERM/SIGINT signals
+- Close connections cleanly
 
-**PM2 Example**:
-
-```javascript
-// ecosystem.config.js
-module.exports = {
-  apps: [{
-    name: 'api',
-    script: './dist/server.js',
-    instances: 'max',
-    exec_mode: 'cluster',
-    env: {
-      NODE_ENV: 'production'
-    }
-  }]
-};
-```
+**Rationale**: Proper shutdown prevents data loss and connection leaks.
 
 ### Health Checks
 
 **MUST** implement:
 
-```typescript
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime()
-  });
-});
+- **Liveness probe**: Is process running?
+- **Readiness probe**: Can process handle requests?
+- Include dependency health (database, cache, external services)
 
-app.get('/ready', async (req, res) => {
-  try {
-    await db.ping();
-    res.json({ status: 'ready' });
-  } catch (error) {
-    res.status(503).json({ status: 'not ready' });
-  }
-});
-```
+**Rationale**: Health checks enable automatic recovery and load balancer integration.
 
-### Graceful Shutdown
-
-**MUST** handle shutdown gracefully:
-
-```typescript
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, closing server...');
-
-  server.close(async () => {
-    await db.disconnect();
-    await redis.quit();
-    process.exit(0);
-  });
-});
-```
-
----
-
-## TypeScript Configuration
+### Environment Configuration
 
 **MUST**:
 
-```json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "outDir": "./dist",
-    "rootDir": "./src"
-  }
-}
-```
+- Use environment-specific configuration
+- Validate configuration at startup
+- Fail fast on missing required configuration
+- Support multiple environments (dev, staging, production)
+
+**Rationale**: Environment-based configuration enables safe deployments across environments.
+
+---
+
+## TypeScript Configuration Principles
+
+**MUST** enable:
+
+- `strict`: Enable all strict type checking
+- `noUncheckedIndexedAccess`: Prevent undefined access bugs
+- `esModuleInterop`: Enable CommonJS/ESM interop
+- `skipLibCheck`: Skip type checking of declaration files (build speed)
+- `forceConsistentCasingInFileNames`: Prevent cross-platform issues
+
+**Rationale**: Strict TypeScript configuration catches bugs at compile time.
 
 ---
 
@@ -571,42 +381,82 @@ process.on('SIGTERM', async () => {
 
 ### Naming Conventions
 
-- Files: kebab-case (`user-service.ts`)
-- Classes: PascalCase (`UserService`)
-- Functions/variables: camelCase (`getUserById`)
-- Constants: UPPER_SNAKE_CASE (`MAX_RETRIES`)
-- Interfaces: PascalCase (`IUserRepository` or `UserRepository`)
+**MUST** follow:
+
+- **Files**: kebab-case (`user-service.ts`)
+- **Classes**: PascalCase (`UserService`)
+- **Functions/Variables**: camelCase (`getUserById`)
+- **Constants**: UPPER_SNAKE_CASE (`MAX_RETRIES`)
+- **Interfaces**: PascalCase (`UserRepository` or `IUserRepository`)
+
+**Rationale**: Consistent naming improves code readability and reduces cognitive load.
 
 ### Code Organization
 
 **MUST**:
 
-- One class/function per file (for large classes)
-- Group related files in folders
-- Export from index files for clean imports
+- Keep functions small and focused
+- Limit file size (< 300 lines ideal)
+- Group related functionality
+- Use meaningful variable names
+- Comment WHY, not WHAT
+
+**Rationale**: Well-organized code is easier to understand, test, and maintain.
 
 ---
 
-## Recommended Libraries
+## Observability Principles
 
-### Utilities
+### Metrics
 
-- **date-fns**: Date manipulation
-- **lodash-es**: Utility functions (tree-shakeable)
-- **zod**: Schema validation
-- **dotenv**: Environment variables
+**SHOULD** track:
 
-### HTTP Clients
+- Request duration and throughput
+- Error rates
+- Database query performance
+- External API latency
+- Resource utilization (CPU, memory)
 
-- **undici**: Fast HTTP/1.1 client (Node.js 18+)
-- **axios**: Popular HTTP client
+**Rationale**: Metrics enable performance optimization and capacity planning.
 
-### Testing
+### Distributed Tracing
 
-- **vitest**: Fast testing framework
-- **supertest**: HTTP assertion library
-- **nock**: HTTP mocking
+**SHOULD** implement:
+
+- Request correlation IDs
+- Trace context propagation
+- Span creation for operations
+- Integration with tracing systems (Jaeger, Zipkin, OpenTelemetry)
+
+**Rationale**: Distributed tracing enables debugging in microservice architectures.
 
 ---
 
-**Note**: These are base guidelines applicable to all Node.js projects. Project-specific requirements (corporate libraries, registries, deployment targets) are defined in profile overrides.
+## Dependency Management
+
+### Package Selection
+
+**MUST** evaluate:
+
+- Security (known vulnerabilities)
+- Maintenance (last update, active maintainers)
+- License compatibility
+- Bundle size impact
+- TypeScript support
+
+**Rationale**: Dependencies become part of your codebase. Choose wisely.
+
+### Updates
+
+**SHOULD**:
+
+- Run security audits regularly (`npm audit`)
+- Update dependencies on schedule
+- Test updates in non-production first
+- Use lock files (package-lock.json)
+
+**Rationale**: Regular updates prevent accumulation of security vulnerabilities.
+
+---
+
+**Note**: These are principle-based guidelines defining WHAT to do and WHY. Implementation details (HOW) vary by framework version and project requirements. Refer to official documentation for current syntax and APIs.
