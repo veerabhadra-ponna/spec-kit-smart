@@ -2,39 +2,50 @@
 
 **Profile**: Personal/Public Open Source
 **Stack**: .NET
-**Version**: 3.0
+**Version**: 3.0 (Principle-Based)
 **Last Updated**: 2025-11-16
 
 > **Note**: This file contains only personal/public project-specific overrides. Base guidelines are inherited from `base/dotnet-base.md`.
+> **Philosophy**: Prioritize developer experience, community packages, and cost-effective solutions.
 
 ---
 
-## Scaffolding
+## Scaffolding Principles
 
-**RECOMMENDED**:
-- `dotnet new webapi` - Web API
-- `dotnet new mvc` - MVC application
-- `dotnet new blazorserver` - Blazor Server
-- `dotnet new blazorwasm` - Blazor WebAssembly
+**RECOMMENDED**: Use `dotnet new` templates for rapid setup (webapi, mvc, blazor, console).
 
-## Package Registry
+**Rationale**: Built-in templates provide optimal developer experience.
 
-**RECOMMENDED**: NuGet.org (default)
+---
+
+## Package Registry Principles
+
+**RECOMMENDED**: Use NuGet.org for packages. Use dotnet CLI for package management.
+
+**Rationale**: Public NuGet provides access to vast ecosystem.
+
+---
 
 ## Recommended Libraries
 
-- **ASP.NET Core**: Web framework
-- **Entity Framework Core**: ORM
-- **Serilog**: Structured logging
-- **FluentValidation**: Input validation
-- **AutoMapper**: Object mapping
-- **Swashbuckle**: Swagger/OpenAPI
+**Popular choices**:
 
-## Free Deployment Options
+- **Framework**: ASP.NET Core (web APIs/MVC), Blazor (web UI)
+- **ORM**: Entity Framework Core, Dapper
+- **Testing**: xUnit, NUnit, Moq
+- **Validation**: FluentValidation, DataAnnotations
 
-- **Azure App Service**: Free tier available
-- **Railway**: <https://railway.app>
-- **Render**: <https://render.com>
-- **Heroku**: Limited .NET support
+**Rationale**: Choose based on project requirements and learning goals.
 
-**Note**: Full content migration in progress. See community best practices for complete recommendations.
+---
+
+## Deployment Platforms
+
+**Popular options**: Azure App Service, Railway, Heroku, AWS Elastic Beanstalk, Docker containers
+
+**Rationale**: Modern platforms offer free tiers for personal projects.
+
+---
+
+**Last Updated**: 2025-11-16
+**Maintained by**: Open Source Community

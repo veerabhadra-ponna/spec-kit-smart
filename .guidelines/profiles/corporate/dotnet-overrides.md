@@ -2,42 +2,46 @@
 
 **Profile**: Corporate
 **Stack**: .NET
-**Version**: 3.0
+**Version**: 3.0 (Principle-Based)
 **Last Updated**: 2025-11-16
 
 > **Note**: This file contains only corporate-specific overrides. Base guidelines are inherited from `base/dotnet-base.md`.
+> **Philosophy**: These overrides define WHAT corporate .NET projects require and WHY, not HOW to implement them.
 
 ---
 
-## Scaffolding
+## Scaffolding Principles
 
-**MUST**: Use corporate .NET templates via `dotnet new`
+**MUST** use corporate-approved templates: Organization's dotnet templates with pre-configured security, logging, monitoring.
 
-## Package Registry
+**Rationale**: Corporate templates ensure compliance and observability from day one.
 
-**MUST**: Configure NuGet to use corporate feed
+---
 
-```xml
-<!-- nuget.config -->
-<configuration>
-  <packageSources>
-    <add key="CorporateFeed" value="https://nuget.yourorg.com/v3/index.json" />
-  </packageSources>
-</configuration>
-```
+## Package Registry Principles
 
-## Mandatory Libraries
+**MUST** use corporate NuGet feed exclusively (Artifactory, Azure Artifacts, GitHub Packages). Configure NuGet.config with corporate registry.
 
-- **Framework**: Corporate ASP.NET starter templates
-- **Authentication**: `YourOrg.Identity.Client`
-- **Logging**: `YourOrg.Logging`
-- **Metrics**: `YourOrg.Telemetry`
-- **Database**: `YourOrg.Data.Extensions`
+**Rationale**: Corporate registries provide security scanning and license compliance.
 
-## Deployment
+---
 
-- Corporate Azure/AWS environments
-- CI/CD via Azure DevOps
-- Internal container registry
+## Mandatory Corporate Libraries
 
-**Note**: Full content migration in progress. See `archive/dotnet-guidelines.md` for complete corporate requirements.
+**MUST** use: Corporate auth library, HTTP client wrapper, logging framework, metrics library.
+
+**Rationale**: Consistent security, logging, and monitoring across all services.
+
+---
+
+## Deployment & CI/CD Principles
+
+**MUST** use corporate CI/CD pipeline with automated security scanning and minimum test coverage thresholds.
+
+**Rationale**: Automated pipelines ensure quality and security.
+
+---
+
+**Last Review**: 2025-11-16
+**Owner**: .NET Architecture Team
+**Contact**: <dotnet-arch@yourorg.com>

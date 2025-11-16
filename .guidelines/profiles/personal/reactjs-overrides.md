@@ -2,542 +2,218 @@
 
 **Profile**: Personal/Public Open Source
 **Stack**: React
-**Version**: 3.0
+**Version**: 3.0 (Principle-Based)
 **Last Updated**: 2025-11-16
 
 > **Note**: This file contains only personal/public project-specific overrides. Base guidelines are inherited from `base/reactjs-base.md`.
+> **Philosophy**: These overrides define WHAT personal projects benefit from and WHY, not HOW to implement them. Prioritize developer experience, community packages, and cost-effective solutions.
 
 ---
 
-## Scaffolding
+## Scaffolding Principles
 
-**RECOMMENDED**:
+**RECOMMENDED** scaffolding approaches:
 
-- **Vite + React**: `npm create vite@latest my-app -- --template react-ts`
-  - Ultra-fast dev server
-  - Modern build tooling
-  - Excellent TypeScript support
-- **Next.js**: `npx create-next-app@latest`
-  - Choose App Router for new projects
-  - Built-in TypeScript support
-  - Automatic routing and optimization
-- **Remix**: `npx create-remix@latest`
-  - Web fundamentals focused
-  - Great for full-stack apps
-  - Progressive enhancement
+- **Vite + React**: Ultra-fast dev server, modern build tooling, excellent TypeScript support
+- **Next.js**: Built-in routing, optimization, TypeScript support, choose App Router for new projects
+- **Remix**: Web fundamentals focused, progressive enhancement, great for full-stack apps
+- **Starter templates**: Use community templates for faster setup with pre-configured tooling
 
-**Starter Templates**:
+**Options by project type**:
 
-- **Vite**: <https://github.com/vitejs/vite/tree/main/packages/create-vite>
-- **Next.js**: <https://github.com/vercel/next.js/tree/canary/examples>
-- **shadcn/ui + Next.js**: <https://ui.shadcn.com>
-- **T3 Stack**: <https://create.t3.gg> (Next.js + tRPC + Prisma + Tailwind)
-
-**Quick Start**:
-
-```bash
-# Vite + React + TypeScript
-npm create vite@latest my-app -- --template react-ts
-cd my-app
-npm install
-npm run dev
-
-# Next.js with TypeScript and Tailwind
-npx create-next-app@latest my-app --typescript --tailwind --app
-cd my-app
-npm run dev
-
-# With shadcn/ui
-npx create-next-app@latest my-app --typescript --tailwind --app
-npx shadcn-ui@latest init
-```
+- SPA with client-side routing → Vite + React Router
+- Full-stack with SSR/SSG → Next.js
+- Content-focused sites → Astro or Next.js
+- Progressive enhancement → Remix
 
 **NEVER**:
 
 - Use deprecated Create React App (CRA) - unmaintained since 2022
 
+**Rationale**: Modern scaffolding tools provide optimal developer experience, fast builds, and production-ready configurations out of the box.
+
 ---
 
-## Package Registry
+## Package Registry Principles
 
 **RECOMMENDED**:
 
-- Use official npm registry (<https://registry.npmjs.org>)
-- Enable npm audit for security scanning: `npm audit`
-- Consider using `pnpm` for faster installs and disk space savings
-- Consider using `bun` for ultra-fast package management
+- Use official npm registry (npmjs.org) as primary source
+- Consider pnpm for faster installs and disk space efficiency
+- Consider bun for ultra-fast package management
+- Run security audits regularly to check for vulnerabilities
 
-**Configuration**:
+**Security practices**:
 
-```bash
-# Standard npm (default)
-npm install <package>
-
-# pnpm (faster, more efficient)
-npm install -g pnpm
-pnpm install <package>
-
-# bun (fastest)
-npm install -g bun
-bun install <package>
-```
-
-**Security**:
-
-- Run `npm audit` regularly to check for vulnerabilities
-- Use `npm audit fix` to automatically fix issues
-- Consider Dependabot for automated dependency updates
+- Run `npm audit` regularly
+- Use automated dependency updates (Dependabot, Renovate)
 - Review package.json for unused dependencies
+- Check package popularity and maintenance status before installing
+
+**Rationale**: Public npm registry provides access to vast ecosystem. Modern package managers (pnpm, bun) improve performance and disk usage.
 
 ---
 
-## Recommended Libraries
+## Recommended Library Categories
 
 ### UI Components
 
-**RECOMMENDED OPTIONS**:
+**Principle**: Choose based on project needs and customization requirements
 
-1. **shadcn/ui** (Recommended for flexibility)
-   - Copy-paste components built on Radix UI + Tailwind
-   - Full customization control
-   - No package dependency
-   - Installation: <https://ui.shadcn.com>
+**Popular options**:
 
-2. **Radix UI** (Unstyled primitives)
-   - Accessible, unstyled components
-   - Bring your own styles
-   - Perfect for design systems
-   - Installation: `npm install @radix-ui/react-dialog @radix-ui/react-dropdown-menu`
+1. **shadcn/ui**: Copy-paste components, full customization control, no package dependency
+2. **Radix UI**: Unstyled accessible primitives, bring your own styles
+3. **Headless UI**: Unstyled components by Tailwind Labs, designed for Tailwind CSS
+4. **MUI (Material-UI)**: Comprehensive component library, Material Design
+5. **Chakra UI**: Component library with built-in theming, excellent accessibility
+6. **Mantine**: 100+ customizable components, built-in dark mode
 
-3. **Headless UI** (by Tailwind Labs)
-   - Unstyled, accessible components
-   - Designed for Tailwind CSS
-   - Installation: `npm install @headlessui/react`
+**Selection criteria**:
 
-4. **MUI (Material-UI v5+)**
-   - Comprehensive component library
-   - Material Design implementation
-   - Installation: `npm install @mui/material @emotion/react @emotion/styled`
+- Customization needs (copy-paste vs npm package)
+- Design system requirements
+- Accessibility built-in
+- Bundle size impact
+- Community support and documentation
 
-5. **Chakra UI**
-   - Component library with built-in theming
-   - Excellent accessibility
-   - Installation: `npm install @chakra-ui/react @emotion/react @emotion/styled`
-
-6. **Mantine**
-   - 100+ customizable components
-   - Built-in dark mode
-   - Installation: `npm install @mantine/core @mantine/hooks`
-
-**Quick Setup (shadcn/ui)**:
-
-```bash
-npx shadcn-ui@latest init
-npx shadcn-ui@latest add button
-npx shadcn-ui@latest add dialog
-npx shadcn-ui@latest add form
-```
-
-**Usage Example**:
-
-```typescript
-// shadcn/ui components (copied to your project)
-import { Button } from '@/components/ui/button';
-import { Dialog } from '@/components/ui/dialog';
-
-function MyComponent() {
-  return (
-    <div>
-      <Button variant="default" size="lg">
-        Click Me
-      </Button>
-    </div>
-  );
-}
-```
+**Rationale**: Different projects have different needs. Choose based on customization requirements, design constraints, and team preferences.
 
 ---
 
 ### Authentication
 
-**RECOMMENDED OPTIONS**:
+**Principle**: Choose based on ease of use, features needed, and budget
 
-1. **Clerk** (Easiest, full-featured)
-   - Drop-in authentication
-   - Beautiful pre-built UI
-   - Free tier available
-   - Installation: `npm install @clerk/nextjs`
-   - Website: <https://clerk.com>
+**Popular options**:
 
-2. **Supabase Auth**
-   - Open-source authentication
-   - Integrates with Supabase database
-   - Email, OAuth, magic links
-   - Installation: `npm install @supabase/supabase-js`
-   - Website: <https://supabase.com>
+1. **Clerk**: Drop-in authentication, beautiful pre-built UI, generous free tier
+2. **Supabase Auth**: Open-source, integrates with Supabase database, email/OAuth/magic links
+3. **NextAuth.js (Auth.js)**: Open-source, flexible, self-hosted, supports many providers
+4. **Firebase Auth**: Google's authentication service, free tier available
+5. **Auth0**: Enterprise-grade, free tier available
 
-3. **NextAuth.js** (now Auth.js)
-   - Open-source, flexible
-   - Supports many providers (Google, GitHub, Email)
-   - Self-hosted
-   - Installation: `npm install next-auth`
-   - Website: <https://authjs.dev>
+**Selection criteria**:
 
-4. **Firebase Auth**
-   - Google's authentication service
-   - Free tier available
-   - Installation: `npm install firebase`
-   - Website: <https://firebase.google.com>
+- Free tier limits (monthly active users)
+- Self-hosted vs managed service
+- UI customization requirements
+- Identity providers needed (Google, GitHub, Email, etc.)
+- Privacy and data residency concerns
 
-5. **Auth0**
-   - Enterprise-grade authentication
-   - Free tier available
-   - Installation: `npm install @auth0/nextjs-auth0`
-   - Website: <https://auth0.com>
-
-**Quick Setup (Clerk + Next.js)**:
-
-```bash
-npm install @clerk/nextjs
-```
-
-```typescript
-// app/layout.tsx
-import { ClerkProvider } from '@clerk/nextjs';
-
-export default function RootLayout({ children }) {
-  return (
-    <ClerkProvider>
-      <html lang="en">
-        <body>{children}</body>
-      </html>
-    </ClerkProvider>
-  );
-}
-
-// middleware.ts
-import { authMiddleware } from '@clerk/nextjs';
-
-export default authMiddleware({
-  publicRoutes: ['/'],
-});
-
-export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-};
-```
+**Rationale**: Authentication is complex and security-critical. Using established providers reduces security risk and development time.
 
 ---
 
-### API Client & Data Fetching
+### Data Fetching & API Client
 
-**RECOMMENDED**:
+**Principle**: Choose based on rendering strategy and complexity
 
-**For Client Components**:
+**For client components**:
 
-- **TanStack Query (React Query)**: Industry standard for server state
-  - Installation: `npm install @tanstack/react-query`
-  - Documentation: <https://tanstack.com/query>
+- **TanStack Query (React Query)**: Industry standard for server state management
+  - Features: Caching, background updates, optimistic updates, infinite queries
+  - Best for: Complex data fetching, real-time updates, pagination
 
-**For Server Components (Next.js)**:
+**For server components (Next.js)**:
 
-- **Built-in fetch with caching**: Use native fetch API
-- **Server Actions**: Use Next.js server actions for mutations
+- **Built-in fetch**: Use native fetch API with Next.js caching
+- **Server Actions**: Use for mutations and form submissions
 
-**Quick Setup (TanStack Query)**:
+**For simple projects**:
 
-```bash
-npm install @tanstack/react-query
-```
+- **Native fetch**: Simple HTTP requests without complex state management
 
-```typescript
-// app/providers.tsx
-'use client';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-const queryClient = new QueryClient();
-
-export function Providers({ children }) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
-  );
-}
-
-// Usage
-import { useQuery } from '@tanstack/react-query';
-
-function Users() {
-  const { data, isLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: async () => {
-      const res = await fetch('/api/users');
-      return res.json();
-    }
-  });
-
-  if (isLoading) return <div>Loading...</div>;
-  return <div>{data.map(u => u.name)}</div>;
-}
-```
-
-**For Simple Projects**:
-
-```typescript
-// Next.js Server Component - native fetch
-async function Users() {
-  const res = await fetch('https://api.example.com/users', {
-    next: { revalidate: 3600 } // Cache for 1 hour
-  });
-  const users = await res.json();
-
-  return <div>{users.map(u => u.name)}</div>;
-}
-```
+**Rationale**: TanStack Query handles server state complexity (caching, revalidation, background updates). For simple cases, native fetch is sufficient.
 
 ---
 
-### Database & ORM
+### Database & Backend
 
-**RECOMMENDED OPTIONS**:
+**Principle**: Choose based on data model, scalability needs, and hosting preferences
 
-1. **Prisma** (Most popular)
-   - Type-safe ORM
-   - Excellent TypeScript support
-   - Supports PostgreSQL, MySQL, SQLite, MongoDB
-   - Installation: `npm install prisma @prisma/client`
-   - Website: <https://www.prisma.io>
+**Popular options**:
 
-2. **Drizzle ORM** (Newer, lightweight)
-   - TypeScript-first ORM
-   - SQL-like syntax
-   - Lightweight and fast
-   - Installation: `npm install drizzle-orm`
-   - Website: <https://orm.drizzle.team>
+1. **Prisma**: Type-safe ORM, excellent TypeScript support, supports SQL and MongoDB
+2. **Drizzle ORM**: TypeScript-first, SQL-like syntax, lightweight and fast
+3. **Supabase**: PostgreSQL database + auto-generated APIs + realtime subscriptions
+4. **PlanetScale**: Serverless MySQL, generous free tier, Git-like workflows
+5. **Neon**: Serverless PostgreSQL, auto-scaling, branching
 
-3. **Supabase** (Backend as a Service)
-   - PostgreSQL database
-   - Auto-generated APIs
-   - Real-time subscriptions
-   - Installation: `npm install @supabase/supabase-js`
-   - Website: <https://supabase.com>
+**Selection criteria**:
 
-**Quick Setup (Prisma)**:
+- Data model (relational vs document)
+- Free tier limits (storage, rows, connections)
+- TypeScript support
+- Developer experience
+- Vendor lock-in concerns
 
-```bash
-npm install prisma @prisma/client
-npx prisma init
-```
-
-```prisma
-// prisma/schema.prisma
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
-}
-
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User    @relation(fields: [authorId], references: [id])
-  authorId  Int
-}
-```
-
-```bash
-npx prisma generate
-npx prisma db push
-```
+**Rationale**: Modern database services provide free tiers suitable for personal projects. ORMs improve type safety and developer experience.
 
 ---
 
 ### Logging & Error Tracking
 
-**RECOMMENDED OPTIONS**:
+**Principle**: Choose based on features needed and budget
 
-1. **Sentry** (Industry standard)
-   - Error tracking and performance monitoring
-   - Free tier available
-   - Installation: `npm install @sentry/nextjs`
-   - Website: <https://sentry.io>
+**Popular options**:
 
-2. **LogRocket** (Session replay + logging)
-   - Session replay
-   - Error tracking
-   - Performance monitoring
-   - Installation: `npm install logrocket`
-   - Website: <https://logrocket.com>
+1. **Sentry**: Error tracking and performance monitoring, generous free tier
+2. **LogRocket**: Session replay + error tracking + performance monitoring
+3. **BetterStack (Logtail)**: Modern logging platform, excellent search
+4. **Console logging**: Simple console-based logging for development
 
-3. **BetterStack (formerly Logtail)** (Logging)
-   - Modern logging platform
-   - Excellent search and filtering
-   - Installation: `npm install @logtail/browser`
-   - Website: <https://betterstack.com>
+**For simple projects**:
 
-**Quick Setup (Sentry)**:
+- Use browser DevTools and console logging during development
+- Add error tracking when project becomes production-critical
 
-```bash
-npx @sentry/wizard@latest -i nextjs
-```
-
-```typescript
-// Automatic instrumentation already configured by wizard
-
-// Manual error logging
-import * as Sentry from '@sentry/nextjs';
-
-try {
-  // Your code
-} catch (error) {
-  Sentry.captureException(error);
-}
-
-// Add context
-Sentry.setUser({ id: user.id, email: user.email });
-Sentry.setTag('feature', 'checkout');
-```
-
-**For Simple Projects (console)**:
-
-```typescript
-// Simple console logging for development
-const logger = {
-  info: (message: string, meta?: any) => console.log('[INFO]', message, meta),
-  warn: (message: string, meta?: any) => console.warn('[WARN]', message, meta),
-  error: (message: string, meta?: any) => console.error('[ERROR]', message, meta),
-};
-
-logger.info('User logged in', { userId: 123 });
-```
+**Rationale**: Error tracking helps identify and fix issues quickly. Start simple, add observability as project grows.
 
 ---
 
 ### Analytics
 
-**RECOMMENDED OPTIONS**:
+**Principle**: Choose privacy-friendly options when possible
 
-1. **Vercel Analytics** (For Next.js on Vercel)
-   - Zero-config
-   - Privacy-friendly
-   - Installation: `npm install @vercel/analytics`
-   - Website: <https://vercel.com/analytics>
+**Popular options**:
 
-2. **Plausible** (Privacy-friendly)
-   - GDPR compliant
-   - No cookies
-   - Self-hosted or cloud
-   - Website: <https://plausible.io>
+1. **Vercel Analytics**: Zero-config for Next.js on Vercel, privacy-friendly
+2. **Plausible**: GDPR compliant, no cookies, self-hosted or cloud
+3. **PostHog**: Open-source product analytics, session replay, feature flags
+4. **Google Analytics 4**: Free, comprehensive, requires cookie consent
 
-3. **Posthog** (Open-source, feature-rich)
-   - Product analytics
-   - Session replay
-   - Feature flags
-   - Installation: `npm install posthog-js`
-   - Website: <https://posthog.com>
+**Privacy considerations**:
 
-4. **Google Analytics 4**
-   - Free, comprehensive
-   - Requires cookie consent
-   - Installation: `npm install react-ga4`
+- Cookie-less analytics (Vercel Analytics, Plausible)
+- GDPR compliance requirements
+- User consent management
+- Data ownership (self-hosted vs cloud)
 
-**Quick Setup (Vercel Analytics)**:
-
-```bash
-npm install @vercel/analytics
-```
-
-```typescript
-// app/layout.tsx
-import { Analytics } from '@vercel/analytics/react';
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  );
-}
-```
-
-**Quick Setup (Plausible)**:
-
-```typescript
-// app/layout.tsx
-import Script from 'next/script';
-
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <Script
-          defer
-          data-domain="yourdomain.com"
-          src="https://plausible.io/js/script.js"
-        />
-      </body>
-    </html>
-  );
-}
-```
+**Rationale**: Privacy-friendly analytics improve user trust and reduce legal compliance burden.
 
 ---
 
 ## Deployment Platforms
 
-**RECOMMENDED**:
+**Principle**: Choose based on framework, features needed, and cost
 
-1. **Vercel** (Best for Next.js)
-   - Zero-config deployment
-   - Automatic HTTPS
-   - Edge functions
-   - Free tier: Unlimited personal projects
-   - Website: <https://vercel.com>
+**Popular options**:
 
-2. **Netlify** (Great for static sites)
-   - Drag-and-drop deployment
-   - Serverless functions
-   - Form handling
-   - Free tier: 100GB bandwidth/month
-   - Website: <https://netlify.com>
+1. **Vercel**: Best for Next.js, zero-config, edge functions, unlimited personal projects
+2. **Netlify**: Great for static sites, serverless functions, form handling
+3. **Cloudflare Pages**: Edge deployment, unlimited bandwidth on free tier
+4. **Railway**: Full-stack deployment, databases + apps, simple pricing
+5. **Render**: Free static sites, PostgreSQL databases, background workers
 
-3. **Cloudflare Pages** (Fast, global)
-   - Edge deployment
-   - Unlimited bandwidth (free tier)
-   - Great performance
-   - Website: <https://pages.cloudflare.com>
+**Selection criteria**:
 
-4. **Railway** (Full-stack)
-   - Deploy databases and apps
-   - Simple pricing
-   - Free tier: $5 credit/month
-   - Website: <https://railway.app>
+- Framework compatibility (Next.js vs Vite)
+- Free tier limits (bandwidth, build minutes)
+- Geographic distribution (CDN, edge)
+- Backend needs (databases, serverless functions)
 
-5. **Render** (Full-stack)
-   - Free static sites
-   - PostgreSQL databases
-   - Background workers
-   - Website: <https://render.com>
-
-**Quick Setup (Vercel)**:
-
-```bash
-npm install -g vercel
-vercel
-
-# Or use GitHub integration (recommended)
-# 1. Push code to GitHub
-# 2. Import project on vercel.com
-# 3. Automatic deployments on push
-```
+**Rationale**: Modern platforms offer generous free tiers for personal projects. Zero-config deployment reduces operations overhead.
 
 ---
 
@@ -547,89 +223,53 @@ vercel
 
 **RECOMMENDED**:
 
-- **ESLint**: `npm install -D eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin`
-- **Prettier**: `npm install -D prettier eslint-config-prettier`
-- **Husky**: `npm install -D husky lint-staged` (Git hooks)
+- **ESLint**: Catch code quality issues and bugs
+- **Prettier**: Consistent code formatting
+- **TypeScript**: Type safety and better IDE support
+- **Husky + lint-staged**: Git hooks for pre-commit checks
 
-**Quick Setup**:
+**Rationale**: Automated code quality tools catch issues early and ensure consistency across team members or contributors.
 
-```bash
-# ESLint + Prettier
-npm install -D eslint prettier eslint-config-prettier
-npx eslint --init
-
-# .prettierrc
-{
-  "semi": true,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "trailingComma": "es5"
-}
-
-# Husky + lint-staged
-npx husky-init && npm install
-npx husky add .husky/pre-commit "npx lint-staged"
-```
+---
 
 ### Testing
 
 **RECOMMENDED**:
 
-- **Vitest**: `npm install -D vitest @testing-library/react @testing-library/jest-dom`
-- **Playwright**: `npm install -D @playwright/test`
+- **Vitest**: Fast unit testing, modern API, better DX than Jest
+- **React Testing Library**: User-centric component testing
+- **Playwright**: Cross-browser E2E testing
+- **Cypress**: Alternative E2E testing with great DX
 
-**Quick Setup (Vitest)**:
+**Testing strategy**:
 
-```bash
-npm install -D vitest @testing-library/react @testing-library/jest-dom jsdom
-```
+- Start with unit tests for critical logic
+- Add integration tests for user flows
+- Add E2E tests for critical paths as project matures
 
-```typescript
-// vitest.config.ts
-import { defineConfig } from 'vitest/config';
-import react from '@vitejs/plugin-react';
-
-export default defineConfig({
-  plugins: [react()],
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: './src/test/setup.ts',
-  },
-});
-```
+**Rationale**: Testing provides confidence for refactoring and prevents regressions. Start simple, add coverage as project grows.
 
 ---
 
 ## Environment Management
 
-**RECOMMENDED**:
+**Principle**: Use environment variables for configuration
 
-```bash
-# .env.local (gitignored - local development)
-NEXT_PUBLIC_API_URL=http://localhost:3000/api
-DATABASE_URL=postgresql://localhost:5432/mydb
-SECRET_KEY=your-secret-key
+**Best practices**:
 
-# .env.example (committed - template)
-NEXT_PUBLIC_API_URL=
-DATABASE_URL=
-SECRET_KEY=
-```
+- Use `.env.local` for local development (gitignored)
+- Provide `.env.example` as template (committed)
+- Validate environment variables at build/runtime
+- Never commit secrets to version control
+- Use platform-specific variable management for deployment
 
-**Environment Variable Validation**:
+**Framework conventions**:
 
-```typescript
-import { z } from 'zod';
+- Next.js: `NEXT_PUBLIC_` prefix for client-exposed variables
+- Vite: `VITE_` prefix for client-exposed variables
+- Server-only variables: No prefix, not accessible in client code
 
-const envSchema = z.object({
-  NEXT_PUBLIC_API_URL: z.string().url(),
-  DATABASE_URL: z.string(),
-  SECRET_KEY: z.string().min(32),
-});
-
-export const env = envSchema.parse(process.env);
-```
+**Rationale**: Environment variables enable configuration per environment while keeping secrets secure.
 
 ---
 
@@ -637,15 +277,15 @@ export const env = envSchema.parse(process.env);
 
 ### Hosting
 
-- **Vercel**: Unlimited personal projects, 100GB bandwidth
-- **Netlify**: 100GB bandwidth, 300 build minutes
+- **Vercel**: Unlimited personal projects, 100GB bandwidth/month
+- **Netlify**: 100GB bandwidth/month, 300 build minutes/month
 - **Cloudflare Pages**: Unlimited bandwidth, 500 builds/month
 - **Railway**: $5 credit/month
 - **Render**: Free static sites, limited databases
 
 ### Databases
 
-- **Supabase**: 500MB database, 1GB file storage
+- **Supabase**: 500MB database, 1GB file storage, 50K monthly active users
 - **PlanetScale**: 5GB storage, 1 billion row reads/month
 - **Neon**: 10GB storage, unlimited projects
 - **MongoDB Atlas**: 512MB storage
@@ -655,7 +295,7 @@ export const env = envSchema.parse(process.env);
 - **Clerk**: 10,000 monthly active users
 - **Supabase Auth**: 50,000 monthly active users
 - **Auth0**: 7,000 monthly active users
-- **Firebase Auth**: Unlimited
+- **Firebase Auth**: Unlimited (pay for other services)
 
 ### Error Tracking
 
@@ -665,54 +305,49 @@ export const env = envSchema.parse(process.env);
 ### Analytics
 
 - **Vercel Analytics**: 2,500 events/month
-- **Plausible**: Self-hosted (free)
+- **Plausible**: Self-hosted (free), cloud ($9/month)
 - **PostHog**: 1 million events/month
+
+**Rationale**: Free tiers enable building and deploying production-quality applications at zero cost.
 
 ---
 
-## Licensing
+## Licensing Principles
 
-**RECOMMENDED** for Open Source:
+**RECOMMENDED** for open source projects:
 
-- **MIT**: Most permissive, allows commercial use
+- **MIT**: Most permissive, allows commercial use, simple
 - **Apache 2.0**: Patent protection, requires attribution
 - **GPL v3**: Copyleft, derivatives must be open source
 - **ISC**: Similar to MIT, simpler wording
 
-**Quick Setup**:
+**License selection criteria**:
 
-```bash
-# Add LICENSE file to project root
-# Update package.json
-{
-  "license": "MIT"
-}
-```
+- Permissiveness level (MIT/Apache vs GPL)
+- Patent grant requirements
+- Commercial use allowance
+- Derivative work requirements
 
-**README Requirements**:
+**Project documentation**:
 
-```markdown
-# Project Name
+- Add LICENSE file to project root
+- Specify license in package.json
+- Include license information in README
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-```
+**Rationale**: Clear licensing prevents legal issues and clarifies how others can use your code.
 
 ---
 
-## Community Resources
+## Community & Learning Resources
 
-### Documentation
+### Official Documentation
 
 - React: <https://react.dev>
 - Next.js: <https://nextjs.org/docs>
 - Vite: <https://vitejs.dev>
 - TypeScript: <https://www.typescriptlang.org>
+- TanStack Query: <https://tanstack.com/query>
+- Tailwind CSS: <https://tailwindcss.com>
 
 ### Component Libraries
 
@@ -720,13 +355,15 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - Radix UI: <https://www.radix-ui.com>
 - Headless UI: <https://headlessui.com>
 - MUI: <https://mui.com>
+- Chakra UI: <https://chakra-ui.com>
 
 ### Learning Resources
 
 - React Tutorial: <https://react.dev/learn>
-- TypeScript Handbook: <https://www.typescriptlang.org/docs/handbook/intro.html>
+- TypeScript Handbook: <https://www.typescriptlang.org/docs/handbook>
 - Next.js Learn: <https://nextjs.org/learn>
-- Web.dev: <https://web.dev>
+- Web.dev: <https://web.dev/learn>
+- JavaScript.info: <https://javascript.info>
 
 ### Communities
 
@@ -734,15 +371,44 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - Reactiflux: <https://www.reactiflux.com>
 - Next.js Discord: <https://nextjs.org/discord>
 - Reddit: r/reactjs, r/nextjs
+- Dev.to: React community articles
+
+**Rationale**: Active community provides support, learning resources, and keeps you updated on best practices.
 
 ---
 
-**Philosophy**: Personal and open-source projects prioritize developer experience, community packages, and cost-effective solutions. Choose tools based on project needs, not corporate mandates.
+## Project Philosophy
 
-**Remember**: Start simple, add complexity as needed. Don't over-engineer early projects. Learn by building!
+**Start Simple, Scale as Needed**:
+
+- Don't over-engineer early projects
+- Add complexity only when required
+- Choose simple solutions first
+- Optimize when you have performance problems (profile first)
+
+**Developer Experience First**:
+
+- Fast feedback loops (hot reload, fast builds)
+- Good error messages and debugging
+- Minimal configuration
+- Modern tooling
+
+**Cost-Effective Solutions**:
+
+- Leverage free tiers
+- Choose managed services over self-hosting (when free)
+- Use serverless when possible (pay per use)
+- Monitor usage to avoid surprise costs
+
+**Learn by Building**:
+
+- Build real projects to learn
+- Contribute to open source
+- Share your work with the community
+- Iterate based on feedback
 
 ---
 
 **Last Updated**: 2025-11-16
 **Maintained by**: Open Source Community
-**Contributing**: PRs welcome! See CONTRIBUTING.md
+**Contributing**: Suggestions welcome! Create an issue or PR in the guidelines repo.

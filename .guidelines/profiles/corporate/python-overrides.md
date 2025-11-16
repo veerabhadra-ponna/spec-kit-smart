@@ -2,40 +2,46 @@
 
 **Profile**: Corporate
 **Stack**: Python
-**Version**: 3.0
+**Version**: 3.0 (Principle-Based)
 **Last Updated**: 2025-11-16
 
 > **Note**: This file contains only corporate-specific overrides. Base guidelines are inherited from `base/python-base.md`.
+> **Philosophy**: These overrides define WHAT corporate Python projects require and WHY, not HOW to implement them.
 
 ---
 
-## Scaffolding
+## Scaffolding Principles
 
-**MUST**: Use `@YOUR_ORG/python-template` or corporate cookiecutter templates
+**MUST** use corporate-approved scaffolding: Organization's FastAPI/Django templates with pre-configured security, logging, monitoring.
 
-## Package Registry
+**Rationale**: Corporate scaffolding ensures compliance and observability from day one.
 
-**MUST**: Configure pip to use corporate PyPI mirror
+---
 
-```ini
-# pip.conf or .pypirc
-[global]
-index-url = https://pypi.yourorg.com/simple
-trusted-host = pypi.yourorg.com
-```
+## Package Registry Principles
 
-## Mandatory Libraries
+**MUST** use corporate PyPI registry exclusively (Artifactory, Nexus, Azure Artifacts). Configure pip/poetry to use corporate registry only.
 
-- **Framework**: Corporate FastAPI/Django starter
-- **Authentication**: `yourorg-auth-client`
-- **Logging**: `yourorg-logger`
-- **Metrics**: `yourorg-metrics`
-- **Database**: `yourorg-db-extensions`
+**Rationale**: Corporate registries provide security scanning and license compliance.
 
-## Deployment
+---
 
-- Corporate Kubernetes/Docker
-- CI/CD via Jenkins/GitLab CI
-- Internal container registry
+## Mandatory Corporate Libraries
 
-**Note**: Full content migration in progress. See `archive/python-guidelines.md` for complete corporate requirements.
+**MUST** use: Corporate auth library, API client wrapper, logging framework, metrics library.
+
+**Rationale**: Consistent security, logging, and monitoring across all services.
+
+---
+
+## Deployment & CI/CD Principles
+
+**MUST** use corporate CI/CD pipeline with automated security scanning and minimum test coverage thresholds.
+
+**Rationale**: Automated pipelines ensure quality and security.
+
+---
+
+**Last Review**: 2025-11-16
+**Owner**: Python Architecture Team
+**Contact**: <python-arch@yourorg.com>

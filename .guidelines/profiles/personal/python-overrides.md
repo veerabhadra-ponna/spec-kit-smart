@@ -2,38 +2,50 @@
 
 **Profile**: Personal/Public Open Source
 **Stack**: Python
-**Version**: 3.0
+**Version**: 3.0 (Principle-Based)
 **Last Updated**: 2025-11-16
 
 > **Note**: This file contains only personal/public project-specific overrides. Base guidelines are inherited from `base/python-base.md`.
+> **Philosophy**: Prioritize developer experience, community packages, and cost-effective solutions.
 
 ---
 
-## Scaffolding
+## Scaffolding Principles
 
-**RECOMMENDED**:
-- FastAPI: `pip install fastapi uvicorn`
-- Django: `django-admin startproject myproject`
-- Flask: `pip install Flask`
+**RECOMMENDED**: Use framework CLIs (FastAPI, Django, Flask) or Poetry for rapid setup.
 
-## Package Registry
+**Rationale**: Modern tools provide optimal developer experience.
 
-**RECOMMENDED**: PyPI (default)
+---
+
+## Package Registry Principles
+
+**RECOMMENDED**: Use PyPI for packages. Use Poetry or pip-tools for dependency management.
+
+**Rationale**: Public PyPI provides access to vast ecosystem.
+
+---
 
 ## Recommended Libraries
 
-- **FastAPI**: Modern, fast API framework
-- **Pydantic**: Data validation
-- **SQLAlchemy**: SQL toolkit and ORM
-- **pytest**: Testing framework
-- **black**: Code formatter
-- **ruff**: Fast Python linter
+**Popular choices**:
 
-## Free Deployment Options
+- **Framework**: FastAPI (modern APIs), Django (full-stack), Flask (lightweight)
+- **ORM**: SQLAlchemy, Django ORM, Tortoise ORM
+- **Testing**: pytest, unittest
+- **Validation**: Pydantic, marshmallow
 
-- **Railway**: <https://railway.app>
-- **Render**: <https://render.com>
-- **PythonAnywhere**: <https://www.pythonanywhere.com>
-- **Vercel**: For FastAPI (serverless)
+**Rationale**: Choose based on project requirements and learning goals.
 
-**Note**: Full content migration in progress. See community best practices for complete recommendations.
+---
+
+## Deployment Platforms
+
+**Popular options**: Railway, Render, Heroku, PythonAnywhere, AWS Lambda, Google Cloud Run
+
+**Rationale**: Modern platforms offer free tiers for personal projects.
+
+---
+
+**Last Updated**: 2025-11-16
+**Maintained by**: Open Source Community

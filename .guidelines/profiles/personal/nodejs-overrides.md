@@ -2,530 +2,390 @@
 
 **Profile**: Personal/Public Open Source
 **Stack**: Node.js
-**Version**: 3.0
+**Version**: 3.0 (Principle-Based)
 **Last Updated**: 2025-11-16
 
 > **Note**: This file contains only personal/public project-specific overrides. Base guidelines are inherited from `base/nodejs-base.md`.
+> **Philosophy**: These overrides define WHAT personal Node.js projects benefit from and WHY, not HOW to implement them. Prioritize developer experience, community packages, and cost-effective solutions.
 
 ---
 
-## Scaffolding
+## Scaffolding Principles
+
+**RECOMMENDED** scaffolding approaches:
+
+- **Express Generator**: Traditional Express setup for REST APIs
+- **Fastify CLI**: High-performance framework with excellent TypeScript support
+- **NestJS CLI**: Enterprise framework for large applications
+- **Minimal setup**: Simple server file for learning and small projects
+
+**Options by project type**:
+
+- REST API → Express or Fastify
+- GraphQL API → Apollo Server or Mercurius
+- Full-stack framework → NestJS or AdonisJS
+- Microservices → Fastify or custom minimal setup
+- Real-time → Socket.io or WebSocket
+
+**Rationale**: Modern Node.js frameworks provide excellent developer experience, fast iteration, and production-ready features.
+
+---
+
+## Package Registry Principles
 
 **RECOMMENDED**:
 
-- **Express**: `npx express-generator --view=ejs --git`
-- **Fastify**: `npm init fastify`
-- **NestJS**: `npm i -g @nestjs/cli && nest new project-name`
-- **Minimal**: Manual setup with express/fastify
+- Use official npm registry (npmjs.org) as primary source
+- Consider pnpm for faster installs and disk space efficiency
+- Consider bun for ultra-fast package management and runtime
+- Run security audits regularly to check for vulnerabilities
 
-**Starter Templates**:
+**Security practices**:
 
-- Express + TypeScript: <https://github.com/microsoft/TypeScript-Node-Starter>
-- Fastify + TypeScript: <https://github.com/fastify/fastify-typescript-starter>
-- NestJS: <https://docs.nestjs.com>
+- Run `npm audit` regularly
+- Use automated dependency updates (Dependabot, Renovate)
+- Review package.json for unused dependencies
+- Check package popularity and maintenance status before installing
+- Verify package authenticity (check GitHub stars, npm downloads, maintainers)
 
-**Quick Start**:
-
-```bash
-# Express + TypeScript
-npm create vite@latest my-api -- --template vanilla-ts
-npm install express @types/express
-
-# Fastify
-npm init fastify
-
-# NestJS
-npm i -g @nestjs/cli
-nest new my-api
-```
+**Rationale**: Public npm registry provides access to vast ecosystem. Modern package managers improve performance and disk usage.
 
 ---
 
-## Package Registry
+## Recommended Library Categories
 
-**RECOMMENDED**:
+### Framework & Web Server
 
-- Use official npm registry (<https://registry.npmjs.org>)
-- Run `npm audit` regularly for security
-- Consider `pnpm` for faster installs
-- Consider `bun` for ultra-fast package management
+**Principle**: Choose based on performance needs, learning curve, and project complexity
 
-**Security**:
+**Popular options**:
 
-```bash
-# Check for vulnerabilities
-npm audit
+1. **Express**: Most popular, largest ecosystem, traditional middleware approach
+2. **Fastify**: High performance, schema validation, modern async/await patterns
+3. **NestJS**: TypeScript-first, dependency injection, Angular-inspired architecture
+4. **Koa**: Minimalist, async/await-first, created by Express team
+5. **Hapi**: Configuration-driven, enterprise features, plugin system
 
-# Auto-fix
-npm audit fix
+**Selection criteria**:
 
-# Use Dependabot for automated updates (GitHub)
-```
+- Performance requirements
+- Team familiarity
+- Ecosystem and plugin availability
+- TypeScript support
+- Project complexity and size
 
----
-
-## Recommended Libraries
-
-### Framework Selection
-
-**Express** (Most Popular):
-
-```bash
-npm install express
-npm install -D @types/express
-```
-
-**Fastify** (High Performance):
-
-```bash
-npm install fastify
-npm install -D @types/node
-```
-
-**NestJS** (Enterprise-Ready):
-
-```bash
-npm i -g @nestjs/cli
-nest new project-name
-```
-
----
-
-### Authentication
-
-**RECOMMENDED OPTIONS**:
-
-1. **Passport.js** (Most flexible)
-   - `npm install passport passport-jwt passport-local`
-   - Multiple strategies (JWT, OAuth, local)
-   - Website: <https://www.passportjs.org>
-
-2. **express-jwt** (Simple JWT)
-   - `npm install express-jwt jsonwebtoken`
-   - Lightweight JWT middleware
-
-3. **NextAuth.js** (If using Next.js)
-   - `npm install next-auth`
-   - OAuth providers, email, credentials
-   - Website: <https://authjs.dev>
-
-**Example (Passport.js + JWT)**:
-
-```typescript
-import passport from 'passport';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-
-passport.use(new JwtStrategy({
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.JWT_SECRET
-}, (payload, done) => {
-  // Verify user
-  const user = await findUser(payload.userId);
-  return done(null, user);
-}));
-
-app.use(passport.initialize());
-app.use('/api', passport.authenticate('jwt', { session: false }));
-```
+**Rationale**: Different frameworks excel at different use cases. Choose based on project requirements and team expertise.
 
 ---
 
 ### Database & ORM
 
-**RECOMMENDED OPTIONS**:
+**Principle**: Choose based on data model, type safety needs, and hosting preferences
 
-1. **Prisma** (Recommended for SQL)
-   - `npm install prisma @prisma/client`
-   - Type-safe, excellent DX
-   - Website: <https://www.prisma.io>
+**Popular options**:
 
-2. **Drizzle ORM** (Lightweight)
-   - `npm install drizzle-orm`
-   - SQL-like syntax
-   - Website: <https://orm.drizzle.team>
+1. **Prisma**: Type-safe ORM, excellent TypeScript support, supports SQL and MongoDB
+2. **Drizzle ORM**: TypeScript-first, SQL-like syntax, lightweight and performant
+3. **TypeORM**: Mature, supports multiple databases, Active Record or Data Mapper patterns
+4. **Mongoose**: MongoDB-specific, schema-based, rich plugin ecosystem
+5. **Sequelize**: Traditional ORM for SQL databases
 
-3. **Mongoose** (For MongoDB)
-   - `npm install mongoose`
-   - Schema-based ODM
-   - Website: <https://mongoosejs.com>
+**Database services**:
 
-4. **Sequelize** (Mature ORM)
-   - `npm install sequelize`
-   - Supports multiple databases
+- **Supabase**: PostgreSQL + auto-generated APIs + realtime subscriptions
+- **PlanetScale**: Serverless MySQL, generous free tier
+- **Neon**: Serverless PostgreSQL, auto-scaling
+- **MongoDB Atlas**: Managed MongoDB, free tier available
+- **SQLite**: Embedded database for development and simple apps
 
-**Quick Setup (Prisma)**:
+**Selection criteria**:
 
-```bash
-npm install prisma @prisma/client
-npx prisma init
-```
+- Data model (relational vs document)
+- Free tier limits
+- TypeScript support
+- Developer experience
+- Migration tooling
 
-```prisma
-// prisma/schema.prisma
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model User {
-  id    String @id @default(cuid())
-  email String @unique
-  name  String?
-}
-```
-
-```bash
-npx prisma migrate dev
-npx prisma generate
-```
+**Rationale**: Modern ORMs provide type safety and excellent developer experience. Database services offer free tiers suitable for personal projects.
 
 ---
 
-### Free Database Options
+### Authentication & Authorization
 
-**PostgreSQL**:
+**Principle**: Choose based on ease of use, features needed, and budget
 
-- **Supabase**: 500MB database, free tier - <https://supabase.com>
-- **Neon**: 10GB storage, free tier - <https://neon.tech>
-- **Railway**: Free tier available - <https://railway.app>
-- **ElephantSQL**: 20MB free tier - <https://www.elephantsql.com>
+**Popular options**:
 
-**MongoDB**:
+1. **Passport.js**: Flexible authentication middleware, 500+ strategies
+2. **JWT (jsonwebtoken)**: Simple JWT token generation and verification
+3. **Auth0**: Managed authentication service, free tier available
+4. **Clerk**: Drop-in authentication with beautiful UI
+5. **Supabase Auth**: Open-source, integrates with Supabase database
 
-- **MongoDB Atlas**: 512MB free tier - <https://www.mongodb.com/cloud/atlas>
+**Selection criteria**:
 
-**MySQL**:
+- Self-hosted vs managed service
+- Authentication strategies needed (local, OAuth, SAML)
+- Free tier limits
+- UI requirements (pre-built vs custom)
 
-- **PlanetScale**: 5GB storage free - <https://planetscale.com>
-
----
-
-### HTTP Client
-
-**RECOMMENDED**:
-
-- **axios**: `npm install axios` - Battle-tested, popular
-- **undici**: Built-in Node.js 18+ - Fast, standards-compliant
-- **got**: `npm install got` - Promise-based
-
-**Example (axios)**:
-
-```typescript
-import axios from 'axios';
-
-const client = axios.create({
-  baseURL: 'https://api.example.com',
-  timeout: 5000
-});
-
-const data = await client.get('/users');
-```
+**Rationale**: Authentication is security-critical. Using established libraries and services reduces security risk.
 
 ---
 
-### Validation
+### Logging & Error Tracking
 
-**RECOMMENDED**:
+**Principle**: Choose based on features needed and budget
 
-- **Zod**: `npm install zod` - TypeScript-first (recommended)
-- **Joi**: `npm install joi` - Popular, mature
-- **class-validator**: `npm install class-validator` - For NestJS
+**Popular options**:
 
-**Example (Zod)**:
+1. **Pino**: Fast structured logging, low overhead
+2. **Winston**: Feature-rich logging library, multiple transports
+3. **Sentry**: Error tracking and performance monitoring, free tier available
+4. **BetterStack (Logtail)**: Modern logging platform
+5. **Console logging**: Simple for development
 
-```typescript
-import { z } from 'zod';
+**For simple projects**:
 
-const userSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  age: z.number().int().positive()
-});
+- Use console logging during development
+- Add structured logging (Pino, Winston) when needed
+- Add error tracking (Sentry) when project becomes production-critical
 
-app.post('/users', async (req, res) => {
-  const validated = userSchema.parse(req.body);
-  // Use validated data
-});
-```
+**Rationale**: Start simple, add observability as project grows. Structured logging enables better debugging and monitoring.
 
 ---
 
-### Logging
+### Validation & Schema
 
-**RECOMMENDED**:
+**Principle**: Validate all inputs for security and data integrity
 
-- **Pino**: `npm install pino` - Fast, structured (recommended)
-- **Winston**: `npm install winston` - Feature-rich
-- **Morgan**: `npm install morgan` - HTTP request logger (Express)
+**Popular options**:
 
-**Example (Pino)**:
+1. **Zod**: TypeScript-first schema validation
+2. **Joi**: Powerful object schema validation
+3. **Yup**: Simple and expressive schema validation
+4. **class-validator**: Decorator-based validation for TypeScript classes
+5. **Ajv**: Fast JSON schema validation
 
-```typescript
-import pino from 'pino';
-
-const logger = pino({
-  transport: {
-    target: 'pino-pretty'
-  }
-});
-
-logger.info('Server started');
-logger.error({ err }, 'Database connection failed');
-```
-
----
-
-### Error Tracking
-
-**RECOMMENDED OPTIONS**:
-
-1. **Sentry** (Most popular)
-   - `npm install @sentry/node`
-   - Free tier: 5,000 events/month
-   - Website: <https://sentry.io>
-
-2. **Bugsnag**
-   - `npm install @bugsnag/js`
-   - Free tier: 7,500 events/month
-   - Website: <https://www.bugsnag.com>
-
-**Quick Setup (Sentry)**:
-
-```bash
-npm install @sentry/node
-```
-
-```typescript
-import * as Sentry from '@sentry/node';
-
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.NODE_ENV
-});
-
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.errorHandler());
-```
+**Rationale**: Input validation prevents security vulnerabilities and data corruption. Type-safe validation improves developer experience.
 
 ---
 
 ### Testing
 
-**RECOMMENDED**:
+**Principle**: Start with unit tests, add integration and E2E tests as project matures
 
-- **Vitest**: `npm install -D vitest` - Fast, modern (recommended)
-- **Jest**: `npm install -D jest ts-jest` - Popular, mature
-- **Supertest**: `npm install -D supertest` - HTTP testing
+**Popular options**:
 
-**Example (Vitest + Supertest)**:
+1. **Vitest**: Fast unit testing, modern API, better DX than Jest
+2. **Jest**: Mature testing framework, large ecosystem
+3. **Supertest**: HTTP assertion library for API testing
+4. **Playwright**: E2E testing across browsers
+5. **Mocha + Chai**: Traditional testing combination
 
-```bash
-npm install -D vitest supertest @types/supertest
-```
+**Testing strategy**:
 
-```typescript
-import { describe, it, expect } from 'vitest';
-import supertest from 'supertest';
-import { app } from './app';
+- Unit tests for business logic
+- Integration tests for API endpoints
+- E2E tests for critical user flows
 
-describe('GET /users', () => {
-  it('should return users', async () => {
-    const response = await supertest(app)
-      .get('/users')
-      .expect(200);
+**Rationale**: Testing provides confidence for refactoring and prevents regressions. Modern testing tools improve developer experience.
 
-    expect(response.body).toBeInstanceOf(Array);
-  });
-});
-```
+---
+
+### Utilities
+
+**Common utilities**:
+
+- **date-fns** or **dayjs**: Date manipulation (avoid moment.js - deprecated)
+- **lodash-es**: Utility functions (tree-shakeable version)
+- **dotenv**: Environment variable loading
+- **cors**: CORS middleware
+- **helmet**: Security headers middleware
+- **express-rate-limit** or **fastify-rate-limit**: Rate limiting
+
+**Rationale**: Well-maintained utilities reduce boilerplate and improve code quality.
 
 ---
 
 ## Deployment Platforms
 
+**Principle**: Choose based on runtime needs, features, and cost
+
+**Popular options**:
+
+1. **Railway**: Full-stack deployment, databases + apps, $5 credit/month free
+2. **Render**: Free tier for web services, background workers, PostgreSQL databases
+3. **Fly.io**: Global edge deployment, generous free tier
+4. **Heroku**: Simple deployment, add-ons ecosystem (paid)
+5. **Vercel** (for serverless): Serverless functions, edge runtime
+6. **DigitalOcean App Platform**: Simple deployment, predictable pricing
+
+**Self-hosted options**:
+
+- **Docker + VPS**: Full control, lowest cost for high traffic
+- **AWS EC2/ECS**: Flexible, pay-per-use
+- **Azure App Service**: Integrated with Azure ecosystem
+
+**Selection criteria**:
+
+- Free tier limits (hours, memory, bandwidth)
+- Geographic distribution
+- Database needs
+- Scaling requirements
+- Pricing model
+
+**Rationale**: Modern platforms offer generous free tiers for personal projects. Zero-config deployment reduces operations overhead.
+
+---
+
+## Development Tools
+
+### Code Quality
+
 **RECOMMENDED**:
 
-1. **Railway** (Easiest, full-stack)
-   - Free tier: $5 credit/month
-   - Supports PostgreSQL, Redis
-   - Website: <https://railway.app>
+- **ESLint**: Catch code quality issues and bugs
+- **Prettier**: Consistent code formatting
+- **TypeScript**: Type safety and better IDE support
+- **Husky + lint-staged**: Git hooks for pre-commit checks
+- **ts-node** or **tsx**: Run TypeScript directly
 
-2. **Render** (Great free tier)
-   - Free static sites
-   - PostgreSQL databases
-   - Website: <https://render.com>
+**Rationale**: Automated code quality tools catch issues early and ensure consistency.
 
-3. **Fly.io** (Edge deployment)
-   - Global deployment
-   - Free tier available
-   - Website: <https://fly.io>
+---
 
-4. **Vercel** (For Next.js/serverless)
-   - Zero-config for Next.js
-   - Serverless functions
-   - Website: <https://vercel.com>
+### Hot Reload / Development
 
-5. **Heroku** (Classic PaaS)
-   - Eco dynos: $5/month
-   - Easy deployment
-   - Website: <https://heroku.com>
+**RECOMMENDED**:
 
-**Quick Deploy (Railway)**:
+- **nodemon**: Auto-restart on file changes
+- **tsx**: Fast TypeScript execution with hot reload
+- **ts-node-dev**: TypeScript development server
 
-```bash
-npm install -g @railway/cli
-railway login
-railway init
-railway up
-```
+**Rationale**: Fast feedback loops improve developer productivity.
 
 ---
 
 ## Environment Management
 
-**RECOMMENDED**:
+**Principle**: Use environment variables for configuration
 
-```bash
-npm install dotenv
-```
+**Best practices**:
 
-```javascript
-// .env (gitignored)
-NODE_ENV=development
-PORT=3000
-DATABASE_URL=postgresql://localhost:5432/mydb
-JWT_SECRET=your-secret-key
+- Use `.env` file for local development (gitignored)
+- Provide `.env.example` as template (committed)
+- Use `dotenv` package to load variables
+- Validate environment variables at startup
+- Never commit secrets to version control
 
-// .env.example (committed)
-NODE_ENV=
-PORT=
-DATABASE_URL=
-JWT_SECRET=
-```
+**Environment tiers**:
 
-```typescript
-import 'dotenv/config';
-import { z } from 'zod';
+- Development: Local development with `.env`
+- Staging: Test environment with production-like data
+- Production: Live environment with real data
 
-const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']),
-  PORT: z.string().transform(Number),
-  DATABASE_URL: z.string(),
-  JWT_SECRET: z.string().min(32)
-});
-
-export const env = envSchema.parse(process.env);
-```
+**Rationale**: Environment variables enable configuration per environment while keeping secrets secure.
 
 ---
 
-## Middleware
-
-**RECOMMENDED**:
-
-- **cors**: `npm install cors` - CORS handling
-- **helmet**: `npm install helmet` - Security headers
-- **express-rate-limit**: `npm install express-rate-limit` - Rate limiting
-- **compression**: `npm install compression` - Response compression
-- **morgan**: `npm install morgan` - HTTP logging
-
-**Quick Setup**:
-
-```typescript
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import compression from 'compression';
-import morgan from 'morgan';
-
-const app = express();
-
-app.use(helmet());
-app.use(cors());
-app.use(compression());
-app.use(morgan('combined'));
-app.use(rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100
-}));
-app.use(express.json());
-```
-
----
-
-## Free Tier Services
-
-### Databases
-
-- **Supabase**: PostgreSQL, 500MB - <https://supabase.com>
-- **PlanetScale**: MySQL, 5GB - <https://planetscale.com>
-- **MongoDB Atlas**: 512MB - <https://www.mongodb.com/atlas>
-- **Neon**: PostgreSQL, 10GB - <https://neon.tech>
+## Free Tier Resources
 
 ### Hosting
 
-- **Railway**: $5 credit/month - <https://railway.app>
-- **Render**: Free static sites - <https://render.com>
-- **Fly.io**: Free tier - <https://fly.io>
-- **Vercel**: Unlimited personal projects - <https://vercel.com>
+- **Railway**: $5 credit/month
+- **Render**: Free web services (750 hours/month), PostgreSQL
+- **Fly.io**: Free tier with 3 VMs
+- **Vercel**: Serverless functions (100GB bandwidth)
 
-### Caching
+### Databases
 
-- **Upstash Redis**: 10,000 commands/day free - <https://upstash.com>
-- **Redis Labs**: 30MB free - <https://redis.com>
+- **Supabase**: 500MB PostgreSQL, 1GB file storage
+- **PlanetScale**: 5GB storage, 1 billion row reads/month
+- **Neon**: 10GB PostgreSQL storage
+- **MongoDB Atlas**: 512MB storage
+- **SQLite**: Free embedded database
+
+### Error Tracking
+
+- **Sentry**: 5,000 events/month
+- **BugSnag**: 7,500 events/month
 
 ### Monitoring
 
-- **Sentry**: 5,000 events/month - <https://sentry.io>
-- **Better Stack**: 1GB logs/month - <https://betterstack.com>
+- **Better Uptime**: 10 monitors
+- **UptimeRobot**: 50 monitors
+
+**Rationale**: Free tiers enable building and deploying production-quality applications at zero cost.
 
 ---
 
-## Licensing
+## Project Philosophy
 
-**RECOMMENDED** for Open Source:
+**Start Simple, Scale as Needed**:
 
-- **MIT**: Most permissive
-- **Apache 2.0**: Patent protection
-- **GPL v3**: Copyleft
+- Don't over-engineer early projects
+- Add complexity only when required
+- Choose simple solutions first
+- Profile before optimizing
 
-**package.json**:
+**Developer Experience First**:
 
-```json
-{
-  "license": "MIT"
-}
-```
+- Fast feedback loops (hot reload, fast builds)
+- Good error messages and debugging
+- Minimal configuration
+- Modern tooling
+
+**Cost-Effective Solutions**:
+
+- Leverage free tiers
+- Choose managed services over self-hosting (when free)
+- Use serverless when possible (pay per use)
+- Monitor usage to avoid surprise costs
+
+**Learn by Building**:
+
+- Build real projects to learn
+- Contribute to open source
+- Share your work with the community
+- Iterate based on feedback
 
 ---
 
-## Community Resources
+## Community & Learning Resources
 
-### Documentation
+### Official Documentation
 
 - Node.js: <https://nodejs.org/docs>
 - Express: <https://expressjs.com>
-- Fastify: <https://fastify.dev>
-- NestJS: <https://docs.nestjs.com>
+- Fastify: <https://www.fastify.io>
+- NestJS: <https://nestjs.com>
 - TypeScript: <https://www.typescriptlang.org>
 
-### Learning
+### Popular Libraries
 
+- Prisma: <https://www.prisma.io>
+- Zod: <https://zod.dev>
+- Passport.js: <https://www.passportjs.org>
+- Pino: <https://getpino.io>
+
+### Learning Resources
+
+- NodeSchool: <https://nodeschool.io>
 - Node.js Best Practices: <https://github.com/goldbergyoni/nodebestpractices>
-- TypeScript Handbook: <https://www.typescriptlang.org/docs>
+- JavaScript.info: <https://javascript.info>
 
 ### Communities
 
-- Node.js Discord: <https://discord.gg/nodejs>
-- Reddit: r/node, r/typescript
+- Node.js Discord
+- Reddit: r/node, r/javascript
+- Dev.to: Node.js community articles
+- Stack Overflow
 
----
-
-**Philosophy**: Personal and open-source projects prioritize developer experience, community packages, and cost-effective solutions. Start simple, scale as needed!
+**Rationale**: Active community provides support, learning resources, and keeps you updated on best practices.
 
 ---
 
 **Last Updated**: 2025-11-16
 **Maintained by**: Open Source Community
-**Contributing**: PRs welcome!
+**Contributing**: Suggestions welcome! Create an issue or PR in the guidelines repo.
