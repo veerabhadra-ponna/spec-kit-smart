@@ -187,6 +187,32 @@ import { Button } from '@mui/material';
 import { Button } from '@acmecorp/ui-components';
 ```
 
+### 5. Guideline Compliance Checking (Optional)
+
+**AFTER** implementation, you can validate guideline compliance:
+
+**Bash/Linux**:
+
+```bash
+./scripts/bash/check-guidelines-compliance.sh
+```
+
+**PowerShell/Windows**:
+
+```powershell
+.\scripts\powershell\check-guidelines-compliance.ps1
+```
+
+**What it checks**:
+
+- Package registry configuration (.npmrc, pip.conf, etc.)
+- Corporate library usage
+- Banned library detection
+- Architecture pattern compliance
+- Security requirements
+
+**Note**: Compliance checking is optional and non-blocking. Violations create `.guidelines-todo.md` for tracking but don't prevent implementation.
+
 ```java
 // ❌ Without guidelines:
 import org.apache.http.client.HttpClient;

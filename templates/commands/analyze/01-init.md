@@ -104,27 +104,54 @@ Check for `.specify/config.json` in the repository root.
 **IF CONFIG MISSING:**
 - Use defaults: `{"enableCheckArtifactory": false, "osEnv": "auto"}`
 
-### Step 3: Detect Corporate Guidelines
+### Step 3: Detect Corporate Guidelines (v3.0 Profile-Based)
 
-Check for guideline files in `/.guidelines/` directory:
+**Check for guideline profile** in `.specify/config.json`:
 
-- `reactjs-guidelines.md` - React/frontend standards
-- `java-guidelines.md` - Java/Spring Boot standards
-- `dotnet-guidelines.md` - .NET/C# standards
-- `nodejs-guidelines.md` - Node.js/Express standards
-- `python-guidelines.md` - Python/Django/Flask standards
+```json
+{
+  "project": {
+    "guidelineProfile": "corporate" // or "personal"
+  }
+}
+```
 
-**For each guideline file found:**
-- Add filename to `guidelines[]` array
-- Note: Files will be loaded in later stages based on detected tech stack
+**Check for guidelines directory** `/.guidelines/`:
+
+**New v3.0 structure** (profile-based):
+
+- `base/reactjs-base.md` - Universal React best practices
+- `base/nodejs-base.md` - Universal Node.js best practices
+- `base/java-base.md` - Universal Java best practices
+- `base/python-base.md` - Universal Python best practices
+- `base/dotnet-base.md` - Universal .NET best practices
+- `profiles/corporate/*-overrides.md` - Corporate-specific requirements
+- `profiles/personal/*-overrides.md` - Personal/OSS-specific recommendations
+
+**Legacy v2.0 structure** (deprecated, in `archive/`):
+
+- `archive/reactjs-guidelines.md`
+- `archive/java-guidelines.md`
+- etc.
+
+**For guidelines detected:**
+
+- Store profile type (`corporate` or `personal`)
+- Add available stacks to `guidelines[]` array
+- Note: Base + profile override will be loaded in later stages based on detected tech stack
 
 **Output example:**
 
 ```text
-✓ Found corporate guidelines:
-  - java-guidelines.md
-  - reactjs-guidelines.md
-  - nodejs-guidelines.md
+✓ Detected guideline profile: corporate
+✓ Found guidelines for stacks:
+  - reactjs (base + corporate profile)
+  - nodejs (base + corporate profile)
+  - java (base + corporate profile)
+
+ℹ Compliance checking available via:
+  - ./scripts/bash/check-guidelines-compliance.sh
+  - .\scripts\powershell\check-guidelines-compliance.ps1
 ```text
 
 ### Step 4: Initialize Analysis Directory
