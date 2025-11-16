@@ -118,7 +118,7 @@ Check for `.specify/config.json` in the repository root.
 
 **Check for guidelines directory** `/.guidelines/`:
 
-**New v3.0 structure** (profile-based):
+**v3.0 structure** (profile-based):
 
 - `base/reactjs-base.md` - Universal React best practices
 - `base/nodejs-base.md` - Universal Node.js best practices
@@ -127,12 +127,8 @@ Check for `.specify/config.json` in the repository root.
 - `base/dotnet-base.md` - Universal .NET best practices
 - `profiles/corporate/*-overrides.md` - Corporate-specific requirements
 - `profiles/personal/*-overrides.md` - Personal/OSS-specific recommendations
-
-**Legacy v2.0 structure** (deprecated, in `archive/`):
-
-- `archive/reactjs-guidelines.md`
-- `archive/java-guidelines.md`
-- etc.
+- `stack-mapping.json` - Tech stack detection and profile routing
+- `README.md` - Guidelines system documentation
 
 **For guidelines detected:**
 

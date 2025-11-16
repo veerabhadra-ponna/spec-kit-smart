@@ -107,13 +107,6 @@ Priority order when making decisions:
 │       ├── python-overrides.md        # PyPI, Render, Railway
 │       └── dotnet-overrides.md        # NuGet.org, Azure free tier
 │
-├── archive/                           # Legacy v2.0 guidelines (deprecated)
-│   ├── reactjs-guidelines.md          # Moved from root
-│   ├── nodejs-guidelines.md
-│   ├── java-guidelines.md
-│   ├── python-guidelines.md
-│   └── dotnet-guidelines.md
-│
 └── examples/                          # CI/CD and configuration examples
     └── ci-cd/
 ```
@@ -462,7 +455,7 @@ When a guideline cannot be followed:
 1. **Mark in code** with tracking comment:
 
 ```typescript
-// TODO: GUIDELINE-VIOLATION - Ticket #TECH-1234
+// GUIDELINE-VIOLATION: Ticket #TECH-1234
 // Using axios directly until @YOUR_ORG/api-client supports Node 22
 import axios from 'axios';
 ```
