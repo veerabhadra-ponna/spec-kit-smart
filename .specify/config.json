@@ -1,7 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "description": "Spec Kit configuration",
-  "version": "1.0",
+  "version": "2.0",
+  "project": {
+    "type": "personal",
+    "guidelineProfile": "personal",
+    "description": "Project type determines which corporate guidelines profile to use: 'corporate' for internal/proprietary projects, 'personal' for open-source/public projects"
+  },
   "workflow": {
     "enableCheckArtifactory": false,
     "osEnv": "windows"

@@ -30,6 +30,7 @@ STRICT_MODE=false
 OUTPUT_FORMAT="text"  # text, json, markdown
 PROJECT_ROOT="$(pwd)"
 GUIDELINES_DIR="${PROJECT_ROOT}/.guidelines"
+GUIDELINE_PROFILE=""  # Will be detected: corporate or personal
 
 # Counters for violations
 CRITICAL_COUNT=0
@@ -84,6 +85,59 @@ log_low() {
 }
 
 ##############################################################################
+# Profile Detection
+##############################################################################
+
+detect_guideline_profile() {
+    # Priority 1: Explicit configuration in .specify/config.json
+    if [ -f ".specify/config.json" ]; then
+        local profile=$(grep -o '"guidelineProfile"[[:space:]]*:[[:space:]]*"[^"]*"' .specify/config.json | sed 's/.*"\([^"]*\)".*/\1/')
+        if [ -n "$profile" ]; then
+            echo "$profile"
+            return 0
+        fi
+    fi
+
+    # Priority 2: .guidelines-profile file marker
+    if [ -f ".guidelines-profile" ]; then
+        local profile=$(cat .guidelines-profile | tr -d '[:space:]')
+        if [ -n "$profile" ]; then
+            echo "$profile"
+            return 0
+        fi
+    fi
+
+    # Priority 3: Detect from package.json
+    if [ -f "package.json" ]; then
+        # Check for corporate markers
+        if grep -q '"private"[[:space:]]*:[[:space:]]*true' package.json 2>/dev/null; then
+            echo "corporate"
+            return 0
+        fi
+        # Check for personal markers
+        if grep -q '"license"[[:space:]]*:[[:space:]]*"MIT"' package.json 2>/dev/null || \
+           grep -q '"license"[[:space:]]*:[[:space:]]*"Apache' package.json 2>/dev/null; then
+            echo "personal"
+            return 0
+        fi
+    fi
+
+    # Priority 4: Detect from filesystem markers
+    if [ -f ".corporate" ] || [ -f "CORPORATE_LICENSE" ] || [ -f "organization.json" ]; then
+        echo "corporate"
+        return 0
+    fi
+    if [ -f ".opensource" ] || [ -f "MIT_LICENSE" ] || [ -f "CONTRIBUTING.md" ]; then
+        echo "personal"
+        return 0
+    fi
+
+    # Fallback to personal (more permissive)
+    echo "personal"
+    return 0
+}
+
+##############################################################################
 # Tech Stack Detection
 ##############################################################################
 
@@ -125,19 +179,38 @@ detect_tech_stacks() {
 }
 
 ##############################################################################
-# Guideline Loading
+# Guideline Loading (Profile-Based Architecture v3.0)
 ##############################################################################
 
 load_guideline() {
     local stack="$1"
-    local guideline_file="${GUIDELINES_DIR}/${stack}-guidelines.md"
+    local profile="${GUIDELINE_PROFILE:-personal}"
 
-    if [ ! -f "$guideline_file" ]; then
-        return 1
+    # Profile-based architecture v3.0
+    local base_guideline="${GUIDELINES_DIR}/base/${stack}-base.md"
+    local profile_override="${GUIDELINES_DIR}/profiles/${profile}/${stack}-overrides.md"
+    local legacy_guideline="${GUIDELINES_DIR}/${stack}-guidelines.md"
+
+    # Check for new profile-based architecture
+    if [ -f "$base_guideline" ]; then
+        # Return both base and profile override (space-separated)
+        if [ -f "$profile_override" ]; then
+            echo "${base_guideline} ${profile_override}"
+            return 0
+        else
+            # Only base available
+            echo "${base_guideline}"
+            return 0
+        fi
     fi
 
-    echo "$guideline_file"
-    return 0
+    # Fallback to legacy single-file guideline
+    if [ -f "$legacy_guideline" ]; then
+        echo "$legacy_guideline"
+        return 0
+    fi
+
+    return 1
 }
 
 ##############################################################################
@@ -468,6 +541,10 @@ main() {
         echo "create a .guidelines directory with tech stack guidelines." >&2
         exit 3
     fi
+
+    # Detect guideline profile (corporate or personal)
+    GUIDELINE_PROFILE=$(detect_guideline_profile)
+    echo -e "${BLUE}Detected guideline profile: ${BOLD}${GUIDELINE_PROFILE}${NC}"
 
     # Detect tech stacks
     local stacks=($(detect_tech_stacks))
