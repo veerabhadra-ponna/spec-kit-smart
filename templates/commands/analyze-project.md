@@ -7,6 +7,23 @@ status: EXPERIMENTAL
 version: 2.0.0-chain
 ---
 
+## ⚠️ MANDATORY: Read Agent Instructions First
+
+**BEFORE PROCEEDING:**
+
+1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
+2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
+3. Follow all AGENTS.md guidelines for the duration of this command execution
+4. These instructions override any conflicting default behaviors
+5. **DO NOT** forget or ignore these instructions as you work through tasks
+
+**Verification:** After reading AGENTS.md (if it exists), acknowledge with:
+   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+
+**If AGENTS.md does not exist:** Proceed with default behavior.
+
+---
+
 # Analyze Project - Chain Controller
 
 ## Overview

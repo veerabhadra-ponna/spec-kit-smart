@@ -13,6 +13,23 @@ Gather project path and analysis scope from user, run estimation, and prepare fo
 
 ---
 
+## ⚠️ MANDATORY: Read Agent Instructions First
+
+**BEFORE PROCEEDING:**
+
+1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
+2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
+3. Follow all AGENTS.md guidelines for the duration of this command execution
+4. These instructions override any conflicting default behaviors
+5. **DO NOT** forget or ignore these instructions as you work through tasks
+
+**Verification:** After reading AGENTS.md (if it exists), acknowledge with:
+   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+
+**If AGENTS.md does not exist:** Proceed with default behavior.
+
+---
+
 ## Previous State
 
 Load state from: `.analysis/.state/01-init.json`
@@ -64,9 +81,24 @@ PROJECT_PATH: /home/user/my-legacy-app
 
 ---
 
+## ⚠️ CRITICAL: Questionnaire Presentation Rules
+
+**YOU MUST FOLLOW THESE RULES WHEN ASKING QUESTIONS:**
+
+1. **Ask questions EXACTLY as written** - Do NOT rephrase, simplify, or modify wording
+2. **Present ALL options** - Do NOT remove or combine choices
+3. **Wait for user response** - Do NOT assume or guess answers
+4. **One question at a time** - Complete each question before moving to next
+5. **Validate input** - If user provides invalid choice, re-prompt with error message
+6. **No shortcuts** - Do NOT skip questions even if answer seems obvious
+
+**IF you modify questions or assume answers, this is a CRITICAL ERROR and workflow must restart.**
+
+---
+
 ## Step 2: Get Analysis Scope
 
-Display the following prompt:
+**PRESENT THE FOLLOWING PROMPT TO USER EXACTLY AS WRITTEN:**
 
 ```text
 ANALYSIS_SCOPE:
@@ -85,7 +117,9 @@ What type of analysis do you need?
       → Suitable for: auth migration, database swap, caching layer, etc.
 
 Your choice: ___
-```text
+```
+
+**WAIT FOR USER RESPONSE - DO NOT PROCEED UNTIL USER PROVIDES ANSWER.**
 
 **Validation**:
 

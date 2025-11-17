@@ -6,6 +6,24 @@ outputs: full_app_state
 version: 1.0.0
 ---
 
+## ⚠️ MANDATORY: Read Agent Instructions First
+
+**BEFORE PROCEEDING:**
+
+1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
+2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
+3. Follow all AGENTS.md guidelines for the duration of this command execution
+4. These instructions override any conflicting default behaviors
+5. **DO NOT** forget or ignore these instructions as you work through tasks
+
+**Verification:** After reading AGENTS.md (if it exists), acknowledge with:
+   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+
+**If AGENTS.md does not exist:** Proceed with default behavior.
+
+---
+
+
 # Stage 5A: Full Application Modernization Analysis
 
 ## Purpose
@@ -26,7 +44,25 @@ Required fields:
 
 ---
 
+## ⚠️ CRITICAL: Questionnaire Presentation Rules
+
+**YOU MUST FOLLOW THESE RULES WHEN ASKING ALL 10 QUESTIONS:**
+
+1. **Ask questions EXACTLY as written** - Do NOT rephrase, simplify, or modify wording
+2. **Present ALL options** - Do NOT remove or combine choices
+3. **Wait for user response** - Do NOT assume or guess answers
+4. **One question at a time** - Complete each question before moving to next
+5. **Validate input** - If user provides invalid choice, re-prompt with error message
+6. **No shortcuts** - Do NOT skip questions even if answer seems obvious
+7. **Ask ALL 10 questions** - Do NOT skip any questions regardless of previous answers
+
+**IF you modify questions, skip questions, or assume answers, this is a CRITICAL ERROR and workflow must restart.**
+
+---
+
 ## Step 1: 10 Progressive Modernization Questions
+
+**YOU MUST ASK ALL 10 QUESTIONS BELOW - DO NOT ASSUME ANY ANSWERS.**
 
 Ask user about target modernization stack based on detected legacy stack.
 
@@ -36,6 +72,53 @@ Based on file analysis, set these flags:
 - `HAS_MESSAGE_BUS` - true if Kafka, RabbitMQ, Azure SB, AWS SQS, Redis Pub/Sub detected
 - `HAS_OBSERVABILITY` - true if logging frameworks, monitoring configs, APM tools detected
 - `IS_TRADITIONAL_DEPLOYMENT` - derived from Q5 answer
+
+---
+
+## ⚠️ MANDATORY: No Assumptions Policy
+
+**YOU MUST ASK ALL 10 QUESTIONS - DO NOT ASSUME ANY ANSWERS.**
+
+**Even if:**
+
+- The answer seems obvious from existing code
+- Industry best practices suggest a choice
+- User mentioned preferences earlier in conversation
+- You think you know what the user wants
+
+**YOU MUST STILL ASK THE QUESTION EXPLICITLY.**
+
+**Failure to ask all 10 questions is a CRITICAL ERROR.**
+
+**IF in doubt about ANY aspect of the questions or user's answer:**
+
+1. **STOP** immediately
+2. **ASK** the user for clarification
+3. **WAIT** for user response
+4. **DO NOT** proceed with assumptions
+
+**Example clarification format:**
+
+```text
+⚠️ CLARIFICATION NEEDED
+
+I need clarification on your answer to Question [N]:
+
+You said: "[user's answer]"
+
+I'm unsure about: "[specific ambiguity]"
+
+Options:
+- [A] [Interpretation 1]
+- [B] [Interpretation 2]
+- [C] Other (please specify)
+
+Your choice: ___
+```
+
+**REMEMBER**: It's better to ask 5 clarification questions than to make 1 wrong assumption.
+
+---
 
 ### Questions
 
@@ -267,6 +350,104 @@ Based on detected legacy stack, please answer the following:
 ```text
 
 **Store all responses** in state as `modernization_preferences`.
+
+---
+
+## Step 1.1: Modernization Scope Validation
+
+**CRITICAL**: Before proceeding to scoring, validate scope boundaries.
+
+**Purpose**: Ensure we only modernize components the user explicitly wants to change.
+
+### Validation Logic
+
+For each of the 10 modernization questions, apply this logic:
+
+```text
+IF user provided EXPLICIT answer (selected option with specific technology):
+  → Component is IN SCOPE for modernization
+  → Store as explicit target in state
+  → Include in complexity scoring
+  → Include in migration planning
+
+IF user pressed Enter / skipped / provided NO answer:
+  → Component is OUT OF SCOPE
+  → Store as "Use existing as-is" in state
+  → EXCLUDE from complexity scoring (no migration cost)
+  → Document as "Out of Scope - Keep existing [component] as-is" in recommendations
+
+IF answer is ambiguous or unclear:
+  → STOP and ask clarifying question
+  → Wait for explicit confirmation
+  → Do NOT assume or guess
+```
+
+### Component-by-Component Validation
+
+**Run through each question systematically and record:**
+
+#### Q1: Target Language/Framework
+```text
+User answer: [record exact answer]
+Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - no target provided]
+Action: [Full migration to X] OR [Keep existing language/framework as-is]
+```
+
+#### Q2: Target Database
+```text
+User answer: [record exact answer]
+Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - no target provided]
+Action: [Database migration to X] OR [Keep existing database as-is]
+```
+
+#### Q3: Message Bus/Queue
+```text
+User answer: [record exact answer]
+Was marked OPTIONAL: [Yes/No]
+Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - user skipped/no answer]
+Action: [Add/migrate messaging to X] OR [No messaging changes, keep existing if any]
+```
+
+#### Q4-Q10: [Similar validation for remaining questions]
+
+### Output Scope Summary
+
+After validation, display summary:
+
+```text
+=== MODERNIZATION SCOPE VALIDATION ===
+
+Components IN SCOPE (explicit targets provided by user):
+  ✓ Language/Framework: [target]
+  ✓ Database: [target]
+  ✓ Deployment: [target]
+
+Components OUT OF SCOPE (no targets, use existing as-is):
+  • Message Bus: Keep existing [current implementation] as-is (user skipped)
+  • Observability: Keep existing logging/monitoring as-is (user skipped)
+  • IaC: Not applicable (traditional deployment)
+
+Validation Status: ✓ PASSED
+Ready to proceed with complexity scoring for IN SCOPE components only.
+```
+
+### Store in State
+
+```json
+{
+  "modernization_scope": {
+    "in_scope": [
+      {"component": "language", "current": "...", "target": "...", "explicit": true},
+      {"component": "database", "current": "...", "target": "...", "explicit": true}
+    ],
+    "out_of_scope": [
+      {"component": "message_bus", "current": "None", "reason": "User skipped question (optional)", "action": "No changes"},
+      {"component": "observability", "current": "Basic logging", "reason": "User provided no answer", "action": "Keep as-is"}
+    ],
+    "validation_passed": true
+  }
+}
+```
 
 ---
 

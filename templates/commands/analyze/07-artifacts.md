@@ -5,6 +5,24 @@ outputs: all_artifacts_complete
 version: 1.0.0
 ---
 
+## ⚠️ MANDATORY: Read Agent Instructions First
+
+**BEFORE PROCEEDING:**
+
+1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
+2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
+3. Follow all AGENTS.md guidelines for the duration of this command execution
+4. These instructions override any conflicting default behaviors
+5. **DO NOT** forget or ignore these instructions as you work through tasks
+
+**Verification:** After reading AGENTS.md (if it exists), acknowledge with:
+   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+
+**If AGENTS.md does not exist:** Proceed with default behavior.
+
+---
+
+
 # Stage 7: Remaining Artifacts Generation
 
 ## Purpose
@@ -35,7 +53,7 @@ Required:
 
 ### Full Application Artifacts (Scope = A)
 
-1. **functional-spec.md** (2-3 chunks)
+1. **functional-spec-legacy.md** (2-3 chunks)
 2. **technical-spec.md** (2-3 chunks)
 3. **stage-prompts/** (4 files)
    - constitution-prompt.md
@@ -190,9 +208,41 @@ Required:
 
 ---
 
-### Artifact 4A (Scope = A): functional-spec.md
+## ⚠️ CRITICAL: Generate BOTH Functional Specs (Scope = A)
 
-**Purpose**: Functional specification for modernized application (WHAT system does)
+**For Full Application Modernization, you MUST generate TWO separate functional specs:**
+
+1. **functional-spec-legacy.md** - What the LEGACY system does TODAY
+2. **functional-spec-target.md** - What the MODERNIZED system WILL do
+
+**This is MANDATORY - do NOT generate just one spec. Generate BOTH.**
+
+**Why Two Specs?**
+- Legacy spec: Documents current functionality (source of truth for what exists)
+- Target spec: Documents desired functionality (what to build)
+- Prevents confusion about which app is being documented
+- Gives user complete documentation set
+
+---
+
+### Artifact 4A-Legacy (Scope = A): functional-spec-legacy.md
+
+**Purpose**: Functional specification for LEGACY/EXISTING application (WHAT system CURRENTLY does)
+
+**CRITICAL - SOURCE OF TRUTH:**
+
+- **Source**: ONLY use analysis-report.md Phase 2 (Feature Catalog) and Phase 3 (Positive Findings)
+- **Scope**: Document EXISTING functionality as currently implemented in legacy code
+- **Target Audience**: Developers/analysts who need to understand what the legacy app does today
+- **Forbidden**: Do NOT include modernization preferences, target tech stack, or future state
+
+**Content Rules:**
+
+1. **Features**: Extract from analysis-report.md Phase 2 exactly as analyzed from legacy code
+2. **File References**: Every feature MUST reference legacy code with file:line notation
+3. **Technology**: Describe as-implemented (e.g., "Uses custom JWT authentication" not "Should use OAuth2")
+4. **Tense**: Present tense (e.g., "The system validates..." not "The system should validate...")
+5. **Completeness**: Document what exists, not what's missing
 
 **Source**: Extract features from analysis-report.md
 
@@ -209,7 +259,7 @@ Required:
 **After Chunk 1 Generation**:
 
 1. **Write to file** using Write tool:
-   - File path: `.analysis/{project}-{timestamp}/functional-spec.md`
+   - File path: `.analysis/{project}-{timestamp}/functional-spec-legacy.md`
    - Content: Complete sections 1-3
 
 2. **Create checkpoint marker**:
@@ -219,7 +269,7 @@ Required:
 
      ```json
      {
-       "artifact": "functional-spec.md",
+       "artifact": "functional-spec-legacy.md",
        "chunk": 1,
        "total_chunks": 5,
        "sections": "Introduction + Summary + Scope",
@@ -231,7 +281,7 @@ Required:
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ functional-spec.md Chunk 1/5 complete: Introduction + Summary + Scope
+   ✓ functional-spec-legacy.md Chunk 1/5 complete: Introduction + Summary + Scope
      - Lines: [COUNT]
    ```
 
@@ -245,7 +295,7 @@ Required:
 **After Chunk 2 Generation**:
 
 1. **Append to file** using Edit tool (str_replace):
-   - Read existing functional-spec.md
+   - Read existing functional-spec-legacy.md
    - Append Section 4.1 content to the end
    - Use str_replace to append (not overwrite)
 
@@ -255,7 +305,7 @@ Required:
 
      ```json
      {
-       "artifact": "functional-spec.md",
+       "artifact": "functional-spec-legacy.md",
        "chunk": 2,
        "total_chunks": 5,
        "sections": "User Stories (CRITICAL)",
@@ -267,7 +317,7 @@ Required:
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ functional-spec.md Chunk 2/5 complete: User Stories (CRITICAL)
+   ✓ functional-spec-legacy.md Chunk 2/5 complete: User Stories (CRITICAL)
      - Features: [COUNT]
      - Lines: [COUNT]
    ```
@@ -281,7 +331,7 @@ Required:
 **After Chunk 3 Generation**:
 
 1. **Append to file** using Edit tool (str_replace):
-   - Append Sections 4.2 & 5 content to functional-spec.md
+   - Append Sections 4.2 & 5 content to functional-spec-legacy.md
 
 2. **Create checkpoint marker**:
    - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-3-complete.json`
@@ -289,7 +339,7 @@ Required:
 
      ```json
      {
-       "artifact": "functional-spec.md",
+       "artifact": "functional-spec-legacy.md",
        "chunk": 3,
        "total_chunks": 5,
        "sections": "STANDARD Features + Rules",
@@ -301,7 +351,7 @@ Required:
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ functional-spec.md Chunk 3/5 complete: STANDARD Features + Rules
+   ✓ functional-spec-legacy.md Chunk 3/5 complete: STANDARD Features + Rules
      - Features: [COUNT]
      - Lines: [COUNT]
    ```
@@ -315,7 +365,7 @@ Required:
 **After Chunk 4 Generation**:
 
 1. **Append to file** using Edit tool (str_replace):
-   - Append Sections 6 & 7 content to functional-spec.md
+   - Append Sections 6 & 7 content to functional-spec-legacy.md
 
 2. **Create checkpoint marker**:
    - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-4-complete.json`
@@ -323,7 +373,7 @@ Required:
 
      ```json
      {
-       "artifact": "functional-spec.md",
+       "artifact": "functional-spec-legacy.md",
        "chunk": 4,
        "total_chunks": 5,
        "sections": "NFRs + Data",
@@ -335,7 +385,7 @@ Required:
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ functional-spec.md Chunk 4/5 complete: NFRs + Data
+   ✓ functional-spec-legacy.md Chunk 4/5 complete: NFRs + Data
      - Lines: [COUNT]
    ```
 
@@ -348,7 +398,7 @@ Required:
 **After Chunk 5 Generation**:
 
 1. **Append to file** using Edit tool (str_replace):
-   - Append Sections 8, 9 & 10 content to functional-spec.md
+   - Append Sections 8, 9 & 10 content to functional-spec-legacy.md
 
 2. **Create final checkpoint marker**:
    - Write JSON file: `.analysis/.checkpoints/functional-spec-complete.json`
@@ -356,7 +406,7 @@ Required:
 
      ```json
      {
-       "artifact": "functional-spec.md",
+       "artifact": "functional-spec-legacy.md",
        "chunk": 5,
        "total_chunks": 5,
        "sections": "Acceptance Criteria + Assumptions + Constraints",
@@ -369,15 +419,59 @@ Required:
 3. **MANDATORY - Display progress and final summary**:
 
    ```text
-   ✓ functional-spec.md Chunk 5/5 complete: Acceptance + Assumptions + Constraints
+   ✓ functional-spec-legacy.md Chunk 5/5 complete: Acceptance + Assumptions + Constraints
      - Lines: [COUNT]
 
-   ✅ functional-spec.md COMPLETE (5/5 chunks)
+   ✅ functional-spec-legacy.md COMPLETE (5/5 chunks)
       Total features: [COUNT]
       Total lines: [COUNT]
    ```
 
-**Progress**: `✓ Generated: functional-spec.md ({lines} lines, {chunks} chunks)`
+**Progress**: `✓ Generated: functional-spec-legacy.md ({lines} lines, {chunks} chunks)`
+
+---
+
+### Artifact 4A-Target (Scope = A): functional-spec-target.md
+
+**Purpose**: Functional specification for TARGET/MODERNIZED application (WHAT system WILL do)
+
+**CRITICAL - FUTURE STATE:**
+
+- **Source**: Use analysis-report.md + user's 10 modernization preferences from Stage 5A
+- **Scope**: Document DESIRED functionality for modernized application
+- **Target Audience**: Developers/PMs who will implement the modernized system
+- **Requirements**: Include user's chosen tech stack, new capabilities, improvements
+
+**Content Rules:**
+
+1. **Features**: Base on legacy features BUT enhanced with modernization improvements
+2. **Technology References**: Use user's chosen target stack (from 10 questions)
+3. **Tense**: Future tense ("The system will..." or "Users will be able to...")
+4. **Enhancements**: Include new capabilities enabled by modernization
+5. **Out of Scope**: Explicitly document what is NOT being migrated (based on user's scope validation)
+
+**CRITICAL - Scope Boundaries:**
+
+Review user's answers to 10 modernization questions and scope validation from Stage 5A:
+
+- **IN SCOPE**: Components where user provided explicit target (e.g., "PostgreSQL 15")
+- **OUT OF SCOPE**: Components where user skipped/provided no answer (use existing as-is)
+
+**DO NOT assume migration for unmentioned components.**
+
+**Example**:
+- Database: User said "PostgreSQL 15" → IN SCOPE, document migration
+- Caching: User pressed Enter/skipped → OUT OF SCOPE, document "Use existing Memcached as-is"
+
+**Chunking Strategy** (Generate in 5 chunks, similar to legacy spec but future-tense):
+
+- Use same 5-chunk structure as legacy spec
+- Change all tense to future ("will", "will be able to")
+- Include modernization enhancements
+- Document scope boundaries clearly
+- File path: `.analysis/{project}-{timestamp}/functional-spec-target.md`
+
+**Progress**: `✓ Generated: functional-spec-target.md ({lines} lines, {chunks} chunks)`
 
 ---
 
@@ -818,8 +912,9 @@ Common:
 
 {IF scope = A}
 Full Application:
-  ✓ functional-spec.md
-  ✓ technical-spec.md
+  ✓ functional-spec-legacy.md (WHAT legacy system does TODAY)
+  ✓ functional-spec-target.md (WHAT modernized system WILL do)
+  ✓ technical-spec.md (HOW to build modernized system)
   ✓ stage-prompts/
     - constitution-prompt.md
     - clarify-prompt.md
@@ -853,7 +948,8 @@ Analysis Duration: {duration}
     "dependency-audit.json",
     "metrics-summary.json",
     "analysis-report.md",
-    "functional-spec.md",
+    "functional-spec-legacy.md",
+    "functional-spec-target.md",
     "technical-spec.md",
     "stage-prompts/constitution-prompt.md",
     "stage-prompts/clarify-prompt.md",
