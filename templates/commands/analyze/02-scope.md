@@ -120,19 +120,22 @@ Which cross-cutting concern do you want to migrate?
 - [4] Message Bus/Queue
       → Examples: TIBCO → Kafka, RabbitMQ → Azure Service Bus, Adding messaging (greenfield)
 
-- [5] Logging/Observability
+- [5] Resilience/Fault Tolerance
+      → Examples: Custom retry logic → Resilience4j, No circuit breakers → Polly/Hystrix, Basic timeouts → Comprehensive resilience strategy, Adding resilience patterns (greenfield)
+
+- [6] Logging/Observability
       → Examples: Custom logs → ELK Stack, Log4j → Prometheus+Grafana, Adding observability (greenfield)
 
-- [6] API Gateway/Routing
+- [7] API Gateway/Routing
       → Examples: Custom routing → Kong/Nginx, Monolith → API Gateway pattern
 
-- [7] File Storage/CDN
+- [8] File Storage/CDN
       → Examples: Local filesystem → S3/Azure Blob, FTP → Object storage
 
-- [8] Deployment/Infrastructure
+- [9] Deployment/Infrastructure
       → Examples: VM → OpenShift, AWS → Azure, On-premise → Cloud, Dedicated server → Kubernetes
 
-- [9] Other (specify)
+- [10] Other (specify)
       → Any other cross-cutting concern not listed above
 
 Your choice: ___
@@ -158,11 +161,12 @@ Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AW
 2 → "Database/ORM Layer"
 3 → "Caching Layer"
 4 → "Message Bus/Queue"
-5 → "Logging/Observability"
-6 → "API Gateway/Routing"
-7 → "File Storage/CDN"
-8 → "Deployment/Infrastructure"
-9 → "Other" (use user-provided text)
+5 → "Resilience/Fault Tolerance"
+6 → "Logging/Observability"
+7 → "API Gateway/Routing"
+8 → "File Storage/CDN"
+9 → "Deployment/Infrastructure"
+10 → "Other" (use user-provided text)
 ```text
 
 **IF CHOICE = [A]** (Full Application):
