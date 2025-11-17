@@ -108,7 +108,6 @@ Your choice: ___
 ```
 
 **WAIT FOR USER RESPONSE. Do NOT proceed until user provides [A] or [B].**
-```
 
 **Required Action**: Add this pattern to:
 
@@ -172,7 +171,6 @@ Your choice: ___
 **REMEMBER**: It's better to ask 5 clarification questions than to make 1 wrong assumption.
 
 ---
-```
 
 **Required Action**: Add this section to `templates/commands/analyze/05a-full-app.md` at line 29.
 
@@ -415,7 +413,6 @@ IF user did NOT mention target implementation:
 **Progress**: `✓ Generated: functional-spec-target.md ({lines} lines, {chunks} chunks)`
 
 ---
-```
 
 **Required Action**:
 
@@ -481,6 +478,7 @@ IF answer is ambiguous or unclear:
 **Run through each question systematically:**
 
 #### Q1: Target Language/Framework
+
 ```text
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - no target provided]
@@ -488,6 +486,7 @@ Action: [Full migration] OR [Keep existing language/framework as-is]
 ```
 
 #### Q2: Target Database
+
 ```text
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - no target provided]
@@ -495,6 +494,7 @@ Action: [Database migration] OR [Keep existing database as-is]
 ```
 
 #### Q3: Message Bus/Queue
+
 ```text
 User answer: [record exact answer]
 Was marked OPTIONAL: [Yes/No]
@@ -503,6 +503,7 @@ Action: [Add/migrate messaging] OR [No messaging changes, keep existing if any]
 ```
 
 #### Q4: Package Manager
+
 ```text
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - keep existing]
@@ -510,6 +511,7 @@ Action: [Migrate to new package manager] OR [Keep existing package manager]
 ```
 
 #### Q5: Deployment Target
+
 ```text
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - keep existing]
@@ -518,6 +520,7 @@ Note: This determines if Q6 and Q7 are asked
 ```
 
 #### Q6: Infrastructure as Code (Conditional)
+
 ```text
 Asked: [Yes/No - based on Q5]
 User answer: [record exact answer if asked]
@@ -526,6 +529,7 @@ Action: [Add IaC] OR [Not applicable] OR [No IaC, manual deployment]
 ```
 
 #### Q7: Containerization Strategy (Conditional)
+
 ```text
 Asked: [Yes/No - based on Q5]
 User answer: [record exact answer if asked]
@@ -534,6 +538,7 @@ Action: [Containerize] OR [Not applicable] OR [No containers, traditional deploy
 ```
 
 #### Q8: Observability Stack (Optional)
+
 ```text
 User answer: [record exact answer]
 Was marked OPTIONAL: [Yes/No]
@@ -542,6 +547,7 @@ Action: [Add/migrate observability] OR [Keep existing observability or none]
 ```
 
 #### Q9: Security & Authentication
+
 ```text
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - keep existing]
@@ -549,6 +555,7 @@ Action: [Migrate auth] OR [Keep existing auth as-is]
 ```
 
 #### Q10: Testing Strategy
+
 ```text
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - keep existing]
@@ -595,7 +602,6 @@ Ready to proceed with complexity scoring for IN SCOPE components only.
 ```
 
 ---
-```
 
 **Required Action**: Add this section to `templates/commands/analyze/05a-full-app.md` at line 268 (right after Step 1 questions complete, before Step 2 scoring).
 
@@ -743,7 +749,7 @@ If invalid: [describe error handling]
 
 ## ✅ Correct Behavior Example
 
-**User runs analyze-project command**
+User runs analyze-project command:
 
 ```text
 AI: ANALYSIS_SCOPE:
@@ -782,7 +788,7 @@ AI: ✓ Target language recorded: Java 17 LTS
 
 ## ❌ Incorrect Behavior Example
 
-**User runs analyze-project command**
+User runs analyze-project command:
 
 ```text
 AI: I'll analyze your project for modernization. Based on your codebase,
@@ -807,7 +813,6 @@ AI: Great! For databases, most teams migrate to PostgreSQL. I'll plan
 ```
 
 ---
-```
 
 **Required Action**: Add to:
 
