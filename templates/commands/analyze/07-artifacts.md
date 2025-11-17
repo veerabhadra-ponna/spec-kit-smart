@@ -22,7 +22,6 @@ version: 1.0.0
 
 ---
 
-
 # Stage 7: Remaining Artifacts Generation
 
 ## Purpose

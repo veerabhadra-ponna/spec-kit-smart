@@ -23,7 +23,6 @@ version: 1.0.0
 
 ---
 
-
 # Stage 5A: Full Application Modernization Analysis
 
 ## Purpose
@@ -44,68 +43,42 @@ Required fields:
 
 ---
 
-## ⚠️ CRITICAL: Questionnaire Presentation Rules
+## ⚠️ CRITICAL: Questionnaire Execution Rules
 
-**YOU MUST FOLLOW THESE RULES WHEN ASKING ALL 10 QUESTIONS:**
+**YOU MUST FOLLOW ALL RULES BELOW WHEN ASKING THE 10 MODERNIZATION QUESTIONS:**
+
+### Presentation Rules
 
 1. **Ask questions EXACTLY as written** - Do NOT rephrase, simplify, or modify wording
 2. **Present ALL options** - Do NOT remove or combine choices
-3. **Wait for user response** - Do NOT assume or guess answers
-4. **One question at a time** - Complete each question before moving to next
-5. **Validate input** - If user provides invalid choice, re-prompt with error message
-6. **No shortcuts** - Do NOT skip questions even if answer seems obvious
-7. **Ask ALL 10 questions** - Do NOT skip any questions regardless of previous answers
+3. **One question at a time** - Complete each question before moving to next
+4. **Ask ALL 10 questions** - Do NOT skip any questions regardless of previous answers
 
-**IF you modify questions, skip questions, or assume answers, this is a CRITICAL ERROR and workflow must restart.**
+### No Assumptions Policy
 
----
+- **Wait for user response** - Do NOT assume or guess answers
+- **No shortcuts** - Do NOT skip questions even if answer seems obvious from code or industry practice
+- **Validate input** - If user provides invalid choice, re-prompt with error message
 
-## Step 1: 10 Progressive Modernization Questions
+**Even if the answer seems obvious, you think you know what the user wants, or industry best practices suggest a choice - YOU MUST STILL ASK THE QUESTION EXPLICITLY.**
 
-**YOU MUST ASK ALL 10 QUESTIONS BELOW - DO NOT ASSUME ANY ANSWERS.**
+### Clarification Protocol
 
-Ask user about target modernization stack based on detected legacy stack.
-
-### Detection Flags (for conditional logic)
-
-Based on file analysis, set these flags:
-- `HAS_MESSAGE_BUS` - true if Kafka, RabbitMQ, Azure SB, AWS SQS, Redis Pub/Sub detected
-- `HAS_OBSERVABILITY` - true if logging frameworks, monitoring configs, APM tools detected
-- `IS_TRADITIONAL_DEPLOYMENT` - derived from Q5 answer
-
----
-
-## ⚠️ MANDATORY: No Assumptions Policy
-
-**YOU MUST ASK ALL 10 QUESTIONS - DO NOT ASSUME ANY ANSWERS.**
-
-**Even if:**
-
-- The answer seems obvious from existing code
-- Industry best practices suggest a choice
-- User mentioned preferences earlier in conversation
-- You think you know what the user wants
-
-**YOU MUST STILL ASK THE QUESTION EXPLICITLY.**
-
-**Failure to ask all 10 questions is a CRITICAL ERROR.**
-
-**IF in doubt about ANY aspect of the questions or user's answer:**
+**IF in doubt about ANY aspect of the user's answer:**
 
 1. **STOP** immediately
-2. **ASK** the user for clarification
+2. **ASK** for clarification using this format:
 3. **WAIT** for user response
 4. **DO NOT** proceed with assumptions
 
-**Example clarification format:**
+**Clarification template:**
 
 ```text
 ⚠️ CLARIFICATION NEEDED
 
-I need clarification on your answer to Question [N]:
+Question [N]: [question topic]
 
 You said: "[user's answer]"
-
 I'm unsure about: "[specific ambiguity]"
 
 Options:
@@ -116,7 +89,23 @@ Options:
 Your choice: ___
 ```
 
-**REMEMBER**: It's better to ask 5 clarification questions than to make 1 wrong assumption.
+**REMEMBER**: Ask 5 clarification questions rather than make 1 wrong assumption.
+
+**IF you modify questions, skip questions, or assume answers - this is a CRITICAL ERROR and workflow must restart.**
+
+---
+
+## Step 1: 10 Progressive Modernization Questions
+
+Ask user about target modernization stack based on detected legacy stack.
+
+### Detection Flags (for conditional logic)
+
+Based on file analysis, set these flags:
+
+- `HAS_MESSAGE_BUS` - true if Kafka, RabbitMQ, Azure SB, AWS SQS, Redis Pub/Sub detected
+- `HAS_OBSERVABILITY` - true if logging frameworks, monitoring configs, APM tools detected
+- `IS_TRADITIONAL_DEPLOYMENT` - derived from Q5 answer
 
 ---
 
@@ -387,6 +376,7 @@ IF answer is ambiguous or unclear:
 **Run through each question systematically and record:**
 
 #### Q1: Target Language/Framework
+
 ```text
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - no target provided]
@@ -394,6 +384,7 @@ Action: [Full migration to X] OR [Keep existing language/framework as-is]
 ```
 
 #### Q2: Target Database
+
 ```text
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - no target provided]
@@ -401,6 +392,7 @@ Action: [Database migration to X] OR [Keep existing database as-is]
 ```
 
 #### Q3: Message Bus/Queue
+
 ```text
 User answer: [record exact answer]
 Was marked OPTIONAL: [Yes/No]

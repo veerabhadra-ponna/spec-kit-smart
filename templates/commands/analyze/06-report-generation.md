@@ -22,7 +22,6 @@ version: 1.0.0
 
 ---
 
-
 # Stage 6: Analysis Report Generation
 
 ## Purpose
