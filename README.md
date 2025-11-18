@@ -1,6 +1,4 @@
-![Spec Kit Logo](./media/logo_small.webp)
-
-# 🌱 Spec Kit
+# 🌱 Spec Kit Smart
 
 *Build high-quality software faster.*
 
@@ -182,18 +180,13 @@ To upgrade specify run:
 pipx install --force git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 ```
 
-#### Option 2: Virtualenv or User Install (No pipx)
+#### Option 2: Virtual Environment (No pipx)
 
-When pipx is blocked, install with standard `pip` (works in corporate environments with Python available):
+When pipx is unavailable, use standard `pip`:
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
 python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
-
-# Or install to user site if you cannot create a venv
-python -m pip install --user "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
-
 speckitsmart init <PROJECT_NAME>
 ```
 
@@ -209,29 +202,14 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git spec
 pipx run --spec git+https://github.company.com/yourorg/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
 ```
 
-#### Option 4: From Corporate Artifactory (Enterprise)
-
-If your company uses Artifactory PyPI mirror:
+#### Option 4: Corporate Artifactory (Enterprise)
 
 ```bash
-# One-time configuration (usually done by IT)
 pip config set global.index-url https://artifactory.company.com/artifactory/api/pypi/pypi-virtual/simple
-
-# Install
 pip install specify-cli
 ```
 
-**Benefits of persistent installation:**
-
-- Tool stays installed and available in PATH
-- No need to create shell aliases
-- Better tool management with `pipx list`, `pipx upgrade`, `pipx uninstall`
-- Cleaner shell configuration
-- Works in corporate environments without UV approval
-
-**Cross-Platform Support:**
-
-All packages automatically include both Bash (`.sh`) and PowerShell (`.ps1`) scripts. Your AI agent's prompts intelligently select the correct script type based on your operating system - no manual configuration needed.
+**Cross-Platform Support:** All packages include both Bash and PowerShell scripts. AI agents auto-select the correct variant - no manual configuration needed.
 
 ### 2. Establish project principles
 
@@ -280,19 +258,18 @@ For detailed step-by-step instructions, see our [comprehensive guide](./spec-dri
 ### Workflow Diagram (Spec-Driven Development)
 
 ```mermaid
-flowchart TD
-    Start([Start New Feature]) --> Constitution
-    Constitution[🏛️ Constitution - REQUIRED] --> Specify
-    Specify[📝 Specify - REQUIRED] --> Clarify
-    Clarify[❓ Clarify - OPTIONAL] --> | Recommended | Plan
+flowchart LR
+    Start([Start]) --> Constitution[🏛️ Constitution<br/>REQUIRED]
+    Constitution --> Specify[📝 Specify<br/>REQUIRED]
+    Specify --> Clarify[❓ Clarify<br/>OPTIONAL]
+    Clarify --> | Recommended | Plan[🏗️ Plan<br/>REQUIRED]
     Clarify -.-> | Skip if clear | Plan
-    Plan[🏗️ Plan - REQUIRED] --> Tasks
-    Tasks[📋 Tasks - REQUIRED] --> Analyze
-    Analyze[🔍 Analyze - OPTIONAL] --> | Recommended | Implement
+    Plan --> Tasks[📋 Tasks<br/>REQUIRED]
+    Tasks --> Analyze[🔍 Analyze<br/>OPTIONAL]
+    Analyze --> | Recommended | Implement[⚙️ Implement<br/>REQUIRED]
     Analyze -.-> | Skip if confident | Implement
-    Implement[⚙️ Implement - REQUIRED] --> Checklist
-    Checklist[✅ Checklist - OPTIONAL] --> Done
-    Done([✅ Feature Complete])
+    Implement --> Checklist[✅ Checklist<br/>OPTIONAL]
+    Checklist --> Done([✅ Done])
 
     style Constitution fill:#ffcccc,stroke:#333,stroke-width:2px
     style Specify fill:#ffcccc,stroke:#333,stroke-width:2px
@@ -825,27 +802,18 @@ The orchestrator saves progress to `.speckitsmart-state.json`, enabling:
 ```mermaid
 graph LR
     subgraph Interactive["Interactive Mode"]
-        I1[Constitution] --> | Ask | I2[Specify]
-        I2 --> | Ask | I3[Clarify]
-        I3 --> | Ask | I4[Plan]
-        I4 --> | Ask | I5[Tasks]
-        I5 --> | Ask | I6[Analyze]
-        I6 --> | Ask | I7[Implement]
+        direction LR
+        I1[Constitution] --> |Ask| I2[Specify] --> |Ask| I3[Clarify] --> |Ask| I4[Plan] --> |Ask| I5[Tasks] --> |Ask| I6[Analyze] --> |Ask| I7[Implement]
     end
 
     subgraph AutoSpec["Auto-Spec Mode"]
-        A1[Constitution] --> A2[Specify]
-        A2 --> A3[Plan]
-        A3 --> A4[Tasks]
-        A4 --> | PAUSE | A5[Implement]
+        direction LR
+        A1[Constitution] --> A2[Specify] --> A3[Plan] --> A4[Tasks] --> |PAUSE| A5[Implement]
     end
 
     subgraph FullAuto["Full Auto Mode"]
-        F1[Constitution] --> F2[Specify]
-        F2 --> F3[Plan]
-        F3 --> F4[Tasks]
-        F4 --> F5[Implement]
-        F5 --> F6[Done]
+        direction LR
+        F1[Constitution] --> F2[Specify] --> F3[Plan] --> F4[Tasks] --> F5[Implement] --> F6[Done]
     end
 
     style Interactive fill:#e3f2fd,stroke:#333,stroke-width:2px
@@ -898,23 +866,16 @@ Runs constitution → specify → plan → tasks automatically, pauses before im
 ```
 
 ```mermaid
-flowchart TD
-    NewChat[New Chat Session] --> Resume["/speckitsmart.resume"]
+flowchart LR
+    NewChat[New Chat] --> Resume[/resume]
     Resume --> LoadState[Load State]
-    LoadState --> LoadArtifacts[Load All Artifacts]
-    LoadArtifacts --> Constitution[Constitution]
-    LoadArtifacts --> Spec[Specification]
-    LoadArtifacts --> Plan[Plan & Research]
-    LoadArtifacts --> Tasks[Tasks 28/47]
-    Constitution --> Identify
-    Spec --> Identify
-    Plan --> Identify
-    Tasks --> Identify[Identify Resume Point]
+    LoadState --> LoadArtifacts[Load Artifacts]
+    LoadArtifacts --> Identify[Identify<br/>Resume Point]
     Identify --> Summary[Show Summary]
     Summary --> Confirm{Resume?}
-    Confirm --> | Yes | Continue[Continue Implementation]
-    Confirm --> | No | Cancel[Cancel]
-    Continue --> Done[Complete Tasks]
+    Confirm -->|Yes| Continue[Continue]
+    Confirm -->|No| Cancel[Cancel]
+    Continue --> Done[Complete]
 
     style NewChat fill:#e8eaf6,stroke:#333,stroke-width:2px
     style Resume fill:#e1f5e1,stroke:#333,stroke-width:2px
@@ -979,20 +940,14 @@ The orchestrator creates `.speckitsmart-state.json` in your repository root:
 **Task-Level Progress:**
 
 ```mermaid
-graph TD
+graph LR
     subgraph US3["User Story 3: In Progress"]
-        T015["T015: Auth middleware ✓"]
-        T016["T016: JWT validation ⚙"]
-        T017["T017: Token refresh ⏳"]
-        T018["T018: Logout handler ⏳"]
-        T019["T019: Rate limiting ⏳"]
-        T020["T020: Tests ⏳"]
-
-        T015 --> T016
-        T016 -.-> T017
-        T017 -.-> T018
-        T018 -.-> T019
-        T019 -.-> T020
+        direction LR
+        T015["T015: Auth<br/>middleware ✓"] --> T016["T016: JWT<br/>validation ⚙"]
+        T016 -.-> T017["T017: Token<br/>refresh ⏳"]
+        T017 -.-> T018["T018: Logout<br/>handler ⏳"]
+        T018 -.-> T019["T019: Rate<br/>limiting ⏳"]
+        T019 -.-> T020["T020:<br/>Tests ⏳"]
     end
 
     style T015 fill:#c8e6c9,stroke:#4caf50,stroke-width:2px
@@ -1034,20 +989,15 @@ Simply fix the issue (e.g., `npm install stripe`) and run `/speckitsmart.resume`
 ### Workflow Diagram (Orchestrator)
 
 ```mermaid
-flowchart TD
-    Start([/speckitsmart.orchestrate]) --> Constitution
-    Constitution[Constitution] --> | State saved | Specify
-    Constitution -.-> | If missing | CreateConst[Create constitution]
-    CreateConst --> Specify
-    Specify[Specify] --> | State saved | Clarify
-    Clarify[Clarify] --> | State saved | Plan
-    Clarify -.-> | Optional | Plan
-    Plan[Plan] --> | State saved | Tasks
-    Tasks[Tasks] --> | State saved | Analyze
-    Analyze[Analyze] --> | State saved | Implement
-    Analyze -.-> | Optional | Implement
-    Implement[Implement] --> | State saved | Done
-    Done([Done])
+flowchart LR
+    Start([/orchestrate]) --> Constitution[Constitution]
+    Constitution --> Specify[Specify]
+    Specify --> Clarify[Clarify]
+    Clarify --> Plan[Plan]
+    Plan --> Tasks[Tasks]
+    Tasks --> Analyze[Analyze]
+    Analyze --> Implement[Implement]
+    Implement --> Done([Done])
 
     State[.speckitsmart-state.json]
     Constitution -.-> State
@@ -1058,15 +1008,8 @@ flowchart TD
     Analyze -.-> State
     Implement -.-> State
 
-    State -.-> Resume
-    Resume["/speckitsmart.resume"]
-    Resume -.-> Constitution
-    Resume -.-> Specify
-    Resume -.-> Clarify
-    Resume -.-> Plan
-    Resume -.-> Tasks
-    Resume -.-> Analyze
-    Resume -.-> Implement
+    State -.-> Resume[/resume]
+    Resume -.-> |Restore| Constitution
 
     style Start fill:#e1f5e1,stroke:#333,stroke-width:2px
     style Done fill:#e1f5e1,stroke:#333,stroke-width:2px
@@ -1337,12 +1280,12 @@ Features: automated checks, merge blocking, auto-fix, trending, notifications.
 When making decisions, AI prompts follow this priority order:
 
 ```mermaid
-graph TD
-    A[Constitution] --> | HIGHEST | B{Guidelines?}
-    B --> | Yes | C[Corporate Guidelines]
-    B --> | No | D[Spec Kit Defaults]
-    C --> | MEDIUM | E[Final Decision]
-    D --> | LOWEST | E
+graph LR
+    A[Constitution<br/>HIGHEST] --> B{Guidelines?}
+    B -->|Yes| C[Corporate<br/>Guidelines<br/>MEDIUM]
+    B -->|No| D[Spec Kit<br/>Defaults<br/>LOWEST]
+    C --> E[Final Decision]
+    D --> E
 
     style A fill:#ff9999,stroke:#333,stroke-width:2px
     style C fill:#ffff99,stroke:#333,stroke-width:2px
