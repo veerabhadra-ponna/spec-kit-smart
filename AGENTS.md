@@ -251,7 +251,7 @@ Add to **Supported AI Agents** table in `README.md`: support level (Full/Partial
 
 ## Testing New Agent Integration
 
-1. Run package creation locally 2. Test `specify init --ai <agent>` 3. Verify directory/files 4. Validate commands work 5. Test context update scripts
+1. Run package creation locally 2. Test `speckitsmart init --ai <agent>` 3. Verify directory/files 4. Validate commands work 5. Test context update scripts
 
 ## Common Pitfalls
 
