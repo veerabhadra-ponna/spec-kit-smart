@@ -1109,7 +1109,7 @@ speckitsmart init . --force --ai claude
 speckitsmart init --here --force --ai claude
 ```
 
-The CLI will check if you have Claude Code, Gemini CLI, Cursor CLI, Qwen CLI, opencode, Codex CLI, or Amazon Q Developer CLI installed. If you do not, or you prefer to get the templates without checking for the right tools, use `--ignore-agent-tools` with your command:
+The CLI will check if you have the selected AI agent's CLI tool installed (for CLI-based agents). If you do not, or you prefer to get the templates without checking for the right tools, use `--ignore-agent-tools` with your command:
 
 ```bash
 speckitsmart init <project_name> --ai claude --ignore-agent-tools

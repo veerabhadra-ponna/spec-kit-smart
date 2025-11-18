@@ -2,7 +2,7 @@
 
 This guide will help you get started with Spec-Driven Development using Spec Kit.
 
-> NEW: All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `speckitsmart` CLI auto-selects based on OS unless you pass `--script sh | ps`.
+> NEW: All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `speckitsmart` CLI auto-selects based on OS.
 
 ## The 4-Step Process
 
