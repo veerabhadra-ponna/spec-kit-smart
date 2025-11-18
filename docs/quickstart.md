@@ -14,6 +14,16 @@ Initialize your project depending on the coding agent you're using:
 pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
 ```
 
+If `pipx` is blocked, use a virtual environment with standard `pip`:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
+
+speckitsmart init <PROJECT_NAME>
+```
+
 All packages include both Bash and PowerShell scripts. Your AI agent automatically uses the correct script type for your operating system.
 
 ### 2. Create the Spec

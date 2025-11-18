@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated tasks.md prompt template with contextual guideline application
 - Updated analyze.md prompt template with stack-specific validation
 - Improved guideline structure documentation with version management
+- `speckitsmart init` now preserves an existing `.specify/memory/constitution.md` in current directories and surfaces a clear skip message
+- Added pip-based installation examples for environments without `pipx`
 
 ## [0.0.20] - 2025-10-14
 

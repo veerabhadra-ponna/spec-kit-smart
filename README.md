@@ -182,7 +182,22 @@ To upgrade specify run:
 pipx install --force git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 ```
 
-#### Option 2: One-time Usage
+#### Option 2: Virtualenv or User Install (No pipx)
+
+When pipx is blocked, install with standard `pip` (works in corporate environments with Python available):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
+
+# Or install to user site if you cannot create a venv
+python -m pip install --user "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
+
+speckitsmart init <PROJECT_NAME>
+```
+
+#### Option 3: One-time Usage
 
 Run directly without installing:
 
@@ -194,7 +209,7 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git spec
 pipx run --spec git+https://github.company.com/yourorg/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
 ```
 
-#### Option 3: From Corporate Artifactory (Enterprise)
+#### Option 4: From Corporate Artifactory (Enterprise)
 
 If your company uses Artifactory PyPI mirror:
 
