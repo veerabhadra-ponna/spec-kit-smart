@@ -217,109 +217,37 @@ flowchart LR
 
 ## ⚡ Get Started
 
-### 1. Install Specify CLI
-
-Choose your preferred installation method:
-
-#### Option 1: Persistent Installation (Recommended)
-
-Install once and use everywhere:
+### Quick Start
 
 ```bash
-# From public GitHub
+# Install
 pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 
-# From GitHub Enterprise (for corporate environments)
-pipx install git+https://github.company.com/yourorg/spec-kit-smart.git
-```
+# Initialize project
+speckitsmart init my-project --ai claude
 
-Then use the tool directly:
-
-```bash
-speckitsmart init <PROJECT_NAME>
-speckitsmart check
-```
-
-To upgrade specify run:
-
-```bash
-pipx install --force git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
-```
-
-#### Option 2: Virtual Environment (No pipx)
-
-When pipx is unavailable, use standard `pip`:
-
-```bash
-python -m venv .venv && source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
-python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
-speckitsmart init <PROJECT_NAME>
-```
-
-#### Option 3: One-time Usage
-
-Run directly without installing:
-
-```bash
-# From public GitHub
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
-
-# From GitHub Enterprise
-pipx run --spec git+https://github.company.com/yourorg/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
-```
-
-#### Option 4: Corporate Artifactory (Enterprise)
-
-```bash
-pip config set global.index-url https://artifactory.company.com/artifactory/api/pypi/pypi-virtual/simple
-pip install specify-cli
-```
-
-**Cross-Platform Support:** All packages include both Bash and PowerShell scripts. AI agents auto-select the correct variant - no manual configuration needed.
-
-### 2. Establish project principles
-
-Launch your AI assistant in the project directory. The `/speckitsmart.*` commands are available in the assistant.
-
-Use the **`/speckitsmart.constitution`** command to create your project's governing principles and development guidelines that will guide all subsequent development.
-
-```bash
-/speckitsmart.constitution Create principles focused on code quality, testing standards, user experience consistency, and performance requirements
-```
-
-### 3. Create the spec
-
-Use the **`/speckitsmart.specify`** command to describe what you want to build. Focus on the **what** and **why**, not the tech stack.
-
-```bash
-/speckitsmart.specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
-```
-
-### 4. Create a technical implementation plan
-
-Use the **`/speckitsmart.plan`** command to provide your tech stack and architecture choices.
-
-```bash
-/speckitsmart.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
-```
-
-### 5. Break down into tasks
-
-Use **`/speckitsmart.tasks`** to create an actionable task list from your implementation plan.
-
-```bash
+# Start building
+/speckitsmart.constitution Create quality-focused principles
+/speckitsmart.specify Build a photo album application...
+/speckitsmart.plan Use Vite, vanilla JS, SQLite
 /speckitsmart.tasks
-```
-
-### 6. Execute implementation
-
-Use **`/speckitsmart.implement`** to execute all tasks and build your feature according to the plan.
-
-```bash
 /speckitsmart.implement
 ```
 
-For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
+### Full Installation & First Feature Tutorial
+
+For complete installation options (pipx, pip, virtualenv, Artifactory) and a step-by-step walkthrough of building your first feature, see:
+
+**📖 [Getting Started Guide](docs/getting-started.md)**
+
+The guide covers:
+
+- All installation methods with examples
+- Project initialization
+- Complete workflow walkthrough (constitution → specify → plan → tasks → implement)
+- Workflow diagrams and command reference
+- Alternative approaches (Orchestrator workflow)
+- Next steps and advanced features
 
 ### Workflow Diagram (Spec-Driven Development)
 
@@ -715,388 +643,90 @@ Use cases for manual override:
 
 ## 🔧 Specify CLI Reference
 
-The `specify` command supports the following options:
+The `speckitsmart` CLI provides commands for initializing projects and checking prerequisites.
 
-### Commands
-
-| Command     | Description                                                    |
-| ------------- | ---------------------------------------------------------------- |
-| `init`      | Initialize a new Specify project from the latest template      |
-| `check`     | Check for installed tools (`git`, `claude`, `gemini`, `code`/`code-insiders`, `cursor-agent`, `windsurf`, `qwen`, `opencode`, `codex`) |
-
-### `speckitsmart init` Arguments & Options
-
-| Argument/Option        | Type     | Description                                                                  |
-| ------------------------ | ---------- | ------------------------------------------------------------------------------ |
-| `<project-name>`       | Argument | Name for your new project directory (optional if using `--here`, or use `.` for current directory) |
-| `--ai`                 | Option   | AI assistant to use: `claude`, `gemini`, `copilot`, `cursor-agent`, `qwen`, `opencode`, `codex`, `windsurf`, `kilocode`, `auggie`, `roo`, `codebuddy`, `amp`, or `q` |
-| `--script`             | Option   | Script variant to use: `sh` (bash/zsh) or `ps` (PowerShell)                 |
-| `--ignore-agent-tools` | Flag     | Skip checks for AI agent tools like Claude Code                             |
-| `--no-git`             | Flag     | Skip git repository initialization                                          |
-| `--here`               | Flag     | Initialize project in the current directory instead of creating a new one   |
-| `--force`              | Flag     | Force merge/overwrite when initializing in current directory (skip confirmation) |
-| `--skip-tls`           | Flag     | Skip SSL/TLS verification (not recommended)                                 |
-| `--debug`              | Flag     | Enable detailed debug output for troubleshooting                            |
-| `--github-token`       | Option   | GitHub token for API requests (or set GH_TOKEN/GITHUB_TOKEN env variable)  |
-
-### Examples
+### Quick Reference
 
 ```bash
-# Basic project initialization
-speckitsmart init my-project
-
-# Initialize with specific AI assistant
-speckitsmart init my-project --ai claude
-
-# Initialize with Cursor support
-speckitsmart init my-project --ai cursor-agent
-
-# Initialize with Windsurf support
-speckitsmart init my-project --ai windsurf
-
-# Initialize with Amp support
-speckitsmart init my-project --ai amp
-
-# Initialize with PowerShell scripts (Windows/cross-platform)
-speckitsmart init my-project --ai copilot --script ps
+# Initialize project
+speckitsmart init <project-name> --ai <agent>
 
 # Initialize in current directory
-speckitsmart init . --ai copilot
-# or use the --here flag
-speckitsmart init --here --ai copilot
+speckitsmart init --here --ai <agent>
 
-# Force merge into current (non-empty) directory without confirmation
-speckitsmart init . --force --ai copilot
-# or
-speckitsmart init --here --force --ai copilot
-
-# Skip git initialization
-speckitsmart init my-project --ai gemini --no-git
-
-# Enable debug output for troubleshooting
-speckitsmart init my-project --ai claude --debug
-
-# Use GitHub token for API requests (helpful for corporate environments)
-speckitsmart init my-project --ai claude --github-token ghp_your_token_here
-
-# Check system requirements
+# Check prerequisites
 speckitsmart check
 ```
 
-### Available Slash Commands
+### Available AI Agents
 
-After running `speckitsmart init`, your AI coding agent will have access to these slash commands for structured development:
+`claude`, `gemini`, `copilot`, `cursor-agent`, `qwen`, `opencode`, `codex`, `windsurf`, `kilocode`, `auggie`, `roo`, `codebuddy`, `amp`, `q`
 
-#### Orchestration Commands
+### Slash Commands (After Init)
 
-**NEW**: Simplified workflow management and context restoration:
+After initialization, your AI coding agent will have access to these commands:
 
-| Command                  | Description                                                           |
-| -------------------------- | ----------------------------------------------------------------------- |
-| `/speckitsmart.orchestrate`  | **Orchestrate the complete workflow** from feature description to implementation in a single command. Manages state, phase transitions, and provides interactive or automatic execution modes. |
-| `/speckitsmart.resume`       | **Restore context and resume work** after chat limit or interruption. Loads all artifacts and continues from exact stopping point with zero context loss. |
+**Orchestration:**
 
-**Quick Start with Orchestrator:**
+- `/speckitsmart.orchestrate` - Run entire workflow in one command
+- `/speckitsmart.resume` - Resume after interruption
 
-```bash
-# Run entire workflow in one command
-/speckitsmart.orchestrate Build a user authentication system with OAuth2 and JWT
+**Core Workflow:**
 
-# Or resume after chat limit/interruption
-/speckitsmart.resume
-```
+- `/speckitsmart.constitution` - Establish project principles
+- `/speckitsmart.specify` - Define requirements
+- `/speckitsmart.plan` - Create technical design
+- `/speckitsmart.tasks` - Generate task list
+- `/speckitsmart.implement` - Execute implementation
 
-See [Orchestrator Workflow Guide](#-orchestrator-workflow) for detailed usage.
+**Optional:**
 
-#### Core Commands
+- `/speckitsmart.clarify` - Resolve ambiguities
+- `/speckitsmart.analyze` - Validate consistency
+- `/speckitsmart.checklist` - Quality validation
+- `/speckitsmart.generate-guidelines` - Generate corporate guidelines
 
-Essential commands for the Spec-Driven Development workflow (can be used individually or via orchestrator):
+### Complete CLI Documentation
 
-| Command                  | Description                                                           |
-| -------------------------- | ----------------------------------------------------------------------- |
-| `/speckitsmart.constitution`  | Create or update project governing principles and development guidelines |
-| `/speckitsmart.specify`       | Define what you want to build (requirements and user stories)        |
-| `/speckitsmart.plan`          | Create technical implementation plans with your chosen tech stack     |
-| `/speckitsmart.tasks`         | Generate actionable task lists for implementation                     |
-| `/speckitsmart.implement`     | Execute all tasks to build the feature according to the plan         |
+For full command reference, arguments, options, environment variables, and examples, see:
 
-#### Optional Commands
-
-Additional commands for enhanced quality and validation:
-
-| Command                      | Description                                                           |
-| ------------------------------ | ----------------------------------------------------------------------- |
-| `/speckitsmart.clarify`           | Clarify underspecified areas (recommended before `/speckitsmart.plan`; formerly `/quizme`) |
-| `/speckitsmart.analyze`           | Cross-artifact consistency & coverage analysis (run after `/speckitsmart.tasks`, before `/speckitsmart.implement`) |
-| `/speckitsmart.checklist`         | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
-| `/speckitsmart.generate-guidelines` | **NEW**: Generate or update corporate coding guidelines by analyzing corporate documents and reference codebases (EXPERIMENTAL v1.0.0-alpha) |
-
-### Environment Variables
-
-| Variable         | Description                                                                                    |
-| ------------------ | ------------------------------------------------------------------------------------------------ |
-| `SPECIFY_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches. **Must be set in the context of the agent you're working with prior to using `/speckitsmart.plan` or follow-up commands.** |
+**📖 [CLI Reference Guide](docs/reference/cli-reference.md)**
 
 ## 🎭 Orchestrator Workflow
 
-### Overview
+The **Orchestrator** simplifies spec-driven development by running all phases in a single command with automatic state management.
 
-The **Orchestrator** workflow simplifies the entire spec-driven development process by managing all phases automatically. Instead of manually invoking each command (constitution → specify → clarify → plan → tasks → analyze → implement), you can run the entire workflow with a single command.
-
-### Why Use the Orchestrator?
-
-**Manual Workflow:** 7 separate commands, manual state tracking, context loss at chat limits.
-
-**Orchestrator Workflow:** `/speckitsmart.orchestrate <feature-description>` - 1 command, automatic state management, seamless resumption.
-
-### Key Features
-
-#### 1. **Single Entry Point**
-
-Run the entire workflow from feature description to implementation with one command.
-
-#### 2. **State Persistence**
-
-The orchestrator saves progress to `.speckitsmart-state.json`, enabling:
-
-- Resumption after chat token limits
-- Cross-session continuity
-- Progress tracking
-
-#### 3. **Flexible Execution Modes**
-
-```mermaid
-graph LR
-    subgraph Interactive["Interactive Mode"]
-        direction LR
-        I1[Constitution] --> |Ask| I2[Specify] --> |Ask| I3[Clarify] --> |Ask| I4[Plan] --> |Ask| I5[Tasks] --> |Ask| I6[Analyze] --> |Ask| I7[Implement]
-    end
-
-    subgraph AutoSpec["Auto-Spec Mode"]
-        direction LR
-        A1[Constitution] --> A2[Specify] --> A3[Plan] --> A4[Tasks] --> |PAUSE| A5[Implement]
-    end
-
-    subgraph FullAuto["Full Auto Mode"]
-        direction LR
-        F1[Constitution] --> F2[Specify] --> F3[Plan] --> F4[Tasks] --> F5[Implement] --> F6[Done]
-    end
-
-    style Interactive fill:#e3f2fd,stroke:#333,stroke-width:2px
-    style AutoSpec fill:#fff9c4,stroke:#333,stroke-width:2px
-    style FullAuto fill:#e8f5e9,stroke:#333,stroke-width:2px
-```
-
-**Interactive Mode** (recommended):
-
-- Asks permission before each major phase
-- Allows review and adjustment between phases
-- User maintains full control
-
-**Auto-Spec Mode**:
-
-- Runs constitution → specify → plan → tasks automatically
-- Pauses before implementation for review
-
-**Full Auto Mode**:
-
-- Runs entire workflow to completion
-- Minimal user interaction required
-
-#### 4. **Context Restoration with `/speckitsmart.resume`**
-
-Restores context after chat limit: loads all artifacts, identifies stopping point, and continues with zero duplicate work.
-
-### Usage Examples
-
-**Interactive Mode:**
+### Quick Start
 
 ```bash
+# Run entire workflow
 /speckitsmart.orchestrate Build a user authentication system with OAuth2 and JWT
-```
 
-Prompts at each phase for user confirmation and review.
-
-**Auto-Spec Mode:**
-
-```bash
-/speckitsmart.orchestrate --mode=auto-spec Create an analytics dashboard
-```
-
-Runs constitution → specify → plan → tasks automatically, pauses before implementation for review.
-
-**Resume After Chat Limit:**
-
-```bash
+# Resume after interruption
 /speckitsmart.resume
 ```
 
-```mermaid
-flowchart LR
-    NewChat[New Chat] --> Resume[/resume]
-    Resume --> LoadState[Load State]
-    LoadState --> LoadArtifacts[Load Artifacts]
-    LoadArtifacts --> Identify[Identify<br/>Resume Point]
-    Identify --> Summary[Show Summary]
-    Summary --> Confirm{Resume?}
-    Confirm -->|Yes| Continue[Continue]
-    Confirm -->|No| Cancel[Cancel]
-    Continue --> Done[Complete]
+### Key Features
 
-    style NewChat fill:#e8eaf6,stroke:#333,stroke-width:2px
-    style Resume fill:#e1f5e1,stroke:#333,stroke-width:2px
-    style LoadState fill:#fff9c4,stroke:#333,stroke-width:2px
-    style LoadArtifacts fill:#e3f2fd,stroke:#333,stroke-width:2px
-    style Identify fill:#fff4e6,stroke:#333,stroke-width:2px
-    style Summary fill:#e8f5e9,stroke:#333,stroke-width:2px
-    style Continue fill:#c8e6c9,stroke:#333,stroke-width:2px
-    style Done fill:#a5d6a7,stroke:#333,stroke-width:2px
-```
+- **Single Entry Point** - One command runs constitution → specify → clarify → plan → tasks → analyze → implement
+- **State Persistence** - Saves progress to `.speckitsmart-state.json` for resumption
+- **Flexible Modes** - Interactive (recommended), Auto-Spec (pause before implement), Full Auto
+- **Context Restoration** - Zero duplicate work after chat token limits
 
-Loads state, shows progress (e.g., 28/47 tasks), identifies next task, and continues from exact stopping point.
+### When to Use
 
-### State Management
+| Scenario | Recommended Approach |
+|----------|---------------------|
+| New features | Use orchestrator |
+| Multi-day workflows | Use orchestrator + `/resume` |
+| Learning the toolkit | Use individual commands |
+| Re-running specific phases | Use individual commands |
 
-The orchestrator creates `.speckitsmart-state.json` in your repository root:
+### Complete Orchestrator Documentation
 
-```json
-{
-  "version": "1.0",
-  "feature_number": "001",
-  "feature_name": "user-auth",
-  "feature_dir": "specs/001-user-auth",
-  "current_phase": "implement",
-  "completed_phases": ["constitution", "specify", "plan", "tasks"],
-  "workflow_mode": "interactive",
-  "started_at": "2025-11-02T10:30:00Z",
-  "last_updated": "2025-11-02T11:15:00Z",
-  "checkpoints": {
-    "implement": {
-      "status": "in_progress",
-      "tasks_completed": 28,
-      "tasks_total": 47,
-      "current_task": "[T029] Implement webhook verification"
-    }
-  }
-}
-```
+For detailed usage, execution modes, state management, progress visualization, error handling, and best practices, see:
 
-**Should you commit `.speckitsmart-state.json`?**
-
-- ✅ **Yes** if you want cross-machine resumption or team collaboration
-- ❌ **Add to .gitignore** if you prefer local-only state
-
-### When to Use Orchestrator vs Individual Commands
-
-- **New features:** Use `/speckitsmart.orchestrate`
-- **Multi-day workflows:** Use orchestrator + `/speckitsmart.resume`
-- **Learning:** Use individual commands
-- **Re-running phases:** Use individual commands (e.g., `/speckitsmart.plan`)
-- **Token limits:** Use `/speckitsmart.resume`
-
-### Best Practices
-
-- **Commit frequently** during long workflows
-- **Review before implementation** using interactive or auto-spec mode
-- **Commit `.speckitsmart-state.json`** for cross-machine work
-- **Use `/speckitsmart.resume`** after token limits or errors
-
-### Progress Visualization
-
-**Task-Level Progress:**
-
-```mermaid
-graph LR
-    subgraph US3["User Story 3: In Progress"]
-        direction LR
-        T015["T015: Auth<br/>middleware ✓"] --> T016["T016: JWT<br/>validation ⚙"]
-        T016 -.-> T017["T017: Token<br/>refresh ⏳"]
-        T017 -.-> T018["T018: Logout<br/>handler ⏳"]
-        T018 -.-> T019["T019: Rate<br/>limiting ⏳"]
-        T019 -.-> T020["T020:<br/>Tests ⏳"]
-    end
-
-    style T015 fill:#c8e6c9,stroke:#4caf50,stroke-width:2px
-    style T016 fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
-    style T017 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px
-    style T018 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px
-    style T019 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px
-    style T020 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px
-```
-
-**Legend:**
-
-- ✓ = Completed
-- ⚙ = In Progress (current task)
-- ⏳ = Pending
-- ⏭ = Skipped
-
-### Error Handling
-
-If any phase fails:
-
-```text
-❌ Error in phase: implement
-
-Error details: Module 'stripe' not found
-
-Your progress has been saved.
-
-To resume after fixing the issue:
-  /speckitsmart.resume
-
-To start over:
-  rm .speckitsmart-state.json
-  /speckitsmart.orchestrate <feature-description>
-```
-
-Simply fix the issue (e.g., `npm install stripe`) and run `/speckitsmart.resume` to continue.
-
-### Workflow Diagram (Orchestrator)
-
-```mermaid
-flowchart LR
-    Start([/orchestrate]) --> Constitution[Constitution]
-    Constitution --> Specify[Specify]
-    Specify --> Clarify[Clarify]
-    Clarify --> Plan[Plan]
-    Plan --> Tasks[Tasks]
-    Tasks --> Analyze[Analyze]
-    Analyze --> Implement[Implement]
-    Implement --> Done([Done])
-
-    State[.speckitsmart-state.json]
-    Constitution -.-> State
-    Specify -.-> State
-    Clarify -.-> State
-    Plan -.-> State
-    Tasks -.-> State
-    Analyze -.-> State
-    Implement -.-> State
-
-    State -.-> Resume[/resume]
-    Resume -.-> |Restore| Constitution
-
-    style Start fill:#e1f5e1,stroke:#333,stroke-width:2px
-    style Done fill:#e1f5e1,stroke:#333,stroke-width:2px
-    style Constitution fill:#fff4e6,stroke:#333,stroke-width:2px
-    style Specify fill:#e3f2fd,stroke:#333,stroke-width:2px
-    style Clarify fill:#f3e5f5,stroke:#333,stroke-width:2px
-    style Plan fill:#e8f5e9,stroke:#333,stroke-width:2px
-    style Tasks fill:#fff9c4,stroke:#333,stroke-width:2px
-    style Analyze fill:#fce4ec,stroke:#333,stroke-width:2px
-    style Implement fill:#e0f2f1,stroke:#333,stroke-width:2px
-    style State fill:#fff3e0,stroke:#333,stroke-width:2px
-    style Resume fill:#e8eaf6,stroke:#333,stroke-width:2px
-```
-
-### Summary
-
-One-command execution, automatic state management, zero context loss, flexible modes, cross-session continuity, error recovery, and progress transparency.
-
-```bash
-/speckitsmart.orchestrate <your-feature-description>
-```
+**📖 [Orchestrator Workflow Guide](docs/workflows/orchestrator.md)**
 
 ## 🏢 Corporate Guidelines System
 
@@ -1717,107 +1347,22 @@ Once the implementation is complete, test the application and resolve any runtim
 
 ## 🔍 Troubleshooting
 
-### Common Issues
+Having issues? Check our comprehensive troubleshooting guide:
 
-#### Issue: Command not found `/speckitsmart.constitution`
+**📖 [Troubleshooting Guide](docs/reference/troubleshooting.md)**
 
-**Symptoms**: AI agent reports command doesn't exist
+### Common Issues Covered
 
-**Solution**:
+- Command not found `/speckitsmart.constitution`
+- Cannot push to branch `claude/xxx`
+- State file corrupted after token limit
+- Guidelines not loading in prompts
+- `pipx install` fails with SSL errors
+- Orchestrator skips phases unexpectedly
+- Cross-platform scripts fail on Windows
+- Git credential manager setup
 
-1. Ensure you ran `speckitsmart init` in the project directory
-2. Check that the agent command directory exists (e.g., `.claude/commands/`, `.gemini/commands/`)
-3. Verify you're using the correct AI agent specified during init
-4. Run `speckitsmart check` to verify prerequisites
-
-#### Issue: Cannot push to branch `claude/xxx`
-
-**Symptoms**: `403 Forbidden` or similar error when pushing
-
-**Solution**:
-
-1. Ensure branch name starts with `claude/` and ends with matching session ID
-2. Check branch name format: `claude/<feature-name>-<sessionId>`
-3. Verify remote repository permissions
-4. Try: `git push -u origin <branch-name>` with full branch name
-
-#### Issue: State file corrupted after token limit
-
-**Symptoms**: `/speckitsmart.resume` fails to load state
-
-**Solution**:
-
-1. Check if `.speckitsmart-state.json.backup` exists and restore it
-2. If no backup, restart with `/speckitsmart.orchestrate --reset`
-3. Future prevention: Commit `.speckitsmart-state.json` regularly
-
-#### Issue: Guidelines not loading in prompts
-
-**Symptoms**: Corporate guidelines seem ignored by AI agent
-
-**Solution**:
-
-1. Verify `.guidelines/` directory exists with appropriate files
-2. Check `.guidelines/stack-mapping.json` exists and paths match your project structure
-3. Ensure guidelines files follow naming convention: `<stack>-guidelines.md`
-4. Run `./scripts/bash/check-guidelines-compliance.sh` to validate setup
-
-#### Issue: `pipx install` fails with SSL errors
-
-**Symptoms**: Certificate verification errors during installation
-
-**Solution**:
-
-```bash
-# Option 1: Use --skip-tls flag (not recommended for production)
-speckitsmart init my-project --skip-tls
-
-# Option 2: Update certificates (recommended)
-pip install --upgrade certifi truststore
-
-# Option 3: Use corporate proxy settings
-export HTTPS_PROXY=http://proxy.company.com:8080
-pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
-```
-
-#### Issue: Orchestrator skips phases unexpectedly
-
-**Symptoms**: `/speckitsmart.orchestrate` jumps over constitution or other phases
-
-**Solution**:
-
-1. Check if artifacts already exist from previous runs (`.specify/specs/`)
-2. Orchestrator skips phases with existing artifacts unless `--force` is used
-3. Review `.speckitsmart-state.json` to see completed phases
-4. To restart: Delete state file and artifact directories
-
-#### Issue: Cross-platform scripts fail on Windows
-
-**Symptoms**: Bash scripts don't work on Windows
-
-**Solution**:
-
-1. Set environment variable: `set SPEC_KIT_PLATFORM=windows` (CMD) or `$env:SPEC_KIT_PLATFORM="windows"` (PowerShell)
-2. Ensure PowerShell scripts have `.ps1` extension
-3. Check execution policy: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-4. Use Git Bash as alternative for bash scripts on Windows
-
-### Git Credential Manager on Linux
-
-If you're having issues with Git authentication on Linux, you can install Git Credential Manager:
-
-```bash
-#!/usr/bin/env bash
-set -e
-echo "Downloading Git Credential Manager v2.6.1..."
-wget https://github.com/git-ecosystem/git-credential-manager/releases/download/v2.6.1/gcm-linux_amd64.2.6.1.deb
-echo "Installing Git Credential Manager..."
-sudo dpkg -i gcm-linux_amd64.2.6.1.deb
-echo "Configuring Git to use GCM..."
-git config --global credential.helper manager
-echo "Cleaning up..."
-rm gcm-linux_amd64.2.6.1.deb
-```
+If your issue isn't covered, please [open a GitHub issue](https://github.com/veerabhadra-ponna/spec-kit-smart/issues/new).
 
 ## 👥 Maintainers
 
