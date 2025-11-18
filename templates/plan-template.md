@@ -630,14 +630,14 @@ def test_[scenario]_[expected_behavior]():
 
 **Critical User Journeys**:
 1. **Journey: [Name]** (e.g., "User completes checkout")
-   - Step 1: [e.g., Add item to cart]
-   - Step 2: [e.g., Proceed to checkout]
-   - Step 3: [e.g., Enter payment details]
-   - Step 4: [e.g., Confirm order]
-   - **Expected outcome**: [e.g., Order created, confirmation email sent]
+    - Step 1: [e.g., Add item to cart]
+    - Step 2: [e.g., Proceed to checkout]
+    - Step 3: [e.g., Enter payment details]
+    - Step 4: [e.g., Confirm order]
+    - **Expected outcome**: [e.g., Order created, confirmation email sent]
 
 2. **Journey: [Name]**
-   - [Steps...]
+    - [Steps...]
 
 ### Contract Tests
 
@@ -777,9 +777,9 @@ def test_[scenario]_[expected_behavior]():
 ### Open Questions
 
 1. **Q1**: [Question requiring clarification]
-   - **Owner**: [Who should answer]
-   - **Deadline**: [When answer is needed]
-   - **Impact**: [What's blocked without answer]
+    - **Owner**: [Who should answer]
+    - **Deadline**: [When answer is needed]
+    - **Impact**: [What's blocked without answer]
 
 2. **Q2**: [Question requiring clarification]
-   - [Same structure...]
+    - [Same structure...]
