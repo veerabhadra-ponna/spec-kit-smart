@@ -160,8 +160,6 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 - [🔍 Troubleshooting](#-troubleshooting)
 - [📖 Glossary](#-glossary)
 - [👥 Maintainers](#-maintainers)
-- [💬 Support](#-support)
-- [🙏 Acknowledgements](#-acknowledgements)
 - [📄 License](#-license)
 
 ## 🤔 What is Spec-Driven Development?
@@ -1366,16 +1364,7 @@ If your issue isn't covered, please [open a GitHub issue](https://github.com/vee
 
 ## 👥 Maintainers
 
-- Den Delimarsky ([@localden](https://github.com/localden))
-- John Lam ([@jflam](https://github.com/jflam))
-
-## 💬 Support
-
-For support, please open a [GitHub issue](https://github.com/veerabhadra-ponna/spec-kit-smart/issues/new). We welcome bug reports, feature requests, and questions about using Spec-Driven Development.
-
-## 🙏 Acknowledgements
-
-This project is heavily influenced by and based on the work and research of [John Lam](https://github.com/jflam).
+Veerabhadra Rao Ponna ([@veerabhadra-ponna](https://github.com/veerabhadra-ponna))
 
 ## 📖 Glossary
 
