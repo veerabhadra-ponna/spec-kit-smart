@@ -170,7 +170,7 @@ graph TB
   MON[Monitoring]:::P1
 
   %% Legend
-  LEGEND[Legend: P1=Green MVP | P2=Yellow Extended | P3=Orange Enhanced | P4=Gray Future]
+  LEGEND[Legend: P1=Green MVP - P2=Yellow Extended - P3=Orange Enhanced - P4=Gray Future]
 ```
 
 **Notes**:
