@@ -183,6 +183,7 @@ graph TB
 **Strategy**: [Fail fast / Graceful degradation / Retry with exponential backoff]
 
 **Error Response Format**:
+
 ```json
 {
   "error": {
@@ -237,7 +238,7 @@ graph TB
   - Request rate: `[feature_name]_requests_total` (counter)
   - Error rate: `[feature_name]_errors_total` (counter)
   - Latency: `[feature_name]_duration_seconds` (histogram)
-  - [Feature-specific metric]: [description]
+  - \[Feature-specific metric\]: [description]
 
 **Tracing** (if applicable):
 - **Tool**: [OpenTelemetry, Jaeger, Datadog APM, etc.]
@@ -516,6 +517,7 @@ graph LR
 **Purpose**: [What this endpoint does]
 
 **Request**:
+
 ```json
 {
   "field": "type (description)"
@@ -523,6 +525,7 @@ graph LR
 ```
 
 **Response** (Success - 200):
+
 ```json
 {
   "field": "type (description)"
@@ -588,6 +591,7 @@ graph LR
 - [Test case 3]: [What it validates - e.g., "Password must meet complexity requirements"]
 
 **Example Test Structure**:
+
 ```python
 # Example - adapt to your language/framework
 def test_[scenario]_[expected_behavior]():
