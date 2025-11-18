@@ -11,6 +11,12 @@
 
 ---
 
+## Quick Navigation
+
+🚀 [Get Started](#-get-started) • 🔄 [Reverse Engineering](#-reverse-engineering--modernization) • 🎭 [Orchestrator](#-orchestrator-workflow) • 🏢 [Corporate Guidelines](#-corporate-guidelines-system) • 🤖 [Supported Agents](#-supported-ai-agents) • 🔧 [CLI Reference](#-specify-cli-reference) • 📖 [Documentation](#-learn-more) • 🔍 [Troubleshooting](#-troubleshooting)
+
+---
+
 ## 🚀 Why This Fork? Enterprise-Ready Spec-Driven Development
 
 This fork extends the [original Spec Kit](https://github.com/github/spec-kit) with **enterprise-grade features** designed for **corporate teams and production environments**. While the original focuses on spec-driven development fundamentals, this fork adds critical capabilities that teams need in real-world corporate settings.
@@ -125,21 +131,34 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 
 ## Table of Contents
 
+### Getting Started
+
 - [🤔 What is Spec-Driven Development?](#-what-is-spec-driven-development)
+- [🎯 Choosing Your Workflow](#-choosing-your-workflow)
 - [⚡ Get Started](#-get-started)
-- [🔄 Reverse Engineering & Modernization](#-reverse-engineering--modernization)
 - [📽️ Video Overview](#️-video-overview)
 - [🤖 Supported AI Agents](#-supported-ai-agents)
-- [🔧 Specify CLI Reference](#-specify-cli-reference)
-- [🎭 Orchestrator Workflow](#-orchestrator-workflow)
-- [🏢 Corporate Guidelines System](#-corporate-guidelines-system)
+- [🔧 Prerequisites](#-prerequisites)
+
+### Core Workflows
+
 - [📚 Core Philosophy](#-core-philosophy)
 - [🌟 Development Phases](#-development-phases)
+- [🎭 Orchestrator Workflow](#-orchestrator-workflow)
+- [🔄 Reverse Engineering & Modernization](#-reverse-engineering--modernization)
+
+### Enterprise Features
+
+- [🏢 Corporate Guidelines System](#-corporate-guidelines-system)
 - [🎯 Experimental Goals](#-experimental-goals)
-- [🔧 Prerequisites](#-prerequisites)
-- [📖 Learn More](#-learn-more)
+
+### Reference & Support
+
+- [🔧 Specify CLI Reference](#-specify-cli-reference)
 - [📋 Detailed Process](#-detailed-process)
+- [📖 Learn More](#-learn-more)
 - [🔍 Troubleshooting](#-troubleshooting)
+- [📖 Glossary](#-glossary)
 - [👥 Maintainers](#-maintainers)
 - [💬 Support](#-support)
 - [🙏 Acknowledgements](#-acknowledgements)
@@ -148,6 +167,53 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 ## 🤔 What is Spec-Driven Development?
 
 Spec-Driven Development **flips the script** on traditional software development. For decades, code has been king — specifications were just scaffolding we built and discarded once the "real work" of coding began. Spec-Driven Development changes this: **specifications become executable**, directly generating working implementations rather than just guiding them.
+
+## 🎯 Choosing Your Workflow
+
+Select the right approach for your project:
+
+| Scenario | Recommended Approach | Commands | Duration |
+|----------|---------------------|----------|----------|
+| **New feature from scratch** | Standard Workflow | `/speckitsmart.constitution` → `/specify` → `/plan` → `/tasks` → `/implement` | 3-8 hours |
+| **Complex feature (token limits likely)** | Orchestrator | `/speckitsmart.orchestrate` <description> → `/speckitsmart.resume` (if needed) | 2-6 hours |
+| **Modernizing entire legacy app** | Reverse Engineering (Full) | `/speckitsmart.analyze-project` → Choose **[A] Full Application** | 1-3 days |
+| **Updating specific component** | Cross-Cutting Concern | `/speckitsmart.analyze-project` → Choose **[B] Cross-Cutting Concern** → Select type | 2-12 weeks |
+| **Enforcing company standards** | Corporate Guidelines | `/speckitsmart.generate-guidelines` → Customize `.guidelines/` | 4-8 hours |
+| **Learning the toolkit** | Manual Commands | Use individual commands step-by-step | Variable |
+
+### Visual Workflow Decision Tree
+
+Use this flowchart to quickly identify the best approach for your needs:
+
+```mermaid
+flowchart LR
+    Start{What do you<br/>want to do?} -->|New feature| NewFeature{Is it<br/>complex?}
+    Start -->|Modernize<br/>legacy app| Legacy[Use Reverse<br/>Engineering]
+    Start -->|Enforce company<br/>standards| Guidelines[Use Corporate<br/>Guidelines]
+
+    NewFeature -->|Simple<br/>single-session| Standard[Standard<br/>Workflow]
+    NewFeature -->|Complex<br/>multi-session| Orchestrator[Use<br/>Orchestrator]
+
+    Legacy --> FullOrTarget{Full app<br/>or specific<br/>component?}
+    FullOrTarget -->|Entire<br/>application| FullMod[Choose Option A:<br/>Full Modernization]
+    FullOrTarget -->|One<br/>component| ConcernMod[Choose Option B:<br/>Cross-Cutting Concern]
+
+    Standard --> StandardCmd["/speckitsmart.constitution<br/>→ /specify → /plan<br/>→ /tasks → /implement"]
+    Orchestrator --> OrchCmd["/speckitsmart.orchestrate<br/>+ /speckitsmart.resume"]
+    FullMod --> AnalyzeCmd["/speckitsmart.analyze-project"]
+    ConcernMod --> AnalyzeCmd
+    Guidelines --> GuideCmd["/speckitsmart.generate-guidelines"]
+
+    style Start fill:#e1f5e1,stroke:#333,stroke-width:2px
+    style Standard fill:#e3f2fd,stroke:#333,stroke-width:2px
+    style Orchestrator fill:#fff9c4,stroke:#333,stroke-width:2px
+    style Legacy fill:#fce4ec,stroke:#333,stroke-width:2px
+    style Guidelines fill:#f3e5f5,stroke:#333,stroke-width:2px
+    style StandardCmd fill:#c8e6c9,stroke:#333,stroke-width:2px
+    style OrchCmd fill:#fff3e0,stroke:#333,stroke-width:2px
+    style AnalyzeCmd fill:#ffcdd2,stroke:#333,stroke-width:2px
+    style GuideCmd fill:#e1bee7,stroke:#333,stroke-width:2px
+```
 
 ## ⚡ Get Started
 
@@ -1651,6 +1717,91 @@ Once the implementation is complete, test the application and resolve any runtim
 
 ## 🔍 Troubleshooting
 
+### Common Issues
+
+#### Issue: Command not found `/speckitsmart.constitution`
+
+**Symptoms**: AI agent reports command doesn't exist
+
+**Solution**:
+
+1. Ensure you ran `speckitsmart init` in the project directory
+2. Check that the agent command directory exists (e.g., `.claude/commands/`, `.gemini/commands/`)
+3. Verify you're using the correct AI agent specified during init
+4. Run `speckitsmart check` to verify prerequisites
+
+#### Issue: Cannot push to branch `claude/xxx`
+
+**Symptoms**: `403 Forbidden` or similar error when pushing
+
+**Solution**:
+
+1. Ensure branch name starts with `claude/` and ends with matching session ID
+2. Check branch name format: `claude/<feature-name>-<sessionId>`
+3. Verify remote repository permissions
+4. Try: `git push -u origin <branch-name>` with full branch name
+
+#### Issue: State file corrupted after token limit
+
+**Symptoms**: `/speckitsmart.resume` fails to load state
+
+**Solution**:
+
+1. Check if `.speckitsmart-state.json.backup` exists and restore it
+2. If no backup, restart with `/speckitsmart.orchestrate --reset`
+3. Future prevention: Commit `.speckitsmart-state.json` regularly
+
+#### Issue: Guidelines not loading in prompts
+
+**Symptoms**: Corporate guidelines seem ignored by AI agent
+
+**Solution**:
+
+1. Verify `.guidelines/` directory exists with appropriate files
+2. Check `.guidelines/stack-mapping.json` exists and paths match your project structure
+3. Ensure guidelines files follow naming convention: `<stack>-guidelines.md`
+4. Run `./scripts/bash/check-guidelines-compliance.sh` to validate setup
+
+#### Issue: `pipx install` fails with SSL errors
+
+**Symptoms**: Certificate verification errors during installation
+
+**Solution**:
+
+```bash
+# Option 1: Use --skip-tls flag (not recommended for production)
+speckitsmart init my-project --skip-tls
+
+# Option 2: Update certificates (recommended)
+pip install --upgrade certifi truststore
+
+# Option 3: Use corporate proxy settings
+export HTTPS_PROXY=http://proxy.company.com:8080
+pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
+```
+
+#### Issue: Orchestrator skips phases unexpectedly
+
+**Symptoms**: `/speckitsmart.orchestrate` jumps over constitution or other phases
+
+**Solution**:
+
+1. Check if artifacts already exist from previous runs (`.specify/specs/`)
+2. Orchestrator skips phases with existing artifacts unless `--force` is used
+3. Review `.speckitsmart-state.json` to see completed phases
+4. To restart: Delete state file and artifact directories
+
+#### Issue: Cross-platform scripts fail on Windows
+
+**Symptoms**: Bash scripts don't work on Windows
+
+**Solution**:
+
+1. Set environment variable: `set SPEC_KIT_PLATFORM=windows` (CMD) or `$env:SPEC_KIT_PLATFORM="windows"` (PowerShell)
+2. Ensure PowerShell scripts have `.ps1` extension
+3. Check execution policy: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+4. Use Git Bash as alternative for bash scripts on Windows
+
 ### Git Credential Manager on Linux
 
 If you're having issues with Git authentication on Linux, you can install Git Credential Manager:
@@ -1680,6 +1831,44 @@ For support, please open a [GitHub issue](https://github.com/veerabhadra-ponna/s
 ## 🙏 Acknowledgements
 
 This project is heavily influenced by and based on the work and research of [John Lam](https://github.com/jflam).
+
+## 📖 Glossary
+
+Key terms and concepts used throughout Spec Kit Smart:
+
+**Constitution**: Project-specific principles and guidelines that govern all development decisions. Acts as the highest-priority reference for AI agents, overriding corporate guidelines and Spec Kit defaults. Created with `/speckitsmart.constitution`.
+
+**Orchestrator**: Automated workflow manager that executes all phases of spec-driven development (constitution → specify → plan → tasks → implement) in a single command with state persistence. Enables seamless resumption after interruptions. Commands: `/speckitsmart.orchestrate`, `/speckitsmart.resume`.
+
+**Cross-Cutting Concern**: An architectural aspect that affects multiple modules or layers of an application (e.g., authentication, logging, caching, database access). Spec Kit Smart can analyze and migrate specific concerns without full application rewrites.
+
+**Blast Radius**: Percentage of codebase affected by a cross-cutting concern migration. Calculated by analyzing files, lines of code, and dependencies. Helps assess migration risk and effort.
+
+**Strangler Fig Pattern**: Incremental migration strategy where the new system gradually replaces the old one. Components are migrated one at a time while both systems run in parallel, reducing risk. Named after strangler fig vines that grow around trees.
+
+**Corporate Guidelines**: Customizable development standards enforced across projects. Includes mandatory libraries, banned packages, architecture patterns, security requirements, and compliance rules. Auto-generated from corporate documents and reference codebases. Located in `.guidelines/` directory.
+
+**Stack Mapping**: Configuration that routes guidelines to specific file paths in multi-stack projects (e.g., React frontend + Java backend). Defined in `.guidelines/stack-mapping.json` with path patterns and file extensions.
+
+**Functional Spec**: Business Analyst document describing WHAT the system does (features, user stories, requirements). Generated during reverse engineering to capture existing application behavior.
+
+**Technical Spec**: Architecture document describing HOW to build the system (tech stack, APIs, data models, deployment). Generated during reverse engineering with target modernization technologies.
+
+**Stage Prompts**: Pre-generated prompts for each Toolkit workflow phase (constitution, clarify, tasks, implement). Created during reverse engineering to guide step-by-step implementation with legacy code context.
+
+**Feasibility Score**: 0-100 rating assessing viability of inline upgrade vs greenfield rewrite vs hybrid approaches. Based on code quality metrics, test coverage, coupling analysis, and business constraints.
+
+**Reverse Engineering**: Process of analyzing existing codebases to extract business logic, assess technical debt, and generate modernization plans. Produces functional specs, technical specs, and migration strategies.
+
+**Abstraction Level**: Measure of how well a cross-cutting concern is separated from business logic. HIGH = easily swappable (interfaces, DI), MEDIUM = partial separation, LOW = tightly coupled (scattered logic).
+
+**State Persistence**: Automatic saving of workflow progress to `.speckitsmart-state.json`. Enables context restoration after chat token limits, interruptions, or end-of-day shutdowns. Includes phase tracking, task completion counts, and checkpoints.
+
+**Spec-Driven Development (SDD)**: Methodology where specifications become executable, directly generating working implementations rather than just guiding them. Emphasizes intent-driven development with rich specifications before code.
+
+**AI Agent**: AI-powered coding assistant that executes Spec Kit Smart commands (e.g., Claude Code, GitHub Copilot, Gemini CLI, Cursor). Reads specifications and generates code according to constitutional principles and guidelines.
+
+**Feature Branch**: Git branch created for a specific feature using pattern `<prefix>/<number>-<name>` (e.g., `feature/001-user-auth`). Automatically generated by `/speckitsmart.specify` with intelligent naming and Jira integration support.
 
 ## 📄 License
 
