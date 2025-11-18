@@ -1,15 +1,16 @@
 # Build and deploy DocFX documentation to GitHub Pages
+# DISABLED: This workflow has been disabled
 name: Deploy Documentation to Pages
 
 on:
-  # Runs on pushes targeting the default branch
-  push:
-    branches: ["main"]
-    paths:
-      - 'docs/**'
+  # DISABLED: Runs on pushes targeting the default branch
+  # push:
+  #   branches: ["main"]
+  #   paths:
+  #     - 'docs/**'
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  # DISABLED: Allows you to run this workflow manually from the Actions tab
+  # workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
