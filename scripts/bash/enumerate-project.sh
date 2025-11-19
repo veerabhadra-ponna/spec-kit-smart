@@ -535,10 +535,11 @@ EOF
     # Close file descriptor
     exec 3>&-
 
-    # Fix scan_end timestamp using jq (update in place)
+    # Fix scan_end timestamp using simple replacement (more reliable and portable than jq)
     if [[ -n "$OUTPUT_FILE" ]]; then
+        # Replace null scan_end with actual timestamp (portable across Linux/macOS)
         local temp_file="${OUTPUT_FILE}.tmp"
-        jq --arg end "$scan_end" '.scan_info.scan_end = $end' "$OUTPUT_FILE" > "$temp_file"
+        sed "s/\"scan_end\": *null/\"scan_end\": \"$scan_end\"/" "$OUTPUT_FILE" > "$temp_file"
         mv "$temp_file" "$OUTPUT_FILE"
     fi
 }
