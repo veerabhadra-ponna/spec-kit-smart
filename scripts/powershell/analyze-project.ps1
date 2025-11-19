@@ -46,7 +46,7 @@ if ($OS -eq "unix") {
 
 # Script directory
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$repoRoot = (Resolve-Path (Join-Path $scriptDir "../..")).Path
+$repoRoot = Get-RepoRoot
 
 # Show help if requested
 if ($Help) {
