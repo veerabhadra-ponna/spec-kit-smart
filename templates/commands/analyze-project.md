@@ -66,7 +66,7 @@ This command orchestrates a **chained prompt workflow** for project analysis. In
 
 **Pattern for EVERY stage:**
 
-1. **Load Stage Prompt**: Use Read tool to load `templates/commands/analyze/{stage}.md`
+1. **Load Stage Prompt**: Use Read tool to load `.specify/prompts/analyze/{stage}.md`
 2. **Read ENTIRE File**: Read all instructions carefully
 3. **Execute ALL Steps**: Follow every step in sequence
 4. **Generate State**: Create state JSON with all required fields
@@ -80,7 +80,7 @@ This command orchestrates a **chained prompt workflow** for project analysis. In
 
 **Start with Stage 1:**
 
-Load and execute: `templates/commands/analyze/01-setup-and-scope.md`
+Load and execute: `.specify/prompts/analyze/01-setup-and-scope.md`
 
 This unified stage handles:
 
@@ -221,4 +221,4 @@ When complete, all artifacts are saved to: `.analysis/{project}-{timestamp}/`
 
 ## Begin
 
-**Execute Stage 1:** Load `templates/commands/analyze/01-setup-and-scope.md` and follow all instructions.
+**Execute Stage 1:** Load `.specify/prompts/analyze/01-setup-and-scope.md` and follow all instructions.

@@ -152,8 +152,8 @@ Check for `.specify/config.json` in the repository root.
   - java (base + corporate profile)
 
 ℹ Compliance checking available via:
-  - ./scripts/bash/check-guidelines-compliance.sh
-  - .\scripts\powershell\check-guidelines-compliance.ps1
+  - .specify/scripts/bash/check-guidelines-compliance.sh
+  - .specify\scripts\powershell\check-guidelines-compliance.ps1
 ```
 
 ---
@@ -202,13 +202,13 @@ PROJECT_PATH: /home/user/my-legacy-app
 **For Unix/Linux/macOS (bash)**:
 
 ```bash
-./scripts/bash/analyze-project.sh PROJECT_PATH
+.specify/scripts/bash/analyze-project.sh PROJECT_PATH
 ```
 
 **For Windows (PowerShell)**:
 
 ```powershell
-.\scripts\powershell\analyze-project.ps1 PROJECT_PATH
+.specify\scripts\powershell\analyze-project.ps1 PROJECT_PATH
 ```
 
 **What the script does:**

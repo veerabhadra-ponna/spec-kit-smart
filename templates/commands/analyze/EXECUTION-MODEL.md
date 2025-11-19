@@ -21,8 +21,8 @@ This document explains **how the chained prompt architecture actually executes**
 The bash/PowerShell script runs FIRST:
 
 ```bash
-scripts/bash/analyze-project.sh /path/to/project
-```text
+.specify/scripts/bash/analyze-project.sh /path/to/project
+```
 
 **Script Actions**:
 1. Validates project path
@@ -37,13 +37,13 @@ scripts/bash/analyze-project.sh /path/to/project
 
 ### 3. AI Execution (Chained Workflow)
 
-Claude Code loads: `templates/commands/analyze-project.md` (master orchestration prompt)
+Claude Code loads: `analyze-project` command (orchestration prompt)
 
 **AI then executes sequentially**:
 
 ```text
 FOR each stage in [01-setup-and-scope, 02-structure, 03-file-analysis, 04a/b-branch, 05-report, 06-artifacts]:
-    1. AI uses Read tool → Load `templates/commands/analyze/{stage}.md`
+    1. AI uses Read tool → Load `.specify/prompts/analyze/{stage}.md`
     2. AI reads ENTIRE stage prompt
     3. AI executes ALL instructions in that prompt
     4. AI uses Bash tool → Load previous state (if not first stage)
@@ -148,17 +148,17 @@ AI uses these Bash commands throughout execution:
 
 ```bash
 # Load previous state
-./scripts/bash/chain-state.sh load {stage-name}
+.specify/scripts/bash/chain-state.sh load {stage-name}
 
 # Save new state
-./scripts/bash/chain-state.sh save {stage-name} '{json}'
+.specify/scripts/bash/chain-state.sh save {stage-name} '{json}'
 
 # Verify state was saved
-./scripts/bash/chain-state.sh load {stage-name}
+.specify/scripts/bash/chain-state.sh load {stage-name}
 
 # Get last completed stage (for recovery)
-./scripts/bash/chain-state.sh last-stage
-```text
+.specify/scripts/bash/chain-state.sh last-stage
+```
 
 ## Dynamic Branching
 
@@ -188,8 +188,8 @@ if (state.analysis_scope === "A") {
 AI must run:
 
 ```bash
-./scripts/bash/verify-analysis-report.sh {report-file}
-```text
+.specify/scripts/bash/verify-analysis-report.sh {report-file}
+```
 
 **Checks**:
 - All 9 phases present
@@ -211,16 +211,16 @@ If analysis is interrupted, AI can resume:
 
 ```bash
 # Check last completed stage
-last_stage=$(./scripts/bash/chain-state.sh last-stage)
+last_stage=$(.specify/scripts/bash/chain-state.sh last-stage)
 
 if [[ "$last_stage" != "none" ]]; then
     # Load last state
-    state=$(./scripts/bash/chain-state.sh load "$last_stage")
+    state=$(.specify/scripts/bash/chain-state.sh load "$last_stage")
 
     # Determine next stage
     # Resume from there
 fi
-```text
+```
 
 ### State Corruption
 
@@ -228,7 +228,7 @@ If state file is corrupted:
 
 ```bash
 # Validate state
-./scripts/bash/chain-state.sh validate "$state_json"
+.specify/scripts/bash/chain-state.sh validate "$state_json"
 
 # If validation fails:
 # - Restore from previous stage
