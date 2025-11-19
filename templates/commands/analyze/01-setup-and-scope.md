@@ -1,15 +1,15 @@
 ---
-stage: scope_definition
-requires: 01-init.json
-outputs: scope_state
-version: 1.0.0
+stage: setup_and_scope
+requires: nothing
+outputs: initial_state
+version: 2.0.0
 ---
 
-# Stage 2: Analysis Scope Definition
+# Stage 1: Setup and Scope Definition
 
 ## Purpose
 
-Gather project path and analysis scope from user, run estimation, and prepare for the main analysis workflow.
+This unified stage handles all initialization tasks: loading spec-kit environment settings, getting the project path from the user, running the analyze-project script, and gathering analysis scope preferences.
 
 ---
 
@@ -30,38 +30,145 @@ Gather project path and analysis scope from user, run estimation, and prepare fo
 
 ---
 
-## Previous State
+## Role & Mindset
 
-Load state from: `.analysis/.state/01-init.json`
+You are a **senior technical auditor and modernization specialist** with deep expertise in assessing legacy systems and charting upgrade paths. You excel at:
 
-You should have:
-- `chain_id` - Unique analysis chain identifier
-- `agents_md` - AGENTS.md loading status
-- `config` - Configuration settings
-- `guidelines` - Available corporate guidelines
+- **Comprehensive code analysis** - identifying patterns, anti-patterns, and technical debt
+- **Dependency auditing** - evaluating security, maintenance, and upgrade complexity
+- **Risk assessment** - quantifying upgrade feasibility and rewrite scenarios
+- **Strategic planning** - balancing technical ideals with business constraints
+- **Data-driven recommendations** - using metrics and scoring to guide decisions
+
+**Your quality standards:**
+
+- Every finding must be specific, evidenced, and actionable
+- Severity levels must be justified with impact analysis
+- Recommendations must include effort estimates and risk assessments
+- Feasibility scores must be calculated transparently
+- All upgrade paths must be tested against LTS and security requirements
+
+**Your philosophy:**
+
+- Good analysis reveals truth, not wishful thinking
+- Modernization serves business goals, not technology trends
+- The best upgrade path balances risk, cost, and value
+- Technical debt is acceptable when consciously managed
+- Greenfield rewrites are expensive - prove they're worth it
+- **Comprehensive analysis takes time** - quality over speed
+- **All files matter** - sampling creates blind spots
 
 ---
 
-## Task
+## PART 1: Spec-Kit Environment Initialization
 
-Interactively gather:
-1. PROJECT_PATH - Path to existing project to analyze
-2. ANALYSIS_SCOPE - Type of analysis (Full App or Cross-Cutting Concern)
-3. Additional details if Cross-Cutting Concern selected
-4. Run estimation to warn user about analysis time
+### Step 1.1: Check for AGENTS.md
+
+Search in the following locations:
+
+- Repository root: `./AGENTS.md`
+- `.specify/memory/AGENTS.md`
+- `templates/AGENTS.md`
+
+**IF FOUND:**
+
+- Read the file in FULL
+- Extract version number if present
+- Output: "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+- Set `agents_md.loaded = true` in state
+
+**IF NOT FOUND:**
+
+- Output: "ℹ No AGENTS.md found - proceeding with default behavior"
+- Set `agents_md.loaded = false` in state
+
+### Step 1.2: Load Configuration
+
+Check for `.specify/config.json` in the repository root.
+
+**Expected structure:**
+
+```json
+{
+  "enableCheckArtifactory": false,
+  "osEnv": "auto"
+}
+```
+
+**Configuration options:**
+
+- `enableCheckArtifactory` (boolean): Controls whether Artifactory validation runs (default: false)
+- `osEnv` (string): Override OS detection ("windows", "unix", "auto") (default: "auto")
+
+**IF CONFIG EXISTS:**
+
+- Load and parse JSON
+- Validate structure
+- Store in state
+
+**IF CONFIG MISSING:**
+
+- Use defaults: `{"enableCheckArtifactory": false, "osEnv": "auto"}`
+
+### Step 1.3: Detect Corporate Guidelines (v3.0 Profile-Based)
+
+**Check for guideline profile** in `.specify/config.json`:
+
+```json
+{
+  "project": {
+    "guidelineProfile": "corporate" // or "personal"
+  }
+}
+```
+
+**Check for guidelines directory** `/.guidelines/`:
+
+**v3.0 structure** (profile-based):
+
+- `base/reactjs-base.md` - Universal React best practices
+- `base/nodejs-base.md` - Universal Node.js best practices
+- `base/java-base.md` - Universal Java best practices
+- `base/python-base.md` - Universal Python best practices
+- `base/dotnet-base.md` - Universal .NET best practices
+- `profiles/corporate/*-overrides.md` - Corporate-specific requirements
+- `profiles/personal/*-overrides.md` - Personal/OSS-specific recommendations
+- `stack-mapping.json` - Tech stack detection and profile routing
+- `README.md` - Guidelines system documentation
+
+**For guidelines detected:**
+
+- Store profile type (`corporate` or `personal`)
+- Add available stacks to `guidelines[]` array
+- Note: Base + profile override will be loaded in later stages based on detected tech stack
+
+**Output example:**
+
+```text
+✓ Detected guideline profile: corporate
+✓ Found guidelines for stacks:
+  - reactjs (base + corporate profile)
+  - nodejs (base + corporate profile)
+  - java (base + corporate profile)
+
+ℹ Compliance checking available via:
+  - ./scripts/bash/check-guidelines-compliance.sh
+  - .\scripts\powershell\check-guidelines-compliance.ps1
+```
 
 ---
 
-## Step 1: Get Project Path and Run Setup Script
+## PART 2: Project Setup
 
 **CRITICAL**: This command analyzes an **EXISTING** project, not one managed by Spec Kit. Do NOT modify the target project directory structure.
 
-### 1.1: Get Project Path
+### Step 2.1: Get Project Path
 
 **IF** arguments were provided to the command:
+
 - Parse PROJECT_PATH from arguments
 - Validate path exists and is readable
-- Continue to Step 1.2
+- Continue to Step 2.2
 
 **ELSE** (interactive mode):
 
@@ -71,13 +178,14 @@ Display prompt:
 PROJECT_PATH: /path/to/existing/project
 ```
 
-**Example**:
+**Example:**
 
 ```text
 PROJECT_PATH: /home/user/my-legacy-app
 ```
 
-**Validation**:
+**Validation:**
+
 - Path must exist
 - Path must be readable
 - Path must be a directory
@@ -85,7 +193,7 @@ PROJECT_PATH: /home/user/my-legacy-app
 
 ---
 
-### 1.2: Run Analysis Setup Script
+### Step 2.2: Run Analysis Setup Script
 
 **Once PROJECT_PATH is confirmed**, run the appropriate setup script from the spec-kit repository root to enumerate project files and initialize analysis workspace.
 
@@ -103,7 +211,8 @@ PROJECT_PATH: /home/user/my-legacy-app
 .\scripts\powershell\analyze-project.ps1 PROJECT_PATH
 ```
 
-**What the script does**:
+**What the script does:**
+
 1. Creates analysis workspace directory (`.analysis/PROJECT-NAME-TIMESTAMP/`)
 2. Enumerates all files and generates `file-manifest.json`
 3. Creates state directory (`.analysis/.state/`)
@@ -111,13 +220,14 @@ PROJECT_PATH: /home/user/my-legacy-app
 5. Creates bootstrap state (`.analysis/.state/00-bootstrap.json`)
 
 **Parse script output** for:
+
 - Chain ID
 - Analysis directory path
 - Manifest file path
 
 ---
 
-### 1.3: Load Bootstrap State
+### Step 2.3: Load Bootstrap State
 
 After the script completes, load the bootstrap state:
 
@@ -125,51 +235,18 @@ After the script completes, load the bootstrap state:
 cat .analysis/.state/00-bootstrap.json
 ```
 
-**Extract from bootstrap state**:
+**Extract from bootstrap state:**
+
 - `chain_id` - Merge into current state
 - `analysis_dir` - Analysis workspace path
 - `manifest_path` - Path to file-manifest.json
+- `project_path` - Validated project path
 
 ---
 
-## 🎯 CONSISTENCY CHECKPOINT
+## PART 3: Analysis Scope Definition
 
-**Expected Behavior (MUST be identical across all runs):**
-
-1. Present analysis scope options ([A] or [B]) to user
-2. Wait for user selection
-3. Record answer in state field: `analysis_scope`
-4. Validate answer matches expected format: "A" or "B"
-5. If invalid, re-prompt with error message
-6. If valid, proceed to next step
-
-**This behavior MUST be consistent regardless of:**
-
-- AI model being used (GPT-4, Claude Sonnet 4, Gemini, etc.)
-- Time of day
-- Previous conversation context
-- Inferred user preferences
-
-**Deviation from this behavior is a CRITICAL ERROR.**
-
----
-
-## ⚠️ CRITICAL: Questionnaire Presentation Rules
-
-**YOU MUST FOLLOW THESE RULES WHEN ASKING QUESTIONS:**
-
-1. **Ask questions EXACTLY as written** - Do NOT rephrase, simplify, or modify wording
-2. **Present ALL options** - Do NOT remove or combine choices
-3. **Wait for user response** - Do NOT assume or guess answers
-4. **One question at a time** - Complete each question before moving to next
-5. **Validate input** - If user provides invalid choice, re-prompt with error message
-6. **No shortcuts** - Do NOT skip questions even if answer seems obvious
-
-**IF you modify questions or assume answers, this is a CRITICAL ERROR and workflow must restart.**
-
----
-
-## Step 2: Get Analysis Scope
+### Step 3.1: Get Analysis Scope
 
 **PRESENT THE FOLLOWING PROMPT TO USER EXACTLY AS WRITTEN:**
 
@@ -194,7 +271,7 @@ Your choice: ___
 
 **WAIT FOR USER RESPONSE - DO NOT PROCEED UNTIL USER PROVIDES ANSWER.**
 
-**Validation**:
+**Validation:**
 
 - **IF** user choice is **not** [A] or [B]:
   - Display error: "❌ Invalid selection. Please choose [A] for Full Application or [B] for Cross-Cutting Concern."
@@ -205,7 +282,7 @@ Your choice: ___
 
 ---
 
-## Step 3: Get Concern Details (Conditional)
+### Step 3.2: Get Concern Details (Conditional)
 
 **IF CHOICE = [B]** (Cross-Cutting Concern Migration):
 
@@ -228,10 +305,10 @@ Which cross-cutting concern do you want to migrate?
       → Examples: TIBCO → Kafka, RabbitMQ → Azure Service Bus, Adding messaging (greenfield)
 
 - [5] Resilience/Fault Tolerance
-      → Examples: Custom retry logic → Resilience4j, No circuit breakers → Polly/Hystrix, Basic timeouts → Comprehensive resilience strategy, Adding resilience patterns (greenfield)
+      → Examples: Custom retry logic → Resilience4j, No circuit breakers → Polly/Hystrix
 
 - [6] Logging/Observability
-      → Examples: Custom logs → ELK Stack, Log4j → Prometheus+Grafana, Adding observability (greenfield)
+      → Examples: Custom logs → ELK Stack, Log4j → Prometheus+Grafana
 
 - [7] API Gateway/Routing
       → Examples: Custom routing → Kong/Nginx, Monolith → API Gateway pattern
@@ -240,7 +317,7 @@ Which cross-cutting concern do you want to migrate?
       → Examples: Local filesystem → S3/Azure Blob, FTP → Object storage
 
 - [9] Deployment/Infrastructure
-      → Examples: VM → OpenShift, AWS → Azure, On-premise → Cloud, Dedicated server → Kubernetes
+      → Examples: VM → OpenShift, AWS → Azure, On-premise → Cloud
 
 - [10] Other (specify)
       → Any other cross-cutting concern not listed above
@@ -254,14 +331,15 @@ Examples: "Custom JWT with bcrypt", "Oracle 11g with raw SQL", "Memcached 1.4"
 TARGET_IMPLEMENTATION: ___
 (What do you want to migrate to?)
 Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AWS"
-```text
+```
 
 **Store responses** in state as `concern_details`:
+
 - `type` - The concern type name (map number to name)
 - `current` - Current implementation
 - `target` - Target implementation
 
-**Concern type mapping**:
+**Concern type mapping:**
 
 ```text
 1 → "Authentication/Authorization"
@@ -274,15 +352,16 @@ Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AW
 8 → "File Storage/CDN"
 9 → "Deployment/Infrastructure"
 10 → "Other" (use user-provided text)
-```text
+```
 
 **IF CHOICE = [A]** (Full Application):
+
 - Skip this step
 - Set `concern_details = null` in state
 
 ---
 
-## Step 3A: Get Additional Context (for both A and B)
+### Step 3.3: Get Additional Context (for both A and B)
 
 **CRITICAL**: This question applies to BOTH Full Application (A) and Cross-Cutting Concern (B) analysis.
 
@@ -311,39 +390,16 @@ ___
 - **IF** user types "none" (case-insensitive): Set `additional_context = null` in state
 - **ELSE**: Store the user's text in `additional_context` field in state
 
-**Example state storage:**
-
-```json
-{
-  "additional_context": "We need to migrate to microservices within 6 months. Team prefers Spring Boot. Must maintain Oracle database compatibility during transition."
-}
-```
-
-**OR if user provided "none":**
-
-```json
-{
-  "additional_context": null
-}
-```
-
 ---
 
-## Step 4: Load File Counts and Calculate Estimation
+## PART 4: File Analysis Estimation
 
-**CRITICAL**: File enumeration was already done in Step 1.2. The bootstrap state and file-manifest.json are now available.
-
-### 4.1: Use Bootstrap State Data
-
-The bootstrap state from Step 1.3 contains:
-- `analysis_dir` - Analysis workspace path
-- `manifest_path` - Path to file-manifest.json
-
-### 4.2: Read File Manifest and Count Categories
+### Step 4.1: Read File Manifest
 
 Read the file-manifest.json from the `manifest_path` in bootstrap state.
 
-**Count files by category**:
+**Count files by category:**
+
 - Core application files (controllers, services, models, repositories, configs, security, middleware, utils)
 - Tests
 - Configuration files
@@ -351,7 +407,7 @@ Read the file-manifest.json from the `manifest_path` in bootstrap state.
 - CI/CD files
 - Dependencies/vendor
 
-**Parse file-manifest.json structure**:
+**Parse file-manifest.json structure:**
 
 ```json
 {
@@ -375,7 +431,7 @@ Use the file list to categorize:
 - Utils: files matching `*util*`, `*helper*`, `*/utils/*`, `*/helpers/*`
 - Tests: files matching `*.test.*`, `*.spec.*`, `*/tests/*`, `*/__tests__/*`
 
-### 4.3: Calculate Time Estimate
+### Step 4.2: Calculate Time Estimate
 
 Use this formula:
 
@@ -383,16 +439,17 @@ Use this formula:
 Important files = controllers + services + models + repositories + configs + security + middleware + utils
 
 Estimated minutes = ceiling(important_files / 10) + 10
-```text
+```
 
-**Time ranges**:
+**Time ranges:**
+
 - **Small** (<50 files): 5-10 minutes
 - **Medium** (50-150 files): 15-25 minutes
 - **Large** (150-300 files): 30-50 minutes
 - **Very Large** (300-500 files): 60-90 minutes
 - **Extremely Large** (>500 files): 90+ minutes
 
-### 4.4: Display Estimation to User
+### Step 4.3: Display Estimation to User
 
 ```text
 === Analysis Scope Estimation ===
@@ -410,9 +467,9 @@ File Categories:
 Estimated Analysis Time: {estimated_minutes} minutes ({time_range})
 
 ⚠️ This is a {size_category} project.
-```text
+```
 
-### 4.5: Warning for Large Projects
+### Step 4.4: Warning for Large Projects
 
 **IF** total files > 300 (or estimated time > 30 minutes):
 
@@ -434,9 +491,10 @@ Do you want to proceed?
 - [N] No, cancel
 
 Your choice: ___
-```text
+```
 
 **IF** user chooses [N]:
+
 - Output: "Analysis cancelled by user"
 - Exit gracefully
 
@@ -444,22 +502,37 @@ Your choice: ___
 
 ## Output State
 
-Generate JSON state object merging previous state with new data:
+Generate JSON state object combining all gathered information:
 
 ```json
 {
-  ...previous_state,
-  "stage": "scope_definition",
-  "timestamp": "2025-11-14T10:15:00Z",
-  "stages_complete": ["initialization", "scope_definition"],
+  "chain_id": "a3f7c8d1",
+  "stage": "setup_and_scope",
+  "timestamp": "2025-11-19T10:15:00Z",
+  "stages_complete": ["setup_and_scope"],
+  "agents_md": {
+    "loaded": true,
+    "version": "2.1",
+    "path": "./AGENTS.md"
+  },
+  "config": {
+    "enableCheckArtifactory": false,
+    "osEnv": "auto"
+  },
+  "guidelines": [
+    "java-guidelines.md",
+    "reactjs-guidelines.md"
+  ],
   "project_path": "/home/user/legacy-app",
+  "analysis_dir": "/path/to/spec-kit/.analysis/legacy-app-2025-11-19-143022",
+  "manifest_path": "/path/to/spec-kit/.analysis/legacy-app-2025-11-19-143022/file-manifest.json",
   "analysis_scope": "B",
   "concern_details": {
     "type": "Authentication/Authorization",
     "current": "Custom JWT with bcrypt",
     "target": "Okta"
   },
-  "additional_context": "We need to migrate to microservices within 6 months. Team prefers Spring Boot. Must maintain Oracle database compatibility during transition.",
+  "additional_context": "We need to migrate to microservices within 6 months. Team prefers Spring Boot.",
   "estimation": {
     "total_files": 245,
     "categories": {
@@ -475,176 +548,51 @@ Generate JSON state object merging previous state with new data:
     "size_category": "large"
   }
 }
-```text
-
-**OR for Full Application (scope = A)**:
-
-```json
-{
-  ...previous_state,
-  "stage": "scope_definition",
-  "timestamp": "2025-11-14T10:15:00Z",
-  "stages_complete": ["initialization", "scope_definition"],
-  "project_path": "/home/user/legacy-app",
-  "analysis_scope": "A",
-  "concern_details": null,
-  "additional_context": null,
-  "estimation": {
-    "total_files": 180,
-    "categories": {
-      "core_application": 85,
-      "tests": 35,
-      "configs": 12,
-      "docs": 18,
-      "ci_cd": 8,
-      "dependencies": 22
-    },
-    "important_files": 85,
-    "estimated_minutes": 25,
-    "size_category": "medium"
-  }
-}
-```text
+```
 
 ---
 
 ## Completion Marker
 
-When scope definition is complete, output:
+When setup and scope definition is complete, output:
 
 ```text
-STAGE_COMPLETE:SCOPE
-STATE_PATH: .analysis/.state/02-scope.json
-```text
-
-Save the state JSON to `.analysis/.state/02-scope.json`.
+STAGE_COMPLETE:SETUP_AND_SCOPE
+STATE_PATH: .analysis/.state/01-setup-and-scope.json
+CHAIN_ID: {chain_id}
+```
 
 ---
 
 ## Error Handling
 
-**If project path doesn't exist**:
+**If project path doesn't exist:**
+
 - Output: "❌ Error: Project path does not exist: {path}"
 - Re-prompt for PROJECT_PATH
 - Do not proceed until valid path provided
 
-**If project path is not readable**:
+**If project path is not readable:**
+
 - Output: "❌ Error: Cannot read project directory: {path}"
 - Check permissions
 - Re-prompt or exit
 
-**If enumeration script fails**:
-- Output: "❌ Error running enumeration script"
-- Display script error output
-- Offer to continue with manual file scanning
+**If script execution fails:**
 
-**If user cancels large project analysis**:
+- Output: "❌ Error: Analysis setup script failed"
+- Display script error output
+- Exit with error
+
+**If user cancels large project analysis:**
+
 - Output: "ℹ Analysis cancelled by user"
 - Clean up any created directories
 - Exit gracefully
 
 ---
 
-## Example Execution
-
-```text
-=== Stage 2: Scope Definition ===
-
-Previous state loaded from: .analysis/.state/01-init.json
-Chain ID: a3f7c8d1
-
-PROJECT_PATH: /home/user/legacy-spring-app
-
-Validating path...
-✓ Path exists and is readable
-
-ANALYSIS_SCOPE:
-What type of analysis do you need?
-
-- [A] Full Application Modernization (entire codebase)
-- [B] Cross-Cutting Concern Migration (specific area)
-
-Your choice: B
-
-CONCERN_TYPE:
-Which cross-cutting concern do you want to migrate?
-
-[1] Authentication/Authorization
-[2] Database/ORM Layer
-... (full list)
-
-Your choice: 1
-
-CURRENT_IMPLEMENTATION: Custom JWT with bcrypt and custom user store
-
-TARGET_IMPLEMENTATION: Okta with OAuth 2.0
-
-Running project estimation...
-✓ Enumerated 245 files
-
-=== Analysis Scope Estimation ===
-
-Total Files: 245
-
-File Categories:
-- Core Application: 120 files
-- Tests: 45 files
-- Configuration: 15 files
-- Documentation: 20 files
-- CI/CD: 10 files
-- Dependencies: 35 files
-
-Estimated Analysis Time: 45 minutes (large)
-
-⚠️ WARNING: Large Project Detected
-... (warning message)
-
-Do you want to proceed? Y
-
-✓ Proceeding with analysis
-
----
-
-## Stage Completion Validation
-
-**Before proceeding to next stage, verify:**
-
-- [ ] All questions asked exactly as written (no modifications)
-- [ ] All user responses recorded in state
-- [ ] No assumptions made (all answers from user)
-- [ ] PROJECT_PATH validated and exists
-- [ ] ANALYSIS_SCOPE is either "A" or "B"
-- [ ] If scope = B, concern details collected
-- [ ] Estimation completed and displayed
-- [ ] State saved successfully
-
-**IF any checkbox is unchecked, STOP and fix the issue before proceeding.**
-
----
-
-STAGE_COMPLETE:SCOPE
-STATE_PATH: .analysis/.state/02-scope.json
-
-Next stage: 03-structure.md
-```text
-
----
-
-## State Schema Reference
-
-This stage must produce a state object conforming to `00-state-schema.json`.
-
-Required new fields:
-- `project_path` (string)
-- `analysis_scope` (string: "A" or "B")
-- `estimation` (object with total_files, categories, etc.)
-
-Optional fields:
-- `concern_details` (object, only if scope = "B")
-
----
-
 ## Next Stage
 
 After successful completion, proceed to:
-**Stage 3: 03-structure.md** (Project Structure Analysis)
+**Stage 2: 02-structure.md** (Project Structure Analysis)

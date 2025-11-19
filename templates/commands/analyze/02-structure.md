@@ -1,6 +1,6 @@
 ---
 stage: structure_analysis
-requires: 02-scope.json
+requires: 01-setup-and-scope.json
 outputs: structure_state
 version: 1.0.0
 ---
@@ -491,10 +491,10 @@ When structure analysis is complete, output:
 
 ```text
 STAGE_COMPLETE:STRUCTURE
-STATE_PATH: .analysis/.state/03-structure.json
+STATE_PATH: .analysis/.state/02-structure.json
 ```text
 
-Save the state JSON to `.analysis/.state/03-structure.json`.
+Save the state JSON to `.analysis/.state/02-structure.json`.
 
 ---
 
@@ -564,9 +564,9 @@ Loading corporate guidelines...
 ✓ Loaded: reactjs-guidelines.md
 
 STAGE_COMPLETE:STRUCTURE
-STATE_PATH: .analysis/.state/03-structure.json
+STATE_PATH: .analysis/.state/02-structure.json
 
-Next stage: 04-file-analysis.md
+Next stage: 03-file-analysis.md
 ```text
 
 ---
@@ -588,6 +588,6 @@ Required new fields:
 ## Next Stage
 
 After successful completion, proceed to:
-**Stage 4: 04-file-analysis.md** (Deep File Analysis)
+**Stage 4: 03-file-analysis.md** (Deep File Analysis)
 
 This is the most critical stage where comprehensive file scanning occurs.

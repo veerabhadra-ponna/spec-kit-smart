@@ -1,6 +1,6 @@
 ---
 stage: file_analysis
-requires: 03-structure.json
+requires: 02-structure.json
 outputs: analysis_state
 version: 1.0.0
 ---
@@ -34,7 +34,7 @@ This stage has **dedicated focus** for maximum attention and completion rate.
 
 ## Previous State
 
-Load state from: `.analysis/.state/03-structure.json`
+Load state from: `.analysis/.state/02-structure.json`
 
 You should have:
 - `chain_id` - Analysis chain identifier
@@ -716,10 +716,10 @@ When file analysis is complete and quality gates pass, output:
 
 ```text
 STAGE_COMPLETE:FILE_ANALYSIS
-STATE_PATH: .analysis/.state/04-file-analysis.json
+STATE_PATH: .analysis/.state/03-file-analysis.json
 ```text
 
-Save the state JSON to `.analysis/.state/04-file-analysis.json`.
+Save the state JSON to `.analysis/.state/03-file-analysis.json`.
 
 ---
 
@@ -747,7 +747,7 @@ Save the state JSON to `.analysis/.state/04-file-analysis.json`.
 ```text
 === Stage 4: Deep File Analysis ===
 
-Previous state loaded from: .analysis/.state/03-structure.json
+Previous state loaded from: .analysis/.state/02-structure.json
 Chain ID: a3f7c8d1
 
 Starting comprehensive file analysis...
@@ -818,11 +818,11 @@ Verifying quality gates...
 ✓ All quality gates passed
 
 STAGE_COMPLETE:FILE_ANALYSIS
-STATE_PATH: .analysis/.state/04-file-analysis.json
+STATE_PATH: .analysis/.state/03-file-analysis.json
 
 Next stage: Branching based on analysis_scope
-  - If scope = A: 05a-full-app.md
-  - If scope = B: 05b-cross-cutting.md
+  - If scope = A: 04a-full-app.md
+  - If scope = B: 04b-cross-cutting.md
 ```text
 
 ---
@@ -842,7 +842,7 @@ Required new fields:
 
 After successful completion, proceed to **DYNAMIC BRANCH**:
 
-- **IF** `analysis_scope = "A"`: **Stage 5a: 05a-full-app.md** (Full Application Analysis)
-- **IF** `analysis_scope = "B"`: **Stage 5b: 05b-cross-cutting.md** (Cross-Cutting Concern Analysis)
+- **IF** `analysis_scope = "A"`: **Stage 5a: 04a-full-app.md** (Full Application Analysis)
+- **IF** `analysis_scope = "B"`: **Stage 5b: 04b-cross-cutting.md** (Cross-Cutting Concern Analysis)
 
 The master orchestration prompt will load the appropriate branch.

@@ -73,9 +73,9 @@ Stage 3: AI loads 02-scope.json
     ↓
 [... continues through all stages ...]
     ↓
-Stage 7: AI loads 06-report.json
-         AI executes 07-artifacts.md
-         AI saves 07-artifacts.json
+Stage 7: AI loads 05-report.json
+         AI executes 06-artifacts.md
+         AI saves 06-artifacts.json
     ↓
 COMPLETE
 ```text
@@ -107,11 +107,11 @@ COMPLETE
 │   ├── 01-init.json            # Created by AI (Stage 1)
 │   ├── 02-scope.json           # Created by AI (Stage 2)
 │   ├── 03-structure.json       # Created by AI (Stage 3)
-│   ├── 04-file-analysis.json   # Created by AI (Stage 4)
-│   ├── 05a-full-app.json       # Created by AI (Stage 5A) OR
-│   ├── 05b-cross-cutting.json  # Created by AI (Stage 5B)
-│   ├── 06-report.json          # Created by AI (Stage 6)
-│   ├── 07-artifacts.json       # Created by AI (Stage 7)
+│   ├── 03-file-analysis.json   # Created by AI (Stage 4)
+│   ├── 04a-full-app.json       # Created by AI (Stage 5A) OR
+│   ├── 04b-cross-cutting.json  # Created by AI (Stage 5B)
+│   ├── 05-report.json          # Created by AI (Stage 6)
+│   ├── 06-artifacts.json       # Created by AI (Stage 7)
 │   └── latest.json             # Symlink/copy to latest state
 └── {project}-{timestamp}/
     └── ... (analysis artifacts)
@@ -153,10 +153,10 @@ Stage 5 uses dynamic branching based on `analysis_scope` from state:
 
 ```javascript
 if (state.analysis_scope === "A") {
-    // Load and execute: 05a-full-app.md
+    // Load and execute: 04a-full-app.md
     // Full application modernization
 } else if (state.analysis_scope === "B") {
-    // Load and execute: 05b-cross-cutting.md
+    // Load and execute: 04b-cross-cutting.md
     // Cross-cutting concern migration
 }
 ```text

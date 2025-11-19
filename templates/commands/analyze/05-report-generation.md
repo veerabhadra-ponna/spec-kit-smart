@@ -33,8 +33,8 @@ Generate the comprehensive `analysis-report.md` file using completion-based chun
 ## Previous State
 
 Load state from either:
-- `.analysis/.state/05a-full-app.json` (if scope = A)
-- `.analysis/.state/05b-cross-cutting.json` (if scope = B)
+- `.analysis/.state/04a-full-app.json` (if scope = A)
+- `.analysis/.state/04b-cross-cutting.json` (if scope = B)
 
 ---
 
@@ -716,11 +716,11 @@ Proceeding to Stage 7 (Artifact Generation)...
 
 ```text
 STAGE_COMPLETE:REPORT
-STATE_PATH: .analysis/.state/06-report.json
+STATE_PATH: .analysis/.state/05-report.json
 ```text
 
 ---
 
 ## Next Stage
 
-Proceed to: **Stage 7: 07-artifacts.md** (Generate remaining artifacts)
+Proceed to: **Stage 7: 06-artifacts.md** (Generate remaining artifacts)

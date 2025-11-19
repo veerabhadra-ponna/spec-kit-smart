@@ -33,11 +33,11 @@ This directory contains the **chained prompt workflow** for the `analyze-project
 1. **01-init.md** (~200 lines) - Initialization & setup
 2. **02-scope.md** (~350 lines) - User input & estimation
 3. **03-structure.md** (~300 lines) - Project structure analysis
-4. **04-file-analysis.md** (~450 lines) - ⭐ **CRITICAL** Deep file scanning
-5. **05a-full-app.md** (~400 lines) - Branch A: Full application modernization
-6. **05b-cross-cutting.md** (~350 lines) - Branch B: Cross-cutting concern migration
-7. **06-report-generation.md** (~300 lines) - Analysis report generation
-8. **07-artifacts.md** (~350 lines) - Remaining artifacts generation
+4. **03-file-analysis.md** (~450 lines) - ⭐ **CRITICAL** Deep file scanning
+5. **04a-full-app.md** (~400 lines) - Branch A: Full application modernization
+6. **04b-cross-cutting.md** (~350 lines) - Branch B: Cross-cutting concern migration
+7. **05-report-generation.md** (~300 lines) - Analysis report generation
+8. **06-artifacts.md** (~350 lines) - Remaining artifacts generation
 
 Total: ~2500 lines (distributed across stages for optimal attention)
 
@@ -74,10 +74,10 @@ Each stage:
 │   ├── 01-init.json
 │   ├── 02-scope.json
 │   ├── 03-structure.json
-│   ├── 04-file-analysis.json
-│   ├── 05a-full-app.json (OR 05b-cross-cutting.json)
-│   ├── 06-report.json
-│   ├── 07-artifacts.json
+│   ├── 03-file-analysis.json
+│   ├── 04a-full-app.json (OR 04b-cross-cutting.json)
+│   ├── 05-report.json
+│   ├── 06-artifacts.json
 │   └── latest.json
 └── {project}-{timestamp}/
     └── ... (generated artifacts)
@@ -163,7 +163,7 @@ Each stage:
 
 **CRITICAL**: Loads different prompt based on `analysis_scope`
 
-#### Branch A: Full Application (05a-full-app.md)
+#### Branch A: Full Application (04a-full-app.md)
 
 **Purpose**: Ask 10 modernization questions, calculate scores
 
@@ -174,7 +174,7 @@ Each stage:
 
 **Completion**: `STAGE_COMPLETE:FULL_APP`
 
-#### Branch B: Cross-Cutting Concern (05b-cross-cutting.md)
+#### Branch B: Cross-Cutting Concern (04b-cross-cutting.md)
 
 **Purpose**: Abstraction assessment, migration planning
 
