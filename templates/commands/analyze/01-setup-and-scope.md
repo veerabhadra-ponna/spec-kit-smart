@@ -60,7 +60,7 @@ You are a **senior technical auditor and modernization specialist** with deep ex
 
 ---
 
-## PART 1: Spec-Kit Environment Initialization
+## Spec-Kit Environment Initialization
 
 ### Step 1.1: Check for AGENTS.md
 
@@ -158,7 +158,7 @@ Check for `.specify/config.json` in the repository root.
 
 ---
 
-## PART 2: Project Setup
+## Project Setup
 
 **CRITICAL**: This command analyzes an **EXISTING** project, not one managed by Spec Kit. Do NOT modify the target project directory structure.
 
@@ -244,7 +244,7 @@ cat .analysis/.state/00-bootstrap.json
 
 ---
 
-## PART 3: Analysis Scope Definition
+## Analysis Scope Definition
 
 ### Step 3.1: Get Analysis Scope
 
@@ -392,7 +392,7 @@ ___
 
 ---
 
-## PART 4: File Analysis Estimation
+## File Analysis Estimation
 
 ### Step 4.1: Read File Manifest
 

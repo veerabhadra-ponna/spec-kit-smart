@@ -45,7 +45,7 @@ You should have:
 
 ## Task
 
-1. Load bootstrap state (analysis_dir, manifest_path already created)
+1. Load previous state (analysis_dir, manifest_path already created)
 2. Detect technology stack from project files
 3. Determine project type (monolith, microservices, etc.)
 4. Identify entry points and key architectural elements
@@ -53,29 +53,31 @@ You should have:
 
 ---
 
-## Step 1: Load Bootstrap State
+## Step 1: Load Previous State
 
-**CRITICAL**: The enumeration script was ALREADY run during bootstrap. Do NOT run it again.
+**CRITICAL**: The enumeration script was ALREADY run in Stage 1. Do NOT run it again.
 
-**Why**: The setup script (analyze-project.sh/ps1) was executed at the very beginning and already:
+**Why**: The setup script (analyze-project.sh/ps1) was executed in Stage 1 and already:
 - Created the analysis workspace directory
 - Generated the file-manifest.json
-- Saved all paths to bootstrap state (00-bootstrap.json)
+- Saved all paths to state
 
 Running it again would create a SECOND directory with a different timestamp, causing artifacts to be split across two locations.
 
-### 1.1: Load Paths from Bootstrap State
+### 1.1: Load Previous State
 
-Load state from: `.analysis/.state/00-bootstrap.json`
+Load state from: `.analysis/.state/01-setup-and-scope.json`
 
-**Bootstrap state contains**:
+**Previous state contains**:
 - `chain_id` - Analysis chain identifier
 - `analysis_dir` - Analysis workspace directory (already created)
 - `manifest_path` - Path to file-manifest.json (already generated)
 - `project_path` - Project being analyzed
-- `project_name` - Project name
+- `analysis_scope` - Type of analysis (A or B)
+- `additional_context` - User-provided context (may be null)
+- Plus: agents_md, config, guidelines, estimation
 
-**Example bootstrap state**:
+**Example state from Stage 1**:
 
 ```json
 {
@@ -93,7 +95,7 @@ Load state from: `.analysis/.state/00-bootstrap.json`
 
 ### 1.2: Extract Values for Current State
 
-Extract these values from bootstrap state and merge into current state:
+Extract these values from previous state and merge into current state:
 
 - `analysis_dir` - Use as-is
 - `manifest_path` - Use as-is
@@ -500,8 +502,8 @@ Save the state JSON to `.analysis/.state/02-structure.json`.
 
 ## Error Handling
 
-**If bootstrap state not found**:
-- Output: "❌ Error: Bootstrap state not found at .analysis/.state/00-bootstrap.json"
+**If previous state not found**:
+- Output: "❌ Error: Previous state not found at .analysis/.state/01-setup-and-scope.json"
 - This means setup script was not run properly
 - Abort and instruct user to run analyze-project.sh/ps1 first
 
@@ -531,8 +533,8 @@ Previous state loaded from: .analysis/.state/02-scope.json
 Chain ID: a3f7c8d1
 Project: /home/user/legacy-app
 
-Loading bootstrap state...
-✓ Bootstrap state: .analysis/.state/00-bootstrap.json
+Loading previous state...
+✓ Previous state: .analysis/.state/01-setup-and-scope.json
 
 Extracting paths from bootstrap...
 ✓ Analysis workspace: .analysis/legacy-app-2025-11-14-102045/
