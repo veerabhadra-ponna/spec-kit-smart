@@ -337,8 +337,9 @@ Comprehensive analysis with AI-driven interactive workflow:
 
 - **`analysis-report.md`** - Technical assessment with strengths/weaknesses, upgrade paths, and data-driven recommendations
 - **`EXECUTIVE-SUMMARY.md`** - High-level overview for stakeholders and decision-makers
-- **`functional-spec.md`** - Business Analyst document (WHAT the system does) with real features extracted from code
-- **`technical-spec.md`** - Architecture document (HOW to build) with your chosen target stack
+- **`functional-spec-legacy.md`** - WHAT the LEGACY system does TODAY (features extracted from existing code)
+- **`functional-spec-target.md`** - WHAT the MODERNIZED system WILL do (future state with your tech stack)
+- **`technical-spec.md`** - HOW to build the modernized system (architecture with your chosen target stack)
 
 **Toolkit Workflow Integration:**
 
@@ -347,7 +348,7 @@ Comprehensive analysis with AI-driven interactive workflow:
   - `clarify-prompt.md` - Clarification guidance with legacy code references
   - `tasks-prompt.md` - Task breakdown guidance
   - `implement-prompt.md` - Implementation guidance with legacy code references
-  - *Note: Use `functional-spec.md` and `technical-spec.md` directly instead of separate specify/plan prompts*
+  - *Note: Use `functional-spec-legacy.md`, `functional-spec-target.md`, and `technical-spec.md` directly instead of separate specify/plan prompts*
 
 **Decision Support:**
 
@@ -414,7 +415,7 @@ The analysis is **fully interactive** with AI-guided questions about your modern
 
 **Step 3: Deep Code Analysis** - AI analyzes ALL code files to extract features, business logic, configurations, and architecture patterns
 
-**Step 4: Artifact Generation** - Creates functional-spec.md, technical-spec.md, and stage prompts based on analysis + your choices
+**Step 4: Artifact Generation** - Creates functional-spec-legacy.md (WHAT legacy system does), functional-spec-target.md (WHAT modernized system will do), technical-spec.md (HOW to build), and stage prompts based on analysis + your choices
 
 ### Key Capabilities
 

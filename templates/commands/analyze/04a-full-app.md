@@ -6,6 +6,8 @@ outputs: full_app_state
 version: 1.0.0
 ---
 
+<!-- markdownlint-disable MD046 -->
+
 ## ⚠️ MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
@@ -124,6 +126,18 @@ Your choice: ___
 
 ## Step 1: 10 Progressive Modernization Questions
 
+**⚠️ CRITICAL - READ BEFORE PROCEEDING:**
+
+You MUST ask ALL 10 questions below EXACTLY as written. Do NOT:
+
+- Modify, rephrase, or simplify any question text
+- Skip any questions (even if answer seems obvious)
+- Combine or remove any options
+- Assume answers from code analysis or context
+- Change the order of questions
+
+**IF YOU MODIFY QUESTIONS OR SKIP QUESTIONS, THIS IS A CRITICAL ERROR.**
+
 Ask user about target modernization stack based on detected legacy stack.
 
 ### Detection Flags (for conditional logic)
@@ -138,7 +152,7 @@ Based on file analysis, set these flags:
 
 ### Questions
 
-Ask the following questions interactively:
+**IMPORTANT**: Present each question EXACTLY as written below. Copy the text verbatim - do not paraphrase or modify.
 
 ```text
 MODERNIZATION PREFERENCES:
@@ -161,15 +175,18 @@ Based on detected legacy stack, please answer the following:
    - [C] MongoDB [latest stable]
    - [D] Other (please specify)
    Your choice: ___
-```text
+```
 
-3. Message Bus/Queue [CONDITIONAL]:
+3\. Message Bus/Queue [CONDITIONAL]:
    Current: [detected or "None detected"]
+
+   **⚠️ CRITICAL**: Present this question WITH ALL OPTIONS as written. Do NOT skip, modify, or simplify.
 
    **IF** `!HAS_MESSAGE_BUS` (no message queue detected):
       Mark as **[OPTIONAL - Not detected in legacy code]**
-      Add educational note:
-      ```
+      Add educational note (present EXACTLY as written):
+
+      ```text
       Since your legacy app doesn't use message queues, you can skip this.
       However, modernization could benefit from async messaging for:
       - Background job processing
@@ -187,7 +204,8 @@ Based on detected legacy stack, please answer the following:
       ```
 
    **ELSE** (message queue detected):
-      ```
+
+      ```text
       Options:
       - [A] Keep current ([detected message bus])
       - [B] Apache Kafka
@@ -198,41 +216,43 @@ Based on detected legacy stack, please answer the following:
       Your choice: ___
       ```
 
-4. Package Manager:
+4\. Package Manager:
    Current: [detected]
    Options:
-   - [A] Keep current ([detected])
-   - [B] [Alternative for stack]
-   - [C] Other (please specify)
+- [A] Keep current ([detected])
+- [B] [Alternative for stack]
+- [C] Other (please specify)
    Your choice: ___
 
-5. Deployment Target:
+5\. Deployment Target:
    Current: [detected or "Unknown"]
    Options:
-   - [A] Dedicated server (traditional VM/bare metal)
-   - [B] Kubernetes (cloud-agnostic container orchestration)
-   - [C] Azure (App Service, AKS, Container Apps, Container Instances)
-   - [D] AWS (ECS, EKS, Elastic Beanstalk, Lambda)
-   - [E] Google Cloud Platform (GKE, Cloud Run, App Engine)
-   - [F] OpenShift (enterprise Kubernetes distribution)
-   - [G] Other (please specify)
+- [A] Dedicated server (traditional VM/bare metal)
+- [B] Kubernetes (cloud-agnostic container orchestration)
+- [C] Azure (App Service, AKS, Container Apps, Container Instances)
+- [D] AWS (ECS, EKS, Elastic Beanstalk, Lambda)
+- [E] Google Cloud Platform (GKE, Cloud Run, App Engine)
+- [F] OpenShift (enterprise Kubernetes distribution)
+- [G] Other (please specify)
    Your choice: ___
 
    **Store choice**:
-   - Set `IS_TRADITIONAL_DEPLOYMENT = true` if user selects **[A]** (Dedicated server)
-   - Set `IS_TRADITIONAL_DEPLOYMENT = false` if user selects **[B], [C], [D], [E], [F]** (any cloud/container platform)
-   - If user selects **[G] Other**, ask clarifying question: "Is this a cloud/container platform (Kubernetes, Docker, etc.)?"
-     - If yes → Set `IS_TRADITIONAL_DEPLOYMENT = false`
-     - If no → Set `IS_TRADITIONAL_DEPLOYMENT = true`
-```text
+- Set `IS_TRADITIONAL_DEPLOYMENT = true` if user selects **[A]** (Dedicated server)
+- Set `IS_TRADITIONAL_DEPLOYMENT = false` if user selects **[B], [C], [D], [E], [F]** (any cloud/container platform)
+- If user selects **[G] Other**, ask clarifying question: "Is this a cloud/container platform (Kubernetes, Docker, etc.)?"
+  - If yes → Set `IS_TRADITIONAL_DEPLOYMENT = false`
+  - If no → Set `IS_TRADITIONAL_DEPLOYMENT = true`
 
-6. Infrastructure as Code (IaC) [CONDITIONAL - Based on Q5 Answer]:
+6\. Infrastructure as Code (IaC) [CONDITIONAL - Based on Q5 Answer]:
+
+   **⚠️ CRITICAL**: Present this question WITH ALL OPTIONS as written (when applicable). Do NOT skip, modify, or simplify.
 
    **CRITICAL LOGIC: Check the user's answer to Question 5 above.**
 
    **IF user selected [A] "Dedicated server" in Question 5**:
       Display this message and SKIP to Question 8:
-      ```
+
+      ```text
       [SKIPPED - Not applicable for traditional deployment]
 
       Note: Infrastructure as Code is typically used with cloud deployments.
@@ -246,7 +266,8 @@ Based on detected legacy stack, please answer the following:
 
    **ELSE IF user selected [B], [C], [D], [E], or [F] in Question 5** (Kubernetes, Azure, AWS, GCP, OpenShift):
       **ASK this question**:
-      ```
+
+      ```text
       Infrastructure as Code (IaC):
       Options:
       - [A] Terraform (cloud-agnostic)
@@ -264,13 +285,16 @@ Based on detected legacy stack, please answer the following:
       - If they answered "yes" to the clarifying question (is cloud/container platform) → **ASK this question** (same as above)
       - If they answered "no" → **SKIP to Question 8** (same skip message as [A])
 
-7. Containerization Strategy [CONDITIONAL - Based on Q5 Answer]:
+7\. Containerization Strategy [CONDITIONAL - Based on Q5 Answer]:
+
+   **⚠️ CRITICAL**: Present this question WITH ALL OPTIONS as written (when applicable). Do NOT skip, modify, or simplify.
 
    **CRITICAL LOGIC: Check the user's answer to Question 5 above.**
 
    **IF user selected [A] "Dedicated server" in Question 5**:
       Display this message and SKIP to Question 8:
-      ```
+
+      ```text
       [SKIPPED - Not applicable for traditional deployment]
 
       Note: Containerization requires migrating away from traditional servers.
@@ -284,7 +308,8 @@ Based on detected legacy stack, please answer the following:
 
    **ELSE IF user selected [B], [C], [D], [E], or [F] in Question 5** (Kubernetes, Azure, AWS, GCP, OpenShift):
       **ASK this question**:
-      ```
+
+      ```text
       Containerization Strategy:
       Options:
       - [A] Docker containers only
@@ -298,15 +323,17 @@ Based on detected legacy stack, please answer the following:
    **ELSE IF user selected [G] "Other" in Question 5**:
       - If they answered "yes" to the clarifying question (is cloud/container platform) → **ASK this question** (same as above)
       - If they answered "no" → **SKIP to Question 8** (same skip message as [A])
-```text
 
-8. Observability Stack [CONDITIONAL]:
+8\. Observability Stack [CONDITIONAL]:
    Current: [detected or "None detected"]
+
+   **⚠️ CRITICAL**: Present this question WITH ALL OPTIONS as written. Do NOT skip, modify, or simplify.
 
    **IF** `!HAS_OBSERVABILITY` (no structured logging/monitoring detected):
       Mark as **[OPTIONAL - Not detected in legacy code]**
-      Add educational note:
-      ```
+      Add educational note (present EXACTLY as written):
+
+      ```text
       No structured observability stack detected in legacy code.
       Modern observability includes:
       - Structured logging (JSON logs, log aggregation)
@@ -328,7 +355,8 @@ Based on detected legacy stack, please answer the following:
       ```
 
    **ELSE** (observability stack detected):
-      ```
+
+      ```text
       Options:
       - [A] Keep current ([detected stack])
       - [B] ELK Stack (Elasticsearch, Logstash, Kibana)
@@ -342,19 +370,19 @@ Based on detected legacy stack, please answer the following:
       Your choice: ___
       ```
 
-9. Security & Authentication:
+9\. Security & Authentication:
    Current: [detected from code or "Unknown"]
    Options:
-   - [A] OAuth 2.0 / OpenID Connect
-   - [B] JWT tokens
-   - [C] SAML 2.0
-   - [D] API Keys
-   - [E] Mutual TLS (mTLS)
-   - [F] Keep current auth mechanism
-   - [G] Other (please specify)
+- [A] OAuth 2.0 / OpenID Connect
+- [B] JWT tokens
+- [C] SAML 2.0
+- [D] API Keys
+- [E] Mutual TLS (mTLS)
+- [F] Keep current auth mechanism
+- [G] Other (please specify)
    Your choice: ___
 
-10. Testing Strategy:
+10\. Testing Strategy:
     Current: [detected test coverage or "No tests detected"]
     Target:
     - [A] Unit tests only (minimum viable)
@@ -363,7 +391,6 @@ Based on detected legacy stack, please answer the following:
     - [D] Unit + Integration + E2E + Contract tests (full suite)
     - [E] Minimal testing (not recommended)
     Your choice: ___
-```text
 
 **Store all responses** in state as `modernization_preferences`.
 
@@ -529,7 +556,7 @@ Calculate complexity scores using scoring matrices.
 ```text
 Complexity Score = {calculated_score}
 Complexity Rating = {LOW | MEDIUM | HIGH | VERY HIGH}
-```text
+```
 
 ---
 
@@ -546,7 +573,7 @@ Inline_Score = 100 - (Complexity_Score * 0.7) - (Tech_Debt_Score * 0.3)
 Where:
 - Complexity_Score = from Step 2 (0-100)
 - Tech_Debt_Score = normalized from tech debt items (0-100)
-```text
+```
 
 **Rating**:
 - 70-100%: **HIGHLY FEASIBLE** - Recommended approach
@@ -564,7 +591,7 @@ Where:
 - Complexity_Score = from Step 2 (0-100)
 - Tech_Debt_Score = normalized (0-100)
 - Coverage_Gap = (100 - test_coverage_percentage)
-```text
+```
 
 **Rating**:
 - 70-100%: **RECOMMENDED** - Rewrite is justified
@@ -579,7 +606,7 @@ Formula:
 Hybrid_Score = 100 - abs(Inline_Score - Rewrite_Score)
 
 Rationale: Hybrid works best when inline and rewrite are equally viable
-```text
+```
 
 **Rating**:
 - 70-100%: **VIABLE** - Good candidate for phased approach
@@ -651,7 +678,7 @@ Based on scores, generate prioritized recommendations:
     "long_term_goals": [...]
   }
 }
-```text
+```
 
 ---
 
@@ -677,7 +704,7 @@ Based on scores, generate prioritized recommendations:
 ```text
 STAGE_COMPLETE:FULL_APP
 STATE_PATH: .analysis/.state/04a-full-app.json
-```text
+```
 
 ---
 

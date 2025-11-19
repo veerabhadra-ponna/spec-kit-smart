@@ -236,8 +236,9 @@ Each stage:
 - metrics-summary.json
 
 **IF Scope = A** (Full Application):
-- functional-spec.md
-- technical-spec.md
+- functional-spec-legacy.md (WHAT legacy system does TODAY)
+- functional-spec-target.md (WHAT modernized system WILL do)
+- technical-spec.md (HOW to build modernized system)
 - stage-prompts/ (4 files)
 
 **IF Scope = B** (Cross-Cutting):
