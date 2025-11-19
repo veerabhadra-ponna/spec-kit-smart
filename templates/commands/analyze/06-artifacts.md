@@ -209,18 +209,35 @@ Required:
 
 ## ⚠️ CRITICAL: Generate BOTH Functional Specs (Scope = A)
 
+🛑 **STOP - READ THIS BEFORE GENERATING ANY FUNCTIONAL SPECS** 🛑
+
 **For Full Application Modernization, you MUST generate TWO separate functional specs:**
 
 1. **functional-spec-legacy.md** - What the LEGACY system does TODAY
 2. **functional-spec-target.md** - What the MODERNIZED system WILL do
 
-**This is MANDATORY - do NOT generate just one spec. Generate BOTH.**
+**⚠️ THIS IS MANDATORY - DO NOT GENERATE JUST ONE SPEC. GENERATE BOTH.**
+
+**IF YOU GENERATE ONLY ONE FUNCTIONAL SPEC, THIS IS A CRITICAL ERROR.**
+
+**DO NOT:**
+- ❌ Generate only functional-spec-legacy.md and stop
+- ❌ Generate only functional-spec-target.md and stop
+- ❌ Combine both into a single file
+- ❌ Skip either spec thinking "the user can infer the other"
+- ❌ Proceed to stage-prompts/ without generating both specs
+
+**YOU MUST GENERATE BOTH SPECS IN SEQUENCE:**
+1. Generate functional-spec-legacy.md (5 chunks) FIRST
+2. THEN generate functional-spec-target.md (5 chunks)
+3. ONLY AFTER BOTH are complete → proceed to technical-spec.md
 
 **Why Two Specs?**
 - Legacy spec: Documents current functionality (source of truth for what exists)
 - Target spec: Documents desired functionality (what to build)
 - Prevents confusion about which app is being documented
 - Gives user complete documentation set
+- Enables comparison between before/after states
 
 ---
 
@@ -430,6 +447,32 @@ Required:
 
 ---
 
+## ⚠️ CHECKPOINT: Legacy Spec Complete - Now Generate Target Spec
+
+🛑 **MANDATORY CHECKPOINT - DO NOT SKIP** 🛑
+
+**You just completed functional-spec-legacy.md. DO NOT STOP HERE.**
+
+### NEXT REQUIRED STEP: Generate functional-spec-target.md
+
+**Verify before proceeding:**
+- [ ] functional-spec-legacy.md is complete (all 5 chunks)
+- [ ] All sections present (Introduction through Constraints)
+- [ ] No placeholders or TODOs
+- [ ] Checkpoint file exists: `.analysis/.checkpoints/functional-spec-complete.json`
+
+### NOW IMMEDIATELY PROCEED TO GENERATE functional-spec-target.md
+
+**DO NOT:**
+- ❌ Skip to technical-spec.md
+- ❌ Skip to stage-prompts/
+- ❌ Mark artifact generation as complete
+- ❌ Proceed to final summary
+
+### ONLY AFTER functional-spec-target.md is ALSO complete can you proceed to technical-spec.md
+
+---
+
 ### Artifact 4A-Target (Scope = A): functional-spec-target.md
 
 **Purpose**: Functional specification for TARGET/MODERNIZED application (WHAT system WILL do)
@@ -469,6 +512,24 @@ Review user's answers to 10 modernization questions and scope validation from St
 - Include modernization enhancements
 - Document scope boundaries clearly
 - File path: `.analysis/{project}-{timestamp}/functional-spec-target.md`
+
+**IMPORTANT - This is the SECOND of TWO required functional specs:**
+1. ✓ functional-spec-legacy.md (COMPLETED)
+2. → functional-spec-target.md (GENERATING NOW - 5 chunks)
+
+Follow the same 5-chunk pattern as legacy spec with proper checkpoint markers.
+
+**After completing ALL 5 chunks of functional-spec-target.md:**
+
+Display final completion message:
+
+```text
+✅ BOTH FUNCTIONAL SPECS COMPLETE
+   1. functional-spec-legacy.md - LEGACY system (what exists today)
+   2. functional-spec-target.md - TARGET system (what will be built)
+
+   Now proceeding to technical-spec.md...
+```
 
 **Progress**: `✓ Generated: functional-spec-target.md ({lines} lines, {chunks} chunks)`
 
@@ -970,7 +1031,7 @@ Analysis Duration: {duration}
 - [ ] EXECUTIVE-SUMMARY.md complete
 - [ ] dependency-audit.json generated
 - [ ] metrics-summary.json generated
-- [ ] If scope = A: functional-spec-legacy.md AND functional-spec-target.md generated
+- [ ] If scope = A: **BOTH** functional-spec-legacy.md AND functional-spec-target.md generated (2 specs required)
 - [ ] If scope = A: technical-spec.md generated
 - [ ] If scope = A: stage-prompts/ directory with 4 files
 - [ ] If scope = B: All concern-specific artifacts generated
