@@ -85,7 +85,12 @@ Example: `a3f7c8d1`
 
 **You are now executing the chained analysis workflow.**
 
-Begin with Stage 1 (01-init.md). The analyze-project setup script will be run later in Stage 2 (02-scope.md) after the user provides the PROJECT_PATH.
+**Execution Order:**
+1. **Stage 1 (01-init.md)** - Spec-kit initialization (AGENTS.md, config, guidelines)
+2. **Stage 2 (02-scope.md)** - Ask PROJECT_PATH → Run script → Script creates `00-bootstrap.json` → Continue with scope questions
+3. **Stage 3+** - Continue analysis using state from previous stages
+
+**Note on Bootstrap State**: The `00-bootstrap.json` file is created BY THE SCRIPT (not a stage file). It's generated during Stage 2 after the user provides PROJECT_PATH.
 
 ---
 
@@ -93,7 +98,7 @@ Begin with Stage 1 (01-init.md). The analyze-project setup script will be run la
 
 **CRITICAL**: Follow this pattern for EVERY stage:
 
-1. **Load Stage Prompt**: Use Read tool to load `.specify/prompts/analyze/{stage}.md`
+1. **Load Stage Prompt**: Use Read tool to load `templates/commands/analyze/{stage}.md`
 2. **Read ENTIRE File**: Read all instructions in the stage prompt
 3. **Execute ALL Steps**: Follow every step in sequence
 4. **Load Previous State**: Use Bash tool to load state from previous stage
@@ -125,7 +130,7 @@ Begin with Stage 1 (01-init.md). The analyze-project setup script will be run la
 
 **Steps**:
 
-1. Use the **Read** tool to load: `.specify/prompts/analyze/01-init.md`
+1. Use the **Read** tool to load: `templates/commands/analyze/01-init.md`
 
 2. Read the ENTIRE file carefully
 
@@ -566,6 +571,6 @@ Continuing analysis...
 **You are now ready to execute the chained analysis.**
 
 Proceed to **STAGE 1: Initialization** by loading and executing:
-`.specify/prompts/analyze/01-init.md`
+`templates/commands/analyze/01-init.md`
 
-Generate chain ID and begin!
+**Note**: The bootstrap state (`00-bootstrap.json`) will be created later in Stage 2 after the analyze-project script runs. Stage 1 only handles spec-kit environment initialization.
