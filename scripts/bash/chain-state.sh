@@ -6,8 +6,17 @@
 
 set -euo pipefail
 
-# State directory
-STATE_DIR=".analysis/.state"
+# Script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Source common functions
+source "$SCRIPT_DIR/common.sh"
+
+# Get repository root
+REPO_ROOT=$(get_repo_root)
+
+# State directory (always at repo root for consistency)
+STATE_DIR="$REPO_ROOT/.analysis/.state"
 
 # Functions
 
