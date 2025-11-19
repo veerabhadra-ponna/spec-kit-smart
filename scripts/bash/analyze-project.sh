@@ -36,7 +36,7 @@ NC='\033[0m' # No Color
 # Default values
 OUTPUT_DIR=""
 PROJECT_PATH=""
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+REPO_ROOT="$(get_repo_root)"
 
 # Functions
 
