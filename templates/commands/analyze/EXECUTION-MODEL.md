@@ -42,43 +42,56 @@ Claude Code loads: `templates/commands/analyze-project.md` (master orchestration
 **AI then executes sequentially**:
 
 ```text
-FOR each stage in [01-init, 02-scope, 03-structure, 04-file-analysis, 05-branch, 06-report, 07-artifacts]:
-    1. AI uses Read tool → Load `.specify/prompts/analyze/{stage}.md`
+FOR each stage in [01-setup-and-scope, 02-structure, 03-file-analysis, 04a/b-branch, 05-report, 06-artifacts]:
+    1. AI uses Read tool → Load `templates/commands/analyze/{stage}.md`
     2. AI reads ENTIRE stage prompt
     3. AI executes ALL instructions in that prompt
-    4. AI uses Bash tool → Load previous state: `./scripts/bash/chain-state.sh load {prev-stage}`
+    4. AI uses Bash tool → Load previous state (if not first stage)
     5. AI generates new state JSON
-    6. AI uses Bash tool → Save state: `./scripts/bash/chain-state.sh save {stage} '{json}'`
+    6. AI saves state to `.analysis/.state/{stage}.json`
     7. AI outputs completion marker: `STAGE_COMPLETE:{STAGE}`
     8. AI proceeds to next stage
 ENDFOR
-```text
+```
 
 ### 4. State Flow Diagram
 
 ```text
 Bootstrap State (from script)
+    ↓  .analysis/.state/00-bootstrap.json (intermediate)
     ↓
-Stage 1: AI loads 00-bootstrap.json
-         AI executes 01-init.md
-         AI saves 01-init.json
+Stage 1: AI executes 01-setup-and-scope.md
+         - Loads 00-bootstrap.json (from script)
+         - Asks user for scope, context, etc.
+         - Saves 01-setup-and-scope.json
     ↓
-Stage 2: AI loads 01-init.json
-         AI executes 02-scope.md
-         AI saves 02-scope.json
+Stage 2: AI executes 02-structure.md
+         - Loads 01-setup-and-scope.json
+         - Analyzes project structure
+         - Saves 02-structure.json
     ↓
-Stage 3: AI loads 02-scope.json
-         AI executes 03-structure.md
-         AI saves 03-structure.json
+Stage 3: AI executes 03-file-analysis.md
+         - Loads 02-structure.json
+         - Deep file scanning
+         - Saves 03-file-analysis.json
     ↓
-[... continues through all stages ...]
+Stage 4: AI executes 04a-full-app.md OR 04b-cross-cutting.md
+         - Loads 03-file-analysis.json
+         - Branch-specific analysis
+         - Saves 04a-full-app.json OR 04b-cross-cutting.json
     ↓
-Stage 7: AI loads 06-report.json
-         AI executes 07-artifacts.md
-         AI saves 07-artifacts.json
+Stage 5: AI executes 05-report-generation.md
+         - Loads 04a/b state
+         - Generates analysis report
+         - Saves 05-report.json
+    ↓
+Stage 6: AI executes 06-artifacts.md
+         - Loads 05-report.json
+         - Generates remaining artifacts
+         - Saves 06-artifacts.json
     ↓
 COMPLETE
-```text
+```
 
 ## Critical Dependencies
 
@@ -104,14 +117,14 @@ COMPLETE
 .analysis/
 ├── .state/
 │   ├── 00-bootstrap.json      # Created by setup script
-│   ├── 01-init.json            # Created by AI (Stage 1)
-│   ├── 02-scope.json           # Created by AI (Stage 2)
-│   ├── 03-structure.json       # Created by AI (Stage 3)
-│   ├── 04-file-analysis.json   # Created by AI (Stage 4)
-│   ├── 05a-full-app.json       # Created by AI (Stage 5A) OR
-│   ├── 05b-cross-cutting.json  # Created by AI (Stage 5B)
-│   ├── 06-report.json          # Created by AI (Stage 6)
-│   ├── 07-artifacts.json       # Created by AI (Stage 7)
+│   ├── 01-setup-and-scope.json            # Created by AI (Stage 1)
+│   ├── 01-setup-and-scope.json           # Created by AI (Stage 2)
+│   ├── 02-structure.json       # Created by AI (Stage 3)
+│   ├── 03-file-analysis.json   # Created by AI (Stage 4)
+│   ├── 04a-full-app.json       # Created by AI (Stage 5A) OR
+│   ├── 04b-cross-cutting.json  # Created by AI (Stage 5B)
+│   ├── 05-report.json          # Created by AI (Stage 6)
+│   ├── 06-artifacts.json       # Created by AI (Stage 7)
 │   └── latest.json             # Symlink/copy to latest state
 └── {project}-{timestamp}/
     └── ... (analysis artifacts)
@@ -153,10 +166,10 @@ Stage 5 uses dynamic branching based on `analysis_scope` from state:
 
 ```javascript
 if (state.analysis_scope === "A") {
-    // Load and execute: 05a-full-app.md
+    // Load and execute: 04a-full-app.md
     // Full application modernization
 } else if (state.analysis_scope === "B") {
-    // Load and execute: 05b-cross-cutting.md
+    // Load and execute: 04b-cross-cutting.md
     // Cross-cutting concern migration
 }
 ```text

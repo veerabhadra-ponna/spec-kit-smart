@@ -1,6 +1,6 @@
 ---
 stage: full_application_analysis
-requires: 04-file-analysis.json
+requires: 03-file-analysis.json
 condition: state.analysis_scope == "A"
 outputs: full_app_state
 version: 1.0.0
@@ -33,7 +33,7 @@ For Full Application Modernization (scope = A), ask 10 progressive questions abo
 
 ## Previous State
 
-Load state from: `.analysis/.state/04-file-analysis.json`
+Load state from: `.analysis/.state/03-file-analysis.json`
 
 Required fields:
 - `analysis_scope` must be "A"
@@ -676,11 +676,11 @@ Based on scores, generate prioritized recommendations:
 
 ```text
 STAGE_COMPLETE:FULL_APP
-STATE_PATH: .analysis/.state/05a-full-app.json
+STATE_PATH: .analysis/.state/04a-full-app.json
 ```text
 
 ---
 
 ## Next Stage
 
-Proceed to: **Stage 6: 06-report-generation.md**
+Proceed to: **Stage 6: 05-report-generation.md**

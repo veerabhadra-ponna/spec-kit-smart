@@ -225,7 +225,7 @@ function Get-FileExtensionSafe {
     $basename = Split-Path -Leaf $FilePath
 
     # Handle dotfiles without extension (.gitignore)
-    if ($basename.StartsWith('.') -and (-not $basename.Contains('.', 1))) {
+    if ($basename.StartsWith('.') -and ($basename.IndexOf('.', 1) -eq -1)) {
         return ""
     }
 
