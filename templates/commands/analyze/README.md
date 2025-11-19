@@ -260,13 +260,13 @@ Each stage:
 1. **Check last completed stage**:
 
    ```bash
-   ./scripts/bash/chain-state.sh last-stage
+   .specify/scripts/bash/chain-state.sh last-stage
    ```
 
 1. **Load state and resume**:
 
    ```bash
-   ./scripts/bash/chain-state.sh load {last-stage}
+   .specify/scripts/bash/chain-state.sh load {last-stage}
    ```
 
 1. **Continue from next stage** with loaded state
@@ -283,60 +283,60 @@ Chain ID: a3f7c8d1
 
 ### Bash Script
 
-**Location**: `scripts/bash/chain-state.sh`
+**Location**: `.specify/scripts/bash/chain-state.sh`
 
 **Commands**:
 
 ```bash
 # Generate unique chain ID
-./scripts/bash/chain-state.sh generate-id
+.specify/scripts/bash/chain-state.sh generate-id
 
 # Initialize state directory
-./scripts/bash/chain-state.sh init
+.specify/scripts/bash/chain-state.sh init
 
 # Save state
-./scripts/bash/chain-state.sh save 01-setup-and-scope '{"chain_id":"abc123",...}'
+.specify/scripts/bash/chain-state.sh save 01-setup-and-scope '{"chain_id":"abc123",...}'
 
 # Load state
-./scripts/bash/chain-state.sh load 01-setup-and-scope
+.specify/scripts/bash/chain-state.sh load 01-setup-and-scope
 
 # Get last completed stage
-./scripts/bash/chain-state.sh last-stage
+.specify/scripts/bash/chain-state.sh last-stage
 
 # Check if stage is complete
-./scripts/bash/chain-state.sh is-complete 01-setup-and-scope
+.specify/scripts/bash/chain-state.sh is-complete 01-setup-and-scope
 
 # Validate state
-./scripts/bash/chain-state.sh validate '{"chain_id":"abc123",...}'
+.specify/scripts/bash/chain-state.sh validate '{"chain_id":"abc123",...}'
 ```text
 
 ### PowerShell Script
 
-**Location**: `scripts/powershell/ChainState.ps1`
+**Location**: `.specify/scripts/powershell/ChainState.ps1`
 
 **Commands**:
 
 ```powershell
 # Generate unique chain ID
-./scripts/powershell/ChainState.ps1 generate-id
+.specify/scripts/powershell/ChainState.ps1 generate-id
 
 # Initialize state directory
-./scripts/powershell/ChainState.ps1 init
+.specify/scripts/powershell/ChainState.ps1 init
 
 # Save state
-./scripts/powershell/ChainState.ps1 save 01-setup-and-scope '{"chain_id":"abc123",...}'
+.specify/scripts/powershell/ChainState.ps1 save 01-setup-and-scope '{"chain_id":"abc123",...}'
 
 # Load state
-./scripts/powershell/ChainState.ps1 load 01-setup-and-scope
+.specify/scripts/powershell/ChainState.ps1 load 01-setup-and-scope
 
 # Get last completed stage
-./scripts/powershell/ChainState.ps1 last-stage
+.specify/scripts/powershell/ChainState.ps1 last-stage
 
 # Check if stage is complete
-./scripts/powershell/ChainState.ps1 is-complete 01-setup-and-scope
+.specify/scripts/powershell/ChainState.ps1 is-complete 01-setup-and-scope
 
 # Validate state
-./scripts/powershell/ChainState.ps1 validate '{"chain_id":"abc123",...}'
+.specify/scripts/powershell/ChainState.ps1 validate '{"chain_id":"abc123",...}'
 ```text
 
 ## Why This Works
@@ -389,27 +389,27 @@ To test the chain implementation:
 
    ```bash
    cd /path/to/spec-kit-smart
-   ./scripts/bash/chain-state.sh init
+   .specify/scripts/bash/chain-state.sh init
    ```
 
 1. **Generate chain ID**:
 
    ```bash
-   CHAIN_ID=$(./scripts/bash/chain-state.sh generate-id)
+   CHAIN_ID=$(.specify/scripts/bash/chain-state.sh generate-id)
    echo "Chain ID: $CHAIN_ID"
    ```
 
 2. **Create initial state**:
 
    ```bash
-   INIT_STATE=$(./scripts/bash/chain-state.sh init-state "$CHAIN_ID")
-   ./scripts/bash/chain-state.sh save 01-setup-and-scope "$INIT_STATE"
+   INIT_STATE=$(.specify/scripts/bash/chain-state.sh init-state "$CHAIN_ID")
+   .specify/scripts/bash/chain-state.sh save 01-setup-and-scope "$INIT_STATE"
    ```
 
 3. **Verify state**:
 
    ```bash
-   ./scripts/bash/chain-state.sh validate "$INIT_STATE"
+   .specify/scripts/bash/chain-state.sh validate "$INIT_STATE"
    ```
 
 ## Migration from Monolithic
