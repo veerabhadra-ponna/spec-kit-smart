@@ -164,32 +164,32 @@ Check for `.specify/config.json` in the repository root.
 
 ### Step 2.1: Get Project Path
 
-**IF** arguments were provided to the command:
+**CRITICAL**: Do NOT assume or infer the project path from context or arguments. ALWAYS ask the user explicitly.
 
-- Parse PROJECT_PATH from arguments
-- Validate path exists and is readable
-- Continue to Step 2.2
-
-**ELSE** (interactive mode):
-
-Display prompt:
+**PRESENT THE FOLLOWING PROMPT TO USER EXACTLY AS WRITTEN:**
 
 ```text
-PROJECT_PATH: /path/to/existing/project
+PROJECT_PATH:
+Please provide the path to the existing project you want to analyze.
+
+Example: /home/user/my-legacy-app
+
+Your path: ___
 ```
 
-**Example:**
-
-```text
-PROJECT_PATH: /home/user/my-legacy-app
-```
+**WAIT FOR USER RESPONSE - DO NOT PROCEED UNTIL USER PROVIDES ANSWER.**
 
 **Validation:**
 
 - Path must exist
 - Path must be readable
 - Path must be a directory
-- If invalid, re-prompt with error message
+
+**IF** path validation fails:
+
+- Display error: "❌ Error: Invalid project path. Path must exist and be readable."
+- Re-prompt for PROJECT_PATH
+- DO NOT proceed until valid path provided
 
 ---
 
@@ -365,6 +365,8 @@ Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AW
 
 **CRITICAL**: This question applies to BOTH Full Application (A) and Cross-Cutting Concern (B) analysis.
 
+**CRITICAL**: Do NOT assume or infer additional context from previous conversation or project files. ALWAYS ask the user explicitly.
+
 **PRESENT THE FOLLOWING PROMPT TO USER EXACTLY AS WRITTEN:**
 
 ```text
@@ -389,6 +391,12 @@ ___
 
 - **IF** user types "none" (case-insensitive): Set `additional_context = null` in state
 - **ELSE**: Store the user's text in `additional_context` field in state
+
+**DO NOT**:
+
+- Assume context from code analysis
+- Infer requirements from file contents
+- Use information not explicitly provided by user
 
 ---
 
