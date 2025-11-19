@@ -16,8 +16,24 @@ param(
     [Parameter(Mandatory=$false, Position=0)]
     [string]$Project = ".",
 
-    [Parameter(Mandatory=$false, Position=1)]
+    [Parameter(Mandatory=$false)]
     [string]$Output = "",
+
+    [Parameter(Mandatory=$false)]
+    [string]$Context = "",
+
+    [Parameter(Mandatory=$false)]
+    [ValidateSet("A", "B", "")]
+    [string]$Scope = "",
+
+    [Parameter(Mandatory=$false)]
+    [string]$ConcernType = "",
+
+    [Parameter(Mandatory=$false)]
+    [string]$CurrentImpl = "",
+
+    [Parameter(Mandatory=$false)]
+    [string]$TargetImpl = "",
 
     [switch]$Help
 )
@@ -101,6 +117,14 @@ if (-not (Test-Path $Project -PathType Container)) {
 $Project = (Resolve-Path $Project).Path
 $projectName = Split-Path -Leaf $Project
 
+# Validate scope B requirements
+if ($Scope -eq "B") {
+    if ([string]::IsNullOrEmpty($ConcernType) -or [string]::IsNullOrEmpty($CurrentImpl) -or [string]::IsNullOrEmpty($TargetImpl)) {
+        Write-Error "Scope B requires -ConcernType, -CurrentImpl, and -TargetImpl parameters"
+        exit 1
+    }
+}
+
 Write-Host "`n====================================== " -ForegroundColor Blue
 Write-Host "AI-Driven Project Analysis" -ForegroundColor Blue
 Write-Host "====================================== `n" -ForegroundColor Blue
@@ -158,6 +182,233 @@ catch {
     Write-Host "[X] File enumeration failed: $_" -ForegroundColor Red
     exit 1
 }
+
+Write-Host ""
+
+# Detect tech stack
+Write-Host "====================================== " -ForegroundColor Blue
+Write-Host "Detecting Technology Stack" -ForegroundColor Blue
+Write-Host "====================================== " -ForegroundColor Blue
+
+Write-Host "[INFO] Analyzing indicator files..." -ForegroundColor Blue
+
+$techStackFile = Join-Path $Output "tech-stack.json"
+$techStack = @{
+    schema_version = "1.0"
+    languages = @()
+    frameworks = @{ backend = @(); frontend = @() }
+    build_tools = @()
+    databases = @()
+    indicators_found = @()
+}
+
+if (Test-Path $manifestFile) {
+    $manifest = Get-Content $manifestFile | ConvertFrom-Json
+
+    # Node.js / JavaScript
+    if ($manifest.files | Where-Object { $_.path -like "*package.json" }) {
+        $techStack.languages += "javascript"
+        $techStack.indicators_found += @{ file = "package.json"; type = "nodejs"; confidence = "high" }
+
+        $pkgJsonPath = ($manifest.files | Where-Object { $_.path -like "*package.json" } | Select-Object -First 1).path
+        $fullPkgPath = Join-Path $Project $pkgJsonPath
+        if (Test-Path $fullPkgPath) {
+            $pkgContent = Get-Content $fullPkgPath -Raw
+            if ($pkgContent -match '"react"') {
+                $techStack.frameworks.frontend += "react"
+            }
+            if ($pkgContent -match '"express"') {
+                $techStack.frameworks.backend += "express"
+            }
+            if ($pkgContent -match '"next"') {
+                $techStack.frameworks.frontend += "nextjs"
+            }
+        }
+    }
+
+    # Java / Maven
+    if ($manifest.files | Where-Object { $_.path -like "*pom.xml" }) {
+        $techStack.languages += "java"
+        $techStack.build_tools += "maven"
+        $techStack.indicators_found += @{ file = "pom.xml"; type = "java-maven"; confidence = "high" }
+
+        $pomPath = ($manifest.files | Where-Object { $_.path -like "*pom.xml" } | Select-Object -First 1).path
+        $fullPomPath = Join-Path $Project $pomPath
+        if (Test-Path $fullPomPath) {
+            $pomContent = Get-Content $fullPomPath -Raw
+            if ($pomContent -match 'spring-boot') {
+                $techStack.frameworks.backend += "spring-boot"
+            }
+        }
+    }
+
+    # Java / Gradle
+    if ($manifest.files | Where-Object { $_.path -like "*build.gradle*" }) {
+        $techStack.languages += "java"
+        $techStack.build_tools += "gradle"
+        $techStack.indicators_found += @{ file = "build.gradle"; type = "java-gradle"; confidence = "high" }
+    }
+
+    # Python
+    if ($manifest.files | Where-Object { $_.path -like "*requirements.txt" -or $_.path -like "*setup.py" }) {
+        $techStack.languages += "python"
+        $techStack.indicators_found += @{ file = "requirements.txt"; type = "python"; confidence = "high" }
+
+        $reqPath = ($manifest.files | Where-Object { $_.path -like "*requirements.txt" } | Select-Object -First 1).path
+        if ($reqPath) {
+            $fullReqPath = Join-Path $Project $reqPath
+            if (Test-Path $fullReqPath) {
+                $reqContent = Get-Content $fullReqPath -Raw
+                if ($reqContent -match 'django') { $techStack.frameworks.backend += "django" }
+                if ($reqContent -match 'flask') { $techStack.frameworks.backend += "flask" }
+            }
+        }
+    }
+
+    # .NET
+    if ($manifest.files | Where-Object { $_.path -like "*.csproj" -or $_.path -like "*.sln" }) {
+        $techStack.languages += "csharp"
+        $techStack.build_tools += "dotnet"
+        $techStack.indicators_found += @{ file = "*.csproj"; type = "dotnet"; confidence = "high" }
+    }
+
+    # Ruby
+    if ($manifest.files | Where-Object { $_.path -like "*Gemfile" }) {
+        $techStack.languages += "ruby"
+        $techStack.indicators_found += @{ file = "Gemfile"; type = "ruby"; confidence = "high" }
+    }
+
+    # Go
+    if ($manifest.files | Where-Object { $_.path -like "*go.mod" }) {
+        $techStack.languages += "go"
+        $techStack.indicators_found += @{ file = "go.mod"; type = "golang"; confidence = "high" }
+    }
+
+    # Remove duplicates
+    $techStack.languages = $techStack.languages | Select-Object -Unique
+    $techStack.frameworks.backend = $techStack.frameworks.backend | Select-Object -Unique
+    $techStack.frameworks.frontend = $techStack.frameworks.frontend | Select-Object -Unique
+    $techStack.build_tools = $techStack.build_tools | Select-Object -Unique
+}
+
+$techStack | ConvertTo-Json -Depth 10 | Out-File -FilePath $techStackFile -Encoding utf8
+Write-Host "[OK] Tech stack detected: $techStackFile" -ForegroundColor Green
+
+if ($techStack.languages) {
+    $langs = $techStack.languages -join ", "
+    Write-Host "[INFO] Languages: $langs" -ForegroundColor Blue
+}
+if ($techStack.frameworks.backend) {
+    $backend = $techStack.frameworks.backend -join ", "
+    Write-Host "[INFO] Backend: $backend" -ForegroundColor Blue
+}
+if ($techStack.frameworks.frontend) {
+    $frontend = $techStack.frameworks.frontend -join ", "
+    Write-Host "[INFO] Frontend: $frontend" -ForegroundColor Blue
+}
+
+Write-Host ""
+
+# Generate file structure
+Write-Host "====================================== " -ForegroundColor Blue
+Write-Host "Analyzing File Structure" -ForegroundColor Blue
+Write-Host "====================================== " -ForegroundColor Blue
+
+Write-Host "[INFO] Categorizing files..." -ForegroundColor Blue
+
+$structureFile = Join-Path $Output "file-structure.json"
+
+if (Test-Path $manifestFile) {
+    $manifest = Get-Content $manifestFile | ConvertFrom-Json
+
+    $controllers = ($manifest.files | Where-Object { $_.path -match '(controller|route|endpoint)' }).Count
+    $services = ($manifest.files | Where-Object { $_.path -match '(service|manager|handler|usecase)' }).Count
+    $models = ($manifest.files | Where-Object { $_.path -match '(model|entity|schema|domain)' }).Count
+    $repositories = ($manifest.files | Where-Object { $_.path -match '(repository|repo|dao|data)' }).Count
+    $configs = ($manifest.files | Where-Object { $_.path -match '(config|settings|properties|yml|yaml|env)' }).Count
+    $security = ($manifest.files | Where-Object { $_.path -match '(auth|security|jwt|oauth|permission)' }).Count
+    $middleware = ($manifest.files | Where-Object { $_.path -match 'middleware' }).Count
+    $utils = ($manifest.files | Where-Object { $_.path -match '(util|helper|common|shared)' }).Count
+    $tests = ($manifest.files | Where-Object { $_.path -match '(test|spec|__tests__)' }).Count
+    $docs = ($manifest.files | Where-Object { $_.path -match '(README|CHANGELOG|LICENSE|\.md$)' }).Count
+
+    $entryPoints = $manifest.files | Where-Object { $_.path -match '(main\.|index\.|app\.|application\.|server\.|start)' } | Select-Object -ExpandProperty path -First 10
+
+    $structure = @{
+        schema_version = "1.0"
+        total_files = $manifest.statistics.total_files
+        categories = @{
+            controllers = $controllers
+            services = $services
+            models = $models
+            repositories = $repositories
+            configs = $configs
+            security = $security
+            middleware = $middleware
+            utils = $utils
+            tests = $tests
+            docs = $docs
+        }
+        entry_points = @($entryPoints)
+        analysis_priority = @{
+            critical = @("configs", "security", "entry_points")
+            high = @("controllers", "services", "models", "repositories")
+            medium = @("middleware", "utils")
+            low = @("tests", "docs")
+        }
+    }
+
+    $structure | ConvertTo-Json -Depth 10 | Out-File -FilePath $structureFile -Encoding utf8
+    Write-Host "[OK] File structure generated: $structureFile" -ForegroundColor Green
+
+    $coreFiles = $controllers + $services + $models + $repositories
+    Write-Host "[INFO] Core application files: $coreFiles" -ForegroundColor Blue
+    Write-Host "[INFO] Configuration files: $configs" -ForegroundColor Blue
+    Write-Host "[INFO] Test files: $tests" -ForegroundColor Blue
+}
+
+Write-Host ""
+
+# Generate project metadata
+Write-Host "====================================== " -ForegroundColor Blue
+Write-Host "Generating Project Metadata" -ForegroundColor Blue
+Write-Host "====================================== " -ForegroundColor Blue
+
+$metadataFile = Join-Path $Output "project-metadata.json"
+$timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+
+$concernDetails = $null
+if ($Scope -eq "B") {
+    $concernDetails = @{
+        type = $ConcernType
+        current = $CurrentImpl
+        target = $TargetImpl
+    }
+}
+
+$metadata = @{
+    schema_version = "1.0"
+    project_path = $Project
+    project_name = $projectName
+    timestamp = $timestamp
+    user_inputs = @{
+        analysis_scope = if ($Scope) { $Scope } else { $null }
+        additional_context = if ($Context) { $Context } else { $null }
+        concern_details = $concernDetails
+    }
+    workspace = @{
+        analysis_dir = $Output
+        manifest_path = $manifestFile
+        tech_stack_path = $techStackFile
+        file_structure_path = $structureFile
+    }
+}
+
+$metadata | ConvertTo-Json -Depth 10 | Out-File -FilePath $metadataFile -Encoding utf8
+Write-Host "[OK] Project metadata generated: $metadataFile" -ForegroundColor Green
+Write-Host "[INFO] Project: $projectName" -ForegroundColor Blue
+if ($Scope) { Write-Host "[INFO] Scope: $Scope" -ForegroundColor Blue }
+if ($Context) { Write-Host "[INFO] Context provided: Yes" -ForegroundColor Blue }
 
 Write-Host ""
 
