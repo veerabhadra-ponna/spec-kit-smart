@@ -81,6 +81,28 @@ PROJECT_PATH: /home/user/my-legacy-app
 
 ---
 
+## 🎯 CONSISTENCY CHECKPOINT
+
+**Expected Behavior (MUST be identical across all runs):**
+
+1. Present analysis scope options ([A] or [B]) to user
+2. Wait for user selection
+3. Record answer in state field: `analysis_scope`
+4. Validate answer matches expected format: "A" or "B"
+5. If invalid, re-prompt with error message
+6. If valid, proceed to next step
+
+**This behavior MUST be consistent regardless of:**
+
+- AI model being used (GPT-4, Claude Sonnet 4, Gemini, etc.)
+- Time of day
+- Previous conversation context
+- Inferred user preferences
+
+**Deviation from this behavior is a CRITICAL ERROR.**
+
+---
+
 ## ⚠️ CRITICAL: Questionnaire Presentation Rules
 
 **YOU MUST FOLLOW THESE RULES WHEN ASKING QUESTIONS:**
@@ -486,6 +508,25 @@ Estimated Analysis Time: 45 minutes (large)
 Do you want to proceed? Y
 
 ✓ Proceeding with analysis
+
+---
+
+## Stage Completion Validation
+
+**Before proceeding to next stage, verify:**
+
+- [ ] All questions asked exactly as written (no modifications)
+- [ ] All user responses recorded in state
+- [ ] No assumptions made (all answers from user)
+- [ ] PROJECT_PATH validated and exists
+- [ ] ANALYSIS_SCOPE is either "A" or "B"
+- [ ] If scope = B, concern details collected
+- [ ] Estimation completed and displayed
+- [ ] State saved successfully
+
+**IF any checkbox is unchecked, STOP and fix the issue before proceeding.**
+
+---
 
 STAGE_COMPLETE:SCOPE
 STATE_PATH: .analysis/.state/02-scope.json

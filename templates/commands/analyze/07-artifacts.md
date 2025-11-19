@@ -962,6 +962,25 @@ Analysis Duration: {duration}
 
 ---
 
+## Stage Completion Validation
+
+**Before proceeding to completion, verify:**
+
+- [ ] All required artifacts generated (check list based on scope)
+- [ ] EXECUTIVE-SUMMARY.md complete
+- [ ] dependency-audit.json generated
+- [ ] metrics-summary.json generated
+- [ ] If scope = A: functional-spec-legacy.md AND functional-spec-target.md generated
+- [ ] If scope = A: technical-spec.md generated
+- [ ] If scope = A: stage-prompts/ directory with 4 files
+- [ ] If scope = B: All concern-specific artifacts generated
+- [ ] All artifacts validated (no placeholders, no TODOs)
+- [ ] State saved successfully with complete artifact list
+
+**IF any checkbox is unchecked, STOP and fix the issue before proceeding.**
+
+---
+
 ## Completion Marker
 
 ```text

@@ -43,6 +43,33 @@ Required fields:
 
 ---
 
+## 🎯 CONSISTENCY CHECKPOINT
+
+**Expected Behavior (MUST be identical across all runs):**
+
+1. Present all 10 modernization questions to user in order
+2. Wait for user response for each question
+3. Record each answer in state field: `modernization_preferences`
+4. Validate each answer matches question's expected options
+5. If invalid, re-prompt with error message for that question
+6. If valid, proceed to next question
+7. After all 10 questions, perform scope validation
+8. Calculate complexity and feasibility scores
+9. Generate recommendations
+
+**This behavior MUST be consistent regardless of:**
+
+- AI model being used (GPT-4, Claude Sonnet 4, Gemini, etc.)
+- Time of day
+- Previous conversation context
+- Inferred user preferences
+- Industry best practices
+- Obvious answers from code analysis
+
+**Deviation from this behavior is a CRITICAL ERROR.**
+
+---
+
 ## ⚠️ CRITICAL: Questionnaire Execution Rules
 
 **YOU MUST FOLLOW ALL RULES BELOW WHEN ASKING THE 10 MODERNIZATION QUESTIONS:**
@@ -625,6 +652,23 @@ Based on scores, generate prioritized recommendations:
   }
 }
 ```text
+
+---
+
+## Stage Completion Validation
+
+**Before proceeding to next stage, verify:**
+
+- [ ] All 10 questions asked exactly as written (no modifications)
+- [ ] All user responses recorded in state (modernization_preferences)
+- [ ] No assumptions made (all answers from user, not inferred)
+- [ ] Scope validation completed (IN SCOPE vs OUT OF SCOPE)
+- [ ] Complexity scoring calculated
+- [ ] Feasibility scores generated (inline/greenfield/hybrid)
+- [ ] Recommendations generated with confidence scores
+- [ ] State saved successfully
+
+**IF any checkbox is unchecked, STOP and fix the issue before proceeding.**
 
 ---
 
