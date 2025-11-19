@@ -45,6 +45,13 @@ You should have:
 - `project_type` - Project classification
 - `structure` - Project structure details
 - `estimation` - File counts and categories
+- `additional_context` - User-provided context (may be null)
+
+**IF `additional_context` is provided (not null)**:
+- Keep this context in mind throughout your analysis
+- Use it to focus on relevant areas (e.g., if user mentioned "performance issues", pay extra attention to performance patterns)
+- Reference it when identifying pain points and recommendations
+- Include relevant findings in your analysis that address the user's specific concerns
 
 ---
 

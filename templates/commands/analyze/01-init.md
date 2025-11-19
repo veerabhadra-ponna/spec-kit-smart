@@ -150,24 +150,17 @@ Check for `.specify/config.json` in the repository root.
   - .\scripts\powershell\check-guidelines-compliance.ps1
 ```text
 
-### Step 4: Initialize Analysis Directory
+### Step 4: Note on Analysis Directory
 
-Create the analysis output directory structure:
+The analysis output directory will be created later in Stage 2 when the analyze-project setup script runs:
 
 ```text
 .analysis/
-├── .state/           # State files for chain execution
-└── [project-name]-[timestamp]/  # Analysis output directory (created later)
-```text
+├── .state/           # State files for chain execution (created by script)
+└── [project-name]-[timestamp]/  # Analysis output directory (created by script)
+```
 
-Create `.analysis/.state/` directory if it doesn't exist.
-
-### Step 5: Generate Chain ID
-
-Create a unique identifier for this analysis chain execution:
-- Format: 8-character hexadecimal string
-- Example: `a3f7c8d1`
-- Purpose: Track this specific analysis session
+The script will also generate a unique chain ID for this analysis session.
 
 ---
 
@@ -177,7 +170,6 @@ Generate a JSON state object with the following structure:
 
 ```json
 {
-  "chain_id": "a3f7c8d1",
   "stage": "initialization",
   "timestamp": "2025-11-14T10:00:00Z",
   "stages_complete": ["initialization"],
@@ -196,7 +188,9 @@ Generate a JSON state object with the following structure:
     "nodejs-guidelines.md"
   ]
 }
-```text
+```
+
+**NOTE**: The `chain_id` will be added in Stage 2 after the analyze-project script runs.
 
 ---
 
@@ -253,14 +247,11 @@ Detecting corporate guidelines...
 Initializing analysis directory...
 ✓ Created .analysis/.state/
 
-Generating chain ID...
-✓ Chain ID: a3f7c8d1
-
 STAGE_COMPLETE:INIT
 STATE_PATH: .analysis/.state/01-init.json
 
 Next stage: 02-scope.md
-```text
+```
 
 ---
 
@@ -269,7 +260,6 @@ Next stage: 02-scope.md
 This stage must produce a state object conforming to `00-state-schema.json`.
 
 Required fields:
-- `chain_id` (string)
 - `stage` (string: "initialization")
 - `timestamp` (ISO 8601 datetime)
 - `stages_complete` (array: ["initialization"])

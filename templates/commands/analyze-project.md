@@ -24,74 +24,6 @@ version: 2.0.0-chain
 
 ---
 
-## User Input & Interactive Mode
-
-```text
-$ARGUMENTS
-```
-
-**IF** `$ARGUMENTS` is empty or contains the literal text "$ARGUMENTS":
-
-   Please provide the following information:
-
-   ```text
-   PROJECT_PATH: /path/to/existing/project
-   ```
-
-   **Example**:
-
-   ```text
-   PROJECT_PATH: /home/user/my-legacy-app
-   ```
-
-**ELSE** (arguments provided):
-   Parse and use the provided PROJECT_PATH.
-   Continue with script execution below.
-
----
-
-## Step 1: Run Analysis Setup Script
-
-**CRITICAL**: This command analyzes an **EXISTING** project, not one managed by Spec Kit. Do NOT modify the target project directory structure.
-
-Run the appropriate setup script from repo root to enumerate project files and initialize analysis workspace:
-
-**For Unix/Linux/macOS (bash)**:
-
-```bash
-{SCRIPT_BASH}
-```
-
-**For Windows (PowerShell)**:
-
-```powershell
-{SCRIPT_POWERSHELL}
-```
-
-**OS Detection** (handled automatically by scripts):
-
-- Scripts auto-detect OS and self-correct if needed
-- Config (`.specify/config.json` osEnv) is honored automatically
-- Detection priority: config file → env var (SPEC_KIT_PLATFORM) → auto-detect
-- If bash is run on Windows, it automatically redirects to PowerShell (and vice versa)
-
-**Script arguments**:
-
-- `$1`: PROJECT_PATH (absolute path to project being analyzed)
-
-**Script Workflow** (Pure PowerShell/Bash - NO Python):
-
-1. Creates analysis workspace directory (`.analysis/PROJECT-TIMESTAMP/`)
-2. Runs `enumerate-project.sh` (or PowerShell equivalent) to scan all files
-3. Generates `file-manifest.json` with complete project inventory
-4. Initializes chain state in `.analysis/.state/` directory
-5. Creates bootstrap state with chain ID
-6. Outputs workspace location for AI to use
-
-**Parse output** for PROJECT_PATH, ANALYSIS_DIR, file-manifest.json location, chain ID, and state directory.
-
----
-
 # Analyze Project - Chain Controller
 
 ## Overview
@@ -153,8 +85,7 @@ Example: `a3f7c8d1`
 
 **You are now executing the chained analysis workflow.**
 
-The setup script has already initialized the state directory and created bootstrap state.
-You should start execution from Stage 1.
+Begin with Stage 1 (01-init.md). The analyze-project setup script will be run later in Stage 2 (02-scope.md) after the user provides the PROJECT_PATH.
 
 ---
 

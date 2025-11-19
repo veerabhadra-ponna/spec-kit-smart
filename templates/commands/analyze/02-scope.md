@@ -52,12 +52,16 @@ Interactively gather:
 
 ---
 
-## Step 1: Get Project Path
+## Step 1: Get Project Path and Run Setup Script
+
+**CRITICAL**: This command analyzes an **EXISTING** project, not one managed by Spec Kit. Do NOT modify the target project directory structure.
+
+### 1.1: Get Project Path
 
 **IF** arguments were provided to the command:
 - Parse PROJECT_PATH from arguments
 - Validate path exists and is readable
-- Continue to Step 2
+- Continue to Step 1.2
 
 **ELSE** (interactive mode):
 
@@ -65,19 +69,66 @@ Display prompt:
 
 ```text
 PROJECT_PATH: /path/to/existing/project
-```text
+```
 
 **Example**:
 
 ```text
 PROJECT_PATH: /home/user/my-legacy-app
-```text
+```
 
 **Validation**:
 - Path must exist
 - Path must be readable
 - Path must be a directory
 - If invalid, re-prompt with error message
+
+---
+
+### 1.2: Run Analysis Setup Script
+
+**Once PROJECT_PATH is confirmed**, run the appropriate setup script from the spec-kit repository root to enumerate project files and initialize analysis workspace.
+
+**Detect OS and run correct script:**
+
+**For Unix/Linux/macOS (bash)**:
+
+```bash
+./scripts/bash/analyze-project.sh PROJECT_PATH
+```
+
+**For Windows (PowerShell)**:
+
+```powershell
+.\scripts\powershell\analyze-project.ps1 PROJECT_PATH
+```
+
+**What the script does**:
+1. Creates analysis workspace directory (`.analysis/PROJECT-NAME-TIMESTAMP/`)
+2. Enumerates all files and generates `file-manifest.json`
+3. Creates state directory (`.analysis/.state/`)
+4. Generates unique chain ID
+5. Creates bootstrap state (`.analysis/.state/00-bootstrap.json`)
+
+**Parse script output** for:
+- Chain ID
+- Analysis directory path
+- Manifest file path
+
+---
+
+### 1.3: Load Bootstrap State
+
+After the script completes, load the bootstrap state:
+
+```bash
+cat .analysis/.state/00-bootstrap.json
+```
+
+**Extract from bootstrap state**:
+- `chain_id` - Merge into current state
+- `analysis_dir` - Analysis workspace path
+- `manifest_path` - Path to file-manifest.json
 
 ---
 
@@ -231,25 +282,66 @@ Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "OpenShift", "AW
 
 ---
 
-## Step 4: Load File Counts and Calculate Estimation
+## Step 3A: Get Additional Context (for both A and B)
 
-**CRITICAL**: File enumeration was already done during bootstrap. Do NOT run enumerate scripts again.
+**CRITICAL**: This question applies to BOTH Full Application (A) and Cross-Cutting Concern (B) analysis.
 
-### 4.1: Load Bootstrap State
+**PRESENT THE FOLLOWING PROMPT TO USER EXACTLY AS WRITTEN:**
 
-Load the bootstrap state that was created by the setup script:
+```text
+ADDITIONAL_CONTEXT:
+Do you want to provide any additional context to help with the analysis?
 
-```bash
-# Load from: .analysis/.state/00-bootstrap.json
+This could include:
+- Known pain points or issues
+- Business requirements or constraints
+- Deployment environment details
+- Team preferences or standards
+- Timeline or budget constraints
+- Any other relevant information
+
+Type "none" if you don't have additional context, or provide your information below:
+___
 ```
 
-**Bootstrap state contains**:
+**WAIT FOR USER RESPONSE - DO NOT PROCEED UNTIL USER PROVIDES ANSWER.**
+
+**Store** the user's response in state:
+
+- **IF** user types "none" (case-insensitive): Set `additional_context = null` in state
+- **ELSE**: Store the user's text in `additional_context` field in state
+
+**Example state storage:**
+
+```json
+{
+  "additional_context": "We need to migrate to microservices within 6 months. Team prefers Spring Boot. Must maintain Oracle database compatibility during transition."
+}
+```
+
+**OR if user provided "none":**
+
+```json
+{
+  "additional_context": null
+}
+```
+
+---
+
+## Step 4: Load File Counts and Calculate Estimation
+
+**CRITICAL**: File enumeration was already done in Step 1.2. The bootstrap state and file-manifest.json are now available.
+
+### 4.1: Use Bootstrap State Data
+
+The bootstrap state from Step 1.3 contains:
 - `analysis_dir` - Analysis workspace path
-- `manifest_path` - Path to file-manifest.json (already generated)
+- `manifest_path` - Path to file-manifest.json
 
 ### 4.2: Read File Manifest and Count Categories
 
-Read the file-manifest.json from the bootstrap `manifest_path`.
+Read the file-manifest.json from the `manifest_path` in bootstrap state.
 
 **Count files by category**:
 - Core application files (controllers, services, models, repositories, configs, security, middleware, utils)
@@ -367,6 +459,7 @@ Generate JSON state object merging previous state with new data:
     "current": "Custom JWT with bcrypt",
     "target": "Okta"
   },
+  "additional_context": "We need to migrate to microservices within 6 months. Team prefers Spring Boot. Must maintain Oracle database compatibility during transition.",
   "estimation": {
     "total_files": 245,
     "categories": {
@@ -395,6 +488,7 @@ Generate JSON state object merging previous state with new data:
   "project_path": "/home/user/legacy-app",
   "analysis_scope": "A",
   "concern_details": null,
+  "additional_context": null,
   "estimation": {
     "total_files": 180,
     "categories": {

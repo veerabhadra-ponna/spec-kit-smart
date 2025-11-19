@@ -161,18 +161,44 @@ catch {
 
 Write-Host ""
 
-# Create analysis workspace
+# Create state directory
+$stateDir = Join-Path $repoRoot ".analysis\.state"
+New-Item -ItemType Directory -Path $stateDir -Force | Out-Null
+
+# Generate chain ID (8-character hex)
+$chainId = -join ((48..57) + (97..102) | Get-Random -Count 8 | ForEach-Object {[char]$_})
+
+# Create bootstrap state
 Write-Host "====================================== " -ForegroundColor Blue
 Write-Host "Preparing Analysis Workspace" -ForegroundColor Blue
 Write-Host "====================================== " -ForegroundColor Blue
 
+$bootstrapState = @{
+    chain_id = $chainId
+    stage = "bootstrap"
+    timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+    project_path = $Project
+    analysis_dir = $Output
+    manifest_path = $manifestFile
+} | ConvertTo-Json -Depth 10
+
+$bootstrapStateFile = Join-Path $stateDir "00-bootstrap.json"
+$bootstrapState | Out-File -FilePath $bootstrapStateFile -Encoding utf8
+
+Write-Host "[OK] Created bootstrap state" -ForegroundColor Green
+Write-Host "[INFO] Chain ID: $chainId" -ForegroundColor Blue
+Write-Host "[INFO] State file: $bootstrapStateFile" -ForegroundColor Blue
+Write-Host ""
+
+# Create analysis workspace template
 $analysisTemplate = @"
 # Project Analysis Report
 
 **Status**: Pending AI Analysis
 
-**Project**: <!-- AI will fill this -->
-**Analysis Date**: <!-- AI will fill this -->
+**Project**: $projectName
+**Analysis Date**: $(Get-Date -Format "yyyy-MM-dd")
+**Chain ID**: $chainId
 
 ---
 
