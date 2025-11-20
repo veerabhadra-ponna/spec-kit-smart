@@ -22,7 +22,7 @@ version: 1.0.0
 
 ---
 
-# Stage 7: Remaining Artifacts Generation
+# Stage 5: Remaining Artifacts Generation
 
 ## Purpose
 
@@ -48,7 +48,7 @@ Required:
 1. **EXECUTIVE-SUMMARY.md** (1 chunk)
 2. **dependency-audit.md** (1 chunk)
 3. **metrics-summary.md** (1 chunk)
-4. **analysis-report.md** (from Stage 6)
+4. **analysis-report.md** (from Stage 4)
 
 ### Full Application Artifacts (Scope = A)
 
@@ -479,7 +479,7 @@ Required:
 
 **CRITICAL - FUTURE STATE:**
 
-- **Source**: Use analysis-report.md + user's 10 modernization preferences from Stage 5A
+- **Source**: Use analysis-report.md + user's 10 modernization preferences from Stage 3A
 - **Scope**: Document DESIRED functionality for modernized application
 - **Target Audience**: Developers/PMs who will implement the modernized system
 - **Requirements**: Include user's chosen tech stack, new capabilities, improvements
@@ -494,7 +494,7 @@ Required:
 
 **CRITICAL - Scope Boundaries:**
 
-Review user's answers to 10 modernization questions and scope validation from Stage 5A:
+Review user's answers to 10 modernization questions and scope validation from Stage 3A:
 
 - **IN SCOPE**: Components where user provided explicit target (e.g., "PostgreSQL 15")
 - **OUT OF SCOPE**: Components where user skipped/provided no answer (use existing as-is)
@@ -793,7 +793,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **Instructions**:
 1. Read template: `.specify/templates/analyze/concern-analysis-template.md`
-2. Fill in all sections using data from Stage 5B
+2. Fill in all sections using data from Stage 3B
 3. Provide detailed analysis with code references
 
 **Progress**: `✓ Generated: abstraction-assessment.md`
@@ -968,7 +968,7 @@ Common:
   ✓ EXECUTIVE-SUMMARY.md
   ✓ dependency-audit.json
   ✓ metrics-summary.json
-  ✓ analysis-report.md (from Stage 6)
+  ✓ analysis-report.md (from Stage 4)
 
 {IF scope = A}
 Full Application:

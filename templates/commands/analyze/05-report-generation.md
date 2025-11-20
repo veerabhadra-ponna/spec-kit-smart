@@ -22,7 +22,7 @@ version: 1.0.0
 
 ---
 
-# Stage 6: Analysis Report Generation
+# Stage 4: Analysis Report Generation
 
 ## Purpose
 
@@ -543,7 +543,7 @@ Complete **Sections 8 & 9**:
 
 ⚠️ **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
 
-**BEFORE** proceeding to Stage 7, verify report quality:
+**BEFORE** proceeding to Stage 5, verify report quality:
 
 ### Verification Checklist
 
@@ -649,7 +649,7 @@ List which phases or quality checks failed verification.
   Recovery options:
   [A] Regenerate entire analysis-report.md from scratch
   [B] Fix individual sections (may take longer)
-  [C] Proceed anyway (NOT RECOMMENDED - will cause issues in Stage 7)
+  [C] Proceed anyway (NOT RECOMMENDED - will cause issues in Stage 5)
 
   Your choice: ___
   ```
@@ -660,7 +660,7 @@ List which phases or quality checks failed verification.
 - Use appropriate tools (Edit/str_replace for fixes, Write for full regen)
 - Create/update checkpoint markers after fixes
 - Re-run verification after recovery
-- **DO NOT proceed to Stage 7 until verification passes**
+- **DO NOT proceed to Stage 5 until verification passes**
 
 ⚠️ **STOP HERE** - DO NOT CONTINUE TO NEXT STEP UNTIL VERIFICATION PASSES
 
@@ -682,10 +682,10 @@ analysis-report.md is complete and meets quality standards:
 - No placeholders or incomplete sections
 - Total lines: [COUNT] (comprehensive analysis)
 
-Proceeding to Stage 7 (Artifact Generation)...
+Proceeding to Stage 5 (Artifact Generation)...
 ```
 
-**Only after passing verification**: Proceed to Stage 7
+**Only after passing verification**: Proceed to Stage 5
 
 ---
 
@@ -723,4 +723,4 @@ STATE_PATH: .analysis/.state/05-report.json
 
 ## Next Stage
 
-Proceed to: **Stage 7: 06-artifacts.md** (Generate remaining artifacts)
+Proceed to: **Stage 5: 06-artifacts.md** (Generate remaining artifacts)

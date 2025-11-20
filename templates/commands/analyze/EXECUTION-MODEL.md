@@ -63,34 +63,33 @@ Bootstrap State (from script)
 Stage 1: AI executes 01-setup-and-scope.md
          - Loads 00-bootstrap.json (from script)
          - Asks user for scope, context, etc.
+         - Runs analyze-project script with inputs
+         - Loads generated JSON files
          - Saves 01-setup-and-scope.json
     ↓
-Stage 2: AI executes 02-structure.md
+Stage 2: AI executes 03-file-analysis.md
          - Loads 01-setup-and-scope.json
-         - Analyzes project structure
-         - Saves 02-structure.json
-    ↓
-Stage 3: AI executes 03-file-analysis.md
-         - Loads 02-structure.json
-         - Deep file scanning
+         - Deep file scanning using JSON data
          - Saves 03-file-analysis.json
     ↓
-Stage 4: AI executes 04a-full-app.md OR 04b-cross-cutting.md
+Stage 3: AI executes 04a-full-app.md OR 04b-cross-cutting.md
          - Loads 03-file-analysis.json
          - Branch-specific analysis
          - Saves 04a-full-app.json OR 04b-cross-cutting.json
     ↓
-Stage 5: AI executes 05-report-generation.md
+Stage 4: AI executes 05-report-generation.md
          - Loads 04a/b state
          - Generates analysis report
          - Saves 05-report.json
     ↓
-Stage 6: AI executes 06-artifacts.md
+Stage 5: AI executes 06-artifacts.md
          - Loads 05-report.json
          - Generates remaining artifacts
          - Saves 06-artifacts.json
     ↓
 COMPLETE
+
+Note: 02-structure.md is obsolete - structure data is now in JSON files from script
 ```
 
 ## Critical Dependencies
@@ -116,19 +115,17 @@ COMPLETE
 ```text
 .analysis/
 ├── .state/
-│   ├── 00-bootstrap.json      # Created by setup script
-│   ├── 01-setup-and-scope.json            # Created by AI (Stage 1)
-│   ├── 01-setup-and-scope.json           # Created by AI (Stage 2)
-│   ├── 02-structure.json       # Created by AI (Stage 3)
-│   ├── 03-file-analysis.json   # Created by AI (Stage 4)
-│   ├── 04a-full-app.json       # Created by AI (Stage 5A) OR
-│   ├── 04b-cross-cutting.json  # Created by AI (Stage 5B)
-│   ├── 05-report.json          # Created by AI (Stage 6)
-│   ├── 06-artifacts.json       # Created by AI (Stage 7)
+│   ├── 00-bootstrap.json       # Created by setup script
+│   ├── 01-setup-and-scope.json # Created by AI (Stage 1)
+│   ├── 03-file-analysis.json   # Created by AI (Stage 2)
+│   ├── 04a-full-app.json       # Created by AI (Stage 3A) OR
+│   ├── 04b-cross-cutting.json  # Created by AI (Stage 3B)
+│   ├── 05-report.json          # Created by AI (Stage 4)
+│   ├── 06-artifacts.json       # Created by AI (Stage 5)
 │   └── latest.json             # Symlink/copy to latest state
 └── {project}-{timestamp}/
     └── ... (analysis artifacts)
-```text
+```
 
 ### State Schema
 
@@ -162,7 +159,7 @@ AI uses these Bash commands throughout execution:
 
 ## Dynamic Branching
 
-Stage 5 uses dynamic branching based on `analysis_scope` from state:
+Stage 3 uses dynamic branching based on `analysis_scope` from state:
 
 ```javascript
 if (state.analysis_scope === "A") {
@@ -172,18 +169,18 @@ if (state.analysis_scope === "A") {
     // Load and execute: 04b-cross-cutting.md
     // Cross-cutting concern migration
 }
-```text
+```
 
 **Implementation**:
 - Master prompt contains explicit conditional instructions
-- AI reads `analysis_scope` from Stage 2 state
+- AI reads `analysis_scope` from Stage 1 state
 - AI loads only the relevant branch prompt
 
 ## Verification Gates
 
-### Stage 6: Report Generation
+### Stage 4: Report Generation
 
-**HARD STOP** before proceeding to Stage 7.
+**HARD STOP** before proceeding to Stage 5.
 
 AI must run:
 
@@ -305,7 +302,7 @@ Manual test with 2-stage chain:
 
 3. **No Parallel Execution**: Stages run sequentially
    - **Impact**: Cannot parallelize artifact generation
-   - **Mitigation**: Stage 7 internally generates artifacts in parallel where possible
+   - **Mitigation**: Stage 5 internally generates artifacts in parallel where possible
 
 4. **Manual Recovery**: User must manually resume if interrupted
    - **Impact**: Not fully automatic recovery
@@ -322,7 +319,7 @@ Manual test with 2-stage chain:
 | Recovery | Restart from scratch | Resume from stage | ✅ Chained |
 | Debugging | Hard to isolate | Easy per stage | ✅ Chained |
 | Setup Complexity | None | Script integration | ⚠️ Monolithic |
-| Token Usage | 2,484 lines once | 350 lines × 7 | ~Same |
+| Token Usage | 2,484 lines once | 350 lines × 5 | ~Same |
 
 ### vs. Separate Commands
 
@@ -352,12 +349,12 @@ The chained prompt architecture with AI self-orchestration is **validated and pr
 **Key Success Factors**:
 1. Explicit step-by-step instructions in master prompt
 2. State management via bash scripts (not AI memory)
-3. Fresh attention for each critical section (especially Stage 4)
+3. Fresh attention for each critical section (especially Stage 2 - File Analysis)
 4. Verification gates enforcing quality
 5. Recovery capability via checkpoint states
 
 ---
 
-**Last Updated**: 2025-11-14
-**Version**: 2.0.0-chain
-**Status**: ✅ Validated via integration testing
+**Last Updated**: 2025-11-20
+**Version**: 3.0.0-scriptfirst
+**Status**: ✅ Updated to 5-stage architecture

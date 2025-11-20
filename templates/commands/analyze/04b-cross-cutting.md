@@ -23,7 +23,7 @@ version: 1.0.0
 
 ---
 
-# Stage 5B: Cross-Cutting Concern Migration Analysis
+# Stage 3B: Cross-Cutting Concern Migration Analysis
 
 ## Purpose
 
@@ -441,4 +441,4 @@ STATE_PATH: .analysis/.state/04b-cross-cutting.json
 
 ## Next Stage
 
-Proceed to: **Stage 6: 05-report-generation.md**
+Proceed to: **Stage 4: 05-report-generation.md**

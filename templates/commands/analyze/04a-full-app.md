@@ -25,7 +25,7 @@ version: 1.0.0
 
 ---
 
-# Stage 5A: Full Application Modernization Analysis
+# Stage 3A: Full Application Modernization Analysis
 
 ## Purpose
 
@@ -710,4 +710,4 @@ STATE_PATH: .analysis/.state/04a-full-app.json
 
 ## Next Stage
 
-Proceed to: **Stage 6: 05-report-generation.md**
+Proceed to: **Stage 4: 05-report-generation.md**
