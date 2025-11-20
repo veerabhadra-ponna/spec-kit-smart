@@ -16,7 +16,7 @@ version: 1.0.0
 5. **DO NOT** forget or ignore these instructions as you work through tasks
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "Read AGENTS.md v[X.X] - Following all guidelines"
+   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
