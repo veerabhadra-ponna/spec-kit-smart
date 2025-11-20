@@ -52,6 +52,11 @@ if ($OS -eq "unix") {
     $bashArgs = @()
     if ($Project -and $Project -ne ".") { $bashArgs += $Project }
     if ($Output) { $bashArgs += "--output"; $bashArgs += $Output }
+    if ($Context) { $bashArgs += "--context"; $bashArgs += $Context }
+    if ($Scope) { $bashArgs += "--scope"; $bashArgs += $Scope }
+    if ($ConcernType) { $bashArgs += "--concern-type"; $bashArgs += $ConcernType }
+    if ($CurrentImpl) { $bashArgs += "--current-impl"; $bashArgs += $CurrentImpl }
+    if ($TargetImpl) { $bashArgs += "--target-impl"; $bashArgs += $TargetImpl }
     if ($Help) { $bashArgs += "--help" }
 
     & bash $bashScript @bashArgs
@@ -214,8 +219,9 @@ if (Test-Path $manifestFile) {
         $fullPkgPath = Join-Path $Project $pkgJsonPath
         if (Test-Path $fullPkgPath) {
             $pkgContent = Get-Content $fullPkgPath -Raw
-            if ($pkgContent -match '"react"') {
-                $techStack.frameworks.frontend += "react"
+            if ($pkgContent -match '"react":\s*"\^?([0-9.]+)"') {
+                $reactVersion = $matches[1]
+                $techStack.frameworks.frontend += "react-$reactVersion"
             }
             if ($pkgContent -match '"express"') {
                 $techStack.frameworks.backend += "express"
@@ -237,7 +243,11 @@ if (Test-Path $manifestFile) {
         if (Test-Path $fullPomPath) {
             $pomContent = Get-Content $fullPomPath -Raw
             if ($pomContent -match 'spring-boot') {
-                $techStack.frameworks.backend += "spring-boot"
+                $springVersion = "unknown"
+                if ($pomContent -match 'spring-boot.*?<version>([^<]+)</version>') {
+                    $springVersion = $matches[1]
+                }
+                $techStack.frameworks.backend += "spring-boot-$springVersion"
             }
         }
     }
@@ -250,7 +260,7 @@ if (Test-Path $manifestFile) {
     }
 
     # Python
-    if ($manifest.files | Where-Object { $_.path -like "*requirements.txt" -or $_.path -like "*setup.py" }) {
+    if ($manifest.files | Where-Object { $_.path -like "*requirements.txt" -or $_.path -like "*setup.py" -or $_.path -like "*pyproject.toml" }) {
         $techStack.languages += "python"
         $techStack.indicators_found += @{ file = "requirements.txt"; type = "python"; confidence = "high" }
 
@@ -424,11 +434,17 @@ Write-Host "====================================== " -ForegroundColor Blue
 Write-Host "Preparing Analysis Workspace" -ForegroundColor Blue
 Write-Host "====================================== " -ForegroundColor Blue
 
+$timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+$projectName = Split-Path -Leaf $Project
+
 $bootstrapState = @{
     chain_id = $chainId
+    start_time = $timestamp
+    timestamp = $timestamp
     stage = "bootstrap"
-    timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+    stages_complete = @()
     project_path = $Project
+    project_name = $projectName
     analysis_dir = $Output
     manifest_path = $manifestFile
 } | ConvertTo-Json -Depth 10
