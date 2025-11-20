@@ -203,9 +203,9 @@ Each stage:
 
 ---
 
-### 5. Artifact Generation (Stage 5)
+### 5. Common Artifact Generation (Stage 5)
 
-**Purpose**: Generate remaining artifacts
+**Purpose**: Generate common artifacts required for both scopes
 
 **Input**: Previous state from Stage 4
 
@@ -213,6 +213,20 @@ Each stage:
 - EXECUTIVE-SUMMARY.md
 - dependency-audit.json
 - metrics-summary.json
+
+**Output**:
+- `common_artifacts_complete` - true
+- `artifacts_generated` - List of common artifacts
+
+**Completion**: `STAGE_COMPLETE:COMMON_ARTIFACTS`
+
+---
+
+### 6. Scope-Specific Artifact Generation (Stage 6)
+
+**Purpose**: Generate scope-specific artifacts based on analysis scope
+
+**Input**: Previous state from Stage 5
 
 **IF Scope = A** (Full Application):
 - functional-spec-legacy.md (WHAT legacy system does TODAY)
@@ -226,10 +240,10 @@ Each stage:
 - rollback-procedure.md
 
 **Output**:
-- `artifacts_generated` - List of all files
-- `analysis_complete` - true
+- `scope_artifacts_generated` - List of scope-specific artifacts
+- `all_artifacts_complete` - true
 
-**Completion**: `STAGE_COMPLETE:ARTIFACTS`
+**Completion**: `STAGE_COMPLETE:SCOPE_ARTIFACTS`
 
 ---
 

@@ -5,7 +5,7 @@ outputs: all_artifacts_complete
 version: 1.0.0
 ---
 
-## MANDATORY: Read Agent Instructions First
+## ⚠️ MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 

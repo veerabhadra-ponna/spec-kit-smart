@@ -42,7 +42,7 @@ Claude Code loads: `analyze-project` command (orchestration prompt)
 **AI then executes sequentially**:
 
 ```text
-FOR each stage in [01-setup-and-scope, 02-file-analysis, 03a/b-branch, 04-report, 05-artifacts]:
+FOR each stage in [01-setup-and-scope, 02-file-analysis, 03a/b-branch, 04-report, 05-artifacts, 06-scope-artifacts]:
     1. AI uses Read tool → Load `.specify/prompts/analyze/{stage}.md`
     2. AI reads ENTIRE stage prompt
     3. AI executes ALL instructions in that prompt
@@ -363,4 +363,4 @@ The chained prompt architecture with AI self-orchestration is **validated and pr
 
 **Last Updated**: 2025-11-20
 **Version**: 3.0.0-scriptfirst
-**Status**: ✅ Updated to 5-stage architecture
+**Status**: ✅ Updated to 6-stage architecture
