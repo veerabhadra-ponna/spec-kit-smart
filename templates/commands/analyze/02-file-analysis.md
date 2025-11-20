@@ -718,10 +718,10 @@ When file analysis is complete and quality gates pass, output:
 
 ```text
 STAGE_COMPLETE:FILE_ANALYSIS
-STATE_PATH: .analysis/.state/03-file-analysis.json
-```text
+STATE_PATH: .analysis/.state/02-file-analysis.json
+```
 
-Save the state JSON to `.analysis/.state/03-file-analysis.json`.
+Save the state JSON to `.analysis/.state/02-file-analysis.json`.
 
 ---
 
@@ -820,12 +820,12 @@ Verifying quality gates...
 ✓ All quality gates passed
 
 STAGE_COMPLETE:FILE_ANALYSIS
-STATE_PATH: .analysis/.state/03-file-analysis.json
+STATE_PATH: .analysis/.state/02-file-analysis.json
 
 Next stage: Branching based on analysis_scope
-  - If scope = A: 04a-full-app.md
-  - If scope = B: 04b-cross-cutting.md
-```text
+  - If scope = A: 03a-full-app.md
+  - If scope = B: 03b-cross-cutting.md
+```
 
 ---
 
@@ -844,7 +844,7 @@ Required new fields:
 
 After successful completion, proceed to **DYNAMIC BRANCH**:
 
-- **IF** `analysis_scope = "A"`: **Stage 3A: 04a-full-app.md** (Full Application Analysis)
-- **IF** `analysis_scope = "B"`: **Stage 3B: 04b-cross-cutting.md** (Cross-Cutting Concern Analysis)
+- **IF** `analysis_scope = "A"`: **Stage 3A: 03a-full-app.md** (Full Application Analysis)
+- **IF** `analysis_scope = "B"`: **Stage 3B: 03b-cross-cutting.md** (Cross-Cutting Concern Analysis)
 
 The master orchestration prompt will load the appropriate branch.

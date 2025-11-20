@@ -1,6 +1,6 @@
 ---
 stage: artifact_generation
-requires: 05-report.json
+requires: 04-report.json
 outputs: all_artifacts_complete
 version: 1.0.0
 ---
@@ -32,7 +32,7 @@ Generate all remaining artifacts based on analysis scope. These complement the m
 
 ## Previous State
 
-Load state from: `.analysis/.state/05-report.json`
+Load state from: `.analysis/.state/04-report.json`
 
 Required:
 - `report_generated` must be `true`
@@ -1046,12 +1046,12 @@ Analysis Duration: {duration}
 
 ```text
 STAGE_COMPLETE:ARTIFACTS
-STATE_PATH: .analysis/.state/06-artifacts.json
+STATE_PATH: .analysis/.state/05-artifacts.json
 
 === ANALYSIS CHAIN COMPLETE ===
 Chain ID: {chain_id}
 All stages successfully completed.
-```text
+```
 
 ---
 

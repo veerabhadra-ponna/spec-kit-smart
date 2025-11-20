@@ -31,11 +31,11 @@ This directory contains the **chained prompt workflow** for the `analyze-project
 ### Stage Prompts
 
 1. **01-setup-and-scope.md** (~430 lines) - Input collection, script execution, JSON loading
-2. **03-file-analysis.md** (~450 lines) - ⭐ **CRITICAL** Deep file scanning using JSON inputs
-3. **04a-full-app.md** (~400 lines) - Branch A: Full application modernization
-   **OR 04b-cross-cutting.md** (~350 lines) - Branch B: Cross-cutting concern migration
-4. **05-report-generation.md** (~300 lines) - Analysis report generation
-5. **06-artifacts.md** (~350 lines) - Remaining artifacts generation
+2. **02-file-analysis.md** (~450 lines) - ⭐ **CRITICAL** Deep file scanning using JSON inputs
+3. **03a-full-app.md** (~400 lines) - Branch A: Full application modernization
+   **OR 03b-cross-cutting.md** (~350 lines) - Branch B: Cross-cutting concern migration
+4. **04-report-generation.md** (~300 lines) - Analysis report generation
+5. **05-artifacts.md** (~350 lines) - Remaining artifacts generation
 
 **Note:** 02-structure.md is obsolete - structure data now in JSON files from script.
 
@@ -73,11 +73,11 @@ Each stage:
 ├── .state/                               # Chain state files
 │   ├── 00-bootstrap.json                 # Script-generated (chain_id, paths)
 │   ├── 01-setup-and-scope.json           # Stage 1 output (inputs + JSON data merged)
-│   ├── 03-file-analysis.json             # Stage 2 output (patterns, debt, security)
-│   ├── 04a-full-app.json                 # Stage 3A output (if scope=A)
-│   ├── 04b-cross-cutting.json            # Stage 3B output (if scope=B)
-│   ├── 05-report.json                    # Stage 4 output
-│   └── 06-artifacts.json                 # Stage 5 output
+│   ├── 02-file-analysis.json             # Stage 2 output (patterns, debt, security)
+│   ├── 03a-full-app.json                 # Stage 3A output (if scope=A)
+│   ├── 03b-cross-cutting.json            # Stage 3B output (if scope=B)
+│   ├── 04-report.json                    # Stage 4 output
+│   └── 05-artifacts.json                 # Stage 5 output
 └── {project}-{timestamp}/                # Analysis workspace
     ├── file-manifest.json                # ✅ Script-generated (all files with metadata)
     ├── tech-stack.json                   # ✅ Script-generated (detected technologies)
@@ -142,7 +142,7 @@ Each stage:
 
 **CRITICAL**: Loads different prompt based on `analysis_scope`
 
-#### Branch A: Full Application (04a-full-app.md)
+#### Branch A: Full Application (03a-full-app.md)
 
 **Purpose**: Ask 10 modernization questions, calculate scores
 
@@ -153,7 +153,7 @@ Each stage:
 
 **Completion**: `STAGE_COMPLETE:FULL_APP`
 
-#### Branch B: Cross-Cutting Concern (04b-cross-cutting.md)
+#### Branch B: Cross-Cutting Concern (03b-cross-cutting.md)
 
 **Purpose**: Abstraction assessment, migration planning
 
@@ -252,7 +252,7 @@ Each stage:
 **Example**:
 
 ```text
-Last completed: 03-file-analysis
+Last completed: 02-file-analysis
 Resume from: Stage 3 (Branch execution)
 Chain ID: a3f7c8d1
 ```

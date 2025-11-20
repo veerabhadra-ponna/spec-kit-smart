@@ -42,7 +42,7 @@ Claude Code loads: `analyze-project` command (orchestration prompt)
 **AI then executes sequentially**:
 
 ```text
-FOR each stage in [01-setup-and-scope, 02-structure, 03-file-analysis, 04a/b-branch, 05-report, 06-artifacts]:
+FOR each stage in [01-setup-and-scope, 02-file-analysis, 03a/b-branch, 04-report, 05-artifacts]:
     1. AI uses Read tool → Load `.specify/prompts/analyze/{stage}.md`
     2. AI reads ENTIRE stage prompt
     3. AI executes ALL instructions in that prompt
@@ -67,25 +67,25 @@ Stage 1: AI executes 01-setup-and-scope.md
          - Loads generated JSON files
          - Saves 01-setup-and-scope.json
     ↓
-Stage 2: AI executes 03-file-analysis.md
+Stage 2: AI executes 02-file-analysis.md
          - Loads 01-setup-and-scope.json
          - Deep file scanning using JSON data
-         - Saves 03-file-analysis.json
+         - Saves 02-file-analysis.json
     ↓
-Stage 3: AI executes 04a-full-app.md OR 04b-cross-cutting.md
-         - Loads 03-file-analysis.json
+Stage 3: AI executes 03a-full-app.md OR 03b-cross-cutting.md
+         - Loads 02-file-analysis.json
          - Branch-specific analysis
-         - Saves 04a-full-app.json OR 04b-cross-cutting.json
+         - Saves 03a-full-app.json OR 03b-cross-cutting.json
     ↓
-Stage 4: AI executes 05-report-generation.md
-         - Loads 04a/b state
+Stage 4: AI executes 04-report-generation.md
+         - Loads 03a/b state
          - Generates analysis report
-         - Saves 05-report.json
+         - Saves 04-report.json
     ↓
-Stage 5: AI executes 06-artifacts.md
-         - Loads 05-report.json
+Stage 5: AI executes 05-artifacts.md
+         - Loads 04-report.json
          - Generates remaining artifacts
-         - Saves 06-artifacts.json
+         - Saves 05-artifacts.json
     ↓
 COMPLETE
 
@@ -117,11 +117,11 @@ Note: 02-structure.md is obsolete - structure data is now in JSON files from scr
 ├── .state/
 │   ├── 00-bootstrap.json       # Created by setup script
 │   ├── 01-setup-and-scope.json # Created by AI (Stage 1)
-│   ├── 03-file-analysis.json   # Created by AI (Stage 2)
-│   ├── 04a-full-app.json       # Created by AI (Stage 3A) OR
-│   ├── 04b-cross-cutting.json  # Created by AI (Stage 3B)
-│   ├── 05-report.json          # Created by AI (Stage 4)
-│   ├── 06-artifacts.json       # Created by AI (Stage 5)
+│   ├── 02-file-analysis.json   # Created by AI (Stage 2)
+│   ├── 03a-full-app.json       # Created by AI (Stage 3A) OR
+│   ├── 03b-cross-cutting.json  # Created by AI (Stage 3B)
+│   ├── 04-report.json          # Created by AI (Stage 4)
+│   ├── 05-artifacts.json       # Created by AI (Stage 5)
 │   └── latest.json             # Symlink/copy to latest state
 └── {project}-{timestamp}/
     └── ... (analysis artifacts)
@@ -163,10 +163,10 @@ Stage 3 uses dynamic branching based on `analysis_scope` from state:
 
 ```javascript
 if (state.analysis_scope === "A") {
-    // Load and execute: 04a-full-app.md
+    // Load and execute: 03a-full-app.md
     // Full application modernization
 } else if (state.analysis_scope === "B") {
-    // Load and execute: 04b-cross-cutting.md
+    // Load and execute: 03b-cross-cutting.md
     // Cross-cutting concern migration
 }
 ```
