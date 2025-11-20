@@ -27,7 +27,7 @@ version: 3.0.0-scriptfirst
 
 This command orchestrates a **script-first chained workflow** for project analysis. Data extraction is handled by shell scripts (deterministic, fast, testable), while AI focuses on analysis and decision-making.
 
-**Architecture: Input → Script → Analysis**
+### Architecture: Input → Script → Analysis
 
 1. **AI collects user inputs** (project path, context, scope)
 2. **Scripts extract data** (files, tech stack, structure) → JSON files
@@ -125,13 +125,14 @@ This unified stage handles:
 
 | Stage | File | Purpose |
 | ------- | ------ | --------- |
-| **1** | 01-setup-and-scope.md | Unified setup and scope |
-| **2** | 02-structure.md | Structure analysis |
-| **3** | 03-file-analysis.md | Deep file analysis |
-| **4A** | 04a-full-app.md | Full app (if scope=A) |
-| **4B** | 04b-cross-cutting.md | Cross-cutting (if scope=B) |
-| **5** | 05-report-generation.md | Report generation |
-| **6** | 06-artifacts.md | Artifact generation |
+| **1** | 01-setup-and-scope.md | Input collection + script execution + JSON loading |
+| **2** | 03-file-analysis.md | Deep file analysis using JSON data |
+| **3A** | 04a-full-app.md | Full app (if scope=A) |
+| **3B** | 04b-cross-cutting.md | Cross-cutting (if scope=B) |
+| **4** | 05-report-generation.md | Report generation |
+| **5** | 06-artifacts.md | Artifact generation |
+
+**Note:** 02-structure.md is obsolete - structure data now in JSON files from script.
 
 ---
 
@@ -254,11 +255,12 @@ When complete, all artifacts are saved to: `.analysis/{project}-{timestamp}/`
 **Execute Stage 1:** Load `.specify/prompts/analyze/01-setup-and-scope.md` and follow all instructions.
 
 **What Stage 1 does:**
+
 1. Collects user inputs (project path, context, scope, concern details if applicable)
 2. Runs analyze-project script with inputs
 3. Script generates 4 JSON files with all project data
 4. Loads JSON files and merges into state
 5. Displays summary to user
-6. Saves state and proceeds to Stage 2
+6. Saves state and proceeds to Stage 2 (03-file-analysis.md)
 
-**Then the AI loads JSON data and proceeds with analysis stages.**
+**Then the AI uses JSON data for deep file analysis and subsequent stages.**
