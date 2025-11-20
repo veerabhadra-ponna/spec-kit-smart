@@ -35,7 +35,8 @@ This directory contains the **chained prompt workflow** for the `analyze-project
 3. **03a-full-app.md** (~400 lines) - Branch A: Full application modernization
    **OR 03b-cross-cutting.md** (~350 lines) - Branch B: Cross-cutting concern migration
 4. **04-report-generation.md** (~300 lines) - Analysis report generation
-5. **05-artifacts.md** (~350 lines) - Remaining artifacts generation
+5. **05-artifacts.md** (~200 lines) - Common artifacts generation
+6. **06-scope-artifacts.md** (~800 lines) - Scope-specific artifacts generation
 
 **Note:** 02-structure.md is obsolete - structure data now in JSON files from script.
 
@@ -77,7 +78,8 @@ Each stage:
 │   ├── 03a-full-app.json                 # Stage 3A output (if scope=A)
 │   ├── 03b-cross-cutting.json            # Stage 3B output (if scope=B)
 │   ├── 04-report.json                    # Stage 4 output
-│   └── 05-artifacts.json                 # Stage 5 output
+│   ├── 05-artifacts.json                 # Stage 5 output (common artifacts)
+│   └── 06-scope-artifacts.json           # Stage 6 output (scope-specific)
 └── {project}-{timestamp}/                # Analysis workspace
     ├── file-manifest.json                # ✅ Script-generated (all files with metadata)
     ├── tech-stack.json                   # ✅ Script-generated (detected technologies)

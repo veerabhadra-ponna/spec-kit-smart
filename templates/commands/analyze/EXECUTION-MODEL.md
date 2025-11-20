@@ -84,8 +84,13 @@ Stage 4: AI executes 04-report-generation.md
     ↓
 Stage 5: AI executes 05-artifacts.md
          - Loads 04-report.json
-         - Generates remaining artifacts
+         - Generates common artifacts
          - Saves 05-artifacts.json
+    ↓
+Stage 6: AI executes 06-scope-artifacts.md
+         - Loads 05-artifacts.json
+         - Generates scope-specific artifacts
+         - Saves 06-scope-artifacts.json
     ↓
 COMPLETE
 
@@ -122,6 +127,7 @@ Note: 02-structure.md is obsolete - structure data is now in JSON files from scr
 │   ├── 03b-cross-cutting.json  # Created by AI (Stage 3B)
 │   ├── 04-report.json          # Created by AI (Stage 4)
 │   ├── 05-artifacts.json       # Created by AI (Stage 5)
+│   ├── 06-scope-artifacts.json # Created by AI (Stage 6)
 │   └── latest.json             # Symlink/copy to latest state
 └── {project}-{timestamp}/
     └── ... (analysis artifacts)
