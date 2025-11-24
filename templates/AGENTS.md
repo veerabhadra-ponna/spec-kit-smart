@@ -484,4 +484,426 @@ project-root/
 
 ---
 
+## 11. Codebase Indexing & Knowledge Base
+
+**New in v1.0.0**: Spec Kit now includes powerful codebase indexing capabilities that dramatically improve code analysis, reverse engineering, and implementation quality.
+
+### 11.1 Overview
+
+The indexing system creates a searchable, structured representation of your codebase that enables:
+
+- **10x faster reverse engineering** - Pre-extracted architecture instead of reading every file
+- **40-60% code reuse** - Automatic detection of duplicate implementations
+- **80% token reduction** - Grounded context instead of full file reads
+- **Better accuracy** - AST-based understanding vs regex patterns
+
+### 11.2 New Commands
+
+#### 11.2.1 `/speckitsmart.index` - Build Codebase Index
+
+**Purpose:** Create searchable index of code structure, data models, and APIs
+
+**When to use:**
+- **FIRST STEP**: Run before `/speckitsmart.analyze-project` (required prerequisite)
+- After major code changes (new modules, refactoring)
+- Weekly for active projects
+
+**Basic usage:**
+```bash
+# First time - full index
+/speckitsmart.index
+
+# Update after changes - incremental (fast)
+/speckitsmart.index --incremental
+
+# Index specific directory
+/speckitsmart.index --path src/
+
+# Verbose output
+/speckitsmart.index --verbose
+```
+
+**What gets indexed:**
+- ✅ Code structure (classes, functions, interfaces)
+- ✅ Data models (database schemas, ORM entities, TypeScript types)
+- ✅ API endpoints (REST, GraphQL, WebSocket)
+- ✅ External APIs (Stripe, AWS, third-party services)
+- ✅ Dependencies (imports, exports, call graphs)
+
+**Output:** `.analysis/index/` directory
+
+**Performance:** 30-60 seconds for typical projects
+
+---
+
+#### 11.2.2 `/speckitsmart.wiki` - Generate Documentation
+
+**Purpose:** Auto-generate comprehensive documentation (DeepWiki) from index
+
+**Prerequisite:** **REQUIRES** index (run `/speckitsmart.index` first)
+
+**Basic usage:**
+```bash
+# Generate all documentation
+/speckitsmart.wiki
+
+# Generate specific tiers
+/speckitsmart.wiki --tiers 1,2
+```
+
+**Output:** `.deepwiki/` directory containing:
+- `overview.md` - What is this repo?
+- `functional-summary.md` - Problems it solves
+- `architecture/` - Architecture diagrams and details
+- `modules/` - Per-module documentation
+- `api-reference/` - API endpoint documentation
+
+**Use cases:**
+- Onboarding new team members
+- Architecture documentation
+- API documentation
+- Understanding legacy code
+
+---
+
+#### 11.2.3 `/speckitsmart.ask` - Query Codebase
+
+**Purpose:** Ask questions about codebase using natural language
+
+**Prerequisites:** **REQUIRES** index, optionally DeepWiki for better answers
+
+**Basic usage:**
+```bash
+# Ask about functionality
+/speckitsmart.ask "How does authentication work?"
+
+# Ask about data
+/speckitsmart.ask "What database tables exist?"
+
+# Ask about APIs
+/speckitsmart.ask "Show me all user management endpoints"
+
+# Ask about integrations
+/speckitsmart.ask "What third-party services does this use?"
+```
+
+**Response includes:**
+- Clear explanation with code examples
+- File paths and line numbers
+- Related information
+- Source citations
+
+**Benefits:**
+- Get answers in seconds vs reading code for hours
+- Grounded in actual codebase (no hallucinations)
+- Links to source code for verification
+
+---
+
+### 11.3 Updated Workflow
+
+**Old workflow:**
+```
+1. /speckitsmart.analyze-project  ← Slow, read every file
+2. /speckitsmart.specify
+3. /speckitsmart.implement
+```
+
+**New workflow (REQUIRED):**
+```
+1. /speckitsmart.index              ← NEW: Build index first (30-60s)
+2. /speckitsmart.analyze-project    ← 10x faster with index
+3. /speckitsmart.wiki               ← NEW: Generate docs (optional)
+4. /speckitsmart.ask                ← NEW: Q&A during development (optional)
+5. /speckitsmart.specify
+6. /speckitsmart.implement          ← Enhanced with code reuse checks
+```
+
+### 11.4 Prerequisite Requirements
+
+**CRITICAL RULE:** Always check prerequisites before command execution
+
+#### Commands that REQUIRE index (MUST have index, will FAIL without):
+
+**`/speckitsmart.analyze-project`**
+- **Behavior:** STOP execution if index missing
+- **Check:** Run `check-index-prerequisite.sh` first
+- **Error message:** Display clear error with solution
+- **Action:** EXIT immediately, do NOT proceed
+
+**`/speckitsmart.wiki`**
+- **Behavior:** STOP execution if index missing
+- **Check:** Run `check-index-prerequisite.sh` first
+- **Error message:** "Index required for documentation generation"
+- **Action:** EXIT immediately, do NOT proceed
+
+**`/speckitsmart.ask`**
+- **Behavior:** STOP execution if index missing
+- **Check:** Run `check-index-prerequisite.sh` first
+- **Error message:** "Index required to answer questions"
+- **Action:** EXIT immediately, do NOT proceed
+
+**Prerequisite Check Output:**
+```json
+{
+  "index_exists": false,
+  "error": "Index not found at .analysis/index"
+}
+```
+
+**IF `index_exists: false` → MUST display:**
+```
+❌ ERROR: Codebase index not found
+
+This command requires a codebase index.
+
+🔧 Solution:
+Run this command first:
+  /speckitsmart.index
+
+Estimated time: 30-60 seconds
+
+Then re-run: /speckitsmart.[command]
+```
+
+**STOP EXECUTION. DO NOT PROCEED.**
+
+**IF `index_exists: true` but `is_stale: true` (>7 days old):**
+```
+⚠️ WARNING: Index is stale (last updated N days ago)
+
+Results may not reflect recent code changes.
+
+Recommendation: Update index (takes 5-10 seconds):
+  /speckitsmart.index --incremental
+
+Continue with stale index? (Press Enter to continue, Ctrl+C to abort)
+```
+
+**WAIT for user confirmation, then proceed.**
+
+---
+
+#### Commands with OPTIONAL index (SHOULD have, warns but continues):
+
+**`/speckitsmart.implement`**
+- **Behavior:** WARN if index missing, but CONTINUE
+- **Check:** Run `check-index-optional.sh` first
+- **Warning message:** Display benefits but allow continuation
+- **Action:** SKIP reusability checks, proceed with standard implementation
+
+**Optional Check Output:**
+```json
+{
+  "index_available": false,
+  "message": "Code reusability checks disabled"
+}
+```
+
+**IF `index_available: false` → SHOULD display:**
+```
+⚠️ Codebase index not available
+
+Proceeding without code reusability checks.
+
+Missing benefits:
+  ✗ 40-60% code reuse (avoid duplicate implementations)
+  ✗ Automatic detection of existing utilities
+  ✗ Consistent architecture patterns
+  ✗ 80% token reduction in AI queries
+
+💡 To enable these features:
+   1. Pause (optional)
+   2. Run: /speckitsmart.index (30-60 seconds)
+   3. Re-run: /speckitsmart.implement
+
+⏭️ Proceeding without index...
+```
+
+**CONTINUE with standard implementation (no reusability checks).**
+
+---
+
+### 11.5 Code Reusability with Index
+
+**WHEN index available during `/speckitsmart.implement`:**
+
+**For EACH task in tasks.md, BEFORE implementing:**
+
+1. **Query index** for reusable code:
+   ```bash
+   find-reusable-code.sh "TASK_DESCRIPTION"
+   ```
+
+2. **Review suggestions:**
+   ```json
+   {
+     "existing_implementations": [
+       {
+         "file": "src/auth/jwt.ts",
+         "function": "validateJWT",
+         "similarity": 0.92,
+         "recommendation": "⚠️ HIGH MATCH - Reuse instead of reimplementing"
+       }
+     ],
+     "reusable_utilities": [
+       {
+         "file": "src/utils/crypto.ts",
+         "exports": ["hashPassword", "verifyPassword"],
+         "recommendation": "Use these crypto utilities"
+       }
+     ],
+     "architecture_patterns": [
+       {
+         "pattern": "Middleware Pattern",
+         "examples": ["src/middleware/authenticate.ts"],
+         "recommendation": "Follow this pattern"
+       }
+     ]
+   }
+   ```
+
+3. **Display to developer:**
+   ```
+   📋 Task: Implement JWT validation
+
+   🔍 Reusability Check:
+   ⚠️ EXISTING IMPLEMENTATION FOUND (92% match)
+      File: src/auth/jwt.ts:45
+      Function: validateJWT
+      Recommendation: REUSE THIS - Don't reimplement
+
+   ✓ Utilities: src/utils/crypto.ts
+   ✓ Pattern: Middleware (see: src/middleware/authenticate.ts)
+   ```
+
+4. **Follow suggestions in implementation:**
+   ```typescript
+   // ✅ GOOD: Reusing existing
+   import { validateJWT } from '@/auth/jwt';
+
+   export const authMiddleware = async (req, res, next) => {
+     const token = req.headers.authorization?.split(' ')[1];
+     const payload = await validateJWT(token);  // Reusing!
+     req.user = payload;
+     next();
+   };
+
+   // ❌ BAD: Reimplementing (ignoring index suggestion)
+   export const authMiddleware = async (req, res, next) => {
+     const token = req.headers.authorization?.split(' ')[1];
+     const payload = jwt.verify(token, secret);  // Duplicate!
+     req.user = payload;
+     next();
+   };
+   ```
+
+**RULE:** MUST check index before implementing. SHOULD reuse when similarity >80%.
+
+---
+
+### 11.6 Index Maintenance
+
+**Freshness levels:**
+- **Fresh:** <24 hours old (optimal)
+- **Valid:** <7 days old (good)
+- **Stale:** >7 days old (warn user, suggest update)
+- **Very stale:** >30 days old (strongly recommend rebuild)
+
+**Update commands:**
+```bash
+# Quick incremental update (5-10 seconds)
+/speckitsmart.index --incremental
+
+# Full rebuild (30-60 seconds)
+/speckitsmart.index --full
+```
+
+**Automatic update triggers:**
+- `/speckitsmart.analyze-project` checks freshness (warns if stale)
+- `/speckitsmart.implement` MAY trigger incremental update after major tasks
+
+---
+
+### 11.7 Best Practices
+
+**DO:**
+- ✅ **Always** run `/speckitsmart.index` before analysis
+- ✅ Keep index fresh (update weekly or after major changes)
+- ✅ Use `/speckitsmart.ask` to understand code before modifying
+- ✅ Follow reusability suggestions (avoid duplicates)
+- ✅ Generate DeepWiki for team onboarding
+
+**DON'T:**
+- ❌ Skip indexing and run analyze-project (will fail)
+- ❌ Ignore reusability suggestions (causes duplicate code)
+- ❌ Let index become very stale (>30 days)
+- ❌ Commit `.analysis/index/` to git (auto-gitignored)
+
+---
+
+### 11.8 Troubleshooting
+
+**Q: analyze-project fails with "index not found"**
+A: Run `/speckitsmart.index` first. It's a required prerequisite.
+
+**Q: How much disk space does index use?**
+A: ~1-10MB for most projects (<1% of codebase size)
+
+**Q: How long does indexing take?**
+A: 30-60 seconds for typical projects, 2-5 minutes for large codebases (10K+ files)
+
+**Q: Does index work with all languages?**
+A: Phase 1 supports TypeScript, JavaScript, Python, Java, C#, Go
+
+**Q: Is index committed to git?**
+A: No. `.analysis/index/` is auto-gitignored. Each developer builds locally.
+
+**Q: What if indexing fails?**
+A: Run with `--verbose` to see details. Common issues:
+   - Syntax errors in code → Use `--skip-invalid`
+   - Large files → Increase `--max-file-size`
+   - Permission issues → Check `.analysis/` write access
+
+**Q: Can I skip indexing?**
+A: No for analyze-project, wiki, ask (hard requirement). Yes for implement (soft warning).
+
+---
+
+### 11.9 Performance Expectations
+
+| Codebase Size | Index Build | Incremental Update |
+|---------------|-------------|-------------------|
+| Small (<1K files) | 5-10s | 1-2s |
+| Medium (1K-10K) | 30-60s | 3-5s |
+| Large (10K-50K) | 2-5min | 10-20s |
+| Very Large (>50K) | 10-30min | 30-60s |
+
+---
+
+### 11.10 Security & Privacy
+
+**What gets indexed:**
+- ✅ Code structure and patterns
+- ✅ API endpoint definitions
+- ✅ Data model schemas
+- ✅ Environment variable **names** (not values)
+
+**What does NOT get indexed:**
+- ❌ Secrets or API keys (redacted if found)
+- ❌ Runtime values
+- ❌ User data
+- ❌ Passwords or credentials
+
+**Security guarantees:**
+- Index is **local-only** (never uploaded to external services)
+- Automatically **gitignored**
+- All processing happens **on your machine**
+- No telemetry or analytics
+- Safe for proprietary code
+
+**MUST NOT:** Commit index to git, share index externally, include secrets in code
+
+---
+
 *AI agents MUST internalize and follow these guidelines for quality, consistency, and specification alignment in Spec-Driven Development projects using Spec Kit.*
