@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://spec-kit-smart.dev/schemas/index/external-apis.json",
+  "title": "External APIs Schema",
+  "description": "Schema for external-apis.json containing third-party service integrations",
+  "type": "object",
+  "required": ["version", "timestamp"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "External APIs format version"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when external APIs were extracted"
+    },
+    "third_party_services": {
+      "type": "array",
+      "description": "Third-party service integrations",
+      "items": {
+        "type": "object",
+        "required": ["service", "sdk_package"],
+        "properties": {
+          "service": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Service name (e.g., Stripe, AWS, SendGrid)"
+          },
+          "sdk_package": {
+            "type": "string",
+            "minLength": 1,
+            "description": "NPM/PyPI/Maven/NuGet package name"
+          },
+          "version": {
+            "type": "string",
+            "description": "Package version or version range"
+          },
+          "api_calls": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["method", "file"],
+              "properties": {
+                "method": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "API method name (e.g., stripe.customers.create)"
+                },
+                "file": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "File containing API call"
+                },
+                "line": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Line number of API call"
+                }
+              }
+            },
+            "description": "API method calls found in codebase"
+          }
+        }
+      }
+    },
+    "environment_variables": {
+      "type": "array",
+      "description": "Environment variables referenced in code",
+      "items": {
+        "type": "object",
+        "required": ["name", "required"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "pattern": "^[A-Z_]+$",
+            "description": "Environment variable name (uppercase with underscores)"
+          },
+          "required": {
+            "type": "boolean",
+            "description": "Whether variable is required for app to function"
+          },
+          "file": {
+            "type": "string",
+            "description": "File where variable is referenced"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number of reference"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of variable purpose (if available)"
+          }
+        }
+      }
+    }
+  }
+}

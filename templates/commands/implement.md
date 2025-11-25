@@ -475,7 +475,85 @@ This validation step works in conjunction with Corporate Guidelines (section abo
 
    For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
-2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
+2. **Optional: Check for Codebase Index** (Reusability Suggestions):
+
+   **IF codebase index exists** (`.analysis/index/metadata.json`), use it to suggest reusable code during implementation:
+
+   **Check for Index** (soft warning, not failure):
+
+   ```bash
+   # Platform detection
+   PLATFORM=$(bash scripts/bash/detect-os.sh 2>/dev/null || echo "unix")
+
+   # Check for optional index
+   if [[ "$PLATFORM" == "windows" ]]; then
+       INDEX_STATUS=$(powershell.exe -ExecutionPolicy Bypass -File scripts/powershell/Check-IndexPrerequisite.ps1 2>/dev/null || echo '{"index_exists":false}')
+   else
+       INDEX_STATUS=$(bash scripts/bash/check-index-prerequisite.sh 2>/dev/null || echo '{"index_exists":false}')
+   fi
+
+   INDEX_EXISTS=$(echo "$INDEX_STATUS" | jq -r '.index_exists // false')
+   ```
+
+   **Benefits When Index Exists**:
+   - **Automatic code reuse detection**: Find similar implementations already in codebase
+   - **Pattern discovery**: Identify existing utility functions, helper classes, common patterns
+   - **Architecture consistency**: Reuse established patterns instead of creating new ones
+   - **40-60% code reuse**: Typical reuse rate when index is available
+
+   **Display Status**:
+
+   ```bash
+   if [[ "$INDEX_EXISTS" == "true" ]]; then
+       AGE_DAYS=$(echo "$INDEX_STATUS" | jq -r '.age_days // 0')
+       FILES_INDEXED=$(echo "$INDEX_STATUS" | jq -r '.files_indexed // 0')
+       IS_STALE=$(echo "$INDEX_STATUS" | jq -r '.is_stale // false')
+
+       if [[ "$IS_STALE" == "true" ]]; then
+           echo "⚠️  Codebase index found but is $AGE_DAYS days old (stale)"
+           echo "   Consider refreshing: /speckitsmart.index --incremental"
+       else
+           echo "✓ Codebase index available ($FILES_INDEXED files indexed)"
+           echo "  Will suggest reusable code during implementation"
+       fi
+       echo ""
+   else
+       echo "💡 Tip: Build codebase index for automatic reusability suggestions"
+       echo "   Run: /speckitsmart.index (takes ~30-60 seconds)"
+       echo ""
+   fi
+   ```
+
+   **During Implementation** (if index exists):
+   - Before creating new utility functions: Search index for existing implementations
+   - Before defining data models: Check for similar entities in `data-models.json`
+   - Before creating API endpoints: Review existing patterns in `api-endpoints.json`
+   - When adding external services: Check `external-apis.json` for existing integrations
+
+   **Search Index for Reusable Code**:
+
+   When implementing a new feature, periodically search the index:
+
+   ```bash
+   # Example: Search for authentication-related code
+   if [[ "$INDEX_EXISTS" == "true" ]]; then
+       # Search classes
+       jq '.classes[] | select(.name | test("Auth|Login|Session"; "i"))' .analysis/index/structure.json
+
+       # Search functions
+       jq '.functions[] | select(.name | test("validate|auth"; "i"))' .analysis/index/structure.json
+
+       # Check for API patterns
+       jq '.rest_endpoints[] | select(.path | contains("/auth"))' .analysis/index/api-endpoints.json
+   fi
+   ```
+
+   **Reusability Prompts** (show periodically during implementation):
+   - "🔍 Found 3 similar authentication functions in codebase. Review before implementing new one?"
+   - "🔍 User validation pattern exists in `src/utils/validation.ts:45`. Consider reusing?"
+   - "🔍 REST endpoint pattern `/api/{resource}/:id` used in 12 places. Follow same structure?"
+
+3. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
    - Scan all checklist files in the checklists/ directory
    - For each checklist, count:
      - Total items: All lines matching `- [ ]` or `- [X]` or `- [x]`
@@ -504,9 +582,9 @@ This validation step works in conjunction with Corporate Guidelines (section abo
 
    - **If all checklists are complete**:
      - Display the table showing all checklists passed
-     - Automatically proceed to step 3
+     - Automatically proceed to step 4
 
-3. Load and analyze the implementation context:
+4. Load and analyze the implementation context:
    - **REQUIRED**: Read tasks.md for the complete task list and execution plan
    - **REQUIRED**: Read plan.md for tech stack, architecture, and file structure
    - **IF EXISTS**: Read data-model.md for entities and relationships
@@ -514,7 +592,7 @@ This validation step works in conjunction with Corporate Guidelines (section abo
    - **IF EXISTS**: Read research.md for technical decisions and constraints
    - **IF EXISTS**: Read quickstart.md for integration scenarios
 
-4. **Project Setup Verification**:
+5. **Project Setup Verification**:
    - **REQUIRED**: Create/verify ignore files based on actual project setup:
 
    **Detection & Creation Logic**:
@@ -557,13 +635,13 @@ This validation step works in conjunction with Corporate Guidelines (section abo
    - **Terraform**: `.terraform/`, `*.tfstate*`, `*.tfvars`, `.terraform.lock.hcl`
    - **Kubernetes/k8s**: `*.secret.yaml`, `secrets/`, `.kube/`, `kubeconfig*`, `*.key`, `*.crt`
 
-5. Parse tasks.md structure and extract:
+6. Parse tasks.md structure and extract:
    - **Task phases**: Setup, Tests, Core, Integration, Polish
    - **Task dependencies**: Sequential vs parallel execution rules
    - **Task details**: ID, description, file paths, parallel markers [P]
    - **Execution flow**: Order and dependency requirements
 
-6. Execute implementation following the task plan:
+7. Execute implementation following the task plan:
    - **Phase-by-phase execution**: Complete each phase before moving to the next
    - **Respect dependencies**: Run sequential tasks in order, parallel tasks [P] can run together
    - **Follow TDD approach**: Execute test tasks before their corresponding implementation tasks
@@ -571,33 +649,32 @@ This validation step works in conjunction with Corporate Guidelines (section abo
    - **Validation checkpoints**: Verify each phase completion before proceeding
    - **⚠️ CRITICAL: Mark completion immediately** - After completing EACH task, immediately mark it as [X] in tasks.md before moving to the next task
 
-7. Implementation execution rules:
+8. Implementation execution rules:
    - **Setup first**: Initialize project structure, dependencies, configuration
    - **Tests before code**: If you need to write tests for contracts, entities, and integration scenarios
    - **Core development**: Implement models, services, CLI commands, endpoints
    - **Integration work**: Database connections, middleware, logging, external services
    - **Polish and validation**: Unit tests, performance optimization, documentation
 
-8. Task completion tracking and progress reporting:
+9. Task completion tracking and progress reporting:
    - **⚠️ MANDATORY: Mark [X] immediately after completing each task** - Do NOT batch completions
    - Report progress after each completed task (e.g., "Completed T012 - Created User model")
    - Update tasks.md file after EVERY single task completion - this provides visibility and enables resumption
    - Before moving to the next task, verify the previous task is marked [X] in tasks.md
 
-9. Error handling:
+10. Error handling:
    - Halt execution if any non-parallel task fails
    - For parallel tasks [P], continue with successful tasks, report failed ones
    - Provide clear error messages with context for debugging
    - Suggest next steps if implementation cannot proceed
    - If stopping mid-phase, explicitly report which tasks are completed [X] and which remain [ ]
 
-10. Completion validation:
-
-- Verify all required tasks are completed
-- Check that implemented features match the original specification
-- Validate that tests pass and coverage meets requirements
-- Confirm the implementation follows the technical plan
-- Report final status with summary of completed work
+11. Completion validation:
+   - Verify all required tasks are completed
+   - Check that implemented features match the original specification
+   - Validate that tests pass and coverage meets requirements
+   - Confirm the implementation follows the technical plan
+   - Report final status with summary of completed work
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckitsmart.tasks` first to regenerate the task list.
 

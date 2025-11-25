@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://spec-kit-smart.dev/schemas/index/dependencies.json",
+  "title": "Dependencies Graph Schema",
+  "description": "Schema for dependencies.json containing import/export relationships",
+  "type": "object",
+  "required": ["version", "timestamp", "files"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Dependencies format version"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when dependencies were extracted"
+    },
+    "files": {
+      "type": "array",
+      "description": "File dependency information",
+      "items": {
+        "type": "object",
+        "required": ["file"],
+        "properties": {
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "File path (relative to repo root)"
+          },
+          "imports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["from", "symbols"],
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Source file/package path"
+                },
+                "symbols": {
+                  "type": "array",
+                  "items": {"type": "string"},
+                  "description": "Imported symbol names"
+                },
+                "external": {
+                  "type": "boolean",
+                  "default": false,
+                  "description": "Whether import is from external package"
+                }
+              }
+            },
+            "description": "Imported dependencies"
+          },
+          "exports": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["symbol", "type"],
+              "properties": {
+                "symbol": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Export name"
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["class", "function", "interface", "const", "type", "variable"],
+                  "description": "Export type"
+                }
+              }
+            },
+            "description": "Exported symbols"
+          }
+        }
+      }
+    },
+    "circular_dependencies": {
+      "type": "array",
+      "description": "Detected circular dependency chains (informational)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "cycle": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Array of file paths forming a circular dependency"
+          }
+        }
+      }
+    }
+  }
+}
