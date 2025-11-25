@@ -92,10 +92,10 @@
 
 ### Integration Scripts
 
-- [ ] [T201] [US2] Create index data loader script for analyze-project (file: .specify/scripts/bash/load-index-for-analysis.sh)
-- [ ] [T202] [US2] Create index data loader script for analyze-project (file: .specify/scripts/powershell/Load-IndexForAnalysis.ps1)
-- [ ] [T203] [US2] Implement optional prerequisite check script (soft warning) (file: .specify/scripts/bash/check-index-optional.sh)
-- [ ] [T204] [US2] Implement optional prerequisite check script (soft warning) (file: .specify/scripts/powershell/Check-IndexOptional.ps1)
+- [X] [T201] [US2] Create index data loader script for analyze-project (file: .specify/scripts/bash/load-index-for-analysis.sh)
+- [X] [T202] [US2] Create index data loader script for analyze-project (file: .specify/scripts/powershell/Load-IndexForAnalysis.ps1)
+- [X] [T203] [US2] Implement optional prerequisite check script (soft warning) (file: .specify/scripts/bash/check-index-optional.sh)
+- [X] [T204] [US2] Implement optional prerequisite check script (soft warning) (file: .specify/scripts/powershell/Check-IndexOptional.ps1)
 
 ### Command Modifications
 
@@ -105,8 +105,8 @@
 
 ### Testing
 
-- [ ] [T208] [US2] Create test suite for analyze-project integration (file: tests/indexing/test-analyze-integration.sh)
-- [ ] [T209] [US2] Create performance benchmark tests (compare with/without index) (file: tests/indexing/benchmark-analyze-performance.sh)
+- [X] [T208] [US2] Create test suite for analyze-project integration (file: tests/indexing/test-analyze-integration.sh)
+- [X] [T209] [US2] Create performance benchmark tests (compare with/without index) (file: tests/indexing/benchmark-analyze-performance.sh)
 
 ---
 
