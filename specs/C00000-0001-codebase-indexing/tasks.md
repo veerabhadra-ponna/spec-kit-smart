@@ -214,34 +214,34 @@
 
 ### Cross-Platform Compatibility
 
-- [ ] [T601] [P] Update all slash commands to use central OS detection utility (T005) for platform routing (files: .claude/commands/index.md, wiki.md, ask.md)
-- [ ] [T602] [P] Add `SPEC_KIT_PLATFORM` environment variable support (embedded in all scripts)
-- [ ] [T603] [P] Ensure consistent JSON output across bash/PowerShell (all scripts)
+- [X] [T601] [P] Update all slash commands to use central OS detection utility (T005) for platform routing (files: .claude/commands/index.md, wiki.md, ask.md)
+- [X] [T602] [P] Add `SPEC_KIT_PLATFORM` environment variable support (embedded in all scripts)
+- [X] [T603] [P] Ensure consistent JSON output across bash/PowerShell (all scripts)
 - [ ] [T604] Test on Windows 10+ with PowerShell 5.1+ (manual validation)
 - [ ] [T605] Test on macOS 10.15+ with Bash 4.0+ (manual validation)
 - [ ] [T606] Test on Ubuntu 18.04+ with Bash 4.0+ (manual validation)
 
 ### Performance Optimization
 
-- [ ] [T607] Benchmark index build time for <1K, 1K-10K, 10K-50K files (file: tests/indexing/benchmark-build-time.sh)
-- [ ] [T608] Benchmark incremental update performance (file: tests/indexing/benchmark-incremental.sh)
-- [ ] [T609] Optimize regex patterns for parsing speed (embedded in build scripts)
-- [ ] [T610] Implement progress indicators for --verbose mode (embedded in build scripts)
+- [X] [T607] Benchmark index build time for <1K, 1K-10K, 10K-50K files (file: tests/indexing/benchmark-build-time.sh)
+- [X] [T608] Benchmark incremental update performance (file: tests/indexing/benchmark-incremental.sh)
+- [X] [T609] Optimize regex patterns for parsing speed (embedded in build scripts)
+- [X] [T610] Implement progress indicators for --verbose mode (embedded in build scripts)
 
 ### Error Handling & Edge Cases
 
-- [ ] [T611] [P] Implement error handling for missing jq dependency (all scripts)
-- [ ] [T612] [P] Implement error handling for corrupted index files (prerequisite check scripts)
-- [ ] [T613] [P] Implement file size limit validation (10MB) (build scripts)
-- [ ] [T614] [P] Implement syntax error fallback (continue on parse failure) (build scripts)
-- [ ] [T615] [P] Implement circular dependency detection (dependency graph builder)
+- [X] [T611] [P] Implement error handling for missing jq dependency (all scripts)
+- [X] [T612] [P] Implement error handling for corrupted index files (prerequisite check scripts)
+- [X] [T613] [P] Implement file size limit validation (10MB) (build scripts)
+- [X] [T614] [P] Implement syntax error fallback (continue on parse failure) (build scripts)
+- [X] [T615] [P] Implement circular dependency detection (dependency graph builder)
 
 ### Documentation
 
-- [ ] [T616] [P] Update quickstart.md with final usage examples (file: specs/C00000-0001-codebase-indexing/quickstart.md)
-- [ ] [T617] [P] Create indexing patterns reference (file: .specify/memory/indexing-patterns.md)
-- [ ] [T618] [P] Update AGENTS.md with complete indexing section (file: .specify/templates/AGENTS.md)
-- [ ] [T619] [P] Create large-project indexing guide for >50K files (manual batching strategies, subdirectory indexing, time estimates, memory considerations) (file: specs/C00000-0001-codebase-indexing/large-projects-guide.md)
+- [X] [T616] [P] Update quickstart.md with final usage examples (file: specs/C00000-0001-codebase-indexing/quickstart.md)
+- [X] [T617] [P] Create indexing patterns reference (file: .specify/memory/indexing-patterns.md)
+- [X] [T618] [P] Update AGENTS.md with complete indexing section (file: .specify/templates/AGENTS.md)
+- [X] [T619] [P] Create large-project indexing guide for >50K files (manual batching strategies, subdirectory indexing, time estimates, memory considerations) (file: specs/C00000-0001-codebase-indexing/large-projects-guide.md)
 
 ---
 
@@ -385,7 +385,7 @@ graph TD
 - **Phase 3 (DeepWiki)**: 19/19 (100%) ✓
 - **Phase 4 (KB Query)**: 16/16 (100%) ✓
 - **Phase 5 (Reusability)**: 14/14 (100%) ✓
-- **Phase 6 (Cross-Platform)**: 0/19 (0%)
+- **Phase 6 (Cross-Platform)**: 16/19 (84%) - 3 manual tests pending
 - **Phase 7 (Validation)**: 0/14 (0%)
 
 ### Recent Accomplishments
@@ -394,13 +394,14 @@ graph TD
 - ✓ Phase 3: DeepWiki generator with 4-tier documentation and Mermaid diagrams
 - ✓ Phase 4: Knowledge base search with confidence scoring and citations
 - ✓ Phase 5: Reusable code finder with similarity scoring algorithm
-- ✓ All test suites for Phases 3-5 (wiki validation, KB queries, query patterns, question categories, reusability, similarity scoring)
+- ✓ Phase 6: Cross-platform compatibility, benchmarks, documentation
+- ✓ All test suites and benchmark scripts created
+- ✓ AGENTS.md updated with indexing section
+- ✓ Large projects guide and indexing patterns reference created
 
-### Next Priorities (Phase 6 & 7)
-1. Cross-Platform Compatibility (T601-T606)
-2. Performance Optimization (T607-T610)
-3. Error Handling & Edge Cases (T611-T615)
-4. Documentation (T616-T619)
-5. Final Integration Testing (T701-T709)
-6. Pre-Launch Checklist (T710-T714)
+### Next Priorities (Phase 7 - Final Validation)
+1. Manual platform testing (T604-T606) - Windows, macOS, Ubuntu
+2. End-to-end integration tests (T701-T703)
+3. Success criteria validation (T704-T709)
+4. Pre-launch checklist (T710-T714)
 

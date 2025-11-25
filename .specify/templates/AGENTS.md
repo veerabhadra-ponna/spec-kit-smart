@@ -147,6 +147,53 @@ Problem → Action
 
 **Command Failure:** REPORT error → CHECK prerequisites → RETRY 1× (transient) → ESCALATE (persistent)
 
+### 2.1 Codebase Indexing
+
+**Purpose:** Build a searchable index of the codebase for fast analysis, documentation generation, and natural language queries.
+
+**Indexing Commands:**
+
+| Command | Description | Output |
+| ------- | ----------- | ------ |
+| `/speckitsmart.index` | Build codebase index | `.analysis/index/` |
+| `/speckitsmart.index --incremental` | Update changed files only | Updated index |
+| `/speckitsmart.wiki` | Generate documentation from index | `.deepwiki/` |
+| `/speckitsmart.ask "question"` | Query codebase with natural language | Answer with code refs |
+
+**Index Contents:**
+
+- `metadata.json` - Statistics, version, freshness tracking
+- `structure.json` - Classes, functions, interfaces
+- `data-models.json` - Database schemas, ORM entities
+- `api-endpoints.json` - REST/GraphQL/WebSocket endpoints
+- `external-apis.json` - Third-party integrations
+- `dependencies.json` - Import/export relationships
+
+**Agent Behavior with Index:**
+
+| Situation | Action |
+| --------- | ------ |
+| Index missing | Emit warning, proceed without enhanced features |
+| Index stale (>7 days) | Emit staleness warning, recommend `--incremental` |
+| Index available | Use pre-extracted data for 10x faster analysis |
+
+**MUST/SHOULD Rules:**
+
+- **SHOULD** run `/speckitsmart.index` before large-scale analysis
+- **SHOULD** use `/speckitsmart.ask` for codebase exploration
+- **MUST NOT** commit `.analysis/` or `.deepwiki/` to git
+- **MUST** respect `.indexignore` exclusion patterns
+
+**Index Scripts:**
+
+- Bash: `.specify/scripts/bash/build-codebase-index.sh`
+- PowerShell: `.specify/scripts/powershell/Build-CodebaseIndex.ps1`
+
+**Prerequisite Checks:**
+
+- Hard check: `check-index-prerequisite.sh` (blocks if missing)
+- Soft check: `check-index-optional.sh` (warns, continues)
+
 ---
 
 ## 3. Document Structure & Priority
