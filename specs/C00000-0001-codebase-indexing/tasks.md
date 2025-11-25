@@ -21,11 +21,11 @@
 
 ### Setup & Configuration
 
-- [ ] [T001] [P] Add `.analysis/` directory to `.gitignore` (file: .gitignore)
-- [ ] [T002] [P] Add `.deepwiki/` directory to `.gitignore` (file: .gitignore)
-- [ ] [T003] [P] Create fixture projects for testing (dir: tests/fixtures/sample-projects/)
-- [ ] [T004] Update AGENTS.md with indexing technologies (file: CLAUDE.md)
-- [ ] [T005] [P] Create central OS detection utility returning platform type (unix/windows) (file: .specify/scripts/bash/detect-os.sh, .specify/scripts/powershell/Detect-OS.ps1)
+- [X] [T001] [P] Add `.analysis/` directory to `.gitignore` (file: .gitignore)
+- [X] [T002] [P] Add `.deepwiki/` directory to `.gitignore` (file: .gitignore)
+- [X] [T003] [P] Create fixture projects for testing (dir: tests/fixtures/sample-projects/)
+- [X] [T004] Update AGENTS.md with indexing technologies (file: CLAUDE.md)
+- [X] [T005] [P] Create central OS detection utility returning platform type (unix/windows) (file: scripts/bash/detect-os.sh, scripts/powershell/Detect-OS.ps1)
 
 ---
 
@@ -34,48 +34,48 @@
 
 ### Core Slash Commands
 
-- [ ] [T101] [US1] Create `/speckitsmart.index` slash command template (file: .claude/commands/index.md)
-- [ ] [T102] [US1] Implement prerequisite check script for hard dependency validation (file: .specify/scripts/bash/check-index-prerequisite.sh)
-- [ ] [T103] [US1] Implement prerequisite check script for hard dependency validation (file: .specify/scripts/powershell/Check-IndexPrerequisite.ps1)
+- [X] [T101] [US1] Create `/speckitsmart.index` slash command template (file: templates/commands/index.md)
+- [X] [T102] [US1] Implement prerequisite check script for hard dependency validation (file: scripts/bash/check-index-prerequisite.sh)
+- [X] [T103] [US1] Implement prerequisite check script for hard dependency validation (file: scripts/powershell/Check-IndexPrerequisite.ps1)
 
 ### Core Indexing Scripts (Bash)
 
-- [ ] [T104] [US1] Create main indexing orchestration script (file: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T105] [US1] Implement file scanner with language filtering (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T106] [US1] Implement code structure parser (classes, functions, interfaces) (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T107] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T108] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T108.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T109] [US1] Implement external API detector (third-party SDKs) (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T110] [US1] Implement dependency graph builder (imports/exports) (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T111] [US1] Implement secret redaction for sensitive data (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T112] [US1] Implement metadata generator with statistics (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T112.5] [US1] Implement index version validation on load with compatibility checking (embedded in: .specify/scripts/bash/build-codebase-index.sh)
-- [ ] [T113] [US1] Implement incremental update with MD5 hash tracking and auto-fallback to full build when base index missing (embedded in: .specify/scripts/bash/build-codebase-index.sh)
+- [X] [T104] [US1] Create main indexing orchestration script (file: scripts/bash/build-codebase-index.sh)
+- [X] [T105] [US1] Implement file scanner with language filtering (embedded in: scripts/bash/build-codebase-index.sh)
+- [X] [T106] [US1] Implement code structure parser (classes, functions, interfaces) (embedded in: scripts/bash/build-codebase-index.sh)
+- [ ] [T107] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/bash/build-codebase-index.sh)
+- [ ] [T108] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/bash/build-codebase-index.sh)
+- [ ] [T108.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/bash/build-codebase-index.sh)
+- [ ] [T109] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/bash/build-codebase-index.sh)
+- [ ] [T110] [US1] Implement dependency graph builder (imports/exports) (embedded in: scripts/bash/build-codebase-index.sh)
+- [ ] [T111] [US1] Implement secret redaction for sensitive data (embedded in: scripts/bash/build-codebase-index.sh)
+- [X] [T112] [US1] Implement metadata generator with statistics (embedded in: scripts/bash/build-codebase-index.sh)
+- [ ] [T112.5] [US1] Implement index version validation on load with compatibility checking (embedded in: scripts/bash/build-codebase-index.sh)
+- [X] [T113] [US1] Implement incremental update with MD5 hash tracking and auto-fallback to full build when base index missing (embedded in: scripts/bash/build-codebase-index.sh)
 
 ### Core Indexing Scripts (PowerShell)
 
-- [ ] [T114] [US1] Create main indexing orchestration script (file: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T115] [US1] Implement file scanner with language filtering (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T116] [US1] Implement code structure parser (classes, functions, interfaces) (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T117] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T118] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T118.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T119] [US1] Implement external API detector (third-party SDKs) (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T120] [US1] Implement dependency graph builder (imports/exports) (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T121] [US1] Implement secret redaction for sensitive data (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T122] [US1] Implement metadata generator with statistics (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T122.5] [US1] Implement index version validation on load with compatibility checking (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T123] [US1] Implement incremental update with MD5 hash tracking and auto-fallback to full build when base index missing (embedded in: .specify/scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T114] [US1] Create main indexing orchestration script (file: scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T115] [US1] Implement file scanner with language filtering (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T116] [US1] Implement code structure parser (classes, functions, interfaces) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [ ] [T117] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [ ] [T118] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [ ] [T118.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [ ] [T119] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [ ] [T120] [US1] Implement dependency graph builder (imports/exports) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [ ] [T121] [US1] Implement secret redaction for sensitive data (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T122] [US1] Implement metadata generator with statistics (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [ ] [T122.5] [US1] Implement index version validation on load with compatibility checking (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T123] [US1] Implement incremental update with MD5 hash tracking and auto-fallback to full build when base index missing (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 
 ### Index Storage Structure
 
-- [ ] [T124] [P] [US1] Create JSON schema for metadata.json (file: specs/C00000-0001-codebase-indexing/contracts/metadata-schema.json) ✅ COMPLETED
-- [ ] [T125] [P] [US1] Create JSON schema for structure.json (file: specs/C00000-0001-codebase-indexing/contracts/structure-schema.json)
-- [ ] [T126] [P] [US1] Create JSON schema for data-models.json (file: specs/C00000-0001-codebase-indexing/contracts/data-models-schema.json)
-- [ ] [T127] [P] [US1] Create JSON schema for api-endpoints.json (file: specs/C00000-0001-codebase-indexing/contracts/api-endpoints-schema.json)
-- [ ] [T128] [P] [US1] Create JSON schema for external-apis.json (file: specs/C00000-0001-codebase-indexing/contracts/external-apis-schema.json)
-- [ ] [T129] [P] [US1] Create JSON schema for dependencies.json (file: specs/C00000-0001-codebase-indexing/contracts/dependencies-schema.json)
+- [X] [T124] [P] [US1] Create JSON schema for metadata.json (file: specs/C00000-0001-codebase-indexing/contracts/metadata-schema.json)
+- [X] [T125] [P] [US1] Create JSON schema for structure.json (file: specs/C00000-0001-codebase-indexing/contracts/structure-schema.json)
+- [X] [T126] [P] [US1] Create JSON schema for data-models.json (file: specs/C00000-0001-codebase-indexing/contracts/data-models-schema.json)
+- [X] [T127] [P] [US1] Create JSON schema for api-endpoints.json (file: specs/C00000-0001-codebase-indexing/contracts/api-endpoints-schema.json)
+- [X] [T128] [P] [US1] Create JSON schema for external-apis.json (file: specs/C00000-0001-codebase-indexing/contracts/external-apis-schema.json)
+- [X] [T129] [P] [US1] Create JSON schema for dependencies.json (file: specs/C00000-0001-codebase-indexing/contracts/dependencies-schema.json)
 
 ### Testing
 
@@ -99,9 +99,9 @@
 
 ### Command Modifications
 
-- [ ] [T205] [US2] Update `/speckitsmart.analyze-project` to add prerequisite check (file: .claude/commands/analyze-project.md)
-- [ ] [T206] [US2] Update analyze-project workflow to load pre-extracted index data (file: .claude/commands/analyze-project.md)
-- [ ] [T207] [US2] Add staleness warning logic for indexes >7 days old (file: .claude/commands/analyze-project.md)
+- [X] [T205] [US2] Update `/speckitsmart.analyze-project` to add prerequisite check (file: templates/commands/analyze-project.md)
+- [X] [T206] [US2] Update analyze-project workflow to load pre-extracted index data (file: templates/commands/analyze-project.md)
+- [X] [T207] [US2] Add staleness warning logic for indexes >7 days old (file: templates/commands/analyze-project.md)
 
 ### Testing
 
@@ -115,7 +115,7 @@
 
 ### Slash Commands
 
-- [ ] [T301] [US3] Create `/speckitsmart.wiki` slash command template (file: .claude/commands/wiki.md)
+- [X] [T301] [US3] Create `/speckitsmart.wiki` slash command template (file: templates/commands/wiki.md)
 
 ### Documentation Generator Scripts (Bash)
 
@@ -151,7 +151,7 @@
 
 ### Slash Commands
 
-- [ ] [T401] [US4] Create `/speckitsmart.ask` slash command template (file: .claude/commands/ask.md)
+- [X] [T401] [US4] Create `/speckitsmart.ask` slash command template (file: templates/commands/ask.md)
 
 ### Query Engine Scripts (Bash)
 
@@ -200,8 +200,8 @@
 
 ### Command Integration
 
-- [ ] [T511] [US5] Update `/speckitsmart.implement` to add optional reusability checks (file: .claude/commands/implement.md)
-- [ ] [T512] [US5] Implement warning message for missing index (file: .claude/commands/implement.md)
+- [X] [T511] [US5] Update `/speckitsmart.implement` to add optional reusability checks (file: templates/commands/implement.md)
+- [X] [T512] [US5] Implement warning message for missing index (file: templates/commands/implement.md)
 
 ### Testing
 
