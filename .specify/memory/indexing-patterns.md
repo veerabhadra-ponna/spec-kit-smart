@@ -5,7 +5,9 @@ This document describes patterns and best practices for the codebase indexing sy
 ## Index Structure Patterns
 
 ### Flat vs Hierarchical
+
 The index uses a **flat file structure** with JSON files:
+
 ```
 .analysis/index/
 ├── metadata.json       # Index metadata and statistics
@@ -23,7 +25,9 @@ The index uses a **flat file structure** with JSON files:
 - Cross-platform compatibility
 
 ### Schema Versioning
+
 Each index file includes version information:
+
 ```json
 {
   "version": "1.0",
@@ -40,35 +44,43 @@ Each index file includes version information:
 ## Extraction Patterns
 
 ### Class Detection
+
 Pattern-based extraction across languages:
 
 **TypeScript/JavaScript**:
+
 ```regex
 (?:export\s+)?(?:abstract\s+)?class\s+(\w+)
 ```
 
 **Python**:
+
 ```regex
 class\s+(\w+)(?:\([^)]*\))?:
 ```
 
 **Java/C#**:
+
 ```regex
 (?:public|private|protected)?\s*(?:abstract|static)?\s*class\s+(\w+)
 ```
 
 ### Function Detection
+
 **Named functions**:
+
 ```regex
 (?:export\s+)?(?:async\s+)?function\s+(\w+)
 ```
 
 **Arrow functions** (with name):
+
 ```regex
 (?:const|let|var)\s+(\w+)\s*=\s*(?:async\s+)?(?:\([^)]*\)|[^=])\s*=>
 ```
 
 **Method definitions**:
+
 ```regex
 (?:async\s+)?(\w+)\s*\([^)]*\)\s*(?::\s*[^{]+)?\s*\{
 ```
@@ -76,16 +88,19 @@ class\s+(\w+)(?:\([^)]*\))?:
 ### API Endpoint Detection
 
 **Express.js**:
+
 ```regex
 (?:app|router)\.(get|post|put|delete|patch)\s*\(\s*['"`]([^'"`]+)['"`]
 ```
 
 **Decorators** (NestJS, Spring):
+
 ```regex
 @(Get|Post|Put|Delete|Patch)\s*\(\s*['"`]([^'"`]+)['"`]
 ```
 
 **Flask/FastAPI**:
+
 ```regex
 @(?:app|router)\.(get|post|put|delete)\s*\(\s*['"`]([^'"`]+)['"`]
 ```
@@ -93,16 +108,19 @@ class\s+(\w+)(?:\([^)]*\))?:
 ### External API Detection
 
 **SDK Patterns**:
+
 ```regex
 require\s*\(\s*['"`](stripe|aws-sdk|firebase|twilio|sendgrid)['"`]\)
 ```
 
 **HTTP Client Calls**:
+
 ```regex
 (?:axios|fetch|http|request)\.(get|post|put|delete)\s*\(\s*['"`](https?://[^'"`]+)['"`]
 ```
 
 **Environment Variables**:
+
 ```regex
 process\.env\.(\w+)|os\.environ(?:\.get)?\s*\(\s*['"`](\w+)['"`]
 ```
@@ -110,6 +128,7 @@ process\.env\.(\w+)|os\.environ(?:\.get)?\s*\(\s*['"`](\w+)['"`]
 ## Performance Patterns
 
 ### Incremental Updates
+
 Use MD5 hash tracking for efficient updates:
 
 1. **Hash Calculation**: Store file hash on index
@@ -127,6 +146,7 @@ Use MD5 hash tracking for efficient updates:
 ```
 
 ### Large File Handling
+
 For files > 10MB:
 1. Skip binary files automatically
 2. Truncate at 10MB for text files
@@ -134,6 +154,7 @@ For files > 10MB:
 4. Extract what's available
 
 ### Memory Optimization
+
 - Stream file reading (don't load entire file)
 - Process one file at a time
 - Write index incrementally
@@ -142,12 +163,14 @@ For files > 10MB:
 ## Query Patterns
 
 ### Keyword-Based Search
+
 1. Extract keywords from query (remove stop words)
 2. Search each index file for keyword matches
 3. Score by match count and location
 4. Return top N results with confidence
 
 ### Confidence Scoring
+
 ```
 confidence = (matched_keywords / total_keywords) * 100
 ```
@@ -158,6 +181,7 @@ Boost factors:
 - Multiple matches in same file: +5% per match
 
 ### Result Ranking
+
 Priority order:
 1. Exact class/function name match
 2. API endpoint path match
@@ -167,6 +191,7 @@ Priority order:
 ## Integration Patterns
 
 ### With Analyze-Project
+
 ```bash
 # Load index before analysis
 INDEX_STATUS=$(bash check-index-optional.sh)
@@ -180,6 +205,7 @@ fi
 ```
 
 ### With Implementation
+
 ```bash
 # Find reusable code before implementing
 REUSABLE=$(bash find-reusable-code.sh --task "$TASK_DESCRIPTION")
@@ -193,6 +219,7 @@ fi
 ## Error Handling Patterns
 
 ### Graceful Degradation
+
 ```bash
 # Always provide fallback
 parse_file() {
@@ -207,6 +234,7 @@ parse_file() {
 ```
 
 ### Validation Before Use
+
 ```bash
 # Validate index before loading
 validate_index() {
@@ -231,6 +259,7 @@ validate_index() {
 ## Best Practices
 
 ### DO
+
 - Always validate index before use
 - Use incremental updates for daily development
 - Run full rebuild after major refactoring
@@ -238,6 +267,7 @@ validate_index() {
 - Handle encoding issues gracefully (UTF-8 preferred)
 
 ### DON'T
+
 - Don't parse files > 10MB
 - Don't include secrets in index
 - Don't block on single file failures

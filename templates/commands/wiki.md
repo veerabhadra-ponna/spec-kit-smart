@@ -76,24 +76,28 @@ fi
 ## Generated Content
 
 ### Tier 1: Overview
+
 - Project purpose and scope
 - Technology stack summary
 - Quick start guide
 - Key features list
 
 ### Tier 2: Functional Summary
+
 - User scenarios and workflows
 - System capabilities
 - Integration points
 - Business logic overview
 
 ### Tier 3: Architecture
+
 - Component diagram (Mermaid)
 - Data flow diagram (Mermaid)
 - System boundaries
 - External dependencies
 
 ### Tier 4: Module Documentation
+
 - Per-module breakdown
 - Class and function documentation
 - API endpoint details

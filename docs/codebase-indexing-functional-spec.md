@@ -152,6 +152,7 @@ The codebase indexing system extracts and organizes information from source code
 #### 3.1.3 Output
 
 **Success Output:**
+
 ```json
 {
   "success": true,
@@ -176,6 +177,7 @@ The codebase indexing system extracts and organizes information from source code
 ```
 
 **User-Facing Display:**
+
 ```
 ✓ Index built successfully!
 
@@ -267,6 +269,7 @@ The codebase indexing system extracts and organizes information from source code
 #### 3.2.3 Prerequisite Check
 
 **If index not found:**
+
 ```
 ❌ ERROR: Codebase index required
 
@@ -331,22 +334,26 @@ export async function validateJWT(token: string) {
 ```
 
 ### Related Information
+
 - Authentication uses JWT with 24-hour expiration
 - Refresh tokens stored in Redis cache
 - Support for OAuth2 providers (Google, GitHub)
 
 ### Sources
+
 - .deepwiki/modules/authentication.md (Section: JWT Flow)
 - src/auth/jwt.ts:45-120
 - src/middleware/authenticate.ts:12-45
 
 ✓ High confidence - Based on 3 sources from knowledge base
+
 ```
 
 #### 3.3.3 Prerequisite Check
 
 **If index not found:**
 ```
+
 ❌ ERROR: Index required
 
 The ask command requires a codebase index to answer questions.
@@ -355,10 +362,12 @@ The ask command requires a codebase index to answer questions.
 1. Build index: /speckitsmart.index
 2. (Optional) Generate docs: /speckitsmart.wiki
 3. Then ask questions: /speckitsmart.ask "your question"
+
 ```
 
 **If index found but DeepWiki missing:**
 ```
+
 ⚠️ WARNING: DeepWiki not generated
 
 Answers will be based on code index only (lower quality).
@@ -367,6 +376,7 @@ Answers will be based on code index only (lower quality).
   /speckitsmart.wiki
 
 Continue anyway? [Y/n]
+
 ```
 
 ---
@@ -383,6 +393,7 @@ Continue anyway? [Y/n]
 
 **If index not found:**
 ```
+
 ❌ ERROR: Codebase index not found
 
 This command requires a codebase index for efficient reverse engineering.
@@ -392,20 +403,22 @@ Run this command first to build the index:
   /speckitsmart.index
 
 Why indexing is required:
-  - 10x faster analysis (uses index instead of reading every file)
-  - 80% token reduction (pre-extracted structure)
-  - Better accuracy (AST-based vs regex)
+- 10x faster analysis (uses index instead of reading every file)
+- 80% token reduction (pre-extracted structure)
+- Better accuracy (AST-based vs regex)
 
 Estimated time to build index: 30-60 seconds (one-time cost)
 
 After indexing completes, re-run:
   /speckitsmart.analyze-project
+
 ```
 
 **STOP execution. DO NOT proceed without index.**
 
 **If index is stale (>7 days old):**
 ```
+
 ⚠️ WARNING: Index is stale (last updated 12 days ago)
 
 Analysis will continue, but results may not reflect recent code changes.
@@ -416,16 +429,19 @@ Recommendation: Update index with:
 This will take ~5-10 seconds and ensure accurate analysis.
 
 Continue anyway? (Press Enter to continue, Ctrl+C to abort)
+
 ```
 
 Wait for user confirmation.
 
 **If index is fresh:**
 ```
+
 ✓ Index found and fresh (updated 2 hours ago)
 ✓ 189 files indexed
 
 Proceeding with reverse engineering analysis...
+
 ```
 
 #### 3.4.2 Enhanced Analysis with Index
@@ -475,6 +491,7 @@ Proceeding with reverse engineering analysis...
 #### 3.5.1 Optional Check
 
 **If index not found:**
+
 ```
 ⚠️ Codebase index not available
 
@@ -494,6 +511,7 @@ You can continue implementation, but you'll miss these benefits:
 **Continue with standard implementation (no reusability checks).**
 
 **If index found:**
+
 ```
 ✓ Index available (189 files indexed)
 ✓ Code reusability checks enabled
@@ -521,6 +539,7 @@ For each task, I'll check for:
 **Task:** "Implement JWT token validation"
 
 **Index Query Results:**
+
 ```json
 {
   "existing_implementations": [
@@ -549,6 +568,7 @@ For each task, I'll check for:
 ```
 
 **AI Action:**
+
 ```typescript
 // ✅ GOOD: Reuse existing (from index suggestion)
 import { validateJWT } from '@/auth/jwt';

@@ -24,7 +24,15 @@
 #>
 
 [CmdletBinding()]
-param()
+param(
+    [switch]$Help
+)
+
+# Handle -Help parameter
+if ($Help) {
+    Get-Help $MyInvocation.MyCommand.Path -Detailed
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

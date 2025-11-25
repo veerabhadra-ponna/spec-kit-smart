@@ -663,18 +663,18 @@ This validation step works in conjunction with Corporate Guidelines (section abo
    - Before moving to the next task, verify the previous task is marked [X] in tasks.md
 
 10. Error handling:
-   - Halt execution if any non-parallel task fails
-   - For parallel tasks [P], continue with successful tasks, report failed ones
-   - Provide clear error messages with context for debugging
-   - Suggest next steps if implementation cannot proceed
-   - If stopping mid-phase, explicitly report which tasks are completed [X] and which remain [ ]
+- Halt execution if any non-parallel task fails
+- For parallel tasks [P], continue with successful tasks, report failed ones
+- Provide clear error messages with context for debugging
+- Suggest next steps if implementation cannot proceed
+- If stopping mid-phase, explicitly report which tasks are completed [X] and which remain [ ]
 
-11. Completion validation:
-   - Verify all required tasks are completed
-   - Check that implemented features match the original specification
-   - Validate that tests pass and coverage meets requirements
-   - Confirm the implementation follows the technical plan
-   - Report final status with summary of completed work
+1. Completion validation:
+- Verify all required tasks are completed
+- Check that implemented features match the original specification
+- Validate that tests pass and coverage meets requirements
+- Confirm the implementation follows the technical plan
+- Report final status with summary of completed work
 
 Note: This command assumes a complete task breakdown exists in tasks.md. If tasks are incomplete or missing, suggest running `/speckitsmart.tasks` first to regenerate the task list.
 

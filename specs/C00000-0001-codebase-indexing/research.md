@@ -54,6 +54,7 @@ This document captures research findings and technical decisions for implementin
 **Decision**: JSON files in `.analysis/index/` directory (6 separate files by domain)
 
 **Structure**:
+
 ```
 .analysis/index/
 ├── structure.json       # Code elements (classes, functions, interfaces)
@@ -211,6 +212,7 @@ This document captures research findings and technical decisions for implementin
    - Update hashes in cache
 
 **Storage**:
+
 ```json
 {
   "src/models/User.ts": "a1b2c3d4e5f6...",
@@ -255,6 +257,7 @@ This document captures research findings and technical decisions for implementin
 **Decision**: Pattern-based secret detection and redaction before storing in index
 
 **Patterns**:
+
 ```bash
 # API keys, secrets, passwords
 (API_KEY|SECRET|PASSWORD)\s*=\s*["']([^"']+)["'] → \1=***REDACTED***
@@ -373,6 +376,7 @@ eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+ → ***JWT_REDACTED***
 - **Cross-language**: Test extraction on TypeScript, JavaScript, Python, Java, C#, Go fixtures
 
 **Test Fixtures** (Sample projects):
+
 ```
 tests/fixtures/sample-projects/
 ├── typescript-express/     # TypeScript + Express + TypeORM + Prisma
@@ -386,6 +390,7 @@ tests/fixtures/sample-projects/
 - Windows 11 (PowerShell)
 
 **Test Matrix**:
+
 | OS | Shell | Commands Tested | Scripts Tested |
 |----|-------|----------------|----------------|
 | Ubuntu 22.04 | bash | All | All .sh |
@@ -412,6 +417,7 @@ tests/fixtures/sample-projects/
 ## Open Questions for Implementation
 
 ### Q1: Custom File Extension Support
+
 **Question**: Should we support custom file extensions via config file?
 
 **Context**: Some projects use non-standard extensions (.tsx.snap, .spec.ts, etc.)
@@ -428,6 +434,7 @@ tests/fixtures/sample-projects/
 ---
 
 ### Q2: DeepWiki Commit Strategy
+
 **Question**: Should generated `.deepwiki/` docs be committed to git or gitignored?
 
 **Context**: Trade-off between always-fresh (gitignore) vs searchable-in-repo (commit)
@@ -444,6 +451,7 @@ tests/fixtures/sample-projects/
 ---
 
 ### Q3: Large Repo Handling (>50K files)
+
 **Question**: What's acceptable index build time for very large repos?
 
 **Context**: Target is <5 min for 10K-50K files, but what about >50K?

@@ -48,8 +48,15 @@ param(
     [switch]$Incremental,
     [string]$Path,
     [string]$Languages = "ts,tsx,js,jsx,py,java,cs,go",
-    [switch]$Json
+    [switch]$Json,
+    [switch]$Help
 )
+
+# Handle -Help parameter
+if ($Help) {
+    Get-Help $MyInvocation.MyCommand.Path -Detailed
+    exit 0
+}
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'

@@ -15,6 +15,7 @@ The Codebase Indexing System is a new feature for SpecKit Smart that provides fa
 ### Core Features
 
 #### `/speckitsmart.index` Command
+
 Build a searchable index of your codebase:
 - **Full build**: Index entire repository
 - **Incremental updates**: Update only changed files
@@ -22,6 +23,7 @@ Build a searchable index of your codebase:
 - **Cross-platform**: Works on Linux, macOS, and Windows
 
 #### `/speckitsmart.wiki` Command
+
 Generate comprehensive documentation:
 - **4-tier structure**: Overview → Functional → Architecture → Modules
 - **Mermaid diagrams**: Auto-generated component and data flow diagrams
@@ -29,6 +31,7 @@ Generate comprehensive documentation:
 - **Data model docs**: Database schema documentation
 
 #### `/speckitsmart.ask` Command
+
 Query your codebase with natural language:
 - **6 question categories**: Architecture, data models, API endpoints, external integrations, authentication, business logic
 - **Confidence scoring**: Relevance-based ranking
@@ -37,11 +40,13 @@ Query your codebase with natural language:
 ### Enhanced Commands
 
 #### `/speckitsmart.analyze-project`
+
 - Now uses pre-built index for 10x faster analysis
 - Automatic staleness warnings for outdated indexes
 - Graceful degradation when index unavailable
 
 #### `/speckitsmart.implement`
+
 - Code reusability detection before implementation
 - Similar implementation suggestions
 - Architecture pattern awareness
@@ -83,6 +88,7 @@ The index stores extracted data in `.analysis/index/`:
 ## Prerequisites
 
 ### Required
+
 - **Bash 4.0+** (Linux/macOS) or **PowerShell 5.1+** (Windows)
 - **jq** JSON processor
 - **Git** (recommended for change detection)
@@ -109,17 +115,20 @@ This is a new feature - no migration required.
 ### First-Time Setup
 
 1. **Build the index**:
+
    ```bash
    /speckitsmart.index
    ```
 
 2. **Add to .gitignore** (if not already present):
+
    ```
    .analysis/
    .deepwiki/
    ```
 
 3. **Use enhanced commands**:
+
    ```bash
    /speckitsmart.analyze-project  # Now uses index
    /speckitsmart.wiki             # Generate docs
@@ -140,21 +149,27 @@ None - this is a new feature that enhances existing functionality.
 ## Troubleshooting
 
 ### Index Not Found
+
 ```
 Error: Codebase index not found.
 ```
+
 **Solution**: Run `/speckitsmart.index` to build the index.
 
 ### jq Not Installed
+
 ```
 Error: jq is required but not installed.
 ```
+
 **Solution**: Install jq using your package manager.
 
 ### Stale Index Warning
+
 ```
 Warning: Index is X days old and may be stale.
 ```
+
 **Solution**: Run `/speckitsmart.index --incremental` to update.
 
 ## Documentation

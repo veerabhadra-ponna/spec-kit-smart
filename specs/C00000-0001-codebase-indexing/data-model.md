@@ -40,6 +40,7 @@ This document defines the data structures for the codebase indexing system. All 
 **Storage**: `metadata.json`
 
 **Schema**:
+
 ```json
 {
   "version": "1.0",
@@ -103,6 +104,7 @@ This document defines the data structures for the codebase indexing system. All 
 **Storage**: `structure.json`
 
 **Schema**:
+
 ```json
 {
   "version": "1.0",
@@ -186,6 +188,7 @@ This document defines the data structures for the codebase indexing system. All 
 **Storage**: `data-models.json`
 
 **Schema**:
+
 ```json
 {
   "version": "1.0",
@@ -320,6 +323,7 @@ This document defines the data structures for the codebase indexing system. All 
 **Storage**: `api-endpoints.json`
 
 **Schema**:
+
 ```json
 {
   "version": "1.0",
@@ -414,6 +418,7 @@ This document defines the data structures for the codebase indexing system. All 
 **Storage**: `external-apis.json`
 
 **Schema**:
+
 ```json
 {
   "version": "1.0",
@@ -487,6 +492,7 @@ This document defines the data structures for the codebase indexing system. All 
 **Storage**: `dependencies.json`
 
 **Schema**:
+
 ```json
 {
   "version": "1.0",
@@ -581,21 +587,25 @@ erDiagram
 ## Indexing Rules
 
 ### File Path Conventions
+
 - All file paths stored as **relative paths** from repository root
 - Use forward slashes `/` even on Windows (normalized)
 - No leading `/` (e.g., `src/models/User.ts` not `/src/models/User.ts`)
 
 ### Line Number Conventions
+
 - Line numbers are **1-indexed** (first line = line 1)
 - Negative or zero line numbers are invalid
 - Line numbers are **optional** (may be null if not determinable)
 
 ### Secret Redaction
+
 - API keys, passwords, tokens redacted before storage
 - Redaction pattern: `***REDACTED***` for values
 - Environment variable **names** preserved, **values** redacted
 
 ### Null/Empty Handling
+
 - Optional fields omitted from JSON (not stored as null)
 - Empty arrays stored as `[]`
 - Empty objects stored as `{}`
