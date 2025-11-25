@@ -186,13 +186,13 @@ Problem → Action
 
 **Index Scripts:**
 
-- Bash: `.specify/scripts/bash/build-codebase-index.sh`
-- PowerShell: `.specify/scripts/powershell/Build-CodebaseIndex.ps1`
+- Bash: `scripts/bash/build-codebase-index.sh`
+- PowerShell: `scripts/powershell/Build-CodebaseIndex.ps1`
 
 **Prerequisite Checks:**
 
-- Hard check: `check-index-prerequisite.sh` (blocks if missing)
-- Soft check: `check-index-optional.sh` (warns, continues)
+- Hard check: `scripts/bash/check-index-prerequisite.sh` (blocks if missing)
+- Soft check: `.specify/scripts/bash/check-index-optional.sh` (warns, continues)
 
 ---
 

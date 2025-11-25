@@ -151,14 +151,14 @@ fi
 
 ```bash
 if [[ "$PLATFORM" == "windows" ]]; then
-    powershell.exe -ExecutionPolicy Bypass -File scripts/powershell/Generate-DeepWiki.ps1 "$@"
+    powershell.exe -ExecutionPolicy Bypass -File .specify/scripts/powershell/Generate-DeepWiki.ps1 "$@"
 else
-    bash scripts/bash/generate-deepwiki.sh "$@"
+    bash .specify/scripts/bash/generate-deepwiki.sh "$@"
 fi
 ```
 
 The command delegates to:
-- **Bash**: `scripts/bash/generate-deepwiki.sh`
-- **PowerShell**: `scripts/powershell/Generate-DeepWiki.ps1`
+- **Bash**: `.specify/scripts/bash/generate-deepwiki.sh`
+- **PowerShell**: `.specify/scripts/powershell/Generate-DeepWiki.ps1`
 
 Both scripts read from `.analysis/index/` and generate markdown documentation in `.deepwiki/`.

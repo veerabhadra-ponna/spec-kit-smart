@@ -152,15 +152,15 @@ fi
 
 # Route to platform script
 if [[ "$PLATFORM" == "windows" ]]; then
-    powershell.exe -ExecutionPolicy Bypass -File scripts/powershell/Search-KnowledgeBase.ps1 -Question "$QUESTION"
+    powershell.exe -ExecutionPolicy Bypass -File .specify/scripts/powershell/Search-KnowledgeBase.ps1 -Question "$QUESTION"
 else
-    bash scripts/bash/search-knowledge-base.sh "$QUESTION"
+    bash .specify/scripts/bash/search-knowledge-base.sh "$QUESTION"
 fi
 ```
 
 The command delegates to:
-- **Bash**: `scripts/bash/search-knowledge-base.sh`
-- **PowerShell**: `scripts/powershell/Search-KnowledgeBase.ps1`
+- **Bash**: `.specify/scripts/bash/search-knowledge-base.sh`
+- **PowerShell**: `.specify/scripts/powershell/Search-KnowledgeBase.ps1`
 
 Both scripts:
 1. Load index files from `.analysis/index/`

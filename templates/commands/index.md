@@ -99,22 +99,22 @@ fi
 
 ```bash
 # Detect platform
-PLATFORM=$(bash .specify/scripts/bash/detect-os.sh 2>/dev/null || echo "unix")
+PLATFORM=$(bash scripts/bash/detect-os.sh 2>/dev/null || echo "unix")
 
 # Route to appropriate script
 if [[ "$PLATFORM" == "windows" ]]; then
     # Windows: Use PowerShell script
-    powershell.exe -ExecutionPolicy Bypass -File .specify/scripts/powershell/Build-CodebaseIndex.ps1 "$@"
+    powershell.exe -ExecutionPolicy Bypass -File scripts/powershell/Build-CodebaseIndex.ps1 "$@"
 else
     # Unix/Linux/macOS: Use Bash script
-    bash .specify/scripts/bash/build-codebase-index.sh "$@"
+    bash scripts/bash/build-codebase-index.sh "$@"
 fi
 ```
 
 **Parse Arguments**: Handle flags and pass to appropriate script
 
 The command delegates to platform-specific scripts:
-- **Bash**: `.specify/scripts/bash/build-codebase-index.sh`
-- **PowerShell**: `.specify/scripts/powershell/Build-CodebaseIndex.ps1`
+- **Bash**: `scripts/bash/build-codebase-index.sh`
+- **PowerShell**: `scripts/powershell/Build-CodebaseIndex.ps1`
 
 Both scripts implement the same interface and produce identical JSON output.
