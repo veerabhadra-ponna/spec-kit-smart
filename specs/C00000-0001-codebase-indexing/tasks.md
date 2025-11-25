@@ -50,7 +50,7 @@
 - [X] [T110] [US1] Implement dependency graph builder (imports/exports) (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T111] [US1] Implement secret redaction for sensitive data (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T112] [US1] Implement metadata generator with statistics (embedded in: scripts/bash/build-codebase-index.sh)
-- [ ] [T112.5] [US1] Implement index version validation on load with compatibility checking (embedded in: scripts/bash/build-codebase-index.sh)
+- [X] [T112.5] [US1] Implement index version validation on load with compatibility checking (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T113] [US1] Implement incremental update with MD5 hash tracking and auto-fallback to full build when base index missing (embedded in: scripts/bash/build-codebase-index.sh)
 
 ### Core Indexing Scripts (PowerShell)
@@ -65,7 +65,7 @@
 - [X] [T120] [US1] Implement dependency graph builder (imports/exports) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T121] [US1] Implement secret redaction for sensitive data (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T122] [US1] Implement metadata generator with statistics (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T122.5] [US1] Implement index version validation on load with compatibility checking (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T122.5] [US1] Implement index version validation on load with compatibility checking (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T123] [US1] Implement incremental update with MD5 hash tracking and auto-fallback to full build when base index missing (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 
 ### Index Storage Structure
@@ -81,9 +81,9 @@
 
 - [X] [T130] [US1] Create test suite for prerequisite checks (file: tests/indexing/test-prerequisite-checks.sh)
 - [X] [T131] [US1] Create test suite for index building (file: tests/indexing/test-index-building.sh)
-- [ ] [T132] [US1] Create test suite for data extraction algorithms (file: tests/indexing/test-data-extraction.sh)
-- [ ] [T133] [US1] Create test suite for incremental updates (file: tests/indexing/test-incremental-update.sh)
-- [ ] [T134] [US1] Create cross-platform compatibility tests (file: tests/indexing/test-cross-platform.sh)
+- [X] [T132] [US1] Create test suite for data extraction algorithms (file: tests/indexing/test-data-extraction.sh)
+- [X] [T133] [US1] Create test suite for incremental updates (file: tests/indexing/test-incremental-update.sh)
+- [X] [T134] [US1] Create cross-platform compatibility tests (file: tests/indexing/test-cross-platform.sh)
 
 ---
 

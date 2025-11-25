@@ -54,6 +54,10 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# Current supported index version
+$script:CURRENT_INDEX_VERSION = "1.0"
+$script:CURRENT_TOOL_VERSION = "1.0.0"
+
 # Helper functions
 function Write-Log {
     param([string]$Message, [string]$Level = "INFO")
@@ -82,6 +86,74 @@ function Get-RepoRoot {
     return (Get-Location).Path
 }
 
+# Validate index version compatibility (FR-064, FR-065)
+# Returns: $true if compatible or no index, $false if incompatible
+function Test-IndexVersion {
+    param([string]$MetadataFile, [switch]$JsonOutput)
+
+    if (-not (Test-Path $MetadataFile)) {
+        # No existing index, nothing to validate
+        return $true
+    }
+
+    try {
+        $metadata = Get-Content $MetadataFile -Raw | ConvertFrom-Json
+
+        $indexVersion = if ($metadata.version) { $metadata.version } else { "unknown" }
+        $createdByVersion = if ($metadata.created_by_version) { $metadata.created_by_version } else { "unknown" }
+
+        # Check if version is compatible
+        if ($indexVersion -eq "unknown") {
+            Write-Log "Index version information missing or corrupted" "ERROR"
+            Write-Log "Please rebuild the index with: -Full" "ERROR"
+            if ($JsonOutput) {
+                @{
+                    success = $false
+                    error   = @{
+                        code        = "INDEX_VERSION_MISSING"
+                        message     = "Index version information missing or corrupted"
+                        remediation = "Run with -Full flag to rebuild the index"
+                    }
+                } | ConvertTo-Json -Depth 5 | Write-Output
+            }
+            return $false
+        }
+
+        # Extract major version for compatibility check
+        $indexMajor = $indexVersion.Split('.')[0]
+        $currentMajor = $script:CURRENT_INDEX_VERSION.Split('.')[0]
+
+        if ($indexMajor -ne $currentMajor) {
+            Write-Log "Index version incompatible: v$indexVersion (created by tool v$createdByVersion)" "ERROR"
+            Write-Log "Current tool requires index version: v$($script:CURRENT_INDEX_VERSION)" "ERROR"
+            Write-Log "Please rebuild the index with: -Full" "ERROR"
+            if ($JsonOutput) {
+                @{
+                    success = $false
+                    error   = @{
+                        code    = "INDEX_VERSION_INCOMPATIBLE"
+                        message = "Index version incompatible"
+                        details = @{
+                            index_version            = $indexVersion
+                            required_version         = $script:CURRENT_INDEX_VERSION
+                            created_by_tool_version  = $createdByVersion
+                        }
+                        remediation = "Run with -Full flag to rebuild the index"
+                    }
+                } | ConvertTo-Json -Depth 5 | Write-Output
+            }
+            return $false
+        }
+
+        Write-Log "Index version validated: v$indexVersion (created by tool v$createdByVersion)"
+        return $true
+    }
+    catch {
+        Write-Log "Failed to read index metadata: $($_.Exception.Message)" "ERROR"
+        return $false
+    }
+}
+
 # Check dependencies (jq is optional for PowerShell version - we use ConvertTo-Json)
 # Kept for bash script parity documentation only
 
@@ -95,8 +167,20 @@ try {
     if ($Full) { $mode = "full" }
     elseif ($Incremental) { $mode = "incremental" }
 
+    # Validate existing index version if present (FR-064, FR-065)
+    $metadataPath = Join-Path $indexDir 'metadata.json'
+    if (Test-Path $metadataPath) {
+        if (-not (Test-IndexVersion -MetadataFile $metadataPath -JsonOutput:$Json)) {
+            # Version incompatible - force full rebuild unless already specified
+            if ($mode -ne "full") {
+                Write-Log "Incompatible index version detected. Forcing full rebuild." "WARN"
+                $mode = "full"
+            }
+        }
+    }
+
     if ($mode -eq "auto") {
-        if (Test-Path (Join-Path $indexDir 'metadata.json')) {
+        if (Test-Path $metadataPath) {
             $mode = "full"
             Write-Log "No mode specified, defaulting to full rebuild"
         }
@@ -107,7 +191,7 @@ try {
     }
 
     # Check for incremental with no base
-    if ($mode -eq "incremental" -and -not (Test-Path (Join-Path $indexDir 'metadata.json'))) {
+    if ($mode -eq "incremental" -and -not (Test-Path $metadataPath)) {
         Write-Log "No existing index found. Running full index build instead of incremental update." "WARN"
         $mode = "full"
     }
@@ -532,7 +616,7 @@ try {
 
     # Write structure.json
     $structureJson = @{
-        version    = "1.0"
+        version    = $script:CURRENT_INDEX_VERSION
         timestamp  = $currentTimestamp
         classes    = $classes
         functions  = $functions
@@ -543,8 +627,8 @@ try {
 
     # Write metadata.json
     $metadataJson = @{
-        version            = "1.0"
-        created_by_version = "1.0.0"
+        version            = $script:CURRENT_INDEX_VERSION
+        created_by_version = $script:CURRENT_TOOL_VERSION
         generated_at       = $currentTimestamp
         freshness          = $currentTimestamp
         index_type         = $mode
@@ -573,7 +657,7 @@ try {
 
     # Write api-endpoints.json
     $apiEndpointsJson = @{
-        version             = "1.0"
+        version             = $script:CURRENT_INDEX_VERSION
         timestamp           = $currentTimestamp
         rest_endpoints      = $restEndpoints
         graphql_resolvers   = $graphqlResolvers
@@ -584,7 +668,7 @@ try {
 
     # Write external-apis.json
     $externalApisJson = @{
-        version              = "1.0"
+        version              = $script:CURRENT_INDEX_VERSION
         timestamp            = $currentTimestamp
         third_party_services = $externalApis
         environment_variables = $envVars
@@ -594,7 +678,7 @@ try {
 
     # Write dependencies.json
     $dependenciesJson = @{
-        version   = "1.0"
+        version   = $script:CURRENT_INDEX_VERSION
         timestamp = $currentTimestamp
         files     = $dependencies
     } | ConvertTo-Json -Depth 10
@@ -603,7 +687,7 @@ try {
 
     # Write data-models.json
     $dataModelsJson = @{
-        version          = "1.0"
+        version          = $script:CURRENT_INDEX_VERSION
         timestamp        = $currentTimestamp
         database_schemas = $databaseSchemas
         orm_entities     = $ormEntities
