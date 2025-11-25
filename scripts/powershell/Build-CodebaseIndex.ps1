@@ -132,11 +132,17 @@ try {
     $totalClasses = 0
     $totalFunctions = 0
     $totalInterfaces = 0
+    $totalRestEndpoints = 0
+    $totalGraphQLResolvers = 0
+    $totalWebSocketHandlers = 0
 
     # Initialize arrays
     $classes = @()
     $functions = @()
     $interfaces = @()
+    $restEndpoints = @()
+    $graphqlResolvers = @()
+    $websocketHandlers = @()
 
     # Build file patterns
     $includePatterns = @()
@@ -245,6 +251,50 @@ try {
                     $totalInterfaces++
                 }
             }
+
+            # Extract REST API endpoints (Express.js, FastAPI style)
+            $restRegex = [regex]::new('(?:router|app)\.(get|post|put|patch|delete|all)\([''"]([^''"]+)[''"]', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $restMatches = $restRegex.Matches($content)
+            foreach ($match in $restMatches) {
+                $method = $match.Groups[1].Value.ToUpper()
+                $path = $match.Groups[2].Value
+                $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+
+                $restEndpoints += [PSCustomObject]@{
+                    method = $method
+                    path   = $path
+                    file   = $relPath
+                    line   = $lineNum
+                }
+                $totalRestEndpoints++
+            }
+
+            # Extract GraphQL resolvers
+            $graphqlRegex = [regex]::new('(?:Query|Mutation|Subscription)\s*:\s*\{', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $graphqlMatches = $graphqlRegex.Matches($content)
+            foreach ($match in $graphqlMatches) {
+                $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+                $graphqlResolvers += [PSCustomObject]@{
+                    type = $match.Value -replace '\s*:\s*\{', ''
+                    file = $relPath
+                    line = $lineNum
+                }
+                $totalGraphQLResolvers++
+            }
+
+            # Extract WebSocket handlers
+            $wsRegex = [regex]::new('\.on\([''"](?:connection|message|disconnect|error)[''"]', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $wsMatches = $wsRegex.Matches($content)
+            foreach ($match in $wsMatches) {
+                $event = $match.Value -replace '\.on\([''"]|[''"]', ''
+                $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+                $websocketHandlers += [PSCustomObject]@{
+                    event = $event
+                    file  = $relPath
+                    line  = $lineNum
+                }
+                $totalWebSocketHandlers++
+            }
         }
         catch {
             Write-Log "Failed to process file $relPath`: $($_.Exception.Message)" "WARN"
@@ -278,20 +328,33 @@ try {
         index_type         = $mode
         duration_seconds   = $duration
         statistics         = @{
-            total_files       = $totalFiles
-            indexed_files     = $indexedFiles
-            skipped_files     = $skippedFiles
-            total_classes     = $totalClasses
-            total_functions   = $totalFunctions
-            total_interfaces  = $totalInterfaces
+            total_files             = $totalFiles
+            indexed_files           = $indexedFiles
+            skipped_files           = $skippedFiles
+            total_classes           = $totalClasses
+            total_functions         = $totalFunctions
+            total_interfaces        = $totalInterfaces
+            total_rest_endpoints    = $totalRestEndpoints
+            total_graphql_resolvers = $totalGraphQLResolvers
+            total_websocket_handlers = $totalWebSocketHandlers
         }
     } | ConvertTo-Json -Depth 10
 
     $metadataJson | Out-File -FilePath (Join-Path $indexDir 'metadata.json') -Encoding UTF8
 
+    # Write api-endpoints.json
+    $apiEndpointsJson = @{
+        version             = "1.0"
+        timestamp           = $currentTimestamp
+        rest_endpoints      = $restEndpoints
+        graphql_resolvers   = $graphqlResolvers
+        websocket_handlers  = $websocketHandlers
+    } | ConvertTo-Json -Depth 10
+
+    $apiEndpointsJson | Out-File -FilePath (Join-Path $indexDir 'api-endpoints.json') -Encoding UTF8
+
     # Create empty files for other schemas
     @{version = "1.0"; timestamp = $currentTimestamp; database_schemas = @(); orm_entities = @(); type_definitions = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'data-models.json') -Encoding UTF8
-    @{version = "1.0"; timestamp = $currentTimestamp; rest_endpoints = @(); graphql_resolvers = @(); websocket_handlers = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'api-endpoints.json') -Encoding UTF8
     @{version = "1.0"; timestamp = $currentTimestamp; third_party_services = @(); environment_variables = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'external-apis.json') -Encoding UTF8
     @{version = "1.0"; timestamp = $currentTimestamp; files = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'dependencies.json') -Encoding UTF8
 
@@ -301,22 +364,26 @@ try {
     }
     else {
         Write-Host ""
-        Write-Host "✓ Index built successfully in $duration seconds" -ForegroundColor Green
-        Write-Host "✓ Files indexed: $indexedFiles" -ForegroundColor Green
-        Write-Host "✓ Classes: $totalClasses" -ForegroundColor Green
-        Write-Host "✓ Functions: $totalFunctions" -ForegroundColor Green
-        Write-Host "✓ Interfaces: $totalInterfaces" -ForegroundColor Green
-        Write-Host "✓ Location: $indexDir" -ForegroundColor Green
+        Write-Host "[OK] Index built successfully in $duration seconds" -ForegroundColor Green
+        Write-Host "[OK] Files indexed: $indexedFiles" -ForegroundColor Green
+        Write-Host "[OK] Classes: $totalClasses" -ForegroundColor Green
+        Write-Host "[OK] Functions: $totalFunctions" -ForegroundColor Green
+        Write-Host "[OK] Interfaces: $totalInterfaces" -ForegroundColor Green
+        Write-Host "[OK] REST endpoints: $totalRestEndpoints" -ForegroundColor Green
+        Write-Host "[OK] GraphQL resolvers: $totalGraphQLResolvers" -ForegroundColor Green
+        Write-Host "[OK] WebSocket handlers: $totalWebSocketHandlers" -ForegroundColor Green
+        Write-Host "[OK] Location: $indexDir" -ForegroundColor Green
         Write-Host ""
         Write-Host "Next steps:"
         Write-Host "  - Generate documentation: /speckitsmart.wiki"
-        Write-Host "  - Query codebase: /speckitsmart.ask `"your question`""
+        Write-Host "  - Query codebase: /speckitsmart.ask your-question"
     }
 
     exit 0
 }
 catch {
-    Write-Host "Error: $_" -ForegroundColor Red
+    $errorMsg = $_.Exception.Message
+    Write-Host "Error: $errorMsg" -ForegroundColor Red
     Write-Host $_.ScriptStackTrace -ForegroundColor Red
     exit 1
 }
