@@ -138,6 +138,7 @@ try {
     $totalExternalApis = 0
     $totalEnvVars = 0
     $totalDependencies = 0
+    $totalSecretsDetected = 0
 
     # Initialize arrays
     $classes = @()
@@ -427,6 +428,34 @@ try {
                 }
                 $totalDependencies++
             }
+
+            # Detect secrets (count only, don't store in index for security)
+            $fileSecrets = 0
+
+            # Pattern 1: API keys, secrets, passwords (KEY=value, SECRET=value, PASSWORD=value)
+            $secretPattern1 = [regex]::new('(API_KEY|SECRET|PASSWORD|PRIVATE_KEY|AUTH_TOKEN)\s*=\s*[''"]', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $fileSecrets += $secretPattern1.Matches($content).Count
+            $totalSecretsDetected += $secretPattern1.Matches($content).Count
+
+            # Pattern 2: JWT tokens (eyJ...)
+            $secretPattern2 = [regex]::new('eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $fileSecrets += $secretPattern2.Matches($content).Count
+            $totalSecretsDetected += $secretPattern2.Matches($content).Count
+
+            # Pattern 3: Bearer/auth tokens in JSON (token: "...", auth: "...", bearer: "...")
+            $secretPattern3 = [regex]::new('(token|auth|bearer)\s*:\s*[''"]', [System.Text.RegularExpressions.RegexOptions]::Multiline -bor [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+            $fileSecrets += $secretPattern3.Matches($content).Count
+            $totalSecretsDetected += $secretPattern3.Matches($content).Count
+
+            # Pattern 4: Hardcoded credentials (username:password patterns, connection strings)
+            $secretPattern4 = [regex]::new('(postgres|mysql|mongodb)://[^:]+:[^@]+@', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $fileSecrets += $secretPattern4.Matches($content).Count
+            $totalSecretsDetected += $secretPattern4.Matches($content).Count
+
+            # If secrets detected in this file, log warning
+            if ($fileSecrets -gt 0) {
+                Write-Log "Detected $fileSecrets potential secret(s) in $relPath (not stored in index)" "WARN"
+            }
         }
         catch {
             Write-Log "Failed to process file $relPath`: $($_.Exception.Message)" "WARN"
@@ -472,6 +501,7 @@ try {
             total_external_apis     = $totalExternalApis
             total_env_vars          = $totalEnvVars
             total_dependencies      = $totalDependencies
+            secrets_detected        = $totalSecretsDetected
         }
     } | ConvertTo-Json -Depth 10
 
@@ -527,6 +557,11 @@ try {
         Write-Host "[OK] External APIs: $totalExternalApis" -ForegroundColor Green
         Write-Host "[OK] Environment variables: $totalEnvVars" -ForegroundColor Green
         Write-Host "[OK] Dependencies: $totalDependencies" -ForegroundColor Green
+        if ($totalSecretsDetected -gt 0) {
+            Write-Host "[WARN] Secrets detected: $totalSecretsDetected (not stored in index)" -ForegroundColor Yellow
+        } else {
+            Write-Host "[OK] Secrets detected: 0" -ForegroundColor Green
+        }
         Write-Host "[OK] Location: $indexDir" -ForegroundColor Green
         Write-Host ""
         Write-Host "Next steps:"

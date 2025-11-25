@@ -119,6 +119,7 @@ TOTAL_WEBSOCKET_HANDLERS=0
 TOTAL_EXTERNAL_APIS=0
 TOTAL_ENV_VARS=0
 TOTAL_DEPENDENCIES=0
+TOTAL_SECRETS_DETECTED=0
 
 # Initialize JSON arrays
 CLASSES_JSON="[]"
@@ -463,6 +464,29 @@ while IFS= read -r file; do
         done <<< "$REEXPORT_MATCHES"
     fi
 
+    # Detect secrets (count only, don't store in index for security)
+    # Pattern 1: API keys, secrets, passwords (KEY=value, SECRET=value, PASSWORD=value)
+    SECRET_PATTERN1_MATCHES=$(grep -c -E "(API_KEY|SECRET|PASSWORD|PRIVATE_KEY|AUTH_TOKEN)[[:space:]]*=[[:space:]]*['\"]" "$file" 2>/dev/null || echo "0")
+    TOTAL_SECRETS_DETECTED=$((TOTAL_SECRETS_DETECTED + SECRET_PATTERN1_MATCHES))
+
+    # Pattern 2: JWT tokens (eyJ...)
+    SECRET_PATTERN2_MATCHES=$(grep -c -E "eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+" "$file" 2>/dev/null || echo "0")
+    TOTAL_SECRETS_DETECTED=$((TOTAL_SECRETS_DETECTED + SECRET_PATTERN2_MATCHES))
+
+    # Pattern 3: Bearer/auth tokens in JSON (token: "...", auth: "...", bearer: "...")
+    SECRET_PATTERN3_MATCHES=$(grep -c -E "(token|auth|bearer)[[:space:]]*:[[:space:]]*['\"]" "$file" 2>/dev/null || echo "0")
+    TOTAL_SECRETS_DETECTED=$((TOTAL_SECRETS_DETECTED + SECRET_PATTERN3_MATCHES))
+
+    # Pattern 4: Hardcoded credentials (username:password patterns, connection strings)
+    SECRET_PATTERN4_MATCHES=$(grep -c -E "(postgres|mysql|mongodb)://[^:]+:[^@]+@" "$file" 2>/dev/null || echo "0")
+    TOTAL_SECRETS_DETECTED=$((TOTAL_SECRETS_DETECTED + SECRET_PATTERN4_MATCHES))
+
+    # If secrets detected in this file, log warning
+    FILE_SECRETS=$((SECRET_PATTERN1_MATCHES + SECRET_PATTERN2_MATCHES + SECRET_PATTERN3_MATCHES + SECRET_PATTERN4_MATCHES))
+    if [[ $FILE_SECRETS -gt 0 ]]; then
+        log_warn "Detected $FILE_SECRETS potential secret(s) in $REL_PATH (not stored in index)"
+    fi
+
 done < "$TEMP_FILE_LIST"
 
 rm "$TEMP_FILE_LIST"
@@ -504,7 +528,8 @@ METADATA_JSON=$(jq -n \
     --argjson total_external_apis "$TOTAL_EXTERNAL_APIS" \
     --argjson total_env_vars "$TOTAL_ENV_VARS" \
     --argjson total_dependencies "$TOTAL_DEPENDENCIES" \
-    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces, total_rest_endpoints: $total_rest_endpoints, total_graphql_resolvers: $total_graphql_resolvers, total_websocket_handlers: $total_websocket_handlers, total_external_apis: $total_external_apis, total_env_vars: $total_env_vars, total_dependencies: $total_dependencies}}')
+    --argjson secrets_detected "$TOTAL_SECRETS_DETECTED" \
+    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces, total_rest_endpoints: $total_rest_endpoints, total_graphql_resolvers: $total_graphql_resolvers, total_websocket_handlers: $total_websocket_handlers, total_external_apis: $total_external_apis, total_env_vars: $total_env_vars, total_dependencies: $total_dependencies, secrets_detected: $secrets_detected}}')
 
 echo "$METADATA_JSON" | jq '.' > "${INDEX_DIR}/metadata.json"
 
@@ -557,6 +582,11 @@ else
     echo "✓ External APIs: $TOTAL_EXTERNAL_APIS"
     echo "✓ Environment variables: $TOTAL_ENV_VARS"
     echo "✓ Dependencies: $TOTAL_DEPENDENCIES"
+    if [[ $TOTAL_SECRETS_DETECTED -gt 0 ]]; then
+        echo "⚠ Secrets detected: $TOTAL_SECRETS_DETECTED (not stored in index)"
+    else
+        echo "✓ Secrets detected: 0"
+    fi
     echo "✓ Location: $INDEX_DIR"
     echo ""
     echo "Next steps:"
