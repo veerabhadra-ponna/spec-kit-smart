@@ -113,11 +113,17 @@ SKIPPED_FILES=0
 TOTAL_CLASSES=0
 TOTAL_FUNCTIONS=0
 TOTAL_INTERFACES=0
+TOTAL_REST_ENDPOINTS=0
+TOTAL_GRAPHQL_RESOLVERS=0
+TOTAL_WEBSOCKET_HANDLERS=0
 
 # Initialize JSON arrays
 CLASSES_JSON="[]"
 FUNCTIONS_JSON="[]"
 INTERFACES_JSON="[]"
+REST_ENDPOINTS_JSON="[]"
+GRAPHQL_RESOLVERS_JSON="[]"
+WEBSOCKET_HANDLERS_JSON="[]"
 
 # File extensions map
 declare -A LANG_EXTENSIONS
@@ -246,6 +252,62 @@ while IFS= read -r file; do
         fi
     fi
 
+    # Extract REST API endpoints (Express.js, FastAPI patterns)
+    REST_MATCHES=$(grep -n "\\(router\\|app\\)\\.\\(get\\|post\\|put\\|patch\\|delete\\|all\\)(['\"]" "$file" 2>/dev/null || true)
+    if [[ -n "$REST_MATCHES" ]]; then
+        while IFS= read -r match; do
+            LINE_NUM=$(echo "$match" | cut -d: -f1)
+            METHOD=$(echo "$match" | sed -E "s/.*\\.(get|post|put|patch|delete|all)\\(['\"].*/\\1/" | tr '[:lower:]' '[:upper:]')
+            PATH=$(echo "$match" | sed -E "s/.*\\.(?:get|post|put|patch|delete|all)\\(['\"]([^'\"]+)['\"].*/\\1/")
+
+            REST_OBJ=$(jq -n \
+                --arg method "$METHOD" \
+                --arg path "$PATH" \
+                --arg file "$REL_PATH" \
+                --argjson line "$LINE_NUM" \
+                '{method: $method, path: $path, file: $file, line: $line}')
+
+            REST_ENDPOINTS_JSON=$(echo "$REST_ENDPOINTS_JSON" | jq ". + [$REST_OBJ]")
+            TOTAL_REST_ENDPOINTS=$((TOTAL_REST_ENDPOINTS + 1))
+        done <<< "$REST_MATCHES"
+    fi
+
+    # Extract GraphQL resolvers
+    GRAPHQL_MATCHES=$(grep -n "\\(Query\\|Mutation\\|Subscription\\)[[:space:]]*:[[:space:]]*{" "$file" 2>/dev/null || true)
+    if [[ -n "$GRAPHQL_MATCHES" ]]; then
+        while IFS= read -r match; do
+            LINE_NUM=$(echo "$match" | cut -d: -f1)
+            TYPE=$(echo "$match" | sed -E 's/.*(Query|Mutation|Subscription).*/\1/')
+
+            GRAPHQL_OBJ=$(jq -n \
+                --arg type "$TYPE" \
+                --arg file "$REL_PATH" \
+                --argjson line "$LINE_NUM" \
+                '{type: $type, file: $file, line: $line}')
+
+            GRAPHQL_RESOLVERS_JSON=$(echo "$GRAPHQL_RESOLVERS_JSON" | jq ". + [$GRAPHQL_OBJ]")
+            TOTAL_GRAPHQL_RESOLVERS=$((TOTAL_GRAPHQL_RESOLVERS + 1))
+        done <<< "$GRAPHQL_MATCHES"
+    fi
+
+    # Extract WebSocket handlers
+    WS_MATCHES=$(grep -n "\\.on(['\"]\\(connection\\|message\\|disconnect\\|error\\)['\"]" "$file" 2>/dev/null || true)
+    if [[ -n "$WS_MATCHES" ]]; then
+        while IFS= read -r match; do
+            LINE_NUM=$(echo "$match" | cut -d: -f1)
+            EVENT=$(echo "$match" | sed -E "s/.*\\.on\\(['\"]([^'\"]+)['\"].*/\\1/")
+
+            WS_OBJ=$(jq -n \
+                --arg event "$EVENT" \
+                --arg file "$REL_PATH" \
+                --argjson line "$LINE_NUM" \
+                '{event: $event, file: $file, line: $line}')
+
+            WEBSOCKET_HANDLERS_JSON=$(echo "$WEBSOCKET_HANDLERS_JSON" | jq ". + [$WS_OBJ]")
+            TOTAL_WEBSOCKET_HANDLERS=$((TOTAL_WEBSOCKET_HANDLERS + 1))
+        done <<< "$WS_MATCHES"
+    fi
+
 done < "$TEMP_FILE_LIST"
 
 rm "$TEMP_FILE_LIST"
@@ -281,13 +343,26 @@ METADATA_JSON=$(jq -n \
     --argjson total_classes "$TOTAL_CLASSES" \
     --argjson total_functions "$TOTAL_FUNCTIONS" \
     --argjson total_interfaces "$TOTAL_INTERFACES" \
-    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces}}')
+    --argjson total_rest_endpoints "$TOTAL_REST_ENDPOINTS" \
+    --argjson total_graphql_resolvers "$TOTAL_GRAPHQL_RESOLVERS" \
+    --argjson total_websocket_handlers "$TOTAL_WEBSOCKET_HANDLERS" \
+    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces, total_rest_endpoints: $total_rest_endpoints, total_graphql_resolvers: $total_graphql_resolvers, total_websocket_handlers: $total_websocket_handlers}}')
 
 echo "$METADATA_JSON" | jq '.' > "${INDEX_DIR}/metadata.json"
 
+# Write api-endpoints.json
+API_ENDPOINTS_JSON=$(jq -n \
+    --arg version "1.0" \
+    --arg timestamp "$CURRENT_TIMESTAMP" \
+    --argjson rest_endpoints "$REST_ENDPOINTS_JSON" \
+    --argjson graphql_resolvers "$GRAPHQL_RESOLVERS_JSON" \
+    --argjson websocket_handlers "$WEBSOCKET_HANDLERS_JSON" \
+    '{version: $version, timestamp: $timestamp, rest_endpoints: $rest_endpoints, graphql_resolvers: $graphql_resolvers, websocket_handlers: $websocket_handlers}')
+
+echo "$API_ENDPOINTS_JSON" | jq '.' > "${INDEX_DIR}/api-endpoints.json"
+
 # Create empty files for other schemas (Phase 1 minimal)
 echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","database_schemas":[],"orm_entities":[],"type_definitions":[]}' | jq '.' > "${INDEX_DIR}/data-models.json"
-echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","rest_endpoints":[],"graphql_resolvers":[],"websocket_handlers":[]}' | jq '.' > "${INDEX_DIR}/api-endpoints.json"
 echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","third_party_services":[],"environment_variables":[]}' | jq '.' > "${INDEX_DIR}/external-apis.json"
 echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","files":[]}' | jq '.' > "${INDEX_DIR}/dependencies.json"
 
@@ -301,6 +376,9 @@ else
     echo "✓ Classes: $TOTAL_CLASSES"
     echo "✓ Functions: $TOTAL_FUNCTIONS"
     echo "✓ Interfaces: $TOTAL_INTERFACES"
+    echo "✓ REST endpoints: $TOTAL_REST_ENDPOINTS"
+    echo "✓ GraphQL resolvers: $TOTAL_GRAPHQL_RESOLVERS"
+    echo "✓ WebSocket handlers: $TOTAL_WEBSOCKET_HANDLERS"
     echo "✓ Location: $INDEX_DIR"
     echo ""
     echo "Next steps:"
