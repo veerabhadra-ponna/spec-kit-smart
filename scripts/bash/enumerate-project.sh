@@ -546,6 +546,44 @@ EOF
 
 # Main execution
 main() {
+    # Check for --help first (before dependency checks)
+    for arg in "$@"; do
+        if [[ "$arg" == "-h" || "$arg" == "--help" ]]; then
+            cat <<EOF
+Usage: $0 --project PATH [OPTIONS]
+
+Enumerate all files in a project directory for AI analysis.
+
+Required Arguments:
+  --project PATH       Path to project root directory
+
+Optional Arguments:
+  --output FILE        Output JSON file (default: stdout)
+  --max-size BYTES     Maximum file size to include (default: 10485760 = 10MB)
+  -h, --help          Show this help message
+
+Output Format:
+  JSON object with project structure, file metadata, and statistics
+
+Examples:
+  # Scan current directory, output to stdout
+  $0 --project .
+
+  # Scan project, save to file
+  $0 --project /path/to/legacy --output manifest.json
+
+  # Scan with custom size limit (50MB)
+  $0 --project . --output manifest.json --max-size 52428800
+
+Dependencies:
+  - jq (required for JSON generation)
+  - find (standard utility)
+
+EOF
+            exit 0
+        fi
+    done
+
     check_dependencies
     detect_platform
     parse_arguments "$@"

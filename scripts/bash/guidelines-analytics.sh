@@ -414,6 +414,14 @@ main() {
     esac
 }
 
+# Check for --help first (before dependency checks)
+for arg in "$@"; do
+    if [[ "$arg" == "--help" ]]; then
+        show_usage
+        exit 0
+    fi
+done
+
 # Check for jq dependency
 if ! command -v jq &> /dev/null; then
     echo "Error: jq is required but not installed" >&2

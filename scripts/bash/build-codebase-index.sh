@@ -50,6 +50,44 @@ while [[ $# -gt 0 ]]; do
             JSON_OUTPUT=true
             shift
             ;;
+        -h|--help)
+            cat <<EOF
+Usage: $(basename "$0") [OPTIONS]
+
+Build a searchable index of your codebase.
+
+Options:
+  --full            Force full rebuild (default if no index exists)
+  --incremental     Update only changed files (requires existing index)
+  --path <dir>      Index specific directory instead of entire repository
+  --languages <list> Filter by languages (default: ts,tsx,js,jsx,py,java,cs,go)
+  --verbose         Show detailed progress output
+  --json            Output results as JSON
+  -h, --help        Show this help message
+
+Examples:
+  $(basename "$0")                    # Build full index
+  $(basename "$0") --incremental      # Update changed files only
+  $(basename "$0") --path src/services # Index specific directory
+  $(basename "$0") --languages ts,js   # Index only TypeScript and JavaScript
+
+Output:
+  Creates JSON index files in .analysis/index/:
+    - metadata.json      Statistics and freshness tracking
+    - structure.json     Classes, functions, interfaces
+    - data-models.json   Database schemas and entities
+    - api-endpoints.json REST/GraphQL/WebSocket endpoints
+    - external-apis.json Third-party service integrations
+    - dependencies.json  Import/export graph
+
+Exit codes:
+  0 - Success
+  1 - General error
+  2 - Dependency missing (jq)
+
+EOF
+            exit 0
+            ;;
         *)
             echo "Unknown option: $1" >&2
             exit 1

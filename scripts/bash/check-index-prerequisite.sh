@@ -11,6 +11,39 @@
 
 set -euo pipefail
 
+# Handle --help first
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+    cat <<EOF
+Usage: $(basename "$0") [OPTIONS]
+
+Hard prerequisite check for codebase index.
+Used by commands that REQUIRE an index (e.g., /speckitsmart.wiki, /speckitsmart.ask).
+
+Options:
+  -h, --help    Show this help message
+
+Output:
+  JSON object to stdout with index status:
+  - index_exists: true/false
+  - index_path: path to index directory
+  - freshness: last update timestamp
+  - age_days: days since last update
+  - is_stale: true if > 7 days old
+  - files_indexed: number of indexed files
+  - error: error message (if index missing/invalid)
+
+Exit codes:
+  0 - Index exists and is valid
+  1 - Index missing or invalid
+
+Examples:
+  $(basename "$0")
+  $(basename "$0") | jq '.index_exists'
+
+EOF
+    exit 0
+fi
+
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
 INDEX_DIR="${REPO_ROOT}/.analysis/index"
 METADATA_FILE="${INDEX_DIR}/metadata.json"
