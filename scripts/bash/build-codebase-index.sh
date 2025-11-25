@@ -116,6 +116,8 @@ TOTAL_INTERFACES=0
 TOTAL_REST_ENDPOINTS=0
 TOTAL_GRAPHQL_RESOLVERS=0
 TOTAL_WEBSOCKET_HANDLERS=0
+TOTAL_EXTERNAL_APIS=0
+TOTAL_ENV_VARS=0
 
 # Initialize JSON arrays
 CLASSES_JSON="[]"
@@ -124,6 +126,8 @@ INTERFACES_JSON="[]"
 REST_ENDPOINTS_JSON="[]"
 GRAPHQL_RESOLVERS_JSON="[]"
 WEBSOCKET_HANDLERS_JSON="[]"
+EXTERNAL_APIS_JSON="[]"
+ENV_VARS_JSON="[]"
 
 # File extensions map
 declare -A LANG_EXTENSIONS
@@ -308,6 +312,51 @@ while IFS= read -r file; do
         done <<< "$WS_MATCHES"
     fi
 
+    # Extract third-party API integrations (known SDKs)
+    KNOWN_SDKS="stripe|aws-sdk|@aws-sdk|firebase|@google-cloud|sendgrid|twilio|mailgun|pusher|socket\\.io-client|axios|fetch|node-fetch|got|request|superagent"
+    API_MATCHES=$(grep -in "import.*from ['\"]\\($KNOWN_SDKS\\)" "$file" 2>/dev/null || grep -in "require(['\"]\\($KNOWN_SDKS\\)" "$file" 2>/dev/null || true)
+    if [[ -n "$API_MATCHES" ]]; then
+        while IFS= read -r match; do
+            LINE_NUM=$(echo "$match" | cut -d: -f1)
+            SERVICE=$(echo "$match" | sed -E "s/.*['\"]([^'\"]+)['\"].*/\\1/" | sed 's/@.*\///' | cut -d'/' -f1)
+
+            API_OBJ=$(jq -n \
+                --arg service "$SERVICE" \
+                --arg file "$REL_PATH" \
+                --argjson line "$LINE_NUM" \
+                '{service: $service, file: $file, line: $line}')
+
+            EXTERNAL_APIS_JSON=$(echo "$EXTERNAL_APIS_JSON" | jq ". + [$API_OBJ]")
+            TOTAL_EXTERNAL_APIS=$((TOTAL_EXTERNAL_APIS + 1))
+        done <<< "$API_MATCHES"
+    fi
+
+    # Extract environment variables (API keys, secrets, configs)
+    ENV_MATCHES=$(grep -on "process\\.env\\.[A-Z_][A-Z0-9_]*" "$file" 2>/dev/null || true)
+    if [[ -n "$ENV_MATCHES" ]]; then
+        # Track unique env vars per file to avoid duplicates
+        declare -A SEEN_ENV_VARS
+        while IFS= read -r match; do
+            LINE_NUM=$(echo "$match" | cut -d: -f1)
+            ENV_VAR=$(echo "$match" | sed -E 's/.*process\.env\.([A-Z_][A-Z0-9_]*).*/\1/')
+
+            # Skip if already seen in this file
+            if [[ -n "${SEEN_ENV_VARS[$ENV_VAR]}" ]]; then
+                continue
+            fi
+            SEEN_ENV_VARS[$ENV_VAR]=1
+
+            ENV_OBJ=$(jq -n \
+                --arg name "$ENV_VAR" \
+                --arg file "$REL_PATH" \
+                --argjson line "$LINE_NUM" \
+                '{name: $name, file: $file, line: $line}')
+
+            ENV_VARS_JSON=$(echo "$ENV_VARS_JSON" | jq ". + [$ENV_OBJ]")
+            TOTAL_ENV_VARS=$((TOTAL_ENV_VARS + 1))
+        done <<< "$ENV_MATCHES"
+    fi
+
 done < "$TEMP_FILE_LIST"
 
 rm "$TEMP_FILE_LIST"
@@ -346,7 +395,9 @@ METADATA_JSON=$(jq -n \
     --argjson total_rest_endpoints "$TOTAL_REST_ENDPOINTS" \
     --argjson total_graphql_resolvers "$TOTAL_GRAPHQL_RESOLVERS" \
     --argjson total_websocket_handlers "$TOTAL_WEBSOCKET_HANDLERS" \
-    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces, total_rest_endpoints: $total_rest_endpoints, total_graphql_resolvers: $total_graphql_resolvers, total_websocket_handlers: $total_websocket_handlers}}')
+    --argjson total_external_apis "$TOTAL_EXTERNAL_APIS" \
+    --argjson total_env_vars "$TOTAL_ENV_VARS" \
+    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces, total_rest_endpoints: $total_rest_endpoints, total_graphql_resolvers: $total_graphql_resolvers, total_websocket_handlers: $total_websocket_handlers, total_external_apis: $total_external_apis, total_env_vars: $total_env_vars}}')
 
 echo "$METADATA_JSON" | jq '.' > "${INDEX_DIR}/metadata.json"
 
@@ -361,9 +412,18 @@ API_ENDPOINTS_JSON=$(jq -n \
 
 echo "$API_ENDPOINTS_JSON" | jq '.' > "${INDEX_DIR}/api-endpoints.json"
 
+# Write external-apis.json
+EXTERNAL_APIS_FILE_JSON=$(jq -n \
+    --arg version "1.0" \
+    --arg timestamp "$CURRENT_TIMESTAMP" \
+    --argjson third_party_services "$EXTERNAL_APIS_JSON" \
+    --argjson environment_variables "$ENV_VARS_JSON" \
+    '{version: $version, timestamp: $timestamp, third_party_services: $third_party_services, environment_variables: $environment_variables}')
+
+echo "$EXTERNAL_APIS_FILE_JSON" | jq '.' > "${INDEX_DIR}/external-apis.json"
+
 # Create empty files for other schemas (Phase 1 minimal)
 echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","database_schemas":[],"orm_entities":[],"type_definitions":[]}' | jq '.' > "${INDEX_DIR}/data-models.json"
-echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","third_party_services":[],"environment_variables":[]}' | jq '.' > "${INDEX_DIR}/external-apis.json"
 echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","files":[]}' | jq '.' > "${INDEX_DIR}/dependencies.json"
 
 # Output summary
@@ -379,6 +439,8 @@ else
     echo "✓ REST endpoints: $TOTAL_REST_ENDPOINTS"
     echo "✓ GraphQL resolvers: $TOTAL_GRAPHQL_RESOLVERS"
     echo "✓ WebSocket handlers: $TOTAL_WEBSOCKET_HANDLERS"
+    echo "✓ External APIs: $TOTAL_EXTERNAL_APIS"
+    echo "✓ Environment variables: $TOTAL_ENV_VARS"
     echo "✓ Location: $INDEX_DIR"
     echo ""
     echo "Next steps:"
