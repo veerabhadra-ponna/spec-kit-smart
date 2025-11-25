@@ -139,6 +139,9 @@ try {
     $totalEnvVars = 0
     $totalDependencies = 0
     $totalSecretsDetected = 0
+    $totalDatabaseSchemas = 0
+    $totalOrmEntities = 0
+    $totalTypeDefinitions = 0
 
     # Initialize arrays
     $classes = @()
@@ -150,6 +153,9 @@ try {
     $externalApis = @()
     $envVars = @()
     $dependencies = @()
+    $databaseSchemas = @()
+    $ormEntities = @()
+    $typeDefinitions = @()
 
     # Build file patterns
     $includePatterns = @()
@@ -163,6 +169,9 @@ try {
             'go' { $includePatterns += '*.go' }
         }
     }
+
+    # Add schema files (.prisma for data models)
+    $includePatterns += '*.prisma'
 
     $excludePaths = @(
         'node_modules',
@@ -429,6 +438,58 @@ try {
                 $totalDependencies++
             }
 
+            # Extract data models
+            # Prisma schemas (.prisma files): model User { ... }
+            if ($file.Extension -eq '.prisma') {
+                $prismaRegex = [regex]::new('^\s*model\s+([A-Za-z0-9_]+)', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+                $prismaMatches = $prismaRegex.Matches($content)
+                foreach ($match in $prismaMatches) {
+                    $modelName = $match.Groups[1].Value
+                    $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+
+                    $databaseSchemas += [PSCustomObject]@{
+                        table         = $modelName
+                        file          = $relPath
+                        line          = $lineNum
+                        schema_type   = "prisma"
+                        columns       = @()
+                        relationships = @()
+                    }
+                    $totalDatabaseSchemas++
+                }
+            }
+
+            # TypeORM entities (TypeScript files): @Entity() decorator
+            if ($file.Extension -in @('.ts', '.tsx')) {
+                $entityRegex = [regex]::new('^\s*@Entity', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+                $entityMatches = $entityRegex.Matches($content)
+                foreach ($match in $entityMatches) {
+                    $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+
+                    # Find the class name on the next few lines
+                    $classPattern = $content.Substring($match.Index) -split "`n" | Select-Object -First 6 | Where-Object { $_ -match 'class\s+([A-Za-z0-9_]+)' }
+                    if ($classPattern) {
+                        $entityName = if ($classPattern[0] -match 'class\s+([A-Za-z0-9_]+)') { $Matches[1] } else { 'Unknown' }
+
+                        # Extract table name from @Entity decorator if present
+                        $decoratorLine = ($content.Substring(0, $match.Index) -split "`n")[-1] + ($content.Substring($match.Index) -split "`n")[0]
+                        $tableName = if ($decoratorLine -match '@Entity\([''"]([^''"]+)[''"]\)') { $Matches[1] } else { $entityName.ToLower() }
+
+                        $ormEntities += [PSCustomObject]@{
+                            entity        = $entityName
+                            table         = $tableName
+                            file          = $relPath
+                            line          = $lineNum
+                            orm_type      = "typeorm"
+                            fields        = @()
+                            decorators    = @()
+                            relationships = @()
+                        }
+                        $totalOrmEntities++
+                    }
+                }
+            }
+
             # Detect secrets (count only, don't store in index for security)
             $fileSecrets = 0
 
@@ -502,6 +563,9 @@ try {
             total_env_vars          = $totalEnvVars
             total_dependencies      = $totalDependencies
             secrets_detected        = $totalSecretsDetected
+            total_database_schemas  = $totalDatabaseSchemas
+            total_orm_entities      = $totalOrmEntities
+            total_type_definitions  = $totalTypeDefinitions
         }
     } | ConvertTo-Json -Depth 10
 
@@ -537,8 +601,16 @@ try {
 
     $dependenciesJson | Out-File -FilePath (Join-Path $indexDir 'dependencies.json') -Encoding UTF8
 
-    # Create empty files for other schemas
-    @{version = "1.0"; timestamp = $currentTimestamp; database_schemas = @(); orm_entities = @(); type_definitions = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'data-models.json') -Encoding UTF8
+    # Write data-models.json
+    $dataModelsJson = @{
+        version          = "1.0"
+        timestamp        = $currentTimestamp
+        database_schemas = $databaseSchemas
+        orm_entities     = $ormEntities
+        type_definitions = $typeDefinitions
+    } | ConvertTo-Json -Depth 10
+
+    $dataModelsJson | Out-File -FilePath (Join-Path $indexDir 'data-models.json') -Encoding UTF8
 
     # Output summary
     if ($Json) {
@@ -557,6 +629,8 @@ try {
         Write-Host "[OK] External APIs: $totalExternalApis" -ForegroundColor Green
         Write-Host "[OK] Environment variables: $totalEnvVars" -ForegroundColor Green
         Write-Host "[OK] Dependencies: $totalDependencies" -ForegroundColor Green
+        Write-Host "[OK] Database schemas: $totalDatabaseSchemas" -ForegroundColor Green
+        Write-Host "[OK] ORM entities: $totalOrmEntities" -ForegroundColor Green
         if ($totalSecretsDetected -gt 0) {
             Write-Host "[WARN] Secrets detected: $totalSecretsDetected (not stored in index)" -ForegroundColor Yellow
         } else {

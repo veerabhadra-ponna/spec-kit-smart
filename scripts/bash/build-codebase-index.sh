@@ -120,6 +120,9 @@ TOTAL_EXTERNAL_APIS=0
 TOTAL_ENV_VARS=0
 TOTAL_DEPENDENCIES=0
 TOTAL_SECRETS_DETECTED=0
+TOTAL_DATABASE_SCHEMAS=0
+TOTAL_ORM_ENTITIES=0
+TOTAL_TYPE_DEFINITIONS=0
 
 # Initialize JSON arrays
 CLASSES_JSON="[]"
@@ -131,6 +134,9 @@ WEBSOCKET_HANDLERS_JSON="[]"
 EXTERNAL_APIS_JSON="[]"
 ENV_VARS_JSON="[]"
 DEPENDENCIES_JSON="[]"
+DATABASE_SCHEMAS_JSON="[]"
+ORM_ENTITIES_JSON="[]"
+TYPE_DEFINITIONS_JSON="[]"
 
 # File extensions map
 declare -A LANG_EXTENSIONS
@@ -170,6 +176,9 @@ for lang in "${LANG_ARRAY[@]}"; do
 done
 # Remove trailing -o
 FIND_PATTERN="${FIND_PATTERN% -o}"
+
+# Add schema files (.prisma for data models)
+FIND_PATTERN="$FIND_PATTERN -o -name '*.prisma'"
 
 # Scan for source files
 log_info "Scanning for source files..."
@@ -464,6 +473,58 @@ while IFS= read -r file; do
         done <<< "$REEXPORT_MATCHES"
     fi
 
+    # Extract data models
+    # Prisma schemas (.prisma files): model User { ... }
+    if [[ "$file" =~ \.prisma$ ]]; then
+        PRISMA_MATCHES=$(grep -n "^[[:space:]]*model[[:space:]]\+[A-Za-z0-9_]\+" "$file" 2>/dev/null || true)
+        if [[ -n "$PRISMA_MATCHES" ]]; then
+            while IFS= read -r match; do
+                LINE_NUM=$(echo "$match" | cut -d: -f1)
+                MODEL_NAME=$(echo "$match" | sed -E 's/.*model[[:space:]]+([A-Za-z0-9_]+).*/\1/')
+
+                SCHEMA_OBJ=$(jq -n \
+                    --arg table "$MODEL_NAME" \
+                    --arg file "$REL_PATH" \
+                    --argjson line "$LINE_NUM" \
+                    --arg schema_type "prisma" \
+                    '{table: $table, file: $file, line: $line, schema_type: $schema_type, columns: [], relationships: []}')
+
+                DATABASE_SCHEMAS_JSON=$(echo "$DATABASE_SCHEMAS_JSON" | jq ". + [$SCHEMA_OBJ]")
+                TOTAL_DATABASE_SCHEMAS=$((TOTAL_DATABASE_SCHEMAS + 1))
+            done <<< "$PRISMA_MATCHES"
+        fi
+    fi
+
+    # TypeORM entities (TypeScript files): @Entity() decorator
+    if [[ "$file" =~ \.(ts|tsx)$ ]]; then
+        ENTITY_MATCHES=$(grep -n "^[[:space:]]*@Entity" "$file" 2>/dev/null || true)
+        if [[ -n "$ENTITY_MATCHES" ]]; then
+            while IFS= read -r match; do
+                LINE_NUM=$(echo "$match" | cut -d: -f1)
+                # Find the class name on the next few lines
+                CLASS_LINE=$((LINE_NUM + 1))
+                ENTITY_NAME=$(sed -n "${CLASS_LINE},$((CLASS_LINE + 5))p" "$file" | grep -m1 "class[[:space:]]\+" | sed -E 's/.*class[[:space:]]+([A-Za-z0-9_]+).*/\1/' || echo "Unknown")
+
+                # Extract table name from @Entity decorator if present
+                TABLE_NAME=$(sed -n "${LINE_NUM}p" "$file" | sed -E "s/.*@Entity\\(['\"]([^'\"]+)['\"]\\).*/\\1/" || echo "$ENTITY_NAME")
+                if [[ "$TABLE_NAME" == *"@Entity"* ]]; then
+                    TABLE_NAME=$(echo "$ENTITY_NAME" | tr '[:upper:]' '[:lower:]')
+                fi
+
+                ENTITY_OBJ=$(jq -n \
+                    --arg entity "$ENTITY_NAME" \
+                    --arg table "$TABLE_NAME" \
+                    --arg file "$REL_PATH" \
+                    --argjson line "$LINE_NUM" \
+                    --arg orm_type "typeorm" \
+                    '{entity: $entity, table: $table, file: $file, line: $line, orm_type: $orm_type, fields: [], decorators: [], relationships: []}')
+
+                ORM_ENTITIES_JSON=$(echo "$ORM_ENTITIES_JSON" | jq ". + [$ENTITY_OBJ]")
+                TOTAL_ORM_ENTITIES=$((TOTAL_ORM_ENTITIES + 1))
+            done <<< "$ENTITY_MATCHES"
+        fi
+    fi
+
     # Detect secrets (count only, don't store in index for security)
     # Pattern 1: API keys, secrets, passwords (KEY=value, SECRET=value, PASSWORD=value)
     SECRET_PATTERN1_MATCHES=$(grep -c -E "(API_KEY|SECRET|PASSWORD|PRIVATE_KEY|AUTH_TOKEN)[[:space:]]*=[[:space:]]*['\"]" "$file" 2>/dev/null || echo "0")
@@ -529,7 +590,10 @@ METADATA_JSON=$(jq -n \
     --argjson total_env_vars "$TOTAL_ENV_VARS" \
     --argjson total_dependencies "$TOTAL_DEPENDENCIES" \
     --argjson secrets_detected "$TOTAL_SECRETS_DETECTED" \
-    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces, total_rest_endpoints: $total_rest_endpoints, total_graphql_resolvers: $total_graphql_resolvers, total_websocket_handlers: $total_websocket_handlers, total_external_apis: $total_external_apis, total_env_vars: $total_env_vars, total_dependencies: $total_dependencies, secrets_detected: $secrets_detected}}')
+    --argjson total_database_schemas "$TOTAL_DATABASE_SCHEMAS" \
+    --argjson total_orm_entities "$TOTAL_ORM_ENTITIES" \
+    --argjson total_type_definitions "$TOTAL_TYPE_DEFINITIONS" \
+    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces, total_rest_endpoints: $total_rest_endpoints, total_graphql_resolvers: $total_graphql_resolvers, total_websocket_handlers: $total_websocket_handlers, total_external_apis: $total_external_apis, total_env_vars: $total_env_vars, total_dependencies: $total_dependencies, secrets_detected: $secrets_detected, total_database_schemas: $total_database_schemas, total_orm_entities: $total_orm_entities, total_type_definitions: $total_type_definitions}}')
 
 echo "$METADATA_JSON" | jq '.' > "${INDEX_DIR}/metadata.json"
 
@@ -563,8 +627,16 @@ DEPENDENCIES_FILE_JSON=$(jq -n \
 
 echo "$DEPENDENCIES_FILE_JSON" | jq '.' > "${INDEX_DIR}/dependencies.json"
 
-# Create empty files for other schemas (Phase 1 minimal)
-echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","database_schemas":[],"orm_entities":[],"type_definitions":[]}' | jq '.' > "${INDEX_DIR}/data-models.json"
+# Write data-models.json
+DATA_MODELS_JSON=$(jq -n \
+    --arg version "1.0" \
+    --arg timestamp "$CURRENT_TIMESTAMP" \
+    --argjson database_schemas "$DATABASE_SCHEMAS_JSON" \
+    --argjson orm_entities "$ORM_ENTITIES_JSON" \
+    --argjson type_definitions "$TYPE_DEFINITIONS_JSON" \
+    '{version: $version, timestamp: $timestamp, database_schemas: $database_schemas, orm_entities: $orm_entities, type_definitions: $type_definitions}')
+
+echo "$DATA_MODELS_JSON" | jq '.' > "${INDEX_DIR}/data-models.json"
 
 # Output summary
 if [[ "$JSON_OUTPUT" == "true" ]]; then
@@ -582,6 +654,8 @@ else
     echo "✓ External APIs: $TOTAL_EXTERNAL_APIS"
     echo "✓ Environment variables: $TOTAL_ENV_VARS"
     echo "✓ Dependencies: $TOTAL_DEPENDENCIES"
+    echo "✓ Database schemas: $TOTAL_DATABASE_SCHEMAS"
+    echo "✓ ORM entities: $TOTAL_ORM_ENTITIES"
     if [[ $TOTAL_SECRETS_DETECTED -gt 0 ]]; then
         echo "⚠ Secrets detected: $TOTAL_SECRETS_DETECTED (not stored in index)"
     else
