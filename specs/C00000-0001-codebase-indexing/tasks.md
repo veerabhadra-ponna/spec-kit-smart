@@ -44,8 +44,8 @@
 - [X] [T105] [US1] Implement file scanner with language filtering (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T106] [US1] Implement code structure parser (classes, functions, interfaces) (embedded in: scripts/bash/build-codebase-index.sh)
 - [ ] [T107] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/bash/build-codebase-index.sh)
-- [ ] [T108] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/bash/build-codebase-index.sh)
-- [ ] [T108.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/bash/build-codebase-index.sh)
+- [X] [T108] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/bash/build-codebase-index.sh)
+- [X] [T108.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/bash/build-codebase-index.sh)
 - [ ] [T109] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/bash/build-codebase-index.sh)
 - [ ] [T110] [US1] Implement dependency graph builder (imports/exports) (embedded in: scripts/bash/build-codebase-index.sh)
 - [ ] [T111] [US1] Implement secret redaction for sensitive data (embedded in: scripts/bash/build-codebase-index.sh)
@@ -59,8 +59,8 @@
 - [X] [T115] [US1] Implement file scanner with language filtering (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T116] [US1] Implement code structure parser (classes, functions, interfaces) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [ ] [T117] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T118] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T118.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T118] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T118.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [ ] [T119] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [ ] [T120] [US1] Implement dependency graph builder (imports/exports) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [ ] [T121] [US1] Implement secret redaction for sensitive data (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
@@ -79,8 +79,8 @@
 
 ### Testing
 
-- [ ] [T130] [US1] Create test suite for prerequisite checks (file: tests/indexing/test-prerequisite-checks.sh)
-- [ ] [T131] [US1] Create test suite for index building (file: tests/indexing/test-index-building.sh)
+- [X] [T130] [US1] Create test suite for prerequisite checks (file: tests/indexing/test-prerequisite-checks.sh)
+- [X] [T131] [US1] Create test suite for index building (file: tests/indexing/test-index-building.sh)
 - [ ] [T132] [US1] Create test suite for data extraction algorithms (file: tests/indexing/test-data-extraction.sh)
 - [ ] [T133] [US1] Create test suite for incremental updates (file: tests/indexing/test-incremental-update.sh)
 - [ ] [T134] [US1] Create cross-platform compatibility tests (file: tests/indexing/test-cross-platform.sh)
