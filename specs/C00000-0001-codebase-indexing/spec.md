@@ -151,6 +151,7 @@ As a developer implementing a new feature, I want the system to automatically su
 - **FR-008**: System MUST store extracted data in JSON format at `.analysis/index/` with files: structure.json, data-models.json, api-endpoints.json, external-apis.json, dependencies.json, and metadata.json
 - **FR-009**: System MUST support full index rebuild via `--full` flag
 - **FR-010**: System MUST support incremental updates via `--incremental` flag that only re-indexes changed files based on MD5 hash comparison
+- **FR-010a**: When `--incremental` flag is specified but no base index exists, system MUST automatically fallback to full index build mode and display explanation message: "No existing index found. Running full index build instead of incremental update."
 - **FR-011**: System MUST allow users to specify target directory via `--path <dir>` flag to index specific subdirectories
 - **FR-012**: System MUST allow users to filter by language via `--languages <list>` flag (comma-separated)
 - **FR-013**: System MUST allow users to exclude patterns via `--exclude <pattern>` flag using glob syntax
@@ -162,7 +163,7 @@ As a developer implementing a new feature, I want the system to automatically su
 
 - **FR-017**: System MUST provide prerequisite check scripts (check-index-prerequisite.sh / Check-IndexPrerequisite.ps1) that verify index exists and return freshness metadata
 - **FR-018**: System MUST provide optional check scripts (check-index-optional.sh / Check-IndexOptional.ps1) that warn if index missing but allow continuation
-- **FR-019**: Prerequisite check scripts MUST return JSON with fields: index_exists (boolean), index_path (string), freshness (ISO timestamp), age_days (integer), is_stale (boolean), files_indexed (integer)
+- **FR-019**: Prerequisite check scripts MUST return JSON with fields: index_exists (boolean), index_path (string), freshness (ISO 8601 timestamp from metadata.json), age_days (integer, calculated from freshness to current date), is_stale (boolean, true if age_days > 7), files_indexed (integer from metadata.statistics)
 - **FR-020**: System MUST consider index stale if >7 days old
 - **FR-021**: System MUST validate index integrity by checking for metadata.json presence and required fields
 
@@ -198,7 +199,7 @@ As a developer implementing a new feature, I want the system to automatically su
 - **FR-043**: All code references in answers MUST include file paths and line numbers (format: `file.ts:start-end`)
 - **FR-044**: System MUST provide confidence indicator for answers (e.g., "High confidence - Based on N sources")
 - **FR-045**: System MUST cite sources including .deepwiki documentation sections and index file references
-- **FR-046**: System MUST support questions about: architecture/patterns, data models, API endpoints, external integrations, authentication flows, and business logic
+- **FR-046**: System MUST support questions about: architecture/patterns, data models, API endpoints, external integrations, authentication flows, and business logic. Each category MUST be validated with representative test questions returning relevant answers with >80% accuracy.
 
 #### Code Reusability Checks
 
@@ -225,6 +226,12 @@ As a developer implementing a new feature, I want the system to automatically su
 - **FR-061**: System MUST skip files exceeding 10MB size limit and log warnings
 - **FR-062**: System MUST continue indexing if individual files fail to parse, log warnings, and report skip count in statistics
 - **FR-063**: System MUST validate index structure on load and report corruption errors with clear recovery instructions
+
+#### Index Version Management
+
+- **FR-064**: System MUST validate index format version (metadata.version field) on load and compare against current tool version
+- **FR-065**: When index version is incompatible with current tool version, system MUST display error message explaining incompatibility and recommend full index rebuild with `--full` flag
+- **FR-066**: System MUST store tool version that created index in metadata.json (field: created_by_version)
 
 ### Key Entities *(include if feature involves data)*
 
@@ -349,3 +356,10 @@ As a developer implementing a new feature, I want the system to automatically su
     - DeepWiki documentation generated in markdown only; no HTML, PDF, or other formats in Phase 1
     - Diagrams use Mermaid syntax; require markdown renderer with Mermaid support for visualization
     - Documentation is static; no interactive features or live code previews
+
+11. **Large Project Constraints**:
+    - Single-threaded processing in Phase 1 limits performance for >50K files
+    - Manual batching recommended: use `--path <subdirectory>` to index in segments
+    - Expected build times: 50K files ~8-12 minutes, 100K files ~15-25 minutes
+    - For very large projects (>100K files), consider subdirectory indexing with separate index outputs
+    - See `large-projects-guide.md` for detailed strategies and workarounds

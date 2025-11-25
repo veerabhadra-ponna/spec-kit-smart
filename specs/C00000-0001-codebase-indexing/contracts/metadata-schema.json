@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://spec-kit-smart.dev/schemas/index/metadata.json",
+  "title": "Index Metadata Schema",
+  "description": "Schema for codebase index metadata.json file",
+  "type": "object",
+  "required": ["version", "created_by_version", "generated_at", "freshness", "statistics"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Index format version"
+    },
+    "created_by_version": {
+      "type": "string",
+      "description": "Version of spec-kit-smart tool that created this index (e.g., '1.0.0')"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when index was built"
+    },
+    "freshness": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp for staleness checks (same as generated_at); used by prerequisite check scripts to calculate age_days"
+    },
+    "index_type": {
+      "type": "string",
+      "enum": ["full", "incremental"],
+      "description": "Type of index build performed"
+    },
+    "duration_seconds": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Time taken to build index in seconds"
+    },
+    "statistics": {
+      "type": "object",
+      "required": ["total_files", "indexed_files", "skipped_files"],
+      "properties": {
+        "total_files": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total files discovered during scan"
+        },
+        "indexed_files": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Files successfully indexed"
+        },
+        "skipped_files": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Files skipped (too large, parse errors, binary)"
+        },
+        "total_classes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total classes found across all files"
+        },
+        "total_functions": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total functions found across all files"
+        },
+        "total_interfaces": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total interfaces/types found across all files"
+        },
+        "total_entities": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total database entities/models found"
+        },
+        "total_rest_endpoints": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total REST API endpoints found"
+        },
+        "total_graphql_resolvers": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total GraphQL resolvers found"
+        },
+        "total_external_services": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total third-party services detected"
+        }
+      }
+    },
+    "languages": {
+      "type": "object",
+      "description": "File count per language",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Glob patterns excluded from indexing"
+    }
+  }
+}
