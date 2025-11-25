@@ -43,7 +43,7 @@
 - [X] [T104] [US1] Create main indexing orchestration script (file: scripts/bash/build-codebase-index.sh)
 - [X] [T105] [US1] Implement file scanner with language filtering (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T106] [US1] Implement code structure parser (classes, functions, interfaces) (embedded in: scripts/bash/build-codebase-index.sh)
-- [ ] [T107] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/bash/build-codebase-index.sh)
+- [X] [T107] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T108] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T108.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T109] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/bash/build-codebase-index.sh)
@@ -58,7 +58,7 @@
 - [X] [T114] [US1] Create main indexing orchestration script (file: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T115] [US1] Implement file scanner with language filtering (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T116] [US1] Implement code structure parser (classes, functions, interfaces) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T117] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T117] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T118] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T118.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T119] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
@@ -375,12 +375,12 @@ graph TD
 
 ### Overall Progress
 - **Total Tasks**: 135
-- **Completed**: 43 (31.9%)
-- **Remaining**: 92 (68.1%)
+- **Completed**: 45 (33.3%)
+- **Remaining**: 90 (66.7%)
 
 ### Phase Breakdown
 - **Phase 0 (Setup)**: 5/5 (100%) ✓
-- **Phase 1 (Core Indexing)**: 31/38 (82%)
+- **Phase 1 (Core Indexing)**: 33/38 (87%)
 - **Phase 2 (Analyze Integration)**: 3/9 (33%)
 - **Phase 3 (DeepWiki)**: 1/19 (5%)
 - **Phase 4 (KB Query)**: 1/16 (6%)
@@ -389,6 +389,7 @@ graph TD
 - **Phase 7 (Validation)**: 0/14 (0%)
 
 ### Recent Accomplishments
+- ✓ Data model extraction (Prisma schemas, TypeORM entities) for both Bash and PowerShell
 - ✓ API endpoint extraction (REST, GraphQL, WebSocket) for both Bash and PowerShell
 - ✓ External API detection (third-party SDKs: stripe, aws-sdk, firebase, etc.)
 - ✓ Environment variable extraction (process.env.* references)
