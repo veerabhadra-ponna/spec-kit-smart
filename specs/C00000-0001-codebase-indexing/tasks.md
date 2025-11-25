@@ -46,7 +46,7 @@
 - [ ] [T107] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T108] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T108.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/bash/build-codebase-index.sh)
-- [ ] [T109] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/bash/build-codebase-index.sh)
+- [X] [T109] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/bash/build-codebase-index.sh)
 - [ ] [T110] [US1] Implement dependency graph builder (imports/exports) (embedded in: scripts/bash/build-codebase-index.sh)
 - [ ] [T111] [US1] Implement secret redaction for sensitive data (embedded in: scripts/bash/build-codebase-index.sh)
 - [X] [T112] [US1] Implement metadata generator with statistics (embedded in: scripts/bash/build-codebase-index.sh)
@@ -61,7 +61,7 @@
 - [ ] [T117] [US1] Implement data model extractor (Prisma, TypeORM, Django, Hibernate) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T118] [US1] Implement API endpoint extractor (REST, GraphQL, WebSocket) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T118.5] [US1] Implement WebSocket handler extractor (Socket.io, native WebSocket, ws library) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
-- [ ] [T119] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
+- [X] [T119] [US1] Implement external API detector (third-party SDKs) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [ ] [T120] [US1] Implement dependency graph builder (imports/exports) (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [ ] [T121] [US1] Implement secret redaction for sensitive data (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
 - [X] [T122] [US1] Implement metadata generator with statistics (embedded in: scripts/powershell/Build-CodebaseIndex.ps1)
@@ -375,12 +375,12 @@ graph TD
 
 ### Overall Progress
 - **Total Tasks**: 135
-- **Completed**: 37 (27.4%)
-- **Remaining**: 98 (72.6%)
+- **Completed**: 39 (28.9%)
+- **Remaining**: 96 (71.1%)
 
 ### Phase Breakdown
 - **Phase 0 (Setup)**: 5/5 (100%) ✓
-- **Phase 1 (Core Indexing)**: 25/38 (66%)
+- **Phase 1 (Core Indexing)**: 27/38 (71%)
 - **Phase 2 (Analyze Integration)**: 3/9 (33%)
 - **Phase 3 (DeepWiki)**: 1/19 (5%)
 - **Phase 4 (KB Query)**: 1/16 (6%)
@@ -390,6 +390,8 @@ graph TD
 
 ### Recent Accomplishments
 - ✓ API endpoint extraction (REST, GraphQL, WebSocket) for both Bash and PowerShell
+- ✓ External API detection (third-party SDKs: stripe, aws-sdk, firebase, etc.)
+- ✓ Environment variable extraction (process.env.* references)
 - ✓ Test suites for prerequisite checks and index building
 - ✓ PowerShell script no longer requires jq dependency
 - ✓ Cross-platform regex extraction with multiline support
@@ -397,9 +399,8 @@ graph TD
 
 ### Next Priorities (Phase 1 Remaining)
 1. Data model extractors (Prisma, TypeORM, Django, Hibernate)
-2. External API detectors (third-party SDKs)
-3. Dependency graph builders (imports/exports)
-4. Secret redaction for sensitive data
-5. Index version validation
-6. Additional test suites
+2. Dependency graph builders (imports/exports)
+3. Secret redaction for sensitive data
+4. Index version validation
+5. Additional test suites
 
