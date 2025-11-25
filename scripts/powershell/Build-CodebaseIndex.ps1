@@ -48,7 +48,6 @@ param(
     [switch]$Incremental,
     [string]$Path,
     [string]$Languages = "ts,tsx,js,jsx,py,java,cs,go",
-    [switch]$Verbose,
     [switch]$Json
 )
 
@@ -58,7 +57,7 @@ $ErrorActionPreference = 'Stop'
 # Helper functions
 function Write-Log {
     param([string]$Message, [string]$Level = "INFO")
-    if ($Verbose -or $Level -ne "INFO") {
+    if ($VerbosePreference -eq 'Continue' -or $Level -ne "INFO") {
         $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
         Write-Host "[$timestamp] [$Level] $Message" -ForegroundColor $(
             switch ($Level) {
@@ -83,19 +82,12 @@ function Get-RepoRoot {
     return (Get-Location).Path
 }
 
-# Check dependencies
-if (-not (Get-Command jq -ErrorAction SilentlyContinue)) {
-    Write-Host "Error: jq is required but not installed." -ForegroundColor Red
-    Write-Host ""
-    Write-Host "Installation instructions:"
-    Write-Host "  Windows: choco install jq  or download from https://jqlang.github.io/jq/"
-    Write-Host "  Or use scoop: scoop install jq"
-    exit 2
-}
+# Check dependencies (jq is optional for PowerShell version - we use ConvertTo-Json)
+# Kept for bash script parity documentation only
 
 try {
     $repoRoot = Get-RepoRoot
-    $indexDir = Join-Path $repoRoot '.analysis' 'index'
+    $indexDir = Join-Path (Join-Path $repoRoot '.analysis') 'index'
     $cacheDir = Join-Path $indexDir 'cache'
 
     # Determine mode
@@ -205,8 +197,9 @@ try {
             $content = Get-Content $file.FullName -Raw -ErrorAction Stop
 
             # Extract classes
-            $classMatches = Select-String -InputObject $content -Pattern '^\s*(export\s+)?class\s+([A-Za-z0-9_]+)' -AllMatches
-            foreach ($match in $classMatches.Matches) {
+            $classRegex = [regex]::new('^\s*(export\s+)?class\s+([A-Za-z0-9_]+)', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $classMatches = $classRegex.Matches($content)
+            foreach ($match in $classMatches) {
                 $className = $match.Groups[2].Value
                 $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
 
@@ -220,8 +213,9 @@ try {
             }
 
             # Extract functions
-            $funcMatches = Select-String -InputObject $content -Pattern '^\s*(export\s+)?function\s+([A-Za-z0-9_]+)' -AllMatches
-            foreach ($match in $funcMatches.Matches) {
+            $funcRegex = [regex]::new('^\s*(export\s+)?function\s+([A-Za-z0-9_]+)', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $funcMatches = $funcRegex.Matches($content)
+            foreach ($match in $funcMatches) {
                 $funcName = $match.Groups[2].Value
                 $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
 
@@ -236,8 +230,9 @@ try {
 
             # Extract interfaces (TypeScript)
             if ($file.Extension -in @('.ts', '.tsx')) {
-                $interfaceMatches = Select-String -InputObject $content -Pattern '^\s*(export\s+)?interface\s+([A-Za-z0-9_]+)' -AllMatches
-                foreach ($match in $interfaceMatches.Matches) {
+                $interfaceRegex = [regex]::new('^\s*(export\s+)?interface\s+([A-Za-z0-9_]+)', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+                $interfaceMatches = $interfaceRegex.Matches($content)
+                foreach ($match in $interfaceMatches) {
                     $interfaceName = $match.Groups[2].Value
                     $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
 
@@ -252,7 +247,7 @@ try {
             }
         }
         catch {
-            Write-Log "Failed to process file $relPath: $_" "WARN"
+            Write-Log "Failed to process file $relPath`: $($_.Exception.Message)" "WARN"
             $skippedFiles++
         }
     }
@@ -272,7 +267,7 @@ try {
         interfaces = $interfaces
     } | ConvertTo-Json -Depth 10
 
-    $structureJson | jq '.' | Out-File -FilePath (Join-Path $indexDir 'structure.json') -Encoding UTF8
+    $structureJson | Out-File -FilePath (Join-Path $indexDir 'structure.json') -Encoding UTF8
 
     # Write metadata.json
     $metadataJson = @{
@@ -292,13 +287,13 @@ try {
         }
     } | ConvertTo-Json -Depth 10
 
-    $metadataJson | jq '.' | Out-File -FilePath (Join-Path $indexDir 'metadata.json') -Encoding UTF8
+    $metadataJson | Out-File -FilePath (Join-Path $indexDir 'metadata.json') -Encoding UTF8
 
     # Create empty files for other schemas
-    @{version = "1.0"; timestamp = $currentTimestamp; database_schemas = @(); orm_entities = @(); type_definitions = @() } | ConvertTo-Json | jq '.' | Out-File -FilePath (Join-Path $indexDir 'data-models.json') -Encoding UTF8
-    @{version = "1.0"; timestamp = $currentTimestamp; rest_endpoints = @(); graphql_resolvers = @(); websocket_handlers = @() } | ConvertTo-Json | jq '.' | Out-File -FilePath (Join-Path $indexDir 'api-endpoints.json') -Encoding UTF8
-    @{version = "1.0"; timestamp = $currentTimestamp; third_party_services = @(); environment_variables = @() } | ConvertTo-Json | jq '.' | Out-File -FilePath (Join-Path $indexDir 'external-apis.json') -Encoding UTF8
-    @{version = "1.0"; timestamp = $currentTimestamp; files = @() } | ConvertTo-Json | jq '.' | Out-File -FilePath (Join-Path $indexDir 'dependencies.json') -Encoding UTF8
+    @{version = "1.0"; timestamp = $currentTimestamp; database_schemas = @(); orm_entities = @(); type_definitions = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'data-models.json') -Encoding UTF8
+    @{version = "1.0"; timestamp = $currentTimestamp; rest_endpoints = @(); graphql_resolvers = @(); websocket_handlers = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'api-endpoints.json') -Encoding UTF8
+    @{version = "1.0"; timestamp = $currentTimestamp; third_party_services = @(); environment_variables = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'external-apis.json') -Encoding UTF8
+    @{version = "1.0"; timestamp = $currentTimestamp; files = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'dependencies.json') -Encoding UTF8
 
     # Output summary
     if ($Json) {
