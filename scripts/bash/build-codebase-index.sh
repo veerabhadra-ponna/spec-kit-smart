@@ -118,6 +118,7 @@ TOTAL_GRAPHQL_RESOLVERS=0
 TOTAL_WEBSOCKET_HANDLERS=0
 TOTAL_EXTERNAL_APIS=0
 TOTAL_ENV_VARS=0
+TOTAL_DEPENDENCIES=0
 
 # Initialize JSON arrays
 CLASSES_JSON="[]"
@@ -128,6 +129,7 @@ GRAPHQL_RESOLVERS_JSON="[]"
 WEBSOCKET_HANDLERS_JSON="[]"
 EXTERNAL_APIS_JSON="[]"
 ENV_VARS_JSON="[]"
+DEPENDENCIES_JSON="[]"
 
 # File extensions map
 declare -A LANG_EXTENSIONS
@@ -357,6 +359,110 @@ while IFS= read -r file; do
         done <<< "$ENV_MATCHES"
     fi
 
+    # Extract dependencies (imports and requires)
+    # Track unique dependencies per file to avoid duplicates
+    declare -A SEEN_IMPORTS
+
+    # Extract ES6 imports: import ... from '...'
+    IMPORT_MATCHES=$(grep -on "import[[:space:]].*from[[:space:]]*['\"]" "$file" 2>/dev/null || true)
+    if [[ -n "$IMPORT_MATCHES" ]]; then
+        while IFS= read -r match; do
+            LINE_NUM=$(echo "$match" | cut -d: -f1)
+            IMPORTED_FROM=$(echo "$match" | sed -E "s/.*from[[:space:]]*['\"]([^'\"]+)['\"].*/\1/")
+
+            # Skip if already seen in this file
+            if [[ -n "${SEEN_IMPORTS[$IMPORTED_FROM]}" ]]; then
+                continue
+            fi
+            SEEN_IMPORTS[$IMPORTED_FROM]=1
+
+            DEP_OBJ=$(jq -n \
+                --arg source_file "$REL_PATH" \
+                --arg imported_from "$IMPORTED_FROM" \
+                --argjson line "$LINE_NUM" \
+                --arg import_type "es6_import" \
+                '{source_file: $source_file, imported_from: $imported_from, line: $line, import_type: $import_type}')
+
+            DEPENDENCIES_JSON=$(echo "$DEPENDENCIES_JSON" | jq ". + [$DEP_OBJ]")
+            TOTAL_DEPENDENCIES=$((TOTAL_DEPENDENCIES + 1))
+        done <<< "$IMPORT_MATCHES"
+    fi
+
+    # Extract CommonJS requires: require('...')
+    REQUIRE_MATCHES=$(grep -on "require(['\"]" "$file" 2>/dev/null || true)
+    if [[ -n "$REQUIRE_MATCHES" ]]; then
+        while IFS= read -r match; do
+            LINE_NUM=$(echo "$match" | cut -d: -f1)
+            IMPORTED_FROM=$(echo "$match" | sed -E "s/.*require\\(['\"]([^'\"]+)['\"].*/\1/")
+
+            # Skip if already seen in this file
+            if [[ -n "${SEEN_IMPORTS[$IMPORTED_FROM]}" ]]; then
+                continue
+            fi
+            SEEN_IMPORTS[$IMPORTED_FROM]=1
+
+            DEP_OBJ=$(jq -n \
+                --arg source_file "$REL_PATH" \
+                --arg imported_from "$IMPORTED_FROM" \
+                --argjson line "$LINE_NUM" \
+                --arg import_type "commonjs_require" \
+                '{source_file: $source_file, imported_from: $imported_from, line: $line, import_type: $import_type}')
+
+            DEPENDENCIES_JSON=$(echo "$DEPENDENCIES_JSON" | jq ". + [$DEP_OBJ]")
+            TOTAL_DEPENDENCIES=$((TOTAL_DEPENDENCIES + 1))
+        done <<< "$REQUIRE_MATCHES"
+    fi
+
+    # Extract dynamic imports: import('...')
+    DYNAMIC_IMPORT_MATCHES=$(grep -on "import(['\"]" "$file" 2>/dev/null || true)
+    if [[ -n "$DYNAMIC_IMPORT_MATCHES" ]]; then
+        while IFS= read -r match; do
+            LINE_NUM=$(echo "$match" | cut -d: -f1)
+            IMPORTED_FROM=$(echo "$match" | sed -E "s/.*import\\(['\"]([^'\"]+)['\"].*/\1/")
+
+            # Skip if already seen in this file
+            if [[ -n "${SEEN_IMPORTS[$IMPORTED_FROM]}" ]]; then
+                continue
+            fi
+            SEEN_IMPORTS[$IMPORTED_FROM]=1
+
+            DEP_OBJ=$(jq -n \
+                --arg source_file "$REL_PATH" \
+                --arg imported_from "$IMPORTED_FROM" \
+                --argjson line "$LINE_NUM" \
+                --arg import_type "dynamic_import" \
+                '{source_file: $source_file, imported_from: $imported_from, line: $line, import_type: $import_type}')
+
+            DEPENDENCIES_JSON=$(echo "$DEPENDENCIES_JSON" | jq ". + [$DEP_OBJ]")
+            TOTAL_DEPENDENCIES=$((TOTAL_DEPENDENCIES + 1))
+        done <<< "$DYNAMIC_IMPORT_MATCHES"
+    fi
+
+    # Extract re-exports: export ... from '...'
+    REEXPORT_MATCHES=$(grep -on "export[[:space:]].*from[[:space:]]*['\"]" "$file" 2>/dev/null || true)
+    if [[ -n "$REEXPORT_MATCHES" ]]; then
+        while IFS= read -r match; do
+            LINE_NUM=$(echo "$match" | cut -d: -f1)
+            IMPORTED_FROM=$(echo "$match" | sed -E "s/.*from[[:space:]]*['\"]([^'\"]+)['\"].*/\1/")
+
+            # Skip if already seen in this file
+            if [[ -n "${SEEN_IMPORTS[$IMPORTED_FROM]}" ]]; then
+                continue
+            fi
+            SEEN_IMPORTS[$IMPORTED_FROM]=1
+
+            DEP_OBJ=$(jq -n \
+                --arg source_file "$REL_PATH" \
+                --arg imported_from "$IMPORTED_FROM" \
+                --argjson line "$LINE_NUM" \
+                --arg import_type "re_export" \
+                '{source_file: $source_file, imported_from: $imported_from, line: $line, import_type: $import_type}')
+
+            DEPENDENCIES_JSON=$(echo "$DEPENDENCIES_JSON" | jq ". + [$DEP_OBJ]")
+            TOTAL_DEPENDENCIES=$((TOTAL_DEPENDENCIES + 1))
+        done <<< "$REEXPORT_MATCHES"
+    fi
+
 done < "$TEMP_FILE_LIST"
 
 rm "$TEMP_FILE_LIST"
@@ -397,7 +503,8 @@ METADATA_JSON=$(jq -n \
     --argjson total_websocket_handlers "$TOTAL_WEBSOCKET_HANDLERS" \
     --argjson total_external_apis "$TOTAL_EXTERNAL_APIS" \
     --argjson total_env_vars "$TOTAL_ENV_VARS" \
-    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces, total_rest_endpoints: $total_rest_endpoints, total_graphql_resolvers: $total_graphql_resolvers, total_websocket_handlers: $total_websocket_handlers, total_external_apis: $total_external_apis, total_env_vars: $total_env_vars}}')
+    --argjson total_dependencies "$TOTAL_DEPENDENCIES" \
+    '{version: $version, created_by_version: $created_by_version, generated_at: $generated_at, freshness: $freshness, index_type: $index_type, duration_seconds: $duration, statistics: {total_files: $total_files, indexed_files: $indexed_files, skipped_files: $skipped_files, total_classes: $total_classes, total_functions: $total_functions, total_interfaces: $total_interfaces, total_rest_endpoints: $total_rest_endpoints, total_graphql_resolvers: $total_graphql_resolvers, total_websocket_handlers: $total_websocket_handlers, total_external_apis: $total_external_apis, total_env_vars: $total_env_vars, total_dependencies: $total_dependencies}}')
 
 echo "$METADATA_JSON" | jq '.' > "${INDEX_DIR}/metadata.json"
 
@@ -422,9 +529,17 @@ EXTERNAL_APIS_FILE_JSON=$(jq -n \
 
 echo "$EXTERNAL_APIS_FILE_JSON" | jq '.' > "${INDEX_DIR}/external-apis.json"
 
+# Write dependencies.json
+DEPENDENCIES_FILE_JSON=$(jq -n \
+    --arg version "1.0" \
+    --arg timestamp "$CURRENT_TIMESTAMP" \
+    --argjson files "$DEPENDENCIES_JSON" \
+    '{version: $version, timestamp: $timestamp, files: $files}')
+
+echo "$DEPENDENCIES_FILE_JSON" | jq '.' > "${INDEX_DIR}/dependencies.json"
+
 # Create empty files for other schemas (Phase 1 minimal)
 echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","database_schemas":[],"orm_entities":[],"type_definitions":[]}' | jq '.' > "${INDEX_DIR}/data-models.json"
-echo '{"version":"1.0","timestamp":"'"$CURRENT_TIMESTAMP"'","files":[]}' | jq '.' > "${INDEX_DIR}/dependencies.json"
 
 # Output summary
 if [[ "$JSON_OUTPUT" == "true" ]]; then
@@ -441,6 +556,7 @@ else
     echo "✓ WebSocket handlers: $TOTAL_WEBSOCKET_HANDLERS"
     echo "✓ External APIs: $TOTAL_EXTERNAL_APIS"
     echo "✓ Environment variables: $TOTAL_ENV_VARS"
+    echo "✓ Dependencies: $TOTAL_DEPENDENCIES"
     echo "✓ Location: $INDEX_DIR"
     echo ""
     echo "Next steps:"

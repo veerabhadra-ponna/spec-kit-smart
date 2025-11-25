@@ -137,6 +137,7 @@ try {
     $totalWebSocketHandlers = 0
     $totalExternalApis = 0
     $totalEnvVars = 0
+    $totalDependencies = 0
 
     # Initialize arrays
     $classes = @()
@@ -147,6 +148,7 @@ try {
     $websocketHandlers = @()
     $externalApis = @()
     $envVars = @()
+    $dependencies = @()
 
     # Build file patterns
     $includePatterns = @()
@@ -345,6 +347,86 @@ try {
                 }
                 $totalEnvVars++
             }
+
+            # Extract dependencies (imports and requires)
+            # Track unique dependencies per file to avoid duplicates
+            $seenImports = @{}
+
+            # Extract ES6 imports: import ... from '...'
+            $importRegex = [regex]::new('import\s+.*from\s+[''"]([^''"]+)[''"]', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $importMatches = $importRegex.Matches($content)
+            foreach ($match in $importMatches) {
+                $importedFrom = $match.Groups[1].Value
+                # Skip if already seen in this file
+                if ($seenImports.ContainsKey($importedFrom)) { continue }
+                $seenImports[$importedFrom] = $true
+
+                $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+                $dependencies += [PSCustomObject]@{
+                    source_file  = $relPath
+                    imported_from = $importedFrom
+                    line         = $lineNum
+                    import_type  = "es6_import"
+                }
+                $totalDependencies++
+            }
+
+            # Extract CommonJS requires: require('...')
+            $requireRegex = [regex]::new('require\([''"]([^''"]+)[''"]\)', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $requireMatches = $requireRegex.Matches($content)
+            foreach ($match in $requireMatches) {
+                $importedFrom = $match.Groups[1].Value
+                # Skip if already seen in this file
+                if ($seenImports.ContainsKey($importedFrom)) { continue }
+                $seenImports[$importedFrom] = $true
+
+                $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+                $dependencies += [PSCustomObject]@{
+                    source_file  = $relPath
+                    imported_from = $importedFrom
+                    line         = $lineNum
+                    import_type  = "commonjs_require"
+                }
+                $totalDependencies++
+            }
+
+            # Extract dynamic imports: import('...')
+            $dynamicImportRegex = [regex]::new('import\([''"]([^''"]+)[''"]\)', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $dynamicImportMatches = $dynamicImportRegex.Matches($content)
+            foreach ($match in $dynamicImportMatches) {
+                $importedFrom = $match.Groups[1].Value
+                # Skip if already seen in this file
+                if ($seenImports.ContainsKey($importedFrom)) { continue }
+                $seenImports[$importedFrom] = $true
+
+                $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+                $dependencies += [PSCustomObject]@{
+                    source_file  = $relPath
+                    imported_from = $importedFrom
+                    line         = $lineNum
+                    import_type  = "dynamic_import"
+                }
+                $totalDependencies++
+            }
+
+            # Extract re-exports: export ... from '...'
+            $reexportRegex = [regex]::new('export\s+.*from\s+[''"]([^''"]+)[''"]', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $reexportMatches = $reexportRegex.Matches($content)
+            foreach ($match in $reexportMatches) {
+                $importedFrom = $match.Groups[1].Value
+                # Skip if already seen in this file
+                if ($seenImports.ContainsKey($importedFrom)) { continue }
+                $seenImports[$importedFrom] = $true
+
+                $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+                $dependencies += [PSCustomObject]@{
+                    source_file  = $relPath
+                    imported_from = $importedFrom
+                    line         = $lineNum
+                    import_type  = "re_export"
+                }
+                $totalDependencies++
+            }
         }
         catch {
             Write-Log "Failed to process file $relPath`: $($_.Exception.Message)" "WARN"
@@ -389,6 +471,7 @@ try {
             total_websocket_handlers = $totalWebSocketHandlers
             total_external_apis     = $totalExternalApis
             total_env_vars          = $totalEnvVars
+            total_dependencies      = $totalDependencies
         }
     } | ConvertTo-Json -Depth 10
 
@@ -415,9 +498,17 @@ try {
 
     $externalApisJson | Out-File -FilePath (Join-Path $indexDir 'external-apis.json') -Encoding UTF8
 
+    # Write dependencies.json
+    $dependenciesJson = @{
+        version   = "1.0"
+        timestamp = $currentTimestamp
+        files     = $dependencies
+    } | ConvertTo-Json -Depth 10
+
+    $dependenciesJson | Out-File -FilePath (Join-Path $indexDir 'dependencies.json') -Encoding UTF8
+
     # Create empty files for other schemas
     @{version = "1.0"; timestamp = $currentTimestamp; database_schemas = @(); orm_entities = @(); type_definitions = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'data-models.json') -Encoding UTF8
-    @{version = "1.0"; timestamp = $currentTimestamp; files = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'dependencies.json') -Encoding UTF8
 
     # Output summary
     if ($Json) {
@@ -435,6 +526,7 @@ try {
         Write-Host "[OK] WebSocket handlers: $totalWebSocketHandlers" -ForegroundColor Green
         Write-Host "[OK] External APIs: $totalExternalApis" -ForegroundColor Green
         Write-Host "[OK] Environment variables: $totalEnvVars" -ForegroundColor Green
+        Write-Host "[OK] Dependencies: $totalDependencies" -ForegroundColor Green
         Write-Host "[OK] Location: $indexDir" -ForegroundColor Green
         Write-Host ""
         Write-Host "Next steps:"
