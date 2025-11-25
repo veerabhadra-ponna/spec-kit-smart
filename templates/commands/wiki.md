@@ -76,24 +76,28 @@ fi
 ## Generated Content
 
 ### Tier 1: Overview
+
 - Project purpose and scope
 - Technology stack summary
 - Quick start guide
 - Key features list
 
 ### Tier 2: Functional Summary
+
 - User scenarios and workflows
 - System capabilities
 - Integration points
 - Business logic overview
 
 ### Tier 3: Architecture
+
 - Component diagram (Mermaid)
 - Data flow diagram (Mermaid)
 - System boundaries
 - External dependencies
 
 ### Tier 4: Module Documentation
+
 - Per-module breakdown
 - Class and function documentation
 - API endpoint details
@@ -151,14 +155,14 @@ fi
 
 ```bash
 if [[ "$PLATFORM" == "windows" ]]; then
-    powershell.exe -ExecutionPolicy Bypass -File scripts/powershell/Generate-DeepWiki.ps1 "$@"
+    powershell.exe -ExecutionPolicy Bypass -File .specify/scripts/powershell/Generate-DeepWiki.ps1 "$@"
 else
-    bash scripts/bash/generate-deepwiki.sh "$@"
+    bash .specify/scripts/bash/generate-deepwiki.sh "$@"
 fi
 ```
 
 The command delegates to:
-- **Bash**: `scripts/bash/generate-deepwiki.sh`
-- **PowerShell**: `scripts/powershell/Generate-DeepWiki.ps1`
+- **Bash**: `.specify/scripts/bash/generate-deepwiki.sh`
+- **PowerShell**: `.specify/scripts/powershell/Generate-DeepWiki.ps1`
 
 Both scripts read from `.analysis/index/` and generate markdown documentation in `.deepwiki/`.

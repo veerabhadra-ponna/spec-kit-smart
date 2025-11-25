@@ -19,6 +19,10 @@ MODE="auto"
 TARGET_PATH="${REPO_ROOT}"
 LANGUAGES="ts,tsx,js,jsx,py,java,cs,go"
 
+# Current supported index version
+CURRENT_INDEX_VERSION="1.0"
+CURRENT_TOOL_VERSION="1.0.0"
+
 # Parse arguments
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -46,6 +50,44 @@ while [[ $# -gt 0 ]]; do
             JSON_OUTPUT=true
             shift
             ;;
+        -h|--help)
+            cat <<EOF
+Usage: $(basename "$0") [OPTIONS]
+
+Build a searchable index of your codebase.
+
+Options:
+  --full            Force full rebuild (default if no index exists)
+  --incremental     Update only changed files (requires existing index)
+  --path <dir>      Index specific directory instead of entire repository
+  --languages <list> Filter by languages (default: ts,tsx,js,jsx,py,java,cs,go)
+  --verbose         Show detailed progress output
+  --json            Output results as JSON
+  -h, --help        Show this help message
+
+Examples:
+  $(basename "$0")                    # Build full index
+  $(basename "$0") --incremental      # Update changed files only
+  $(basename "$0") --path src/services # Index specific directory
+  $(basename "$0") --languages ts,js   # Index only TypeScript and JavaScript
+
+Output:
+  Creates JSON index files in .analysis/index/:
+    - metadata.json      Statistics and freshness tracking
+    - structure.json     Classes, functions, interfaces
+    - data-models.json   Database schemas and entities
+    - api-endpoints.json REST/GraphQL/WebSocket endpoints
+    - external-apis.json Third-party service integrations
+    - dependencies.json  Import/export graph
+
+Exit codes:
+  0 - Success
+  1 - General error
+  2 - Dependency missing (jq)
+
+EOF
+            exit 0
+            ;;
         *)
             echo "Unknown option: $1" >&2
             exit 1
@@ -68,6 +110,64 @@ log_error() {
     echo "[ERROR] $*" >&2
 }
 
+# Validate index version compatibility (FR-064, FR-065)
+# Returns: 0 if compatible or no index, 1 if incompatible
+validate_index_version() {
+    local metadata_file="${INDEX_DIR}/metadata.json"
+
+    if [[ ! -f "$metadata_file" ]]; then
+        # No existing index, nothing to validate
+        return 0
+    fi
+
+    # Read version from metadata
+    local index_version
+    index_version=$(jq -r '.version // "unknown"' "$metadata_file" 2>/dev/null || echo "unknown")
+
+    local created_by_version
+    created_by_version=$(jq -r '.created_by_version // "unknown"' "$metadata_file" 2>/dev/null || echo "unknown")
+
+    # Check if version is compatible
+    # Version 1.0 is compatible with 1.0
+    # Future: implement semantic versioning comparison
+    if [[ "$index_version" == "unknown" ]]; then
+        log_error "Index version information missing or corrupted"
+        log_error "Please rebuild the index with: --full"
+        if [[ "$JSON_OUTPUT" == "true" ]]; then
+            jq -n \
+                --arg error "INDEX_VERSION_MISSING" \
+                --arg message "Index version information missing or corrupted" \
+                --arg remediation "Run with --full flag to rebuild the index" \
+                '{success: false, error: {code: $error, message: $message, remediation: $remediation}}'
+        fi
+        return 1
+    fi
+
+    # Extract major version for compatibility check
+    local index_major="${index_version%%.*}"
+    local current_major="${CURRENT_INDEX_VERSION%%.*}"
+
+    if [[ "$index_major" != "$current_major" ]]; then
+        log_error "Index version incompatible: v${index_version} (created by tool v${created_by_version})"
+        log_error "Current tool requires index version: v${CURRENT_INDEX_VERSION}"
+        log_error "Please rebuild the index with: --full"
+        if [[ "$JSON_OUTPUT" == "true" ]]; then
+            jq -n \
+                --arg error "INDEX_VERSION_INCOMPATIBLE" \
+                --arg message "Index version incompatible" \
+                --arg index_version "$index_version" \
+                --arg current_version "$CURRENT_INDEX_VERSION" \
+                --arg created_by "$created_by_version" \
+                --arg remediation "Run with --full flag to rebuild the index" \
+                '{success: false, error: {code: $error, message: $message, details: {index_version: $index_version, required_version: $current_version, created_by_tool_version: $created_by}, remediation: $remediation}}'
+        fi
+        return 1
+    fi
+
+    log_info "Index version validated: v${index_version} (created by tool v${created_by_version})"
+    return 0
+}
+
 # Check dependencies
 if ! command -v jq >/dev/null 2>&1; then
     log_error "jq is required but not installed."
@@ -77,6 +177,17 @@ if ! command -v jq >/dev/null 2>&1; then
     echo "  Linux:   apt-get install jq  or  yum install jq"
     echo "  Windows: choco install jq  or download from https://jqlang.github.io/jq/"
     exit 2
+fi
+
+# Validate existing index version if present (FR-064, FR-065)
+if [[ -f "${INDEX_DIR}/metadata.json" ]]; then
+    if ! validate_index_version; then
+        # Version incompatible - force full rebuild unless already specified
+        if [[ "$MODE" != "full" ]]; then
+            log_warn "Incompatible index version detected. Forcing full rebuild."
+            MODE="full"
+        fi
+    fi
 fi
 
 # Determine mode
@@ -560,7 +671,7 @@ log_info "Index build completed in ${DURATION} seconds"
 
 # Write structure.json
 STRUCTURE_JSON=$(jq -n \
-    --arg version "1.0" \
+    --arg version "$CURRENT_INDEX_VERSION" \
     --arg timestamp "$CURRENT_TIMESTAMP" \
     --argjson classes "$CLASSES_JSON" \
     --argjson functions "$FUNCTIONS_JSON" \
@@ -571,8 +682,8 @@ echo "$STRUCTURE_JSON" | jq '.' > "${INDEX_DIR}/structure.json"
 
 # Write metadata.json
 METADATA_JSON=$(jq -n \
-    --arg version "1.0" \
-    --arg created_by_version "1.0.0" \
+    --arg version "$CURRENT_INDEX_VERSION" \
+    --arg created_by_version "$CURRENT_TOOL_VERSION" \
     --arg generated_at "$CURRENT_TIMESTAMP" \
     --arg freshness "$CURRENT_TIMESTAMP" \
     --arg index_type "$MODE" \
@@ -599,7 +710,7 @@ echo "$METADATA_JSON" | jq '.' > "${INDEX_DIR}/metadata.json"
 
 # Write api-endpoints.json
 API_ENDPOINTS_JSON=$(jq -n \
-    --arg version "1.0" \
+    --arg version "$CURRENT_INDEX_VERSION" \
     --arg timestamp "$CURRENT_TIMESTAMP" \
     --argjson rest_endpoints "$REST_ENDPOINTS_JSON" \
     --argjson graphql_resolvers "$GRAPHQL_RESOLVERS_JSON" \
@@ -610,7 +721,7 @@ echo "$API_ENDPOINTS_JSON" | jq '.' > "${INDEX_DIR}/api-endpoints.json"
 
 # Write external-apis.json
 EXTERNAL_APIS_FILE_JSON=$(jq -n \
-    --arg version "1.0" \
+    --arg version "$CURRENT_INDEX_VERSION" \
     --arg timestamp "$CURRENT_TIMESTAMP" \
     --argjson third_party_services "$EXTERNAL_APIS_JSON" \
     --argjson environment_variables "$ENV_VARS_JSON" \
@@ -620,7 +731,7 @@ echo "$EXTERNAL_APIS_FILE_JSON" | jq '.' > "${INDEX_DIR}/external-apis.json"
 
 # Write dependencies.json
 DEPENDENCIES_FILE_JSON=$(jq -n \
-    --arg version "1.0" \
+    --arg version "$CURRENT_INDEX_VERSION" \
     --arg timestamp "$CURRENT_TIMESTAMP" \
     --argjson files "$DEPENDENCIES_JSON" \
     '{version: $version, timestamp: $timestamp, files: $files}')
@@ -629,7 +740,7 @@ echo "$DEPENDENCIES_FILE_JSON" | jq '.' > "${INDEX_DIR}/dependencies.json"
 
 # Write data-models.json
 DATA_MODELS_JSON=$(jq -n \
-    --arg version "1.0" \
+    --arg version "$CURRENT_INDEX_VERSION" \
     --arg timestamp "$CURRENT_TIMESTAMP" \
     --argjson database_schemas "$DATABASE_SCHEMAS_JSON" \
     --argjson orm_entities "$ORM_ENTITIES_JSON" \

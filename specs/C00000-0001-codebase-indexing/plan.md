@@ -37,7 +37,7 @@ Build a codebase indexing system that creates searchable representations of code
 - **jq**: Must be installed on all platforms (scripts check at startup)
   - macOS: `brew install jq`
   - Linux: `apt-get install jq` or `yum install jq`
-  - Windows: `choco install jq` or download from https://jqlang.github.io/jq/
+  - Windows: `choco install jq` or download from <https://jqlang.github.io/jq/>
 - **git**: Optional (fallback to current directory if not available)
 - **Unix tools equivalents in PowerShell**:
   - `find` → `Get-ChildItem -Recurse`

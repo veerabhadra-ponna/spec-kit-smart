@@ -140,6 +140,7 @@ A: Run incremental update: `/speckitsmart.index --incremental`
 **Q: Some files not indexed**
 
 A: Check verbose output for reasons:
+
 ```bash
 /speckitsmart.index --verbose
 ```
@@ -248,6 +249,7 @@ Common reasons:
 ### Testing Strategy
 
 **Unit Tests** (Bash test framework - bats):
+
 ```bash
 # tests/indexing/test-prerequisite-checks.sh
 test_prerequisite_index_exists() {
@@ -267,6 +269,7 @@ test_prerequisite_index_exists() {
 ```
 
 **Integration Tests**:
+
 ```bash
 # tests/indexing/test-index-building.sh
 test_full_index_workflow() {
@@ -284,6 +287,7 @@ test_full_index_workflow() {
 ```
 
 **Cross-Platform Tests** (GitHub Actions):
+
 ```yaml
 # .github/workflows/test-indexing.yml
 jobs:

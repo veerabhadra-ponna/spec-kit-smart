@@ -9,7 +9,7 @@
   },
   "workflow": {
     "enableCheckArtifactory": false,
-    "osEnv": "windows"
+    "osEnv": "auto"
   },
   "branching": {
     "pattern": "feature/<jira>-<shortname>",

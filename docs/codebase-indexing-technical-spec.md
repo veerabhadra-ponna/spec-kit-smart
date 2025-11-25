@@ -105,6 +105,7 @@ Source Code Files
 **File:** `templates/commands/index.md`
 
 **Frontmatter:**
+
 ```yaml
 ---
 description: Build codebase index (PREREQUISITE for analyze-project)
@@ -170,6 +171,7 @@ fi
 **File:** `templates/commands/wiki.md`
 
 **Frontmatter:**
+
 ```yaml
 ---
 description: Generate DeepWiki documentation from index
@@ -197,11 +199,13 @@ prerequisite_check:
 ```
 
 **For Windows (PowerShell):**
+
 ```powershell
 .specify/scripts/powershell/Check-IndexPrerequisite.ps1
 ```
 
 **Expected output:**
+
 ```json
 {
   "index_exists": true,
@@ -234,6 +238,7 @@ Then re-run:
 **If `index_exists: true`:**
 
 Proceed with DeepWiki generation.
+
 ```
 
 ---
@@ -270,6 +275,7 @@ Run prerequisite check:
 ```
 
 **For Windows:**
+
 ```powershell
 .specify/scripts/powershell/Check-IndexPrerequisite.ps1
 ```
@@ -303,6 +309,7 @@ Continue anyway? [Y/n]
 ```
 
 Wait for user input. If 'n' or 'N', exit. Otherwise continue.
+
 ```
 
 ---
@@ -326,11 +333,13 @@ Wait for user input. If 'n' or 'N', exit. Otherwise continue.
 ```
 
 **For Windows (PowerShell):**
+
 ```powershell
 .specify/scripts/powershell/Check-IndexPrerequisite.ps1
 ```
 
 **Expected output:**
+
 ```json
 {
   "index_exists": true,
@@ -416,11 +425,13 @@ Proceed immediately to Step 3.
 ### Step 3: Load Index Data for Analysis
 
 **For Unix/Linux/macOS:**
+
 ```bash
 .specify/scripts/bash/load-index-for-analysis.sh
 ```
 
 **For Windows:**
+
 ```powershell
 .specify/scripts/powershell/Load-IndexForAnalysis.ps1
 ```
@@ -473,6 +484,7 @@ This provides:
 - ✅ Detected patterns and frameworks
 
 **Then proceed with existing analyze-project workflow...**
+
 ```
 
 ---
@@ -496,11 +508,13 @@ This provides:
 ```
 
 **For Windows:**
+
 ```powershell
 .specify/scripts/powershell/Check-IndexOptional.ps1
 ```
 
 **Output:**
+
 ```json
 {
   "index_available": true,
@@ -568,11 +582,13 @@ This will help you:
 **BEFORE implementing each task from tasks.md:**
 
 **For Unix/Linux/macOS:**
+
 ```bash
 .specify/scripts/bash/find-reusable-code.sh "TASK_DESCRIPTION"
 ```
 
 **For Windows:**
+
 ```powershell
 .specify/scripts/powershell/Find-ReusableCode.ps1 -TaskDescription "TASK_DESCRIPTION"
 ```
@@ -580,6 +596,7 @@ This will help you:
 **Example Task:** "Implement JWT token validation"
 
 **Script returns:**
+
 ```json
 {
   "existing_implementations": [
@@ -676,6 +693,7 @@ export const authMiddleware = async (req, res, next) => {
 ```
 
 **Then proceed with next task...**
+
 ```
 
 ---
@@ -1510,6 +1528,7 @@ The indexing system creates a searchable, structured representation of your code
 **Prerequisite:** Requires index (run `/speckitsmart.index` first)
 
 **Basic usage:**
+
 ```bash
 # Generate all documentation
 /speckitsmart.wiki
@@ -1540,6 +1559,7 @@ The indexing system creates a searchable, structured representation of your code
 **Prerequisites:** Requires index, optionally DeepWiki for better answers
 
 **Basic usage:**
+
 ```bash
 # Ask about functionality
 /speckitsmart.ask "How does authentication work?"
@@ -1570,6 +1590,7 @@ The indexing system creates a searchable, structured representation of your code
 ### Updated Workflow
 
 **Old workflow:**
+
 ```
 1. /speckitsmart.analyze-project  ← Slow, read every file
 2. /speckitsmart.specify
@@ -1577,6 +1598,7 @@ The indexing system creates a searchable, structured representation of your code
 ```
 
 **New workflow (recommended):**
+
 ```
 1. /speckitsmart.index              ← NEW: Build index first (30-60s)
 2. /speckitsmart.analyze-project    ← 10x faster with index
@@ -1588,13 +1610,14 @@ The indexing system creates a searchable, structured representation of your code
 
 ### Prerequisite Requirements
 
-#### Commands that REQUIRE index (will fail without):
+#### Commands that REQUIRE index (will fail without)
 
 - `/speckitsmart.analyze-project` - Reverse engineering needs index
 - `/speckitsmart.wiki` - Documentation generation needs index
 - `/speckitsmart.ask` - Q&A needs index to answer questions
 
 **If index missing, you'll see:**
+
 ```
 ❌ ERROR: Codebase index not found
 
@@ -1604,11 +1627,12 @@ Run this command first:
 Then re-run this command.
 ```
 
-#### Commands with OPTIONAL index (warns but continues):
+#### Commands with OPTIONAL index (warns but continues)
 
 - `/speckitsmart.implement` - Works without index, but with reduced benefits
 
 **If index missing during implement:**
+
 ```
 ⚠️ Index not available
 
@@ -1626,6 +1650,7 @@ Run /speckitsmart.index to enable these features.
 - Stale: >7 days old (commands will warn)
 
 **Update index:**
+
 ```bash
 # Quick incremental update (5-10 seconds)
 /speckitsmart.index --incremental
@@ -1662,9 +1687,9 @@ A: No, `.analysis/index/` is gitignored. Each developer builds locally.
 
 **Q: What if indexing fails?**
 A: Run with `--verbose` to see details. Common issues:
-   - Syntax errors in code (skip with `--skip-invalid`)
-   - Large files (increase `--max-file-size`)
-   - Permission issues (check `.analysis/` write access)
+- Syntax errors in code (skip with `--skip-invalid`)
+- Large files (increase `--max-file-size`)
+- Permission issues (check `.analysis/` write access)
 
 ### Performance Expectations
 
@@ -1692,6 +1717,7 @@ A: Run with `--verbose` to see details. Common issues:
 - Index is local-only (never uploaded)
 - Automatically gitignored
 - Safe to use with proprietary code
+
 ```
 
 ---
