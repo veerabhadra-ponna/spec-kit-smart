@@ -135,6 +135,8 @@ try {
     $totalRestEndpoints = 0
     $totalGraphQLResolvers = 0
     $totalWebSocketHandlers = 0
+    $totalExternalApis = 0
+    $totalEnvVars = 0
 
     # Initialize arrays
     $classes = @()
@@ -143,6 +145,8 @@ try {
     $restEndpoints = @()
     $graphqlResolvers = @()
     $websocketHandlers = @()
+    $externalApis = @()
+    $envVars = @()
 
     # Build file patterns
     $includePatterns = @()
@@ -295,6 +299,52 @@ try {
                 }
                 $totalWebSocketHandlers++
             }
+
+            # Extract third-party API integrations (known SDKs)
+            $apiRegex = [regex]::new('(?:import|require).*?from\s+[''"]([^''"]+)[''"]', [System.Text.RegularExpressions.RegexOptions]::Multiline -bor [System.Text.RegularExpressions.RegexOptions]::IgnoreCase)
+            $knownServices = @('stripe', 'aws-sdk', '@aws-sdk', 'firebase', '@google-cloud', 'sendgrid', 'twilio', 'mailgun', 'pusher', 'socket.io-client', 'axios', 'node-fetch', 'got', 'request', 'superagent')
+            $apiMatches = $apiRegex.Matches($content)
+            foreach ($match in $apiMatches) {
+                $service = $match.Groups[1].Value
+                $isKnownService = $false
+                foreach ($known in $knownServices) {
+                    if ($service -eq $known -or $service.StartsWith("$known/")) {
+                        $isKnownService = $true
+                        break
+                    }
+                }
+                if ($isKnownService) {
+                    $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+                    if ($service -match '@') { $service = $service -replace '@.*/', '' }
+                    $service = $service.Split('/')[0]
+
+                    $externalApis += [PSCustomObject]@{
+                        service = $service
+                        file    = $relPath
+                        line    = $lineNum
+                    }
+                    $totalExternalApis++
+                }
+            }
+
+            # Extract environment variables (API keys, secrets, configs)
+            $envRegex = [regex]::new('process\.env\.([A-Z_][A-Z0-9_]*)', [System.Text.RegularExpressions.RegexOptions]::Multiline)
+            $envMatches = $envRegex.Matches($content)
+            $seenEnvVars = @{}
+            foreach ($match in $envMatches) {
+                $envVar = $match.Groups[1].Value
+                # Skip if already seen in this file
+                if ($seenEnvVars.ContainsKey($envVar)) { continue }
+                $seenEnvVars[$envVar] = $true
+
+                $lineNum = ($content.Substring(0, $match.Index) -split "`n").Count
+                $envVars += [PSCustomObject]@{
+                    name = $envVar
+                    file = $relPath
+                    line = $lineNum
+                }
+                $totalEnvVars++
+            }
         }
         catch {
             Write-Log "Failed to process file $relPath`: $($_.Exception.Message)" "WARN"
@@ -337,6 +387,8 @@ try {
             total_rest_endpoints    = $totalRestEndpoints
             total_graphql_resolvers = $totalGraphQLResolvers
             total_websocket_handlers = $totalWebSocketHandlers
+            total_external_apis     = $totalExternalApis
+            total_env_vars          = $totalEnvVars
         }
     } | ConvertTo-Json -Depth 10
 
@@ -353,9 +405,18 @@ try {
 
     $apiEndpointsJson | Out-File -FilePath (Join-Path $indexDir 'api-endpoints.json') -Encoding UTF8
 
+    # Write external-apis.json
+    $externalApisJson = @{
+        version              = "1.0"
+        timestamp            = $currentTimestamp
+        third_party_services = $externalApis
+        environment_variables = $envVars
+    } | ConvertTo-Json -Depth 10
+
+    $externalApisJson | Out-File -FilePath (Join-Path $indexDir 'external-apis.json') -Encoding UTF8
+
     # Create empty files for other schemas
     @{version = "1.0"; timestamp = $currentTimestamp; database_schemas = @(); orm_entities = @(); type_definitions = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'data-models.json') -Encoding UTF8
-    @{version = "1.0"; timestamp = $currentTimestamp; third_party_services = @(); environment_variables = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'external-apis.json') -Encoding UTF8
     @{version = "1.0"; timestamp = $currentTimestamp; files = @() } | ConvertTo-Json | Out-File -FilePath (Join-Path $indexDir 'dependencies.json') -Encoding UTF8
 
     # Output summary
@@ -372,6 +433,8 @@ try {
         Write-Host "[OK] REST endpoints: $totalRestEndpoints" -ForegroundColor Green
         Write-Host "[OK] GraphQL resolvers: $totalGraphQLResolvers" -ForegroundColor Green
         Write-Host "[OK] WebSocket handlers: $totalWebSocketHandlers" -ForegroundColor Green
+        Write-Host "[OK] External APIs: $totalExternalApis" -ForegroundColor Green
+        Write-Host "[OK] Environment variables: $totalEnvVars" -ForegroundColor Green
         Write-Host "[OK] Location: $indexDir" -ForegroundColor Green
         Write-Host ""
         Write-Host "Next steps:"
