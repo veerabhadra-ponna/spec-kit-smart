@@ -145,7 +145,7 @@ Generate:
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Write to: `.analysis/{dir}/abstraction-assessment.md`
+Write to: `{analysis_dir}/abstraction-assessment.md`
 
 **Verify:** Read file, confirm no placeholders.
 
@@ -246,7 +246,7 @@ Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
 
 ```
 
-Write to: `.analysis/{dir}/concern-migration-plan.md`
+Write to: `{analysis_dir}/concern-migration-plan.md`
 
 **Output:**
 
@@ -329,7 +329,7 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Append to: `.analysis/{dir}/concern-migration-plan.md`
+Append to: `{analysis_dir}/concern-migration-plan.md`
 
 **Output:**
 
@@ -428,7 +428,7 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 
 ```
 
-Append to: `.analysis/{dir}/concern-migration-plan.md`
+Append to: `{analysis_dir}/concern-migration-plan.md`
 
 **Verify:** Read complete file, confirm all 10 sections present.
 
@@ -590,7 +590,7 @@ Generate detailed rollback procedure:
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Write to: `.analysis/{dir}/rollback-procedure.md`
+Write to: `{analysis_dir}/rollback-procedure.md`
 
 **Verify:** Read file, confirm no placeholders.
 

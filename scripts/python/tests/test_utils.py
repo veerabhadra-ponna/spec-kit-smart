@@ -63,10 +63,10 @@ class TestGenerateChainId:
         int(result, 16)  # Should not raise
 
     def test_unique_ids(self):
-        """Should generate unique IDs."""
+        """Should generate unique IDs using cryptographically secure random."""
         ids = [generate_chain_id() for _ in range(10)]
-        # Most should be unique (time-based, so small chance of collision)
-        assert len(set(ids)) >= 5
+        # All should be unique (using secrets.token_hex)
+        assert len(set(ids)) == 10
 
 
 class TestSafeJsonLoads:

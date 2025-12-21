@@ -28,7 +28,7 @@ Generate functional specification documenting WHAT the MODERNIZED system WILL do
 ## Source of Truth
 
 **Primary Sources:**
-- `.analysis/{dir}/analysis-report.md` (feature catalog)
+- `{analysis_dir}/analysis-report.md` (feature catalog)
 - `.analysis/.state/03a-full-app.json` (10 modernization preferences)
 - User's scope validation answers
 
@@ -87,7 +87,7 @@ Generate Sections 1, 2, and 3 for TARGET system.
 - OUT OF SCOPE: Components to keep as-is
 - Migration boundaries
 
-Write to: `.analysis/{dir}/functional-spec-target.md`
+Write to: `{analysis_dir}/functional-spec-target.md`
 
 **Verify:** Read file, confirm scope boundaries match user's answers.
 
@@ -155,7 +155,7 @@ For each CRITICAL feature from legacy spec:
 
 ```
 
-Append to: `.analysis/{dir}/functional-spec-target.md`
+Append to: `{analysis_dir}/functional-spec-target.md`
 
 **Output:**
 
@@ -211,7 +211,7 @@ Generate Sections 4.2 and 5 with target stack considerations.
 
 ```
 
-Append to: `.analysis/{dir}/functional-spec-target.md`
+Append to: `{analysis_dir}/functional-spec-target.md`
 
 **Output:**
 
@@ -271,7 +271,7 @@ Use user's answer from Q2 (Database):
 
 ```
 
-Append to: `.analysis/{dir}/functional-spec-target.md`
+Append to: `{analysis_dir}/functional-spec-target.md`
 
 **Output:**
 
@@ -316,7 +316,7 @@ Generate Sections 8, 9, and 10.
 - Budget constraints
 - Technology constraints from user preferences
 
-Append to: `.analysis/{dir}/functional-spec-target.md`
+Append to: `{analysis_dir}/functional-spec-target.md`
 
 **Verify:** Read complete file, confirm:
 - All 10 sections present

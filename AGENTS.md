@@ -175,7 +175,7 @@ Specify generates agent-specific command files and directories. Each agent uses 
 
 #### 1. Add to AGENT_CONFIG
 
-Add to `AGENT_CONFIG` in `src/specify_cli/__init__.py` (single source of truth):
+Add to `AGENT_CONFIG` in `scripts/python/speckit/setup/config.py` (single source of truth):
 
 ```python
 AGENT_CONFIG = {

@@ -331,7 +331,7 @@ Output: `✓ Checkpoint verified: 04c (Chunks 7-9, Report Generation Complete)`
     Phase 8: Decision Matrix ✓
     Phase 9: Final Recommendations ✓
 
-  Report: .analysis/{analysis_dir}/analysis-report.md
+  Report: {analysis_dir}/analysis-report.md
 
   Proceeding to Report Verification...
 ═══════════════════════════════════════════════════════════

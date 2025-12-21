@@ -38,7 +38,7 @@ Templates are embedded in CLI
 
 ## Create Output Directory
 
-Create: `.analysis/{dir}/stage-prompts/`
+Create: `{analysis_dir}/stage-prompts/`
 
 ---
 
@@ -47,7 +47,7 @@ Create: `.analysis/{dir}/stage-prompts/`
 ---
 ⏸️ **[STOP: GENERATE_CONSTITUTION_PROMPT]**
 
-**Purpose:** Extract project principles from legacy code for `/speckit.constitution` command
+**Purpose:** Extract project principles from legacy code for `/speckitadv.constitution` command
 
 **Template:** embedded template `constitution-prompt-template.md`
 
@@ -86,7 +86,7 @@ Create: `.analysis/{dir}/stage-prompts/`
 
 ```
 
-Write to: `.analysis/{dir}/stage-prompts/constitution-prompt.md`
+Write to: `{analysis_dir}/stage-prompts/constitution-prompt.md`
 
 **Output:** `✓ Generated: constitution-prompt.md`
 
@@ -97,7 +97,7 @@ Write to: `.analysis/{dir}/stage-prompts/constitution-prompt.md`
 ---
 ⏸️ **[STOP: GENERATE_CLARIFY_PROMPT]**
 
-**Purpose:** Use legacy code as source of truth for clarifications with `/speckit.clarify` command
+**Purpose:** Use legacy code as source of truth for clarifications with `/speckitadv.clarify` command
 
 **Template:** embedded template `clarify-prompt-template.md`
 
@@ -142,7 +142,7 @@ When clarifying ambiguous requirements, reference these legacy implementations:
 
 ```
 
-Write to: `.analysis/{dir}/stage-prompts/clarify-prompt.md`
+Write to: `{analysis_dir}/stage-prompts/clarify-prompt.md`
 
 **Output:** `✓ Generated: clarify-prompt.md`
 
@@ -153,7 +153,7 @@ Write to: `.analysis/{dir}/stage-prompts/clarify-prompt.md`
 ---
 ⏸️ **[STOP: GENERATE_TASKS_PROMPT]**
 
-**Purpose:** Break down implementation with legacy complexity awareness for `/speckit.tasks` command
+**Purpose:** Break down implementation with legacy complexity awareness for `/speckitadv.tasks` command
 
 **Template:** embedded template `tasks-prompt-template.md`
 
@@ -203,7 +203,7 @@ Write to: `.analysis/{dir}/stage-prompts/clarify-prompt.md`
 
 ```
 
-Write to: `.analysis/{dir}/stage-prompts/tasks-prompt.md`
+Write to: `{analysis_dir}/stage-prompts/tasks-prompt.md`
 
 **Output:** `✓ Generated: tasks-prompt.md`
 
@@ -214,7 +214,7 @@ Write to: `.analysis/{dir}/stage-prompts/tasks-prompt.md`
 ---
 ⏸️ **[STOP: GENERATE_IMPLEMENT_PROMPT]**
 
-**Purpose:** Reference legacy code during implementation for `/speckit.implement` command
+**Purpose:** Reference legacy code during implementation for `/speckitadv.implement` command
 
 **Template:** embedded template `implement-prompt-template.md`
 
@@ -266,7 +266,7 @@ These behaviors must be implemented EXACTLY as in legacy:
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Write to: `.analysis/{dir}/stage-prompts/implement-prompt.md`
+Write to: `{analysis_dir}/stage-prompts/implement-prompt.md`
 
 **Output:** `✓ Generated: implement-prompt.md`
 
@@ -296,7 +296,7 @@ Write: `.analysis/.checkpoints/stage-prompts-complete.json`
 ⏸️ **[STOP: CHECKPOINT_VERIFY]**
 
 1. Read `.analysis/.checkpoints/stage-prompts-complete.json`
-2. Verify all 4 files exist in `.analysis/{dir}/stage-prompts/`
+2. Verify all 4 files exist in `{analysis_dir}/stage-prompts/`
 3. Confirm no placeholders in any file
 
 **IF verified:** Output: `✓ Checkpoint verified: stage-prompts`
@@ -393,7 +393,7 @@ Generated Artifacts:
 Next Steps:
   1. Review generated artifacts in {analysis_dir}
   2. Use stage-prompts/ with Spec Kit commands
-  3. Begin implementation using /speckit.implement
+  3. Begin implementation using /speckitadv.implement
 
 ═══════════════════════════════════════════════════════════
 

@@ -27,7 +27,7 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 ---
 ⏸️ **[STOP: GENERATE_EXECUTIVE_SUMMARY]**
 
-Generate C-level summary. Write to: `.analysis/{dir}/EXECUTIVE-SUMMARY.md`
+Generate C-level summary. Write to: `{analysis_dir}/EXECUTIVE-SUMMARY.md`
 
 ```markdown
 # Executive Summary: {Project Name}
@@ -89,7 +89,7 @@ Generate C-level summary. Write to: `.analysis/{dir}/EXECUTIVE-SUMMARY.md`
 ---
 ⏸️ **[STOP: GENERATE_DEPENDENCY_AUDIT]**
 
-Generate machine-readable dependency audit. Write to: `.analysis/{dir}/dependency-audit.json`
+Generate machine-readable dependency audit. Write to: `{analysis_dir}/dependency-audit.json`
 
 ```json
 {
@@ -128,7 +128,7 @@ Generate machine-readable dependency audit. Write to: `.analysis/{dir}/dependenc
 ---
 ⏸️ **[STOP: GENERATE_METRICS_SUMMARY]**
 
-Generate metrics for tracking. Write to: `.analysis/{dir}/metrics-summary.json`
+Generate metrics for tracking. Write to: `{analysis_dir}/metrics-summary.json`
 
 ```json
 {

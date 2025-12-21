@@ -600,25 +600,25 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 - Template: embedded template `constitution-prompt-template.md`
 - Fill with: Project values, coding standards, architecture decisions extracted from analysis
-- Purpose: Use with `/speckit.constitution` command
+- Purpose: Use with `/speckitadv.constitution` command
 
 **clarify-prompt.md**: Use legacy code as source of truth for clarifications
 
 - Template: embedded template `clarify-prompt-template.md`
 - Fill with: Legacy code references (file:line), ambiguity resolution patterns, critical behaviors
-- Purpose: Use with `/speckit.clarify` command when specs are unclear
+- Purpose: Use with `/speckitadv.clarify` command when specs are unclear
 
 **tasks-prompt.md**: Break down implementation with legacy complexity awareness
 
 - Template: embedded template `tasks-prompt-template.md`
 - Fill with: Legacy feature complexity scores, migration task breakdowns, effort estimates
-- Purpose: Use with `/speckit.tasks` command
+- Purpose: Use with `/speckitadv.tasks` command
 
 **implement-prompt.md**: Reference legacy code during implementation
 
 - Template: embedded template `implement-prompt-template.md`
 - Fill with: Legacy code patterns (with file:line), must-preserve behaviors, edge cases
-- Purpose: Use with `/speckit.implement` command
+- Purpose: Use with `/speckitadv.implement` command
 
 **Instructions**:
 

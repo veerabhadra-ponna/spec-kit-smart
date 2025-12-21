@@ -1594,7 +1594,7 @@ GitHub Release (Current):
     │   ├── commands/           # Command prompts
     │   │   └── analyze/        # Staged prompts
     │   └── analyze/            # Templates
-    ├── src/specify_cli/        # Python CLI
+    ├── scripts/python/speckit/ # Python CLI
     └── ...other files
 ```
 

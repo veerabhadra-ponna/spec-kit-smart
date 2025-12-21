@@ -132,7 +132,7 @@ def run_analyze_project(
         "stage": stage,
         "total_stages": total_stages,
         "project_path": str(state.project_path),
-        "analysis_dir": str(analysis_dir) if analysis_dir else "",
+        "analysis_dir": str(analysis_dir) if analysis_dir else ".analysis",
         "scope": effective_scope,
         "context": context or state.get("context") or "",
         "concern_type": concern_type or state.get("concern_type") or "",

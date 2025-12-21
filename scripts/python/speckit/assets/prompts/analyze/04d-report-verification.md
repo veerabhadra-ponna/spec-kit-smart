@@ -112,7 +112,7 @@ Read the complete analysis-report.md and verify each item:
   "timestamp": "{ISO-8601}",
   "stages_complete": ["setup_and_scope", "file_analysis", "{stage_3}", "report_generation"],
   "report_generated": true,
-  "report_path": ".analysis/{dir}/analysis-report.md",
+  "report_path": "{analysis_dir}/analysis-report.md",
   "report_stats": {
     "total_lines": {count},
     "chunks": 9,
@@ -163,7 +163,7 @@ Write: `.analysis/.checkpoints/04-report-complete.json`
   STAGE COMPLETE: REPORT_GENERATION
 
   Chain ID: {chain_id}
-  Report: .analysis/{dir}/analysis-report.md
+  Report: {analysis_dir}/analysis-report.md
   Lines: {count}
   Verification: PASSED ✓
 

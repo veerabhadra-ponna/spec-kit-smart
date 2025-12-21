@@ -44,7 +44,7 @@ Each chunk MUST be written to file before proceeding to next.
 Check for existing partial report:
 
 ```bash
-if [ -f ".analysis/{analysis_dir}/analysis-report.md" ]; then
+if [ -f "{analysis_dir}/analysis-report.md" ]; then
   # Check which chunks exist
 fi
 
@@ -75,7 +75,7 @@ Generate Phase 1 content. This section documents the project's technology stack 
 
 **Generate and Write:**
 
-Write to: `.analysis/{analysis_dir}/analysis-report.md`
+Write to: `{analysis_dir}/analysis-report.md`
 
 ```markdown
 # Analysis Report: {project_name}
@@ -146,7 +146,7 @@ Write to: `.analysis/{analysis_dir}/analysis-report.md`
 
 ### Verify Chunk 1 Written
 
-1. Read `.analysis/{analysis_dir}/analysis-report.md`
+1. Read `{analysis_dir}/analysis-report.md`
 2. Confirm Phase 1 sections present
 3. Confirm no placeholders
 
