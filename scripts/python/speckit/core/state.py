@@ -11,11 +11,13 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class StateSchema(BaseModel):
     """Schema for chain state validation."""
+
+    model_config = ConfigDict(extra="allow")
 
     schema_version: str = "3.0.0"
     chain_id: str
@@ -33,9 +35,6 @@ class StateSchema(BaseModel):
     dependencies: dict = Field(default_factory=dict)
     files_analyzed: int = 0
     analysis_quality: dict = Field(default_factory=dict)
-
-    class Config:
-        extra = "allow"
 
 
 class ChainState:

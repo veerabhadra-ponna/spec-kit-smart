@@ -9,7 +9,7 @@ import os
 import platform
 from pathlib import Path
 from typing import Any, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class WorkflowConfig(BaseModel):
@@ -22,10 +22,9 @@ class WorkflowConfig(BaseModel):
 class SpecKitConfig(BaseModel):
     """Main configuration schema."""
 
-    workflow: WorkflowConfig = Field(default_factory=WorkflowConfig)
+    model_config = ConfigDict(extra="allow")
 
-    class Config:
-        extra = "allow"
+    workflow: WorkflowConfig = Field(default_factory=WorkflowConfig)
 
 
 class Config:
