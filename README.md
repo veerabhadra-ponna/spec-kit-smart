@@ -916,7 +916,6 @@ The Corporate Guidelines system was implemented in four phases:
 | Tool | Command | Purpose |
 | ------ | -------- | --------- |
 | **Generate Guidelines** | `speckitadv generate-guidelines` | Extract coding guidelines from corporate docs and reference projects |
-| **CI/CD Templates** | `templates/ci-cd/` | GitHub Actions, GitLab CI, Jenkins pipeline examples for codebase analysis |
 
 ### Using Guidelines Tools
 
@@ -927,17 +926,6 @@ speckitadv generate-guidelines /path/to/sources
 ```
 
 The generate-guidelines command analyzes corporate documents and reference projects to extract coding guidelines.
-
-**CI/CD Integration (Codebase Analysis):**
-
-```bash
-# Copy analysis workflow templates to your project
-cp templates/ci-cd/github-actions-analysis.yml .github/workflows/codebase-analysis.yml
-cp templates/ci-cd/gitlab-ci-analysis.yml .gitlab-ci.yml
-cp templates/ci-cd/jenkins-pipeline.groovy Jenkinsfile
-```
-
-Features: automated analysis, vulnerability scanning, PR comments, artifact reports.
 
 ### Guidelines Hierarchy
 
@@ -963,7 +951,6 @@ graph LR
 
 1. Customize guidelines: Edit `.guidelines/*.md` files
 2. Configure branch naming and workflow: Edit `memory/config.json` (optional)
-3. Set up CI/CD: Copy templates from `templates/ci-cd/`
 
 ### Documentation (Guidelines)
 
