@@ -246,6 +246,81 @@ def checklist(
 
 
 # ============================================================================
+# ORCHESTRATE Command
+# ============================================================================
+
+
+@app.command("orchestrate")
+def orchestrate(
+    description: Optional[str] = typer.Argument(None, help="Feature description to orchestrate"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+) -> None:
+    """
+    Orchestrate complete spec-driven workflow.
+
+    Runs the entire workflow from constitution to implementation.
+    Use 'resume' to continue after interruptions.
+    """
+    from speckit.core.prompts import get_prompt_fragment
+
+    fragment = get_prompt_fragment("orchestrate", "01")
+    if description:
+        fragment = fragment.replace("{description}", description)
+    console.print(fragment)
+
+
+# ============================================================================
+# RESUME Command
+# ============================================================================
+
+
+@app.command("resume")
+def resume(
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+) -> None:
+    """
+    Resume workflow from saved state.
+
+    Restores context after interruptions, chat limits, or shutdowns.
+    """
+    from speckit.core.prompts import get_prompt_fragment
+
+    fragment = get_prompt_fragment("resume", "01")
+    console.print(fragment)
+
+
+# ============================================================================
+# ANALYZE Command (alias for analyze-project)
+# ============================================================================
+
+
+@app.command("analyze")
+def analyze(
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-16)"),
+    chunk: Optional[int] = typer.Option(None, "--chunk", "-c", help="Report chunk number for chunked stages"),
+    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path to analyze"),
+    scope: Optional[str] = typer.Option(None, "--scope", help="Analysis scope: A (full) or B (cross-cutting)"),
+    verify: bool = typer.Option(False, "--verify", help="Run verification after final stage completes"),
+) -> None:
+    """
+    Analyze an existing project (alias for analyze-project).
+
+    Shorthand for 'speckitadv analyze-project'.
+    """
+    from speckit.commands.analyze import run_analyze_project
+
+    run_analyze_project(
+        stage=stage,
+        chunk=chunk,
+        chain_id=chain_id,
+        path=path,
+        scope=scope,
+        verify=verify,
+    )
+
+
+# ============================================================================
 # INIT Command
 # ============================================================================
 

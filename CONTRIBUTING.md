@@ -43,7 +43,7 @@ On [GitHub Codespaces](https://github.com/features/codespaces) it's even simpler
    pip install -e .
    ```
 
-1. Make sure the CLI works on your machine: `speckitsmart --help`
+1. Make sure the CLI works on your machine: `speckitadv --help`
 1. Create a new branch: `git checkout -b my-branch-name`
 1. Make your change, add tests, and make sure everything still works
 1. Test the CLI functionality with a sample project if relevant

@@ -488,7 +488,7 @@ Instead of loading the entire 850+ line staged prompt at once, the EXE outputs p
 │                PROGRESSIVE PROMPT INJECTION FLOW                │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  User: "Run /speckitsmart.analyze-project"                      │
+│  User: "Run /speckitadv.analyze-project"                      │
 │                                                                 │
 │  Agent: Runs → speckit analyze --stage=init                     │
 │                                                                 │
@@ -1028,10 +1028,10 @@ speckit analyze-project
 └── Stage 9: Create artifacts (50 lines)
 ```
 
-### 9.5 Complete Flow Example: /speckitsmart.constitution
+### 9.5 Complete Flow Example: /speckitadv.constitution
 
 ```text
-User: /speckitsmart.constitution
+User: /speckitadv.constitution
 
 Agent reads launcher (3 lines):
   "Run: speckit constitution"
@@ -1096,7 +1096,7 @@ EXE outputs:
 │ Principles: 1                                                  │
 │                                                                │
 │ Next steps:                                                    │
-│ - Run /speckitsmart.specify to create specifications           │
+│ - Run /speckitadv.specify to create specifications           │
 └────────────────────────────────────────────────────────────────┘
 ```
 
@@ -1157,7 +1157,7 @@ def constitution(
     if stage == 3:
         emit_complete(
             message="Constitution created: memory/constitution.md",
-            next_steps=["Run /speckitsmart.specify to create specifications"]
+            next_steps=["Run /speckitadv.specify to create specifications"]
         )
 
 def emit_stage(stage_num, total_stages, title, content, next_cmd, alt_cmd=None):
@@ -1620,9 +1620,9 @@ GitHub Release (New):
 └── launcher-templates/            # Minimal launcher files per agent
     ├── claude/
     │   └── commands/
-    │       ├── speckitsmart.constitution.md  (3 lines)
-    │       ├── speckitsmart.specify.md       (3 lines)
-    │       ├── speckitsmart.plan.md          (3 lines)
+    │       ├── speckitadv.constitution.md  (3 lines)
+    │       ├── speckitadv.specify.md       (3 lines)
+    │       ├── speckitadv.plan.md          (3 lines)
     │       └── ...                           (3 lines each)
     ├── copilot/
     │   └── ...
@@ -1803,7 +1803,7 @@ def generate_launchers():
                 command=command
             )
 
-            launcher_file = agent_dir / f"speckitsmart.{command}.md"
+            launcher_file = agent_dir / f"speckitadv.{command}.md"
             launcher_file.write_text(launcher_content)
             print(f"Generated: {launcher_file}")
 
@@ -1820,7 +1820,7 @@ if __name__ == "__main__":
 pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 
 # Initialize project (downloads ZIP with scripts + prompts)
-speckitsmart init my-project --ai claude
+speckitadv init my-project --ai claude
 ```
 
 #### New flow

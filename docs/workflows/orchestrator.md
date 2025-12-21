@@ -8,7 +8,7 @@ The **Orchestrator** workflow simplifies the entire spec-driven development proc
 
 **Manual Workflow:** 7 separate commands, manual state tracking, context loss at chat limits.
 
-**Orchestrator Workflow:** `/speckitsmart.orchestrate <feature-description>` - 1 command, automatic state management, seamless resumption.
+**Orchestrator Workflow:** `/speckitadv.orchestrate <feature-description>` - 1 command, automatic state management, seamless resumption.
 
 ## Key Features
 
@@ -18,7 +18,7 @@ Run the entire workflow from feature description to implementation with one comm
 
 ### 2. State Persistence
 
-The orchestrator saves progress to `.speckitsmart-state.json`, enabling:
+The orchestrator saves progress to `.speckitadv-state.json`, enabling:
 
 - Resumption after chat token limits
 - Cross-session continuity
@@ -64,7 +64,7 @@ graph LR
 - Runs entire workflow to completion
 - Minimal user interaction required
 
-### 4. Context Restoration with `/speckitsmart.resume`
+### 4. Context Restoration with `/speckitadv.resume`
 
 Restores context after chat limit: loads all artifacts, identifies stopping point, and continues with zero duplicate work.
 
@@ -73,7 +73,7 @@ Restores context after chat limit: loads all artifacts, identifies stopping poin
 **Interactive Mode:**
 
 ```bash
-/speckitsmart.orchestrate Build a user authentication system with OAuth2 and JWT
+/speckitadv.orchestrate Build a user authentication system with OAuth2 and JWT
 ```
 
 Prompts at each phase for user confirmation and review.
@@ -81,7 +81,7 @@ Prompts at each phase for user confirmation and review.
 **Auto-Spec Mode:**
 
 ```bash
-/speckitsmart.orchestrate --mode=auto-spec Create an analytics dashboard
+/speckitadv.orchestrate --mode=auto-spec Create an analytics dashboard
 ```
 
 Runs constitution → specify → plan → tasks automatically, pauses before implementation for review.
@@ -89,7 +89,7 @@ Runs constitution → specify → plan → tasks automatically, pauses before im
 **Resume After Chat Limit:**
 
 ```bash
-/speckitsmart.resume
+/speckitadv.resume
 ```
 
 ```mermaid
@@ -118,7 +118,7 @@ Loads state, shows progress (e.g., 28/47 tasks), identifies next task, and conti
 
 ## State Management
 
-The orchestrator creates `.speckitsmart-state.json` in your repository root:
+The orchestrator creates `.speckitadv-state.json` in your repository root:
 
 ```json
 {
@@ -142,25 +142,25 @@ The orchestrator creates `.speckitsmart-state.json` in your repository root:
 }
 ```
 
-**Should you commit `.speckitsmart-state.json`?**
+**Should you commit `.speckitadv-state.json`?**
 
 - ✅ **Yes** if you want cross-machine resumption or team collaboration
 - ❌ **Add to .gitignore** if you prefer local-only state
 
 ## When to Use Orchestrator vs Individual Commands
 
-- **New features:** Use `/speckitsmart.orchestrate`
-- **Multi-day workflows:** Use orchestrator + `/speckitsmart.resume`
+- **New features:** Use `/speckitadv.orchestrate`
+- **Multi-day workflows:** Use orchestrator + `/speckitadv.resume`
 - **Learning:** Use individual commands
-- **Re-running phases:** Use individual commands (e.g., `/speckitsmart.plan`)
-- **Token limits:** Use `/speckitsmart.resume`
+- **Re-running phases:** Use individual commands (e.g., `/speckitadv.plan`)
+- **Token limits:** Use `/speckitadv.resume`
 
 ## Best Practices
 
 - **Commit frequently** during long workflows
 - **Review before implementation** using interactive or auto-spec mode
-- **Commit `.speckitsmart-state.json`** for cross-machine work
-- **Use `/speckitsmart.resume`** after token limits or errors
+- **Commit `.speckitadv-state.json`** for cross-machine work
+- **Use `/speckitadv.resume`** after token limits or errors
 
 ## Progress Visualization
 
@@ -204,14 +204,14 @@ Error details: Module 'stripe' not found
 Your progress has been saved.
 
 To resume after fixing the issue:
-  /speckitsmart.resume
+  /speckitadv.resume
 
 To start over:
-  rm .speckitsmart-state.json
-  /speckitsmart.orchestrate <feature-description>
+  rm .speckitadv-state.json
+  /speckitadv.orchestrate <feature-description>
 ```
 
-Simply fix the issue (e.g., `npm install stripe`) and run `/speckitsmart.resume` to continue.
+Simply fix the issue (e.g., `npm install stripe`) and run `/speckitadv.resume` to continue.
 
 ## Workflow Diagram (Orchestrator)
 
@@ -226,7 +226,7 @@ flowchart LR
     Analyze --> Implement[Implement]
     Implement --> Done([Done])
 
-    State[.speckitsmart-state.json]
+    State[.speckitadv-state.json]
     Constitution -.-> State
     Specify -.-> State
     Clarify -.-> State
@@ -256,7 +256,7 @@ flowchart LR
 One-command execution, automatic state management, zero context loss, flexible modes, cross-session continuity, error recovery, and progress transparency.
 
 ```bash
-/speckitsmart.orchestrate <your-feature-description>
+/speckitadv.orchestrate <your-feature-description>
 ```
 
 ## Related Documentation

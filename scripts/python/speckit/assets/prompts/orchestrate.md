@@ -114,7 +114,7 @@ If user input contains multiple components, you will pass the appropriate extrac
 
 ## Workflow State Management
 
-### State File: `.speckitsmart-state.json`
+### State File: `.speckitadv-state.json`
 
 This file tracks orchestration progress in the repository root. Structure:
 
@@ -155,9 +155,9 @@ This file tracks orchestration progress in the repository root. Structure:
 
 ```bash
 # Check if state file exists
-if [ -f .speckitsmart-state.json ]; then
+if [ -f .speckitadv-state.json ]; then
   # Parse and display current state
-  cat .speckitsmart-state.json
+  cat .speckitadv-state.json
 fi
 ```
 
@@ -174,7 +174,7 @@ fi
 
 ```bash
 # On successful completion or user abort
-rm -f .speckitsmart-state.json
+rm -f .speckitadv-state.json
 ```
 
 ## Execution Flow
@@ -200,7 +200,7 @@ Optional phases in brackets are skippable based on user preference or context.
 1. **Check for existing state:**
 
    ```bash
-   if [ -f .speckitsmart-state.json ]; then
+   if [ -f .speckitadv-state.json ]; then
      echo "Found existing workflow state."
      echo "Options:"
      echo "  1. Resume existing workflow"
@@ -220,8 +220,8 @@ Optional phases in brackets are skippable based on user preference or context.
    1. Full auto - Run entire workflow to implementation (requires confirmation)
 
    Optional phases:
-   - Include /speckitsmart.clarify for ambiguity resolution? [y/N]
-   - Include /speckitsmart.analyze for consistency validation? [Y/n]
+   - Include /speckitadv.clarify for ambiguity resolution? [y/N]
+   - Include /speckitadv.analyze for consistency validation? [Y/n]
    - Pause before implementation for review? [Y/n]
    ```
 
@@ -256,7 +256,7 @@ if grep -q "\[PROJECT_NAME\]" memory/constitution.md || \
    grep -q "\[CONSTITUTION_VERSION\]" memory/constitution.md; then
 
   echo "⚠️  Constitution template found but not yet established"
-  echo "Running /speckitsmart.constitution to fill in principles..."
+  echo "Running /speckitadv.constitution to fill in principles..."
 
   # Extract principles from user input (if any)
   EXTRACTED_PRINCIPLES="<extracted from user input in smart parsing step>"
@@ -307,7 +307,7 @@ fi
 ```bash
 # After constitution phase completes (if constitution was created/updated)
 if [ "$constitution_action" = "created" ]; then
-  git add memory/constitution.md .speckitsmart-state.json
+  git add memory/constitution.md .speckitadv-state.json
   git commit -m "chore: establish project constitution
 
 - Initialize constitution with principles
@@ -346,7 +346,7 @@ EXTRACTED_FEATURE="<functional description extracted from user input>"
 **Execution:**
 
 ```bash
-# Invoke /speckitsmart.specify with extracted feature description
+# Invoke /speckitadv.specify with extracted feature description
 # Pass: EXTRACTED_FEATURE (the WHAT and WHY)
 
 # The specify command will:
@@ -390,7 +390,7 @@ Next phase: Clarification (optional)
 
 ```bash
 # After specify phase completes, commit the specification
-git add specs/$feature_dir/ .speckitsmart-state.json
+git add specs/$feature_dir/ .speckitadv-state.json
 git commit -m "feat: add specification for $feature_name
 
 - Create feature specification
@@ -430,7 +430,7 @@ if [ "$clarification_count" -eq 0 ]; then
   # Update state: mark clarify as skipped
 else
   echo "Found $clarification_count clarification points"
-  # Invoke /speckitsmart.clarify
+  # Invoke /speckitadv.clarify
 fi
 ```
 
@@ -455,7 +455,7 @@ fi
 ```bash
 # After clarify phase completes (if not skipped), commit the updates
 if [ "$clarify_status" = "completed" ]; then
-  git add specs/$feature_dir/spec.md .speckitsmart-state.json
+  git add specs/$feature_dir/spec.md .speckitadv-state.json
   git commit -m "docs: clarify specification for $feature_name
 
 - Resolve ambiguities and clarification points
@@ -488,7 +488,7 @@ EXTRACTED_CONSTRAINTS="<technical constraints extracted from user input>"
 **Execution:**
 
 ```bash
-# Invoke /speckitsmart.plan with extracted constraints (if any)
+# Invoke /speckitadv.plan with extracted constraints (if any)
 # Pass: EXTRACTED_CONSTRAINTS as arguments
 # If no constraints extracted, plan enters INTERACTIVE MODE automatically
 
@@ -539,7 +539,7 @@ Next phase: Task generation
 
 ```bash
 # After plan phase completes, commit all planning artifacts
-git add specs/$feature_dir/ .speckitsmart-state.json
+git add specs/$feature_dir/ .speckitadv-state.json
 git commit -m "docs: add implementation plan for $feature_name
 
 - Create technical implementation plan
@@ -568,7 +568,7 @@ Continue to task generation? [Y/n]
 **Execution:**
 
 ```bash
-# Invoke /speckitsmart.tasks
+# Invoke /speckitadv.tasks
 # This will create tasks.md with:
 # - Phase 1: Setup
 # - Phase 2: Foundational
@@ -615,7 +615,7 @@ Next phase: Analysis (optional quality check)
 
 ```bash
 # After tasks phase completes, commit the task breakdown
-git add specs/$feature_dir/tasks.md .speckitsmart-state.json
+git add specs/$feature_dir/tasks.md .speckitadv-state.json
 git commit -m "docs: generate task breakdown for $feature_name
 
 - Create executable task list across implementation phases
@@ -639,7 +639,7 @@ git commit -m "docs: generate task breakdown for $feature_name
 **Execution if not skipped:**
 
 ```bash
-# Invoke /speckitsmart.analyze
+# Invoke /speckitadv.analyze
 # This performs read-only validation:
 # - Duplication detection
 # - Ambiguity detection
@@ -675,7 +675,7 @@ git commit -m "docs: generate task breakdown for $feature_name
 ```bash
 # After analyze phase completes (if not skipped), commit the analysis results
 if [ "$analyze_status" = "completed" ]; then
-  git add specs/$feature_dir/analysis.md .speckitsmart-state.json
+  git add specs/$feature_dir/analysis.md .speckitadv-state.json
   git commit -m "docs: add consistency analysis for $feature_name
 
 - Validate specification and plan consistency
@@ -715,7 +715,7 @@ fi
 │                                                     │
 │  Proceed with implementation? [y/N]                │
 │    'y': Start implementation                       │
-│    'n': Pause here (resume with /speckitsmart.resume)  │
+│    'n': Pause here (resume with /speckitadv.resume)  │
 │    'tasks': Review tasks.md before deciding       │
 └─────────────────────────────────────────────────────┘
 ```
@@ -729,7 +729,7 @@ fi
 **Execution:**
 
 ```bash
-# Invoke /speckitsmart.implement
+# Invoke /speckitadv.implement
 # This will:
 # 1. Check prerequisite checklists
 # 2. Load all design documents
@@ -793,7 +793,7 @@ If implementation fails:
       "tasks_total": 42,
       "failed_task": "[T016] Implement JWT validation",
       "error_message": "...",
-      "resume_hint": "Fix the error and run /speckitsmart.resume to continue from task T016"
+      "resume_hint": "Fix the error and run /speckitadv.resume to continue from task T016"
     }
   }
 }
@@ -835,7 +835,7 @@ echo "Cleaning up workflow state..."
 **Remove state file:**
 
 ```bash
-rm -f .speckitsmart-state.json
+rm -f .speckitadv-state.json
 echo "✓ Workflow state cleared"
 ```
 
@@ -848,12 +848,12 @@ When invoked with `--resume` or when resuming from state:
 1. **Load state file:**
 
    ```bash
-   if [ ! -f .speckitsmart-state.json ]; then
+   if [ ! -f .speckitadv-state.json ]; then
      echo "ERROR: No workflow state found. Nothing to resume."
      exit 1
    fi
 
-   state=$(cat .speckitsmart-state.json)
+   state=$(cat .speckitadv-state.json)
    current_phase=$(echo "$state" | jq -r '.current_phase')
    feature_dir=$(echo "$state" | jq -r '.feature_dir')
    ```
@@ -943,11 +943,11 @@ echo ""
 echo "Your progress has been saved."
 echo ""
 echo "To resume after fixing the issue:"
-echo "  /speckitsmart.resume"
+echo "  /speckitadv.resume"
 echo ""
 echo "To start over:"
-echo "  rm .speckitsmart-state.json"
-echo "  /speckitsmart.orchestrate <feature-description>"
+echo "  rm .speckitadv-state.json"
+echo "  /speckitadv.orchestrate <feature-description>"
 ```
 
 ---
@@ -988,16 +988,16 @@ For long-running phases (plan, implement), show sub-progress:
 
 The orchestrator does NOT replace individual commands. Users can still run:
 
-- `/speckitsmart.specify` - Direct specification creation
-- `/speckitsmart.plan` - Direct planning
-- `/speckitsmart.implement` - Direct implementation
+- `/speckitadv.specify` - Direct specification creation
+- `/speckitadv.plan` - Direct planning
+- `/speckitadv.implement` - Direct implementation
 - etc.
 
 The orchestrator simply chains them together with state management.
 
 **When to use orchestrator vs individual commands:**
 
-- **Use `/speckitsmart.orchestrate`** for new features start-to-finish
+- **Use `/speckitadv.orchestrate`** for new features start-to-finish
 - **Use individual commands** for:
 
   - Re-running a single phase
@@ -1012,7 +1012,7 @@ The orchestrator simply chains them together with state management.
 ### Example 1: Interactive Full Workflow
 
 ```bash
-/speckitsmart.orchestrate Add user authentication with OAuth2 and JWT tokens
+/speckitadv.orchestrate Add user authentication with OAuth2 and JWT tokens
 ```
 
 **Workflow:**
@@ -1030,7 +1030,7 @@ The orchestrator simply chains them together with state management.
 ### Example 2: Auto-Spec Mode
 
 ```bash
-/speckitsmart.orchestrate --mode=auto-spec Create analytics dashboard
+/speckitadv.orchestrate --mode=auto-spec Create analytics dashboard
 ```
 
 **Workflow:**
@@ -1038,22 +1038,22 @@ The orchestrator simply chains them together with state management.
 1. Runs constitution → specify → plan → tasks automatically
 1. Pauses before implementation
 1. User reviews tasks.md
-1. User runs `/speckitsmart.resume` to continue
+1. User runs `/speckitadv.resume` to continue
 1. Implements and completes
 
 ### Example 3: Resume After Chat Limit
 
 ```bash
 # Original chat (reached token limit during implementation)
-/speckitsmart.orchestrate Build payment processing system
+/speckitadv.orchestrate Build payment processing system
 
 # New chat (restored context)
-/speckitsmart.resume
+/speckitadv.resume
 ```
 
 **Workflow:**
 
-1. Loads .speckitsmart-state.json
+1. Loads .speckitadv-state.json
 1. Shows progress summary (28/42 tasks completed)
 1. Asks to continue from task T029
 1. Resumes implementation
@@ -1063,7 +1063,7 @@ The orchestrator simply chains them together with state management.
 
 ## State File Persistence
 
-The `.speckitsmart-state.json` file should be:
+The `.speckitadv-state.json` file should be:
 
 - ✓ **Committed to git** (allows team collaboration)
 - ✓ **Updated after every phase** (crash recovery)
@@ -1074,7 +1074,7 @@ Add to `.gitignore` if you prefer local-only state:
 
 ```text
 # Optional: Keep workflow state local
-.speckitsmart-state.json
+.speckitadv-state.json
 ```
 
 ---
@@ -1133,9 +1133,9 @@ Add to `.gitignore` if you prefer local-only state:
 
   ┌─────────────────────────────────────────┐
   │  At any point, state is saved to:       │
-  │  .speckitsmart-state.json                    │
+  │  .speckitadv-state.json                    │
   │                                         │
-  │  Resume with: /speckitsmart.resume           │
+  │  Resume with: /speckitadv.resume           │
   └─────────────────────────────────────────┘
 ```
 
@@ -1153,4 +1153,4 @@ The orchestrator provides:
 - ✅ **Optional phases**: Skip clarify/analyze if not needed
 - ✅ **Integration**: Works alongside individual commands
 
-**Next:** See `/speckitsmart.resume` for context restoration and seamless chat continuity.
+**Next:** See `/speckitadv.resume` for context restoration and seamless chat continuity.

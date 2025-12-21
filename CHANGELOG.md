@@ -79,7 +79,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated tasks.md prompt template with contextual guideline application
 - Updated analyze.md prompt template with stack-specific validation
 - Improved guideline structure documentation with version management
-- `speckitsmart init` now preserves an existing `.specify/memory/constitution.md` in current directories and surfaces a clear skip message
+- `speckitadv init` now preserves an existing `.specify/memory/constitution.md` in current directories and surfaces a clear skip message
 - Added pip-based installation examples for environments without `pipx`
 
 ## [0.0.20] - 2025-10-14
@@ -122,8 +122,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support for using `.` as a shorthand for current directory in `speckitsmart init .` command, equivalent to `--here` flag but more intuitive for users.
-- Use the `/speckitsmart.` command prefix to easily discover Spec Kit-related commands.
+- Support for using `.` as a shorthand for current directory in `speckitadv init .` command, equivalent to `--here` flag but more intuitive for users.
+- Use the `/speckitadv.` command prefix to easily discover Spec Kit-related commands.
 - Refactor the prompts and templates to simplify their capabilities and how they are tracked. No more polluting things with tests when they are not needed.
 - Ensure that tasks are created per user story (simplifies testing and validation).
 - Add support for Visual Studio Code prompt shortcuts and automatic script execution.

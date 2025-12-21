@@ -4,16 +4,16 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 
 ## Common Issues
 
-### Issue: Command not found `/speckitsmart.constitution`
+### Issue: Command not found `/speckitadv.constitution`
 
 **Symptoms**: AI agent reports command doesn't exist
 
 **Solution**:
 
-1. Ensure you ran `speckitsmart init` in the project directory
+1. Ensure you ran `speckitadv init` in the project directory
 2. Check that the agent command directory exists (e.g., `.claude/commands/`, `.gemini/commands/`)
 3. Verify you're using the correct AI agent specified during init
-4. Run `speckitsmart check` to verify prerequisites
+4. Run `speckitadv check` to verify prerequisites
 
 ### Issue: Cannot push to branch `claude/xxx`
 
@@ -28,13 +28,13 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 
 ### Issue: State file corrupted after token limit
 
-**Symptoms**: `/speckitsmart.resume` fails to load state
+**Symptoms**: `/speckitadv.resume` fails to load state
 
 **Solution**:
 
-1. Check if `.speckitsmart-state.json.backup` exists and restore it
-2. If no backup, restart with `/speckitsmart.orchestrate --reset`
-3. Future prevention: Commit `.speckitsmart-state.json` regularly
+1. Check if `.speckitadv-state.json.backup` exists and restore it
+2. If no backup, restart with `/speckitadv.orchestrate --reset`
+3. Future prevention: Commit `.speckitadv-state.json` regularly
 
 ### Issue: Guidelines not loading in prompts
 
@@ -55,7 +55,7 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 
 ```bash
 # Option 1: Use --skip-tls flag (not recommended for production)
-speckitsmart init my-project --skip-tls
+speckitadv init my-project --skip-tls
 
 # Option 2: Update certificates (recommended)
 pip install --upgrade certifi truststore
@@ -67,13 +67,13 @@ pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 
 ### Issue: Orchestrator skips phases unexpectedly
 
-**Symptoms**: `/speckitsmart.orchestrate` jumps over constitution or other phases
+**Symptoms**: `/speckitadv.orchestrate` jumps over constitution or other phases
 
 **Solution**:
 
 1. Check if artifacts already exist from previous runs (`.specify/specs/`)
 2. Orchestrator skips phases with existing artifacts unless `--force` is used
-3. Review `.speckitsmart-state.json` to see completed phases
+3. Review `.speckitadv-state.json` to see completed phases
 4. To restart: Delete state file and artifact directories
 
 ### Issue: speckitadv command not found

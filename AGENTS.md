@@ -251,7 +251,7 @@ Agent context is handled by the Python CLI. Add new agent support to:
 
 ## Testing New Agent Integration
 
-1. Run package creation locally 2. Test `speckitsmart init --ai <agent>` 3. Verify directory/files 4. Validate commands work 5. Test context update scripts
+1. Run package creation locally 2. Test `speckitadv init --ai <agent>` 3. Verify directory/files 4. Validate commands work 5. Test context update scripts
 
 ## Common Pitfalls
 

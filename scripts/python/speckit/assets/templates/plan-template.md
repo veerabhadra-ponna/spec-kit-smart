@@ -41,12 +41,12 @@
 
 ```text
 specs/[###-feature]/
-├── plan.md              # This file (/speckitsmart.plan command output)
-├── research.md          # Phase 0 output (/speckitsmart.plan command)
-├── data-model.md        # Phase 1 output (/speckitsmart.plan command)
-├── quickstart.md        # Phase 1 output (/speckitsmart.plan command)
-├── contracts/           # Phase 1 output (/speckitsmart.plan command)
-└── tasks.md             # Phase 2 output (/speckitsmart.tasks command - NOT created by /speckitsmart.plan)
+├── plan.md              # This file (/speckitadv.plan command output)
+├── research.md          # Phase 0 output (/speckitadv.plan command)
+├── data-model.md        # Phase 1 output (/speckitadv.plan command)
+├── quickstart.md        # Phase 1 output (/speckitadv.plan command)
+├── contracts/           # Phase 1 output (/speckitadv.plan command)
+└── tasks.md             # Phase 2 output (/speckitadv.tasks command - NOT created by /speckitadv.plan)
 ```
 
 ### Source Code (repository root)

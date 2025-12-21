@@ -23,7 +23,7 @@
   - `checkpoint.py` - State management for resumable analysis
   - Plus 4 language-specific analyzers (Java, Python, JavaScript, .NET)
 
-- ✅ **Complete `/speckitsmart.analyze-project` command** with bash/PowerShell orchestration scripts
+- ✅ **Complete `/speckitadv.analyze-project` command** with bash/PowerShell orchestration scripts
 - ✅ **Analysis framework** with phase-by-phase workflows and AI-guided prompts
 - ✅ **Comprehensive templates** (analysis reports, upgrade plans, recommended constitutions)
 - ✅ **Scoring formulas** implemented in code (0-100 feasibility scoring)
@@ -123,7 +123,7 @@ This is particularly useful for:
 
 ### ❌ Not Suitable For
 
-- Brand new projects (use `/speckitsmart.orchestrate` instead)
+- Brand new projects (use `/speckitadv.orchestrate` instead)
 - Projects without code (idea stage)
 - Non-software systems
 
@@ -135,7 +135,7 @@ This is particularly useful for:
 
 ```bash
 # In your AI coding agent (Claude Code, GitHub Copilot, etc.)
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 ```text
 
 When prompted, provide:
@@ -299,9 +299,9 @@ Analysis results saved to `.analysis/[PROJECT_NAME]-[TIMESTAMP]/`:
 cp .analysis/[PROJECT]/stage-prompts/* .claude/commands/
 
 # Then run Toolkit workflow as normal
-/speckitsmart.constitution    # Uses constitution-prompt.md
-/speckitsmart.specify         # Uses specify-prompt.md + functional-spec.md
-/speckitsmart.plan           # Uses plan-prompt.md + technical-spec.md
+/speckitadv.constitution    # Uses constitution-prompt.md
+/speckitadv.specify         # Uses specify-prompt.md + functional-spec.md
+/speckitadv.plan           # Uses plan-prompt.md + technical-spec.md
 # ... continue with clarify, tasks, implement
 ```
 
@@ -330,9 +330,9 @@ Based on the recommendation:
 1. Use as starting point for new project:
 
    ```bash
-   /speckitsmart.constitution [use principles from constitution-prompt.md]
-   /speckitsmart.specify [describe features based on functional-spec.md]
-   /speckitsmart.plan [use target stack from technical-spec.md]
+   /speckitadv.constitution [use principles from constitution-prompt.md]
+   /speckitadv.specify [describe features based on functional-spec.md]
+   /speckitadv.plan [use target stack from technical-spec.md]
    ```
 
 **If HYBRID APPROACH**:
@@ -809,7 +809,7 @@ Check Business Constraints
 **Analysis**:
 
 ```bash
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 
 PROJECT_PATH: /home/user/legacy-api
 ANALYSIS_DEPTH: STANDARD
@@ -842,7 +842,7 @@ FOCUS_AREAS: ALL
 **Analysis**:
 
 ```bash
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 
 PROJECT_PATH: /opt/monolith
 ANALYSIS_DEPTH: COMPREHENSIVE
@@ -876,7 +876,7 @@ FOCUS_AREAS: ALL
 **Analysis**:
 
 ```bash
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 
 PROJECT_PATH: /var/www/frontend
 ANALYSIS_DEPTH: STANDARD
@@ -1028,10 +1028,10 @@ When analyzing untrusted codebases:
 
    ```bash
    # Analyze subdirectories separately
-   /speckitsmart.analyze-project
+   /speckitadv.analyze-project
    PROJECT_PATH: /project/backend
 
-   /speckitsmart.analyze-project
+   /speckitadv.analyze-project
    PROJECT_PATH: /project/frontend
    ```
 
@@ -1086,10 +1086,10 @@ When analyzing untrusted codebases:
 **A**: Yes, but analyze each project separately:
 
 ```bash
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 PROJECT_PATH: /monorepo/packages/frontend
 
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 PROJECT_PATH: /monorepo/packages/backend
 ```text
 
@@ -1151,7 +1151,7 @@ FOCUS_AREAS: DEPENDENCIES  # Dependency health only
 **A**: No. For new projects, use:
 
 ```bash
-/speckitsmart.orchestrate <feature-description>
+/speckitadv.orchestrate <feature-description>
 ```text
 
 This is specifically for **existing** codebases.
@@ -1167,7 +1167,7 @@ After running analysis:
 1. **Get Approval** - Present `decision-matrix.md` to stakeholders
 1. **Execute Plan**:
    - Inline: Follow `upgrade-plan.md`
-   - Greenfield: Use `/speckitsmart.orchestrate` with recommended artifacts
+   - Greenfield: Use `/speckitadv.orchestrate` with recommended artifacts
    - Hybrid: Combine both approaches
 1. **Monitor Progress** - Re-run analysis quarterly to track improvements
 

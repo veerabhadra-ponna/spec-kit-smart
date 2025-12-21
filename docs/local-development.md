@@ -1,6 +1,6 @@
 # Local Development Guide
 
-This guide shows how to iterate on the `speckitsmart` CLI locally without publishing a release or committing to `main` first.
+This guide shows how to iterate on the `speckitadv` CLI locally without publishing a release or committing to `main` first.
 
 > The toolkit uses the `speckitadv` Python CLI for all workflow operations. No bash or PowerShell scripts required.
 
@@ -46,7 +46,7 @@ source .venv/bin/activate  # Linux/Mac/Git Bash
 pip install -e .
 
 # Now 'specify' entrypoint is available
-speckitsmart --help
+speckitadv --help
 ```
 
 Re-running after code edits requires no reinstall because of editable mode.
@@ -57,10 +57,10 @@ Re-running after code edits requires no reinstall because of editable mode.
 
 ```bash
 # Run from local repository
-pipx run --spec /path/to/spec-kit-smart speckitsmart init test-project
+pipx run --spec /path/to/spec-kit-smart speckitadv init test-project
 
 # Run from specific Git branch
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@feature-branch speckitsmart init test-project
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@feature-branch speckitadv init test-project
 ```
 
 ### 4a. Absolute Path pipx (Run From Anywhere)
@@ -68,15 +68,15 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@feat
 If you're in another directory, use an absolute path:
 
 ```bash
-pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitsmart --help
-pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitsmart init demo-anywhere --ai copilot --ignore-agent-tools
+pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitadv --help
+pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitadv init demo-anywhere --ai copilot --ignore-agent-tools
 ```
 
 Set an environment variable for convenience:
 
 ```bash
 export SPEC_KIT_SRC=/mnt/c/GitHub/spec-kit-smart
-pipx run --spec "$SPEC_KIT_SRC" speckitsmart init demo-env --ai copilot --ignore-agent-tools
+pipx run --spec "$SPEC_KIT_SRC" speckitadv init demo-env --ai copilot --ignore-agent-tools
 ```
 
 (Optional) Define a shell function:
@@ -134,8 +134,8 @@ Or copy only the modified CLI portion if you want a lighter sandbox.
 If you need to bypass TLS validation while experimenting:
 
 ```bash
-speckitsmart check --skip-tls
-speckitsmart init demo --skip-tls --ai gemini --ignore-agent-tools
+speckitadv check --skip-tls
+speckitadv init demo --skip-tls --ai gemini --ignore-agent-tools
 ```
 
 (Use only for local experimentation.)
@@ -145,7 +145,7 @@ speckitsmart init demo --skip-tls --ai gemini --ignore-agent-tools
 | Action | Command |
 | -------- | --------- |
 | Run CLI directly | `python -m src.specify_cli --help` |
-| Editable install | `pip install -e .` then `speckitsmart ...` |
+| Editable install | `pip install -e .` then `speckitadv ...` |
 | Local pipx run | `pipx run --spec /path/to/repo specify ...` |
 | Git branch pipx | `pipx run --spec git+URL@branch specify ...` |
 | Build wheel | `python -m build` |
