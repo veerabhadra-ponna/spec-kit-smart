@@ -3,7 +3,7 @@ set -euo pipefail
 
 # create-release-packages.sh (workflow-local)
 # Build Spec Kit template release archives for each supported AI assistant.
-# Generates unified packages containing both bash and PowerShell scripts.
+# Generates packages with Python CLI launchers (no bash/PowerShell scripts).
 # Usage: .github/workflows/scripts/create-release-packages.sh <version>
 #   Version argument should include leading 'v'.
 #   Optionally set AGENTS env var to limit which agents get built.
@@ -33,108 +33,16 @@ rm -rf "$GENRELEASES_DIR"/* || true
 rewrite_paths() {
   sed -E \
     -e 's@(/?)memory/@.specify/memory/@g' \
-    -e 's@(/?)scripts/@.specify/scripts/@g' \
     -e 's@(/?)templates/@.specify/templates/@g'
-}
-
-generate_commands() {
-  local agent=$1 ext=$2 arg_format=$3 output_dir=$4
-  mkdir -p "$output_dir"
-  for template in templates/commands/*.md; do
-    [[ -f "$template" ]] || continue
-    # Skip monolithic backup files
-    [[ "$template" == *-monolithic.md ]] && continue
-    local name description script_bash script_powershell agent_script_bash agent_script_powershell body
-    name=$(basename "$template" .md)
-
-    # Normalize line endings
-    file_content=$(tr -d '\r' < "$template")
-
-    # Extract description from YAML frontmatter
-    description=$(awk '/^description:/ {sub(/^description:[[:space:]]*/, ""); print; exit}' <<< "$file_content")
-
-    # Extract BOTH bash and powershell script commands from YAML frontmatter
-    script_bash=$(awk '
-      /^scripts:$/ { in_scripts=1; next }
-      in_scripts && /^[[:space:]]*bash:[[:space:]]*/ {
-        sub(/^[[:space:]]*bash:[[:space:]]*/, "")
-        print
-        exit
-      }
-      in_scripts && /^[a-zA-Z]/ { in_scripts=0 }
-    ' <<< "$file_content")
-
-    script_powershell=$(awk '
-      /^scripts:$/ { in_scripts=1; next }
-      in_scripts && /^[[:space:]]*powershell:[[:space:]]*/ {
-        sub(/^[[:space:]]*powershell:[[:space:]]*/, "")
-        print
-        exit
-      }
-      in_scripts && /^[a-zA-Z]/ { in_scripts=0 }
-    ' <<< "$file_content")
-
-    if [[ -z $script_bash && -z $script_powershell ]]; then
-      echo "Warning: no script commands found in $template" >&2
-    fi
-
-    # Extract agent_script commands from YAML frontmatter if present
-    agent_script_bash=$(awk '
-      /^agent_scripts:$/ { in_agent_scripts=1; next }
-      in_agent_scripts && /^[[:space:]]*bash:[[:space:]]*/ {
-        sub(/^[[:space:]]*bash:[[:space:]]*/, "")
-        print
-        exit
-      }
-      in_agent_scripts && /^[a-zA-Z]/ { in_agent_scripts=0 }
-    ' <<< "$file_content")
-
-    agent_script_powershell=$(awk '
-      /^agent_scripts:$/ { in_agent_scripts=1; next }
-      in_agent_scripts && /^[[:space:]]*powershell:[[:space:]]*/ {
-        sub(/^[[:space:]]*powershell:[[:space:]]*/, "")
-        print
-        exit
-      }
-      in_agent_scripts && /^[a-zA-Z]/ { in_agent_scripts=0 }
-    ' <<< "$file_content")
-
-    # Replace {SCRIPT_BASH} and {SCRIPT_POWERSHELL} placeholders
-    body=$(sed "s|{SCRIPT_BASH}|${script_bash}|g" <<< "$file_content" | sed "s|{SCRIPT_POWERSHELL}|${script_powershell}|g")
-
-    # Replace {AGENT_SCRIPT_BASH} and {AGENT_SCRIPT_POWERSHELL} placeholders if found
-    if [[ -n $agent_script_bash ]]; then
-      body=$(sed "s|{AGENT_SCRIPT_BASH}|${agent_script_bash}|g" <<< "$body")
-    fi
-    if [[ -n $agent_script_powershell ]]; then
-      body=$(sed "s|{AGENT_SCRIPT_POWERSHELL}|${agent_script_powershell}|g" <<< "$body")
-    fi
-
-    # Keep the scripts: and agent_scripts: sections in frontmatter for AI reference
-    # (Don't remove them anymore)
-
-    # Apply other substitutions
-    body=$(sed "s/{ARGS}/$arg_format/g" <<< "$body" | sed "s/__AGENT__/$agent/g" | rewrite_paths)
-
-    case $ext in
-      toml)
-        body=$(sed 's/\\/\\\\/g' <<< "$body")
-        { echo "description = \"$description\""; echo; echo "prompt = \"\"\""; echo "$body"; echo "\"\"\""; } > "$output_dir/speckitsmart.$name.$ext" ;;
-      md)
-        echo "$body" > "$output_dir/speckitsmart.$name.$ext" ;;
-      prompt.md)
-        echo "$body" > "$output_dir/speckitsmart.$name.$ext" ;;
-    esac
-  done
 }
 
 build_unified() {
   local agent=$1
   local base_dir="$GENRELEASES_DIR/sdd-${agent}-package-unified"
-  echo "Building $agent (unified) package..."
+  echo "Building $agent package..."
   mkdir -p "$base_dir"
 
-  # Copy base structure with BOTH script directories
+  # Copy base structure
   SPEC_DIR="$base_dir/.specify"
   mkdir -p "$SPEC_DIR"
 
@@ -144,34 +52,14 @@ build_unified() {
   [[ -d memory ]] && { cp -r memory "$SPEC_DIR/"; echo "Copied memory -> .specify"; }
   [[ -d .guidelines ]] && { cp -r .guidelines "$base_dir/"; echo "Copied .guidelines -> package root"; }
 
-  # Copy bash, powershell, and python script directories
-  if [[ -d scripts ]]; then
-    mkdir -p "$SPEC_DIR/scripts"
-    [[ -d scripts/bash ]] && {
-      cp -r scripts/bash "$SPEC_DIR/scripts/"
-      echo "Copied scripts/bash -> .specify/scripts"
-    }
-    [[ -d scripts/powershell ]] && {
-      cp -r scripts/powershell "$SPEC_DIR/scripts/"
-      echo "Copied scripts/powershell -> .specify/scripts"
-    }
-    [[ -d scripts/python ]] && {
-      cp -r scripts/python "$SPEC_DIR/scripts/"
-      echo "Copied scripts/python -> .specify/scripts"
-    }
-    # Copy any script files that aren't in variant-specific directories
-    find scripts -maxdepth 1 -type f -exec cp {} "$SPEC_DIR/scripts/" \; 2>/dev/null || true
-  fi
-
+  # Copy templates (excluding commands folder - commands are agent-specific launchers)
   [[ -d templates ]] && {
     mkdir -p "$SPEC_DIR/templates"
-    # Copy templates but exclude commands folder (commands are agent-specific)
-    # Also exclude vscode-settings.json (IDE-specific) and monolithic backup files
     find templates -type f -not -path "templates/commands/*" -not -name "vscode-settings.json" -not -name "*-monolithic.md" -exec cp --parents {} "$SPEC_DIR"/ \;
     echo "Copied templates -> .specify/templates"
   }
 
-  # Copy chained prompts to .specify/prompts/ (workflow orchestration, not user commands)
+  # Copy chained prompts to .specify/prompts/ (workflow orchestration)
   [[ -d templates/commands/analyze ]] && {
     mkdir -p "$SPEC_DIR/prompts/analyze"
     cp -r templates/commands/analyze/* "$SPEC_DIR/prompts/analyze/"
@@ -181,61 +69,89 @@ build_unified() {
   # Copy AGENTS.md to package root for easy agent access
   [[ -f templates/AGENTS.md ]] && { cp templates/AGENTS.md "$base_dir/AGENTS.md"; echo "Copied AGENTS.md -> package root"; }
 
-  # NOTE: We substitute {ARGS} internally. Outward tokens differ intentionally:
-  #   * Markdown/prompt (claude, copilot, cursor-agent, opencode): $ARGUMENTS
-  #   * TOML (gemini, qwen): {{args}}
-  # This keeps formats readable without extra abstraction.
+  # Copy launcher files from launchers/ directory based on agent
+  local launcher_dir=""
+  local dest_dir=""
 
   case $agent in
     claude)
-      mkdir -p "$base_dir/.claude/commands"
-      generate_commands claude md "\$ARGUMENTS" "$base_dir/.claude/commands" ;;
+      launcher_dir="launchers/claude"
+      dest_dir="$base_dir/.claude/commands"
+      ;;
     gemini)
-      mkdir -p "$base_dir/.gemini/commands"
-      generate_commands gemini toml "{{args}}" "$base_dir/.gemini/commands"
-      [[ -f agent_templates/gemini/GEMINI.md ]] && cp agent_templates/gemini/GEMINI.md "$base_dir/GEMINI.md" ;;
+      launcher_dir="launchers/gemini"
+      dest_dir="$base_dir/.gemini/commands"
+      [[ -f agent_templates/gemini/GEMINI.md ]] && cp agent_templates/gemini/GEMINI.md "$base_dir/GEMINI.md"
+      ;;
     copilot)
-      mkdir -p "$base_dir/.github/prompts"
-      generate_commands copilot prompt.md "\$ARGUMENTS" "$base_dir/.github/prompts"
+      launcher_dir="launchers/copilot"
+      dest_dir="$base_dir/.github/prompts"
       # Create VS Code workspace settings
       mkdir -p "$base_dir/.vscode"
       [[ -f templates/vscode-settings.json ]] && cp templates/vscode-settings.json "$base_dir/.vscode/settings.json"
       ;;
     cursor-agent)
-      mkdir -p "$base_dir/.cursor/commands"
-      generate_commands cursor-agent md "\$ARGUMENTS" "$base_dir/.cursor/commands" ;;
+      launcher_dir="launchers/cursor"
+      dest_dir="$base_dir/.cursor/commands"
+      ;;
     qwen)
-      mkdir -p "$base_dir/.qwen/commands"
-      generate_commands qwen toml "{{args}}" "$base_dir/.qwen/commands"
-      [[ -f agent_templates/qwen/QWEN.md ]] && cp agent_templates/qwen/QWEN.md "$base_dir/QWEN.md" ;;
+      launcher_dir="launchers/qwen"
+      dest_dir="$base_dir/.qwen/commands"
+      [[ -f agent_templates/qwen/QWEN.md ]] && cp agent_templates/qwen/QWEN.md "$base_dir/QWEN.md"
+      ;;
     opencode)
-      mkdir -p "$base_dir/.opencode/command"
-      generate_commands opencode md "\$ARGUMENTS" "$base_dir/.opencode/command" ;;
+      launcher_dir="launchers/opencode"
+      dest_dir="$base_dir/.opencode/command"
+      ;;
     windsurf)
-      mkdir -p "$base_dir/.windsurf/workflows"
-      generate_commands windsurf md "\$ARGUMENTS" "$base_dir/.windsurf/workflows" ;;
+      launcher_dir="launchers/windsurf"
+      dest_dir="$base_dir/.windsurf/workflows"
+      ;;
     codex)
-      mkdir -p "$base_dir/.codex/prompts"
-      generate_commands codex md "\$ARGUMENTS" "$base_dir/.codex/prompts" ;;
+      launcher_dir="launchers/codex"
+      dest_dir="$base_dir/.codex/prompts"
+      ;;
     kilocode)
-      mkdir -p "$base_dir/.kilocode/workflows"
-      generate_commands kilocode md "\$ARGUMENTS" "$base_dir/.kilocode/workflows" ;;
+      launcher_dir="launchers/kilocode"
+      dest_dir="$base_dir/.kilocode/workflows"
+      ;;
     auggie)
-      mkdir -p "$base_dir/.augment/commands"
-      generate_commands auggie md "\$ARGUMENTS" "$base_dir/.augment/commands" ;;
+      launcher_dir="launchers/auggie"
+      dest_dir="$base_dir/.augment/commands"
+      ;;
     roo)
-      mkdir -p "$base_dir/.roo/commands"
-      generate_commands roo md "\$ARGUMENTS" "$base_dir/.roo/commands" ;;
+      launcher_dir="launchers/roo"
+      dest_dir="$base_dir/.roo/commands"
+      ;;
     codebuddy)
-      mkdir -p "$base_dir/.codebuddy/commands"
-      generate_commands codebuddy md "\$ARGUMENTS" "$base_dir/.codebuddy/commands" ;;
+      launcher_dir="launchers/codebuddy"
+      dest_dir="$base_dir/.codebuddy/commands"
+      ;;
     amp)
-      mkdir -p "$base_dir/.agents/commands"
-      generate_commands amp md "\$ARGUMENTS" "$base_dir/.agents/commands" ;;
+      launcher_dir="launchers/amp"
+      dest_dir="$base_dir/.agents/commands"
+      ;;
     q)
-      mkdir -p "$base_dir/.amazonq/prompts"
-      generate_commands q md "\$ARGUMENTS" "$base_dir/.amazonq/prompts" ;;
+      launcher_dir="launchers/amazonq"
+      dest_dir="$base_dir/.amazonq/prompts"
+      ;;
   esac
+
+  # Copy launcher files with speckitsmart prefix
+  if [[ -d "$launcher_dir" ]]; then
+    mkdir -p "$dest_dir"
+    for file in "$launcher_dir"/*; do
+      [[ -f "$file" ]] || continue
+      local basename=$(basename "$file")
+      local name="${basename%.*}"
+      local ext="${basename##*.}"
+      cp "$file" "$dest_dir/speckitsmart.$name.$ext"
+    done
+    echo "Copied launchers from $launcher_dir -> $dest_dir"
+  else
+    echo "Warning: No launcher directory found at $launcher_dir"
+  fi
+
   ( cd "$base_dir" && zip -r "../spec-kit-template-${agent}-${NEW_VERSION}.zip" . )
   echo "Created $GENRELEASES_DIR/spec-kit-template-${agent}-${NEW_VERSION}.zip"
 }
@@ -276,7 +192,7 @@ else
 fi
 
 echo "Agents: ${AGENT_LIST[*]}"
-echo "Building unified packages (containing both bash and PowerShell scripts)"
+echo "Building packages with Python CLI launchers (speckitadv)"
 
 for agent in "${AGENT_LIST[@]}"; do
   build_unified "$agent"
@@ -284,4 +200,3 @@ done
 
 echo "Archives in $GENRELEASES_DIR:"
 ls -1 "$GENRELEASES_DIR"/spec-kit-template-*-"${NEW_VERSION}".zip
-
