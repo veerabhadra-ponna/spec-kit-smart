@@ -65,6 +65,7 @@ speckitadv create-feature "{{feature}}" --json --number N+1 \
 **Parse JSON output** for BRANCH_NAME and SPEC_FILE paths.
 
 JSON output format:
+
 ```json
 {
   "BRANCH_NAME": "feature/001-C12345-7890-user-auth",
