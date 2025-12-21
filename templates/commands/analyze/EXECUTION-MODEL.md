@@ -170,14 +170,13 @@ Every sub-prompt ends with:
 
 Write: `.analysis/.checkpoints/{name}-complete.json`
 
-```
+```json
 {
   "sub_prompt": "{name}",
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
-
-```text
+```
 
 ### Verify Checkpoint
 
@@ -191,6 +190,7 @@ Write: `.analysis/.checkpoints/{name}-complete.json`
 **IF verified:** Output: `✓ Checkpoint verified: {name}`
 **IF failed:** Retry once, then STOP and report error
 
+<!-- markdownlint-disable-next-line MD040 -->
 ```
 
 ### Why Verification Matters

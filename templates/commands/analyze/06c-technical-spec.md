@@ -43,12 +43,13 @@ Generate Sections 1, 2, and 3.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_1]**
 
-#### Section 1: Introduction
+### Section 1: Introduction
+
 - Document purpose
 - Technical audience
 - Scope of implementation
 
-#### Section 2: Architecture Overview
+### Section 2: Architecture Overview
 
 ```markdown
 ## 2. Architecture Overview
@@ -68,7 +69,7 @@ Generate Sections 1, 2, and 3.
 
 ```
 
-#### Section 3: Legacy vs Target Comparison
+### Section 3: Legacy vs Target Comparison
 
 | Aspect | Legacy | Target | Migration Impact |
 |--------|--------|--------|------------------|
@@ -114,7 +115,7 @@ Generate Sections 4 and 5 using user's Q1-Q4 answers.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_2]**
 
-#### Section 4: Target Technology Stack
+### Section 4: Target Technology Stack
 
 Based on user's 10 questions:
 
@@ -145,7 +146,7 @@ Based on user's 10 questions:
 
 ```
 
-#### Section 5: Data Architecture
+### Section 5: Data Architecture
 
 ```markdown
 ## 5. Data Architecture
@@ -193,7 +194,7 @@ Generate Sections 6 and 7.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_3]**
 
-#### Section 6: API Design
+### Section 6: API Design
 
 ```markdown
 ## 6. API Design
@@ -215,7 +216,7 @@ Generate Sections 6 and 7.
 
 ```
 
-#### Section 7: Integration Architecture
+### Section 7: Integration Architecture
 
 ```markdown
 ## 7. Integration Architecture
@@ -264,7 +265,7 @@ Generate Sections 8 and 9 using Q5, Q6, Q7, Q9 answers.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_4]**
 
-#### Section 8: Security Architecture
+### Section 8: Security Architecture
 
 Based on Q9 (Security approach):
 
@@ -296,7 +297,7 @@ Based on Q9 (Security approach):
 
 ```
 
-#### Section 9: Deployment Architecture
+### Section 9: Deployment Architecture
 
 Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 
@@ -355,7 +356,7 @@ Generate Sections 10, 11, and 12 using Q8, Q10 answers.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_5]**
 
-#### Section 10: Testing Strategy
+### Section 10: Testing Strategy
 
 Based on Q10 (Testing approach):
 
@@ -383,7 +384,7 @@ Based on Q10 (Testing approach):
 
 ```
 
-#### Section 11: Observability
+### Section 11: Observability
 
 Based on Q8 (Observability stack):
 
@@ -409,7 +410,7 @@ Based on Q8 (Observability stack):
 
 ```
 
-#### Section 12: Migration Risks & Mitigations
+### Section 12: Migration Risks & Mitigations
 
 ```markdown
 ## 12. Migration Risks

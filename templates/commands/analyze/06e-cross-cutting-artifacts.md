@@ -118,11 +118,10 @@ Generate:
 
 ### Interface Design
 
-```
+```text
 // Recommended abstraction interface
 {interface code}
-
-```text
+```
 
 ## Migration Readiness
 
@@ -143,6 +142,7 @@ Generate:
 
 {Prioritized list of pre-migration tasks}
 
+<!-- markdownlint-disable-next-line MD040 -->
 ```
 
 Write to: `.analysis/{dir}/abstraction-assessment.md`
@@ -281,10 +281,9 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 
 ### Configuration
 
-```
-{configuration example}
-
 ```text
+{configuration example}
+```
 
 ## 5. Code Changes
 
@@ -296,14 +295,13 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 
 ### Migration Pattern
 
-```
+```text
 // Before (Legacy)
 {legacy code}
 
 // After (Target)
 {target code}
-
-```text
+```
 
 ### Key Transformations
 
@@ -328,6 +326,7 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 
 {How to verify rollback works before going live}
 
+<!-- markdownlint-disable-next-line MD040 -->
 ```
 
 Append to: `.analysis/{dir}/concern-migration-plan.md`
@@ -505,37 +504,37 @@ Generate detailed rollback procedure:
 
 ### Step 1: Initiate Rollback
 
-```
+```bash
 {command or action}
+```
 
-```text
 - **Expected Duration:** {time}
 - **Verification:** {how to verify}
 
 ### Step 2: Switch Traffic
 
-```
+```bash
 {command or action}
+```
 
-```text
 - **Expected Duration:** {time}
 - **Verification:** {how to verify}
 
 ### Step 3: Disable New Implementation
 
-```
+```bash
 {command or action}
+```
 
-```text
 - **Expected Duration:** {time}
 - **Verification:** {how to verify}
 
 ### Step 4: Verify Legacy Active
 
-```
+```bash
 {command or action}
+```
 
-```text
 - **Expected Duration:** {time}
 - **Verification:** {how to verify}
 
@@ -588,6 +587,7 @@ Generate detailed rollback procedure:
 |------|--------|--------|
 | {date} | Initial version | {author} |
 
+<!-- markdownlint-disable-next-line MD040 -->
 ```
 
 Write to: `.analysis/{dir}/rollback-procedure.md`

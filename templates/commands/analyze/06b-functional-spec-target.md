@@ -69,17 +69,20 @@ Generate Sections 1, 2, and 3 for TARGET system.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_1]**
 
-#### Section 1: Introduction
+### Section 1: Introduction
+
 - Project name: {name} (Modernized)
 - Target system overview
 - Modernization goals from user preferences
 
-#### Section 2: Executive Summary
+### Section 2: Executive Summary
+
 - High-level target functionality
 - Key improvements over legacy
 - New capabilities
 
-#### Section 3: Scope
+### Section 3: Scope
+
 - IN SCOPE: Components with explicit target preferences
 - OUT OF SCOPE: Components to keep as-is
 - Migration boundaries
@@ -179,12 +182,13 @@ Generate Sections 4.2 and 5 with target stack considerations.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_3]**
 
-#### Section 4.2: STANDARD Features (Modernized)
+### Section 4.2: STANDARD Features (Modernized)
+
 - Same format as CRITICAL
 - Include modernization changes where applicable
 - Note OUT OF SCOPE items explicitly
 
-#### Section 5: Business Rules (Preserved + Enhanced)
+### Section 5: Business Rules (Preserved + Enhanced)
 
 ```markdown
 ## 5. Business Rules
@@ -235,7 +239,7 @@ Generate Sections 6 and 7 using user's target preferences.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_4]**
 
-#### Section 6: Non-Functional Requirements (Target)
+### Section 6: Non-Functional Requirements (Target)
 
 Use user's answers from 10 questions:
 - Q5: Deployment target
@@ -251,7 +255,7 @@ Use user's answers from 10 questions:
 | Scalability | {target approach} | Q5: {answer} |
 | Observability | {target stack} | Q8: {answer} |
 
-#### Section 7: Data Requirements (Target)
+### Section 7: Data Requirements (Target)
 
 Use user's answer from Q2 (Database):
 
@@ -294,17 +298,20 @@ Generate Sections 8, 9, and 10.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_5]**
 
-#### Section 8: Acceptance Criteria (Target)
+### Section 8: Acceptance Criteria (Target)
+
 - Migration success criteria
 - Feature parity verification
 - Performance benchmarks vs legacy
 
-#### Section 9: Assumptions (Target)
+### Section 9: Assumptions (Target)
+
 - Target environment assumptions
 - Migration path assumptions
 - Team capability assumptions
 
-#### Section 10: Constraints (Target)
+### Section 10: Constraints (Target)
+
 - Timeline constraints
 - Budget constraints
 - Technology constraints from user preferences

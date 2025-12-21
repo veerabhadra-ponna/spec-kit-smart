@@ -118,15 +118,14 @@ Output: `✓ Chunk 7/9: Upgrade Paths ({lines} lines)`
 
 **Formula:**
 
-```
+```text
 Score = 100 - (Complexity × 10) + Abstraction Bonus
 
 Components:
   Complexity Factor: {score}/10
   Abstraction Level: {level}
   Abstraction Bonus: {bonus}
-
-```text
+```
 
 **Factors:**
 
@@ -144,10 +143,9 @@ Components:
 
 **Formula:**
 
-```
-Score = 50 + Abstraction Penalty - (Feature Count / 10)
-
 ```text
+Score = 50 + Abstraction Penalty - (Feature Count / 10)
+```
 
 **Factors:**
 
@@ -164,16 +162,16 @@ Score = 50 + Abstraction Penalty - (Feature Count / 10)
 
 **Formula:**
 
-```
-Score = (Inline + Greenfield) / 2 + 10 (flexibility bonus)
-
 ```text
+Score = (Inline + Greenfield) / 2 + 10 (flexibility bonus)
+```
 
 **Rationale:**
 {Why hybrid might be suitable}
 
 ---
 
+<!-- markdownlint-disable-next-line MD040 -->
 ```
 
 **Checkpoint:** `.analysis/.checkpoints/report-chunk-8.json`

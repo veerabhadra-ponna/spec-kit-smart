@@ -237,12 +237,11 @@ These behaviors must be implemented EXACTLY as in legacy:
 
 {Legacy patterns that should be replicated}
 
-```
+```text
 // Legacy Pattern: {name}
 // Source: {file}:{line}
 {code snippet}
-
-```text
+```
 
 ## Edge Cases Catalog
 
@@ -264,6 +263,7 @@ These behaviors must be implemented EXACTLY as in legacy:
 |------------|------------|------------------|
 | {checkpoint} | {how to verify} | {file}:{line} |
 
+<!-- markdownlint-disable-next-line MD040 -->
 ```
 
 Write to: `.analysis/{dir}/stage-prompts/implement-prompt.md`

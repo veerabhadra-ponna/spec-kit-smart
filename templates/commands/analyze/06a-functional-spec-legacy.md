@@ -59,17 +59,20 @@ Generate Sections 1, 2, and 3.
 
 Generate the following sections:
 
-#### Section 1: Introduction
+### Section 1: Introduction
+
 - Project name and purpose
 - Document scope and audience
 - Legacy system overview
 
-#### Section 2: Executive Summary
+### Section 2: Executive Summary
+
 - High-level functionality summary
 - Key capabilities
 - System boundaries
 
-#### Section 3: Scope
+### Section 3: Scope
+
 - In-scope functionality
 - Out-of-scope items
 - Assumptions
@@ -176,12 +179,13 @@ Generate Sections 4.2 and 5.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_3]**
 
-#### Section 4.2: STANDARD Features
+### Section 4.2: STANDARD Features
+
 - Extract all STANDARD priority features
 - Same user story format as CRITICAL
 - Include file:line references
 
-#### Section 5: Business Rules
+### Section 5: Business Rules
 
 ```markdown
 ## 5. Business Rules
@@ -193,15 +197,12 @@ Generate Sections 4.2 and 5.
 **Description:** {plain English description}
 **Pseudocode:**
 
-```
+```text
 IF condition THEN
   action
 ELSE
   alternative
 END IF
-
-```text
-
 ```
 
 Append to: `.analysis/{dir}/functional-spec-legacy.md`
@@ -231,7 +232,7 @@ Generate Sections 6 and 7.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_4]**
 
-#### Section 6: Non-Functional Requirements
+### Section 6: Non-Functional Requirements
 
 | Category | Current State | Evidence |
 |----------|--------------|----------|
@@ -240,7 +241,7 @@ Generate Sections 6 and 7.
 | Scalability | {approach} | {file:line} |
 | Reliability | {mechanisms} | {file:line} |
 
-#### Section 7: Data Requirements
+### Section 7: Data Requirements
 
 ```markdown
 ### Entity: {Name}
@@ -283,17 +284,20 @@ Generate Sections 8, 9, and 10.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_5]**
 
-#### Section 8: Acceptance Criteria
+### Section 8: Acceptance Criteria
+
 - System-level acceptance tests
 - Integration verification points
 - Performance benchmarks
 
-#### Section 9: Assumptions
+### Section 9: Assumptions
+
 - Technical assumptions
 - Business assumptions
 - Environmental assumptions
 
-#### Section 10: Constraints
+### Section 10: Constraints
+
 - Technical constraints
 - Business constraints
 - Regulatory constraints
