@@ -73,7 +73,7 @@ def run_analyze_project(
     concern_type: Optional[str] = None,
     current_impl: Optional[str] = None,
     target_impl: Optional[str] = None,
-    verify: bool = False,  # TODO: Implement verification after final stage
+    verify: bool = False,
 ) -> None:
     """
     Execute analyze-project workflow at specified stage.
@@ -94,9 +94,8 @@ def run_analyze_project(
         concern_type: Type of cross-cutting concern (for scope B)
         current_impl: Current implementation details
         target_impl: Target implementation details
-        verify: Run verification after generation (not yet implemented)
+        verify: Run verification after final stage completes
     """
-    _ = verify  # Reserved for future implementation
     # Initialize or load chain state
     if chain_id:
         try:
@@ -215,6 +214,16 @@ Run the following command to begin:""",
         next_cmd=next_cmd,
         context=render_context if stage == 1 else None,  # Show context on first stage
     )
+
+    # Run verification if this is the final stage and verify flag is set
+    if next_cmd is None and verify:
+        from speckit.commands.project import verify_analysis_report
+        report_path = state.project_path / ".analysis" / "analysis-report.md"
+        if report_path.exists():
+            print("\n")  # Add spacing
+            verify_analysis_report(str(report_path))
+        else:
+            print(f"\n[Note] Verification skipped: report not found at {report_path}")
 
 
 def _emit_chunk_stage(

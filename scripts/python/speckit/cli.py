@@ -74,7 +74,7 @@ def analyze_project(
     concern_type: Optional[str] = typer.Option(None, "--concern-type", help="Cross-cutting concern type"),
     current_impl: Optional[str] = typer.Option(None, "--current-impl", help="Current implementation"),
     target_impl: Optional[str] = typer.Option(None, "--target-impl", help="Target implementation"),
-    verify: bool = typer.Option(False, "--verify", help="Run verification after report generation (not yet implemented)"),
+    verify: bool = typer.Option(False, "--verify", help="Run verification after final stage completes"),
 ) -> None:
     """
     Analyze an existing project for modernization.
