@@ -613,17 +613,22 @@ The `speckitadv` Python executable provides seamless cross-platform support:
 - **macOS Apple Silicon**: `speckitadv-darwin-arm64`
 - **Windows**: `speckitadv-windows-x86_64.exe`
 
-No need to choose between platform-specific packages - one binary works on your OS!
+No need to choose between platform-specific packages - one CLI works everywhere!
 
-**Installation Options:**
+**Installation:**
 
 ```bash
-# Option 1: Download pre-built binary from GitHub Releases
-# Download the appropriate binary for your platform
-
-# Option 2: Build from source
+# Install from source
 cd scripts/python
 pip install -e .
+
+# Verify installation
+speckitadv --help
+```
+
+**Optional: Build standalone binary (no Python required):**
+
+```bash
 pip install pyinstaller
 pyinstaller speckit.spec
 # Binary at: dist/speckitadv
