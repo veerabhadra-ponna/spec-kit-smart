@@ -5,14 +5,13 @@ Ports functionality from chain-state.sh.
 """
 
 import json
-import secrets
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 from rich.console import Console
 
-from speckit.core.utils import find_repo_root
+from speckit.core.utils import find_repo_root, generate_chain_id
 
 console = Console()
 
@@ -21,11 +20,6 @@ def get_state_dir(repo_root: Optional[Path] = None) -> Path:
     """Get the state directory path."""
     root = repo_root or find_repo_root()
     return root / ".analysis" / ".state"
-
-
-def generate_chain_id() -> str:
-    """Generate unique 8-character chain ID."""
-    return secrets.token_hex(4)
 
 
 def init_state_dir(repo_root: Optional[Path] = None) -> Path:

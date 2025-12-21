@@ -20,13 +20,14 @@ COMMANDS = {
     "checklist": "Generate quality validation checklist",
     "orchestrate": "Orchestrate complete spec-driven workflow",
     "resume": "Resume workflow from saved state",
+    "generate-guidelines": "Generate corporate coding guidelines",
 }
 
-# Agent configurations
+# Agent configurations (keys match AGENT_CONFIG in setup/config.py)
 MARKDOWN_AGENTS = {
     "claude": ".claude/commands",
     "copilot": ".github/prompts",
-    "cursor": ".cursor/commands",
+    "cursor-agent": ".cursor/commands",
     "opencode": ".opencode/command",
     "codex": ".codex/commands",
     "windsurf": ".windsurf/workflows",
@@ -34,7 +35,7 @@ MARKDOWN_AGENTS = {
     "auggie": ".augment/rules",
     "roo": ".roo/rules",
     "codebuddy": ".codebuddy/commands",
-    "amazonq": ".amazonq/prompts",
+    "q": ".amazonq/prompts",
     "amp": ".agents/commands",
 }
 

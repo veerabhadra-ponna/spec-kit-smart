@@ -133,6 +133,9 @@ WORKFLOW_COMMANDS = [
     ("implement", "Execute implementation"),
     ("checklist", "Generate quality checklist"),
     ("analyze", "Cross-artifact consistency check"),
+    ("orchestrate", "Orchestrate complete spec-driven workflow"),
+    ("resume", "Resume workflow from saved state"),
+    ("generate-guidelines", "Generate corporate coding guidelines"),
 ]
 
 # Launcher templates by format

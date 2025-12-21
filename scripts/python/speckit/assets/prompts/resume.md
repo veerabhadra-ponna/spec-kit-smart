@@ -71,15 +71,15 @@ This command restores full context when starting a new chat session after:
 
 ### **STEP 1: Identify What to Resume**
 
-#### **Option A: State File Exists (.speckit-state.json)**
+#### **Option A: State File Exists (.speckitadv-state.json)**
 
 This is the primary resume path when using `/speckitadv.orchestrate`.
 
 ```bash
 # Check for orchestration state
-if [ -f .speckit-state.json ]; then
+if [ -f .speckitadv-state.json ]; then
   echo "✓ Found orchestration state file"
-  state=$(cat .speckit-state.json)
+  state=$(cat .speckitadv-state.json)
 
   # Extract key information
   feature_dir=$(echo "$state" | jq -r '.feature_dir')
@@ -265,8 +265,8 @@ else
 fi
 
 # Override with state file if available
-if [ -f .speckit-state.json ]; then
-  state_phase=$(jq -r '.current_phase' .speckit-state.json)
+if [ -f .speckitadv-state.json ]; then
+  state_phase=$(jq -r '.current_phase' .speckitadv-state.json)
   if [ "$state_phase" != "null" ] && [ -n "$state_phase" ]; then
     phase="$state_phase"
     phase_description="From state file: $state_phase"
@@ -828,7 +828,7 @@ case "$phase" in
 
   *)
     echo "❌ Unknown phase: $phase"
-    echo "Check .speckit-state.json and feature directory for details."
+    echo "Check .speckitadv-state.json and feature directory for details."
     exit 1
     ;;
 esac
@@ -841,16 +841,16 @@ esac
 If state file exists, update it to reflect resumption:
 
 ```bash
-if [ -f .speckit-state.json ]; then
+if [ -f .speckitadv-state.json ]; then
   # Update last_updated timestamp
   current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
   # Update state file
   jq --arg time "$current_time" \
      '.last_updated = $time | .resumed = true | .resume_count = (.resume_count // 0) + 1' \
-     .speckit-state.json > .speckit-state.json.tmp
+     .speckitadv-state.json > .speckitadv-state.json.tmp
 
-  mv .speckit-state.json.tmp .speckit-state.json
+  mv .speckitadv-state.json.tmp .speckitadv-state.json
 
   echo "✓ State file updated with resume timestamp"
 fi
@@ -933,7 +933,7 @@ fi
 
 - Feature branch pushed to remote
 - All artifacts (spec, plan, tasks) committed
-- .speckit-state.json committed (optional but recommended)
+- .speckitadv-state.json committed (optional but recommended)
 
 **Resume flow:**
 
@@ -983,7 +983,7 @@ The `/speckitadv.resume` command works seamlessly with `/speckitadv.orchestrate`
 
 ```bash
 /speckitadv.resume
-# → Reads .speckit-state.json
+# → Reads .speckitadv-state.json
 # → Loads all artifacts from specs/001-user-auth
 # → Continues orchestration from current_phase
 ```
@@ -1004,7 +1004,7 @@ If NOT using orchestrator, resume still works by:
 1. **Commit frequently:**
 
    - Commit after each major phase completion
-   - Commit .speckit-state.json for cross-machine resumption
+   - Commit .speckitadv-state.json for cross-machine resumption
    - Tag important milestones
 
 2. **Use descriptive branch names:**
@@ -1195,7 +1195,7 @@ The `/speckitadv.resume` command provides:
 - ✅ **Phase-aware resumption** (works for any workflow phase)
 - ✅ **Cross-machine support** (works anywhere with branch checkout)
 - ✅ **Error recovery** (handles failures gracefully)
-- ✅ **Orchestrator integration** (seamless with .speckit-state.json)
+- ✅ **Orchestrator integration** (seamless with .speckitadv-state.json)
 
 **Key principle:** The filesystem IS the source of truth. Chat history is ephemeral; artifacts are permanent.
 

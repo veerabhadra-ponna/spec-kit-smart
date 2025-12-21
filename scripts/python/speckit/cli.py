@@ -253,7 +253,6 @@ def checklist(
 @app.command("orchestrate")
 def orchestrate(
     description: Optional[str] = typer.Argument(None, help="Feature description to orchestrate"),
-    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ) -> None:
     """
     Orchestrate complete spec-driven workflow.
@@ -265,7 +264,7 @@ def orchestrate(
 
     fragment = get_prompt_fragment("orchestrate", "01")
     if description:
-        fragment = fragment.replace("{description}", description)
+        fragment = fragment.replace("$ARGUMENTS", description)
     console.print(fragment)
 
 
@@ -275,9 +274,7 @@ def orchestrate(
 
 
 @app.command("resume")
-def resume(
-    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-) -> None:
+def resume() -> None:
     """
     Resume workflow from saved state.
 
