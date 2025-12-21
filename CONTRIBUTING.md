@@ -63,33 +63,27 @@ Here are a few things you can do that will increase the likelihood of your pull 
 
 When working on spec-kit:
 
-1. Test changes with the `speckitsmart` CLI commands (`/speckitsmart.specify`, `/speckitsmart.plan`, `/speckitsmart.tasks`) in your coding agent of choice
-2. Verify templates are working correctly in `templates/` directory
-3. Test script functionality in the `scripts/` directory
+1. Test changes with the `speckitadv` CLI commands (`speckitadv specify`, `speckitadv plan`, `speckitadv tasks`)
+2. Verify embedded assets are working correctly in `scripts/python/speckit/assets/`
+3. Run the test suite: `cd scripts/python && pytest tests/`
 4. Ensure memory files (`memory/constitution.md`) are updated if major process changes are made
 
-### Testing template and command changes locally
+### Testing CLI changes locally
 
-Running `speckitsmart init` after installing with `pip install -e .` pulls released packages, which won't include your local changes.
-To test your templates, commands, and other changes locally, follow these steps:
+Install the CLI in development mode to test your local changes:
 
-1. **Create release packages**
+```bash
+cd scripts/python
+pip install -e .
+```
 
-   Run the following command to generate the local packages:
+Then test commands directly:
 
-   ```bash
-   ./.github/workflows/scripts/create-release-packages.sh v1.0.0
-   ```
-
-2. **Copy the relevant package to your test project**
-
-   ```bash
-   cp -r .genreleases/sdd-copilot-package-sh/. <path-to-test-project>/
-   ```
-
-3. **Open and test the agent**
-
-   Navigate to your test project folder and open the agent to verify your implementation.
+```bash
+speckitadv --help
+speckitadv check
+speckitadv list-fragments analyze-project
+```
 
 ## AI contributions in Spec Kit
 

@@ -295,6 +295,6 @@ Uses markdownlint-cli2 with configuration in `.markdownlint.json` (enforced via 
 
 **Repository Development** (`docs/development/`): For devs ON repo (engineering-review, roadmap, architecture, developer README)
 **Toolkit Documentation** (`docs/`): For toolkit USERS (guides, examples, quickstart, installation)
-**AI Instructions**: `AGENTS.md` (repo dev) vs `.specify/AGENTS.md` (toolkit usage)
+**AI Instructions**: `AGENTS.md` (repo dev) - toolkit AGENTS.md embedded in CLI
 
 **Key Rule**: Separate developer implementation from user-facing docs.

@@ -144,9 +144,10 @@ speckitadv constitution --stage=3 --chain=abc12345
 
 ```text
 project-root/
-├── .specify/memory/constitution.md    # Immutable principles
-├── .specify/templates/                 # Templates
-├── .specify/commands/                  # Agent launcher files
+├── memory/
+│   ├── config.json                     # Project configuration
+│   └── constitution.md                 # Immutable principles
+├── .guidelines/                        # Corporate/project guidelines
 └── specs/[###-feature-name]/
     ├── spec.md                         # WHAT/WHY (requirements)
     ├── plan.md                         # HOW (architecture)

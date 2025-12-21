@@ -222,7 +222,7 @@ Dependencies: Phase 1
 ```
 
 Migrate from common.sh/ps1:
-- Load .specify/config.json
+- Load memory/config.json (with .specify/config.json as legacy fallback)
 - Environment variable handling
 - OS detection
 

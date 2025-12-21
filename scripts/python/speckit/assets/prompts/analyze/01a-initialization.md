@@ -19,8 +19,7 @@ Initialize the analysis chain by verifying AGENTS.md guidelines and preparing th
 Check if `AGENTS.md` exists in any of these locations (in order):
 
 1. Repository root: `./AGENTS.md`
-2. Specify memory: `.specify/memory/AGENTS.md`
-3. Templates directory: `templates/AGENTS.md`
+2. Memory directory: `memory/AGENTS.md`
 
 ---
 ⏸️ **[STOP: AGENTS_CHECK]**

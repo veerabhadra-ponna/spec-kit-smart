@@ -454,6 +454,7 @@ def run_update_agent_context(agent_type: Optional[str] = None) -> bool:
         repo_root / "memory" / "templates" / "agent-file-template.md",
         repo_root / ".specify" / "templates" / "agent-file-template.md",
         repo_root / "templates" / "agent-file-template.md",
+        Path(__file__).parent.parent / "assets" / "templates" / "agent-file-template.md",
     ]
     for path in search_paths:
         if path.exists():

@@ -19,8 +19,7 @@ Initialize the constitution workflow by verifying AGENTS.md and understanding yo
 Check if `AGENTS.md` exists in any of these locations (in order):
 
 1. Repository root: `./AGENTS.md`
-2. Specify memory: `.specify/memory/AGENTS.md`
-3. Templates directory: `templates/AGENTS.md`
+2. Memory directory: `memory/AGENTS.md`
 
 **IF EXISTS**: Read it in FULL. Instructions are NON-NEGOTIABLE.
 

@@ -32,7 +32,7 @@ Generate functional specification documenting WHAT the LEGACY/EXISTING system CU
 - `.analysis/{dir}/analysis-report.md` Phase 2 (Feature Catalog)
 - `.analysis/{dir}/analysis-report.md` Phase 3 (Positive Findings)
 
-**Template:** Read `.specify/templates/analyze/functional-spec-template.md`
+**Template:** Use embedded template: functional-spec-template.md`
 
 ---
 

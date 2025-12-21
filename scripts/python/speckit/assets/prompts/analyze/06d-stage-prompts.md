@@ -27,7 +27,7 @@ Generate staged implementation prompts for Spec Kit workflow integration. These 
 
 ## Templates
 
-Read templates from: `.specify/templates/analyze/stage-prompt-templates/`
+Templates are embedded in CLI
 
 - `constitution-prompt-template.md`
 - `clarify-prompt-template.md`
@@ -49,7 +49,7 @@ Create: `.analysis/{dir}/stage-prompts/`
 
 **Purpose:** Extract project principles from legacy code for `/speckit.constitution` command
 
-**Template:** `.specify/templates/analyze/stage-prompt-templates/constitution-prompt-template.md`
+**Template:** embedded template `constitution-prompt-template.md`
 
 **Content to extract:**
 
@@ -99,7 +99,7 @@ Write to: `.analysis/{dir}/stage-prompts/constitution-prompt.md`
 
 **Purpose:** Use legacy code as source of truth for clarifications with `/speckit.clarify` command
 
-**Template:** `.specify/templates/analyze/stage-prompt-templates/clarify-prompt-template.md`
+**Template:** embedded template `clarify-prompt-template.md`
 
 **Content to extract:**
 
@@ -155,7 +155,7 @@ Write to: `.analysis/{dir}/stage-prompts/clarify-prompt.md`
 
 **Purpose:** Break down implementation with legacy complexity awareness for `/speckit.tasks` command
 
-**Template:** `.specify/templates/analyze/stage-prompt-templates/tasks-prompt-template.md`
+**Template:** embedded template `tasks-prompt-template.md`
 
 **Content to extract:**
 
@@ -216,7 +216,7 @@ Write to: `.analysis/{dir}/stage-prompts/tasks-prompt.md`
 
 **Purpose:** Reference legacy code during implementation for `/speckit.implement` command
 
-**Template:** `.specify/templates/analyze/stage-prompt-templates/implement-prompt-template.md`
+**Template:** embedded template `implement-prompt-template.md`
 
 **Content to extract:**
 

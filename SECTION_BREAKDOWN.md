@@ -1,8 +1,9 @@
-# Analyze-Project.md - Section Breakdown for Chained Prompts
+# Analyze-Project - Section Breakdown for Chained Prompts
 
-**File**: `/home/user/spec-kit-smart/templates/commands/analyze-project.md`
-**Total Lines**: 2484
+**Location**: Embedded in CLI at `scripts/python/speckit/assets/prompts/analyze/`
 **Version**: v1.2.0-alpha
+
+> **Note**: Prompts are now embedded in the Python CLI and output via `speckitadv analyze-project --stage N`
 
 ---
 

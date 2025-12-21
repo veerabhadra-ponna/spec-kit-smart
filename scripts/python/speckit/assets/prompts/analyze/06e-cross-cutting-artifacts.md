@@ -46,7 +46,7 @@ From Stage 3B state, extract:
 
 **Purpose:** Detailed abstraction analysis for the concern
 
-**Template:** Read `.specify/templates/analyze/concern-analysis-template.md`
+**Template:** Use embedded template: concern-analysis-template.md`
 
 Generate:
 
@@ -177,7 +177,7 @@ Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
 ---
 ⏸️ **[STOP: GENERATE_MIGRATION_PLAN_CHUNK_1]**
 
-**Template:** Read `.specify/templates/analyze/concern-migration-plan-template.md`
+**Template:** Use embedded template: concern-migration-plan-template.md`
 
 ```markdown
 # Migration Plan: {Concern Type}
