@@ -65,8 +65,8 @@ def main(
 
 @app.command("analyze-project")
 def analyze_project(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-9)"),
-    chunk: Optional[int] = typer.Option(None, "--chunk", "-c", help="Report chunk number (1-9)"),
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-16)"),
+    chunk: Optional[int] = typer.Option(None, "--chunk", "-c", help="Report chunk number for chunked stages"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path to analyze"),
     scope: Optional[str] = typer.Option(None, "--scope", help="Analysis scope: A (full) or B (cross-cutting)"),
@@ -74,7 +74,7 @@ def analyze_project(
     concern_type: Optional[str] = typer.Option(None, "--concern-type", help="Cross-cutting concern type"),
     current_impl: Optional[str] = typer.Option(None, "--current-impl", help="Current implementation"),
     target_impl: Optional[str] = typer.Option(None, "--target-impl", help="Target implementation"),
-    verify: bool = typer.Option(False, "--verify", help="Run verification after report generation"),
+    verify: bool = typer.Option(False, "--verify", help="Run verification after report generation (not yet implemented)"),
 ) -> None:
     """
     Analyze an existing project for modernization.

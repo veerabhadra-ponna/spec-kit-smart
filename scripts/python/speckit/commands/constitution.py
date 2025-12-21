@@ -8,9 +8,8 @@ Implements a 3-stage workflow: gather, structure, finalize.
 from pathlib import Path
 from typing import Optional
 
-from speckit.core.emit import emit_stage, emit_complete, emit_error
-from speckit.core.prompts import get_prompt_fragment, render_prompt, fragment_exists
-from speckit.core.templates import get_embedded_template, template_exists
+from speckit.core.emit import emit_stage, emit_error
+from speckit.core.prompts import get_prompt_fragment, render_prompt
 from speckit.core.utils import get_repo_root
 
 
@@ -198,7 +197,7 @@ Use this markdown structure:
 
 ## Output
 
-Write the complete constitution to: `.speckit/constitution.md`
+Write the complete constitution to: `memory/constitution.md`
 """
 
     emit_stage(
@@ -218,7 +217,7 @@ Review and finalize the constitution.
 
 ## Task
 
-1. **Read** `.speckit/constitution.md`
+1. **Read** `memory/constitution.md`
 2. **Verify** all principles are covered
 3. **Check** formatting is consistent
 4. **Add** timestamp and version

@@ -2,20 +2,14 @@
 Analyze-Project Command
 
 Implements the progressive analysis workflow with enforced chunking.
-This is the most complex command with 9 stages and dynamic branching.
+This is the most complex command with 16 stages and dynamic branching.
 """
 
 from pathlib import Path
 from typing import Optional
 
-from speckit.core.emit import emit_stage, emit_chunk, emit_error, emit_complete
-from speckit.core.prompts import (
-    get_prompt_fragment,
-    render_prompt,
-    fragment_exists,
-    get_next_stage,
-    get_stage_order,
-)
+from speckit.core.emit import emit_stage, emit_chunk, emit_error
+from speckit.core.prompts import get_prompt_fragment, render_prompt
 from speckit.core.state import ChainState
 
 
@@ -288,7 +282,7 @@ def _emit_chunk_stage(
         total_chunks=total_chunks,
         title=f"{_get_stage_title(stage)} - Chunk {chunk}",
         content=rendered,
-        file_path=f".speckit/reports/stage{stage}-chunk{chunk}.md",
+        file_path=f".analysis/reports/stage{stage}-chunk{chunk}.md",
         mode="append" if chunk > 1 else "create",
         line_range=((chunk-1)*50+1, chunk*50),
         next_cmd=next_cmd,
