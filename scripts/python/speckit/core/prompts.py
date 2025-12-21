@@ -21,7 +21,8 @@ def get_prompts_base() -> Path:
     """
     if getattr(sys, "frozen", False):
         # Running as compiled executable (PyInstaller)
-        return Path(sys._MEIPASS) / "assets" / "prompts"  # type: ignore
+        # Templates are embedded at templates/commands/
+        return Path(sys._MEIPASS) / "templates" / "commands"  # type: ignore
     else:
         # Running in development - prefer repo templates (source of truth)
         repo_templates = Path(__file__).parent.parent.parent.parent.parent / "templates" / "commands"
