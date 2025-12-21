@@ -353,12 +353,15 @@ def check(
     """
     from speckit.setup.check_cmd import run_check
 
-    run_check(
+    _result, success = run_check(
         output_json=json_output,
         paths_only=paths_only,
         require_tasks=require_tasks,
         include_tasks=include_tasks,
     )
+
+    if not success:
+        raise typer.Exit(1)
 
 
 # ============================================================================

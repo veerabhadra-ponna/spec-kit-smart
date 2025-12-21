@@ -6,7 +6,6 @@ Also provides feature directory discovery (replaces check-prerequisites.sh).
 """
 
 import json
-import os
 import re
 import shutil
 import subprocess
@@ -109,7 +108,7 @@ def run_check(
     paths_only: bool = False,
     require_tasks: bool = False,
     include_tasks: bool = False,
-) -> dict:
+) -> tuple[dict, bool]:
     """
     Check tools and find feature paths.
 
@@ -120,7 +119,7 @@ def run_check(
         include_tasks: Include tasks content in output
 
     Returns:
-        Dictionary with check results
+        Tuple of (results dict, success bool)
     """
     repo_root = find_repo_root()
     feature_dir = find_feature_dir(repo_root)
@@ -145,20 +144,20 @@ def run_check(
                 print(json.dumps(result, indent=2))
             else:
                 console.print(f"[red]Error:[/red] tasks.md not found in {feature_dir}")
-            return result
+            return result, False  # Return failure
 
         if include_tasks and (feature_dir / "tasks.md").exists():
             result["TASKS_CONTENT"] = (feature_dir / "tasks.md").read_text(encoding="utf-8")
 
     if output_json:
         print(json.dumps(result, indent=2))
-        return result
+        return result, True
 
     if paths_only:
         for key, value in result.items():
             if key not in ("AVAILABLE_DOCS", "TASKS_CONTENT", "HAS_GIT"):
                 print(f"{key}={value}")
-        return result
+        return result, True
 
     # Rich formatted output
     tree = Tree("[cyan]Tool Check[/cyan]")
@@ -197,4 +196,4 @@ def run_check(
     console.print()
     console.print("[bold green]speckitadv is ready to use![/bold green]")
 
-    return result
+    return result, True

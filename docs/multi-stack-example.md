@@ -271,4 +271,4 @@ ls -la .guidelines/
 
 - [Corporate Guidelines README](.guidelines/README.md)
 - [Stack Mapping Configuration](.guidelines/stack-mapping.json)
-- [Configuration File](.specify/config.json)
+- [Configuration File](memory/config.json)

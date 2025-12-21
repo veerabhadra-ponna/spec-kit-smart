@@ -8,7 +8,7 @@
     "sources": [
       {
         "priority": 1,
-        "source": ".specify/config.json",
+        "source": "memory/config.json",
         "field": "project.guidelineProfile",
         "description": "Explicit profile configuration (highest priority)"
       },

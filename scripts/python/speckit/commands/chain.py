@@ -4,9 +4,7 @@ Chain state management for speckitadv.
 Ports functionality from chain-state.sh.
 """
 
-import hashlib
 import json
-import os
 import secrets
 from datetime import datetime
 from pathlib import Path

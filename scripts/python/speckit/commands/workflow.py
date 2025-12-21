@@ -139,12 +139,20 @@ def run_setup_plan(
     # Ensure feature directory exists
     feature_dir.mkdir(parents=True, exist_ok=True)
 
-    # Check for template in memory/templates/ or .specify/templates/
-    template = repo_root / "memory" / "templates" / "plan-template.md"
-    if not template.exists():
-        template = repo_root / ".specify" / "templates" / "plan-template.md"
+    # Check for template in priority order
+    template = None
+    search_paths = [
+        repo_root / "memory" / "templates" / "plan-template.md",
+        repo_root / ".specify" / "templates" / "plan-template.md",
+        repo_root / "templates" / "plan-template.md",
+        Path(__file__).parent.parent / "assets" / "templates" / "plan-template.md",
+    ]
+    for path in search_paths:
+        if path.exists():
+            template = path
+            break
 
-    if template.exists():
+    if template and template.exists():
         content = template.read_text(encoding="utf-8")
 
         # Replace Input line if arguments provided
@@ -340,8 +348,9 @@ def update_agent_file(
     new_tech_entry = f"- {tech_stack} ({branch})\n" if tech_stack else None
     new_change_entry = f"- {branch}: Added {tech_stack}\n" if tech_stack else None
 
-    # Check if the new tech entry already exists (avoid duplicates)
+    # Check if entries already exist (avoid duplicates)
     tech_already_exists = new_tech_entry and new_tech_entry.strip() in content
+    change_already_exists = new_change_entry and new_change_entry.strip() in content
 
     for line in lines:
         # Update timestamp
@@ -379,8 +388,8 @@ def update_agent_file(
         if line.strip() == "## Recent Changes":
             new_lines.append(line)
             in_changes_section = True
-            # Add new change right after heading (before existing entries)
-            if new_change_entry:
+            # Add new change right after heading (before existing entries) if not duplicate
+            if new_change_entry and not change_already_exists:
                 new_lines.append("\n")  # Blank line after heading
                 new_lines.append(new_change_entry)
             continue
@@ -439,12 +448,17 @@ def run_update_agent_context(agent_type: Optional[str] = None) -> bool:
     if plan_data.get("framework"):
         console.print(f"[dim]Found framework: {plan_data['framework']}[/dim]")
 
-    # Check for template
-    template_path = repo_root / "memory" / "templates" / "agent-file-template.md"
-    if not template_path.exists():
-        template_path = repo_root / ".specify" / "templates" / "agent-file-template.md"
-    if not template_path.exists():
-        template_path = None
+    # Check for template in priority order
+    template_path = None
+    search_paths = [
+        repo_root / "memory" / "templates" / "agent-file-template.md",
+        repo_root / ".specify" / "templates" / "agent-file-template.md",
+        repo_root / "templates" / "agent-file-template.md",
+    ]
+    for path in search_paths:
+        if path.exists():
+            template_path = path
+            break
 
     success = True
 

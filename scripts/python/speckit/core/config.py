@@ -1,7 +1,7 @@
 """
 Configuration Management
 
-Loads configuration from .specify/config.json and environment variables.
+Loads configuration from memory/config.json and environment variables.
 """
 
 import json
@@ -32,8 +32,9 @@ class Config:
     Configuration manager for Spec Kit.
 
     Loads from:
-    1. .specify/config.json (if exists)
-    2. Environment variables (override)
+    1. memory/config.json (preferred - new location)
+    2. .specify/config.json (legacy fallback)
+    3. Environment variables (override)
     """
 
     def __init__(self, config_path: Optional[Path] = None):
@@ -45,16 +46,16 @@ class Config:
         """Load configuration from file and environment."""
         # Try to find config file
         if self._config_path is None:
-            # Look in current directory and up
-            search_paths = [
-                Path.cwd() / ".specify" / "config.json",
-                Path.cwd() / "config.json",
-            ]
-
-            # Also check from repo root
             repo_root = self._find_repo_root()
+
+            # Search paths in priority order (memory/ is preferred)
+            search_paths = []
             if repo_root:
-                search_paths.insert(0, repo_root / ".specify" / "config.json")
+                search_paths.append(repo_root / "memory" / "config.json")
+                search_paths.append(repo_root / ".specify" / "config.json")
+            search_paths.append(Path.cwd() / "memory" / "config.json")
+            search_paths.append(Path.cwd() / ".specify" / "config.json")
+            search_paths.append(Path.cwd() / "config.json")
 
             for path in search_paths:
                 if path.exists():

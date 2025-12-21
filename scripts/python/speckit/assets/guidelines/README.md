@@ -37,7 +37,7 @@ Guidelines are now organized using a **base + profile override** architecture, e
 
 When implementing code:
 
-1. **Profile is detected** from `.specify/config.json` → `.guidelines-profile` file → package.json markers → filesystem markers
+1. **Profile is detected** from `memory/config.json` → `.guidelines-profile` file → package.json markers → filesystem markers
 2. **Base guideline** is loaded (e.g., `base/reactjs-base.md`)
 3. **Profile override** is loaded (e.g., `profiles/corporate/reactjs-overrides.md` or `profiles/personal/reactjs-overrides.md`)
 4. **Composition**: Base principles + Profile specifics = Final guideline
@@ -113,7 +113,7 @@ Priority order when making decisions:
 
 ### Configuration
 
-Profile selection is configured in `.specify/config.json`:
+Profile selection is configured in `memory/config.json`:
 
 ```json
 {

@@ -12,7 +12,6 @@ import urllib.request
 import urllib.error
 from pathlib import Path
 from typing import Optional
-from datetime import datetime
 
 from rich.console import Console
 from rich.panel import Panel
