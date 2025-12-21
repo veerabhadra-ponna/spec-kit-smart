@@ -38,7 +38,7 @@ This document provides a comprehensive assessment of migrating from the current 
 
 ### 1.2 Core Scripts by Function
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    SCRIPT ARCHITECTURE                          │
 ├─────────────────────────────────────────────────────────────────┤
@@ -59,14 +59,16 @@ This document provides a comprehensive assessment of migrating from the current 
 
 ### 1.3 External Dependencies
 
-**Bash Scripts Require:**
+#### Bash Scripts Require
+
 - `jq` - JSON processing (CRITICAL - prevents injection attacks)
 - `find` - File enumeration
 - `stat` - File metadata (platform-specific flags)
 - `git` - Optional, for repo detection
 - `openssl` - Optional, for hash generation
 
-**PowerShell Scripts Require:**
+#### PowerShell Scripts Require
+
 - No external dependencies (pure PowerShell cmdlets)
 - Works on Windows, macOS, Linux with PowerShell Core
 
@@ -120,8 +122,9 @@ This document provides a comprehensive assessment of migrating from the current 
 
 ### 3.1 Option A: Single Unified Python Script
 
-**Structure:**
-```
+#### Structure
+
+```text
 scripts/python/
 └── speckit.py (~3000-4000 lines)
     ├── Commands: analyze, enumerate, check-guidelines, etc.
@@ -129,12 +132,14 @@ scripts/python/
     └── All functionality in one file
 ```
 
-**Pros:**
+#### Pros
+
 - Simplest distribution (one file)
 - No import/path issues
 - Easy to embed in release
 
-**Cons:**
+#### Cons
+
 - Large file, harder to maintain
 - All code loaded even for small operations
 - Merge conflicts more likely
@@ -145,8 +150,9 @@ scripts/python/
 
 ### 3.2 Option B: Modular Python Package
 
-**Structure:**
-```
+#### Structure
+
+```text
 scripts/python/
 ├── speckit/
 │   ├── __init__.py
@@ -170,13 +176,15 @@ scripts/python/
     └── ...
 ```
 
-**Pros:**
+#### Pros
+
 - Clean separation of concerns
 - Easy to test individual modules
 - Standard Python package structure
 - Can still compile to single EXE
 
-**Cons:**
+#### Cons
+
 - More complex than single file
 - Requires proper packaging
 
@@ -186,15 +194,16 @@ scripts/python/
 
 ### 3.3 Option C: Compiled Single Executable
 
-**Structure:**
-```
+#### Structure
+
+```text
 dist/
 ├── speckit (Linux/macOS binary)
 ├── speckit.exe (Windows binary)
 └── speckit-universal (macOS universal binary)
 ```
 
-**Compilation Options:**
+#### Compilation Options
 
 | Tool | Size | Startup | Cross-Compile | Notes |
 |------|------|---------|---------------|-------|
@@ -223,13 +232,15 @@ pyinstaller --onefile \
 # Result: dist/speckit (~25MB)
 ```
 
-**Advantages:**
+#### Advantages
+
 - Single file, no dependencies
 - All Python packages bundled
 - Works on all platforms (compile per-platform)
 - Can embed prompts/templates as data files
 
-**Disadvantages:**
+#### Disadvantages
+
 - Must compile separately for each OS
 - Larger file size (~15-50MB)
 - Slower first startup (~1-2s) due to extraction
@@ -249,19 +260,21 @@ python -m nuitka \
 # Result: dist/speckit.bin (~15MB, faster startup)
 ```
 
-**Advantages:**
+#### Advantages
+
 - Faster startup (~200ms vs 1-2s)
 - Smaller binary size
 - Actual compiled code (harder to reverse-engineer)
 
-**Disadvantages:**
+#### Disadvantages
+
 - Longer compile time
 - C compiler required for building
 - Less mature than PyInstaller
 
 ### 4.3 Cross-Platform Distribution Strategy
 
-```
+```text
 GitHub Release Assets:
 ├── speckit-linux-x86_64        (Linux AMD64)
 ├── speckit-linux-arm64         (Linux ARM64)
@@ -342,7 +355,8 @@ def get_template(name: str) -> str:
     return template_path.read_text(encoding='utf-8')
 ```
 
-**PyInstaller spec file:**
+#### PyInstaller spec file
+
 ```python
 # speckit.spec
 a = Analysis(
@@ -383,7 +397,8 @@ def get_prompt(name: str) -> str:
     return PROMPTS.get(name, "")
 ```
 
-**Build script to generate embedded.py:**
+#### Build script to generate embedded.py
+
 ```python
 # scripts/embed_prompts.py
 import json
@@ -412,7 +427,7 @@ def get_prompt(name: str) -> str:
 
 ### 5.5 Prompt Organization in EXE
 
-```
+```text
 speckit (compiled EXE)
 ├── [Python runtime bundled]
 ├── [Dependencies bundled]
@@ -468,7 +483,7 @@ Instead of loading the entire 850+ line staged prompt at once, the EXE outputs p
 
 **YES, this is fully possible.** Here's how:
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                PROGRESSIVE PROMPT INJECTION FLOW                │
 ├─────────────────────────────────────────────────────────────────┤
@@ -760,7 +775,7 @@ The `constitution.md` prompt succeeds because:
 
 ### 8.1 Migration Strategy: Phased Approach
 
-```
+```text
 Phase 1: Python Core (Week 1-2)
 ├── Create Python package structure
 ├── Migrate common.sh/ps1 → core/utils.py
@@ -789,7 +804,7 @@ Phase 4: Packaging (Week 7-8)
 
 ### 8.2 Recommended Architecture
 
-```
+```text
 speckit/
 ├── __init__.py
 ├── __main__.py
@@ -822,8 +837,9 @@ speckit/
 
 ### 8.3 Prompt Fragment Design
 
-**Current (monolithic):**
-```
+#### Current (monolithic)
+
+```text
 02-file-analysis.md (851 lines)
 ├── Phase 1: Category Scan (200 lines)
 ├── Phase 2: Deep Dive (250 lines)
@@ -833,8 +849,9 @@ speckit/
 └── Output State (71 lines)
 ```
 
-**Proposed (fragmented):**
-```
+#### Proposed (fragmented)
+
+```text
 analyze/
 ├── init.md (30 lines)            # Initial setup instructions
 ├── collect.md (50 lines)         # Collect user inputs
@@ -848,7 +865,8 @@ analyze/
 └── generate-report.md (50 lines)
 ```
 
-**Benefits:**
+#### Benefits
+
 - Each fragment is 30-80 lines (vs 851)
 - Model only sees current task
 - EXE injects relevant context
@@ -856,7 +874,7 @@ analyze/
 
 ### 8.4 Final Recommendation
 
-**Implement: Modular Python Package with Progressive Prompt Injection and Optional EXE Compilation**
+Recommendation: Modular Python Package with Progressive Prompt Injection and Optional EXE Compilation
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
@@ -913,13 +931,16 @@ Provide your findings as:
   "token_expiry": "24h",
   "vulnerabilities": ["issue1", "issue2"]
 }
-```
+```text
 
 ## Next Step
+
 When complete, run:
+
 ```bash
 speckit analyze --stage=auth-complete --chain={chain_id} --findings='<YOUR_JSON>'
-```
+```text
+
 ```
 
 **Note:** This fragment is 30 lines vs the current 200+ lines for auth analysis in `02-file-analysis.md`.
@@ -975,9 +996,9 @@ Follow all instructions in the output.
 
 ### 9.4 Progressive Injection for ALL Commands
 
-**Even simple commands benefit:**
+#### Even simple commands benefit
 
-```
+```text
 speckit constitution
 ├── Stage 1: Collect principles (40 lines)
 ├── Stage 2: Generate file (50 lines)
@@ -1009,7 +1030,7 @@ speckit analyze-project
 
 ### 9.5 Complete Flow Example: /speckitsmart.constitution
 
-```
+```text
 User: /speckitsmart.constitution
 
 Agent reads launcher (3 lines):
@@ -1175,9 +1196,9 @@ def emit_complete(message, next_steps):
 
 ### 10.1 The Chunking Problem
 
-**Current behavior with prompt-based chunking:**
+#### Current behavior with prompt-based chunking
 
-```
+```text
 Prompt instruction:
 "Generate the analysis report in 9 chunks:
 1. Executive Summary
@@ -1203,7 +1224,7 @@ What models do:
 
 With the EXE architecture, chunking is **enforced by design**:
 
-```
+```text
 speckit analyze-project --stage=8
 ├── --chunk=1  →  "Generate Executive Summary ONLY"
 ├── --chunk=2  →  "Generate Technology Stack ONLY"
@@ -1220,7 +1241,7 @@ speckit analyze-project --stage=8
 
 ### 10.3 Chunk Flow Example
 
-```
+```text
 Agent runs: speckit analyze-project --stage=8 --chunk=1 --chain=abc123
 
 EXE outputs:
@@ -1419,9 +1440,9 @@ def emit_chunk(chunk_num, total_chunks, title, content, file_path, mode, line_ra
 
 ### 11.2 Template Injection Strategies
 
-**Strategy A: Inline (for templates < 100 lines)**
+#### Strategy A: Inline (for templates < 100 lines)
 
-```
+```text
 EXE outputs:
 ┌────────────────────────────────────────────────────────────────┐
 │ STAGE: 2/3 - Generate Constitution                             │
@@ -1453,9 +1474,9 @@ EXE outputs:
 └────────────────────────────────────────────────────────────────┘
 ```
 
-**Strategy B: Extract (for templates > 100 lines)**
+#### Strategy B: Extract (for templates > 100 lines)
 
-```
+```text
 EXE behavior:
 1. Extracts embedded template to filesystem
 2. Outputs reference in stage
@@ -1561,7 +1582,7 @@ def emit_with_template(
 
 ### 12.1 Current Release Structure
 
-```
+```text
 GitHub Release (Current):
 └── spec-kit-template-{agent}-{version}.zip
     ├── .specify/
@@ -1577,7 +1598,8 @@ GitHub Release (Current):
     └── ...other files
 ```
 
-**Current process:**
+#### Current process
+
 1. Update scripts and prompts in repo
 2. Create version tag
 3. GitHub Action builds ZIP per agent
@@ -1585,7 +1607,7 @@ GitHub Release (Current):
 
 ### 12.2 New Release Structure (Zero-Prompt)
 
-```
+```text
 GitHub Release (New):
 ├── speckit-linux-x86_64           # Linux AMD64 binary (~25MB)
 ├── speckit-linux-arm64            # Linux ARM64 binary (~25MB)
@@ -1610,7 +1632,7 @@ GitHub Release (New):
 
 ### 12.3 What's Inside the EXE
 
-```
+```text
 speckit (compiled binary)
 ├── Python 3.11 runtime (bundled)
 ├── Dependencies (typer, rich, etc.)
@@ -1791,7 +1813,8 @@ if __name__ == "__main__":
 
 ### 12.6 Installation Flow Changes
 
-**Current flow:**
+#### Current flow
+
 ```bash
 # Install CLI
 pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
@@ -1800,7 +1823,8 @@ pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 speckitsmart init my-project --ai claude
 ```
 
-**New flow:**
+#### New flow
+
 ```bash
 # Option A: Download binary directly
 curl -L https://github.com/.../releases/latest/speckit-linux-x86_64 -o speckit
@@ -1842,4 +1866,4 @@ curl -L .../releases/latest/speckit-source.tar.gz | tar xz
 
 ---
 
-*End of Assessment Document*
+---End of Assessment Document---
