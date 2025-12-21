@@ -48,6 +48,7 @@ This command orchestrates a **script-first chained workflow** for project analys
 Each stage is split into focused sub-prompts (~100-200 lines each) for better AI comprehension and execution.
 
 ### Stage 1: Setup and Scope
+
 | Sub-Prompt | Purpose |
 |------------|---------|
 | **01a-initialization.md** | AGENTS.md check, toolkit verification, project path input |
@@ -55,6 +56,7 @@ Each stage is split into focused sub-prompts (~100-200 lines each) for better AI
 | **01c-script-execution.md** | Script execution, JSON loading, state creation |
 
 ### Stage 2: File Analysis
+
 | Sub-Prompt | Purpose |
 |------------|---------|
 | **02a-category-scan.md** | Phase 1 (25%): Quick category scan by priority |
@@ -64,6 +66,7 @@ Each stage is split into focused sub-prompts (~100-200 lines each) for better AI
 | **02e-quality-gates.md** | Quality gate verification before proceeding |
 
 ### Stage 3A: Full Application (Scope = A)
+
 | Sub-Prompt | Purpose |
 |------------|---------|
 | **03a1-questions-part1.md** | Questions 1-5: Language, Database, Message Bus, Packages, Deployment |
@@ -72,6 +75,7 @@ Each stage is split into focused sub-prompts (~100-200 lines each) for better AI
 | **03a4-recommendations.md** | Recommendations, phased plan, state output |
 
 ### Stage 3B: Cross-Cutting Concern (Scope = B)
+
 | Sub-Prompt | Purpose |
 |------------|---------|
 | **03b1-abstraction-assessment.md** | Abstraction level + blast radius analysis |
@@ -79,6 +83,7 @@ Each stage is split into focused sub-prompts (~100-200 lines each) for better AI
 | **03b3-effort-success.md** | Effort estimation + success criteria |
 
 ### Stage 4: Report Generation
+
 | Sub-Prompt | Purpose |
 |------------|---------|
 | **04a-report-chunks-1-3.md** | Chunks 1-3: Header, TOC, Tech Stack, File Analysis |
@@ -87,11 +92,13 @@ Each stage is split into focused sub-prompts (~100-200 lines each) for better AI
 | **04d-report-verification.md** | Report verification + state output |
 
 ### Stage 5: Common Artifacts
+
 | Sub-Prompt | Purpose |
 |------------|---------|
 | **05a-executive-summary.md** | EXECUTIVE-SUMMARY.md, dependency-audit.json, metrics-summary.json |
 
 ### Stage 6: Scope-Specific Artifacts
+
 | Sub-Prompt | Condition | Purpose |
 |------------|-----------|---------|
 | **06a-functional-spec-legacy.md** | Scope = A | Legacy system functional spec (5 chunks) |
