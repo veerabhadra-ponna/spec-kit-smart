@@ -25,7 +25,7 @@ speckit --version
 cd scripts/python
 pip install pyinstaller
 pyinstaller speckit.spec
-./dist/speckit --version
+./dist/speckitadv --version
 ```
 
 ## Usage
@@ -117,7 +117,7 @@ speckit/
 # Build single-file executable
 pyinstaller speckit.spec
 
-# Output: dist/speckit (15MB)
+# Output: dist/speckitadv (15MB)
 ```
 
 The executable includes all prompts and templates embedded via PyInstaller.
