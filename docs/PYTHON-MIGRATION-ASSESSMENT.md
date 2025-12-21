@@ -943,4 +943,232 @@ speckit analyze --stage=auth-complete --chain={chain_id} --findings='<YOUR_JSON>
 
 ---
 
+## 9. Zero-Prompt Architecture (Enhanced Design)
+
+### 9.1 Concept: EXE as Single Source of All Prompts
+
+Instead of having prompt files that the agent reads, the EXE **outputs** all prompts dynamically. Slash command files become ultra-minimal launchers.
+
+### 9.2 Launcher File Template (3 lines each)
+
+```markdown
+---
+description: {command_description}
+---
+Run: `speckit {command_name}`
+Follow all instructions in the output.
+```
+
+### 9.3 All Commands Using Zero-Prompt Pattern
+
+| Command | Launcher | EXE Command |
+|---------|----------|-------------|
+| constitution | 3 lines | `speckit constitution` |
+| specify | 3 lines | `speckit specify` |
+| plan | 3 lines | `speckit plan` |
+| clarify | 3 lines | `speckit clarify` |
+| tasks | 3 lines | `speckit tasks` |
+| implement | 3 lines | `speckit implement` |
+| analyze-project | 3 lines | `speckit analyze-project` |
+| checklist | 3 lines | `speckit checklist` |
+| analyze | 3 lines | `speckit analyze` |
+
+### 9.4 Progressive Injection for ALL Commands
+
+**Even simple commands benefit:**
+
+```
+speckit constitution
+├── Stage 1: Collect principles (40 lines)
+├── Stage 2: Generate file (50 lines)
+└── Stage 3: Verify & complete (30 lines)
+
+speckit specify
+├── Stage 1: Gather requirements (50 lines)
+├── Stage 2: Structure spec (60 lines)
+├── Stage 3: Write sections (50 lines)
+└── Stage 4: Validate (30 lines)
+
+speckit plan
+├── Stage 1: Load spec context (40 lines)
+├── Stage 2: Design approach (60 lines)
+├── Stage 3: Generate plan (50 lines)
+└── Stage 4: Review (30 lines)
+
+speckit analyze-project
+├── Stage 1: Collect inputs (50 lines)
+├── Stage 2: Run enumeration (40 lines)
+├── Stage 3: Analyze files - auth (60 lines)
+├── Stage 4: Analyze files - db (60 lines)
+├── Stage 5: Analyze files - api (60 lines)
+├── Stage 6: Configuration (50 lines)
+├── Stage 7: Test coverage (40 lines)
+├── Stage 8: Generate report (60 lines)
+└── Stage 9: Create artifacts (50 lines)
+```
+
+### 9.5 Complete Flow Example: /speckitsmart.constitution
+
+```
+User: /speckitsmart.constitution
+
+Agent reads launcher (3 lines):
+  "Run: speckit constitution"
+
+Agent runs: speckit constitution
+
+EXE outputs:
+┌────────────────────────────────────────────────────────────────┐
+│ STAGE: 1/3 - Collect Principles                                │
+│                                                                │
+│ Ask user for their project principles.                         │
+│                                                                │
+│ Format: One principle per line                                 │
+│   PrincipleName: MUST/SHOULD/MAY description                   │
+│                                                                │
+│ Examples:                                                      │
+│   Library-First: MUST use existing libraries over custom code  │
+│   Test-First: MUST write tests before implementation           │
+│                                                                │
+│ If user says "use defaults" or provides empty input,           │
+│ pass --defaults flag.                                          │
+│                                                                │
+│ NEXT: speckit constitution --stage=2 --principles="<INPUT>"    │
+│   OR: speckit constitution --stage=2 --defaults                │
+└────────────────────────────────────────────────────────────────┘
+
+Agent: "Please provide your project principles..."
+User: "Test-First: MUST write tests before code"
+
+Agent runs: speckit constitution --stage=2 --principles="Test-First: MUST write tests before code"
+
+EXE outputs:
+┌────────────────────────────────────────────────────────────────┐
+│ STAGE: 2/3 - Generate Constitution                             │
+│                                                                │
+│ Create file: memory/constitution.md                            │
+│                                                                │
+│ Content to write:                                              │
+│ ---                                                            │
+│ # Project Constitution v1.0.0                                  │
+│ Ratified: 2025-12-21                                           │
+│                                                                │
+│ ## Principles                                                  │
+│                                                                │
+│ ### Test-First                                                 │
+│ MUST write tests before implementation                         │
+│ ---                                                            │
+│                                                                │
+│ After writing file:                                            │
+│ NEXT: speckit constitution --stage=3                           │
+└────────────────────────────────────────────────────────────────┘
+
+Agent: Creates memory/constitution.md
+Agent runs: speckit constitution --stage=3
+
+EXE outputs:
+┌────────────────────────────────────────────────────────────────┐
+│ WORKFLOW_COMPLETE                                              │
+│                                                                │
+│ Constitution created: memory/constitution.md                   │
+│ Version: 1.0.0                                                 │
+│ Principles: 1                                                  │
+│                                                                │
+│ Next steps:                                                    │
+│ - Run /speckitsmart.specify to create specifications           │
+└────────────────────────────────────────────────────────────────┘
+```
+
+### 9.6 Benefits Summary
+
+| Aspect | Current (Prompt Files) | Zero-Prompt (EXE Only) |
+|--------|----------------------|------------------------|
+| Prompt files | 11 files, 2000+ lines | 11 files, 33 lines total |
+| Source of truth | Scattered .md files | Single EXE |
+| Version sync | Manual | Automatic |
+| Source/deploy confusion | Possible | Eliminated |
+| Model consistency | Varies | Guaranteed |
+| Update process | Edit multiple files | Rebuild EXE |
+| Distribution | EXE + prompts | EXE only |
+| Context window | Full prompt loaded | 40-80 lines at a time |
+
+### 9.7 Implementation in Python
+
+```python
+# speckit/commands/constitution.py
+import typer
+from speckit.prompts import emit_stage
+
+app = typer.Typer()
+
+@app.command()
+def constitution(
+    stage: int = typer.Option(1, help="Current stage"),
+    principles: str = typer.Option(None, help="User principles"),
+    defaults: bool = typer.Option(False, help="Use default principles"),
+):
+    if stage == 1:
+        emit_stage(
+            stage_num=1,
+            total_stages=3,
+            title="Collect Principles",
+            content=STAGE_1_PROMPT,
+            next_cmd="speckit constitution --stage=2 --principles='<INPUT>'",
+            alt_cmd="speckit constitution --stage=2 --defaults"
+        )
+        return
+
+    if stage == 2:
+        if defaults:
+            principles = DEFAULT_PRINCIPLES
+
+        constitution_content = generate_constitution(principles)
+
+        emit_stage(
+            stage_num=2,
+            total_stages=3,
+            title="Generate Constitution",
+            content=f"Create file: memory/constitution.md\n\nContent:\n{constitution_content}",
+            next_cmd="speckit constitution --stage=3"
+        )
+        return
+
+    if stage == 3:
+        emit_complete(
+            message="Constitution created: memory/constitution.md",
+            next_steps=["Run /speckitsmart.specify to create specifications"]
+        )
+
+def emit_stage(stage_num, total_stages, title, content, next_cmd, alt_cmd=None):
+    print(f"STAGE: {stage_num}/{total_stages} - {title}")
+    print()
+    print(content)
+    print()
+    print(f"NEXT: {next_cmd}")
+    if alt_cmd:
+        print(f"  OR: {alt_cmd}")
+
+def emit_complete(message, next_steps):
+    print("WORKFLOW_COMPLETE")
+    print()
+    print(message)
+    print()
+    print("Next steps:")
+    for step in next_steps:
+        print(f"- {step}")
+```
+
+### 9.8 Revised Implementation Priority
+
+| Priority | Task | Notes |
+|----------|------|-------|
+| P0 | Implement emit_stage/emit_complete helpers | Core output format |
+| P0 | Convert analyze-project to progressive | Most complex, biggest win |
+| P1 | Convert main prompts to progressive | constitution, specify, plan, etc. |
+| P1 | Create 3-line launcher templates | Replace current .md files |
+| P2 | Compile to EXE with embedded fragments | Distribution |
+| P2 | CI/CD for multi-platform builds | Automation |
+
+---
+
 *End of Assessment Document*
