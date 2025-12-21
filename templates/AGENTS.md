@@ -1,31 +1,22 @@
 # AI Agent Guidelines
 
-**Version:** 2.4
-**Last Updated:** 2025-11-13
+**Version:** 3.0
+**Last Updated:** 2025-12-21
 
 ---
 
 ## ⚠️ CRITICAL OPERATIONAL RULES (Read First)
 
-### PowerShell Commands
+### CLI Commands
 
-**RULE 1**: Use semicolon (`;`) NOT double-ampersand (`&&`)
-- ✅ `Get-Service 'ServiceA'; Stop-Service 'ServiceA'`
-- ❌ `Get-Service 'ServiceA' && Stop-Service 'ServiceA'`
+**RULE 1**: Use the `speckitadv` Python CLI for all workflow operations
+- The CLI embeds all prompts and templates
+- CLI outputs progressive prompts (50-80 lines per stage)
+- Follow CLI instructions exactly
 
-**RULE 2**: On execution policy errors, run TWO separate commands:
-1. `Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force`
-2. Rerun original script
-
-**WHY**: VSCode auto-approves individual commands. Chaining (`;` or `&&`) triggers approval prompts.
-
-### Bash/Sh Commands
-
-**RULE 3**: On permission errors, run TWO separate commands:
-1. `chmod +x <script>`
-2. Rerun original script
-
-**WHY**: Same as PowerShell - individual commands auto-approved, chaining triggers prompts.
+**RULE 2**: Chain ID persistence
+- Save the chain ID returned by stage commands
+- Pass chain ID to subsequent stages: `speckitadv <command> --stage=N --chain=<id>`
 
 ### File Operations
 
@@ -99,33 +90,42 @@ Problem → Action
 
 ## 2. Toolkit Intelligence
 
-**Available Capabilities:** The toolkit provides cross-platform scripts (bash + PowerShell) for common operations. Agents SHOULD leverage these instead of implementing from scratch.
+**Available Capabilities:** The toolkit provides the `speckitadv` Python CLI for all workflow operations. The CLI embeds all prompts, templates, and logic.
 
-**Script Locations:**
+**CLI Commands:**
 
-- Bash: `.specify/scripts/bash/`
-- PowerShell: `.specify/scripts/powershell/`
+| Command | Stages | Description |
+| ------- | ------ | ----------- |
+| `speckitadv analyze-project` | 9+ | Analyze existing project for modernization |
+| `speckitadv constitution` | 3 | Create project constitution |
+| `speckitadv specify` | 6 | Create baseline specification |
+| `speckitadv plan` | 4 | Create implementation plan |
+| `speckitadv tasks` | 4 | Generate actionable tasks |
+| `speckitadv implement` | 5 | Execute implementation |
+| `speckitadv clarify` | 3 | Ask structured questions |
+| `speckitadv checklist` | 3 | Generate quality checklist |
 
-**Core Functions Available:**
+**Progressive Prompt Injection:**
 
-| Function | Description | Bash | PowerShell |
-| ---------- | ------------- | ------ | ------------ |
-| Repository root detection | Gets project root (git or fallback) | `get_repo_root()` | `Get-RepoRoot` |
-| Git detection | Checks if git is available | `has_git()` | `Test-HasGit` |
-| Branch detection | Gets current branch or feature | `get_current_branch()` | `Get-CurrentBranch` |
-| Feature paths | Gets all spec file paths | `get_feature_paths()` | `Get-FeaturePathsEnv` |
-| File validation | Checks file existence | `check_file()` | `Test-FileExists` |
+Each command runs in stages. The CLI outputs focused prompts (50-80 lines) per stage:
 
-**Environment Variables:**
+```bash
+# Stage 1: Initialize
+speckitadv constitution --stage=1 --path=/project
 
-- `SPECIFY_FEATURE`: Override feature detection (useful for CI/CD)
-- Standard git env vars (GIT_DIR, etc.) work as expected
+# Stage 2: Continue with chain ID from stage 1
+speckitadv constitution --stage=2 --chain=abc12345
 
-**OS Detection:** Agents CAN detect OS from:
+# Stage 3: Complete
+speckitadv constitution --stage=3 --chain=abc12345
+```
 
-1. Bash presence → Unix-like (Linux/macOS)
-2. PowerShell presence → Windows (or cross-platform)
-3. Script file extensions in project (.sh → bash, .ps1 → PowerShell)
+**Debug Commands:**
+
+| Command | Description |
+| ------- | ----------- |
+| `speckitadv list-fragments <command>` | List available stages for a command |
+| `speckitadv show-fragment <command> <stage>` | Show stage prompt content |
 
 **Pre-commit Hooks:** Check for:
 
@@ -133,17 +133,6 @@ Problem → Action
 - `.git/hooks/pre-commit` (manual hooks)
 - `package.json` → `husky`, `lint-staged`
 - `Makefile` → `pre-commit` or `lint` targets
-
-**Workflow Commands:**
-
-| Command | Output | Description |
-| --------- | -------- | ------------- |
-| `/speckitsmart.specify` | spec.md | Create spec from description |
-| `/speckitsmart.clarify` | Updated spec.md | Resolve ambiguities |
-| `/speckitsmart.plan` | plan.md + design docs | Generate architecture |
-| `/speckitsmart.tasks` | tasks.md | Generate task list |
-| `/speckitsmart.implement` | Code + tests | Execute tasks |
-| `/speckitsmart.resume` | Restored context | Resume from state/tasks |
 
 **Command Failure:** REPORT error → CHECK prerequisites → RETRY 1× (transient) → ESCALATE (persistent)
 
@@ -157,7 +146,7 @@ Problem → Action
 project-root/
 ├── .specify/memory/constitution.md    # Immutable principles
 ├── .specify/templates/                 # Templates
-├── .specify/scripts/{bash,powershell}/ # Cross-platform scripts
+├── .specify/commands/                  # Agent launcher files
 └── specs/[###-feature-name]/
     ├── spec.md                         # WHAT/WHY (requirements)
     ├── plan.md                         # HOW (architecture)

@@ -78,14 +78,14 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 
 **The Problem:** Teams use mixed environments—developers on Windows, CI/CD on Linux, cloud agents on Unix. Managing separate script packages is painful.
 
-**The Solution:** One unified package with automatic platform detection.
+**The Solution:** Single Python executable with cross-platform support.
 
-- **Dual-Script Architecture** - Every command includes both bash (`scripts/bash/`) and PowerShell (`scripts/powershell/`) implementations
-- **Automatic Detection** - AI agents auto-select the correct script variant based on OS
-- **No Configuration Required** - Works out of the box on Unix/Linux/macOS, Windows, and Git Bash
-- **Cloud-Ready** - Perfect for hybrid workflows where developers use Windows locally but delegate to cloud-based AI agents (Devin, Cursor) running on Linux
+- **Unified Python CLI** - `speckitadv` binary works on Linux, macOS, and Windows
+- **Progressive Prompt Injection** - CLI outputs focused prompts (50-80 lines) at each workflow stage
+- **Embedded Assets** - All prompts, templates, and logic bundled in single executable
+- **Cloud-Ready** - Perfect for hybrid workflows across platforms
 
-**Real-World Use Case:** Developer on Windows starts a feature, pushes code, and a Linux-based CI pipeline continues the workflow. Same package, zero configuration changes, seamless execution across platforms.
+**Real-World Use Case:** Developer on Windows starts a feature, pushes code, and a Linux-based CI pipeline continues the workflow. Same binary, zero configuration changes, seamless execution across platforms.
 
 #### 📋 **Interactive Prompts with Examples**
 
@@ -120,7 +120,7 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 | Feature | Original Spec Kit | This Fork (Enterprise) |
 | --------- | ------------------ | ------------------------ |
 | **Target Audience** | Individual developers, greenfield projects | **Corporate teams, legacy modernization** |
-| **Platform Support** | Bash scripts (Unix/Linux/macOS) | **Bash + PowerShell (Windows + Unix)** |
+| **Platform Support** | Bash scripts (Unix/Linux/macOS) | **Single Python executable (all platforms)** |
 | **Workflow Management** | Manual command execution | **Orchestrator + auto-resume** |
 | **Legacy Code Support** | Greenfield only | **Reverse engineering & modernization** |
 | **Corporate Standards** | Generic defaults | **Customizable guidelines + compliance** |
@@ -610,35 +610,28 @@ Want to see Spec Kit in action? Watch our [video overview](https://www.youtube.c
 
 ### Cross-Platform Support
 
-All packages include **both bash and PowerShell scripts**, providing seamless cross-platform support:
+The `speckitadv` Python executable provides seamless cross-platform support:
 
-- **Unix/Linux/macOS**: AI agents automatically use `scripts/bash/`
-- **Windows**: AI agents automatically use `scripts/powershell/`
-- **Git Bash on Windows**: Uses bash scripts automatically
+- **Linux**: `speckitadv-linux-x86_64`
+- **macOS Intel**: `speckitadv-darwin-x86_64`
+- **macOS Apple Silicon**: `speckitadv-darwin-arm64`
+- **Windows**: `speckitadv-windows-x86_64.exe`
 
-No need to choose between sh/ps packages - one package works everywhere!
+No need to choose between platform-specific packages - one binary works on your OS!
 
-**Manual Override (Optional)**:
-
-Set the `SPEC_KIT_PLATFORM` environment variable to force a specific platform:
+**Installation Options:**
 
 ```bash
-# Force bash scripts (Unix/Linux/macOS)
-export SPEC_KIT_PLATFORM=unix
+# Option 1: Download pre-built binary from GitHub Releases
+# Download the appropriate binary for your platform
 
-# Force PowerShell scripts (Windows)
-set SPEC_KIT_PLATFORM=windows  # CMD
-$env:SPEC_KIT_PLATFORM="windows"  # PowerShell
-
-# Use auto-detection (default)
-export SPEC_KIT_PLATFORM=auto
+# Option 2: Build from source
+cd scripts/python
+pip install -e .
+pip install pyinstaller
+pyinstaller speckit.spec
+# Binary at: dist/speckitadv
 ```
-
-Use cases for manual override:
-
-- Testing scripts on non-native platforms
-- Cloud environments where auto-detection may be unreliable
-- Explicit platform preference for debugging
 
 ## 🔧 Specify CLI Reference
 
