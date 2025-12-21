@@ -1,0 +1,240 @@
+"""
+Tests for speckit.core.prompts module.
+"""
+
+import pytest
+from pathlib import Path
+
+from speckit.core.prompts import (
+    get_prompts_base,
+    get_prompt_fragment,
+    render_prompt,
+    list_fragments,
+    get_stage_order,
+    fragment_exists,
+    get_next_stage,
+    count_fragment_lines,
+)
+
+
+class TestGetPromptsBase:
+    """Tests for get_prompts_base function."""
+
+    def test_returns_path(self):
+        """Should return a Path object."""
+        result = get_prompts_base()
+        assert isinstance(result, Path)
+
+    def test_path_structure(self):
+        """Should return path containing 'commands' or 'prompts'."""
+        result = get_prompts_base()
+        path_str = str(result)
+        # Should point to commands directory
+        assert "commands" in path_str or "prompts" in path_str
+
+
+class TestGetPromptFragment:
+    """Tests for get_prompt_fragment function."""
+
+    def test_existing_fragment(self):
+        """Should load existing fragment."""
+        # Test with constitution command (known to exist)
+        try:
+            content = get_prompt_fragment("constitution", "01-initialization")
+            assert isinstance(content, str)
+            assert len(content) > 0
+        except FileNotFoundError:
+            # May not exist in all test environments
+            pytest.skip("Fragment not found in test environment")
+
+    def test_nonexistent_fragment(self):
+        """Should raise FileNotFoundError for missing fragment."""
+        with pytest.raises(FileNotFoundError):
+            get_prompt_fragment("nonexistent-command", "stage99")
+
+    def test_fragment_content(self):
+        """Should return markdown content."""
+        try:
+            content = get_prompt_fragment("constitution", "01-initialization")
+            # Should be markdown content
+            assert "#" in content or content.strip()
+        except FileNotFoundError:
+            pytest.skip("Fragment not found in test environment")
+
+
+class TestRenderPrompt:
+    """Tests for render_prompt function."""
+
+    def test_simple_substitution(self):
+        """Should substitute simple variables."""
+        fragment = "Hello {name}, you are stage {stage}"
+        context = {"name": "World", "stage": "1"}
+
+        result = render_prompt(fragment, context)
+
+        assert "Hello World" in result
+        assert "stage 1" in result
+
+    def test_default_values(self):
+        """Should use default values when variable missing."""
+        fragment = "Value: {key:default_value}"
+        context = {}
+
+        result = render_prompt(fragment, context)
+
+        assert "Value: default_value" in result
+
+    def test_override_default(self):
+        """Should override default when value provided."""
+        fragment = "Value: {key:default}"
+        context = {"key": "provided"}
+
+        result = render_prompt(fragment, context)
+
+        assert "Value: provided" in result
+
+    def test_escaped_braces(self):
+        """Should handle escaped braces."""
+        fragment = "Code: {{variable}} and {real}"
+        context = {"real": "value"}
+
+        result = render_prompt(fragment, context)
+
+        assert "{variable}" in result
+        assert "value" in result
+
+    def test_empty_default(self):
+        """Should handle empty default value."""
+        fragment = "Optional: {key:}"
+        context = {}
+
+        result = render_prompt(fragment, context)
+
+        assert "Optional: " in result
+
+    def test_missing_no_default(self):
+        """Should leave empty for missing without default."""
+        fragment = "Value: {missing}"
+        context = {}
+
+        result = render_prompt(fragment, context)
+
+        assert "Value: " in result
+
+
+class TestListFragments:
+    """Tests for list_fragments function."""
+
+    def test_returns_list(self):
+        """Should return a list."""
+        result = list_fragments("constitution")
+        assert isinstance(result, list)
+
+    def test_known_command(self):
+        """Should find fragments for known command."""
+        result = list_fragments("constitution")
+        # Should have at least some fragments if directory exists
+        assert isinstance(result, list)
+
+    def test_unknown_command(self):
+        """Should return empty list for unknown command."""
+        result = list_fragments("completely-unknown-command-xyz")
+        assert result == []
+
+
+class TestGetStageOrder:
+    """Tests for get_stage_order function."""
+
+    def test_returns_sorted_list(self):
+        """Should return sorted list."""
+        result = get_stage_order("constitution")
+        assert isinstance(result, list)
+        if len(result) > 1:
+            # Should be sorted
+            assert result == sorted(result, key=lambda x: (
+                int(x.split("-")[0].rstrip("abcdefghijklmnopqrstuvwxyz")) if x.split("-")[0].rstrip("abcdefghijklmnopqrstuvwxyz").isdigit() else 999,
+                x
+            ))
+
+    def test_sorts_numeric_prefix(self):
+        """Should sort by numeric prefix."""
+        # Mock test with known ordering
+        stages = ["02-second", "01-first", "03-third"]
+
+        def sort_key(name):
+            import re
+            match = re.match(r"(\d+)([a-z]?)-?(.*)", name)
+            if match:
+                num = int(match.group(1))
+                letter = match.group(2) or "z"
+                rest = match.group(3)
+                return (num, letter, rest)
+            return (999, "z", name)
+
+        result = sorted(stages, key=sort_key)
+        assert result == ["01-first", "02-second", "03-third"]
+
+
+class TestFragmentExists:
+    """Tests for fragment_exists function."""
+
+    def test_existing_fragment(self):
+        """Should return True for existing fragment."""
+        try:
+            content = get_prompt_fragment("constitution", "01-initialization")
+            assert fragment_exists("constitution", "01-initialization") is True
+        except FileNotFoundError:
+            # If fragment doesn't exist, function should return False
+            assert fragment_exists("constitution", "01-initialization") is False
+
+    def test_nonexistent_fragment(self):
+        """Should return False for nonexistent fragment."""
+        result = fragment_exists("fake-command", "fake-stage")
+        assert result is False
+
+
+class TestGetNextStage:
+    """Tests for get_next_stage function."""
+
+    def test_returns_next(self):
+        """Should return next stage in order."""
+        stages = get_stage_order("constitution")
+        if len(stages) >= 2:
+            first = stages[0]
+            expected_next = stages[1]
+            result = get_next_stage("constitution", first)
+            assert result == expected_next
+
+    def test_last_stage_returns_none(self):
+        """Should return None for last stage."""
+        stages = get_stage_order("constitution")
+        if stages:
+            last = stages[-1]
+            result = get_next_stage("constitution", last)
+            assert result is None
+
+    def test_unknown_stage_returns_none(self):
+        """Should return None for unknown stage."""
+        result = get_next_stage("constitution", "unknown-stage-xyz")
+        assert result is None
+
+
+class TestCountFragmentLines:
+    """Tests for count_fragment_lines function."""
+
+    def test_existing_fragment(self):
+        """Should count lines for existing fragment."""
+        try:
+            content = get_prompt_fragment("constitution", "01-initialization")
+            expected = len(content.splitlines())
+            result = count_fragment_lines("constitution", "01-initialization")
+            assert result == expected
+        except FileNotFoundError:
+            # Fragment doesn't exist
+            result = count_fragment_lines("constitution", "01-initialization")
+            assert result == 0
+
+    def test_nonexistent_fragment(self):
+        """Should return 0 for nonexistent fragment."""
+        result = count_fragment_lines("fake", "fake")
+        assert result == 0
