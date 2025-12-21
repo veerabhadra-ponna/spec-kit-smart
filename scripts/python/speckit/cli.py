@@ -126,24 +126,18 @@ def constitution(
 
 @app.command("specify")
 def specify(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-6)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ) -> None:
     """
     Create baseline specification.
 
     Defines what needs to be built before planning how.
     """
-    from speckit.core.emit import emit_stage
+    from speckit.core.stages import run_staged_command
 
-    # Placeholder - implement in commands/specify.py
-    emit_stage(
-        stage_num=stage,
-        total_stages=4,
-        title="Specify - Coming Soon",
-        content="This command is under development.",
-        next_cmd="speckit specify --stage=2",
-    )
+    run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path)
 
 
 # ============================================================================
@@ -155,22 +149,16 @@ def specify(
 def plan(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ) -> None:
     """
     Create implementation plan.
 
     Designs how to build what was specified.
     """
-    from speckit.core.emit import emit_stage
+    from speckit.core.stages import run_staged_command
 
-    # Placeholder - implement in commands/plan.py
-    emit_stage(
-        stage_num=stage,
-        total_stages=4,
-        title="Plan - Coming Soon",
-        content="This command is under development.",
-        next_cmd="speckit plan --stage=2",
-    )
+    run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path)
 
 
 # ============================================================================
@@ -180,24 +168,18 @@ def plan(
 
 @app.command("tasks")
 def tasks(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ) -> None:
     """
     Generate actionable tasks.
 
     Breaks down the plan into implementable units.
     """
-    from speckit.core.emit import emit_stage
+    from speckit.core.stages import run_staged_command
 
-    # Placeholder - implement in commands/tasks.py
-    emit_stage(
-        stage_num=stage,
-        total_stages=3,
-        title="Tasks - Coming Soon",
-        content="This command is under development.",
-        next_cmd="speckit tasks --stage=2",
-    )
+    run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path)
 
 
 # ============================================================================
@@ -207,24 +189,18 @@ def tasks(
 
 @app.command("implement")
 def implement(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-5)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ) -> None:
     """
     Execute implementation.
 
     Implements tasks with quality checks.
     """
-    from speckit.core.emit import emit_stage
+    from speckit.core.stages import run_staged_command
 
-    # Placeholder - implement in commands/implement.py
-    emit_stage(
-        stage_num=stage,
-        total_stages=4,
-        title="Implement - Coming Soon",
-        content="This command is under development.",
-        next_cmd="speckit implement --stage=2",
-    )
+    run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path)
 
 
 # ============================================================================
@@ -236,22 +212,16 @@ def implement(
 def clarify(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ) -> None:
     """
     Ask structured questions.
 
     Resolves ambiguities before implementation.
     """
-    from speckit.core.emit import emit_stage
+    from speckit.core.stages import run_staged_command
 
-    # Placeholder - implement in commands/clarify.py
-    emit_stage(
-        stage_num=stage,
-        total_stages=3,
-        title="Clarify - Coming Soon",
-        content="This command is under development.",
-        next_cmd="speckit clarify --stage=2",
-    )
+    run_staged_command(command="clarify", stage=stage, chain_id=chain_id, path=path)
 
 
 # ============================================================================
@@ -261,24 +231,18 @@ def clarify(
 
 @app.command("checklist")
 def checklist(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-2)"),
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ) -> None:
     """
     Generate quality checklist.
 
     Creates validation checklists for requirements.
     """
-    from speckit.core.emit import emit_stage
+    from speckit.core.stages import run_staged_command
 
-    # Placeholder - implement in commands/checklist.py
-    emit_stage(
-        stage_num=stage,
-        total_stages=2,
-        title="Checklist - Coming Soon",
-        content="This command is under development.",
-        next_cmd="speckit checklist --stage=2",
-    )
+    run_staged_command(command="checklist", stage=stage, chain_id=chain_id, path=path)
 
 
 # ============================================================================
