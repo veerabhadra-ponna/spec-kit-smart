@@ -52,11 +52,11 @@ STOP_WORDS = {
 
 def load_branch_config(project_root: Path) -> dict:
     """
-    Load branching configuration from .specify/config.json.
+    Load branching configuration from memory/config.json.
 
     Falls back to defaults if file doesn't exist or jq-style parsing fails.
     """
-    config_file = project_root / ".specify" / "config.json"
+    config_file = project_root / "memory" / "config.json"
 
     if config_file.exists():
         try:
@@ -158,11 +158,11 @@ def validate_jira_number(jira: str, config: dict) -> tuple[bool, str]:
 
 def find_repo_root(start_path: Path) -> Optional[Path]:
     """
-    Find repository root by searching for .git or .specify directory.
+    Find repository root by searching for .git or memory directory.
     """
     current = start_path.resolve()
     while current != current.parent:
-        if (current / ".git").exists() or (current / ".specify").exists():
+        if (current / ".git").exists() or (current / "memory").exists():
             return current
         current = current.parent
     return None
@@ -387,7 +387,7 @@ def create_spec_directory(
     feature_dir.mkdir(parents=True, exist_ok=True)
 
     # Copy template if exists, otherwise create empty spec.md
-    template_path = project_root / ".specify" / "templates" / "spec-template.md"
+    template_path = project_root / "memory" / "templates" / "spec-template.md"
     spec_file = feature_dir / "spec.md"
 
     if template_path.exists():

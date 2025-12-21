@@ -199,17 +199,12 @@ def create_project_structure(
     commands_path = project_path / folder / subfolder
     commands_path.mkdir(parents=True, exist_ok=True)
 
-    # Create memory directory
+    # Create memory directory with config.json
     memory_path = project_path / "memory"
     memory_path.mkdir(exist_ok=True)
-    gitkeep = memory_path / ".gitkeep"
-    if not gitkeep.exists():
-        gitkeep.touch()
 
-    # Create .specify directory with config.json
-    specify_dir = project_path / ".specify"
-    specify_dir.mkdir(exist_ok=True)
-    config_file = specify_dir / "config.json"
+    # Create config.json in memory/
+    config_file = memory_path / "config.json"
     if not config_file.exists() or force:
         config_content = get_default_config()
         config_file.write_text(config_content, encoding="utf-8")
@@ -273,9 +268,8 @@ def show_success_message(project_path: Path, agent: str, is_current_dir: bool = 
     cmd_branch = agent_branch.add(f"[cyan]{subfolder}/[/cyan]")
     for command, _ in WORKFLOW_COMMANDS:
         cmd_branch.add(f"speckitadv.{command}.md")
-    tree.add("[cyan]memory/[/cyan]")
-    specify_branch = tree.add("[cyan].specify/[/cyan]")
-    specify_branch.add("config.json")
+    memory_branch = tree.add("[cyan]memory/[/cyan]")
+    memory_branch.add("config.json")
     tree.add("AGENTS.md")
     tree.add(".gitignore")
 
