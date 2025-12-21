@@ -2,7 +2,7 @@
 
 This guide will help you get started with Spec-Driven Development using Spec Kit.
 
-> NEW: All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `speckitsmart` CLI auto-selects based on OS.
+> The toolkit now uses the `speckitadv` Python CLI for all workflow operations. No bash or PowerShell scripts required.
 
 ## The 4-Step Process
 
@@ -24,7 +24,7 @@ python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna
 speckitsmart init <PROJECT_NAME>
 ```
 
-All packages include both Bash and PowerShell scripts. Your AI agent automatically uses the correct script type for your operating system.
+All packages include Python CLI launchers. The `speckitadv` CLI handles all workflow operations cross-platform.
 
 ### 2. Create the Spec
 

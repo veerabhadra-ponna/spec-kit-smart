@@ -2,7 +2,7 @@
 
 This guide shows how to iterate on the `speckitsmart` CLI locally without publishing a release or committing to `main` first.
 
-> Scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants. The CLI auto-selects based on OS.
+> The toolkit uses the `speckitadv` Python CLI for all workflow operations. No bash or PowerShell scripts required.
 
 ## 1. Clone and Switch Branches
 
@@ -87,16 +87,16 @@ specify-dev() { pipx run --spec /mnt/c/GitHub/spec-kit-smart specify "$@"; }
 specify-dev --help
 ```
 
-## 5. Testing Script Permission Logic
+## 5. Testing Python CLI
 
-After running an `init`, check that shell scripts are executable on POSIX systems:
+After running an `init`, verify the launcher files are in place:
 
 ```bash
-ls -l scripts | grep .sh
-# Expect owner execute bit (e.g. -rwxr-xr-x)
+ls -la .specify/commands/
+# Or check agent-specific directory (e.g., .claude/commands/)
 ```
 
-On Windows you will instead use the `.ps1` scripts (no chmod needed).
+The `speckitadv` CLI handles all operations cross-platform - no shell scripts needed.
 
 ## 6. Run Lint / Basic Checks (Add Your Own)
 
@@ -163,7 +163,7 @@ rm -rf .venv dist build *.egg-info
 | Symptom | Fix |
 | --------- | ----- |
 | `ModuleNotFoundError: typer` | Run `pip install -e .` after activating venv |
-| Scripts not executable (Linux) | Re-run init or `chmod +x scripts/*.sh` |
+| Launcher files missing | Re-run init or check agent command directory |
 | Git step skipped | You passed `--no-git` or Git not installed |
 | TLS errors on corporate network | Try `--skip-tls` (not for production) |
 

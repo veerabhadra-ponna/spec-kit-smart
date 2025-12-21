@@ -63,7 +63,7 @@ After initialization, you should see the following commands available in your AI
 - `/speckitsmart.plan` - Generate implementation plans
 - `/speckitsmart.tasks` - Break down into actionable tasks
 
-The `.specify/scripts` directory will contain both `.sh` and `.ps1` scripts.
+The `.specify/commands` directory will contain launcher files for the `speckitadv` CLI.
 
 ## Troubleshooting
 

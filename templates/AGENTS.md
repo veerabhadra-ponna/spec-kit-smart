@@ -20,7 +20,7 @@
 
 ### File Operations
 
-**RULE 4**: If inline edit fails → Use fallback strategy:
+**RULE 3**: If inline edit fails → Use fallback strategy:
 1. Recreate with full content using creation tool (preserve original filename)
 2. **Preserve comments** - Keep ALL existing comments exactly as they were
 3. **Precise edits only** - Make ONLY the required changes, do not modify unrelated sections
@@ -32,17 +32,17 @@
 ✅ GOOD: Recreate file with exact original content + only the specific required change
 ```
 
-**RULE 5**: Chain `mkdir` with semicolon: `mkdir folderA; mkdir folderB`
+**RULE 4**: Chain `mkdir` with semicolon: `mkdir folderA; mkdir folderB`
 
 ### Documentation Updates
 
-**RULE 6**: After documentation changes:
+**RULE 5**: After documentation changes:
 1. Increment version number
 2. Add entry to CHANGELOG.md (if `__init__.py` or `pyproject.toml` changed)
 
 ### Large File Generation
 
-**RULE 7**: Files >1500 lines → Use chunked generation (300-800 lines per chunk)
+**RULE 6**: Files >1500 lines → Use chunked generation (300-800 lines per chunk)
 - First chunk: Use Write tool
 - Subsequent chunks: Use Edit tool (append mode)
 

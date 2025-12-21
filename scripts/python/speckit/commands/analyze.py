@@ -21,31 +21,52 @@ from speckit.core.utils import generate_chain_id, get_repo_root
 
 
 # Stage mapping: numeric stage -> fragment identifier
+# Maps to actual files in templates/commands/analyze/
 STAGE_MAP = {
-    1: "01a-initialization",
-    2: "02a-category-scan",
-    3: "02b-deep-dive",
-    4: "03a-patterns",
-    5: "03b-anti-patterns",
-    6: "04a-gap-analysis",
-    7: "04b-modernization",
-    8: "05a-dependency-scan",
-    9: "05b-pattern-analysis",
+    1: "01a-initialization",      # Stage 1.1: Setup
+    2: "01b-input-collection",    # Stage 1.2: Input collection
+    3: "01c-script-execution",    # Stage 1.3: Script execution
+    4: "02a-category-scan",       # Stage 2.1: Category scan
+    5: "02b-deep-dive",           # Stage 2.2: Deep dive
+    6: "02c-config-analysis",     # Stage 2.3: Config analysis
+    7: "02d-test-audit",          # Stage 2.4: Test audit
+    8: "02e-quality-gates",       # Stage 2.5: Quality gates
+    9: "03a-full-app",            # Stage 3A: Full app analysis (Scope A)
+    10: "03b-cross-cutting",      # Stage 3B: Cross-cutting (Scope B)
+    11: "04a-report-chunks-1-3",  # Stage 4.1: Report chunks 1-3
+    12: "04b-report-chunks-4-6",  # Stage 4.2: Report chunks 4-6
+    13: "04c-report-chunks-7-9",  # Stage 4.3: Report chunks 7-9
+    14: "04d-report-verification",# Stage 4.4: Report verification
+    15: "05a-executive-summary",  # Stage 5: Executive summary
+    16: "06-scope-artifacts",     # Stage 6: Scope-specific artifacts
 }
 
-# Chunk map for stages that have multiple report chunks
+# Chunk map for stages that use sub-prompts (Stage 3A has 4 sub-prompts, Stage 3B has 3)
 CHUNK_MAP = {
-    6: {  # Stage 6 has report chunks
-        1: "06-scope-artifacts",
-        2: "06-scope-artifacts",  # Same fragment, different chunk
-        3: "06-scope-artifacts",
+    9: {  # Stage 3A: Full app (4 sub-prompts)
+        1: "03a1-questions-part1",
+        2: "03a2-questions-part2",
+        3: "03a3-validation-scoring",
+        4: "03a4-recommendations",
+    },
+    10: {  # Stage 3B: Cross-cutting (3 sub-prompts)
+        1: "03b1-abstraction-assessment",
+        2: "03b2-migration-strategy",
+        3: "03b3-effort-success",
+    },
+    16: {  # Stage 6: Scope-specific artifacts (5 sub-prompts for A, 1 for B)
+        1: "06a-functional-spec-legacy",
+        2: "06b-functional-spec-target",
+        3: "06c-technical-spec",
+        4: "06d-stage-prompts",
+        5: "06e-cross-cutting-artifacts",
     },
 }
 
 # Total stages by scope
 TOTAL_STAGES = {
-    "A": 9,  # Full analysis
-    "B": 6,  # Cross-cutting concern only
+    "A": 16,  # Full analysis (stages 1-8, 9, 11-16)
+    "B": 15,  # Cross-cutting concern (stages 1-8, 10, 11-15, 16)
 }
 
 
@@ -322,15 +343,22 @@ def _extract_chunk(fragment: str, chunk: int, total_chunks: int) -> str:
 def _get_stage_title(stage: int) -> str:
     """Get human-readable title for a stage."""
     titles = {
-        1: "Project Initialization",
-        2: "Category Scan",
-        3: "Deep Dive Analysis",
-        4: "Pattern Recognition",
-        5: "Anti-Pattern Detection",
-        6: "Gap Analysis",
-        7: "Modernization Opportunities",
-        8: "Dependency Scan",
-        9: "Pattern Analysis",
+        1: "Initialization",
+        2: "Input Collection",
+        3: "Script Execution",
+        4: "Category Scan",
+        5: "Deep Dive Analysis",
+        6: "Config Analysis",
+        7: "Test Audit",
+        8: "Quality Gates",
+        9: "Full App Analysis",
+        10: "Cross-Cutting Analysis",
+        11: "Report Chunks 1-3",
+        12: "Report Chunks 4-6",
+        13: "Report Chunks 7-9",
+        14: "Report Verification",
+        15: "Executive Summary",
+        16: "Scope Artifacts",
     }
     return titles.get(stage, f"Stage {stage}")
 

@@ -45,7 +45,7 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 1. Verify `.guidelines/` directory exists with appropriate files
 2. Check `.guidelines/stack-mapping.json` exists and paths match your project structure
 3. Ensure guidelines files follow naming convention: `<stack>-guidelines.md`
-4. Run `./scripts/bash/check-guidelines-compliance.sh` to validate setup
+4. Manually verify guidelines file structure matches your stack
 
 ### Issue: `pipx install` fails with SSL errors
 
@@ -76,16 +76,16 @@ pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 3. Review `.speckitsmart-state.json` to see completed phases
 4. To restart: Delete state file and artifact directories
 
-### Issue: Cross-platform scripts fail on Windows
+### Issue: speckitadv command not found
 
-**Symptoms**: Bash scripts don't work on Windows
+**Symptoms**: The `speckitadv` CLI binary is not in PATH
 
 **Solution**:
 
-1. Set environment variable: `set SPEC_KIT_PLATFORM=windows` (CMD) or `$env:SPEC_KIT_PLATFORM="windows"` (PowerShell)
-2. Ensure PowerShell scripts have `.ps1` extension
-3. Check execution policy: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-4. Use Git Bash as alternative for bash scripts on Windows
+1. Download the platform-specific binary from the releases page
+2. Add the binary location to your PATH
+3. Alternatively, use full path in launcher files: `/path/to/speckitadv`
+4. Verify with: `speckitadv --version`
 
 ## Git Credential Manager on Linux
 

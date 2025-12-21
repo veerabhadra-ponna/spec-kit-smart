@@ -1,10 +1,12 @@
 # Cross-Platform Unified Package Solution
 
-## Executive Summary
+> **⚠️ SUPERSEDED**: This document describes the original bash/PowerShell unified package approach. As of v3.0, Spec Kit Smart uses the `speckitadv` Python CLI which eliminates the need for bash/PowerShell scripts entirely. See [PYTHON-MIGRATION-ASSESSMENT.md](./PYTHON-MIGRATION-ASSESSMENT.md) for the current architecture.
+
+## Executive Summary (Historical)
 
 **Problem**: Developers need both sh and ps scripts when switching between Windows local environments and Unix cloud containers. Current approach generates 28 separate packages (14 agents × 2 script types), making it impractical.
 
-**Solution**: Unified package containing both script types with intelligent OS detection at the AI agent level.
+**Solution (v3.0)**: Single Python executable (`speckitadv`) that works on all platforms. No bash or PowerShell scripts required.
 
 ## Solution Architecture: "Intelligent Unified Package"
 

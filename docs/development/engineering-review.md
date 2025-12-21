@@ -1,9 +1,11 @@
 # Senior Engineering Review: Reverse Engineering & Modernization Feature
 
+> **⚠️ HISTORICAL**: This review predates the Python CLI implementation. The concerns about bash script implementation have been addressed by the `speckitadv` Python CLI which replaces all bash/PowerShell scripts. See [PYTHON-MIGRATION-ASSESSMENT.md](../PYTHON-MIGRATION-ASSESSMENT.md).
+
 **Reviewer**: Senior Engineering Lead & Architect
 **Review Date**: 2025-11-06
 **Feature**: Reverse Engineering & Modernization System
-**Status**: COMPREHENSIVE REVIEW
+**Status**: ADDRESSED (Python CLI)
 
 ---
 

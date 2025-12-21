@@ -249,14 +249,14 @@ Loading detailed section: java-guidelines.md → "Mandatory Libraries"
 
 ## Validation
 
-Validate your multi-stack configuration using the built-in compliance scripts:
+Validate your multi-stack configuration by checking the `stack-mapping.json` structure:
 
 ```bash
-# Check guideline compliance
-./scripts/bash/check-guidelines-compliance.sh
+# Verify stack mapping exists
+cat .guidelines/stack-mapping.json
 
-# Or use PowerShell
-./scripts/powershell/check-guidelines-compliance.ps1
+# Verify guideline files exist for each defined stack
+ls -la .guidelines/
 ```
 
 ## Benefits

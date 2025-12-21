@@ -7,7 +7,7 @@ set -euo pipefail
 # Usage: .github/workflows/scripts/create-release-packages.sh <version>
 #   Version argument should include leading 'v'.
 #   Optionally set AGENTS env var to limit which agents get built.
-#     AGENTS  : space or comma separated subset of: claude gemini copilot cursor-agent qwen opencode windsurf codex amp (default: all)
+#     AGENTS  : space or comma separated subset of: claude gemini copilot cursor-agent qwen opencode windsurf codex kilocode auggie roo codebuddy amp q (default: all)
 #   Examples:
 #     AGENTS=claude $0 v0.2.0
 #     AGENTS="copilot,gemini" $0 v0.2.0
@@ -109,19 +109,19 @@ build_unified() {
       ;;
     codex)
       launcher_dir="launchers/codex"
-      dest_dir="$base_dir/.codex/prompts"
+      dest_dir="$base_dir/.codex/commands"
       ;;
     kilocode)
       launcher_dir="launchers/kilocode"
-      dest_dir="$base_dir/.kilocode/workflows"
+      dest_dir="$base_dir/.kilocode/rules"
       ;;
     auggie)
       launcher_dir="launchers/auggie"
-      dest_dir="$base_dir/.augment/commands"
+      dest_dir="$base_dir/.augment/rules"
       ;;
     roo)
       launcher_dir="launchers/roo"
-      dest_dir="$base_dir/.roo/commands"
+      dest_dir="$base_dir/.roo/rules"
       ;;
     codebuddy)
       launcher_dir="launchers/codebuddy"

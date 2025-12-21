@@ -17,7 +17,8 @@ The CLI embeds all prompts and templates - agents just receive focused stage ins
 
 2. Ensure `speckitadv` is in your PATH or use full path in launchers.
 
-3. Use slash commands: `/analyze-project`, `/constitution`, `/specify`, etc.
+3. Use slash commands: `/speckitsmart.analyze-project`, `/speckitsmart.constitution`, `/speckitsmart.specify`, etc.
+   (Note: Commands are prefixed with `speckitsmart.` during release packaging)
 
 ## Available Commands
 

@@ -1029,7 +1029,7 @@ def init(
                 raise typer.Exit(1)
 
     console.print(f"[cyan]Selected AI assistant:[/cyan] {selected_ai}")
-    console.print(f"[cyan]Package includes:[/cyan] Both Bash and PowerShell scripts (auto-selected by AI prompts)")
+    console.print(f"[cyan]Package includes:[/cyan] Python CLI launchers (speckitadv) + templates")
 
     tracker = StepTracker("Initialize Specify Project")
 
