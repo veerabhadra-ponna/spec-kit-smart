@@ -70,7 +70,9 @@ Check the provided input:
 ## Output
 
 Confirm input collected:
-```
+
+```text
+
 ✓ Input collected
   - JIRA: [number]
   - Feature: [short summary]
@@ -80,6 +82,7 @@ Confirm input collected:
 
 ## NEXT
 
-```
+```text
+
 speckit specify --stage=3 --chain={{chain_id}} --jira={{jira}} --feature="{{feature}}"
 ```

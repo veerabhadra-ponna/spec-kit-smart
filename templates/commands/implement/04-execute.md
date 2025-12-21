@@ -26,7 +26,8 @@ Execute implementation following the task plan.
 
 ## Phase Order
 
-**Phase 1: Setup**
+### Phase 1: Setup
+
 - Initialize project structure
 - Install dependencies
 - Create configuration
@@ -36,12 +37,14 @@ Execute implementation following the task plan.
 - Shared utilities
 - Must complete before user stories
 
-**Phase 3+: User Stories**
+### Phase 3+: User Stories
+
 - One phase per story (P1, P2, P3...)
 - Within each: Tests → Models → Services → Endpoints
 - Test each story independently
 
-**Final: Polish**
+### Final: Polish
+
 - Cross-cutting concerns
 - Documentation
 - Compliance verification
@@ -76,13 +79,17 @@ After:  - [X] T012 [US1] Create User model
 ## Output
 
 After each task:
-```
+
+```text
+
 ✓ T012 [US1] Create User model - COMPLETE
   - File: src/models/user.py
 ```
 
 After each phase:
-```
+
+```text
+
 ✓ Phase 3 (US1) Complete
   - Tasks: 8/8
   - Tests: Passing
@@ -92,6 +99,7 @@ After each phase:
 
 ## NEXT
 
-```
+```text
+
 speckit implement --stage=5 --chain={{chain_id}}
 ```

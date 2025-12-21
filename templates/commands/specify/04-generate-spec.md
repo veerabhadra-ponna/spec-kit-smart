@@ -81,7 +81,8 @@ Prioritize: scope > security > user experience > technical
 
 Write spec to `{{spec_file}}`.
 
-```
+```text
+
 ✓ Specification generated
   - Sections: [N] completed
   - Clarifications needed: [0-3]
@@ -91,6 +92,7 @@ Write spec to `{{spec_file}}`.
 
 ## NEXT
 
-```
+```text
+
 speckit specify --stage=5 --chain={{chain_id}}
 ```

@@ -77,7 +77,8 @@ Review spec against each checklist item:
 
 ## Output
 
-```
+```text
+
 ✓ Validation complete
   - Passed: [N]/[Total] items
   - Clarifications: [0-3] pending
@@ -87,6 +88,7 @@ Review spec against each checklist item:
 
 ## NEXT
 
-```
+```text
+
 speckit specify --stage=6 --chain={{chain_id}}
 ```

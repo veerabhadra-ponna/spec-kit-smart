@@ -74,7 +74,9 @@ Before saving, verify:
 Write constitution to `/memory/constitution.md`.
 
 Output completion summary:
-```
+
+```text
+
 ✅ Constitution created successfully
 
 Version: 1.0.0

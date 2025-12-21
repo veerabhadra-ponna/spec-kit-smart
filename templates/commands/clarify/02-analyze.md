@@ -55,7 +55,9 @@ For Partial/Missing categories, create questions that:
 **Question Format:**
 
 For multiple-choice:
-```
+
+```text
+
 **Recommended:** Option [X] - [reasoning]
 
 | Option | Description |
@@ -94,7 +96,8 @@ After each answer:
 
 ## Output
 
-```
+```text
+
 ✓ Analysis complete
   - Questions asked: [N]/5
   - Categories resolved: [list]
@@ -104,6 +107,7 @@ After each answer:
 
 ## NEXT
 
-```
+```text
+
 speckit clarify --stage=3 --chain={{chain_id}}
 ```

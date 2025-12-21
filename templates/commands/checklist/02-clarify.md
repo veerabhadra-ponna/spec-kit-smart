@@ -64,7 +64,8 @@ Combine arguments + answers:
 
 ## Output
 
-```
+```text
+
 ✓ Intent clarified
   - Theme: [domain]
   - Focus areas: [list]
@@ -75,6 +76,7 @@ Combine arguments + answers:
 
 ## NEXT
 
-```
+```text
+
 speckit checklist --stage=3 --chain={{chain_id}}
 ```

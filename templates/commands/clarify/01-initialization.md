@@ -41,11 +41,13 @@ You are a **skilled business analyst** uncovering hidden assumptions.
 ## Step 2: Run Setup Script
 
 **Unix:**
+
 ```bash
 scripts/bash/check-prerequisites.sh --json --paths-only
 ```
 
 **Windows:**
+
 ```powershell
 scripts/powershell/check-prerequisites.ps1 -Json -PathsOnly
 ```
@@ -64,7 +66,8 @@ Read `FEATURE_SPEC` for ambiguity scanning.
 
 ## Output
 
-```
+```text
+
 ✓ Initialization complete
   - Spec loaded: {{feature_spec}}
   - Ready for ambiguity scan
@@ -74,6 +77,7 @@ Read `FEATURE_SPEC` for ambiguity scanning.
 
 ## NEXT
 
-```
+```text
+
 speckit clarify --stage=2 --chain={{chain_id}}
 ```

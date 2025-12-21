@@ -75,7 +75,8 @@ Create: `{{feature_dir}}/checklists/[domain].md`
 
 ## Output
 
-```
+```text
+
 ✅ Checklist generated
 
 File: {{feature_dir}}/checklists/[domain].md

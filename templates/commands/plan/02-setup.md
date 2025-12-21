@@ -45,11 +45,13 @@ Valid constraint types:
 Execute from repo root:
 
 **Unix/Linux/macOS:**
+
 ```bash
 scripts/bash/setup-plan.sh --json
 ```
 
 **Windows:**
+
 ```powershell
 scripts/powershell/setup-plan.ps1 -Json
 ```
@@ -74,7 +76,8 @@ Parse JSON output for:
 
 ## Output
 
-```
+```text
+
 ✓ Setup complete
   - Spec: {{feature_spec}}
   - Plan template: {{impl_plan}}
@@ -85,6 +88,7 @@ Parse JSON output for:
 
 ## NEXT
 
-```
+```text
+
 speckit plan --stage=3 --chain={{chain_id}}
 ```

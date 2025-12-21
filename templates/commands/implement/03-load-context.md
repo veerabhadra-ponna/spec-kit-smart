@@ -59,7 +59,8 @@ From tasks.md extract:
 
 ## Output
 
-```
+```text
+
 ✓ Context loaded
   - Tasks: [N] across [N] phases
   - Tech stack: [detected]
@@ -70,6 +71,7 @@ From tasks.md extract:
 
 ## NEXT
 
-```
+```text
+
 speckit implement --stage=4 --chain={{chain_id}}
 ```

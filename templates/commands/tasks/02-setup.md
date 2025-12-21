@@ -44,11 +44,13 @@ Examples:
 Execute from repo root:
 
 **Unix:**
+
 ```bash
 scripts/bash/check-prerequisites.sh --json
 ```
 
 **Windows:**
+
 ```powershell
 scripts/powershell/check-prerequisites.ps1 -Json
 ```
@@ -69,7 +71,8 @@ Note: Not all projects have all documents. Generate tasks from available docs.
 
 ## Output
 
-```
+```text
+
 ✓ Setup complete
   - Feature dir: {{feature_dir}}
   - Docs available: [list]
@@ -80,6 +83,7 @@ Note: Not all projects have all documents. Generate tasks from available docs.
 
 ## NEXT
 
-```
+```text
+
 speckit tasks --stage=3 --chain={{chain_id}}
 ```

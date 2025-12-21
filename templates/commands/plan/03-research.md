@@ -26,11 +26,13 @@ Review Technical Context from the spec for:
 ## Step 2: Generate Research Tasks
 
 For each unknown:
+
 ```text
 Task: "Research {unknown} for {feature context}"
 ```
 
 For each technology choice:
+
 ```text
 Task: "Find best practices for {tech} in {domain}"
 ```
@@ -79,7 +81,8 @@ Verify:
 
 ## Output
 
-```
+```text
+
 ✓ Research complete
   - Decisions: [N] documented
   - Unknowns resolved: [N]
@@ -90,6 +93,7 @@ Verify:
 
 ## NEXT
 
-```
+```text
+
 speckit plan --stage=4 --chain={{chain_id}}
 ```

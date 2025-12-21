@@ -67,7 +67,8 @@ When writing code:
 
 ## Output
 
-```
+```text
+
 ✓ Initialization complete
   - Role: Senior Engineer
   - Guidelines: [loaded / not found]
@@ -78,6 +79,7 @@ When writing code:
 
 ## NEXT
 
-```
+```text
+
 speckit implement --stage=2 --chain={{chain_id}}
 ```

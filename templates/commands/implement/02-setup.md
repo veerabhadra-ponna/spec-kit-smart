@@ -41,11 +41,13 @@ Examples:
 ## Step 2: Run Setup Script
 
 **Unix:**
+
 ```bash
 scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
 ```
 
 **Windows:**
+
 ```powershell
 scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
 ```
@@ -58,7 +60,8 @@ Parse: `FEATURE_DIR`, `AVAILABLE_DOCS`
 
 Scan `{{feature_dir}}/checklists/`:
 
-```
+```text
+
 | Checklist | Total | Complete | Incomplete | Status |
 |-----------|-------|----------|------------|--------|
 | ux.md     | 12    | 12       | 0          | ✓ PASS |
@@ -78,7 +81,8 @@ Scan `{{feature_dir}}/checklists/`:
 
 ## Output
 
-```
+```text
+
 ✓ Setup complete
   - Feature: {{feature_dir}}
   - Checklists: [PASS / user approved]
@@ -88,6 +92,7 @@ Scan `{{feature_dir}}/checklists/`:
 
 ## NEXT
 
-```
+```text
+
 speckit implement --stage=3 --chain={{chain_id}}
 ```

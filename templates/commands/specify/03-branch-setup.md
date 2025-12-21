@@ -58,12 +58,14 @@ Use N+1 for the new branch number.
 Execute the appropriate script:
 
 **Unix/Linux/macOS:**
+
 ```bash
 scripts/bash/create-new-feature.sh --json --number N+1 \
   --jira-number "{{jira}}" --short-name "{{short_name}}" "{{feature}}"
 ```
 
 **Windows:**
+
 ```powershell
 scripts/powershell/create-new-feature.ps1 -Json -Number N+1 \
   -JiraNumber "{{jira}}" -ShortName "{{short_name}}" "{{feature}}"
@@ -75,7 +77,8 @@ scripts/powershell/create-new-feature.ps1 -Json -Number N+1 \
 
 ## Output
 
-```
+```text
+
 ✓ Branch created
   - Branch: feature/{{number}}-{{jira}}-{{short_name}}
   - Spec dir: specs/{{number}}-{{jira}}-{{short_name}}/
@@ -85,6 +88,7 @@ scripts/powershell/create-new-feature.ps1 -Json -Number N+1 \
 
 ## NEXT
 
-```
+```text
+
 speckit specify --stage=4 --chain={{chain_id}}
 ```

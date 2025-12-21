@@ -65,7 +65,9 @@ Simply provide empty input or type "use defaults".
 - Explicit Errors: MUST handle errors explicitly, no silent failures
 
 **When defaults applied, show user:**
-```
+
+```text
+
 ℹ️ Applied default constitution principles. Run again with custom principles to override.
 ```
 
@@ -74,7 +76,9 @@ Simply provide empty input or type "use defaults".
 ## Output
 
 Confirm principles collected:
-```
+
+```text
+
 ✓ Principles collected: [N] principles
   - Source: [User input / Defaults]
   - Project: [Name or TBD]
@@ -85,6 +89,8 @@ Confirm principles collected:
 ## NEXT
 
 Run the next stage to generate the constitution:
-```
+
+```text
+
 speckit constitution --stage=3 --chain={{chain_id}}
 ```

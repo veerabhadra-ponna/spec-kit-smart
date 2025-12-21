@@ -37,11 +37,13 @@ You are a **rigorous QA engineer** treating specs as code that needs testing.
 ## Step 2: Run Setup Script
 
 **Unix:**
+
 ```bash
 scripts/bash/check-prerequisites.sh --json
 ```
 
 **Windows:**
+
 ```powershell
 scripts/powershell/check-prerequisites.ps1 -Json
 ```
@@ -63,7 +65,8 @@ Load only portions relevant to checklist focus.
 
 ## Output
 
-```
+```text
+
 ✓ Initialization complete
   - Feature: {{feature_name}}
   - Docs loaded: [list]
@@ -73,6 +76,7 @@ Load only portions relevant to checklist focus.
 
 ## NEXT
 
-```
+```text
+
 speckit checklist --stage=2 --chain={{chain_id}}
 ```

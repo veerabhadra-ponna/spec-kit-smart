@@ -67,7 +67,8 @@ Check `/.guidelines/` directory:
 
 ## Output
 
-```
+```text
+
 ✓ Initialization complete
   - Role: Software Architect
   - Tech stack: [detected stacks]
@@ -78,6 +79,7 @@ Check `/.guidelines/` directory:
 
 ## NEXT
 
-```
+```text
+
 speckit plan --stage=2 --chain={{chain_id}}
 ```

@@ -28,7 +28,8 @@ Compile the workflow results:
 
 Output final summary:
 
-```
+```text
+
 ✅ Specification created successfully
 
 Branch: feature/{{number}}-{{jira}}-{{short_name}}
@@ -69,10 +70,15 @@ Suggested commit:
 The specification has been created. No further stages.
 
 **Recommended next command:**
-```
+
+```text
+
 speckit clarify --chain={{chain_id}}
 ```
+
 or
-```
+
+```text
+
 speckit plan --chain={{chain_id}}
 ```

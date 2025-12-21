@@ -56,7 +56,8 @@ Check `/.guidelines/` directory based on tech stack:
 
 ## Output
 
-```
+```text
+
 ✓ Initialization complete
   - Role: Tech Lead
   - Guidelines: [loaded / not found]
@@ -67,6 +68,7 @@ Check `/.guidelines/` directory based on tech stack:
 
 ## NEXT
 
-```
+```text
+
 speckit tasks --stage=2 --chain={{chain_id}}
 ```

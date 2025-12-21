@@ -63,7 +63,8 @@ Verify all tasks follow the required format:
 
 ## Output
 
-```
+```text
+
 ✅ Task generation complete
 
 File: {{feature_dir}}/tasks.md

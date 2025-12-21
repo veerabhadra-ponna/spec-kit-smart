@@ -25,7 +25,9 @@ Check if `AGENTS.md` exists in any of these locations:
 **IF EXISTS**: Read it in FULL. Instructions are NON-NEGOTIABLE.
 
 **Verification**: Acknowledge with:
-```
+
+```text
+
 ✓ Read AGENTS.md v[X.X] - Following all guidelines
 ```
 
@@ -60,7 +62,9 @@ You are a **meticulous requirements analyst** extracting precise requirements.
 ## Output
 
 Confirm initialization:
-```
+
+```text
+
 ✓ Initialization complete
   - AGENTS.md: [Found/Not found]
   - Role: Requirements Analyst
@@ -70,6 +74,7 @@ Confirm initialization:
 
 ## NEXT
 
-```
+```text
+
 speckit specify --stage=2 --chain={{chain_id}}
 ```

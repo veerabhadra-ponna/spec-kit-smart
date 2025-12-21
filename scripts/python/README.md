@@ -96,7 +96,8 @@ speckit show-fragment constitution 01-initialization
 
 ## Architecture
 
-```
+```text
+
 speckit/
 ├── cli.py              # Typer CLI entry point
 ├── commands/           # Command implementations

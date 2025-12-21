@@ -17,7 +17,9 @@ Generate tasks organized by user story.
 ## Task Format (REQUIRED)
 
 Every task MUST follow:
-```
+
+```text
+
 - [ ] [TaskID] [P?] [Story?] Description with file path
 ```
 
@@ -71,7 +73,8 @@ Components:
 
 Write to `{{feature_dir}}/tasks.md`
 
-```
+```text
+
 ✓ Tasks generated
   - Total: [N] tasks
   - Phases: [N] phases
@@ -82,6 +85,7 @@ Write to `{{feature_dir}}/tasks.md`
 
 ## NEXT
 
-```
+```text
+
 speckit tasks --stage=4 --chain={{chain_id}}
 ```

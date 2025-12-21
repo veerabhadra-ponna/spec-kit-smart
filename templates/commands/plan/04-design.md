@@ -77,11 +77,13 @@ Create `quickstart.md` with:
 Run agent update script:
 
 **Unix:**
+
 ```bash
 scripts/bash/update-agent-context.sh {{agent_type}}
 ```
 
 **Windows:**
+
 ```powershell
 scripts/powershell/update-agent-context.ps1 -AgentType {{agent_type}}
 ```
@@ -90,7 +92,8 @@ scripts/powershell/update-agent-context.ps1 -AgentType {{agent_type}}
 
 ## Output
 
-```
+```text
+
 ✅ Planning complete
 
 Artifacts generated:

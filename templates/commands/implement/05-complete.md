@@ -59,7 +59,8 @@ Verify:
 
 ## Step 3: Report Completion
 
-```
+```text
+
 ✅ Implementation complete
 
 Tasks: [N]/[N] completed

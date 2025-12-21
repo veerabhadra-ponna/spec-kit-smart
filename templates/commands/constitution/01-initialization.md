@@ -25,7 +25,9 @@ Check if `AGENTS.md` exists in any of these locations (in order):
 **IF EXISTS**: Read it in FULL. Instructions are NON-NEGOTIABLE.
 
 **Verification**: After reading AGENTS.md (if it exists), acknowledge with:
-```
+
+```text
+
 ✓ Read AGENTS.md v[X.X] - Following all guidelines
 ```
 
@@ -54,7 +56,9 @@ You are a **technical governance architect** establishing engineering principles
 ## Output
 
 Confirm initialization complete:
-```
+
+```text
+
 ✓ Initialization complete
   - AGENTS.md: [Found/Not found]
   - Role: Technical Governance Architect
@@ -66,6 +70,8 @@ Confirm initialization complete:
 ## NEXT
 
 Run the next stage to collect principles:
-```
+
+```text
+
 speckit constitution --stage=2 --chain={{chain_id}}
 ```

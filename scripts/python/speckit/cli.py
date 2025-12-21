@@ -21,7 +21,7 @@ app = typer.Typer(
     name="speckit",
     help="Spec Kit Smart - Zero-Prompt Architecture CLI for AI-powered development",
     add_completion=True,
-    no_args_is_help=True,
+    # Note: no_args_is_help removed - commands default to stage 1 with current directory
 )
 
 

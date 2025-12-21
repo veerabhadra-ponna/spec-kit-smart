@@ -47,7 +47,8 @@ Verify spec updates:
 
 ## Step 3: Report Completion
 
-```
+```text
+
 ✅ Clarification complete
 
 Questions asked: [N]
@@ -77,6 +78,8 @@ Next steps:
 Spec is clarified. Proceed to planning.
 
 **Next command:**
-```
+
+```text
+
 speckit plan --chain={{chain_id}}
 ```
