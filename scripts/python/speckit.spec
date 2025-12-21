@@ -1,8 +1,8 @@
 # -*- mode: python ; coding: utf-8 -*-
 """
-PyInstaller spec file for Spec Kit Smart CLI
+PyInstaller spec file for Spec Kit Smart CLI (speckitadv)
 
-Builds a single-file executable with all prompts and templates embedded.
+Builds a single-file executable with all prompts, templates, and launchers embedded.
 Usage: pyinstaller speckit.spec
 """
 
@@ -11,36 +11,53 @@ from pathlib import Path
 
 # Get the spec file directory
 spec_dir = Path(SPECPATH)
-repo_root = spec_dir.parent.parent
 
-# Define paths
-speckit_pkg = spec_dir / 'speckit'
-templates_dir = repo_root / 'templates'
+# Define paths - assets are now in speckit/assets/
+assets_dir = spec_dir / 'speckit' / 'assets'
 
-# Collect all template files to embed
-templates_data = []
+# Collect all asset files to embed
+assets_data = []
+
+# Collect prompts
+prompts_dir = assets_dir / 'prompts'
+if prompts_dir.exists():
+    for root, dirs, files in os.walk(prompts_dir):
+        for file in files:
+            if file.endswith('.md') or file.endswith('.json'):
+                src = Path(root) / file
+                rel_path = src.relative_to(assets_dir)
+                dest_dir = Path('assets') / rel_path.parent
+                assets_data.append((str(src), str(dest_dir)))
+
+# Collect templates
+templates_dir = assets_dir / 'templates'
 if templates_dir.exists():
     for root, dirs, files in os.walk(templates_dir):
         for file in files:
-            if file.endswith('.md'):
+            if file.endswith('.md') or file.endswith('.json'):
                 src = Path(root) / file
-                # Destination path relative to templates/
-                rel_path = src.relative_to(templates_dir)
-                dest_dir = Path('templates') / rel_path.parent
-                templates_data.append((str(src), str(dest_dir)))
+                rel_path = src.relative_to(assets_dir)
+                dest_dir = Path('assets') / rel_path.parent
+                assets_data.append((str(src), str(dest_dir)))
+
+# Collect AGENTS.md
+agents_md = assets_dir / 'AGENTS.md'
+if agents_md.exists():
+    assets_data.append((str(agents_md), 'assets'))
 
 # Analysis
 a = Analysis(
     ['speckit/__main__.py'],
     pathex=[str(spec_dir)],
     binaries=[],
-    datas=templates_data,
+    datas=assets_data,
     hiddenimports=[
         'typer',
         'rich',
         'rich.console',
         'rich.panel',
         'rich.table',
+        'rich.tree',
         'pydantic',
         'speckit.commands',
         'speckit.commands.analyze',
@@ -53,6 +70,10 @@ a = Analysis(
         'speckit.core.templates',
         'speckit.core.prompts',
         'speckit.core.stages',
+        'speckit.setup',
+        'speckit.setup.config',
+        'speckit.setup.init_cmd',
+        'speckit.setup.check_cmd',
     ],
     hookspath=[],
     hooksconfig={},

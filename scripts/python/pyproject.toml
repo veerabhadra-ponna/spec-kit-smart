@@ -1,6 +1,6 @@
 [project]
 name = "speckit"
-version = "1.0.0-alpha.1"
+version = "2.0.0"
 description = "Spec Kit Smart - Zero-Prompt Architecture CLI for AI-powered development"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -10,7 +10,7 @@ authors = [
 ]
 keywords = ["ai", "cli", "development", "specification", "code-generation"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
@@ -38,6 +38,9 @@ dev = [
 ]
 
 [project.scripts]
+# Primary command name
+speckitadv = "speckit.cli:app"
+# Aliases for convenience
 speckit = "speckit.cli:app"
 
 [build-system]
@@ -46,6 +49,18 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["speckit"]
+
+# Include all assets in the wheel
+[tool.hatch.build.targets.wheel.force-include]
+"speckit/assets" = "speckit/assets"
+
+# Ensure all asset files are included
+[tool.hatch.build]
+include = [
+    "speckit/**/*.py",
+    "speckit/assets/**/*.md",
+    "speckit/assets/**/*.json",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -253,24 +253,136 @@ def checklist(
 @app.command("init")
 def init(
     project_name: Optional[str] = typer.Argument(None, help="Project name or '.' for current directory"),
-    ai: Optional[str] = typer.Option(None, "--ai", help="AI assistant: claude, copilot, gemini, etc."),
+    ai: Optional[str] = typer.Option(None, "--ai", help="AI assistant: claude, copilot, gemini, cursor-agent, qwen, opencode, codex, windsurf, kilocode, auggie, roo, codebuddy, amp, q"),
     here: bool = typer.Option(False, "--here", help="Initialize in current directory"),
     no_git: bool = typer.Option(False, "--no-git", help="Skip git initialization"),
+    force: bool = typer.Option(False, "--force", help="Overwrite existing files"),
 ) -> None:
     """
     Initialize a new Spec Kit project.
 
-    Downloads launcher files for the specified AI assistant.
-    """
-    from speckit.core.emit import emit_complete
+    Creates project structure with embedded launchers - no network required.
 
-    # Placeholder - implement full init logic
-    emit_complete(
-        message="Init command is under development.",
-        next_steps=[
-            "Use the existing speckitsmart CLI for now",
-            "pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git",
-        ],
+    Examples:
+        speckitadv init my-project --ai claude
+        speckitadv init . --ai copilot
+        speckitadv init --here --ai gemini
+    """
+    from speckit.setup.config import AGENT_CONFIG, get_all_agents
+    from speckit.setup.init_cmd import create_project_structure, show_success_message
+
+    # Handle '.' as current directory
+    if project_name == ".":
+        here = True
+        project_name = None
+
+    # Validate arguments
+    if here and project_name:
+        console.print("[red]Error:[/red] Cannot specify both project name and --here flag")
+        raise typer.Exit(1)
+
+    if not here and not project_name:
+        console.print("[red]Error:[/red] Must specify project name, use '.' for current directory, or --here")
+        raise typer.Exit(1)
+
+    # Determine project path
+    if here:
+        project_path = Path.cwd()
+        project_name = project_path.name
+        is_current_dir = True
+    else:
+        project_path = Path(project_name).resolve()
+        is_current_dir = False
+
+    # Check if directory exists (for new projects)
+    if not is_current_dir and project_path.exists():
+        console.print(f"[red]Error:[/red] Directory '{project_name}' already exists")
+        console.print("Use --here to initialize in an existing directory")
+        raise typer.Exit(1)
+
+    # Validate or prompt for AI assistant
+    if ai:
+        if ai not in AGENT_CONFIG:
+            console.print(f"[red]Error:[/red] Unknown AI assistant '{ai}'")
+            console.print(f"Available: {', '.join(get_all_agents())}")
+            raise typer.Exit(1)
+    else:
+        # List available agents
+        console.print("[bold]Available AI assistants:[/bold]")
+        for key, config in AGENT_CONFIG.items():
+            console.print(f"  [cyan]{key}[/cyan] - {config['name']}")
+        console.print()
+        console.print("Use --ai <name> to select an assistant")
+        raise typer.Exit(1)
+
+    # Create project
+    console.print(f"\n[bold]Initializing project:[/bold] {project_name}")
+    console.print(f"[bold]AI assistant:[/bold] {AGENT_CONFIG[ai]['name']}")
+    console.print()
+
+    success = create_project_structure(
+        project_path=project_path,
+        agent=ai,
+        no_git=no_git,
+        force=force,
+    )
+
+    if success:
+        show_success_message(project_path, ai, is_current_dir)
+    else:
+        raise typer.Exit(1)
+
+
+# ============================================================================
+# CHECK Command
+# ============================================================================
+
+
+@app.command("check")
+def check() -> None:
+    """
+    Check that required tools are installed.
+
+    Verifies git and AI agent CLI tools.
+    """
+    from speckit.setup.check_cmd import run_check
+
+    run_check()
+
+
+# ============================================================================
+# CREATE-FEATURE Command
+# ============================================================================
+
+
+@app.command("create-feature")
+def create_feature(
+    description: str = typer.Argument(..., help="Feature description"),
+    jira: Optional[str] = typer.Option(None, "--jira", "-j", help="JIRA ticket number"),
+    short_name: Optional[str] = typer.Option(None, "--short-name", "-s", help="Custom short name (auto-generated if not provided)"),
+    number: Optional[int] = typer.Option(None, "--number", "-n", help="Feature number (auto-incremented if not provided)"),
+    no_branch: bool = typer.Option(False, "--no-branch", help="Skip git branch creation"),
+    json_output: bool = typer.Option(False, "--json", help="Output in JSON format"),
+) -> None:
+    """
+    Create a new feature branch and spec directory.
+
+    Replaces scripts/bash/create-new-feature.sh with full functionality.
+
+    Examples:
+        speckitadv create-feature "Add user authentication"
+        speckitadv create-feature "OAuth2 integration" --jira C12345-7890
+        speckitadv create-feature "Fix payment bug" --short-name fix-payment --number 5
+    """
+    from speckit.commands.feature import run_create_feature
+
+    run_create_feature(
+        description=description,
+        jira=jira,
+        short_name=short_name,
+        number=number,
+        no_branch=no_branch,
+        output_json=json_output,
     )
 
 

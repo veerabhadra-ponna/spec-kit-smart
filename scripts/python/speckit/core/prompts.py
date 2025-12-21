@@ -17,24 +17,25 @@ def get_prompts_base() -> Path:
     Get the base path for prompts.
 
     Returns:
-        Path to prompts directory (handles both dev and frozen modes)
+        Path to prompts directory (handles dev, pip install, and frozen modes)
     """
     if getattr(sys, "frozen", False):
         # Running as compiled executable (PyInstaller)
-        # Templates are embedded at templates/commands/
-        return Path(sys._MEIPASS) / "templates" / "commands"  # type: ignore
-    else:
-        # Running in development - prefer repo templates (source of truth)
-        repo_templates = Path(__file__).parent.parent.parent.parent.parent / "templates" / "commands"
-        if repo_templates.exists() and any(repo_templates.glob("**/*.md")):
-            return repo_templates
+        # Assets are embedded at assets/prompts/
+        return Path(sys._MEIPASS) / "assets" / "prompts"  # type: ignore
 
-        # Fall back to local assets (for packaged dev builds)
-        local_assets = Path(__file__).parent.parent / "assets" / "prompts"
-        if local_assets.exists():
-            return local_assets
+    # Check for package assets first (pip install)
+    package_assets = Path(__file__).parent.parent / "assets" / "prompts"
+    if package_assets.exists() and any(package_assets.glob("**/*.md")):
+        return package_assets
 
+    # Fall back to repo templates (development mode)
+    repo_templates = Path(__file__).parent.parent.parent.parent.parent / "templates" / "commands"
+    if repo_templates.exists() and any(repo_templates.glob("**/*.md")):
         return repo_templates
+
+    # Default to package assets path (may not exist yet)
+    return package_assets
 
 
 def get_prompt_fragment(command: str, stage: str) -> str:
