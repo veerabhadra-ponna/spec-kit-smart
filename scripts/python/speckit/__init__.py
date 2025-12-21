@@ -5,7 +5,7 @@ A unified Python CLI that provides progressive prompt injection for AI agents.
 All prompts, templates, and logic are embedded in this package.
 """
 
-__version__ = "1.0.0-alpha.1"
+__version__ = "2.1.0"
 __author__ = "Spec Kit Team"
 
 from speckit.cli import app

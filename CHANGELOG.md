@@ -9,6 +9,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2025-12-21
+
+### Added
+
+- `--verify` flag for `analyze-project` command to run verification after final stage
+- `analysis_dir` added to render context for prompt templates
+
+### Changed
+
+- CLI app name changed from `speckit` to `speckitadv` for consistency
+- Report paths now use `{analysis_dir}` from state instead of hardcoded paths
+- Constitution prompts updated to use `memory/constitution.md` instead of `.speckit/`
+- CLI help updated to show correct stage range (1-16)
+- Version output now shows `speckitadv version X.X.X`
+
+### Fixed
+
+- `TOTAL_STAGES["B"]` corrected to 16 so Scope B can reach Stage 16
+- Report verification now uses correct path from `analysis_dir`
+- Template lookup in `run_update_agent_context` now includes embedded assets
+- Removed stale `.specify/templates` references from prompts
+- Removed unused imports in `analyze.py` and `constitution.py`
+
+### Removed
+
+- CI/CD template examples (vary by corporate environment)
+- Empty `__init__.py` in stage-prompt-templates
+- Bash/PowerShell scripts replaced by Python CLI
+
+## [2.0.0] - 2025-12-20
+
+### Added
+
+- **Python CLI Migration**: Complete rewrite from bash/PowerShell to unified Python CLI
+- Progressive prompt injection architecture with 16 stages
+- Embedded assets (prompts, templates, guidelines) in CLI package
+- Chain state management for multi-stage workflows
+- `speckitadv` and `speckit` entrypoints
+
+### Changed
+
+- Config location preference: `memory/config.json` over `.specify/config.json`
+- Project structure: `memory/` replaces `.specify/memory/`
+
+---
+
+## [0.0.20+] - Legacy Bash/PowerShell releases
+
 ### Added
 
 - **Corporate Guidelines Phase 3: Multi-Stack Coordination**
