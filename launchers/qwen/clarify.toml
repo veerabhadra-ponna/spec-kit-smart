@@ -1,0 +1,2 @@
+description = "Ask structured clarification questions"
+prompt = "Run: speckitadv clarify {{args}}"

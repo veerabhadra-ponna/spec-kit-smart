@@ -1,0 +1,2 @@
+description = "Create implementation plan from specification"
+prompt = "Run: speckitadv plan {{args}}"

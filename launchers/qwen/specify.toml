@@ -1,0 +1,2 @@
+description = "Create baseline specification from requirements"
+prompt = "Run: speckitadv specify {{args}}"
