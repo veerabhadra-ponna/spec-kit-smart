@@ -45,7 +45,7 @@ def run_staged_command(
         emit_error(
             "No fragments found",
             f"No prompt fragments found for command: {command}",
-            recovery_cmd=f"speckit list-fragments {command}",
+            recovery_cmd=f"speckitadv list-fragments {command}",
         )
         return
 
@@ -56,7 +56,7 @@ def run_staged_command(
         emit_error(
             "Invalid stage",
             f"Stage {stage} is not valid. Command '{command}' has {total_stages} stages.",
-            recovery_cmd=f"speckit {command} --stage=1",
+            recovery_cmd=f"speckitadv {command} --stage=1",
         )
         return
 
@@ -71,7 +71,7 @@ def run_staged_command(
             emit_error(
                 "Chain state not found",
                 f"No state found for chain ID: {chain_id}",
-                recovery_cmd=f"speckit {command} --stage=1 --path={path or '.'}",
+                recovery_cmd=f"speckitadv {command} --stage=1 --path={path or '.'}",
             )
             return
     else:
@@ -97,7 +97,7 @@ def run_staged_command(
         emit_error(
             "Fragment not found",
             f"Prompt fragment not found: {command}/{stage_id}",
-            recovery_cmd=f"speckit list-fragments {command}",
+            recovery_cmd=f"speckitadv list-fragments {command}",
         )
         return
 
@@ -108,7 +108,7 @@ def run_staged_command(
 
     # Determine next command
     if stage < total_stages:
-        next_cmd = f"speckit {command} --stage={stage + 1} --chain={chain_id}"
+        next_cmd = f"speckitadv {command} --stage={stage + 1} --chain={chain_id}"
     else:
         next_cmd = None
 

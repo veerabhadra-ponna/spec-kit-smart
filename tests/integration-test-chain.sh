@@ -2,7 +2,7 @@
 #
 # integration-test-chain.sh - Integration test for chained prompt workflow
 #
-# Tests state management and stage execution
+# Tests state management and stage execution using Python CLI
 #
 
 set -euo pipefail
@@ -20,6 +20,12 @@ cd "$REPO_ROOT"
 
 echo -e "${BLUE}=== Chain Integration Test ===${NC}"
 echo ""
+
+# Check if speckitadv is available
+if ! command -v speckitadv &> /dev/null; then
+    echo -e "${RED}Error: speckitadv not found. Install with: pip install -e scripts/python${NC}"
+    exit 1
+fi
 
 # Test counter
 TESTS_PASSED=0
@@ -51,7 +57,7 @@ echo "Test 1: State Management Utilities"
 echo "-----------------------------------"
 
 # Test 1.1: Generate chain ID
-CHAIN_ID=$(./scripts/bash/chain-state.sh generate-id)
+CHAIN_ID=$(speckitadv chain-state generate-id 2>/dev/null | tr -d '\n' || echo "")
 if [[ -n "$CHAIN_ID" ]] && [[ ${#CHAIN_ID} -eq 8 ]]; then
     pass "Chain ID generated: $CHAIN_ID"
 else
@@ -59,7 +65,7 @@ else
 fi
 
 # Test 1.2: Initialize state directory
-./scripts/bash/chain-state.sh init > /dev/null 2>&1 || true
+speckitadv chain-state init > /dev/null 2>&1 || true
 if [[ -d ".analysis/.state" ]]; then
     pass "State directory created"
 else
@@ -72,7 +78,7 @@ echo "Test 2: State Persistence"
 echo "-------------------------"
 
 test_state='{"chain_id":"'$CHAIN_ID'","stage":"test","timestamp":"2025-11-14T12:00:00Z","counter":1}'
-./scripts/bash/chain-state.sh save test-state "$test_state" > /dev/null 2>&1
+speckitadv chain-state save test-state --state="$test_state" > /dev/null 2>&1
 
 if [[ -f ".analysis/.state/test-state.json" ]]; then
     pass "State file created"
@@ -80,7 +86,7 @@ else
     fail "State file creation"
 fi
 
-loaded_state=$(./scripts/bash/chain-state.sh load test-state)
+loaded_state=$(speckitadv chain-state load test-state 2>/dev/null || echo "{}")
 if echo "$loaded_state" | jq -e '.chain_id' > /dev/null 2>&1; then
     pass "State loaded successfully"
 else
@@ -92,7 +98,7 @@ echo ""
 echo "Test 3: State Validation"
 echo "------------------------"
 
-if ./scripts/bash/chain-state.sh validate "$test_state" > /dev/null 2>&1; then
+if speckitadv chain-state validate --state="$test_state" > /dev/null 2>&1; then
     pass "State validation passed"
 else
     fail "State validation"
@@ -104,7 +110,7 @@ echo "Test 4: Two-Stage Chain Execution"
 echo "----------------------------------"
 
 # Initialize for test
-./scripts/bash/chain-state.sh init > /dev/null 2>&1 || true
+speckitadv chain-state init > /dev/null 2>&1 || true
 
 # Stage 1: Save state
 state1='{
@@ -114,16 +120,17 @@ state1='{
   "stages_complete": ["test_stage_1"],
   "counter": 1
 }'
-./scripts/bash/chain-state.sh save test-stage-1 "$state1" > /dev/null 2>&1
+speckitadv chain-state save test-stage-1 --state="$state1" > /dev/null 2>&1
 
-if ./scripts/bash/chain-state.sh is-complete test-stage-1 | grep -q "true"; then
+result=$(speckitadv chain-state is-complete test-stage-1 2>/dev/null || echo "")
+if echo "$result" | grep -qi "true"; then
     pass "Stage 1 completion recorded"
 else
     fail "Stage 1 completion"
 fi
 
 # Stage 2: Load, modify, save
-loaded=$(./scripts/bash/chain-state.sh load test-stage-1)
+loaded=$(speckitadv chain-state load test-stage-1 2>/dev/null || echo "{}")
 state2='{
   "chain_id": "test1234",
   "stage": "test_stage_2",
@@ -131,10 +138,10 @@ state2='{
   "stages_complete": ["test_stage_1", "test_stage_2"],
   "counter": 2
 }'
-./scripts/bash/chain-state.sh save test-stage-2 "$state2" > /dev/null 2>&1
+speckitadv chain-state save test-stage-2 --state="$state2" > /dev/null 2>&1
 
 # Verify counter incremented
-counter=$(./scripts/bash/chain-state.sh load test-stage-2 | jq -r '.counter')
+counter=$(speckitadv chain-state load test-stage-2 2>/dev/null | jq -r '.counter' || echo "0")
 if [[ "$counter" == "2" ]]; then
     pass "State modified correctly (counter: 1 → 2)"
 else
@@ -142,7 +149,7 @@ else
 fi
 
 # Verify stages_complete
-stages=$(./scripts/bash/chain-state.sh load test-stage-2 | jq -r '.stages_complete | length')
+stages=$(speckitadv chain-state load test-stage-2 2>/dev/null | jq -r '.stages_complete | length' || echo "0")
 if [[ "$stages" == "2" ]]; then
     pass "Both stages recorded in stages_complete"
 else
@@ -156,8 +163,8 @@ echo "------------------------"
 
 # Note: last-stage looks for files matching [0-9]{2}[ab]?-.*\.json pattern
 # Our test stages use test-stage-* which doesn't match, so we expect "none"
-last_stage=$(./scripts/bash/chain-state.sh last-stage)
-if [[ "$last_stage" == "none" ]]; then
+last_stage=$(speckitadv chain-state last-stage 2>/dev/null || echo "none")
+if [[ "$last_stage" == "none" ]] || [[ -z "$last_stage" ]]; then
     pass "Last stage detection (test stages don't match numbering pattern - expected)"
 else
     # If we get a real stage, that's also fine
@@ -176,9 +183,9 @@ bootstrap='{
   "project_path": "/test/project",
   "analysis_dir": "/test/analysis"
 }'
-./scripts/bash/chain-state.sh save 00-bootstrap "$bootstrap" > /dev/null 2>&1
+speckitadv chain-state save 00-bootstrap --state="$bootstrap" > /dev/null 2>&1
 
-if ./scripts/bash/chain-state.sh load 00-bootstrap | jq -e '.project_path' > /dev/null 2>&1; then
+if speckitadv chain-state load 00-bootstrap 2>/dev/null | jq -e '.project_path' > /dev/null 2>&1; then
     pass "Bootstrap state created and accessible"
 else
     fail "Bootstrap state"

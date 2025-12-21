@@ -61,7 +61,7 @@
 | DO | DON'T |
 | ---- | ------- |
 | Stop & emit `CLARIFICATION NEEDED` when unclear | Commit secrets/API keys/credentials |
-| Follow Constitution at all times | Modify `.specify/` during implementation |
+| Follow Constitution at all times | Modify `memory/` during implementation |
 | Run formatters → linters → tests before commit | Add requirements not in specs |
 | Update spec first if issues found | Proceed when spec is unclear |
 | Mark tasks immediately after completion | Override human feedback without updated spec |
@@ -266,7 +266,7 @@ project-root/
 
 **Allowed:** `src/`, `tests/`, dev configs (`/config/{dev,test,local,development,staging}.*`), build files (package.json, Cargo.toml, pyproject.toml, go.mod, pom.xml, build.gradle, Makefile)
 
-**Prohibited:** `.specify/*`, `specs/[###-name]/*.md`, production configs (`/config/*.{production,prod}.*`), dependencies (node_modules, .venv, target, build), `.git`, system files
+**Prohibited:** `memory/*`, `specs/[###-name]/*.md`, production configs (`/config/*.{production,prod}.*`), dependencies (node_modules, .venv, target, build), `.git`, system files
 
 **Exception:** Changes with explicit plan.md justification in "Complexity Tracking" section.
 
@@ -455,7 +455,7 @@ project-root/
 | **Acceptance Criteria** | Measurable conditions for user story completion (spec.md) |
 | **Acceptance Scenario** | Given-When-Then test case defining success criteria |
 | **Atomic Commit** | Single logical change implementing 1 story/scenario |
-| **Constitution** | Immutable project principles (`.specify/memory/constitution.md`) |
+| **Constitution** | Immutable project principles (`memory/constitution.md`) |
 | **Constitution Gate** | Yes/no compliance check (plan.md). Failure = blocker without justification |
 | **Complexity Tracking** | Table in plan.md: `Violation │ Why Needed │ Simpler Alternative Rejected` |
 | **Deterministic** | Same spec → functionally equivalent code (behavior identical) |

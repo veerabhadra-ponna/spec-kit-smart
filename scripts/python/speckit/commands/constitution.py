@@ -55,7 +55,7 @@ def run_constitution(
         emit_error(
             "Invalid stage",
             f"Stage must be between 1 and {TOTAL_STAGES}",
-            recovery_cmd="speckit constitution --stage=1",
+            recovery_cmd="speckitadv constitution --stage=1",
         )
         return
 
@@ -89,7 +89,7 @@ def run_constitution(
             emit_error(
                 "No principles provided",
                 "Stage 2 requires principles from stage 1",
-                recovery_cmd="speckit constitution --stage=1 --defaults",
+                recovery_cmd="speckitadv constitution --stage=1 --defaults",
             )
             return
         _emit_stage_2(context)
@@ -150,8 +150,8 @@ SECURITY: No hardcoded secrets, use .env files
         total_stages=context["total_stages"],
         title="Gather Project Principles",
         content=content,
-        next_cmd="speckit constitution --stage=2 --principles='<paste-principles-here>'",
-        alt_cmd="speckit constitution --stage=2 --defaults",
+        next_cmd="speckitadv constitution --stage=2 --principles='<paste-principles-here>'",
+        alt_cmd="speckitadv constitution --stage=2 --defaults",
     )
 
 
@@ -206,7 +206,7 @@ Write the complete constitution to: `.speckit/constitution.md`
         total_stages=context["total_stages"],
         title="Structure Constitution",
         content=content,
-        next_cmd="speckit constitution --stage=3",
+        next_cmd="speckitadv constitution --stage=3",
     )
 
 

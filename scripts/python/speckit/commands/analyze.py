@@ -17,7 +17,6 @@ from speckit.core.prompts import (
     get_stage_order,
 )
 from speckit.core.state import ChainState
-from speckit.core.utils import generate_chain_id, get_repo_root
 
 
 # Stage mapping: numeric stage -> fragment identifier
@@ -66,7 +65,7 @@ CHUNK_MAP = {
 # Total stages by scope
 TOTAL_STAGES = {
     "A": 16,  # Full analysis (stages 1-8, 9, 11-16)
-    "B": 15,  # Cross-cutting concern (stages 1-8, 10, 11-15, 16)
+    "B": 16,  # Cross-cutting concern (stages 1-8, 10, 11-16)
 }
 
 
@@ -80,7 +79,7 @@ def run_analyze_project(
     concern_type: Optional[str] = None,
     current_impl: Optional[str] = None,
     target_impl: Optional[str] = None,
-    verify: bool = False,
+    verify: bool = False,  # TODO: Implement verification after final stage
 ) -> None:
     """
     Execute analyze-project workflow at specified stage.
@@ -92,7 +91,7 @@ def run_analyze_project(
     - AI agent runs next command from output
 
     Args:
-        stage: Current workflow stage (1-9)
+        stage: Current workflow stage (1-16)
         chunk: Report chunk number for chunked stages
         chain_id: Chain ID for state persistence
         path: Project path to analyze
@@ -101,8 +100,9 @@ def run_analyze_project(
         concern_type: Type of cross-cutting concern (for scope B)
         current_impl: Current implementation details
         target_impl: Target implementation details
-        verify: Run verification after generation
+        verify: Run verification after generation (not yet implemented)
     """
+    _ = verify  # Reserved for future implementation
     # Initialize or load chain state
     if chain_id:
         try:
@@ -111,7 +111,7 @@ def run_analyze_project(
             emit_error(
                 "Chain state not found",
                 f"No state found for chain ID: {chain_id}",
-                recovery_cmd=f"speckit analyze-project --stage=1 --path={path or '.'}",
+                recovery_cmd=f"speckitadv analyze-project --stage=1 --path={path or '.'}",
             )
             return
     else:
@@ -121,7 +121,7 @@ def run_analyze_project(
             emit_error(
                 "Project path not found",
                 f"Path does not exist: {project_path}",
-                recovery_cmd="speckit analyze-project --stage=1 --path=<valid-path>",
+                recovery_cmd="speckitadv analyze-project --stage=1 --path=<valid-path>",
             )
             return
 
@@ -156,7 +156,7 @@ def run_analyze_project(
         emit_error(
             "Invalid stage",
             f"Stage {stage} is not valid for analyze-project",
-            recovery_cmd=f"speckit analyze-project --stage=1 --chain={chain_id}",
+            recovery_cmd=f"speckitadv analyze-project --stage=1 --chain={chain_id}",
         )
         return
 
@@ -171,7 +171,7 @@ def run_analyze_project(
             emit_error(
                 "Fragment not found",
                 f"Prompt fragment not found: {fragment_id}",
-                recovery_cmd=f"speckit analyze-project --stage={stage} --chain={chain_id}",
+                recovery_cmd=f"speckitadv analyze-project --stage={stage} --chain={chain_id}",
             )
             return
 
@@ -180,14 +180,14 @@ def run_analyze_project(
     # Determine next command
     next_stage = stage + 1 if stage < total_stages else None
     if next_stage:
-        next_cmd = f"speckit analyze-project --stage={next_stage} --chain={chain_id}"
+        next_cmd = f"speckitadv analyze-project --stage={next_stage} --chain={chain_id}"
     else:
         next_cmd = None
 
     # Check if this stage has chunks (report generation)
     if stage in CHUNK_MAP:
         # This stage requires chunking - redirect to chunk 1
-        next_cmd = f"speckit analyze-project --stage={stage} --chunk=1 --chain={chain_id}"
+        next_cmd = f"speckitadv analyze-project --stage={stage} --chunk=1 --chain={chain_id}"
         emit_stage(
             stage_num=stage,
             total_stages=total_stages,
@@ -241,7 +241,7 @@ def _emit_chunk_stage(
         emit_error(
             "Stage not chunked",
             f"Stage {stage} does not support chunking",
-            recovery_cmd=f"speckit analyze-project --stage={stage} --chain={chain_id}",
+            recovery_cmd=f"speckitadv analyze-project --stage={stage} --chain={chain_id}",
         )
         return
 
@@ -250,7 +250,7 @@ def _emit_chunk_stage(
         emit_error(
             "Invalid chunk",
             f"Chunk {chunk} is not valid (1-{total_chunks})",
-            recovery_cmd=f"speckit analyze-project --stage={stage} --chunk=1 --chain={chain_id}",
+            recovery_cmd=f"speckitadv analyze-project --stage={stage} --chunk=1 --chain={chain_id}",
         )
         return
 
@@ -263,7 +263,7 @@ def _emit_chunk_stage(
         emit_error(
             "Fragment not found",
             f"Chunk fragment not found: {fragment_id}",
-            recovery_cmd=f"speckit analyze-project --stage={stage} --chain={chain_id}",
+            recovery_cmd=f"speckitadv analyze-project --stage={stage} --chain={chain_id}",
         )
         return
 
@@ -273,12 +273,12 @@ def _emit_chunk_stage(
 
     # Determine next command
     if chunk < total_chunks:
-        next_cmd = f"speckit analyze-project --stage={stage} --chunk={chunk + 1} --chain={chain_id}"
+        next_cmd = f"speckitadv analyze-project --stage={stage} --chunk={chunk + 1} --chain={chain_id}"
     else:
         # Move to next stage
         next_stage = stage + 1 if stage < context["total_stages"] else None
         if next_stage:
-            next_cmd = f"speckit analyze-project --stage={next_stage} --chain={chain_id}"
+            next_cmd = f"speckitadv analyze-project --stage={next_stage} --chain={chain_id}"
         else:
             next_cmd = None
 

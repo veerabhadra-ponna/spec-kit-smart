@@ -116,7 +116,7 @@ Estimated size: ~2400 lines. I'll generate in 4 chunks:
    - **Workflow**: `.github/workflows/lint.yml` runs same command on push/PR
    - **Auto-fix**: `npx markdownlint-cli2 --fix '**/*.md'` (fix where possible, then recheck)
 2. **Spell check**: Review for typos/grammar
-3. **Test scripts**: If modifying bash/PowerShell, test locally with `--help`
+3. **Test CLI**: If modifying Python CLI, run `pytest tests/` and test with `--help`
 
 **Checklist:**
 
@@ -209,10 +209,10 @@ Add to **Supported AI Agents** table in `README.md`: support level (Full/Partial
 
 - Add agent's zip packages to `gh release create`
 
-#### 5. Update Agent Context Scripts
+#### 5. Update Agent Context Workflow
 
-**Bash** (`scripts/bash/update-agent-context.sh`): Add file variable, add to case statement
-**PowerShell** (`scripts/powershell/update-agent-context.ps1`): Add file variable, add to switch statement
+Agent context is handled by the Python CLI. Add new agent support to:
+- `scripts/python/speckit/commands/workflow.py`: Add to `AGENT_FILES` dict
 
 #### 6. Update CLI Tool Checks
 
@@ -256,7 +256,7 @@ Add to **Supported AI Agents** table in `README.md`: support level (Full/Partial
 ## Common Pitfalls
 
 1. Using shorthand keys not actual CLI names (e.g., `cursor` vs `cursor-agent`)
-2. Forgetting bash/PowerShell script updates
+2. Forgetting to update Python CLI workflow.py AGENT_FILES
 3. Wrong `requires_cli` value (True=CLI tool, False=IDE-based)
 4. Wrong argument format (`$ARGUMENTS`=Markdown, `{{args}}`=TOML)
 5. Incorrect directory naming
