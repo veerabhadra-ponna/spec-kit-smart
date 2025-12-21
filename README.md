@@ -65,9 +65,6 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 - **Three-Persona Analysis** - Standards Architect (documents) → Code Archeologist (codebases) → Technical Writer (synthesis) for comprehensive principle extraction
 - **Multi-Stack Guidelines** - Pre-built templates for React, Java, .NET, Node.js, Python, Go with tech stack auto-detection
 - **Compliance Enforcement** - Define mandatory libraries (internal auth SDKs), banned packages (security/licensing), architecture patterns
-- **Automated Validation** - `check-guidelines-compliance.sh` validates projects with severity levels (CRITICAL/HIGH/MEDIUM/LOW)
-- **Auto-Fix Tooling** - Automatically fix common violations (missing `.env` in `.gitignore`, security configs, folder structure)
-- **CI/CD Integration** - Ready-to-use GitHub Actions, GitLab CI, and Jenkins templates for automated enforcement
 - **Hierarchy System** - Constitution > Corporate Guidelines > Spec Kit Defaults ensures project-specific rules always win
 
 **Real-World Use Cases:**
@@ -76,7 +73,7 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 
 #### 🌍 **Universal Cross-Platform Support**
 
-**The Problem:** Teams use mixed environments—developers on Windows, CI/CD on Linux, cloud agents on Unix. Managing separate script packages is painful.
+**The Problem:** Teams use mixed environments—developers on Windows, build servers on Linux, cloud agents on Unix. Managing separate script packages is painful.
 
 **The Solution:** Single Python executable with cross-platform support.
 
@@ -85,7 +82,7 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 - **Embedded Assets** - All prompts, templates, and logic bundled in single executable
 - **Cloud-Ready** - Perfect for hybrid workflows across platforms
 
-**Real-World Use Case:** Developer on Windows starts a feature, pushes code, and a Linux-based CI pipeline continues the workflow. Same binary, zero configuration changes, seamless execution across platforms.
+**Real-World Use Case:** Developer on Windows starts a feature, pushes code, and a Linux-based build server continues the workflow. Same binary, zero configuration changes, seamless execution across platforms.
 
 #### 📋 **Interactive Prompts with Examples**
 

@@ -87,15 +87,8 @@ Additional nice-to-have features:
 - [ ] Guideline diff tool (compare project vs template)
 - [ ] Auto-fix common guideline violations
 - [ ] Guideline analytics (compliance metrics)
-- [ ] Enhanced CI/CD integration for guideline checking
 - [ ] Guideline version management and migration tools
 - [ ] Team-specific guideline overrides
-
-### PowerShell Script
-
-- [ ] Improve regex matching (mirror bash improvements)
-- [ ] Add better error handling for Windows-specific issues
-- [ ] Test on PowerShell Core (cross-platform)
 
 ### Reverse Engineering & Modernization Feature
 
@@ -1764,7 +1757,6 @@ Select concern type (1-9), specify current/target implementation, and AI will ge
 - [ ] Add pytest configuration (`pytest.ini`, `pyproject.toml`)
 - [ ] Add coverage reporting (`pytest-cov`)
 - [ ] Achieve 85%+ code coverage
-- [ ] Add CI/CD workflow for automated testing
 
 **Integration Tests**:
 
@@ -1888,7 +1880,7 @@ Select concern type (1-9), specify current/target implementation, and AI will ge
   - [ ] Resource exhaustion (DoS)
 - [ ] Add rate limiting for subprocess calls
 - [ ] Implement sandboxing for untrusted projects
-- [ ] Add security scanning to CI/CD (Bandit, Safety)
+- [ ] Add security scanning (Bandit, Safety)
 - [ ] Target: Pass audit with 0 high/critical findings
 
 **Dependency Management**:
@@ -1965,7 +1957,6 @@ Select concern type (1-9), specify current/target implementation, and AI will ge
 - [ ] Create `tests/` directory + basic test structure
 - [ ] Add pytest + pytest-cov to project
 - [ ] Create `requirements.txt` with pinned dependencies
-- [ ] Set up GitHub Actions for CI/CD
 - [ ] Test on 3 diverse real projects
 
 **Week 3-4**:
@@ -2090,13 +2081,9 @@ Track completed items here for reference.
   - Progress tracking and ETA estimation
   - Streaming report generation
   - Support for 500K+ LOC projects
-- [x] Implement Reverse Engineering Phase 4 (CI/CD & Advanced Features) - (commit verified 2025-11-08)
-  - Created GitHub Actions workflow template
-  - Created GitLab CI configuration template
-  - Created Jenkins pipeline template
+- [x] Implement Reverse Engineering Phase 4 (Advanced Features) - (commit verified 2025-11-08)
   - Implemented customizable scoring weights (config.py)
   - JSON output format support
-  - Complete documentation in templates
 - [x] Deep analysis and documentation accuracy update - (commit c18c770, 2025-11-08)
   - Analyzed complete implementation (~4,564 LOC Python)
   - Updated reverse-engineering.md with accurate status
