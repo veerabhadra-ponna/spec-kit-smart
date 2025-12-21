@@ -714,6 +714,9 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
     elif verbose:
         console.print("Extracting template...")
 
+    protected_paths = {Path(".specify") / "memory" / "constitution.md"}
+    constitution_skipped = False
+
     try:
         if not is_current_dir:
             project_path.mkdir(parents=True)
@@ -747,6 +750,9 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                         elif verbose:
                             console.print(f"[cyan]Found nested directory structure[/cyan]")
 
+                    if tracker:
+                        tracker.add("constitution", "Preserve existing constitution")
+
                     for item in source_dir.iterdir():
                         dest_path = project_path / item.name
                         if item.is_dir():
@@ -758,6 +764,14 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                                         rel_path = sub_item.relative_to(item)
                                         dest_file = dest_path / rel_path
                                         dest_file.parent.mkdir(parents=True, exist_ok=True)
+                                        rel_to_project = dest_file.relative_to(project_path)
+                                        if rel_to_project in protected_paths and dest_file.exists():
+                                            constitution_skipped = True
+                                            if tracker:
+                                                tracker.skip("constitution", f"kept existing {rel_to_project}")
+                                            elif verbose:
+                                                console.print(f"[yellow]Skipped existing constitution:[/yellow] {rel_to_project}")
+                                            continue
                                         # Special handling for .vscode/settings.json - merge instead of overwrite
                                         if dest_file.name == "settings.json" and dest_file.parent.name == ".vscode":
                                             handle_vscode_settings(sub_item, dest_file, rel_path, verbose, tracker)
@@ -766,9 +780,20 @@ def download_and_extract_template(project_path: Path, ai_assistant: str, script_
                             else:
                                 shutil.copytree(item, dest_path)
                         else:
-                            if dest_path.exists() and verbose and not tracker:
-                                console.print(f"[yellow]Overwriting file:[/yellow] {item.name}")
+                            if dest_path.exists():
+                                rel_to_project = dest_path.relative_to(project_path)
+                                if rel_to_project in protected_paths:
+                                    constitution_skipped = True
+                                    if tracker:
+                                        tracker.skip("constitution", f"kept existing {rel_to_project}")
+                                    elif verbose:
+                                        console.print(f"[yellow]Skipped existing constitution:[/yellow] {rel_to_project}")
+                                    continue
+                                if verbose and not tracker:
+                                    console.print(f"[yellow]Overwriting file:[/yellow] {item.name}")
                             shutil.copy2(item, dest_path)
+                    if not constitution_skipped and tracker:
+                        tracker.complete("constitution", "no existing file found")
                     if verbose and not tracker:
                         console.print(f"[cyan]Template files merged into current directory[/cyan]")
             else:

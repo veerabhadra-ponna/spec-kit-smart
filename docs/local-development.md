@@ -2,7 +2,7 @@
 
 This guide shows how to iterate on the `speckitsmart` CLI locally without publishing a release or committing to `main` first.
 
-> Scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants. The CLI auto-selects based on OS unless you pass `--script sh | ps`.
+> Scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants. The CLI auto-selects based on OS.
 
 ## 1. Clone and Switch Branches
 
@@ -20,13 +20,13 @@ You can execute the CLI via the module entrypoint without installing anything:
 ```bash
 # From repo root
 python -m src.specify_cli --help
-python -m src.specify_cli init demo-project --ai claude --ignore-agent-tools --script sh
+python -m src.specify_cli init demo-project --ai claude --ignore-agent-tools
 ```
 
 If you prefer invoking the script file style (uses shebang):
 
 ```bash
-python src/specify_cli/__init__.py init demo-project --script ps
+python src/specify_cli/__init__.py init demo-project
 ```
 
 ## 3. Use Editable Install (Isolated Environment)
@@ -69,14 +69,14 @@ If you're in another directory, use an absolute path:
 
 ```bash
 pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitsmart --help
-pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitsmart init demo-anywhere --ai copilot --ignore-agent-tools --script sh
+pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitsmart init demo-anywhere --ai copilot --ignore-agent-tools
 ```
 
 Set an environment variable for convenience:
 
 ```bash
 export SPEC_KIT_SRC=/mnt/c/GitHub/spec-kit-smart
-pipx run --spec "$SPEC_KIT_SRC" speckitsmart init demo-env --ai copilot --ignore-agent-tools --script ps
+pipx run --spec "$SPEC_KIT_SRC" speckitsmart init demo-env --ai copilot --ignore-agent-tools
 ```
 
 (Optional) Define a shell function:
@@ -124,7 +124,7 @@ When testing `init --here` in a dirty directory, create a temp workspace:
 
 ```bash
 mkdir /tmp/spec-test && cd /tmp/spec-test
-python -m src.specify_cli init --here --ai claude --ignore-agent-tools --script sh  # if repo copied here
+python -m src.specify_cli init --here --ai claude --ignore-agent-tools  # if repo copied here
 ```
 
 Or copy only the modified CLI portion if you want a lighter sandbox.
@@ -135,7 +135,7 @@ If you need to bypass TLS validation while experimenting:
 
 ```bash
 speckitsmart check --skip-tls
-speckitsmart init demo --skip-tls --ai gemini --ignore-agent-tools --script ps
+speckitsmart init demo --skip-tls --ai gemini --ignore-agent-tools
 ```
 
 (Use only for local experimentation.)
@@ -165,7 +165,6 @@ rm -rf .venv dist build *.egg-info
 | `ModuleNotFoundError: typer` | Run `pip install -e .` after activating venv |
 | Scripts not executable (Linux) | Re-run init or `chmod +x scripts/*.sh` |
 | Git step skipped | You passed `--no-git` or Git not installed |
-| Wrong script type downloaded | Script type is auto-detected; pass `--script sh` or `--script ps` to override |
 | TLS errors on corporate network | Try `--skip-tls` (not for production) |
 
 ## 13. Next Steps

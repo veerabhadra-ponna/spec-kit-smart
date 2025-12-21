@@ -1,6 +1,4 @@
-![Spec Kit Logo](./media/logo_small.webp)
-
-# 🌱 Spec Kit
+# 🌱 Spec Kit Smart
 
 *Build high-quality software faster.*
 
@@ -10,6 +8,12 @@
 [![GitHub stars](https://img.shields.io/github/stars/veerabhadra-ponna/spec-kit-smart?style=social)](https://github.com/veerabhadra-ponna/spec-kit-smart/stargazers)
 [![License](https://img.shields.io/github/license/veerabhadra-ponna/spec-kit-smart)](https://github.com/veerabhadra-ponna/spec-kit-smart/blob/main/LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-GitHub_Pages-blue)](https://veerabhadra-ponna.github.io/spec-kit-smart/)
+
+---
+
+## Quick Navigation
+
+🚀 [Get Started](#-get-started) • 🔄 [Reverse Engineering](#-reverse-engineering--modernization) • 🎭 [Orchestrator](#-orchestrator-workflow) • 🏢 [Corporate Guidelines](#-corporate-guidelines-system) • 🤖 [Supported Agents](#-supported-ai-agents) • 🔧 [CLI Reference](#-specify-cli-reference) • 📖 [Documentation](#-learn-more) • 🔍 [Troubleshooting](#-troubleshooting)
 
 ---
 
@@ -102,12 +106,12 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 
 **The Solution:** Configurable branch patterns with optional Jira integration.
 
-- **JSON-Based Configuration** - `branch-config.json` defines custom patterns, prefixes, and Jira format
+- **JSON-Based Configuration** - `.specify/config.json` defines custom patterns, prefixes, and Jira format
 - **Flexible Jira Support** - Optional Jira integration for teams that use it, skippable for teams that don't
 - **Regex Validation** - Enforce company-specific ticket formats (e.g., `C12345-7890`)
 - **Backward Compatible** - Works with existing projects without requiring migration
 
-**Real-World Use Case:** Company uses Jira tickets in branch names (`feature/001-PROJ-1234-user-auth`). Configure once in `branch-config.json`, and all feature branches follow the standard automatically.
+**Real-World Use Case:** Company uses Jira tickets in branch names (`feature/001-PROJ-1234-user-auth`). Configure once in `.specify/config.json`, and all feature branches follow the standard automatically.
 
 ---
 
@@ -127,157 +131,137 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 
 ## Table of Contents
 
+### Getting Started
+
 - [🤔 What is Spec-Driven Development?](#-what-is-spec-driven-development)
+- [🎯 Choosing Your Workflow](#-choosing-your-workflow)
 - [⚡ Get Started](#-get-started)
-- [🔄 Reverse Engineering & Modernization](#-reverse-engineering--modernization)
 - [📽️ Video Overview](#️-video-overview)
 - [🤖 Supported AI Agents](#-supported-ai-agents)
-- [🔧 Specify CLI Reference](#-specify-cli-reference)
-- [🎭 Orchestrator Workflow](#-orchestrator-workflow)
-- [🏢 Corporate Guidelines System](#-corporate-guidelines-system)
+- [🔧 Prerequisites](#-prerequisites)
+
+### Core Workflows
+
 - [📚 Core Philosophy](#-core-philosophy)
 - [🌟 Development Phases](#-development-phases)
+- [🎭 Orchestrator Workflow](#-orchestrator-workflow)
+- [🔄 Reverse Engineering & Modernization](#-reverse-engineering--modernization)
+
+### Enterprise Features
+
+- [🏢 Corporate Guidelines System](#-corporate-guidelines-system)
 - [🎯 Experimental Goals](#-experimental-goals)
-- [🔧 Prerequisites](#-prerequisites)
-- [📖 Learn More](#-learn-more)
+
+### Reference & Support
+
+- [🔧 Specify CLI Reference](#-specify-cli-reference)
 - [📋 Detailed Process](#-detailed-process)
+- [📖 Learn More](#-learn-more)
 - [🔍 Troubleshooting](#-troubleshooting)
+- [📖 Glossary](#-glossary)
 - [👥 Maintainers](#-maintainers)
-- [💬 Support](#-support)
-- [🙏 Acknowledgements](#-acknowledgements)
 - [📄 License](#-license)
 
 ## 🤔 What is Spec-Driven Development?
 
 Spec-Driven Development **flips the script** on traditional software development. For decades, code has been king — specifications were just scaffolding we built and discarded once the "real work" of coding began. Spec-Driven Development changes this: **specifications become executable**, directly generating working implementations rather than just guiding them.
 
+## 🎯 Choosing Your Workflow
+
+Select the right approach for your project:
+
+| Scenario | Recommended Approach | Commands | Duration |
+|----------|---------------------|----------|----------|
+| **New feature from scratch** | Standard Workflow | `/speckitsmart.constitution` → `/specify` → `/plan` → `/tasks` → `/implement` | 3-8 hours |
+| **Complex feature (token limits likely)** | Orchestrator | `/speckitsmart.orchestrate` <description> → `/speckitsmart.resume` (if needed) | 2-6 hours |
+| **Modernizing entire legacy app** | Reverse Engineering (Full) | `/speckitsmart.analyze-project` → Choose **[A] Full Application** | 1-3 days |
+| **Updating specific component** | Cross-Cutting Concern | `/speckitsmart.analyze-project` → Choose **[B] Cross-Cutting Concern** → Select type | 2-12 weeks |
+| **Enforcing company standards** | Corporate Guidelines | `/speckitsmart.generate-guidelines` → Customize `.guidelines/` | 4-8 hours |
+| **Learning the toolkit** | Manual Commands | Use individual commands step-by-step | Variable |
+
+### Visual Workflow Decision Tree
+
+Use this flowchart to quickly identify the best approach for your needs:
+
+```mermaid
+flowchart LR
+    Start{What do you<br/>want to do?} -->|New feature| NewFeature{Is it<br/>complex?}
+    Start -->|Modernize<br/>legacy app| Legacy[Use Reverse<br/>Engineering]
+    Start -->|Enforce company<br/>standards| Guidelines[Use Corporate<br/>Guidelines]
+
+    NewFeature -->|Simple<br/>single-session| Standard[Standard<br/>Workflow]
+    NewFeature -->|Complex<br/>multi-session| Orchestrator[Use<br/>Orchestrator]
+
+    Legacy --> FullOrTarget{Full app<br/>or specific<br/>component?}
+    FullOrTarget -->|Entire<br/>application| FullMod[Choose Option A:<br/>Full Modernization]
+    FullOrTarget -->|One<br/>component| ConcernMod[Choose Option B:<br/>Cross-Cutting Concern]
+
+    Standard --> StandardCmd["/speckitsmart.constitution<br/>→ /specify → /plan<br/>→ /tasks → /implement"]
+    Orchestrator --> OrchCmd["/speckitsmart.orchestrate<br/>+ /speckitsmart.resume"]
+    FullMod --> AnalyzeCmd["/speckitsmart.analyze-project"]
+    ConcernMod --> AnalyzeCmd
+    Guidelines --> GuideCmd["/speckitsmart.generate-guidelines"]
+
+    style Start fill:#e1f5e1,stroke:#333,stroke-width:2px
+    style Standard fill:#e3f2fd,stroke:#333,stroke-width:2px
+    style Orchestrator fill:#fff9c4,stroke:#333,stroke-width:2px
+    style Legacy fill:#fce4ec,stroke:#333,stroke-width:2px
+    style Guidelines fill:#f3e5f5,stroke:#333,stroke-width:2px
+    style StandardCmd fill:#c8e6c9,stroke:#333,stroke-width:2px
+    style OrchCmd fill:#fff3e0,stroke:#333,stroke-width:2px
+    style AnalyzeCmd fill:#ffcdd2,stroke:#333,stroke-width:2px
+    style GuideCmd fill:#e1bee7,stroke:#333,stroke-width:2px
+```
+
 ## ⚡ Get Started
 
-### 1. Install Specify CLI
-
-Choose your preferred installation method:
-
-#### Option 1: Persistent Installation (Recommended)
-
-Install once and use everywhere:
+### Quick Start
 
 ```bash
-# From public GitHub
+# Install
 pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 
-# From GitHub Enterprise (for corporate environments)
-pipx install git+https://github.company.com/yourorg/spec-kit-smart.git
-```
+# Initialize project
+speckitsmart init my-project --ai claude
 
-Then use the tool directly:
-
-```bash
-speckitsmart init <PROJECT_NAME>
-speckitsmart check
-```
-
-To upgrade specify run:
-
-```bash
-pipx install --force git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
-```
-
-#### Option 2: One-time Usage
-
-Run directly without installing:
-
-```bash
-# From public GitHub
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
-
-# From GitHub Enterprise
-pipx run --spec git+https://github.company.com/yourorg/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
-```
-
-#### Option 3: From Corporate Artifactory (Enterprise)
-
-If your company uses Artifactory PyPI mirror:
-
-```bash
-# One-time configuration (usually done by IT)
-pip config set global.index-url https://artifactory.company.com/artifactory/api/pypi/pypi-virtual/simple
-
-# Install
-pip install specify-cli
-```
-
-**Benefits of persistent installation:**
-
-- Tool stays installed and available in PATH
-- No need to create shell aliases
-- Better tool management with `pipx list`, `pipx upgrade`, `pipx uninstall`
-- Cleaner shell configuration
-- Works in corporate environments without UV approval
-
-**Cross-Platform Support:**
-
-All packages automatically include both Bash (`.sh`) and PowerShell (`.ps1`) scripts. Your AI agent's prompts intelligently select the correct script type based on your operating system - no manual configuration needed.
-
-### 2. Establish project principles
-
-Launch your AI assistant in the project directory. The `/speckitsmart.*` commands are available in the assistant.
-
-Use the **`/speckitsmart.constitution`** command to create your project's governing principles and development guidelines that will guide all subsequent development.
-
-```bash
-/speckitsmart.constitution Create principles focused on code quality, testing standards, user experience consistency, and performance requirements
-```
-
-### 3. Create the spec
-
-Use the **`/speckitsmart.specify`** command to describe what you want to build. Focus on the **what** and **why**, not the tech stack.
-
-```bash
-/speckitsmart.specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
-```
-
-### 4. Create a technical implementation plan
-
-Use the **`/speckitsmart.plan`** command to provide your tech stack and architecture choices.
-
-```bash
-/speckitsmart.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
-```
-
-### 5. Break down into tasks
-
-Use **`/speckitsmart.tasks`** to create an actionable task list from your implementation plan.
-
-```bash
+# Start building
+/speckitsmart.constitution Create quality-focused principles
+/speckitsmart.specify Build a photo album application...
+/speckitsmart.plan Use Vite, vanilla JS, SQLite
 /speckitsmart.tasks
-```
-
-### 6. Execute implementation
-
-Use **`/speckitsmart.implement`** to execute all tasks and build your feature according to the plan.
-
-```bash
 /speckitsmart.implement
 ```
 
-For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
+### Full Installation & First Feature Tutorial
+
+For complete installation options (pipx, pip, virtualenv, Artifactory) and a step-by-step walkthrough of building your first feature, see:
+
+**📖 [Getting Started Guide](docs/getting-started.md)**
+
+The guide covers:
+
+- All installation methods with examples
+- Project initialization
+- Complete workflow walkthrough (constitution → specify → plan → tasks → implement)
+- Workflow diagrams and command reference
+- Alternative approaches (Orchestrator workflow)
+- Next steps and advanced features
 
 ### Workflow Diagram (Spec-Driven Development)
 
 ```mermaid
-flowchart TD
-    Start([Start New Feature]) --> Constitution
-    Constitution[🏛️ Constitution - REQUIRED] --> Specify
-    Specify[📝 Specify - REQUIRED] --> Clarify
-    Clarify[❓ Clarify - OPTIONAL] --> | Recommended | Plan
+flowchart LR
+    Start([Start]) --> Constitution[🏛️ Constitution<br/>REQUIRED]
+    Constitution --> Specify[📝 Specify<br/>REQUIRED]
+    Specify --> Clarify[❓ Clarify<br/>OPTIONAL]
+    Clarify --> | Recommended | Plan[🏗️ Plan<br/>REQUIRED]
     Clarify -.-> | Skip if clear | Plan
-    Plan[🏗️ Plan - REQUIRED] --> Tasks
-    Tasks[📋 Tasks - REQUIRED] --> Analyze
-    Analyze[🔍 Analyze - OPTIONAL] --> | Recommended | Implement
+    Plan --> Tasks[📋 Tasks<br/>REQUIRED]
+    Tasks --> Analyze[🔍 Analyze<br/>OPTIONAL]
+    Analyze --> | Recommended | Implement[⚙️ Implement<br/>REQUIRED]
     Analyze -.-> | Skip if confident | Implement
-    Implement[⚙️ Implement - REQUIRED] --> Checklist
-    Checklist[✅ Checklist - OPTIONAL] --> Done
-    Done([✅ Feature Complete])
+    Implement --> Checklist[✅ Checklist<br/>OPTIONAL]
+    Checklist --> Done([✅ Done])
 
     style Constitution fill:#ffcccc,stroke:#333,stroke-width:2px
     style Specify fill:#ffcccc,stroke:#333,stroke-width:2px
@@ -353,8 +337,9 @@ Comprehensive analysis with AI-driven interactive workflow:
 
 - **`analysis-report.md`** - Technical assessment with strengths/weaknesses, upgrade paths, and data-driven recommendations
 - **`EXECUTIVE-SUMMARY.md`** - High-level overview for stakeholders and decision-makers
-- **`functional-spec.md`** - Business Analyst document (WHAT the system does) with real features extracted from code
-- **`technical-spec.md`** - Architecture document (HOW to build) with your chosen target stack
+- **`functional-spec-legacy.md`** - WHAT the LEGACY system does TODAY (features extracted from existing code)
+- **`functional-spec-target.md`** - WHAT the MODERNIZED system WILL do (future state with your tech stack)
+- **`technical-spec.md`** - HOW to build the modernized system (architecture with your chosen target stack)
 
 **Toolkit Workflow Integration:**
 
@@ -363,7 +348,7 @@ Comprehensive analysis with AI-driven interactive workflow:
   - `clarify-prompt.md` - Clarification guidance with legacy code references
   - `tasks-prompt.md` - Task breakdown guidance
   - `implement-prompt.md` - Implementation guidance with legacy code references
-  - *Note: Use `functional-spec.md` and `technical-spec.md` directly instead of separate specify/plan prompts*
+  - *Note: Use `functional-spec-legacy.md`, `functional-spec-target.md`, and `technical-spec.md` directly instead of separate specify/plan prompts*
 
 **Decision Support:**
 
@@ -430,7 +415,7 @@ The analysis is **fully interactive** with AI-guided questions about your modern
 
 **Step 3: Deep Code Analysis** - AI analyzes ALL code files to extract features, business logic, configurations, and architecture patterns
 
-**Step 4: Artifact Generation** - Creates functional-spec.md, technical-spec.md, and stage prompts based on analysis + your choices
+**Step 4: Artifact Generation** - Creates functional-spec-legacy.md (WHAT legacy system does), functional-spec-target.md (WHAT modernized system will do), technical-spec.md (HOW to build), and stage prompts based on analysis + your choices
 
 ### Key Capabilities
 
@@ -657,422 +642,90 @@ Use cases for manual override:
 
 ## 🔧 Specify CLI Reference
 
-The `specify` command supports the following options:
+The `speckitsmart` CLI provides commands for initializing projects and checking prerequisites.
 
-### Commands
-
-| Command     | Description                                                    |
-| ------------- | ---------------------------------------------------------------- |
-| `init`      | Initialize a new Specify project from the latest template      |
-| `check`     | Check for installed tools (`git`, `claude`, `gemini`, `code`/`code-insiders`, `cursor-agent`, `windsurf`, `qwen`, `opencode`, `codex`) |
-
-### `speckitsmart init` Arguments & Options
-
-| Argument/Option        | Type     | Description                                                                  |
-| ------------------------ | ---------- | ------------------------------------------------------------------------------ |
-| `<project-name>`       | Argument | Name for your new project directory (optional if using `--here`, or use `.` for current directory) |
-| `--ai`                 | Option   | AI assistant to use: `claude`, `gemini`, `copilot`, `cursor-agent`, `qwen`, `opencode`, `codex`, `windsurf`, `kilocode`, `auggie`, `roo`, `codebuddy`, `amp`, or `q` |
-| `--script`             | Option   | Script variant to use: `sh` (bash/zsh) or `ps` (PowerShell)                 |
-| `--ignore-agent-tools` | Flag     | Skip checks for AI agent tools like Claude Code                             |
-| `--no-git`             | Flag     | Skip git repository initialization                                          |
-| `--here`               | Flag     | Initialize project in the current directory instead of creating a new one   |
-| `--force`              | Flag     | Force merge/overwrite when initializing in current directory (skip confirmation) |
-| `--skip-tls`           | Flag     | Skip SSL/TLS verification (not recommended)                                 |
-| `--debug`              | Flag     | Enable detailed debug output for troubleshooting                            |
-| `--github-token`       | Option   | GitHub token for API requests (or set GH_TOKEN/GITHUB_TOKEN env variable)  |
-
-### Examples
+### Quick Reference
 
 ```bash
-# Basic project initialization
-speckitsmart init my-project
-
-# Initialize with specific AI assistant
-speckitsmart init my-project --ai claude
-
-# Initialize with Cursor support
-speckitsmart init my-project --ai cursor-agent
-
-# Initialize with Windsurf support
-speckitsmart init my-project --ai windsurf
-
-# Initialize with Amp support
-speckitsmart init my-project --ai amp
-
-# Initialize with PowerShell scripts (Windows/cross-platform)
-speckitsmart init my-project --ai copilot --script ps
+# Initialize project
+speckitsmart init <project-name> --ai <agent>
 
 # Initialize in current directory
-speckitsmart init . --ai copilot
-# or use the --here flag
-speckitsmart init --here --ai copilot
+speckitsmart init --here --ai <agent>
 
-# Force merge into current (non-empty) directory without confirmation
-speckitsmart init . --force --ai copilot
-# or
-speckitsmart init --here --force --ai copilot
-
-# Skip git initialization
-speckitsmart init my-project --ai gemini --no-git
-
-# Enable debug output for troubleshooting
-speckitsmart init my-project --ai claude --debug
-
-# Use GitHub token for API requests (helpful for corporate environments)
-speckitsmart init my-project --ai claude --github-token ghp_your_token_here
-
-# Check system requirements
+# Check prerequisites
 speckitsmart check
 ```
 
-### Available Slash Commands
+### Available AI Agents
 
-After running `speckitsmart init`, your AI coding agent will have access to these slash commands for structured development:
+`claude`, `gemini`, `copilot`, `cursor-agent`, `qwen`, `opencode`, `codex`, `windsurf`, `kilocode`, `auggie`, `roo`, `codebuddy`, `amp`, `q`
 
-#### Orchestration Commands
+### Slash Commands (After Init)
 
-**NEW**: Simplified workflow management and context restoration:
+After initialization, your AI coding agent will have access to these commands:
 
-| Command                  | Description                                                           |
-| -------------------------- | ----------------------------------------------------------------------- |
-| `/speckitsmart.orchestrate`  | **Orchestrate the complete workflow** from feature description to implementation in a single command. Manages state, phase transitions, and provides interactive or automatic execution modes. |
-| `/speckitsmart.resume`       | **Restore context and resume work** after chat limit or interruption. Loads all artifacts and continues from exact stopping point with zero context loss. |
+**Orchestration:**
 
-**Quick Start with Orchestrator:**
+- `/speckitsmart.orchestrate` - Run entire workflow in one command
+- `/speckitsmart.resume` - Resume after interruption
 
-```bash
-# Run entire workflow in one command
-/speckitsmart.orchestrate Build a user authentication system with OAuth2 and JWT
+**Core Workflow:**
 
-# Or resume after chat limit/interruption
-/speckitsmart.resume
-```
+- `/speckitsmart.constitution` - Establish project principles
+- `/speckitsmart.specify` - Define requirements
+- `/speckitsmart.plan` - Create technical design
+- `/speckitsmart.tasks` - Generate task list
+- `/speckitsmart.implement` - Execute implementation
 
-See [Orchestrator Workflow Guide](#-orchestrator-workflow) for detailed usage.
+**Optional:**
 
-#### Core Commands
+- `/speckitsmart.clarify` - Resolve ambiguities
+- `/speckitsmart.analyze` - Validate consistency
+- `/speckitsmart.checklist` - Quality validation
+- `/speckitsmart.generate-guidelines` - Generate corporate guidelines
 
-Essential commands for the Spec-Driven Development workflow (can be used individually or via orchestrator):
+### Complete CLI Documentation
 
-| Command                  | Description                                                           |
-| -------------------------- | ----------------------------------------------------------------------- |
-| `/speckitsmart.constitution`  | Create or update project governing principles and development guidelines |
-| `/speckitsmart.specify`       | Define what you want to build (requirements and user stories)        |
-| `/speckitsmart.plan`          | Create technical implementation plans with your chosen tech stack     |
-| `/speckitsmart.tasks`         | Generate actionable task lists for implementation                     |
-| `/speckitsmart.implement`     | Execute all tasks to build the feature according to the plan         |
+For full command reference, arguments, options, environment variables, and examples, see:
 
-#### Optional Commands
-
-Additional commands for enhanced quality and validation:
-
-| Command                      | Description                                                           |
-| ------------------------------ | ----------------------------------------------------------------------- |
-| `/speckitsmart.clarify`           | Clarify underspecified areas (recommended before `/speckitsmart.plan`; formerly `/quizme`) |
-| `/speckitsmart.analyze`           | Cross-artifact consistency & coverage analysis (run after `/speckitsmart.tasks`, before `/speckitsmart.implement`) |
-| `/speckitsmart.checklist`         | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
-| `/speckitsmart.generate-guidelines` | **NEW**: Generate or update corporate coding guidelines by analyzing corporate documents and reference codebases (EXPERIMENTAL v1.0.0-alpha) |
-
-### Environment Variables
-
-| Variable         | Description                                                                                    |
-| ------------------ | ------------------------------------------------------------------------------------------------ |
-| `SPECIFY_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches. **Must be set in the context of the agent you're working with prior to using `/speckitsmart.plan` or follow-up commands.** |
+**📖 [CLI Reference Guide](docs/reference/cli-reference.md)**
 
 ## 🎭 Orchestrator Workflow
 
-### Overview
+The **Orchestrator** simplifies spec-driven development by running all phases in a single command with automatic state management.
 
-The **Orchestrator** workflow simplifies the entire spec-driven development process by managing all phases automatically. Instead of manually invoking each command (constitution → specify → clarify → plan → tasks → analyze → implement), you can run the entire workflow with a single command.
-
-### Why Use the Orchestrator?
-
-**Manual Workflow:** 7 separate commands, manual state tracking, context loss at chat limits.
-
-**Orchestrator Workflow:** `/speckitsmart.orchestrate <feature-description>` - 1 command, automatic state management, seamless resumption.
-
-### Key Features
-
-#### 1. **Single Entry Point**
-
-Run the entire workflow from feature description to implementation with one command.
-
-#### 2. **State Persistence**
-
-The orchestrator saves progress to `.speckitsmart-state.json`, enabling:
-
-- Resumption after chat token limits
-- Cross-session continuity
-- Progress tracking
-
-#### 3. **Flexible Execution Modes**
-
-```mermaid
-graph LR
-    subgraph Interactive["Interactive Mode"]
-        I1[Constitution] --> | Ask | I2[Specify]
-        I2 --> | Ask | I3[Clarify]
-        I3 --> | Ask | I4[Plan]
-        I4 --> | Ask | I5[Tasks]
-        I5 --> | Ask | I6[Analyze]
-        I6 --> | Ask | I7[Implement]
-    end
-
-    subgraph AutoSpec["Auto-Spec Mode"]
-        A1[Constitution] --> A2[Specify]
-        A2 --> A3[Plan]
-        A3 --> A4[Tasks]
-        A4 --> | PAUSE | A5[Implement]
-    end
-
-    subgraph FullAuto["Full Auto Mode"]
-        F1[Constitution] --> F2[Specify]
-        F2 --> F3[Plan]
-        F3 --> F4[Tasks]
-        F4 --> F5[Implement]
-        F5 --> F6[Done]
-    end
-
-    style Interactive fill:#e3f2fd,stroke:#333,stroke-width:2px
-    style AutoSpec fill:#fff9c4,stroke:#333,stroke-width:2px
-    style FullAuto fill:#e8f5e9,stroke:#333,stroke-width:2px
-```
-
-**Interactive Mode** (recommended):
-
-- Asks permission before each major phase
-- Allows review and adjustment between phases
-- User maintains full control
-
-**Auto-Spec Mode**:
-
-- Runs constitution → specify → plan → tasks automatically
-- Pauses before implementation for review
-
-**Full Auto Mode**:
-
-- Runs entire workflow to completion
-- Minimal user interaction required
-
-#### 4. **Context Restoration with `/speckitsmart.resume`**
-
-Restores context after chat limit: loads all artifacts, identifies stopping point, and continues with zero duplicate work.
-
-### Usage Examples
-
-**Interactive Mode:**
+### Quick Start
 
 ```bash
+# Run entire workflow
 /speckitsmart.orchestrate Build a user authentication system with OAuth2 and JWT
-```
 
-Prompts at each phase for user confirmation and review.
-
-**Auto-Spec Mode:**
-
-```bash
-/speckitsmart.orchestrate --mode=auto-spec Create an analytics dashboard
-```
-
-Runs constitution → specify → plan → tasks automatically, pauses before implementation for review.
-
-**Resume After Chat Limit:**
-
-```bash
+# Resume after interruption
 /speckitsmart.resume
 ```
 
-```mermaid
-flowchart TD
-    NewChat[New Chat Session] --> Resume["/speckitsmart.resume"]
-    Resume --> LoadState[Load State]
-    LoadState --> LoadArtifacts[Load All Artifacts]
-    LoadArtifacts --> Constitution[Constitution]
-    LoadArtifacts --> Spec[Specification]
-    LoadArtifacts --> Plan[Plan & Research]
-    LoadArtifacts --> Tasks[Tasks 28/47]
-    Constitution --> Identify
-    Spec --> Identify
-    Plan --> Identify
-    Tasks --> Identify[Identify Resume Point]
-    Identify --> Summary[Show Summary]
-    Summary --> Confirm{Resume?}
-    Confirm --> | Yes | Continue[Continue Implementation]
-    Confirm --> | No | Cancel[Cancel]
-    Continue --> Done[Complete Tasks]
+### Key Features
 
-    style NewChat fill:#e8eaf6,stroke:#333,stroke-width:2px
-    style Resume fill:#e1f5e1,stroke:#333,stroke-width:2px
-    style LoadState fill:#fff9c4,stroke:#333,stroke-width:2px
-    style LoadArtifacts fill:#e3f2fd,stroke:#333,stroke-width:2px
-    style Identify fill:#fff4e6,stroke:#333,stroke-width:2px
-    style Summary fill:#e8f5e9,stroke:#333,stroke-width:2px
-    style Continue fill:#c8e6c9,stroke:#333,stroke-width:2px
-    style Done fill:#a5d6a7,stroke:#333,stroke-width:2px
-```
+- **Single Entry Point** - One command runs constitution → specify → clarify → plan → tasks → analyze → implement
+- **State Persistence** - Saves progress to `.speckitsmart-state.json` for resumption
+- **Flexible Modes** - Interactive (recommended), Auto-Spec (pause before implement), Full Auto
+- **Context Restoration** - Zero duplicate work after chat token limits
 
-Loads state, shows progress (e.g., 28/47 tasks), identifies next task, and continues from exact stopping point.
+### When to Use
 
-### State Management
+| Scenario | Recommended Approach |
+|----------|---------------------|
+| New features | Use orchestrator |
+| Multi-day workflows | Use orchestrator + `/resume` |
+| Learning the toolkit | Use individual commands |
+| Re-running specific phases | Use individual commands |
 
-The orchestrator creates `.speckitsmart-state.json` in your repository root:
+### Complete Orchestrator Documentation
 
-```json
-{
-  "version": "1.0",
-  "feature_number": "001",
-  "feature_name": "user-auth",
-  "feature_dir": "specs/001-user-auth",
-  "current_phase": "implement",
-  "completed_phases": ["constitution", "specify", "plan", "tasks"],
-  "workflow_mode": "interactive",
-  "started_at": "2025-11-02T10:30:00Z",
-  "last_updated": "2025-11-02T11:15:00Z",
-  "checkpoints": {
-    "implement": {
-      "status": "in_progress",
-      "tasks_completed": 28,
-      "tasks_total": 47,
-      "current_task": "[T029] Implement webhook verification"
-    }
-  }
-}
-```
+For detailed usage, execution modes, state management, progress visualization, error handling, and best practices, see:
 
-**Should you commit `.speckitsmart-state.json`?**
-
-- ✅ **Yes** if you want cross-machine resumption or team collaboration
-- ❌ **Add to .gitignore** if you prefer local-only state
-
-### When to Use Orchestrator vs Individual Commands
-
-- **New features:** Use `/speckitsmart.orchestrate`
-- **Multi-day workflows:** Use orchestrator + `/speckitsmart.resume`
-- **Learning:** Use individual commands
-- **Re-running phases:** Use individual commands (e.g., `/speckitsmart.plan`)
-- **Token limits:** Use `/speckitsmart.resume`
-
-### Best Practices
-
-- **Commit frequently** during long workflows
-- **Review before implementation** using interactive or auto-spec mode
-- **Commit `.speckitsmart-state.json`** for cross-machine work
-- **Use `/speckitsmart.resume`** after token limits or errors
-
-### Progress Visualization
-
-**Task-Level Progress:**
-
-```mermaid
-graph TD
-    subgraph US3["User Story 3: In Progress"]
-        T015["T015: Auth middleware ✓"]
-        T016["T016: JWT validation ⚙"]
-        T017["T017: Token refresh ⏳"]
-        T018["T018: Logout handler ⏳"]
-        T019["T019: Rate limiting ⏳"]
-        T020["T020: Tests ⏳"]
-
-        T015 --> T016
-        T016 -.-> T017
-        T017 -.-> T018
-        T018 -.-> T019
-        T019 -.-> T020
-    end
-
-    style T015 fill:#c8e6c9,stroke:#4caf50,stroke-width:2px
-    style T016 fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
-    style T017 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px
-    style T018 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px
-    style T019 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px
-    style T020 fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px
-```
-
-**Legend:**
-
-- ✓ = Completed
-- ⚙ = In Progress (current task)
-- ⏳ = Pending
-- ⏭ = Skipped
-
-### Error Handling
-
-If any phase fails:
-
-```text
-❌ Error in phase: implement
-
-Error details: Module 'stripe' not found
-
-Your progress has been saved.
-
-To resume after fixing the issue:
-  /speckitsmart.resume
-
-To start over:
-  rm .speckitsmart-state.json
-  /speckitsmart.orchestrate <feature-description>
-```
-
-Simply fix the issue (e.g., `npm install stripe`) and run `/speckitsmart.resume` to continue.
-
-### Workflow Diagram (Orchestrator)
-
-```mermaid
-flowchart TD
-    Start([/speckitsmart.orchestrate]) --> Constitution
-    Constitution[Constitution] --> | State saved | Specify
-    Constitution -.-> | If missing | CreateConst[Create constitution]
-    CreateConst --> Specify
-    Specify[Specify] --> | State saved | Clarify
-    Clarify[Clarify] --> | State saved | Plan
-    Clarify -.-> | Optional | Plan
-    Plan[Plan] --> | State saved | Tasks
-    Tasks[Tasks] --> | State saved | Analyze
-    Analyze[Analyze] --> | State saved | Implement
-    Analyze -.-> | Optional | Implement
-    Implement[Implement] --> | State saved | Done
-    Done([Done])
-
-    State[.speckitsmart-state.json]
-    Constitution -.-> State
-    Specify -.-> State
-    Clarify -.-> State
-    Plan -.-> State
-    Tasks -.-> State
-    Analyze -.-> State
-    Implement -.-> State
-
-    State -.-> Resume
-    Resume["/speckitsmart.resume"]
-    Resume -.-> Constitution
-    Resume -.-> Specify
-    Resume -.-> Clarify
-    Resume -.-> Plan
-    Resume -.-> Tasks
-    Resume -.-> Analyze
-    Resume -.-> Implement
-
-    style Start fill:#e1f5e1,stroke:#333,stroke-width:2px
-    style Done fill:#e1f5e1,stroke:#333,stroke-width:2px
-    style Constitution fill:#fff4e6,stroke:#333,stroke-width:2px
-    style Specify fill:#e3f2fd,stroke:#333,stroke-width:2px
-    style Clarify fill:#f3e5f5,stroke:#333,stroke-width:2px
-    style Plan fill:#e8f5e9,stroke:#333,stroke-width:2px
-    style Tasks fill:#fff9c4,stroke:#333,stroke-width:2px
-    style Analyze fill:#fce4ec,stroke:#333,stroke-width:2px
-    style Implement fill:#e0f2f1,stroke:#333,stroke-width:2px
-    style State fill:#fff3e0,stroke:#333,stroke-width:2px
-    style Resume fill:#e8eaf6,stroke:#333,stroke-width:2px
-```
-
-### Summary
-
-One-command execution, automatic state management, zero context loss, flexible modes, cross-session continuity, error recovery, and progress transparency.
-
-```bash
-/speckitsmart.orchestrate <your-feature-description>
-```
+**📖 [Orchestrator Workflow Guide](docs/workflows/orchestrator.md)**
 
 ## 🏢 Corporate Guidelines System
 
@@ -1214,7 +867,7 @@ The Corporate Guidelines system was implemented in four phases:
 
 **Completed Features:**
 
-- JSON-based branch configuration (`branch-config.json`)
+- JSON-based unified configuration (`.specify/config.json`)
 - Customizable branch patterns and prefixes
 - Configurable Jira format with regex validation
 - Optional Jira support for teams without ticket systems
@@ -1322,12 +975,12 @@ Features: automated checks, merge blocking, auto-fix, trending, notifications.
 When making decisions, AI prompts follow this priority order:
 
 ```mermaid
-graph TD
-    A[Constitution] --> | HIGHEST | B{Guidelines?}
-    B --> | Yes | C[Corporate Guidelines]
-    B --> | No | D[Spec Kit Defaults]
-    C --> | MEDIUM | E[Final Decision]
-    D --> | LOWEST | E
+graph LR
+    A[Constitution<br/>HIGHEST] --> B{Guidelines?}
+    B -->|Yes| C[Corporate<br/>Guidelines<br/>MEDIUM]
+    B -->|No| D[Spec Kit<br/>Defaults<br/>LOWEST]
+    C --> E[Final Decision]
+    D --> E
 
     style A fill:#ff9999,stroke:#333,stroke-width:2px
     style C fill:#ffff99,stroke:#333,stroke-width:2px
@@ -1340,7 +993,7 @@ graph TD
 ### Quick Start (Guidelines)
 
 1. Customize guidelines: Edit `.guidelines/*.md` files
-2. Configure branch naming: Edit `.guidelines/branch-config.json` (optional)
+2. Configure branch naming and workflow: Edit `.specify/config.json` (optional)
 3. Check compliance: `./scripts/bash/check-guidelines-compliance.sh`
 4. Auto-fix issues: `./scripts/bash/autofix-guidelines.sh`
 5. Set up CI/CD: Copy templates from `.guidelines/examples/ci-cd/`
@@ -1457,7 +1110,7 @@ speckitsmart init . --force --ai claude
 speckitsmart init --here --force --ai claude
 ```
 
-The CLI will check if you have Claude Code, Gemini CLI, Cursor CLI, Qwen CLI, opencode, Codex CLI, or Amazon Q Developer CLI installed. If you do not, or you prefer to get the templates without checking for the right tools, use `--ignore-agent-tools` with your command:
+The CLI will check if you have the selected AI agent's CLI tool installed (for CLI-based agents). If you do not, or you prefer to get the templates without checking for the right tools, use `--ignore-agent-tools` with your command:
 
 ```bash
 speckitsmart init <project_name> --ai claude --ignore-agent-tools
@@ -1693,35 +1346,64 @@ Once the implementation is complete, test the application and resolve any runtim
 
 ## 🔍 Troubleshooting
 
-### Git Credential Manager on Linux
+Having issues? Check our comprehensive troubleshooting guide:
 
-If you're having issues with Git authentication on Linux, you can install Git Credential Manager:
+**📖 [Troubleshooting Guide](docs/reference/troubleshooting.md)**
 
-```bash
-#!/usr/bin/env bash
-set -e
-echo "Downloading Git Credential Manager v2.6.1..."
-wget https://github.com/git-ecosystem/git-credential-manager/releases/download/v2.6.1/gcm-linux_amd64.2.6.1.deb
-echo "Installing Git Credential Manager..."
-sudo dpkg -i gcm-linux_amd64.2.6.1.deb
-echo "Configuring Git to use GCM..."
-git config --global credential.helper manager
-echo "Cleaning up..."
-rm gcm-linux_amd64.2.6.1.deb
-```
+### Common Issues Covered
+
+- Command not found `/speckitsmart.constitution`
+- Cannot push to branch `claude/xxx`
+- State file corrupted after token limit
+- Guidelines not loading in prompts
+- `pipx install` fails with SSL errors
+- Orchestrator skips phases unexpectedly
+- Cross-platform scripts fail on Windows
+- Git credential manager setup
+
+If your issue isn't covered, please [open a GitHub issue](https://github.com/veerabhadra-ponna/spec-kit-smart/issues/new).
 
 ## 👥 Maintainers
 
-- Den Delimarsky ([@localden](https://github.com/localden))
-- John Lam ([@jflam](https://github.com/jflam))
+Veerabhadra Rao Ponna ([@veerabhadra-ponna](https://github.com/veerabhadra-ponna))
 
-## 💬 Support
+## 📖 Glossary
 
-For support, please open a [GitHub issue](https://github.com/veerabhadra-ponna/spec-kit-smart/issues/new). We welcome bug reports, feature requests, and questions about using Spec-Driven Development.
+Key terms and concepts used throughout Spec Kit Smart:
 
-## 🙏 Acknowledgements
+**Constitution**: Project-specific principles and guidelines that govern all development decisions. Acts as the highest-priority reference for AI agents, overriding corporate guidelines and Spec Kit defaults. Created with `/speckitsmart.constitution`.
 
-This project is heavily influenced by and based on the work and research of [John Lam](https://github.com/jflam).
+**Orchestrator**: Automated workflow manager that executes all phases of spec-driven development (constitution → specify → plan → tasks → implement) in a single command with state persistence. Enables seamless resumption after interruptions. Commands: `/speckitsmart.orchestrate`, `/speckitsmart.resume`.
+
+**Cross-Cutting Concern**: An architectural aspect that affects multiple modules or layers of an application (e.g., authentication, logging, caching, database access). Spec Kit Smart can analyze and migrate specific concerns without full application rewrites.
+
+**Blast Radius**: Percentage of codebase affected by a cross-cutting concern migration. Calculated by analyzing files, lines of code, and dependencies. Helps assess migration risk and effort.
+
+**Strangler Fig Pattern**: Incremental migration strategy where the new system gradually replaces the old one. Components are migrated one at a time while both systems run in parallel, reducing risk. Named after strangler fig vines that grow around trees.
+
+**Corporate Guidelines**: Customizable development standards enforced across projects. Includes mandatory libraries, banned packages, architecture patterns, security requirements, and compliance rules. Auto-generated from corporate documents and reference codebases. Located in `.guidelines/` directory.
+
+**Stack Mapping**: Configuration that routes guidelines to specific file paths in multi-stack projects (e.g., React frontend + Java backend). Defined in `.guidelines/stack-mapping.json` with path patterns and file extensions.
+
+**Functional Spec**: Business Analyst document describing WHAT the system does (features, user stories, requirements). Generated during reverse engineering to capture existing application behavior.
+
+**Technical Spec**: Architecture document describing HOW to build the system (tech stack, APIs, data models, deployment). Generated during reverse engineering with target modernization technologies.
+
+**Stage Prompts**: Pre-generated prompts for each Toolkit workflow phase (constitution, clarify, tasks, implement). Created during reverse engineering to guide step-by-step implementation with legacy code context.
+
+**Feasibility Score**: 0-100 rating assessing viability of inline upgrade vs greenfield rewrite vs hybrid approaches. Based on code quality metrics, test coverage, coupling analysis, and business constraints.
+
+**Reverse Engineering**: Process of analyzing existing codebases to extract business logic, assess technical debt, and generate modernization plans. Produces functional specs, technical specs, and migration strategies.
+
+**Abstraction Level**: Measure of how well a cross-cutting concern is separated from business logic. HIGH = easily swappable (interfaces, DI), MEDIUM = partial separation, LOW = tightly coupled (scattered logic).
+
+**State Persistence**: Automatic saving of workflow progress to `.speckitsmart-state.json`. Enables context restoration after chat token limits, interruptions, or end-of-day shutdowns. Includes phase tracking, task completion counts, and checkpoints.
+
+**Spec-Driven Development (SDD)**: Methodology where specifications become executable, directly generating working implementations rather than just guiding them. Emphasizes intent-driven development with rich specifications before code.
+
+**AI Agent**: AI-powered coding assistant that executes Spec Kit Smart commands (e.g., Claude Code, GitHub Copilot, Gemini CLI, Cursor). Reads specifications and generates code according to constitutional principles and guidelines.
+
+**Feature Branch**: Git branch created for a specific feature using pattern `<prefix>/<number>-<name>` (e.g., `feature/001-user-auth`). Automatically generated by `/speckitsmart.specify` with intelligent naming and Jira integration support.
 
 ## 📄 License
 

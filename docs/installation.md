@@ -2,8 +2,8 @@
 
 ## Prerequisites
 
-- **Linux/macOS** (or Windows; PowerShell scripts now supported without WSL)
-- AI coding agent: [Claude Code](https://www.anthropic.com/claude-code), [GitHub Copilot](https://code.visualstudio.com/), [Codebuddy CLI](https://www.codebuddy.ai/cli) or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
+- **Linux/macOS/Windows**
+- AI coding agent (see [Supported AI Agents](../README.md#-supported-ai-agents) for complete list)
 - [uv](https://docs.astral.sh/uv/) for package management
 - [Python 3.11+](https://www.python.org/downloads/)
 - [Git](https://git-scm.com/downloads)
@@ -16,6 +16,16 @@ The easiest way to get started is to initialize a new project:
 
 ```bash
 pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
+```
+
+If `pipx` is not available in your environment, use a virtual environment (or `--user`) with standard `pip`:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
+
+speckitsmart init <PROJECT_NAME>
 ```
 
 Or initialize in the current directory:

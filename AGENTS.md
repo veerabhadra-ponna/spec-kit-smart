@@ -140,7 +140,7 @@ Spec Kit supports corporate development guidelines via `/.guidelines/` directory
 
 **For contributors:** Guidelines are templates with `@YOUR_ORG` placeholders. Never commit actual corporate info.
 
-**Implementation:** All phases complete (Phases 1-3). Validation: `python3 scripts/validate-guidelines.py`
+**Implementation:** All phases complete (Phases 1-3).
 
 **See:** `.guidelines/README.md` for complete documentation and customization guide.
 
@@ -251,7 +251,7 @@ Add to **Supported AI Agents** table in `README.md`: support level (Full/Partial
 
 ## Testing New Agent Integration
 
-1. Run package creation locally 2. Test `specify init --ai <agent>` 3. Verify directory/files 4. Validate commands work 5. Test context update scripts
+1. Run package creation locally 2. Test `speckitsmart init --ai <agent>` 3. Verify directory/files 4. Validate commands work 5. Test context update scripts
 
 ## Common Pitfalls
 

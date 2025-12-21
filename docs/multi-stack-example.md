@@ -249,19 +249,14 @@ Loading detailed section: java-guidelines.md → "Mandatory Libraries"
 
 ## Validation
 
-Run the validation tool to check multi-stack configuration:
+Validate your multi-stack configuration using the built-in compliance scripts:
 
 ```bash
-python3 scripts/validate-guidelines.py
+# Check guideline compliance
+./scripts/bash/check-guidelines-compliance.sh
 
-# Output:
-🔍 Validating Corporate Guidelines...
-
-✅ PASSED CHECKS: 21
-✓ All stack mappings valid
-✓ All referenced guideline files exist
-✓ Path patterns are valid
-✓ Precedence rules defined
+# Or use PowerShell
+./scripts/powershell/check-guidelines-compliance.ps1
 ```
 
 ## Benefits
@@ -276,4 +271,4 @@ python3 scripts/validate-guidelines.py
 
 - [Corporate Guidelines README](.guidelines/README.md)
 - [Stack Mapping Configuration](.guidelines/stack-mapping.json)
-- [Guideline Validation Tool](scripts/validate-guidelines.py)
+- [Configuration File](.specify/config.json)

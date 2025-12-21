@@ -21,6 +21,9 @@ It is adapted for **legacy code modernization** to define HOW to build the new s
 - Leverage **AI knowledge base** for LTS versions (don't hardcode)
 - Use **phase-colored Mermaid** adapted to target infrastructure
 - Convert **legacy NFRs to measurable SLO/SLI targets**
+- Include **C4 architecture diagrams** at multiple levels
+- Document **component dependencies** and **sequence flows**
+- Define **resilience patterns** and **data flows**
 
 **Placeholders to Fill** (from user answers + AI knowledge):
 
@@ -65,7 +68,628 @@ From analysis of the legacy codebase:
 
 ---
 
-## 2. Why This Pattern (Legacy → Target)
+## 2. C4 Architecture Views
+
+### 2.1 System Context Diagram (C4 Level 1)
+
+**Purpose**: Shows how the system fits into its environment
+
+#### Legacy System Context
+
+```mermaid
+C4Context
+    title Legacy System Context
+
+    Person(user, "<<User Type>>", "<<Description>>")
+    Person(admin, "<<Admin>>", "<<Description>>")
+
+    System(legacySys, "<<Legacy System>>", "<<Current description>>")
+
+    System_Ext(ext1, "<<External System 1>>", "<<Description>>")
+    System_Ext(ext2, "<<External System 2>>", "<<Description>>")
+    System_Ext(db, "<<Database>>", "<<Legacy DB type>>")
+
+    Rel(user, legacySys, "Uses", "HTTPS")
+    Rel(admin, legacySys, "Manages", "HTTPS")
+    Rel(legacySys, ext1, "Calls", "<<protocol>>")
+    Rel(legacySys, ext2, "Sends to", "<<protocol>>")
+    Rel(legacySys, db, "Reads/Writes", "<<protocol>>")
+```
+
+#### Target System Context
+
+```mermaid
+C4Context
+    title Target System Context (Modernized)
+
+    Person(user, "<<User Type>>", "<<Description>>")
+    Person(admin, "<<Admin>>", "<<Description>>")
+
+    Enterprise_Boundary(b0, "<<Organization>>") {
+        System(targetSys, "<<Target System>>", "<<Modernized description>>")
+    }
+
+    System_Ext(idp, "Identity Provider", "<<USER_CHOICE_SECURITY>>")
+    System_Ext(ext1, "<<External System 1>>", "<<Description>>")
+    System_Ext(ext2, "<<External System 2>>", "<<Description>>")
+    System_Ext(db, "<<Target Database>>", "<<USER_CHOICE_DATABASE>>")
+    System_Ext(cache, "Cache", "Redis")
+    System_Ext(mq, "Message Queue", "<<USER_CHOICE_MESSAGE_BUS>>")
+
+    Rel(user, targetSys, "Uses", "HTTPS/REST")
+    Rel(admin, targetSys, "Manages", "HTTPS/REST")
+    Rel(targetSys, idp, "Authenticates", "OAuth 2.0")
+    Rel(targetSys, ext1, "Calls", "REST/gRPC")
+    Rel(targetSys, ext2, "Publishes to", "<<protocol>>")
+    Rel(targetSys, db, "Reads/Writes", "TCP")
+    Rel(targetSys, cache, "Caches", "TCP")
+    Rel(targetSys, mq, "Pub/Sub", "<<protocol>>")
+```
+
+---
+
+### 2.2 Container Diagram (C4 Level 2)
+
+**Purpose**: Shows the high-level shape of the software architecture
+
+#### Legacy Container View
+
+```mermaid
+C4Container
+    title Legacy Container Diagram
+
+    Person(user, "User", "")
+
+    Container_Boundary(legacy, "Legacy System") {
+        Container(web, "Web Application", "<<Technology>>", "Serves UI and API")
+        ContainerDb(db, "Database", "<<Legacy DB>>", "Stores data")
+        Container(batch, "Batch Jobs", "<<Technology>>", "Background processing")
+    }
+
+    Rel(user, web, "Uses", "HTTPS")
+    Rel(web, db, "Reads/Writes", "JDBC/ODBC")
+    Rel(batch, db, "Reads/Writes", "JDBC/ODBC")
+```
+
+#### Target Container View
+
+```mermaid
+C4Container
+    title Target Container Diagram (Modernized)
+
+    Person(user, "User", "")
+
+    Container_Boundary(target, "Target System") {
+        Container(gateway, "API Gateway", "<<Technology>>", "Routing, Auth, Rate Limiting")
+        Container(auth, "Auth Service", "<<USER_CHOICE_LANGUAGE>>", "Authentication & Authorization")
+        Container(core, "Core Service", "<<USER_CHOICE_LANGUAGE>>", "Business Logic")
+        Container(worker, "Worker Service", "<<USER_CHOICE_LANGUAGE>>", "Async Processing")
+        ContainerDb(db, "Database", "<<USER_CHOICE_DATABASE>>", "Primary Data Store")
+        ContainerDb(cache, "Cache", "Redis", "Session & Query Cache")
+        ContainerQueue(mq, "Message Queue", "<<USER_CHOICE_MESSAGE_BUS>>", "Event Bus")
+    }
+
+    System_Ext(idp, "Identity Provider", "OAuth 2.0")
+
+    Rel(user, gateway, "Uses", "HTTPS")
+    Rel(gateway, auth, "Authenticates", "gRPC/REST")
+    Rel(gateway, core, "Routes to", "gRPC/REST")
+    Rel(auth, idp, "Validates", "OAuth 2.0")
+    Rel(core, db, "Reads/Writes", "TCP")
+    Rel(core, cache, "Caches", "TCP")
+    Rel(core, mq, "Publishes", "<<protocol>>")
+    Rel(mq, worker, "Subscribes", "<<protocol>>")
+    Rel(worker, db, "Reads/Writes", "TCP")
+```
+
+---
+
+### 2.3 Component Diagram (C4 Level 3)
+
+**Purpose**: Shows components within a container
+
+#### Core Service Components
+
+```mermaid
+C4Component
+    title Core Service - Component Diagram
+
+    Container_Boundary(core, "Core Service") {
+        Component(api, "API Controller", "<<Framework>>", "REST endpoints")
+        Component(service, "Business Service", "<<Language>>", "Business logic")
+        Component(repo, "Repository", "<<ORM>>", "Data access")
+        Component(mapper, "Mapper", "<<Library>>", "DTO mapping")
+        Component(validator, "Validator", "<<Library>>", "Input validation")
+        Component(event, "Event Publisher", "<<Library>>", "Async events")
+    }
+
+    ContainerDb(db, "Database", "<<DB>>")
+    ContainerQueue(mq, "Message Queue", "<<MQ>>")
+
+    Rel(api, validator, "Validates")
+    Rel(api, mapper, "Maps")
+    Rel(api, service, "Calls")
+    Rel(service, repo, "Uses")
+    Rel(service, event, "Publishes")
+    Rel(repo, db, "Queries")
+    Rel(event, mq, "Sends")
+```
+
+---
+
+## 3. Component Dependency Diagram
+
+### 3.1 Service Dependencies
+
+```mermaid
+graph LR
+    subgraph External
+        IDP[Identity Provider]
+        EXT1[External API 1]
+        EXT2[External API 2]
+    end
+
+    subgraph Infrastructure
+        DB[(Database)]
+        CACHE[(Cache)]
+        MQ[Message Queue]
+    end
+
+    subgraph Services
+        GW[API Gateway]
+        AUTH[Auth Service]
+        CORE[Core Service]
+        WORKER[Worker Service]
+    end
+
+    GW --> AUTH
+    GW --> CORE
+    AUTH --> IDP
+    AUTH --> CACHE
+    CORE --> DB
+    CORE --> CACHE
+    CORE --> MQ
+    CORE --> EXT1
+    WORKER --> MQ
+    WORKER --> DB
+    WORKER --> EXT2
+
+    classDef critical fill:#ff6b6b,stroke:#333
+    classDef high fill:#ffd93d,stroke:#333
+    classDef external fill:#6bcfff,stroke:#333
+
+    class DB,AUTH critical
+    class CORE,MQ high
+    class IDP,EXT1,EXT2 external
+```
+
+### 3.2 Dependency Matrix
+
+| Component | Depends On | Criticality | Failure Impact |
+|-----------|------------|-------------|----------------|
+| API Gateway | Auth Service | CRITICAL | All requests fail |
+| Auth Service | IDP, Cache | CRITICAL | No authentication |
+| Core Service | DB, Cache, MQ | HIGH | Core functionality unavailable |
+| Worker Service | MQ, DB | MEDIUM | Async processing delayed |
+
+### 3.3 Module Dependencies (Code Level)
+
+```mermaid
+graph TB
+    subgraph Presentation
+        CTRL[Controllers]
+        DTO[DTOs]
+    end
+
+    subgraph Business
+        SVC[Services]
+        DOMAIN[Domain Models]
+        RULES[Business Rules]
+    end
+
+    subgraph Data
+        REPO[Repositories]
+        ENTITY[Entities]
+        MAPPER[Mappers]
+    end
+
+    subgraph Infrastructure
+        CONFIG[Configuration]
+        CLIENTS[External Clients]
+        EVENTS[Event Publishers]
+    end
+
+    CTRL --> DTO
+    CTRL --> SVC
+    SVC --> DOMAIN
+    SVC --> RULES
+    SVC --> REPO
+    SVC --> CLIENTS
+    SVC --> EVENTS
+    REPO --> ENTITY
+    REPO --> MAPPER
+    ENTITY --> DOMAIN
+```
+
+---
+
+## 4. Sequence Diagrams
+
+### 4.1 User Authentication Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as User
+    participant GW as API Gateway
+    participant AUTH as Auth Service
+    participant IDP as Identity Provider
+    participant CACHE as Cache
+
+    U->>GW: POST /auth/login
+    GW->>AUTH: Authenticate(credentials)
+    AUTH->>IDP: Validate(credentials)
+    IDP-->>AUTH: Token + Claims
+    AUTH->>CACHE: Store Session
+    AUTH-->>GW: JWT Token
+    GW-->>U: 200 OK + Token
+
+    Note over U,CACHE: Subsequent Requests
+
+    U->>GW: GET /api/resource (Bearer Token)
+    GW->>AUTH: Validate Token
+    AUTH->>CACHE: Get Session
+    CACHE-->>AUTH: Session Data
+    AUTH-->>GW: Valid + Claims
+    GW->>CORE: Forward Request + Claims
+    CORE-->>GW: Response
+    GW-->>U: 200 OK + Data
+```
+
+### 4.2 Core Business Flow (Example: <<Use Case Name>>)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as User
+    participant GW as API Gateway
+    participant CORE as Core Service
+    participant DB as Database
+    participant MQ as Message Queue
+    participant WORKER as Worker
+
+    U->>GW: POST /api/<<resource>>
+    GW->>CORE: Create<<Entity>>(data)
+
+    activate CORE
+    CORE->>CORE: Validate Input
+    CORE->>DB: BEGIN Transaction
+    CORE->>DB: INSERT <<entity>>
+    CORE->>MQ: Publish <<Event>>Created
+    CORE->>DB: COMMIT
+    CORE-->>GW: 201 Created + <<Entity>>
+    deactivate CORE
+
+    GW-->>U: 201 Created
+
+    Note over MQ,WORKER: Async Processing
+
+    MQ->>WORKER: <<Event>>Created
+    activate WORKER
+    WORKER->>DB: Process <<Entity>>
+    WORKER->>WORKER: Execute Business Logic
+    WORKER-->>MQ: ACK
+    deactivate WORKER
+```
+
+### 4.3 Error Handling Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant U as User
+    participant GW as API Gateway
+    participant CORE as Core Service
+    participant DB as Database
+
+    U->>GW: POST /api/<<resource>> (invalid data)
+    GW->>CORE: Create<<Entity>>(invalid)
+
+    activate CORE
+    CORE->>CORE: Validate Input
+    CORE-->>GW: 400 Bad Request (RFC7807)
+    deactivate CORE
+
+    GW-->>U: 400 Bad Request
+
+    Note over U,DB: Database Error Scenario
+
+    U->>GW: POST /api/<<resource>> (valid data)
+    GW->>CORE: Create<<Entity>>(data)
+
+    activate CORE
+    CORE->>DB: BEGIN Transaction
+    CORE->>DB: INSERT <<entity>>
+    DB-->>CORE: Connection Error
+    CORE->>CORE: Retry (3 attempts)
+    CORE-->>GW: 503 Service Unavailable
+    deactivate CORE
+
+    GW-->>U: 503 Service Unavailable
+```
+
+---
+
+## 5. Deployment Architecture
+
+### 5.1 Target Deployment Diagram
+
+```mermaid
+C4Deployment
+    title Deployment Diagram - <<USER_CHOICE_DEPLOYMENT>>
+
+    Deployment_Node(cloud, "<<Cloud Provider>>", "Cloud") {
+        Deployment_Node(region, "<<Region>>", "Region") {
+            Deployment_Node(vpc, "VPC", "Network") {
+
+                Deployment_Node(publicSubnet, "Public Subnet", "") {
+                    Container(lb, "Load Balancer", "ALB/NLB", "Traffic distribution")
+                }
+
+                Deployment_Node(privateSubnet, "Private Subnet", "") {
+                    Deployment_Node(k8s, "Kubernetes Cluster", "<<USER_CHOICE_CONTAINERIZATION>>") {
+                        Container(gw, "API Gateway", "Pod", "2+ replicas")
+                        Container(auth, "Auth Service", "Pod", "2+ replicas")
+                        Container(core, "Core Service", "Pod", "3+ replicas")
+                        Container(worker, "Worker", "Pod", "2+ replicas")
+                    }
+                }
+
+                Deployment_Node(dataSubnet, "Data Subnet", "") {
+                    ContainerDb(db, "Database", "<<USER_CHOICE_DATABASE>>", "Primary + Replica")
+                    ContainerDb(cache, "Cache", "Redis", "Cluster mode")
+                    ContainerQueue(mq, "Message Queue", "<<USER_CHOICE_MESSAGE_BUS>>", "3 brokers")
+                }
+            }
+        }
+    }
+
+    Rel(lb, gw, "Routes", "HTTPS")
+    Rel(gw, auth, "Auth", "gRPC")
+    Rel(gw, core, "API", "gRPC")
+    Rel(core, db, "Data", "TCP")
+    Rel(core, cache, "Cache", "TCP")
+    Rel(core, mq, "Events", "TCP")
+    Rel(mq, worker, "Jobs", "TCP")
+```
+
+### 5.2 Environment Strategy
+
+| Environment | Purpose | Resources | Scaling |
+|-------------|---------|-----------|---------|
+| Development | Local development | Minimal (1 replica each) | Manual |
+| Staging | Pre-production testing | Reduced (2 replicas) | Manual |
+| Production | Live traffic | Full (HPA: 3-10 replicas) | Auto (HPA) |
+| DR | Disaster recovery | Standby | Failover |
+
+### 5.3 Kubernetes Deployment Specs
+
+```yaml
+# Example HPA configuration
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: core-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: core-service
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+```
+
+---
+
+## 6. Data Flow Diagrams
+
+### 6.1 System Data Flow
+
+```mermaid
+flowchart LR
+    subgraph External
+        USER[User]
+        EXT[External Systems]
+    end
+
+    subgraph Entry
+        GW[API Gateway]
+    end
+
+    subgraph Processing
+        AUTH[Auth Service]
+        CORE[Core Service]
+        WORKER[Worker Service]
+    end
+
+    subgraph Storage
+        DB[(Database)]
+        CACHE[(Cache)]
+        MQ[Message Queue]
+        BLOB[Object Storage]
+    end
+
+    USER -->|Request| GW
+    GW -->|Auth Check| AUTH
+    AUTH -->|Session| CACHE
+    GW -->|API Call| CORE
+    CORE -->|Read/Write| DB
+    CORE -->|Cache| CACHE
+    CORE -->|Events| MQ
+    CORE -->|Files| BLOB
+    MQ -->|Jobs| WORKER
+    WORKER -->|Process| DB
+    WORKER -->|Notify| EXT
+
+    classDef input fill:#90EE90
+    classDef process fill:#87CEEB
+    classDef storage fill:#FFB6C1
+    classDef external fill:#DDA0DD
+
+    class USER,GW input
+    class AUTH,CORE,WORKER process
+    class DB,CACHE,MQ,BLOB storage
+    class EXT external
+```
+
+### 6.2 Data Classification & Flow
+
+| Data Type | Classification | Source | Destination | Encryption | Retention |
+|-----------|---------------|--------|-------------|------------|-----------|
+| User Credentials | PII - CRITICAL | User | Auth Service | TLS + Hash | N/A |
+| Session Tokens | Sensitive | Auth | Cache | TLS | 15 min |
+| Business Data | Internal | Core | Database | TLS + At Rest | 7 years |
+| Audit Logs | Compliance | All | Log Store | TLS | 5 years |
+| Analytics | Internal | Events | Analytics | TLS | 2 years |
+
+### 6.3 Data Transformation Pipeline
+
+```mermaid
+flowchart TB
+    subgraph Input
+        RAW[Raw Request]
+    end
+
+    subgraph Validation
+        SCHEMA[Schema Validation]
+        SANITIZE[Input Sanitization]
+        AUTH_CHECK[Authorization Check]
+    end
+
+    subgraph Transform
+        MAP[DTO → Domain]
+        ENRICH[Data Enrichment]
+        RULES[Business Rules]
+    end
+
+    subgraph Persist
+        ENTITY[Domain → Entity]
+        DB_WRITE[Database Write]
+        EVENT[Event Publish]
+    end
+
+    subgraph Output
+        RESPONSE[Response DTO]
+    end
+
+    RAW --> SCHEMA
+    SCHEMA --> SANITIZE
+    SANITIZE --> AUTH_CHECK
+    AUTH_CHECK --> MAP
+    MAP --> ENRICH
+    ENRICH --> RULES
+    RULES --> ENTITY
+    ENTITY --> DB_WRITE
+    DB_WRITE --> EVENT
+    RULES --> RESPONSE
+```
+
+---
+
+## 7. Resilience Patterns
+
+### 7.1 Circuit Breaker Configuration
+
+```mermaid
+stateDiagram-v2
+    [*] --> Closed
+
+    Closed --> Open: Failure threshold exceeded
+    Open --> HalfOpen: Timeout elapsed
+    HalfOpen --> Closed: Success
+    HalfOpen --> Open: Failure
+```
+
+| Circuit | Failure Threshold | Timeout | Half-Open Max |
+|---------|------------------|---------|---------------|
+| Database | 5 failures in 10s | 30s | 3 requests |
+| External API | 3 failures in 5s | 60s | 1 request |
+| Cache | 10 failures in 30s | 10s | 5 requests |
+
+### 7.2 Retry Strategy
+
+| Operation | Retries | Backoff | Max Delay | Jitter |
+|-----------|---------|---------|-----------|--------|
+| Database Read | 3 | Exponential | 10s | ±20% |
+| Database Write | 2 | Exponential | 5s | ±10% |
+| External API | 3 | Exponential | 30s | ±30% |
+| Message Publish | 5 | Fixed 1s | 5s | None |
+
+### 7.3 Fallback Strategies
+
+| Service | Primary | Fallback | Degradation |
+|---------|---------|----------|-------------|
+| Auth | IDP | Cached Token | Read-only mode |
+| Core Data | Database | Cache (stale) | Limited features |
+| Search | Elasticsearch | Database | Slow search |
+| Notifications | Push | Email queue | Delayed delivery |
+
+### 7.4 Bulkhead Pattern
+
+```mermaid
+flowchart TB
+    subgraph Thread Pool Isolation
+        REQ[Incoming Requests]
+
+        subgraph Critical["Critical Pool (20 threads)"]
+            AUTH_POOL[Auth Requests]
+            CORE_POOL[Core Requests]
+        end
+
+        subgraph Standard["Standard Pool (10 threads)"]
+            SEARCH_POOL[Search Requests]
+            REPORT_POOL[Report Requests]
+        end
+
+        subgraph Background["Background Pool (5 threads)"]
+            BATCH_POOL[Batch Jobs]
+            NOTIFY_POOL[Notifications]
+        end
+    end
+
+    REQ --> AUTH_POOL
+    REQ --> CORE_POOL
+    REQ --> SEARCH_POOL
+    REQ --> REPORT_POOL
+    REQ --> BATCH_POOL
+    REQ --> NOTIFY_POOL
+```
+
+### 7.5 Health Check Strategy
+
+| Check | Type | Interval | Timeout | Threshold |
+|-------|------|----------|---------|-----------|
+| Liveness | HTTP /health/live | 10s | 5s | 3 failures |
+| Readiness | HTTP /health/ready | 5s | 3s | 1 failure |
+| Database | TCP connection | 30s | 10s | 2 failures |
+| External API | HTTP HEAD | 60s | 10s | 3 failures |
+
+---
+
+## 8. Why This Pattern (Legacy → Target)
 
 ### Legacy Architecture Pattern
 
@@ -101,7 +725,7 @@ From analysis of the legacy codebase:
 
 ---
 
-## 3. Capabilities by Phase (50/30/15/5)
+## 9. Capabilities by Phase (50/30/15/5)
 
 Map legacy features (from functional-spec.md) to modernization phases:
 
@@ -143,55 +767,7 @@ Map legacy features (from functional-spec.md) to modernization phases:
 
 ---
 
-## 4. High-Level Architecture (Phase-Colored Mermaid)
-
-### Target Architecture Diagram
-
-**Pattern**: <<Adapted based on USER_CHOICE_DEPLOYMENT>>
-
-```mermaid
-%%{init: { "themeVariables": { "fontFamily":"Inter","lineColor":"#6b7280","primaryTextColor":"#111827"}}}%%
-graph TB
-  classDef P1 fill:#90EE90,stroke:#1f2937,color:#111;
-  classDef P2 fill:#FFD700,stroke:#1f2937,color:#111;
-  classDef P3 fill:#FFA500,stroke:#1f2937,color:#111;
-  classDef P4 fill:#D3D3D3,stroke:#1f2937,color:#111;
-
-  %% Example for Kubernetes deployment (adapt based on user choice):
-  INGRESS[Ingress/ALB]:::P1 --> API[API Gateway]:::P1
-  API --> AUTH[Auth Service]:::P1
-  API --> CORE[Core Service]:::P1
-  CORE --> DB[(Database)]:::P1
-  CORE --> CACHE[(Cache)]:::P2
-  API --> INTEG[Integration Service]:::P2
-  INTEG --> EXT[External APIs]:::P2
-  CORE --> EVENTS[Event Bus]:::P3
-  EVENTS --> ANALYTICS[Analytics]:::P3
-  MON[Monitoring]:::P1
-
-  %% Legend
-  LEGEND[Legend: P1=Green MVP | P2=Yellow Extended | P3=Orange Enhanced | P4=Gray Future]
-```
-
-**Notes**:
-
-- Diagram shows **<<USER_CHOICE_DEPLOYMENT>>** deployment pattern
-- Uses **<<USER_CHOICE_CONTAINERIZATION>>** for runtime
-- Managed by **<<USER_CHOICE_IAC>>** infrastructure as code
-
-### Legacy vs. Target Comparison
-
-| Aspect | Legacy | Target | Improvement |
-| -------- | -------- | -------- | ------------- |
-| Deployment | <<VM/bare metal>> | <<Kubernetes cluster>> | Auto-scaling, self-healing |
-| Database | <<Oracle 11g>> | <<PostgreSQL 16 LTS>> | Open source, modern features |
-| Caching | <<Memcached 1.4>> | <<Redis 7.x>> | Persistence, pub/sub |
-| Observability | <<Log files>> | <<Prometheus + Grafana>> | Metrics, dashboards, alerts |
-| Auth | <<Session-based>> | <<OAuth 2.0 / JWT>> | Stateless, scalable |
-
----
-
-## 5. Component / Service Responsibilities
+## 10. Component / Service Responsibilities
 
 Map legacy code to modernized components:
 
@@ -222,7 +798,7 @@ Map legacy code to modernized components:
 
 ---
 
-## 6. Interfaces & Contracts
+## 11. Interfaces & Contracts
 
 ### API Design
 
@@ -248,7 +824,7 @@ Map legacy code to modernized components:
 | GET | `/api/v1/users` | Bearer token | - | UserListResponse | 401, 429, 500 |
 | POST | `/api/v1/users` | Bearer token | UserInput | User | 400, 401, 409, 429, 500 |
 
-**Schemas**: See functional-spec.md §10 for legacy contracts
+**Schemas**: See functional-spec.md §15 for legacy contracts
 **Target Schemas**: <<Update with modern conventions (camelCase, ISO8601, etc.)>>
 
 ### Authentication Flow (Target)
@@ -262,7 +838,7 @@ Map legacy code to modernized components:
 
 ---
 
-## 7. Data & Schema (Legacy → Target)
+## 12. Data & Schema (Legacy → Target)
 
 ### Database Migration
 
@@ -273,7 +849,7 @@ Map legacy code to modernized components:
 
 #### Entity: <<User>> (Example)
 
-**Legacy Schema** (from functional-spec.md §8):
+**Legacy Schema** (from functional-spec.md §13):
 
 ```sql
 -- Oracle 11g
@@ -321,7 +897,7 @@ CREATE TYPE user_role AS ENUM ('admin', 'user', 'guest');
 
 ---
 
-## 8. Target Tech Stack (From User Preferences + LTS)
+## 13. Target Tech Stack (From User Preferences + LTS)
 
 ### Summary Table
 
@@ -338,67 +914,11 @@ CREATE TYPE user_role AS ENUM ('admin', 'user', 'guest');
 | Security (Auth) | <<Sessions>> | <<USER_CHOICE_SECURITY>> | <<OAuth 2.0 / OIDC>> | Standard | Stateless, scalable, secure |
 | Testing | <<Unit only>> | <<USER_CHOICE_TESTING>> | <<JUnit 5 + Testcontainers>> | Active | Unit + Integration + E2E |
 
-**LTS Guidance** (AI Knowledge Base):
-
-- All versions above queried from official sources or AI knowledge as of <<ANALYSIS_DATE>>
-- Chosen based on: Latest LTS, community support, team familiarity, migration complexity
-
-### Detailed Stack Specifications
-
-#### Language: <<USER_CHOICE_LANGUAGE>>
-
-**Version**: <<Java 21 LTS>> (example)
-**Why**: Latest LTS with support until 2028, performance improvements (Virtual Threads, Pattern Matching)
-**Migration Complexity**: HIGH (Java 8 → 21 requires code changes)
-**Migration Guide**: [Oracle Java 8 to 21 Migration](https://docs.oracle.com/...)
-
-**Alternative Considered**: Java 17 LTS (more conservative, but shorter support)
-
-#### Framework: <<Spring Boot 3.2>>
-
-**Why**: Matches Java 21, native compilation, observability built-in
-**Migration**: Spring Boot 2.x → 3.x has breaking changes (Jakarta EE namespace)
-
-#### Database: <<USER_CHOICE_DATABASE>>
-
-**Version**: <<PostgreSQL 16 LTS>>
-**Why**: Latest LTS, JSONB for flexible schema, better concurrent writes
-**Migration Tool**: `pgloader` for automated Oracle → PostgreSQL
-**Schema Compatibility**: 90% compatible, need to handle NUMBER → UUID, sequences
-
-<<Repeat for other stack components>>
-
-#### Library Availability Validation
-
-**Artifactory URL**: <<ARTIFACTORY_URL or "Not configured">>
-
-**Validation Results** (if Artifactory configured):
-
-| Library | Category | Status | Version | Notes |
-| --------- | ---------- | -------- | --------- | ------- |
-| <<spring-boot-starter-web>> | External | ✅ Approved | 3.2.0 | Found in Artifactory |
-| <<jackson-databind>> | External | ✅ Approved | 2.15.3 | Found in Artifactory |
-| <<@acmecorp/auth-client>> | Corporate | ✅ Approved | 2.1.0 | Internal package |
-| <<some-library>> | External | ❌ Not Whitelisted | N/A | Not found - risk documented |
-| <<java.util.*>> | Standard | ⊘ Skipped | N/A | Built-in, no validation needed |
-
-**Summary**:
-- ✅ Approved: <<N>> libraries
-- ❌ Not Whitelisted: <<N>> libraries (documented as risk)
-- ⊘ Skipped: <<N>> standard/built-in libraries
-
-**Risk Assessment** (if any libraries not whitelisted):
-- **Impact**: <<Libraries not approved may cause build failures in corporate environment>>
-- **Mitigation**: <<1) Request security approval, 2) Use approved alternatives, 3) Document exception>>
-- **Decision**: <<User chose [A/B/C] - see analysis-report.md for details>>
-
-**Note**: If Artifactory URL not configured, this section shows "Validation skipped - no corporate package registry configured"
-
 ---
 
-## 9. NFR Targets (Measurable SLO/SLI)
+## 14. NFR Targets (Measurable SLO/SLI)
 
-Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
+Convert legacy NFRs (from functional-spec.md §12) to measurable targets:
 
 ### Performance
 
@@ -429,28 +949,9 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 | Max Load | <<1000 users>> | **10,000 users** | Load testing + auto-scaling |
 | Resource Efficiency | <<50% CPU idle>> | **70-80% utilization** | Right-sizing + auto-scaling |
 
-### Security
-
-| Metric | Legacy | Target | Implementation |
-| -------- | -------- | -------- | ---------------- |
-| Auth Token Lifetime | 30min session | **15min access token** | OAuth 2.0 / JWT |
-| Encryption at Rest | <<None>> | **AES-256** | Database encryption |
-| Encryption in Transit | <<TLS 1.0>> | **TLS 1.3** | Ingress/ALB config |
-| Vulnerability Scan | Manual | **Automated (weekly)** | Snyk / Trivy integration |
-
-### Observability
-
-| Aspect | Legacy | Target | Tool |
-| -------- | -------- | -------- | ------ |
-| Logs | Text files | **Structured (JSON)** | <<USER_CHOICE_OBSERVABILITY>> |
-| Metrics | <<None>> | **RED (Rate/Errors/Duration)** | Prometheus |
-| Tracing | <<None>> | **Distributed tracing** | OpenTelemetry + Jaeger |
-| Dashboards | <<None>> | **Grafana dashboards** | Pre-built + custom |
-| Alerting | <<Email on crash>> | **PagerDuty integration** | Alert rules + runbooks |
-
 ---
 
-## 10. Operations & SRE
+## 15. Operations & SRE
 
 ### SLO Table
 
@@ -485,7 +986,7 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 
 ---
 
-## 11. Security & Compliance
+## 16. Security & Compliance
 
 ### Threat Model
 
@@ -498,7 +999,7 @@ Convert legacy NFRs (from functional-spec.md §7) to measurable targets:
 
 ### Compliance Requirements
 
-From legacy analysis (functional-spec.md §6):
+From legacy analysis (functional-spec.md §11):
 
 - **GDPR**: PII encryption, right to erasure
 - **SOX**: Audit logging, immutability
@@ -510,16 +1011,11 @@ From legacy analysis (functional-spec.md §6):
 - Audit: Immutable audit log table + event stream
 - Access Controls: RBAC + audit trail
 
-### Data Residency
-
-**Legacy**: <<Single region>>
-**Target**: <<USER_CHOICE_DEPLOYMENT region>> (configurable)
-
 ---
 
-## 12. Migration / Expansion Paths
+## 17. Migration / Expansion Paths
 
-### P1: Minimum Viable Migration (Months 1-3)
+### P1: Minimum Viable Migration
 
 **Approach**: Strangler Fig Pattern
 
@@ -536,7 +1032,7 @@ From legacy analysis (functional-spec.md §6):
 - ✅ Zero data loss in dual-write
 - ✅ Rollback tested
 
-### P2: Feature Parity (Months 4-6)
+### P2: Feature Parity
 
 **Approach**: Incremental migration
 
@@ -550,7 +1046,7 @@ From legacy analysis (functional-spec.md §6):
 - ✅ Performance better than legacy
 - ✅ User acceptance testing passed
 
-### P3: Modernization Benefits (Months 7-9)
+### P3: Modernization Benefits
 
 **Approach**: Leverage new capabilities
 
@@ -564,17 +1060,9 @@ From legacy analysis (functional-spec.md §6):
 - ✅ Observability dashboards live
 - ✅ Cost savings achieved
 
-### Data Migration Detailed Plan
-
-| Phase | Data | Approach | Validation | Rollback |
-| ------- | ------ | ---------- | ----------- | ---------- |
-| P1 | <<Core entities>> | Dual-write | Reconciliation job | Stop new writes |
-| P2 | <<All entities>> | Backfill historical | Data integrity checks | Restore from backup |
-| P3 | <<Cleanup>> | Delete from legacy | Archive verification | Restore from archive |
-
 ---
 
-## 13. Risks & Decisions (RAD)
+## 18. Risks & Decisions (RAD)
 
 ### Top Risks (Prioritized)
 
@@ -594,16 +1082,9 @@ From legacy analysis (functional-spec.md §6):
 - **Owner**: Product
 - **Deadline**: Before P1 implementation
 
-**D-002**: Migration strategy?
-
-- **Options**: A) Big bang, B) Strangler fig, C) Hybrid
-- **Recommendation**: Strangler fig (lower risk)
-- **Owner**: Architecture
-- **Deadline**: Before P1 start
-
 ---
 
-## 14. R→C→T Traceability
+## 19. R→C→T Traceability
 
 Map Requirements (from functional-spec.md) → Components → Tests:
 
@@ -624,7 +1105,7 @@ Map Requirements (from functional-spec.md) → Components → Tests:
 
 ---
 
-## 15. Open Questions & Next Steps
+## 20. Open Questions & Next Steps
 
 ### Open Questions
 
@@ -641,7 +1122,7 @@ Map Requirements (from functional-spec.md) → Components → Tests:
 
 ---
 
-## Appendix: LTS Version Sources
+## Appendix A: LTS Version Sources
 
 **Sources for LTS versions** (queried <<ANALYSIS_DATE>>):
 
@@ -652,8 +1133,21 @@ Map Requirements (from functional-spec.md) → Components → Tests:
 
 ---
 
+## Appendix B: Diagram Legend
+
+| Color/Symbol | Meaning |
+|--------------|---------|
+| Green (#90EE90) | P1 - Core MVP (50% value) |
+| Yellow (#FFD700) | P2 - Extended (30% value) |
+| Orange (#FFA500) | P3 - Enhanced (15% value) |
+| Gray (#D3D3D3) | P4 - Future (5% value) |
+| Red border | Critical path |
+| Dashed line | Optional/async |
+
+---
+
 ## END OF TECHNICAL SPECIFICATION
 
 This document defines HOW to build the modernized system.
-For WHAT the system does, see `functional-spec.md`.
-For stage-specific guidance, see `stage-prompts/plan-prompt.md`.
+For WHAT the system does, see `functional-spec-legacy.md` and `functional-spec-target.md`.
+For stage-specific guidance, see `stage-prompts/`.

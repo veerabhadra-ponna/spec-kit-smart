@@ -225,7 +225,7 @@ function Get-FileExtensionSafe {
     $basename = Split-Path -Leaf $FilePath
 
     # Handle dotfiles without extension (.gitignore)
-    if ($basename.StartsWith('.') -and (-not $basename.Contains('.', 1))) {
+    if ($basename.StartsWith('.') -and ($basename.IndexOf('.', 1) -eq -1)) {
         return ""
     }
 
@@ -449,11 +449,18 @@ function Invoke-FileEnumeration {
         $stream.Dispose()
     }
 
-    # Update scan_end timestamp
+    # Update scan_end timestamp using simple string replacement (more reliable than full JSON parse)
     if ($Output -ne "") {
-        $content = Get-Content -Path $Output -Raw | ConvertFrom-Json
-        $content.scan_info.scan_end = $scanEnd
-        $content | ConvertTo-Json -Depth 100 | Set-Content -Path $Output -Encoding UTF8
+        try {
+            $content = Get-Content -Path $Output -Raw
+            # Replace null scan_end with actual timestamp using regex
+            $content = $content -replace '("scan_end":\s*)null', "`$1`"$scanEnd`""
+            Set-Content -Path $Output -Value $content -Encoding UTF8 -NoNewline
+        }
+        catch {
+            # If update fails, it's not critical - the file is already complete
+            Write-Warning "Could not update scan_end timestamp (file is still valid): $_"
+        }
     }
 }
 

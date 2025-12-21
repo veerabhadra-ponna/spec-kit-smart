@@ -1,12 +1,54 @@
 {
-  "version": "2.0",
-  "last_updated": "2025-01-15",
-  "description": "Maps project paths and file types to specific technology stack guidelines with framework-specific detection",
+  "version": "3.0",
+  "last_updated": "2025-11-16",
+  "description": "Maps project paths and file types to specific technology stack guidelines with framework-specific detection and profile-based architecture",
+
+  "profileDetection": {
+    "description": "Determines which guideline profile to apply (corporate vs personal/public)",
+    "sources": [
+      {
+        "priority": 1,
+        "source": ".specify/config.json",
+        "field": "project.guidelineProfile",
+        "description": "Explicit profile configuration (highest priority)"
+      },
+      {
+        "priority": 2,
+        "source": ".guidelines-profile",
+        "description": "File marker in project root containing profile name"
+      },
+      {
+        "priority": 3,
+        "source": "package.json",
+        "markers": {
+          "corporate": ["private: true", "@yourorg/* in dependencies"],
+          "personal": ["private: false", "license: MIT/Apache/GPL"]
+        },
+        "description": "Detect from package.json characteristics"
+      },
+      {
+        "priority": 4,
+        "source": "filesystem",
+        "markers": {
+          "corporate": [".corporate", "CORPORATE_LICENSE", "organization.json"],
+          "personal": [".opensource", "LICENSE", "MIT_LICENSE", "CONTRIBUTING.md"]
+        },
+        "description": "Detect from file markers in project root"
+      }
+    ],
+    "fallback": "personal",
+    "fallbackReason": "Personal profile is more permissive and suitable for unknown projects"
+  },
   
   "stacks": [
     {
       "name": "reactjs",
-      "guideline": "reactjs-guidelines.md",
+      "baseGuideline": "base/reactjs-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/reactjs-overrides.md",
+        "personal": "profiles/personal/reactjs-overrides.md"
+      },
+      "legacyGuideline": "reactjs-guidelines.md",
       "description": "React, TypeScript, Next.js, Vite, frontend applications",
       "paths": [
         "frontend/**",
@@ -61,7 +103,12 @@
     },
     {
       "name": "java",
-      "guideline": "java-guidelines.md",
+      "baseGuideline": "base/java-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/java-overrides.md",
+        "personal": "profiles/personal/java-overrides.md"
+      },
+      "legacyGuideline": "java-guidelines.md",
       "description": "Java, Spring Boot, backend services, microservices",
       "paths": [
         "backend/**",
@@ -118,7 +165,12 @@
     },
     {
       "name": "dotnet",
-      "guideline": "dotnet-guidelines.md",
+      "baseGuideline": "base/dotnet-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/dotnet-overrides.md",
+        "personal": "profiles/personal/dotnet-overrides.md"
+      },
+      "legacyGuideline": "dotnet-guidelines.md",
       "description": ".NET, C#, ASP.NET Core, backend services, microservices",
       "paths": [
         "backend/**",
@@ -174,7 +226,12 @@
     },
     {
       "name": "nodejs",
-      "guideline": "nodejs-guidelines.md",
+      "baseGuideline": "base/nodejs-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/nodejs-overrides.md",
+        "personal": "profiles/personal/nodejs-overrides.md"
+      },
+      "legacyGuideline": "nodejs-guidelines.md",
       "description": "Node.js, Express, Fastify, TypeScript, backend services, APIs",
       "paths": [
         "backend/**",
@@ -232,7 +289,12 @@
     },
     {
       "name": "python",
-      "guideline": "python-guidelines.md",
+      "baseGuideline": "base/python-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/python-overrides.md",
+        "personal": "profiles/personal/python-overrides.md"
+      },
+      "legacyGuideline": "python-guidelines.md",
       "description": "Python, FastAPI, Django, Flask, backend services, APIs, data processing, ML/AI",
       "paths": [
         "backend/**",
@@ -412,7 +474,18 @@
       "packages/*",
       "services/*"
     ],
-    "apply_per_workspace": true
+    "apply_per_workspace": true,
+    "allowMixedProfiles": true,
+    "workspaceOverrides": {
+      "description": "Override profile for specific workspaces",
+      "examples": {
+        "packages/internal-tools": "corporate",
+        "packages/public-library": "personal",
+        "apps/admin-dashboard": "corporate",
+        "apps/marketing-site": "personal"
+      },
+      "configLocation": ".specify/workspace-profiles.json"
+    }
   },
   
   "precedence_rules": {

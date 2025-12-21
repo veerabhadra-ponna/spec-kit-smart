@@ -24,6 +24,15 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+# Script directory
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+# Source common functions
+. (Join-Path $ScriptDir "common.ps1")
+
+# Get repository root
+$RepoRoot = Get-RepoRoot
+
 # Handle -Help
 if ($Help -or $Command -eq "help" -or $Command -eq "--help" -or $Command -eq "-h") {
     Write-Host @"
@@ -59,8 +68,8 @@ if ([string]::IsNullOrEmpty($Command)) {
     exit 1
 }
 
-# State directory
-$StateDir = ".analysis/.state"
+# State directory (always at repo root for consistency)
+$StateDir = Join-Path $RepoRoot ".analysis\.state"
 
 # Functions
 

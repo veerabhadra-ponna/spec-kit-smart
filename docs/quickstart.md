@@ -2,7 +2,7 @@
 
 This guide will help you get started with Spec-Driven Development using Spec Kit.
 
-> NEW: All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `speckitsmart` CLI auto-selects based on OS unless you pass `--script sh | ps`.
+> NEW: All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `speckitsmart` CLI auto-selects based on OS.
 
 ## The 4-Step Process
 
@@ -12,6 +12,16 @@ Initialize your project depending on the coding agent you're using:
 
 ```bash
 pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
+```
+
+If `pipx` is blocked, use a virtual environment with standard `pip`:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
+
+speckitsmart init <PROJECT_NAME>
 ```
 
 All packages include both Bash and PowerShell scripts. Your AI agent automatically uses the correct script type for your operating system.
