@@ -1,0 +1,744 @@
+{
+  "version": "3.0",
+  "last_updated": "2025-11-16",
+  "description": "Maps project paths and file types to specific technology stack guidelines with framework-specific detection and profile-based architecture",
+
+  "profileDetection": {
+    "description": "Determines which guideline profile to apply (corporate vs personal/public)",
+    "sources": [
+      {
+        "priority": 1,
+        "source": ".specify/config.json",
+        "field": "project.guidelineProfile",
+        "description": "Explicit profile configuration (highest priority)"
+      },
+      {
+        "priority": 2,
+        "source": ".guidelines-profile",
+        "description": "File marker in project root containing profile name"
+      },
+      {
+        "priority": 3,
+        "source": "package.json",
+        "markers": {
+          "corporate": ["private: true", "@yourorg/* in dependencies"],
+          "personal": ["private: false", "license: MIT/Apache/GPL"]
+        },
+        "description": "Detect from package.json characteristics"
+      },
+      {
+        "priority": 4,
+        "source": "filesystem",
+        "markers": {
+          "corporate": [".corporate", "CORPORATE_LICENSE", "organization.json"],
+          "personal": [".opensource", "LICENSE", "MIT_LICENSE", "CONTRIBUTING.md"]
+        },
+        "description": "Detect from file markers in project root"
+      }
+    ],
+    "fallback": "personal",
+    "fallbackReason": "Personal profile is more permissive and suitable for unknown projects"
+  },
+  
+  "stacks": [
+    {
+      "name": "reactjs",
+      "baseGuideline": "base/reactjs-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/reactjs-overrides.md",
+        "personal": "profiles/personal/reactjs-overrides.md"
+      },
+      "legacyGuideline": "reactjs-guidelines.md",
+      "description": "React, TypeScript, Next.js, Vite, frontend applications",
+      "paths": [
+        "frontend/**",
+        "client/**",
+        "ui/**",
+        "web/**",
+        "app/**",
+        "apps/web/**",
+        "packages/ui/**",
+        "src/components/**",
+        "src/pages/**",
+        "src/app/**"
+      ],
+      "extensions": [
+        ".tsx",
+        ".jsx",
+        ".js",
+        ".ts"
+      ],
+      "markers": [
+        "package.json",
+        "next.config.js",
+        "next.config.mjs",
+        "vite.config.ts",
+        "vite.config.js",
+        "remix.config.js"
+      ],
+      "dependency_markers": {
+        "package.json": [
+          "react",
+          "next",
+          "vite",
+          "remix"
+        ]
+      },
+      "framework_detection": {
+        "nextjs": {
+          "markers": ["next.config.js", "next.config.mjs", "next.config.ts"],
+          "dependencies": ["next"],
+          "directories": ["app/", "pages/"]
+        },
+        "vite": {
+          "markers": ["vite.config.ts", "vite.config.js"],
+          "dependencies": ["vite"]
+        },
+        "remix": {
+          "markers": ["remix.config.js"],
+          "dependencies": ["@remix-run/react"]
+        }
+      },
+      "priority": 10
+    },
+    {
+      "name": "java",
+      "baseGuideline": "base/java-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/java-overrides.md",
+        "personal": "profiles/personal/java-overrides.md"
+      },
+      "legacyGuideline": "java-guidelines.md",
+      "description": "Java, Spring Boot, backend services, microservices",
+      "paths": [
+        "backend/**",
+        "server/**",
+        "api/**",
+        "services/**",
+        "apps/api/**",
+        "packages/backend/**",
+        "src/main/java/**",
+        "src/main/kotlin/**"
+      ],
+      "extensions": [
+        ".java",
+        ".kt",
+        ".kts"
+      ],
+      "markers": [
+        "pom.xml",
+        "build.gradle",
+        "build.gradle.kts",
+        "settings.gradle",
+        "settings.gradle.kts",
+        "gradlew",
+        "mvnw"
+      ],
+      "dependency_markers": {
+        "pom.xml": [
+          "spring-boot-starter",
+          "spring-boot-parent"
+        ],
+        "build.gradle": [
+          "org.springframework.boot",
+          "io.spring.dependency-management"
+        ]
+      },
+      "framework_detection": {
+        "spring_boot": {
+          "markers": ["pom.xml", "build.gradle"],
+          "dependencies": ["spring-boot-starter"],
+          "patterns": ["@SpringBootApplication", "SpringApplication.run"]
+        },
+        "quarkus": {
+          "markers": ["pom.xml", "build.gradle"],
+          "dependencies": ["quarkus-"],
+          "patterns": ["@ApplicationScoped", "Quarkus"]
+        },
+        "micronaut": {
+          "markers": ["pom.xml", "build.gradle"],
+          "dependencies": ["micronaut-"],
+          "patterns": ["@Controller", "Micronaut"]
+        }
+      },
+      "priority": 10
+    },
+    {
+      "name": "dotnet",
+      "baseGuideline": "base/dotnet-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/dotnet-overrides.md",
+        "personal": "profiles/personal/dotnet-overrides.md"
+      },
+      "legacyGuideline": "dotnet-guidelines.md",
+      "description": ".NET, C#, ASP.NET Core, backend services, microservices",
+      "paths": [
+        "backend/**",
+        "server/**",
+        "api/**",
+        "services/**",
+        "apps/api/**",
+        "packages/backend/**",
+        "src/**"
+      ],
+      "extensions": [
+        ".cs",
+        ".csproj",
+        ".sln",
+        ".fs",
+        ".fsproj",
+        ".vb",
+        ".vbproj"
+      ],
+      "markers": [
+        "*.csproj",
+        "*.sln",
+        "*.fsproj",
+        "global.json",
+        "Directory.Build.props",
+        "Directory.Build.targets"
+      ],
+      "dependency_markers": {
+        "*.csproj": [
+          "Microsoft.AspNetCore",
+          "Microsoft.EntityFrameworkCore",
+          "Swashbuckle.AspNetCore"
+        ]
+      },
+      "framework_detection": {
+        "aspnet_core": {
+          "markers": ["*.csproj"],
+          "dependencies": ["Microsoft.AspNetCore.App"],
+          "patterns": ["WebApplication.CreateBuilder", "app.Run()"]
+        },
+        "blazor": {
+          "markers": ["*.csproj"],
+          "dependencies": ["Microsoft.AspNetCore.Components.WebAssembly"],
+          "patterns": ["@page", "BlazorApp"]
+        },
+        "maui": {
+          "markers": ["*.csproj"],
+          "dependencies": ["Microsoft.Maui"],
+          "patterns": ["MauiProgram"]
+        }
+      },
+      "priority": 10
+    },
+    {
+      "name": "nodejs",
+      "baseGuideline": "base/nodejs-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/nodejs-overrides.md",
+        "personal": "profiles/personal/nodejs-overrides.md"
+      },
+      "legacyGuideline": "nodejs-guidelines.md",
+      "description": "Node.js, Express, Fastify, TypeScript, backend services, APIs",
+      "paths": [
+        "backend/**",
+        "server/**",
+        "api/**",
+        "services/**",
+        "apps/api/**",
+        "packages/backend/**",
+        "src/server/**"
+      ],
+      "extensions": [
+        ".js",
+        ".ts",
+        ".mjs",
+        ".cjs"
+      ],
+      "markers": [
+        "package.json",
+        "tsconfig.json",
+        "nest-cli.json"
+      ],
+      "dependency_markers": {
+        "package.json": [
+          "express",
+          "fastify",
+          "koa",
+          "@nestjs/core",
+          "hapi"
+        ]
+      },
+      "framework_detection": {
+        "express": {
+          "dependencies": ["express"],
+          "patterns": ["express()", "app.listen"]
+        },
+        "fastify": {
+          "dependencies": ["fastify"],
+          "patterns": ["fastify()", "fastify.listen"]
+        },
+        "nestjs": {
+          "markers": ["nest-cli.json"],
+          "dependencies": ["@nestjs/core"],
+          "patterns": ["@Module", "@Controller", "NestFactory.create"]
+        },
+        "koa": {
+          "dependencies": ["koa"],
+          "patterns": ["new Koa()", "app.use"]
+        }
+      },
+      "exclude_when": {
+        "dependencies": ["react", "next", "vite", "remix"],
+        "reason": "React projects take precedence over Node.js backend detection"
+      },
+      "priority": 5
+    },
+    {
+      "name": "python",
+      "baseGuideline": "base/python-base.md",
+      "profileOverrides": {
+        "corporate": "profiles/corporate/python-overrides.md",
+        "personal": "profiles/personal/python-overrides.md"
+      },
+      "legacyGuideline": "python-guidelines.md",
+      "description": "Python, FastAPI, Django, Flask, backend services, APIs, data processing, ML/AI",
+      "paths": [
+        "backend/**",
+        "server/**",
+        "api/**",
+        "services/**",
+        "apps/api/**",
+        "packages/backend/**",
+        "src/**",
+        "ml/**",
+        "data/**"
+      ],
+      "extensions": [
+        ".py",
+        ".pyi",
+        ".pyx"
+      ],
+      "markers": [
+        "requirements.txt",
+        "pyproject.toml",
+        "setup.py",
+        "poetry.lock",
+        "Pipfile",
+        "Pipfile.lock",
+        "manage.py"
+      ],
+      "dependency_markers": {
+        "requirements.txt": [
+          "fastapi",
+          "django",
+          "flask",
+          "starlette",
+          "uvicorn"
+        ],
+        "pyproject.toml": [
+          "fastapi",
+          "django",
+          "flask"
+        ]
+      },
+      "framework_detection": {
+        "fastapi": {
+          "dependencies": ["fastapi", "uvicorn"],
+          "patterns": ["FastAPI()", "@app.get", "@app.post"]
+        },
+        "django": {
+          "markers": ["manage.py"],
+          "dependencies": ["django"],
+          "patterns": ["INSTALLED_APPS", "settings.py", "django.conf"]
+        },
+        "flask": {
+          "dependencies": ["flask"],
+          "patterns": ["Flask(__name__)", "@app.route"]
+        },
+        "starlette": {
+          "dependencies": ["starlette"],
+          "patterns": ["Starlette()", "Route("]
+        }
+      },
+      "priority": 10
+    },
+    {
+      "name": "go",
+      "guideline": "go-guidelines.md",
+      "description": "Go, Gin, Echo, backend services, microservices",
+      "paths": [
+        "backend/**",
+        "server/**",
+        "api/**",
+        "services/**",
+        "apps/api/**",
+        "packages/backend/**",
+        "cmd/**",
+        "internal/**"
+      ],
+      "extensions": [
+        ".go"
+      ],
+      "markers": [
+        "go.mod",
+        "go.sum"
+      ],
+      "dependency_markers": {
+        "go.mod": [
+          "github.com/gin-gonic/gin",
+          "github.com/labstack/echo",
+          "github.com/gofiber/fiber"
+        ]
+      },
+      "framework_detection": {
+        "gin": {
+          "dependencies": ["github.com/gin-gonic/gin"],
+          "patterns": ["gin.Default()", "gin.New()"]
+        },
+        "echo": {
+          "dependencies": ["github.com/labstack/echo"],
+          "patterns": ["echo.New()"]
+        },
+        "fiber": {
+          "dependencies": ["github.com/gofiber/fiber"],
+          "patterns": ["fiber.New()"]
+        }
+      },
+      "priority": 10,
+      "enabled": false,
+      "note": "Go guidelines not yet implemented - enable when available"
+    },
+    {
+      "name": "rust",
+      "guideline": "rust-guidelines.md",
+      "description": "Rust, Actix, Rocket, backend services, microservices",
+      "paths": [
+        "backend/**",
+        "server/**",
+        "api/**",
+        "services/**",
+        "apps/api/**",
+        "packages/backend/**",
+        "src/**"
+      ],
+      "extensions": [
+        ".rs"
+      ],
+      "markers": [
+        "Cargo.toml",
+        "Cargo.lock"
+      ],
+      "dependency_markers": {
+        "Cargo.toml": [
+          "actix-web",
+          "rocket",
+          "axum",
+          "warp"
+        ]
+      },
+      "framework_detection": {
+        "actix": {
+          "dependencies": ["actix-web"],
+          "patterns": ["HttpServer::new", "App::new()"]
+        },
+        "rocket": {
+          "dependencies": ["rocket"],
+          "patterns": ["#[launch]", "rocket::build()"]
+        },
+        "axum": {
+          "dependencies": ["axum"],
+          "patterns": ["Router::new()"]
+        }
+      },
+      "priority": 10,
+      "enabled": false,
+      "note": "Rust guidelines not yet implemented - enable when available"
+    }
+  ],
+  
+  "shared_paths": [
+    "shared/**",
+    "common/**",
+    "lib/**",
+    "libs/**",
+    "utils/**",
+    "packages/shared/**",
+    "packages/common/**",
+    "packages/utils/**"
+  ],
+  
+  "monorepo_detection": {
+    "markers": [
+      "lerna.json",
+      "nx.json",
+      "pnpm-workspace.yaml",
+      "turbo.json",
+      "rush.json"
+    ],
+    "workspace_patterns": [
+      "apps/*",
+      "packages/*",
+      "services/*"
+    ],
+    "apply_per_workspace": true,
+    "allowMixedProfiles": true,
+    "workspaceOverrides": {
+      "description": "Override profile for specific workspaces",
+      "examples": {
+        "packages/internal-tools": "corporate",
+        "packages/public-library": "personal",
+        "apps/admin-dashboard": "corporate",
+        "apps/marketing-site": "personal"
+      },
+      "configLocation": ".specify/workspace-profiles.json"
+    }
+  },
+  
+  "precedence_rules": {
+    "description": "Rules for resolving conflicts when multiple guidelines apply",
+    
+    "explicit_beats_implicit": {
+      "enabled": true,
+      "description": "Explicit path mapping in stack-mapping.json beats auto-detection"
+    },
+    
+    "path_beats_extension": {
+      "enabled": true,
+      "description": "If a file is in frontend/ but has .ts extension, use React guidelines (not Node.js)",
+      "examples": [
+        "frontend/utils.ts -> reactjs (path wins over .ts extension)"
+      ]
+    },
+    
+    "higher_priority_wins": {
+      "enabled": true,
+      "description": "When multiple stacks match, use stack with higher priority value"
+    },
+    
+    "framework_specific_wins": {
+      "enabled": true,
+      "description": "Framework-specific detection (Next.js, Django) wins over generic (React, Python)"
+    },
+    
+    "constitution_beats_all": {
+      "enabled": true,
+      "description": "Constitution (/memory/constitution.md) always takes precedence over all guidelines"
+    },
+    
+    "dependency_over_marker": {
+      "enabled": true,
+      "description": "package.json with 'react' dependency is stronger signal than just package.json existence"
+    }
+  },
+  
+  "conflict_resolution": {
+    "description": "How to handle files that match multiple stack guidelines",
+    
+    "strategies": [
+      {
+        "strategy": "path_priority",
+        "description": "Use most specific path match",
+        "example": "src/components/Button.ts matches both 'src/**' and 'src/components/**', use more specific"
+      },
+      {
+        "strategy": "framework_detection",
+        "description": "Detect framework from dependencies and markers",
+        "example": "package.json with 'react' dependency -> React guidelines"
+      },
+      {
+        "strategy": "file_content_analysis",
+        "description": "Analyze file imports and patterns as last resort",
+        "example": "File imports 'from react' -> React guidelines"
+      }
+    ],
+    
+    "tie_breaker": "higher_priority_wins"
+  },
+  
+  "fallback": {
+    "description": "Default behavior when no stack mapping found",
+    
+    "load_all_detected": {
+      "enabled": true,
+      "description": "Load all guidelines for detected stacks in project"
+    },
+    
+    "apply_context_sensitive": {
+      "enabled": true,
+      "description": "Apply guidelines based on file context (imports, directory structure)"
+    },
+    
+    "suggest_manual_mapping": {
+      "enabled": true,
+      "description": "Suggest adding explicit mapping to stack-mapping.json for ambiguous files"
+    }
+  },
+  
+  "exclusions": {
+    "description": "Paths and files to exclude from guideline detection",
+    
+    "paths": [
+      "node_modules/**",
+      ".git/**",
+      ".github/**",
+      "dist/**",
+      "build/**",
+      "out/**",
+      "target/**",
+      ".next/**",
+      ".vite/**",
+      "coverage/**",
+      ".venv/**",
+      "__pycache__/**",
+      "*.egg-info/**",
+      ".gradle/**",
+      "bin/**",
+      "obj/**"
+    ],
+    
+    "extensions": [
+      ".md",
+      ".txt",
+      ".json",
+      ".yaml",
+      ".yml",
+      ".toml",
+      ".xml",
+      ".lock",
+      ".log"
+    ],
+    
+    "patterns": [
+      "**/test/**",
+      "**/tests/**",
+      "**/__tests__/**",
+      "**/*.test.*",
+      "**/*.spec.*",
+      "**/mock/**",
+      "**/mocks/**"
+    ]
+  },
+  
+  "special_cases": {
+    "description": "Special handling for edge cases and complex scenarios",
+    
+    "full_stack_apps": {
+      "description": "Projects with both frontend and backend in single repo",
+      "detection": [
+        "Has both React (package.json) and backend framework markers",
+        "Has frontend/ and backend/ directories"
+      ],
+      "handling": "Apply both guidelines based on file path"
+    },
+    
+    "microfrontends": {
+      "description": "Projects using module federation or microfrontend architecture",
+      "detection": [
+        "webpack.config with ModuleFederationPlugin",
+        "Multiple apps/ directories with separate package.json"
+      ],
+      "handling": "Apply React guidelines per microfrontend boundary"
+    },
+    
+    "mobile_apps": {
+      "description": "React Native, Flutter, or native mobile apps",
+      "detection": [
+        "react-native dependency",
+        "pubspec.yaml (Flutter)",
+        "ios/ and android/ directories"
+      ],
+      "handling": "Use mobile-specific guidelines when available, fallback to React guidelines"
+    },
+    
+    "serverless": {
+      "description": "AWS Lambda, Azure Functions, Google Cloud Functions",
+      "detection": [
+        "serverless.yml",
+        "template.yaml (SAM)",
+        "function.json (Azure Functions)"
+      ],
+      "handling": "Apply backend guidelines with serverless-specific considerations"
+    }
+  },
+  
+  "version_detection": {
+    "description": "Detect framework/language versions for version-specific guidance",
+    
+    "react": {
+      "sources": ["package.json"],
+      "key": "dependencies.react",
+      "version_mapping": {
+        "18.x": "React 18 with concurrent features",
+        "19.x": "React 19 with compiler and new hooks"
+      }
+    },
+    
+    "nextjs": {
+      "sources": ["package.json"],
+      "key": "dependencies.next",
+      "version_mapping": {
+        "13.x": "Next.js 13 with App Router (beta)",
+        "14.x": "Next.js 14 with stable App Router"
+      }
+    },
+    
+    "python": {
+      "sources": ["pyproject.toml", "runtime.txt", ".python-version"],
+      "patterns": ["python = \"^3.11\"", "python-3.12"],
+      "version_mapping": {
+        "3.11": "Python 3.11 with performance improvements",
+        "3.12": "Python 3.12 with PEP 701, comprehension inlining"
+      }
+    },
+    
+    "java": {
+      "sources": ["pom.xml", "build.gradle"],
+      "patterns": ["<java.version>21</java.version>", "sourceCompatibility = 21"],
+      "version_mapping": {
+        "17": "Java 17 LTS",
+        "21": "Java 21 LTS with virtual threads"
+      }
+    },
+    
+    "dotnet": {
+      "sources": ["*.csproj", "global.json"],
+      "patterns": ["<TargetFramework>net8.0</TargetFramework>"],
+      "version_mapping": {
+        "net6.0": ".NET 6 LTS",
+        "net8.0": ".NET 8 LTS"
+      }
+    },
+    
+    "nodejs": {
+      "sources": ["package.json", ".nvmrc", ".node-version"],
+      "key": "engines.node",
+      "version_mapping": {
+        "18.x": "Node.js 18 LTS",
+        "20.x": "Node.js 20 LTS",
+        "22.x": "Node.js 22 LTS"
+      }
+    }
+  },
+  
+  "ai_agent_hints": {
+    "description": "Hints for AI agents on how to use stack-mapping effectively",
+    
+    "decision_tree": [
+      "1. Check if file path matches explicit path patterns (highest priority)",
+      "2. Check if project has framework-specific markers (next.config.js, django manage.py)",
+      "3. Check dependency_markers in package.json, requirements.txt, etc.",
+      "4. Check file extensions and patterns",
+      "5. If still ambiguous, analyze file imports and content",
+      "6. Apply precedence_rules to resolve conflicts",
+      "7. Fall back to loading all detected guidelines"
+    ],
+    
+    "performance_tips": [
+      "Cache guideline detection results per file/directory",
+      "Detect once at project root, apply to all files",
+      "Use monorepo_detection for workspace-based projects",
+      "Skip excluded paths early for performance"
+    ],
+    
+    "common_mistakes": [
+      "Don't apply Node.js guidelines to React frontend just because of .ts extension",
+      "Don't ignore path patterns in favor of extension-only matching",
+      "Don't forget to check framework_detection for more specific guidance",
+      "Don't apply guidelines to test files (check exclusions)"
+    ]
+  }
+}

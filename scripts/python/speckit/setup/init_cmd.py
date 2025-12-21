@@ -30,13 +30,7 @@ console = Console()
 
 def get_default_config() -> str:
     """Get default config.json content from embedded assets or fallback."""
-    if getattr(sys, "frozen", False):
-        # PyInstaller binary
-        base = Path(sys._MEIPASS) / "assets"  # type: ignore
-    else:
-        # Development or pip install
-        base = Path(__file__).parent.parent / "assets"
-
+    base = get_assets_base()
     config_file = base / "config-template.json"
     if config_file.exists():
         return config_file.read_text(encoding="utf-8")
@@ -76,14 +70,28 @@ def get_default_config() -> str:
 """
 
 
-def get_agents_md_content() -> str:
-    """Get AGENTS.md content from embedded assets."""
+def get_assets_base() -> Path:
+    """Get the base path for embedded assets."""
     if getattr(sys, "frozen", False):
         # PyInstaller binary
-        base = Path(sys._MEIPASS) / "assets"  # type: ignore
+        return Path(sys._MEIPASS) / "assets"  # type: ignore
     else:
         # Development or pip install
-        base = Path(__file__).parent.parent / "assets"
+        return Path(__file__).parent.parent / "assets"
+
+
+def get_guidelines_path() -> Optional[Path]:
+    """Get path to embedded guidelines folder."""
+    base = get_assets_base()
+    guidelines = base / "guidelines"
+    if guidelines.exists() and guidelines.is_dir():
+        return guidelines
+    return None
+
+
+def get_agents_md_content() -> str:
+    """Get AGENTS.md content from embedded assets."""
+    base = get_assets_base()
 
     agents_file = base / "AGENTS.md"
     if agents_file.exists():
@@ -228,6 +236,15 @@ def create_project_structure(
     if not agents_file.exists() or force:
         agents_file.write_text(get_agents_md_content(), encoding="utf-8")
 
+    # Copy .guidelines folder (baseline guidelines for generate-guidelines command)
+    guidelines_dest = project_path / ".guidelines"
+    guidelines_src = get_guidelines_path()
+    if guidelines_src and (not guidelines_dest.exists() or force):
+        if guidelines_dest.exists():
+            shutil.rmtree(guidelines_dest)
+        shutil.copytree(guidelines_src, guidelines_dest)
+        console.print("[green]Copied .guidelines/ baseline[/green]")
+
     # Create basic .gitignore
     gitignore_file = project_path / ".gitignore"
     if not gitignore_file.exists():
@@ -274,6 +291,10 @@ def show_success_message(project_path: Path, agent: str, is_current_dir: bool = 
     cmd_branch = agent_branch.add(f"[cyan]{subfolder}/[/cyan]")
     for command, _ in WORKFLOW_COMMANDS:
         cmd_branch.add(f"speckitadv.{command}{launcher_ext}")
+    guidelines_branch = tree.add("[cyan].guidelines/[/cyan]")
+    guidelines_branch.add("base/")
+    guidelines_branch.add("profiles/")
+    guidelines_branch.add("stack-mapping.json")
     memory_branch = tree.add("[cyan]memory/[/cyan]")
     memory_branch.add("config.json")
     tree.add("AGENTS.md")

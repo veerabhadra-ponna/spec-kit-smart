@@ -1,2 +1,0 @@
-description = "Create project constitution with guiding principles"
-prompt = "Run: speckitadv constitution {{args}}"

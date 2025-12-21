@@ -1,2 +1,0 @@
-description = "Generate actionable tasks from plan"
-prompt = "Run: speckitadv tasks {{args}}"

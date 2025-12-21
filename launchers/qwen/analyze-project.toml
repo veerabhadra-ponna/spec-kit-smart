@@ -1,2 +1,0 @@
-description = "Analyze existing project for modernization"
-prompt = "Run: speckitadv analyze-project {{args}}"

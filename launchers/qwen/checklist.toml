@@ -1,2 +1,0 @@
-description = "Generate quality validation checklist"
-prompt = "Run: speckitadv checklist {{args}}"

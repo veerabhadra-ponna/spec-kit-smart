@@ -1,2 +1,0 @@
-description = "Execute implementation with quality checks"
-prompt = "Run: speckitadv implement {{args}}"

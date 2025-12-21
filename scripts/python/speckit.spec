@@ -50,6 +50,17 @@ config_template = assets_dir / 'config-template.json'
 if config_template.exists():
     assets_data.append((str(config_template), 'assets'))
 
+# Collect guidelines folder (baseline guidelines for generate-guidelines)
+guidelines_dir = assets_dir / 'guidelines'
+if guidelines_dir.exists():
+    for root, dirs, files in os.walk(guidelines_dir):
+        for file in files:
+            if file.endswith('.md') or file.endswith('.json'):
+                src = Path(root) / file
+                rel_path = src.relative_to(assets_dir)
+                dest_dir = Path('assets') / rel_path.parent
+                assets_data.append((str(src), str(dest_dir)))
+
 # Analysis
 a = Analysis(
     ['speckit/__main__.py'],
