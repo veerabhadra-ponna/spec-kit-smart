@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Spec Kit configuration",
+  "version": "2.0",
+  "project": {
+    "type": "personal",
+    "guidelineProfile": "personal",
+    "description": "Project type determines which corporate guidelines profile to use: 'corporate' for internal/proprietary projects, 'personal' for open-source/public projects"
+  },
+  "workflow": {
+    "enableCheckArtifactory": false,
+    "osEnv": "windows"
+  },
+  "branching": {
+    "pattern": "feature/<jira>-<shortname>",
+    "pattern_example": "feature/<num>-<jira>-<shortname>",
+    "prefix": "feature/",
+    "separator": "-",
+    "number_format": {
+      "digits": 3,
+      "zero_padded": true
+    },
+    "jira": {
+      "required": true,
+      "format": "C12345-7890",
+      "regex": "^C[0-9]{5}-[0-9]{4}$",
+      "placeholder": "<jira>"
+    },
+    "directory": {
+      "includes_prefix": false,
+      "base_path": "specs"
+    }
+  }
+}

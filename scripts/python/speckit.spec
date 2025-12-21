@@ -45,6 +45,11 @@ agents_md = assets_dir / 'AGENTS.md'
 if agents_md.exists():
     assets_data.append((str(agents_md), 'assets'))
 
+# Collect config-template.json
+config_template = assets_dir / 'config-template.json'
+if config_template.exists():
+    assets_data.append((str(config_template), 'assets'))
+
 # Analysis
 a = Analysis(
     ['speckit/__main__.py'],
@@ -62,6 +67,7 @@ a = Analysis(
         'speckit.commands',
         'speckit.commands.analyze',
         'speckit.commands.constitution',
+        'speckit.commands.feature',
         'speckit.core',
         'speckit.core.emit',
         'speckit.core.state',

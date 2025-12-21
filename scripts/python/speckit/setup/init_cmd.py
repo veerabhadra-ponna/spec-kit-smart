@@ -26,6 +26,54 @@ from speckit.setup.config import (
 console = Console()
 
 
+def get_default_config() -> str:
+    """Get default config.json content from embedded assets or fallback."""
+    if getattr(sys, "frozen", False):
+        # PyInstaller binary
+        base = Path(sys._MEIPASS) / "assets"  # type: ignore
+    else:
+        # Development or pip install
+        base = Path(__file__).parent.parent / "assets"
+
+    config_file = base / "config-template.json"
+    if config_file.exists():
+        return config_file.read_text(encoding="utf-8")
+
+    # Fallback default config
+    return """{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Spec Kit configuration",
+  "version": "2.0",
+  "project": {
+    "type": "personal",
+    "guidelineProfile": "personal"
+  },
+  "workflow": {
+    "enableCheckArtifactory": false,
+    "osEnv": "auto"
+  },
+  "branching": {
+    "pattern": "feature/<num>-<jira>-<shortname>",
+    "prefix": "feature/",
+    "separator": "-",
+    "number_format": {
+      "digits": 3,
+      "zero_padded": true
+    },
+    "jira": {
+      "required": false,
+      "format": "C12345-7890",
+      "regex": "^C[0-9]{5}-[0-9]{4}$"
+    },
+    "directory": {
+      "includes_prefix": false,
+      "base_path": "specs"
+    }
+  }
+}
+"""
+
+
 def get_agents_md_content() -> str:
     """Get AGENTS.md content from embedded assets."""
     if getattr(sys, "frozen", False):
@@ -158,6 +206,14 @@ def create_project_structure(
     if not gitkeep.exists():
         gitkeep.touch()
 
+    # Create .specify directory with config.json
+    specify_dir = project_path / ".specify"
+    specify_dir.mkdir(exist_ok=True)
+    config_file = specify_dir / "config.json"
+    if not config_file.exists() or force:
+        config_content = get_default_config()
+        config_file.write_text(config_content, encoding="utf-8")
+
     # Write launcher files
     for command, description in WORKFLOW_COMMANDS:
         launcher_file = commands_path / f"speckitadv.{command}.md"
@@ -218,6 +274,8 @@ def show_success_message(project_path: Path, agent: str, is_current_dir: bool = 
     for command, _ in WORKFLOW_COMMANDS:
         cmd_branch.add(f"speckitadv.{command}.md")
     tree.add("[cyan]memory/[/cyan]")
+    specify_branch = tree.add("[cyan].specify/[/cyan]")
+    specify_branch.add("config.json")
     tree.add("AGENTS.md")
     tree.add(".gitignore")
 
