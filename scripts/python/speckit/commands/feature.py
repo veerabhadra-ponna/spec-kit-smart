@@ -560,8 +560,6 @@ def run_create_feature(
     """
     # Find project root
     project_root = find_repo_root(Path.cwd())
-    if not project_root:
-        project_root = Path.cwd()
 
     # Load configuration
     config = load_branch_config(project_root)

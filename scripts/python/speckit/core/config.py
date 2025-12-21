@@ -9,7 +9,10 @@ import os
 import platform
 from pathlib import Path
 from typing import Any, Optional
+
 from pydantic import BaseModel, ConfigDict, Field
+
+from speckit.core.utils import get_repo_root
 
 
 class WorkflowConfig(BaseModel):
@@ -73,14 +76,9 @@ class Config:
         # Apply environment overrides
         self._apply_env_overrides()
 
-    def _find_repo_root(self) -> Optional[Path]:
-        """Find git repository root."""
-        current = Path.cwd()
-        while current != current.parent:
-            if (current / ".git").exists():
-                return current
-            current = current.parent
-        return None
+    def _find_repo_root(self) -> Path:
+        """Find git repository root using shared utility."""
+        return get_repo_root()
 
     def _apply_env_overrides(self) -> None:
         """Apply environment variable overrides."""

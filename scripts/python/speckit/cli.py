@@ -290,34 +290,39 @@ def resume(
 
 
 # ============================================================================
-# ANALYZE Command (alias for analyze-project)
+# ANALYZE Command (cross-artifact consistency check)
 # ============================================================================
 
 
 @app.command("analyze")
 def analyze(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-16)"),
-    chunk: Optional[int] = typer.Option(None, "--chunk", "-c", help="Report chunk number for chunked stages"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
-    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path to analyze"),
-    scope: Optional[str] = typer.Option(None, "--scope", help="Analysis scope: A (full) or B (cross-cutting)"),
-    verify: bool = typer.Option(False, "--verify", help="Run verification after final stage completes"),
+    focus: Optional[str] = typer.Argument(None, help="Focus areas for analysis (e.g., 'security', 'constitution')"),
+    stage: int = typer.Option(1, "--stage", "-s", help="Analysis stage (1-3)"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ) -> None:
     """
-    Analyze an existing project (alias for analyze-project).
+    Cross-artifact consistency and quality analysis.
 
-    Shorthand for 'speckitadv analyze-project'.
+    Performs non-destructive analysis across spec.md, plan.md, and tasks.md
+    to identify inconsistencies, gaps, and quality issues before implementation.
+    Run after /speckitadv.tasks and before /speckitadv.implement.
+
+    Stages:
+      1 - Setup and artifact loading
+      2 - Detection passes
+      3 - Report generation
     """
-    from speckit.commands.analyze import run_analyze_project
+    from speckit.core.prompts import get_prompt_fragment
 
-    run_analyze_project(
-        stage=stage,
-        chunk=chunk,
-        chain_id=chain_id,
-        path=path,
-        scope=scope,
-        verify=verify,
-    )
+    stage_map = {1: "01-setup", 2: "02-detection", 3: "03-report"}
+    stage_key = stage_map.get(stage, "01-setup")
+
+    fragment = get_prompt_fragment("cross-analyze", stage_key)
+    if focus and stage == 1:
+        fragment = fragment.replace("{ARGS}", focus)
+    else:
+        fragment = fragment.replace("{ARGS}", "")
+    console.print(fragment)
 
 
 # ============================================================================

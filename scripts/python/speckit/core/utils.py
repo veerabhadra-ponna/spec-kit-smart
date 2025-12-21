@@ -24,17 +24,18 @@ def get_repo_root(start_path: Optional[Path] = None) -> Path:
         start_path: Starting path to search from (defaults to cwd)
 
     Returns:
-        Path to repository root, or cwd if not found
+        Path to repository root, or start_path if not found
     """
-    current = start_path or Path.cwd()
-    current = current.resolve()
+    original = start_path or Path.cwd()
+    current = original.resolve()
 
     while current != current.parent:
         if (current / ".git").exists() or (current / "memory").exists():
             return current
         current = current.parent
 
-    return Path.cwd()
+    # Return original path as fallback (not cwd when start_path was specified)
+    return original.resolve()
 
 
 # Alias for backward compatibility

@@ -10,7 +10,7 @@ from pathlib import Path
 # Commands and their descriptions
 COMMANDS = {
     "analyze-project": "Analyze existing project for modernization",
-    "analyze": "Analyze existing project (alias)",
+    "analyze": "Cross-artifact consistency and quality analysis",
     "constitution": "Create project constitution with guiding principles",
     "specify": "Create baseline specification from requirements",
     "plan": "Create implementation plan from specification",
