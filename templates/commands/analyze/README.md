@@ -174,7 +174,7 @@ Each sub-prompt:
 
 ```text
 FOR each sub-prompt in stage order:
-    1. AI uses Read tool → Load `.specify/templates/commands/analyze/{sub-prompt}.md`
+    1. AI uses Read tool → Load `.specify/prompts/analyze/{sub-prompt}.md`
     2. AI reads ENTIRE sub-prompt
     3. AI runs PRE-CHECK (verify previous checkpoint)
     4. AI executes ALL instructions in sequence

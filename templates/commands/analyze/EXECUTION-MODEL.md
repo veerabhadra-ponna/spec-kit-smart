@@ -53,7 +53,7 @@ Claude Code loads: `analyze-project` command (orchestration prompt)
 
 ```text
 FOR each sub-prompt in [01a, 01b, 01c, 02a, 02b, 02c, 02d, 02e, 03a1-4/03b1-3, 04a-d, 05a, 06a-e]:
-    1. AI uses Read tool → Load `.specify/templates/commands/analyze/{sub-prompt}.md`
+    1. AI uses Read tool → Load `.specify/prompts/analyze/{sub-prompt}.md`
     2. AI runs PRE-CHECK → Verify previous checkpoint exists and status = "complete"
     3. AI reads ENTIRE sub-prompt
     4. AI executes ALL instructions in sequence
