@@ -14,25 +14,31 @@ from pathlib import Path
 from typing import Any, Optional
 
 
-def get_repo_root(start_path: Optional[Path] = None) -> Optional[Path]:
+def get_repo_root(start_path: Optional[Path] = None) -> Path:
     """
-    Find the git repository root directory.
+    Find the repository root directory.
+
+    Searches for .git directory or memory directory to identify the repo root.
 
     Args:
         start_path: Starting path to search from (defaults to cwd)
 
     Returns:
-        Path to repository root, or None if not in a git repo
+        Path to repository root, or cwd if not found
     """
     current = start_path or Path.cwd()
     current = current.resolve()
 
     while current != current.parent:
-        if (current / ".git").exists():
+        if (current / ".git").exists() or (current / "memory").exists():
             return current
         current = current.parent
 
-    return None
+    return Path.cwd()
+
+
+# Alias for backward compatibility
+find_repo_root = get_repo_root
 
 
 def detect_os() -> str:
@@ -135,7 +141,9 @@ def is_git_repo(path: Optional[Path] = None) -> bool:
         True if inside a git repo
     """
     check_path = path or Path.cwd()
-    return get_repo_root(check_path) is not None
+    repo_root = get_repo_root(check_path)
+    # Verify the returned path actually contains .git (not just cwd fallback)
+    return (repo_root / ".git").exists()
 
 
 def get_file_info(path: Path) -> dict[str, Any]:

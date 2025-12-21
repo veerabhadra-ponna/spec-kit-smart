@@ -16,6 +16,8 @@ from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
 
+from speckit.core.utils import find_repo_root
+
 console = Console()
 
 # Default configuration values
@@ -154,18 +156,6 @@ def validate_jira_number(jira: str, config: dict) -> tuple[bool, str]:
     if not re.match(regex, jira):
         return False, f"JIRA number must match format {jira_format} (pattern: {regex})"
     return True, ""
-
-
-def find_repo_root(start_path: Path) -> Optional[Path]:
-    """
-    Find repository root by searching for .git or memory directory.
-    """
-    current = start_path.resolve()
-    while current != current.parent:
-        if (current / ".git").exists() or (current / "memory").exists():
-            return current
-        current = current.parent
-    return None
 
 
 def has_git() -> bool:

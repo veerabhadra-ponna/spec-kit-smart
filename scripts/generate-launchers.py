@@ -10,6 +10,7 @@ from pathlib import Path
 # Commands and their descriptions
 COMMANDS = {
     "analyze-project": "Analyze existing project for modernization",
+    "analyze": "Analyze existing project (alias)",
     "constitution": "Create project constitution with guiding principles",
     "specify": "Create baseline specification from requirements",
     "plan": "Create implementation plan from specification",
@@ -17,6 +18,8 @@ COMMANDS = {
     "implement": "Execute implementation with quality checks",
     "clarify": "Ask structured clarification questions",
     "checklist": "Generate quality validation checklist",
+    "orchestrate": "Orchestrate complete spec-driven workflow",
+    "resume": "Resume workflow from saved state",
 }
 
 # Agent configurations

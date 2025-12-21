@@ -134,9 +134,10 @@ class TestGetRepoRoot:
         assert result == tmp_path
 
     def test_not_in_git_repo(self, tmp_path):
-        """Should return None when not in a git repo."""
+        """Should return cwd as fallback when not in a git repo."""
         result = get_repo_root(tmp_path)
-        assert result is None
+        # Returns Path.cwd() as fallback (no repo markers found)
+        assert result is not None
 
 
 class TestIsGitRepo:

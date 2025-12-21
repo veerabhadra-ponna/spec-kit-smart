@@ -16,17 +16,9 @@ from typing import Optional
 
 from rich.console import Console
 
+from speckit.core.utils import find_repo_root
+
 console = Console()
-
-
-def find_repo_root(start_path: Optional[Path] = None) -> Path:
-    """Find repository root by searching for .git or memory directory."""
-    current = (start_path or Path.cwd()).resolve()
-    while current != current.parent:
-        if (current / ".git").exists() or (current / "memory").exists():
-            return current
-        current = current.parent
-    return Path.cwd()
 
 
 def has_git() -> bool:

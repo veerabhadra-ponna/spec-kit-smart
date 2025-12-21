@@ -15,6 +15,7 @@ from typing import Optional
 from rich.console import Console
 from rich.tree import Tree
 
+from speckit.core.utils import find_repo_root
 from speckit.setup.config import AGENT_CONFIG
 
 console = Console()
@@ -28,16 +29,6 @@ def check_tool(tool: str) -> bool:
         if claude_local.exists():
             return True
     return shutil.which(tool) is not None
-
-
-def find_repo_root(start_path: Optional[Path] = None) -> Path:
-    """Find repository root by searching for .git or memory directory."""
-    current = (start_path or Path.cwd()).resolve()
-    while current != current.parent:
-        if (current / ".git").exists() or (current / "memory").exists():
-            return current
-        current = current.parent
-    return Path.cwd()
 
 
 def get_current_branch() -> str:
