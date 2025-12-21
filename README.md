@@ -913,34 +913,31 @@ The Corporate Guidelines system was implemented in four phases:
 
 **New Tools:**
 
-| Tool | Script | Purpose |
+| Tool | Command | Purpose |
 | ------ | -------- | --------- |
-| **Compliance Checker** | `check-guidelines-compliance.sh` | Validate project against guidelines with severity levels (CRITICAL/HIGH/MEDIUM/LOW) |
-| **Diff Tool** | `diff-guidelines.sh` | Compare project guidelines vs templates, identify outdated sections |
-| **Auto-Fix Tool** | `autofix-guidelines.sh` | Automatically fix common violations (security, structure, config) |
-| **Analytics Dashboard** | `guidelines-analytics.sh` | Track compliance metrics, generate trends, visualize scores |
-| **CI/CD Integration** | `.guidelines/examples/ci-cd/` | GitHub Actions, GitLab CI, Jenkins pipeline examples |
+| **Generate Guidelines** | `speckitadv generate-guidelines` | Extract coding guidelines from corporate docs and reference projects |
+| **CI/CD Templates** | `templates/ci-cd/` | GitHub Actions, GitLab CI, Jenkins pipeline examples for codebase analysis |
 
 ### Using Guidelines Tools
 
-**Check Compliance:**
+**Generate Guidelines:**
 
 ```bash
 speckitadv generate-guidelines /path/to/sources
 ```
 
-The generate-guidelines command analyzes corporate documents and reference projects to extract coding guidelines. Future versions will include compliance checking, diff analysis, auto-fix, and analytics dashboards.
+The generate-guidelines command analyzes corporate documents and reference projects to extract coding guidelines.
 
-**CI/CD Integration:**
+**CI/CD Integration (Codebase Analysis):**
 
 ```bash
-# Copy templates to your project
-cp .guidelines/examples/ci-cd/github-actions.yml .github/workflows/
-cp .guidelines/examples/ci-cd/gitlab-ci.yml .gitlab-ci.yml
-cp .guidelines/examples/ci-cd/Jenkinsfile Jenkinsfile
+# Copy analysis workflow templates to your project
+cp templates/ci-cd/github-actions-analysis.yml .github/workflows/codebase-analysis.yml
+cp templates/ci-cd/gitlab-ci-analysis.yml .gitlab-ci.yml
+cp templates/ci-cd/jenkins-pipeline.groovy Jenkinsfile
 ```
 
-Features: automated checks, merge blocking, auto-fix, trending, notifications.
+Features: automated analysis, vulnerability scanning, PR comments, artifact reports.
 
 ### Guidelines Hierarchy
 
@@ -966,13 +963,11 @@ graph LR
 
 1. Customize guidelines: Edit `.guidelines/*.md` files
 2. Configure branch naming and workflow: Edit `memory/config.json` (optional)
-3. Check compliance: `./scripts/bash/check-guidelines-compliance.sh`
-4. Auto-fix issues: `./scripts/bash/autofix-guidelines.sh`
-5. Set up CI/CD: Copy templates from `.guidelines/examples/ci-cd/`
+3. Set up CI/CD: Copy templates from `templates/ci-cd/`
 
 ### Documentation (Guidelines)
 
-See `.guidelines/README.md`, `GUIDELINES-IMPLEMENTATION-PLAN.md`, `IMPROVEMENTS.md`, and `.guidelines/examples/ci-cd/` for details.
+See `.guidelines/README.md`, `GUIDELINES-IMPLEMENTATION-PLAN.md`, and `IMPROVEMENTS.md` for details.
 
 ---
 

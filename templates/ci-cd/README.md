@@ -129,10 +129,8 @@ Example in GitHub Actions:
 ```yaml
 - name: Run analysis
   run: |
-    /tmp/spec-kit/scripts/bash/analyze-project.sh \
-      ${{ github.workspace }} \
-      --depth QUICK \
-      --focus SECURITY,DEPENDENCIES \
+    speckitadv analyze-project \
+      --path ${{ github.workspace }} \
       --output analysis-results
 ```
 

@@ -28,7 +28,6 @@ pipeline {
 
     environment {
         PYTHON_VERSION = '3.11'
-        SPEC_KIT_DIR = '/tmp/spec-kit'
     }
 
     triggers {
@@ -55,11 +54,9 @@ pipeline {
                     pip3 install --user pip-audit || echo "Could not install pip-audit"
                 '''
 
-                // Clone spec-kit-smart
+                // Install speckitadv CLI
                 sh '''
-                    rm -rf ${SPEC_KIT_DIR}
-                    git clone https://github.com/veerabhadra-ponna/spec-kit-smart.git ${SPEC_KIT_DIR}
-                    chmod +x ${SPEC_KIT_DIR}/scripts/bash/analyze-project.sh
+                    pip3 install --user git+https://github.com/veerabhadra-ponna/spec-kit-smart.git#subdirectory=scripts/python
                 '''
             }
         }
@@ -71,9 +68,7 @@ pipeline {
                 }
 
                 sh '''
-                    ${SPEC_KIT_DIR}/scripts/bash/analyze-project.sh \
-                        ${WORKSPACE} \
-                        --depth ${ANALYSIS_DEPTH} \
+                    speckitadv analyze-project --path ${WORKSPACE} \
                         --output analysis-results
                 '''
             }

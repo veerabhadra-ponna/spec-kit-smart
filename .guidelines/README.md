@@ -106,9 +106,6 @@ Priority order when making decisions:
 │       ├── java-overrides.md          # Maven Central, GitHub Actions
 │       ├── python-overrides.md        # PyPI, Render, Railway
 │       └── dotnet-overrides.md        # NuGet.org, Azure free tier
-│
-└── examples/                          # CI/CD and configuration examples
-    └── ci-cd/
 ```
 
 ### Configuration
