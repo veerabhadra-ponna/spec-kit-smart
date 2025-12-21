@@ -107,7 +107,7 @@ Each stage is split into focused sub-prompts (~100-200 lines each) for better AI
 **For EVERY sub-prompt:**
 
 ```text
-1. LOAD    → Read .specify/prompts/analyze/{sub-prompt}.md
+1. LOAD    → Read .specify/templates/commands/analyze/{sub-prompt}.md
 2. PRE-CHECK → Verify previous checkpoint exists and status = "complete"
 3. EXECUTE → Follow ALL steps in sequence
 4. STOP    → WAIT at each ⏸️ [STOP] marker
@@ -162,7 +162,7 @@ jq '.status' .analysis/.checkpoints/{stage}-complete.json
 
 **Start with Stage 1, Sub-prompt 1A:**
 
-Load and execute: `.specify/prompts/analyze/01a-initialization.md`
+Load and execute: `.specify/templates/commands/analyze/01a-initialization.md`
 
 ### Execution Flow
 
@@ -333,7 +333,7 @@ When complete, all artifacts are saved to: `.analysis/{project}-{timestamp}/`
 
 **Execute Stage 1, Sub-prompt 1A:**
 
-Load `.specify/prompts/analyze/01a-initialization.md` and follow all instructions.
+Load `.specify/templates/commands/analyze/01a-initialization.md` and follow all instructions.
 
 **Remember:**
 - STOP at every ⏸️ marker
