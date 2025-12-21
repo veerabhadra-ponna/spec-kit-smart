@@ -837,7 +837,7 @@ Agents:
 - auggie (.augment/commands/)
 - codebuddy (.codebuddy/commands/)
 - roo (.roo/commands/)
-- q (.amazonq/commands/)
+- q (.amazonq/prompts/)
 - amp (.agents/commands/)
 
 ```text

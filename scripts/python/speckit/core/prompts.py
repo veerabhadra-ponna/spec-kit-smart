@@ -45,6 +45,7 @@ def get_prompt_fragment(command: str, stage: str) -> str:
     Args:
         command: Command name (e.g., "analyze-project", "constitution")
         stage: Stage identifier (e.g., "01-setup", "02a-category-scan")
+               Use empty string for single-file prompts
 
     Returns:
         Prompt fragment content
@@ -65,6 +66,8 @@ def get_prompt_fragment(command: str, stage: str) -> str:
         prompts_base / f"{command}-{stage}.md",
         # Direct match for analyze subfolder
         prompts_base / "analyze" / f"{stage}.md",
+        # Single-file prompts (no staging): orchestrate.md, resume.md
+        prompts_base / f"{command}.md",
     ]
 
     for path in search_paths:

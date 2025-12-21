@@ -8,6 +8,7 @@ import hashlib
 import json
 import os
 import platform
+import secrets
 import subprocess
 import time
 from pathlib import Path
@@ -59,11 +60,12 @@ def generate_chain_id() -> str:
     """
     Generate a unique chain ID (8 hex characters).
 
+    Uses cryptographically secure random bytes for uniqueness.
+
     Returns:
         8-character hex string
     """
-    timestamp = str(time.time()).encode()
-    return hashlib.md5(timestamp).hexdigest()[:8]
+    return secrets.token_hex(4)
 
 
 def safe_json_loads(text: str, default: Any = None) -> Any:

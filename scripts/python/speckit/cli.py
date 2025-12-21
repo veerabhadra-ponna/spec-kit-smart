@@ -262,7 +262,7 @@ def orchestrate(
     """
     from speckit.core.prompts import get_prompt_fragment
 
-    fragment = get_prompt_fragment("orchestrate", "01")
+    fragment = get_prompt_fragment("orchestrate", "")
     if description:
         fragment = fragment.replace("$ARGUMENTS", description)
     console.print(fragment)
@@ -282,7 +282,7 @@ def resume() -> None:
     """
     from speckit.core.prompts import get_prompt_fragment
 
-    fragment = get_prompt_fragment("resume", "01")
+    fragment = get_prompt_fragment("resume", "")
     console.print(fragment)
 
 

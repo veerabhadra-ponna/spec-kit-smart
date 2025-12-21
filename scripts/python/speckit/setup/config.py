@@ -142,14 +142,14 @@ WORKFLOW_COMMANDS = [
 LAUNCHER_TEMPLATE_MARKDOWN = """---
 description: {description}
 ---
-Run: `speckitadv {command}`
+Run: `speckitadv {command} $ARGUMENTS`
 Follow all instructions in the output.
 """
 
 LAUNCHER_TEMPLATE_TOML = """# {description}
 [command]
 description = "{description}"
-command = "speckitadv {command}"
+command = "speckitadv {command} {{{{args}}}}"
 
 [instructions]
 run = "Execute the command above"
