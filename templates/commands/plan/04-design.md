@@ -74,18 +74,10 @@ Create `quickstart.md` with:
 
 ## Step 4: Update Agent Context
 
-Run agent update script:
-
-**Unix:**
+Run agent update command (cross-platform):
 
 ```bash
-scripts/bash/update-agent-context.sh {{agent_type}}
-```
-
-**Windows:**
-
-```powershell
-scripts/powershell/update-agent-context.ps1 -AgentType {{agent_type}}
+speckitadv update-agent-context {{agent_type}}
 ```
 
 ---

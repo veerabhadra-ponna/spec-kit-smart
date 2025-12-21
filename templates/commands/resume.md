@@ -1,8 +1,6 @@
 ---
 description: Restore full context and resume workflow from saved state (ideal for new chat sessions)
-scripts:
-  bash: scripts/bash/check-prerequisites.sh --json
-  powershell: scripts/powershell/check-prerequisites.ps1 -Json
+command: speckitadv check --json
 ---
 
 ## ⚠️ MANDATORY: Read Agent Instructions First

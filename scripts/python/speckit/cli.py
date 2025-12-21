@@ -436,5 +436,177 @@ def show_fragment_cmd(
         raise typer.Exit(1)
 
 
+# ============================================================================
+# SETUP-PLAN Command
+# ============================================================================
+
+
+@app.command("setup-plan")
+def setup_plan(
+    arguments: Optional[str] = typer.Option(None, "--arguments", "-a", help="User description to record in plan"),
+    json_output: bool = typer.Option(False, "--json", help="Output in JSON format"),
+) -> None:
+    """
+    Set up plan file from template.
+
+    Copies plan template and prepares feature directory.
+    """
+    from speckit.commands.workflow import run_setup_plan
+
+    run_setup_plan(arguments=arguments, output_json=json_output)
+
+
+# ============================================================================
+# UPDATE-AGENT-CONTEXT Command
+# ============================================================================
+
+
+@app.command("update-agent-context")
+def update_agent_context(
+    agent: Optional[str] = typer.Argument(None, help="Agent type: claude, gemini, copilot, cursor-agent, qwen, opencode, codex, windsurf, kilocode, auggie, roo, codebuddy, amp, q"),
+) -> None:
+    """
+    Update agent context files with plan information.
+
+    Parses plan.md and updates agent-specific context files.
+    """
+    from speckit.commands.workflow import run_update_agent_context
+
+    success = run_update_agent_context(agent_type=agent)
+    if not success:
+        raise typer.Exit(1)
+
+
+# ============================================================================
+# GENERATE-GUIDELINES Command
+# ============================================================================
+
+
+@app.command("generate-guidelines")
+def generate_guidelines(
+    sources_path: str = typer.Argument(..., help="Path to folder with docs/ and reference-projects/"),
+) -> None:
+    """
+    Generate coding guidelines from corporate documents and reference projects.
+
+    Analyzes documents and code to extract principles for guidelines.
+    """
+    from speckit.commands.guidelines import run_generate_guidelines
+
+    success = run_generate_guidelines(sources_path)
+    if not success:
+        raise typer.Exit(1)
+
+
+# ============================================================================
+# CHECK-ARTIFACTORY Command
+# ============================================================================
+
+
+@app.command("check-artifactory")
+def check_artifactory(
+    url: str = typer.Argument(..., help="Artifactory URL"),
+    library: str = typer.Argument(..., help="Library name to check"),
+    api_key: Optional[str] = typer.Option(None, "--api-key", "-k", help="API key (or use ARTIFACTORY_API_KEY env var)"),
+    repos: Optional[str] = typer.Option(None, "--repos", "-r", help="Comma-separated repository list"),
+    debug: bool = typer.Option(False, "--debug", help="Enable debug output"),
+) -> None:
+    """
+    Check if a library is available in Artifactory.
+
+    Validates library availability for dependency whitelisting.
+    """
+    from speckit.commands.guidelines import check_artifactory as do_check
+
+    exit_code, message = do_check(url, library, api_key, repos, debug)
+
+    if exit_code == 0:
+        console.print(f"[green]✅ {message}[/green]")
+    elif exit_code == 1:
+        console.print(f"[yellow]❌ {message}[/yellow]")
+        raise typer.Exit(1)
+    elif exit_code == 2:
+        console.print(f"[red]⚠️ {message}[/red]")
+        raise typer.Exit(2)
+    elif exit_code == 4:
+        console.print(f"[yellow]⊘ SKIPPED: {message}[/yellow]")
+    else:
+        console.print(f"[red]⚠️ ERROR: {message}[/red]")
+        raise typer.Exit(3)
+
+
+# ============================================================================
+# VERIFY-REPORT Command
+# ============================================================================
+
+
+@app.command("verify-report")
+def verify_report(
+    report_file: str = typer.Argument(..., help="Path to analysis report file"),
+) -> None:
+    """
+    Verify analysis report meets quality gates.
+
+    Checks for all phases, minimum lines, references, and no placeholders.
+    """
+    from speckit.commands.project import verify_analysis_report
+
+    success = verify_analysis_report(report_file)
+    if not success:
+        raise typer.Exit(1)
+
+
+# ============================================================================
+# ENUMERATE-PROJECT Command
+# ============================================================================
+
+
+@app.command("enumerate-project")
+def enumerate_project_cmd(
+    project_path: str = typer.Argument(".", help="Path to project root"),
+    output: Optional[str] = typer.Option(None, "--output", "-o", help="Output JSON file"),
+    max_size: int = typer.Option(10485760, "--max-size", help="Maximum file size in bytes (default 10MB)"),
+) -> None:
+    """
+    Enumerate all files in a project for AI analysis.
+
+    Generates a JSON manifest of all files with metadata.
+    """
+    from speckit.commands.project import enumerate_project
+
+    project = Path(project_path).resolve()
+    output_file = Path(output) if output else None
+
+    manifest = enumerate_project(project, output_file, max_size)
+
+    if not output:
+        import json
+        print(json.dumps(manifest, indent=2))
+    else:
+        console.print(f"[green]✓[/green] Manifest saved to {output}")
+        console.print(f"  Total files: {manifest['statistics']['total_files']}")
+
+
+# ============================================================================
+# CHAIN-STATE Command
+# ============================================================================
+
+
+@app.command("chain-state")
+def chain_state(
+    command: str = typer.Argument(..., help="Command: generate-id, init, save, load, load-latest, last-stage, is-complete, chain-id, init-state, validate"),
+    stage: Optional[str] = typer.Argument(None, help="Stage name or chain ID (for some commands)"),
+    state_json: Optional[str] = typer.Option(None, "--state", "-s", help="State JSON (for save/validate)"),
+) -> None:
+    """
+    Manage chain state for workflow persistence.
+
+    Tracks progress through multi-stage workflows.
+    """
+    from speckit.commands.chain import run_chain_state_command
+
+    run_chain_state_command(command, stage, state_json)
+
+
 if __name__ == "__main__":
     app()

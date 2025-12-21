@@ -42,18 +42,10 @@ Valid constraint types:
 
 ## Step 2: Run Setup Script
 
-Execute from repo root:
-
-**Unix/Linux/macOS:**
+Execute from repo root (cross-platform):
 
 ```bash
-scripts/bash/setup-plan.sh --json
-```
-
-**Windows:**
-
-```powershell
-scripts/powershell/setup-plan.ps1 -Json
+speckitadv setup-plan --json
 ```
 
 Parse JSON output for:
