@@ -97,16 +97,20 @@ Use **completion-based chunking**, NOT size-based chunking:
 
 ```bash
 # Check if analysis-report.md already exists
+
 if [ -f ".analysis/{project}-{timestamp}/analysis-report.md" ]; then
   # Report exists - check if complete
 fi
+
 ```
 
 **Step 2: Check checkpoints directory**:
 
 ```bash
 # Check for checkpoint markers
+
 ls .analysis/.checkpoints/
+
 ```
 
 **Step 3: Determine resume point**:
@@ -124,6 +128,7 @@ ls .analysis/.checkpoints/
    Resuming from: Chunk 5 (Phase 3 - Positive Findings)
 
    Continuing analysis...
+
    ```
 
 4. Skip completed chunks 1-4
@@ -193,6 +198,7 @@ Complete sections:
        "timestamp": "2025-11-15T10:30:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -202,6 +208,7 @@ Complete sections:
      - Analyzed: [COUNT] configuration files
      - Identified: [TECH STACK SUMMARY]
      - Lines generated: [COUNT]
+
    ```
 
 ### Chunk 2: Phase 2.1 - Controllers & API Endpoints
@@ -233,6 +240,7 @@ Complete **Section 2.1: Controllers Analysis**:
        "timestamp": "2025-11-15T10:45:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -243,6 +251,7 @@ Complete **Section 2.1: Controllers Analysis**:
      - Documented: [COUNT] API endpoints
      - Features extracted: [COUNT]
      - Lines generated: [COUNT]
+
    ```
 
 ### Chunk 3: Phase 2.2 - Services & Business Logic
@@ -272,6 +281,7 @@ Complete **Section 2.2: Services Analysis**:
        "timestamp": "2025-11-15T11:00:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -282,6 +292,7 @@ Complete **Section 2.2: Services Analysis**:
      - Documented: [COUNT] business workflows
      - Integrations found: [COUNT]
      - Lines generated: [COUNT]
+
    ```
 
 ### Chunk 4: Phase 2.3 - Data Layer
@@ -311,6 +322,7 @@ Complete **Section 2.3: Data Models & Repositories**:
        "timestamp": "2025-11-15T11:15:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -320,6 +332,7 @@ Complete **Section 2.3: Data Models & Repositories**:
      - Analyzed: [COUNT] model files, [COUNT] repositories
      - Documented: [COUNT] entities, [COUNT] relationships
      - Lines generated: [COUNT]
+
    ```
 
 ### Chunk 5: Phase 3 - Positive Findings
@@ -348,6 +361,7 @@ Complete **Section 3: What's Working Well**:
        "timestamp": "2025-11-15T11:30:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -357,6 +371,7 @@ Complete **Section 3: What's Working Well**:
      - Documented: [COUNT] positive findings
      - Good patterns found: [COUNT]
      - Lines generated: [COUNT]
+
    ```
 
 ### Chunk 6: Phase 4 - Technical Debt & Issues
@@ -388,6 +403,7 @@ Complete **Section 4: Technical Debt**:
        "timestamp": "2025-11-15T11:45:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -398,6 +414,7 @@ Complete **Section 4: Technical Debt**:
      - Security findings: [COUNT]
      - Code quality issues: [COUNT]
      - Lines generated: [COUNT]
+
    ```
 
 ### Chunk 7: Phase 5 - Upgrade Path Analysis
@@ -430,6 +447,7 @@ Complete **Section 5: Upgrade Paths**:
        "timestamp": "2025-11-15T12:00:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -439,6 +457,7 @@ Complete **Section 5: Upgrade Paths**:
      - Upgrade paths evaluated: [COUNT]
      - Breaking changes identified: [COUNT]
      - Lines generated: [COUNT]
+
    ```
 
 ### Chunk 8: Phases 6-7 - Modernization & Feasibility
@@ -474,6 +493,7 @@ Complete **Sections 6 & 7**:
        "timestamp": "2025-11-15T12:15:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -483,6 +503,7 @@ Complete **Sections 6 & 7**:
      - Recommendations: [COUNT]
      - Feasibility scores calculated
      - Lines generated: [COUNT]
+
    ```
 
 ### Chunk 9: Phases 8-9 - Decision Matrix & Final Recommendations
@@ -520,6 +541,7 @@ Complete **Sections 8 & 9**:
        "status": "complete",
        "all_phases_complete": true
      }
+
      ```
 
 3. **MANDATORY - Display progress and final summary**:
@@ -535,6 +557,7 @@ Complete **Sections 8 & 9**:
       Total chunks: 9
       File path: .analysis/{project}-{timestamp}/analysis-report.md
       Analysis duration: [DURATION]
+
    ```
 
 ---
@@ -597,6 +620,7 @@ Read analysis-report.md and verify:
 
 analysis-report.md is incomplete. Issues found:
 - [List specific missing items from checklist above]
+
 ```
 
 **RECOVERY DECISION TREE**:
@@ -641,6 +665,7 @@ List which phases or quality checks failed verification.
   - Quality failures: [COUNT]
 
   Recommendation: Full regeneration recommended due to extent of issues.
+
   ```
 
 - **Ask user**:
@@ -652,6 +677,7 @@ List which phases or quality checks failed verification.
   [C] Proceed anyway (NOT RECOMMENDED - will cause issues in Stage 5)
 
   Your choice: ___
+
   ```
 
 **3. Execute recovery**:
@@ -683,6 +709,7 @@ analysis-report.md is complete and meets quality standards:
 - Total lines: [COUNT] (comprehensive analysis)
 
 Proceeding to Stage 5 (Artifact Generation)...
+
 ```
 
 **Only after passing verification**: Proceed to Stage 5
@@ -708,7 +735,8 @@ Proceeding to Stage 5 (Artifact Generation)...
   },
   "verification_passed": true
 }
-```text
+
+```
 
 ---
 
@@ -717,6 +745,7 @@ Proceeding to Stage 5 (Artifact Generation)...
 ```text
 STAGE_COMPLETE:REPORT
 STATE_PATH: .analysis/.state/04-report.json
+
 ```
 
 ---

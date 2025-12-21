@@ -1,18 +1,16 @@
 ---
 description: Reverse engineer and analyze an existing project using chained prompts with script-based data extraction
 status: STABLE
-version: 3.0.0-scriptfirst
+version: 3.1.0
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
 1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
-2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
+2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE
 3. Follow all AGENTS.md guidelines for the duration of this command execution
-4. These instructions override any conflicting default behaviors
-5. **DO NOT** forget or ignore these instructions as you work through tasks
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
    "✓ Read AGENTS.md v[X.X] - Following all guidelines"
@@ -21,7 +19,7 @@ version: 3.0.0-scriptfirst
 
 ---
 
-# Analyze Project - Chain Orchestrator
+# Analyze Project - Chain Orchestrator v3.1
 
 ## Overview
 
@@ -33,15 +31,6 @@ This command orchestrates a **script-first chained workflow** for project analys
 2. **Scripts extract data** (files, tech stack, structure) → JSON files
 3. **AI analyzes data** from JSON files and generates recommendations
 
-**Benefits of script-first approach:**
-
-- ✅ 98% completion rate (vs 40% broken old approach)
-- ✅ Deterministic behavior (scripts always produce same JSON)
-- ✅ 90% reduction in AI tokens for data collection
-- ✅ 10x faster data extraction (script vs AI file-by-file)
-- ✅ Testable and debuggable (JSON files show exact data)
-- ✅ Clear separation of concerns (scripts=data, AI=analysis)
-
 ---
 
 ## Chain Architecture
@@ -52,188 +41,275 @@ This command orchestrates a **script-first chained workflow** for project analys
   User → JSON Files → State → State → State → Complete
 ```
 
-### Data Flow
+---
 
-```text
-Stage 1 (AI):      Collect inputs from user
-                   ↓
-                   Run analyze-project.sh/ps1 with inputs
-                   ↓
-Script:            • Enumerate files → file-manifest.json
-                   • Detect tech stack → tech-stack.json
-                   • Categorize files → file-structure.json
-                   • Save metadata → project-metadata.json
-                   ↓
-Stage 1 (AI):      Load JSON files → merge into state → save
-                   ↓
-Stage 2 (AI):      Use JSON data for deep file analysis
-                   ↓
-Stage 3 (AI):      Questionnaire + recommendations
-                   ↓
-Stage 4 (AI):      Generate artifacts
-```
+## Stage Sub-Prompt Reference
 
-### Stages
+Each stage is split into focused sub-prompts (~100-200 lines each) for better AI comprehension and execution.
 
-1. **01-setup-and-scope.md** (~430 lines) - Input collection + script execution + JSON loading
-2. **02-file-analysis.md** (~450 lines) - Deep file scanning using JSON inputs ⭐ CRITICAL
-3. **03a-full-app.md** (~400 lines) - Branch A: Full application analysis
-   **OR 03b-cross-cutting.md** (~350 lines) - Branch B: Cross-cutting concern
-4. **04-report-generation.md** (~300 lines) - Analysis report generation
-5. **05-artifacts.md** (~200 lines) - Common artifacts generation
-6. **06-scope-artifacts.md** (~800 lines) - Scope-specific artifacts generation
+### Stage 1: Setup and Scope
 
-**Note:** Stage 02-structure.md is obsolete (data now in JSON files from script)
+| Sub-Prompt | Purpose |
+|------------|---------|
+| **01a-initialization.md** | AGENTS.md check, toolkit verification, project path input |
+| **01b-input-collection.md** | Scope selection, concern details (if B), additional context |
+| **01c-script-execution.md** | Script execution, JSON loading, state creation |
 
-**Total**: ~2000 lines (20% reduction from v2.0, but more importantly: AI only does analysis)
+### Stage 2: File Analysis
+
+| Sub-Prompt | Purpose |
+|------------|---------|
+| **02a-category-scan.md** | Phase 1 (25%): Quick category scan by priority |
+| **02b-deep-dive.md** | Phase 2 (40%): Deep analysis of critical/high priority |
+| **02c-config-analysis.md** | Phase 3 (15%): Configuration file analysis |
+| **02d-test-audit.md** | Phase 4 (20%): Test coverage + dependency audit |
+| **02e-quality-gates.md** | Quality gate verification before proceeding |
+
+### Stage 3A: Full Application (Scope = A)
+
+| Sub-Prompt | Purpose |
+|------------|---------|
+| **03a1-questions-part1.md** | Questions 1-5: Language, Database, Message Bus, Packages, Deployment |
+| **03a2-questions-part2.md** | Questions 6-10: IaC, Containers, Observability, Security, Testing |
+| **03a3-validation-scoring.md** | Scope validation, complexity & feasibility scoring |
+| **03a4-recommendations.md** | Recommendations, phased plan, state output |
+
+### Stage 3B: Cross-Cutting Concern (Scope = B)
+
+| Sub-Prompt | Purpose |
+|------------|---------|
+| **03b1-abstraction-assessment.md** | Abstraction level + blast radius analysis |
+| **03b2-migration-strategy.md** | Strategy selection + risk assessment |
+| **03b3-effort-success.md** | Effort estimation + success criteria |
+
+### Stage 4: Report Generation
+
+| Sub-Prompt | Purpose |
+|------------|---------|
+| **04a-report-chunks-1-3.md** | Chunks 1-3: Header, TOC, Tech Stack, File Analysis |
+| **04b-report-chunks-4-6.md** | Chunks 4-6: Quality, Dependencies, Security |
+| **04c-report-chunks-7-9.md** | Chunks 7-9: Recommendations, Appendix, Conclusions |
+| **04d-report-verification.md** | Report verification + state output |
+
+### Stage 5: Common Artifacts
+
+| Sub-Prompt | Purpose |
+|------------|---------|
+| **05a-executive-summary.md** | EXECUTIVE-SUMMARY.md, dependency-audit.json, metrics-summary.json |
+
+### Stage 6: Scope-Specific Artifacts
+
+| Sub-Prompt | Condition | Purpose |
+|------------|-----------|---------|
+| **06a-functional-spec-legacy.md** | Scope = A | Legacy system functional spec (5 chunks) |
+| **06b-functional-spec-target.md** | Scope = A | Target system functional spec (5 chunks) |
+| **06c-technical-spec.md** | Scope = A | Technical specification (5 chunks) |
+| **06d-stage-prompts.md** | Scope = A | Spec Kit stage prompts (4 files) |
+| **06e-cross-cutting-artifacts.md** | Scope = B | Abstraction assessment + migration plan + rollback |
 
 ---
 
-## How to Execute
+## Execution Pattern
 
-**Pattern for EVERY stage:**
+**For EVERY sub-prompt:**
 
-1. **Load Stage Prompt**: Use Read tool to load `.specify/prompts/analyze/{stage}.md`
-2. **Read ENTIRE File**: Read all instructions carefully
-3. **Execute ALL Steps**: Follow every step in sequence
-4. **Generate State**: Create state JSON with all required fields
-5. **Save State**: Save to `.analysis/.state/{stage}.json`
-6. **Output Completion**: Output `STAGE_COMPLETE:{STAGE_NAME}`
-7. **Proceed to Next**: Move immediately to next stage
+```text
+1. LOAD    → Read .specify/prompts/analyze/{sub-prompt}.md
+2. PRE-CHECK → Verify previous checkpoint exists and status = "complete"
+3. EXECUTE → Follow ALL steps in sequence
+4. STOP    → WAIT at each ⏸️ [STOP] marker
+5. VERIFY  → Confirm output before proceeding
+6. SAVE    → Create checkpoint file
+7. PROCEED → Move to next sub-prompt
+```
+
+### STOP Marker Protocol
+
+When you encounter:
+
+```text
+---
+⏸️ **[STOP: ACTION_NAME]**
+---
+```
+
+**YOU MUST:**
+1. Complete the action described
+2. Wait for user input if required
+3. Verify output before proceeding
+4. DO NOT skip or rush past STOP markers
+
+---
+
+## Inter-Stage Validation
+
+**Before loading any sub-prompt, verify:**
+
+```text
+1. Previous checkpoint exists
+2. Previous checkpoint status = "complete"
+3. Required state data is available
+```
+
+**IF validation fails:** STOP and return to previous incomplete sub-prompt.
+
+### Checkpoint Verification Pattern
+
+```bash
+# Check checkpoint exists
+cat .analysis/.checkpoints/{stage}-complete.json
+
+# Verify status
+jq '.status' .analysis/.checkpoints/{stage}-complete.json
+# Expected: "complete"
+```
 
 ---
 
 ## Begin Execution
 
-**Start with Stage 1:**
+**Start with Stage 1, Sub-prompt 1A:**
 
-Load and execute: `.specify/prompts/analyze/01-setup-and-scope.md`
+Load and execute: `.specify/prompts/analyze/01a-initialization.md`
 
-This unified stage handles:
+### Execution Flow
 
-- Spec-kit initialization (AGENTS.md, config, guidelines)
-- Project path input
-- Running analyze-project script (creates bootstrap state)
-- Analysis scope selection
-- Additional context gathering
-- File analysis estimation
-
-**Then proceed through remaining stages in sequence.**
-
----
-
-## Stage Reference
-
-| Stage | File | Purpose |
-| ------- | ------ | --------- |
-| **1** | 01-setup-and-scope.md | Input collection + script execution + JSON loading |
-| **2** | 02-file-analysis.md | Deep file analysis using JSON data |
-| **3A** | 03a-full-app.md | Full app (if scope=A) |
-| **3B** | 03b-cross-cutting.md | Cross-cutting (if scope=B) |
-| **4** | 04-report-generation.md | Report generation |
-| **5** | 05-artifacts.md | Common artifacts generation |
-| **6** | 06-scope-artifacts.md | Scope-specific artifacts generation |
-
-**Note:** 02-structure.md is obsolete - structure data now in JSON files from script.
+```text
+01a-initialization.md
+        ↓
+01b-input-collection.md
+        ↓
+01c-script-execution.md
+        ↓
+02a-category-scan.md
+        ↓
+02b-deep-dive.md
+        ↓
+02c-config-analysis.md
+        ↓
+02d-test-audit.md
+        ↓
+02e-quality-gates.md
+        ↓
+   ┌────┴────┐
+   ↓         ↓
+Scope A   Scope B
+   ↓         ↓
+03a1...   03b1...
+03a2...   03b2...
+03a3...   03b3...
+03a4...      ↓
+   ↓         │
+   └────┬────┘
+        ↓
+04a-report-chunks-1-3.md
+        ↓
+04b-report-chunks-4-6.md
+        ↓
+04c-report-chunks-7-9.md
+        ↓
+04d-report-verification.md
+        ↓
+05a-executive-summary.md
+        ↓
+   ┌────┴────┐
+   ↓         ↓
+Scope A   Scope B
+   ↓         ↓
+06a...    06e...
+06b...
+06c...
+06d...
+   ↓         ↓
+   └────┬────┘
+        ↓
+    COMPLETE
+```
 
 ---
 
 ## State Management
 
-Each stage:
-
-1. Loads previous state from `.analysis/.state/{previous-stage}.json`
-2. Executes its specific task
-3. Merges previous state with new data
-4. Saves to `.analysis/.state/{current-stage}.json`
-5. Outputs `STAGE_COMPLETE:{STAGE_NAME}`
-
-**Directory Structure:**
+### Directory Structure
 
 ```text
 .analysis/
-├── .state/                                # Chain state directory (AI-generated)
-│   ├── 00-bootstrap.json                  # Script-generated (chain_id, paths)
-│   ├── 01-setup-and-scope.json            # Stage 1 output (inputs + JSON data merged)
-│   ├── 02-file-analysis.json              # Stage 2 output (patterns, debt, security)
-│   ├── 03a-full-app.json                  # Stage 3A output (if scope=A)
-│   ├── 03b-cross-cutting.json             # Stage 3B output (if scope=B)
+├── .state/                                # Chain state directory
+│   ├── 00-bootstrap.json                  # Script-generated
+│   ├── 01-setup-and-scope.json            # Stage 1 output
+│   ├── 02-file-analysis.json              # Stage 2 output
+│   ├── 03a-full-app.json                  # Stage 3A (if scope=A)
+│   ├── 03b-cross-cutting.json             # Stage 3B (if scope=B)
 │   ├── 04-report.json                     # Stage 4 output
-│   ├── 05-artifacts.json                  # Stage 5 output (common artifacts)
-│   └── 06-scope-artifacts.json            # Stage 6 output (scope-specific)
+│   ├── 05-artifacts.json                  # Stage 5 output
+│   └── 06-scope-artifacts.json            # Stage 6 output
+├── .checkpoints/                          # Sub-prompt checkpoints
+│   ├── 01a-init-complete.json
+│   ├── 01b-inputs-complete.json
+│   ├── 01c-script-complete.json
+│   ├── 02a-category-complete.json
+│   ├── ... (one per sub-prompt)
+│   └── stage-prompts-complete.json
 └── {project}-{timestamp}/                 # Analysis workspace
-    ├── file-manifest.json                 # ✅ Script-generated (all files with metadata)
-    ├── tech-stack.json                    # ✅ Script-generated (detected technologies)
-    ├── file-structure.json                # ✅ Script-generated (categorized files)
-    ├── project-metadata.json              # ✅ Script-generated (consolidated inputs)
-    ├── analysis-report.md                 # AI-generated (Stage 4)
-    ├── EXECUTIVE-SUMMARY.md               # AI-generated (Stage 5)
-    ├── functional-spec-legacy.md          # AI-generated (Stage 6, if scope=A)
-    ├── functional-spec-target.md          # AI-generated (Stage 6, if scope=A)
-    ├── concern-migration-plan.md          # AI-generated (Stage 6, if scope=B)
-    └── ... (other artifacts)
+    ├── file-manifest.json                 # Script-generated
+    ├── tech-stack.json                    # Script-generated
+    ├── file-structure.json                # Script-generated
+    ├── project-metadata.json              # Script-generated
+    ├── analysis-report.md                 # AI-generated
+    ├── EXECUTIVE-SUMMARY.md               # AI-generated
+    ├── functional-spec-legacy.md          # AI-generated (scope=A)
+    ├── functional-spec-target.md          # AI-generated (scope=A)
+    ├── technical-spec.md                  # AI-generated (scope=A)
+    ├── stage-prompts/                     # AI-generated (scope=A)
+    ├── abstraction-assessment.md          # AI-generated (scope=B)
+    ├── concern-migration-plan.md          # AI-generated (scope=B)
+    └── rollback-procedure.md              # AI-generated (scope=B)
 ```
-
-**Key Innovation:**
-- ✅ **Scripts generate JSON data** (deterministic, fast)
-- ✅ **AI loads and analyzes JSON** (no more file-by-file enumeration)
-- ✅ **Clear separation**: Scripts=data extraction, AI=analysis+recommendations
 
 ---
 
 ## Recovery & Resume
 
-**IF** analysis is interrupted:
+**IF analysis is interrupted:**
 
-1. Check last completed checkpoint: `ls -la .analysis/.state/`
-2. Identify last completed stage from filename
-3. Resume from next stage
+1. List checkpoints: `ls -la .analysis/.checkpoints/`
+2. Find last complete checkpoint
+3. Resume from next sub-prompt
 4. Load previous state and continue
 
 **Example:**
 
 ```text
-Last completed: 02-file-analysis.json
-Resume from: Stage 3 (Branch execution)
+Last checkpoint: 02c-config-complete.json
+Resume from: 02d-test-audit.md
 ```
 
 ---
 
 ## Error Handling
 
-**IF stage fails:**
+**IF sub-prompt fails:**
 
-1. Output error with stage name
-2. Save partial state
+1. Output error with sub-prompt name
+2. Save partial checkpoint with status = "failed"
 3. Offer options: Retry / Skip / Debug / Abort
 
-**IF verification gate fails** (Stage 5):
+**IF checkpoint verification fails:**
 
-1. Identify incomplete sections
-2. Regenerate missing/problematic chunks
-3. Re-run verification
-4. Do NOT proceed until verification passes
+1. DO NOT proceed to next sub-prompt
+2. Retry checkpoint creation once
+3. If still failing, STOP and report error
 
 ---
 
-## Key Improvements Over Monolithic
+## Key Metrics
 
-| Metric | Monolithic | Chained | Improvement |
-| -------- | ------------ | --------- | ------------- |
-| **Completion Rate** | 60% | 95% | +58% |
-| **File Analysis Coverage** | 70% | 95% | +36% |
-| **Pattern Extraction** | 60% | 90% | +50% |
-| **Progress Reporting** | 30% | 95% | +217% |
-| **Artifact Generation** | 60% | 95% | +58% |
-| **Error Recovery** | 20% | 85% | +325% |
-
-**Why it works:**
-
-- Each stage gets **fresh attention** (no dilution)
-- **Critical Stage 3** (file analysis) has dedicated focus
-- **State boundaries** prevent information loss
-- **Checkpoint/resume** enables recovery
-- **Progress visibility** keeps user informed
+| Metric | Target |
+|--------|--------|
+| Sub-prompt completion rate | 98% |
+| Checkpoint verification pass | 100% |
+| STOP marker compliance | 100% |
+| State preservation | 100% |
 
 ---
 
@@ -241,29 +317,37 @@ Resume from: Stage 3 (Branch execution)
 
 When complete, all artifacts are saved to: `.analysis/{project}-{timestamp}/`
 
-**Generated files:**
+### Scope A Artifacts
 
-- `analysis-report.md` - Comprehensive analysis (3000+ lines)
+- `analysis-report.md` - Comprehensive analysis
 - `EXECUTIVE-SUMMARY.md` - High-level overview
-- `functional-spec.md` / `concern-migration-plan.md` - Based on scope
-- `technical-spec.md` / `abstraction-assessment.md` - Based on scope
+- `functional-spec-legacy.md` - Legacy system spec
+- `functional-spec-target.md` - Target system spec
+- `technical-spec.md` - Implementation design
+- `stage-prompts/` - Spec Kit integration prompts
 - `dependency-audit.json` - Dependency analysis
 - `metrics-summary.json` - Metrics and statistics
-- And more...
+
+### Scope B Artifacts
+
+- `analysis-report.md` - Comprehensive analysis
+- `EXECUTIVE-SUMMARY.md` - High-level overview
+- `abstraction-assessment.md` - Abstraction analysis
+- `concern-migration-plan.md` - Migration strategy
+- `rollback-procedure.md` - Rollback instructions
+- `dependency-audit.json` - Dependency analysis
+- `metrics-summary.json` - Metrics and statistics
 
 ---
 
 ## Begin
 
-**Execute Stage 1:** Load `.specify/prompts/analyze/01-setup-and-scope.md` and follow all instructions.
+**Execute Stage 1, Sub-prompt 1A:**
 
-**What Stage 1 does:**
+Load `.specify/prompts/analyze/01a-initialization.md` and follow all instructions.
 
-1. Collects user inputs (project path, context, scope, concern details if applicable)
-2. Runs analyze-project script with inputs
-3. Script generates 4 JSON files with all project data
-4. Loads JSON files and merges into state
-5. Displays summary to user
-6. Saves state and proceeds to Stage 2 (02-file-analysis.md)
-
-**Then the AI uses JSON data for deep file analysis and subsequent stages.**
+**Remember:**
+- STOP at every ⏸️ marker
+- Verify checkpoints before proceeding
+- Save state after every sub-prompt
+- Follow inter-stage validation

@@ -67,6 +67,7 @@ Required:
 # Executive Summary: {Project Name}
 
 ## Overview
+
 - Project: {name}
 - Analysis Date: {date}
 - Analysis Scope: {Full Application | Cross-Cutting Concern}
@@ -74,28 +75,33 @@ Required:
 ## Key Findings
 
 ### Current State
+
 - Technology Stack: {primary stack}
 - Project Size: {LOC}, {files} files
 - Test Coverage: {percentage}%
 - Technical Debt: {HIGH/MEDIUM/LOW}
 
 ### Recommendations
+
 - Primary Approach: {Inline Upgrade | Greenfield Rewrite | Hybrid | Migration}
 - Confidence: {percentage}%
 - Estimated Timeline: {months}
 - Estimated Effort: {person-weeks}
 
 ### Business Impact
+
 - Risk Level: {LOW/MEDIUM/HIGH/CRITICAL}
 - Downtime Required: {Yes/No - details}
 - Training Required: {Yes/No - details}
 - Cost Estimate: {range}
 
 ### Next Steps
+
 1. {immediate action 1}
 2. {immediate action 2}
 3. {immediate action 3}
-```text
+
+```
 
 **Progress**: `✓ Generated: EXECUTIVE-SUMMARY.md`
 
@@ -140,7 +146,8 @@ Required:
   ],
   "license_issues": []
 }
-```text
+
+```
 
 **Progress**: `✓ Generated: dependency-audit.json`
 
@@ -188,7 +195,8 @@ Required:
     }
   }
 }
-```text
+
+```
 
 **Progress**: `✓ Generated: metrics-summary.json`
 
@@ -223,6 +231,7 @@ Before proceeding to Stage 6, verify:
   "timestamp": "{ISO-8601}",
   "ready_for_scope_artifacts": true
 }
+
 ```
 
 ---
@@ -232,6 +241,7 @@ Before proceeding to Stage 6, verify:
 ```text
 STAGE_COMPLETE:COMMON_ARTIFACTS
 STATE_PATH: .analysis/.state/05-artifacts.json
+
 ```
 
 ---
