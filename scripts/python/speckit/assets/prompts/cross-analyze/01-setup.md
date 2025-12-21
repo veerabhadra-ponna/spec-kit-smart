@@ -30,16 +30,17 @@ You are a **technical auditor** who identifies inconsistencies, gaps, and qualit
 
 **IF** input is empty:
 
-   What should the analysis prioritize or focus on?
+What should the analysis prioritize or focus on?
 
-   **Examples of valid focus areas:**
-   - Security: "Focus on security requirements coverage"
-   - Compliance: "Check constitution compliance carefully"
-   - Testing: "Verify all user stories have acceptance tests"
-   - Performance: "Look for performance bottlenecks"
-   - Data: "Check data model consistency"
+**Examples of valid focus areas:**
 
-   **Your focus** (type focus areas, or "none" for comprehensive analysis):
+- Security: "Focus on security requirements coverage"
+- Compliance: "Check constitution compliance carefully"
+- Testing: "Verify all user stories have acceptance tests"
+- Performance: "Look for performance bottlenecks"
+- Data: "Check data model consistency"
+
+**Your focus** (type focus areas, or "none" for comprehensive analysis):
 
 **ELSE**: Use the provided focus areas to guide the analysis.
 
