@@ -40,16 +40,10 @@ Examples:
 
 ## Step 2: Run Setup Script
 
-**Unix:**
+Execute (cross-platform):
 
 ```bash
-scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks
-```
-
-**Windows:**
-
-```powershell
-scripts/powershell/check-prerequisites.ps1 -Json -RequireTasks -IncludeTasks
+speckitadv check --json --require-tasks --include-tasks
 ```
 
 Parse: `FEATURE_DIR`, `AVAILABLE_DOCS`

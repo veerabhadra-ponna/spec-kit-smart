@@ -481,9 +481,8 @@ The reverse engineering system uses **AI-guided analysis** with orchestration sc
 2. → User provides PROJECT_PATH and chooses ANALYSIS_SCOPE:
    - **[A] Full Application Modernization** - Comprehensive analysis of entire codebase
    - **[B] Cross-Cutting Concern Migration** - Targeted analysis of specific concern (9 types)
-3. → Orchestration script (cross-platform):
-   - **Unix/Linux/macOS**: `scripts/bash/analyze-project.sh`
-   - **Windows**: `scripts/powershell/analyze-project.ps1`
+3. → Orchestration command (cross-platform):
+   - `speckitadv analyze-project --path <project-path>`
 4. → AI-guided analysis workflow:
    - **Quick tech stack detection** - Identify current technologies
    - **Interactive modernization questions** (10 questions with conditional logic)
@@ -927,30 +926,10 @@ The Corporate Guidelines system was implemented in four phases:
 **Check Compliance:**
 
 ```bash
-./scripts/bash/check-guidelines-compliance.sh [--strict] [--output=json]
+speckitadv generate-guidelines /path/to/sources
 ```
 
-**Compare Guidelines:**
-
-```bash
-./scripts/bash/diff-guidelines.sh [--stack=reactjs] [--all]
-```
-
-**Auto-Fix Violations:**
-
-```bash
-./scripts/bash/autofix-guidelines.sh [--dry-run] [--fixes=security | structure | config]
-```
-
-Fixes: `.env` in `.gitignore`, `.env.example`, `.npmrc`, architecture folders, docs.
-
-**Analytics Dashboard:**
-
-```bash
-./scripts/bash/guidelines-analytics.sh [--save-history] [--output=json | csv]
-```
-
-Shows compliance score (0-100), violations, historical trends, and recommendations.
+The generate-guidelines command analyzes corporate documents and reference projects to extract coding guidelines. Future versions will include compliance checking, diff analysis, auto-fix, and analytics dashboards.
 
 **CI/CD Integration:**
 

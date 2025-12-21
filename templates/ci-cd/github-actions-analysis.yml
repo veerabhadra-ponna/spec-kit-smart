@@ -71,19 +71,14 @@ jobs:
           # Install Python tools
           pip install pip-audit
 
-      - name: Clone spec-kit-smart
+      - name: Install speckitadv CLI
         run: |
-          git clone https://github.com/veerabhadra-ponna/spec-kit-smart.git /tmp/spec-kit
-          chmod +x /tmp/spec-kit/scripts/bash/analyze-project.sh
+          pip install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git#subdirectory=scripts/python
 
       - name: Run analysis
         id: analysis
         run: |
-          DEPTH="${{ github.event.inputs.analysis_depth || env.ANALYSIS_DEPTH }}"
-
-          /tmp/spec-kit/scripts/bash/analyze-project.sh \
-            ${{ github.workspace }} \
-            --depth "$DEPTH" \
+          speckitadv analyze-project --path ${{ github.workspace }} \
             --output analysis-results
 
       - name: Upload analysis reports

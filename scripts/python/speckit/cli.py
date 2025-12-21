@@ -339,15 +339,26 @@ def init(
 
 
 @app.command("check")
-def check() -> None:
+def check(
+    json_output: bool = typer.Option(False, "--json", help="Output in JSON format"),
+    paths_only: bool = typer.Option(False, "--paths-only", help="Only output paths"),
+    require_tasks: bool = typer.Option(False, "--require-tasks", help="Require tasks.md to exist"),
+    include_tasks: bool = typer.Option(False, "--include-tasks", help="Include tasks content in output"),
+) -> None:
     """
-    Check that required tools are installed.
+    Check that required tools are installed and find feature paths.
 
     Verifies git and AI agent CLI tools.
+    Also discovers current feature directory for workflow commands.
     """
     from speckit.setup.check_cmd import run_check
 
-    run_check()
+    run_check(
+        output_json=json_output,
+        paths_only=paths_only,
+        require_tasks=require_tasks,
+        include_tasks=include_tasks,
+    )
 
 
 # ============================================================================

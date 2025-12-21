@@ -335,11 +335,13 @@ def update_agent_file(
     in_tech_section = False
     in_changes_section = False
     tech_added = False
-    changes_added = False
     changes_count = 0
 
-    new_tech_entry = f"- {tech_stack} ({branch})" if tech_stack else None
-    new_change_entry = f"- {branch}: Added {tech_stack}" if tech_stack else None
+    new_tech_entry = f"- {tech_stack} ({branch})\n" if tech_stack else None
+    new_change_entry = f"- {branch}: Added {tech_stack}\n" if tech_stack else None
+
+    # Check if the new tech entry already exists (avoid duplicates)
+    tech_already_exists = new_tech_entry and new_tech_entry.strip() in content
 
     for line in lines:
         # Update timestamp
@@ -354,32 +356,50 @@ def update_agent_file(
 
         if in_tech_section:
             if line.startswith("## "):
-                # End of section - add new entry before it
-                if not tech_added and new_tech_entry and new_tech_entry not in content:
-                    new_lines.append(new_tech_entry + "\n")
+                # End of section - add new entry before next heading if not added
+                if not tech_added and new_tech_entry and not tech_already_exists:
+                    new_lines.append(new_tech_entry)
+                    new_lines.append("\n")  # Blank line before heading
                 in_tech_section = False
-            elif line.strip() == "" and not tech_added and new_tech_entry:
-                if new_tech_entry not in content:
-                    new_lines.append(new_tech_entry + "\n")
-                tech_added = True
+                # Fall through to append the heading line
+            elif line.strip() == "":
+                # Blank line - add new entry before it if not added yet
+                if not tech_added and new_tech_entry and not tech_already_exists:
+                    new_lines.append(new_tech_entry)
+                    tech_added = True
+                # Preserve the blank line
+                new_lines.append(line)
+                continue
+            elif line.startswith("- "):
+                # Existing tech entry - always preserve it
+                new_lines.append(line)
+                continue
 
         # Handle Recent Changes section
         if line.strip() == "## Recent Changes":
             new_lines.append(line)
             in_changes_section = True
-            # Add new change right after heading
+            # Add new change right after heading (before existing entries)
             if new_change_entry:
-                new_lines.append(new_change_entry + "\n")
-                changes_added = True
+                new_lines.append("\n")  # Blank line after heading
+                new_lines.append(new_change_entry)
             continue
 
         if in_changes_section:
             if line.startswith("## "):
                 in_changes_section = False
+                # Fall through to append the heading
             elif line.startswith("- "):
                 changes_count += 1
                 if changes_count > 2:
-                    continue  # Skip old entries beyond 2
+                    continue  # Keep only 3 most recent changes (including the new one)
+                # Preserve existing change entries
+                new_lines.append(line)
+                continue
+            elif line.strip() == "":
+                # Skip extra blank lines in changes section
+                if changes_count == 0:
+                    continue  # Skip blank line right after heading (we added our own)
 
         new_lines.append(line)
 

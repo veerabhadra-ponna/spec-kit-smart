@@ -47,23 +47,13 @@ Search for AGENTS.md in the locations listed above.
 
 ## Step 2: Verify Toolkit Availability
 
-Check that required scripts exist:
-
-**For Unix/Linux/macOS:**
+Check that the speckitadv CLI is available:
 
 ```bash
-ls -la .specify/scripts/bash/analyze-project.sh
-ls -la .specify/scripts/bash/enumerate-project.sh
-
+speckitadv --version
 ```
 
-**For Windows:**
-
-```powershell
-Test-Path .specify\scripts\powershell\analyze-project.ps1
-Test-Path .specify\scripts\powershell\enumerate-project.ps1
-
-```
+This provides the cross-platform commands for project analysis and enumeration.
 
 ---
 ⏸️ **[STOP: TOOLKIT_CHECK]**

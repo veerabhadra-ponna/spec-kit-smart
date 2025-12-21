@@ -26,34 +26,15 @@ Execute the analyze-project script with collected inputs, then load and merge th
 
 ## Step 1: Execute Analyze-Project Script
 
-Detect OS and run the appropriate script with collected inputs.
-
-### For Unix/Linux/macOS (bash)
+Run the cross-platform CLI command with collected inputs:
 
 ```bash
-.specify/scripts/bash/analyze-project.sh "$PROJECT_PATH" \
-  ${ADDITIONAL_CONTEXT:+--context "$ADDITIONAL_CONTEXT"} \
-  ${ANALYSIS_SCOPE:+--scope "$ANALYSIS_SCOPE"} \
-  ${CONCERN_TYPE:+--concern-type "$CONCERN_TYPE"} \
-  ${CURRENT_IMPL:+--current-impl "$CURRENT_IMPL"} \
-  ${TARGET_IMPL:+--target-impl "$TARGET_IMPL"}
-
-```
-
-### For Windows (PowerShell)
-
-```powershell
-$params = @{
-    Project = "$PROJECT_PATH"
-}
-if ($ADDITIONAL_CONTEXT) { $params.Context = $ADDITIONAL_CONTEXT }
-if ($ANALYSIS_SCOPE) { $params.Scope = $ANALYSIS_SCOPE }
-if ($CONCERN_TYPE) { $params.ConcernType = $CONCERN_TYPE }
-if ($CURRENT_IMPL) { $params.CurrentImpl = $CURRENT_IMPL }
-if ($TARGET_IMPL) { $params.TargetImpl = $TARGET_IMPL }
-
-.specify\scripts\powershell\analyze-project.ps1 @params
-
+speckitadv analyze-project --path "$PROJECT_PATH" \
+  --context "$ADDITIONAL_CONTEXT" \
+  --scope "$ANALYSIS_SCOPE" \
+  --concern-type "$CONCERN_TYPE" \
+  --current-impl "$CURRENT_IMPL" \
+  --target-impl "$TARGET_IMPL"
 ```
 
 ---

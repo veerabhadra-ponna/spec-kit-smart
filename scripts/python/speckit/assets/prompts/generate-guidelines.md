@@ -1,8 +1,6 @@
 ---
 description: Generate or update corporate coding guidelines by analyzing corporate documents and reference projects
-scripts:
-  bash: scripts/bash/generate-guidelines.sh "$1"
-  powershell: scripts/powershell/generate-guidelines.ps1 "$1"
+command: speckitadv generate-guidelines "$1"
 status: EXPERIMENTAL
 version: 1.0.0-alpha
 ---
@@ -204,42 +202,19 @@ $ARGUMENTS
 
 Parse arguments from interactive mode or $ARGUMENTS. Detect your operating system and run the appropriate script from repo root.
 
-**Environment Variable Override (Optional)**:
-
-First, check if the user has set `SPEC_KIT_PLATFORM` environment variable:
-
-- If `SPEC_KIT_PLATFORM=unix` → use bash scripts (skip auto-detection)
-- If `SPEC_KIT_PLATFORM=windows` → use PowerShell scripts (skip auto-detection)
-- If not set or `auto` → proceed with auto-detection below
-
-**Auto-detect Operating System**:
-
-- Unix/Linux/macOS: Run `uname`. If successful → use bash
-- Windows: Check `$env:OS`. If "Windows_NT" → use PowerShell
-
-**For Unix/Linux/macOS (bash)**:
+**Run the cross-platform command**:
 
 ```bash
-{SCRIPT_BASH}
+speckitadv generate-guidelines {{SOURCES_PATH}}
 ```
 
-**For Windows (PowerShell)**:
+**Command arguments**:
 
-```powershell
-{SCRIPT_POWERSHELL}
-```
+- The command accepts SOURCES_PATH as the first positional argument
+- Example invocation: `speckitadv generate-guidelines /path/to/sources`
+- The command is cross-platform and works on Windows, macOS, and Linux
 
-**Script arguments**:
-
-- Both scripts accept SOURCES_PATH as the first positional argument
-- Example invocations:
-  - Bash: `scripts/bash/generate-guidelines.sh /path/to/sources`
-  - PowerShell: `scripts/powershell/generate-guidelines.ps1 /path/to/sources`
-- **Important**: Parameters are defined in the YAML header at the top of this file
-- The {SCRIPT_BASH} and {SCRIPT_POWERSHELL} placeholders automatically expand to include parameters
-- DO NOT append additional parameters when using these placeholders
-
-The script will:
+The command will:
 
 - Enumerate all files in SOURCES_PATH
 - Categorize into docs/ and reference-projects/

@@ -19,6 +19,8 @@ from speckit.setup.config import (
     AGENT_CONFIG,
     WORKFLOW_COMMANDS,
     get_launcher_content,
+    get_launcher_extension,
+    get_launcher_format,
     get_agent_commands_path,
     get_all_agents,
 )
@@ -209,13 +211,16 @@ def create_project_structure(
         config_content = get_default_config()
         config_file.write_text(config_content, encoding="utf-8")
 
-    # Write launcher files
+    # Write launcher files with correct format for agent
+    launcher_ext = get_launcher_extension(agent)
+    launcher_format = get_launcher_format(agent)
+
     for command, description in WORKFLOW_COMMANDS:
-        launcher_file = commands_path / f"speckitadv.{command}.md"
+        launcher_file = commands_path / f"speckitadv.{command}{launcher_ext}"
         if launcher_file.exists() and not force:
             console.print(f"[yellow]Skipping existing:[/yellow] {launcher_file.name}")
             continue
-        content = get_launcher_content(command, description)
+        content = get_launcher_content(command, description, launcher_format)
         launcher_file.write_text(content, encoding="utf-8")
 
     # Write AGENTS.md
@@ -261,13 +266,14 @@ def show_success_message(project_path: Path, agent: str, is_current_dir: bool = 
     """Display success message with next steps."""
     agent_config = AGENT_CONFIG[agent]
     folder, subfolder = get_agent_commands_path(agent)
+    launcher_ext = get_launcher_extension(agent)
 
     # Build tree of created structure
     tree = Tree(f"[cyan]{project_path.name}/[/cyan]")
     agent_branch = tree.add(f"[cyan]{folder}/[/cyan]")
     cmd_branch = agent_branch.add(f"[cyan]{subfolder}/[/cyan]")
     for command, _ in WORKFLOW_COMMANDS:
-        cmd_branch.add(f"speckitadv.{command}.md")
+        cmd_branch.add(f"speckitadv.{command}{launcher_ext}")
     memory_branch = tree.add("[cyan]memory/[/cyan]")
     memory_branch.add("config.json")
     tree.add("AGENTS.md")

@@ -40,16 +40,10 @@ You are a **skilled business analyst** uncovering hidden assumptions.
 
 ## Step 2: Run Setup Script
 
-**Unix:**
+Execute (cross-platform):
 
 ```bash
-scripts/bash/check-prerequisites.sh --json --paths-only
-```
-
-**Windows:**
-
-```powershell
-scripts/powershell/check-prerequisites.ps1 -Json -PathsOnly
+speckitadv check --json --paths-only
 ```
 
 Parse: `FEATURE_DIR`, `FEATURE_SPEC`

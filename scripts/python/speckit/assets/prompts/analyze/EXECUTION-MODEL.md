@@ -25,16 +25,15 @@ This document explains **how the sub-prompt architecture executes** in the Claud
 
 ```
 
-### 2. Script Execution (Pre-AI)
+### 2. CLI Execution (Pre-AI)
 
-The bash/PowerShell script runs FIRST:
+The speckitadv CLI command runs FIRST:
 
 ```bash
-.specify/scripts/bash/analyze-project.sh /path/to/project
-
+speckitadv analyze-project --path /path/to/project
 ```
 
-**Script Actions**:
+**Command Actions**:
 
 1. Validates project path
 2. Runs `enumerate-project` to scan all files

@@ -36,16 +36,10 @@ You are a **rigorous QA engineer** treating specs as code that needs testing.
 
 ## Step 2: Run Setup Script
 
-**Unix:**
+Execute (cross-platform):
 
 ```bash
-scripts/bash/check-prerequisites.sh --json
-```
-
-**Windows:**
-
-```powershell
-scripts/powershell/check-prerequisites.ps1 -Json
+speckitadv check --json
 ```
 
 Parse: `FEATURE_DIR`, `AVAILABLE_DOCS`

@@ -41,18 +41,10 @@ Examples:
 
 ## Step 2: Run Setup Script
 
-Execute from repo root:
-
-**Unix:**
+Execute from repo root (cross-platform):
 
 ```bash
-scripts/bash/check-prerequisites.sh --json
-```
-
-**Windows:**
-
-```powershell
-scripts/powershell/check-prerequisites.ps1 -Json
+speckitadv check --json
 ```
 
 Parse: `FEATURE_DIR`, `AVAILABLE_DOCS`

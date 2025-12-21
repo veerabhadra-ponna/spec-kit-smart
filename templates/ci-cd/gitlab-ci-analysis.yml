@@ -38,15 +38,12 @@ codebase_analysis:
     # Install Python tools
     - pip install pip-audit
 
-    # Clone spec-kit-smart
-    - git clone https://github.com/veerabhadra-ponna/spec-kit-smart.git /tmp/spec-kit
-    - chmod +x /tmp/spec-kit/scripts/bash/analyze-project.sh
+    # Install speckitadv CLI
+    - pip install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git#subdirectory=scripts/python
 
   script:
     - |
-      /tmp/spec-kit/scripts/bash/analyze-project.sh \
-        ${CI_PROJECT_DIR} \
-        --depth ${ANALYSIS_DEPTH} \
+      speckitadv analyze-project --path ${CI_PROJECT_DIR} \
         --output analysis-results
 
   artifacts:
