@@ -52,31 +52,38 @@ Create: `.analysis/{dir}/stage-prompts/`
 **Template:** `.specify/templates/analyze/stage-prompt-templates/constitution-prompt-template.md`
 
 **Content to extract:**
+
 ```markdown
 # Project Constitution: {Project Name}
 
 ## Core Values
+
 {Extract from legacy code patterns and documentation}
 
 ## Coding Standards
+
 - Naming conventions observed in legacy
 - Code organization patterns
 - Documentation style
 
 ## Architecture Decisions
+
 | Decision | Context | Rationale |
 |----------|---------|-----------|
 | {ADR from legacy} | {why} | {justification} |
 
 ## Quality Standards
+
 - Test coverage expectations
 - Performance benchmarks
 - Security requirements
 
 ## Legacy Preservation
+
 {Critical behaviors that MUST be preserved exactly}
 - {behavior 1} (Source: {file}:{line})
 - {behavior 2} (Source: {file}:{line})
+
 ```
 
 Write to: `.analysis/{dir}/stage-prompts/constitution-prompt.md`
@@ -95,21 +102,26 @@ Write to: `.analysis/{dir}/stage-prompts/constitution-prompt.md`
 **Template:** `.specify/templates/analyze/stage-prompt-templates/clarify-prompt-template.md`
 
 **Content to extract:**
+
 ```markdown
 # Clarification Guide: {Project Name}
 
 ## Legacy Code References
+
 When clarifying ambiguous requirements, reference these legacy implementations:
 
 ### Authentication & Authorization
+
 - Source: {auth files with line numbers}
 - Key behaviors: {list}
 
 ### Business Logic
+
 - Source: {business logic files with line numbers}
 - Critical rules: {list}
 
 ### Data Validation
+
 - Source: {validation files with line numbers}
 - Validation patterns: {list}
 
@@ -120,11 +132,14 @@ When clarifying ambiguous requirements, reference these legacy implementations:
 | "{ambiguous text}" | {what legacy does} | {clarification} |
 
 ## Edge Cases Discovered
+
 - {edge case 1}: Handled by {file}:{line}
 - {edge case 2}: Handled by {file}:{line}
 
 ## Questions for Stakeholders
+
 {List of unresolved ambiguities requiring business decision}
+
 ```
 
 Write to: `.analysis/{dir}/stage-prompts/clarify-prompt.md`
@@ -143,40 +158,49 @@ Write to: `.analysis/{dir}/stage-prompts/clarify-prompt.md`
 **Template:** `.specify/templates/analyze/stage-prompt-templates/tasks-prompt-template.md`
 
 **Content to extract:**
+
 ```markdown
 # Task Breakdown: {Project Name}
 
 ## Migration Phases
 
 ### Phase 1: Foundation (50% value)
+
 | Task | Legacy Source | Complexity | Effort |
 |------|--------------|------------|--------|
 | {task} | {file}:{line} | {H/M/L} | {days} |
 
 ### Phase 2: Core Migration (30% value)
+
 | Task | Legacy Source | Complexity | Effort |
 |------|--------------|------------|--------|
 | {task} | {file}:{line} | {H/M/L} | {days} |
 
 ### Phase 3: Complete Migration (15% value)
+
 | Task | Legacy Source | Complexity | Effort |
 |------|--------------|------------|--------|
 | {task} | {file}:{line} | {H/M/L} | {days} |
 
 ### Phase 4: Optimization (5% value)
+
 | Task | Legacy Source | Complexity | Effort |
 |------|--------------|------------|--------|
 | {task} | {file}:{line} | {H/M/L} | {days} |
 
 ## Complexity Hotspots
+
 {Files/components with highest complexity scores}
 - {file}: Complexity {score}, Effort: {estimate}
 
 ## Dependencies
+
 {Task dependencies and ordering constraints}
 
 ## Risk Mitigation Tasks
+
 {Additional tasks to reduce migration risk}
+
 ```
 
 Write to: `.analysis/{dir}/stage-prompts/tasks-prompt.md`
@@ -195,12 +219,14 @@ Write to: `.analysis/{dir}/stage-prompts/tasks-prompt.md`
 **Template:** `.specify/templates/analyze/stage-prompt-templates/implement-prompt-template.md`
 
 **Content to extract:**
+
 ```markdown
 # Implementation Guide: {Project Name}
 
 ## Must-Preserve Behaviors
 
 ### CRITICAL - Exact Preservation Required
+
 These behaviors must be implemented EXACTLY as in legacy:
 
 | Behavior | Legacy Source | Why Critical |
@@ -208,29 +234,36 @@ These behaviors must be implemented EXACTLY as in legacy:
 | {behavior} | {file}:{line} | {reason} |
 
 ### Code Patterns to Follow
+
 {Legacy patterns that should be replicated}
 
-```{language}
+```
 // Legacy Pattern: {name}
 // Source: {file}:{line}
 {code snippet}
-```
+
+```text
 
 ## Edge Cases Catalog
+
 | Scenario | Legacy Handling | Test Case |
 |----------|-----------------|-----------|
 | {edge case} | {behavior} | {test ref} |
 
 ## API Contract Preservation
+
 {Endpoints/interfaces that must maintain backwards compatibility}
 
 ## Data Migration Notes
+
 {Critical data handling from legacy that affects implementation}
 
 ## Testing Checkpoints
+
 | Checkpoint | Validation | Legacy Reference |
 |------------|------------|------------------|
 | {checkpoint} | {how to verify} | {file}:{line} |
+
 ```
 
 Write to: `.analysis/{dir}/stage-prompts/implement-prompt.md`
@@ -256,6 +289,7 @@ Write: `.analysis/.checkpoints/stage-prompts-complete.json`
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -291,6 +325,7 @@ Write: `.analysis/.checkpoints/stage-prompts-complete.json`
   "total_scope_artifacts": 7,
   "all_artifacts_complete": true
 }
+
 ```
 
 Write to: `.analysis/.state/06-scope-artifacts.json`
@@ -299,7 +334,7 @@ Write to: `.analysis/.state/06-scope-artifacts.json`
 
 ## Completion Marker
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   STAGE COMPLETE: SCOPE_ARTIFACTS (Full Application)
 
@@ -318,13 +353,14 @@ Write to: `.analysis/.state/06-scope-artifacts.json`
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:SCOPE_ARTIFACTS
+
 ```
 
 ---
 
 ## Analysis Chain Complete
 
-```
+```text
 ═══════════════════════════════════════════════════════════
            ANALYSIS CHAIN COMPLETE
 ═══════════════════════════════════════════════════════════
@@ -360,4 +396,5 @@ Next Steps:
   3. Begin implementation using /speckit.implement
 
 ═══════════════════════════════════════════════════════════
+
 ```

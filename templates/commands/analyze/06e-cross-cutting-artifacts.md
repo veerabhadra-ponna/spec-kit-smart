@@ -49,10 +49,12 @@ From Stage 3B state, extract:
 **Template:** Read `.specify/templates/analyze/concern-analysis-template.md`
 
 Generate:
+
 ```markdown
 # Abstraction Assessment: {Concern Type}
 
 ## Overview
+
 - **Concern:** {concern_type}
 - **Current Implementation:** {current_implementation}
 - **Target Implementation:** {target_implementation}
@@ -62,15 +64,18 @@ Generate:
 ## Abstraction Analysis
 
 ### Current Abstraction Level
+
 - **Score:** {score}/10
 - **Level:** {HIGH | MEDIUM | LOW}
 
 ### Patterns Found
+
 | Pattern | Location | Quality |
 |---------|----------|---------|
 | {pattern} | {file}:{line} | {good/poor} |
 
 ### Issues Found
+
 | Issue | Impact | Location |
 |-------|--------|----------|
 | {issue} | {impact} | {file}:{line} |
@@ -78,11 +83,13 @@ Generate:
 ## Touch Points Analysis
 
 ### Direct Usage ({count} files)
+
 | File | Usage Type | Lines |
 |------|------------|-------|
 | {file} | {import/call/config} | {lines} |
 
 ### Indirect Dependencies ({count} files)
+
 | File | Dependency Path | Impact |
 |------|-----------------|--------|
 | {file} | {path} | {impact} |
@@ -90,15 +97,18 @@ Generate:
 ## Coupling Analysis
 
 ### Coupling Type
+
 - **Classification:** {TIGHT | MODERATE | LOOSE}
 - **Evidence:** {description}
 
 ### Dependency Graph
+
 {Mermaid diagram showing dependencies}
 
 ## Refactoring Recommendations
 
 ### Before Migration (if abstraction < 7)
+
 1. {refactoring step 1}
    - Files: {files}
    - Effort: {estimate}
@@ -107,10 +117,12 @@ Generate:
    - Effort: {estimate}
 
 ### Interface Design
-```{language}
+
+```
 // Recommended abstraction interface
 {interface code}
-```
+
+```text
 
 ## Migration Readiness
 
@@ -124,10 +136,13 @@ Generate:
 | Team familiarity | {✓/✗} | {notes} |
 
 ### Blockers
+
 {List any blockers that must be resolved before migration}
 
 ### Recommendations
+
 {Prioritized list of pre-migration tasks}
+
 ```
 
 Write to: `.analysis/{dir}/abstraction-assessment.md`
@@ -150,6 +165,7 @@ Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -184,6 +200,7 @@ Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
 {explanation from Stage 3B}
 
 **Alternatives Considered:**
+
 | Strategy | Score | Why Not Selected |
 |----------|-------|------------------|
 | {alt1} | {score} | {reason} |
@@ -192,6 +209,7 @@ Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
 ## 3. Phased Plan
 
 ### Phase 1: Foundation (50% value)
+
 - **Duration:** {weeks} weeks
 - **Focus:** {description}
 - **Deliverables:**
@@ -200,6 +218,7 @@ Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
 - **Milestone:** {milestone}
 
 ### Phase 2: Expansion (30% value)
+
 - **Duration:** {weeks} weeks
 - **Focus:** {description}
 - **Deliverables:**
@@ -208,6 +227,7 @@ Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
 - **Milestone:** {milestone}
 
 ### Phase 3: Completion (15% value)
+
 - **Duration:** {weeks} weeks
 - **Focus:** {description}
 - **Deliverables:**
@@ -216,22 +236,26 @@ Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
 - **Milestone:** {milestone}
 
 ### Phase 4: Optimization (5% value)
+
 - **Duration:** {weeks} weeks
 - **Focus:** {description}
 - **Deliverables:**
   - {deliverable 1}
   - {deliverable 2}
 - **Milestone:** {milestone}
+
 ```
 
 Write to: `.analysis/{dir}/concern-migration-plan.md`
 
 **Output:**
-```
+
+```text
 concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
   - Strategy: {strategy}
   - Phases: 4
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -245,42 +269,51 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 ## 4. Environment Setup
 
 ### Prerequisites
+
 - [ ] {prerequisite 1}
 - [ ] {prerequisite 2}
 
 ### Setup Steps
+
 1. {step 1}
 2. {step 2}
 3. {step 3}
 
 ### Configuration
-```{format}
-{configuration example}
+
 ```
+{configuration example}
+
+```text
 
 ## 5. Code Changes
 
 ### Files to Modify
+
 | File | Change Type | Description |
 |------|-------------|-------------|
 | {file} | {add/modify/delete} | {description} |
 
 ### Migration Pattern
-```{language}
+
+```
 // Before (Legacy)
 {legacy code}
 
 // After (Target)
 {target code}
-```
+
+```text
 
 ### Key Transformations
+
 1. {transformation 1}
 2. {transformation 2}
 
 ## 6. Testing Strategy
 
 ### Test Categories
+
 | Type | Scope | Automation |
 |------|-------|------------|
 | Unit | {scope} | {yes/no} |
@@ -288,20 +321,25 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 | E2E | {scope} | {yes/no} |
 
 ### Parallel Testing
+
 {How to run legacy and target in parallel for comparison}
 
 ### Rollback Test
+
 {How to verify rollback works before going live}
+
 ```
 
 Append to: `.analysis/{dir}/concern-migration-plan.md`
 
 **Output:**
-```
+
+```text
 concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
   - Files to modify: [COUNT]
   - Test types: [COUNT]
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -315,15 +353,18 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 ## 7. Deployment Strategy
 
 ### Deployment Approach
+
 - **Method:** {Blue-Green | Canary | Rolling | Big Bang}
 - **Rationale:** {why this approach}
 
 ### Deployment Steps
+
 1. {step 1}
 2. {step 2}
 3. {step 3}
 
 ### Feature Flags
+
 | Flag | Purpose | Default |
 |------|---------|---------|
 | {flag} | {purpose} | {on/off} |
@@ -331,15 +372,18 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 ## 8. Monitoring & Alerting
 
 ### Key Metrics
+
 | Metric | Baseline | Target | Alert Threshold |
 |--------|----------|--------|-----------------|
 | {metric} | {current} | {target} | {threshold} |
 
 ### Dashboards
+
 - {dashboard 1}: {purpose}
 - {dashboard 2}: {purpose}
 
 ### Alerts
+
 | Alert | Condition | Severity | Action |
 |-------|-----------|----------|--------|
 | {alert} | {condition} | {sev} | {action} |
@@ -347,17 +391,20 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 ## 9. Success Criteria
 
 ### Functional Criteria
+
 - [ ] All {count} components migrated
 - [ ] 100% feature parity
 - [ ] Zero data loss
 - [ ] All tests passing
 
 ### Performance Criteria
+
 - [ ] Response time: ≤ {threshold}ms
 - [ ] Throughput: ≥ {threshold} req/sec
 - [ ] Error rate: < 0.1%
 
 ### Operational Criteria
+
 - [ ] Monitoring operational
 - [ ] Alerting configured
 - [ ] Rollback tested
@@ -366,16 +413,20 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 ## 10. Post-Migration
 
 ### Cleanup Tasks
+
 1. {cleanup task 1}
 2. {cleanup task 2}
 
 ### Documentation Updates
+
 - [ ] Architecture docs
 - [ ] Runbooks
 - [ ] API docs
 
 ### Lessons Learned
+
 {Template for post-migration retrospective}
+
 ```
 
 Append to: `.analysis/{dir}/concern-migration-plan.md`
@@ -383,12 +434,14 @@ Append to: `.analysis/{dir}/concern-migration-plan.md`
 **Verify:** Read complete file, confirm all 10 sections present.
 
 **Output:**
-```
+
+```text
 concern-migration-plan.md Chunk 3/3 complete: Deployment + Operations + Success
   - Lines: [COUNT]
 
 concern-migration-plan.md COMPLETE (3/3 chunks)
    Total lines: [COUNT]
+
 ```
 
 ---
@@ -406,6 +459,7 @@ Write: `.analysis/.checkpoints/migration-plan-complete.json`
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -421,6 +475,7 @@ Generate detailed rollback procedure:
 # Rollback Procedure: {Concern Type} Migration
 
 ## Overview
+
 - **Migration:** {current} → {target}
 - **Last Updated:** {date}
 - **Owner:** {team/person}
@@ -428,11 +483,13 @@ Generate detailed rollback procedure:
 ## When to Rollback
 
 ### Automatic Rollback Triggers
+
 - Error rate > {threshold}%
 - Response time > {threshold}ms for > {duration}
 - {Critical metric} breach
 
 ### Manual Rollback Triggers
+
 - Customer-reported critical issue
 - Data integrity concern
 - Security vulnerability discovered
@@ -447,60 +504,74 @@ Generate detailed rollback procedure:
 ## Rollback Steps
 
 ### Step 1: Initiate Rollback
-```bash
-{command or action}
+
 ```
+{command or action}
+
+```text
 - **Expected Duration:** {time}
 - **Verification:** {how to verify}
 
 ### Step 2: Switch Traffic
-```bash
-{command or action}
+
 ```
+{command or action}
+
+```text
 - **Expected Duration:** {time}
 - **Verification:** {how to verify}
 
 ### Step 3: Disable New Implementation
-```bash
-{command or action}
+
 ```
+{command or action}
+
+```text
 - **Expected Duration:** {time}
 - **Verification:** {how to verify}
 
 ### Step 4: Verify Legacy Active
-```bash
-{command or action}
+
 ```
+{command or action}
+
+```text
 - **Expected Duration:** {time}
 - **Verification:** {how to verify}
 
 ## Post-Rollback Verification
 
 ### Functional Verification
+
 - [ ] Core functionality working
 - [ ] No error spikes
 - [ ] Data integrity confirmed
 
 ### Performance Verification
+
 - [ ] Response times normal
 - [ ] Throughput normal
 - [ ] No resource issues
 
 ### Monitoring Verification
+
 - [ ] All dashboards green
 - [ ] No active alerts
 
 ## Post-Rollback Actions
 
 ### Immediate (within 1 hour)
+
 1. {action 1}
 2. {action 2}
 
 ### Short-term (within 24 hours)
+
 1. {action 1}
 2. {action 2}
 
 ### Analysis Required
+
 1. Root cause analysis
 2. Fix identification
 3. Re-migration planning
@@ -516,6 +587,7 @@ Generate detailed rollback procedure:
 | Date | Change | Author |
 |------|--------|--------|
 | {date} | Initial version | {author} |
+
 ```
 
 Write to: `.analysis/{dir}/rollback-procedure.md`
@@ -543,6 +615,7 @@ Write: `.analysis/.checkpoints/cross-cutting-artifacts-complete.json`
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -574,6 +647,7 @@ Write: `.analysis/.checkpoints/cross-cutting-artifacts-complete.json`
   "total_scope_artifacts": 3,
   "all_artifacts_complete": true
 }
+
 ```
 
 Write to: `.analysis/.state/06-scope-artifacts.json`
@@ -582,7 +656,7 @@ Write to: `.analysis/.state/06-scope-artifacts.json`
 
 ## Completion Marker
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   STAGE COMPLETE: SCOPE_ARTIFACTS (Cross-Cutting Concern)
 
@@ -601,13 +675,14 @@ Write to: `.analysis/.state/06-scope-artifacts.json`
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:SCOPE_ARTIFACTS
+
 ```
 
 ---
 
 ## Analysis Chain Complete
 
-```
+```text
 ═══════════════════════════════════════════════════════════
            ANALYSIS CHAIN COMPLETE
 ═══════════════════════════════════════════════════════════
@@ -642,4 +717,5 @@ Next Steps:
   3. Keep rollback-procedure.md accessible during migration
 
 ═══════════════════════════════════════════════════════════
+
 ```

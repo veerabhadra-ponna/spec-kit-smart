@@ -116,6 +116,7 @@ Options:
 - [C] Other (please specify)
 
 Your choice: ___
+
 ```
 
 **REMEMBER**: Ask 5 clarification questions rather than make 1 wrong assumption.
@@ -175,6 +176,7 @@ Based on detected legacy stack, please answer the following:
    - [C] MongoDB [latest stable]
    - [D] Other (please specify)
    Your choice: ___
+
 ```
 
 3\. Message Bus/Queue [CONDITIONAL]:
@@ -201,6 +203,7 @@ Based on detected legacy stack, please answer the following:
       - [E] Cloud-native (Azure Service Bus / AWS SQS / Google Pub/Sub)
       - [F] Other (please specify)
       Your choice (or press Enter to skip): ___
+
       ```
 
    **ELSE** (message queue detected):
@@ -214,6 +217,7 @@ Based on detected legacy stack, please answer the following:
       - [E] Cloud-native (Azure Service Bus / AWS SQS / Google Pub/Sub)
       - [F] Other (please specify)
       Your choice: ___
+
       ```
 
 4\. Package Manager:
@@ -262,6 +266,7 @@ Based on detected legacy stack, please answer the following:
       - Windows DSC (for Windows Server)
 
       If you migrate to cloud in the future, IaC becomes relevant.
+
       ```
 
    **ELSE IF user selected [B], [C], [D], [E], or [F] in Question 5** (Kubernetes, Azure, AWS, GCP, OpenShift):
@@ -279,6 +284,7 @@ Based on detected legacy stack, please answer the following:
       - [G] None / Manual deployment
       - [H] Other (please specify)
       Your choice: ___
+
       ```
 
    **ELSE IF user selected [G] "Other" in Question 5**:
@@ -304,6 +310,7 @@ Based on detected legacy stack, please answer the following:
       - Cloud portability
 
       This becomes relevant if you choose cloud deployment in the future.
+
       ```
 
    **ELSE IF user selected [B], [C], [D], [E], or [F] in Question 5** (Kubernetes, Azure, AWS, GCP, OpenShift):
@@ -318,6 +325,7 @@ Based on detected legacy stack, please answer the following:
       - [D] No containerization
       - [E] Other (please specify)
       Your choice: ___
+
       ```
 
    **ELSE IF user selected [G] "Other" in Question 5**:
@@ -352,6 +360,7 @@ Based on detected legacy stack, please answer the following:
       - [H] Basic logging only (not recommended for production)
       - [I] Other (please specify)
       Your choice (or press Enter to skip): ___
+
       ```
 
    **ELSE** (observability stack detected):
@@ -368,6 +377,7 @@ Based on detected legacy stack, please answer the following:
       - [H] Datadog / New Relic (commercial SaaS)
       - [I] Other (please specify)
       Your choice: ___
+
       ```
 
 9\. Security & Authentication:
@@ -423,6 +433,7 @@ IF answer is ambiguous or unclear:
   → STOP and ask clarifying question
   → Wait for explicit confirmation
   → Do NOT assume or guess
+
 ```
 
 ### Component-by-Component Validation
@@ -435,6 +446,7 @@ IF answer is ambiguous or unclear:
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - no target provided]
 Action: [Full migration to X] OR [Keep existing language/framework as-is]
+
 ```
 
 #### Q2: Target Database
@@ -443,6 +455,7 @@ Action: [Full migration to X] OR [Keep existing language/framework as-is]
 User answer: [record exact answer]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - no target provided]
 Action: [Database migration to X] OR [Keep existing database as-is]
+
 ```
 
 #### Q3: Message Bus/Queue
@@ -452,6 +465,7 @@ User answer: [record exact answer]
 Was marked OPTIONAL: [Yes/No]
 Scope: [IN SCOPE - explicit target: X] OR [OUT OF SCOPE - user skipped/no answer]
 Action: [Add/migrate messaging to X] OR [No messaging changes, keep existing if any]
+
 ```
 
 #### Q4-Q10: [Similar validation for remaining questions]
@@ -475,6 +489,7 @@ Components OUT OF SCOPE (no targets, use existing as-is):
 
 Validation Status: ✓ PASSED
 Ready to proceed with complexity scoring for IN SCOPE components only.
+
 ```
 
 ### Store in State
@@ -493,6 +508,7 @@ Ready to proceed with complexity scoring for IN SCOPE components only.
     "validation_passed": true
   }
 }
+
 ```
 
 ---
@@ -556,6 +572,7 @@ Calculate complexity scores using scoring matrices.
 ```text
 Complexity Score = {calculated_score}
 Complexity Rating = {LOW | MEDIUM | HIGH | VERY HIGH}
+
 ```
 
 ---
@@ -573,6 +590,7 @@ Inline_Score = 100 - (Complexity_Score * 0.7) - (Tech_Debt_Score * 0.3)
 Where:
 - Complexity_Score = from Step 2 (0-100)
 - Tech_Debt_Score = normalized from tech debt items (0-100)
+
 ```
 
 **Rating**:
@@ -591,6 +609,7 @@ Where:
 - Complexity_Score = from Step 2 (0-100)
 - Tech_Debt_Score = normalized (0-100)
 - Coverage_Gap = (100 - test_coverage_percentage)
+
 ```
 
 **Rating**:
@@ -606,6 +625,7 @@ Formula:
 Hybrid_Score = 100 - abs(Inline_Score - Rewrite_Score)
 
 Rationale: Hybrid works best when inline and rewrite are equally viable
+
 ```
 
 **Rating**:
@@ -678,6 +698,7 @@ Based on scores, generate prioritized recommendations:
     "long_term_goals": [...]
   }
 }
+
 ```
 
 ---
@@ -704,6 +725,7 @@ Based on scores, generate prioritized recommendations:
 ```text
 STAGE_COMPLETE:FULL_APP
 STATE_PATH: .analysis/.state/03a-full-app.json
+
 ```
 
 ---

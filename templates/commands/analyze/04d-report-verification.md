@@ -63,7 +63,7 @@ Read the complete analysis-report.md and verify each item:
 
 **IF ALL checks pass:**
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   ✅ VERIFICATION PASSED
 
@@ -76,11 +76,12 @@ Read the complete analysis-report.md and verify each item:
     • Recommendation clear ({confidence}%)
     • Total lines: {count}
 ═══════════════════════════════════════════════════════════
+
 ```
 
 **IF ANY check fails:**
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   ❌ VERIFICATION FAILED
 
@@ -90,6 +91,7 @@ Read the complete analysis-report.md and verify each item:
   Recovery Required:
     Return to appropriate substage to fix issues
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---
@@ -120,6 +122,7 @@ Read the complete analysis-report.md and verify each item:
   },
   "verification_passed": true
 }
+
 ```
 
 Write to: `.analysis/.state/04-report.json`
@@ -141,6 +144,7 @@ Write: `.analysis/.checkpoints/04-report-complete.json`
   "state_saved": ".analysis/.state/04-report.json",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -154,7 +158,7 @@ Write: `.analysis/.checkpoints/04-report-complete.json`
 
 ## Completion Marker
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   STAGE COMPLETE: REPORT_GENERATION
 
@@ -167,6 +171,7 @@ Write: `.analysis/.checkpoints/04-report-complete.json`
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:REPORT_GENERATION
+
 ```
 
 ---

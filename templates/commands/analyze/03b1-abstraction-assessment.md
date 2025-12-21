@@ -50,7 +50,8 @@ Search for files matching the concern type: **{concern_type}**
 | API Gateway | `*Gateway*`, `*Proxy*`, `*Route*`, `*Middleware*` |
 
 **Output:**
-```
+
+```text
 Concern File Identification: {concern_type}
 
 Files Found: {count}
@@ -65,6 +66,7 @@ Files Found: {count}
   Consumers/Callers:
     - {caller1} ({usage_count} usages)
     - {caller2} ({usage_count} usages)
+
 ```
 
 Store in: `$CONCERN_FILES`
@@ -106,12 +108,15 @@ For each concern file, analyze:
 | Config | Fully externalized | Partial | Hardcoded |
 
 **Calculate Score:**
-```
+
+```text
 abstraction_score = AVG(interface, isolation, coupling, config)
+
 ```
 
 **Output Format:**
-```
+
+```text
 Abstraction Assessment: {concern_type}
 
 Current Implementation: {current_implementation}
@@ -132,6 +137,7 @@ Abstraction Patterns Found:
 
 Abstraction Issues:
   ✗ {negative patterns with file:line}
+
 ```
 
 ---
@@ -146,51 +152,64 @@ Calculate how many files would be affected by the migration.
 **Count affected files:**
 
 1. **Direct Impact** - Files that directly use the concern:
-   ```
+
+   ```text
    Count files with imports/references to:
    - Concern implementation classes
    - Concern-specific annotations
    - Concern configuration
+
    ```
 
 2. **Indirect Impact** - Files that depend on directly impacted files:
-   ```
+
+   ```text
    For each directly impacted file:
      Count files that import/call it
+
    ```
 
 3. **Configuration Impact**:
-   ```
+
+   ```text
    Count config files referencing the concern:
    - Application configs
    - Build files (dependencies)
    - Infrastructure (env vars, secrets)
+
    ```
 
 4. **Test Impact**:
-   ```
+
+   ```text
    Count test files for:
    - Concern unit tests
    - Integration tests using concern
    - E2E tests affected
+
    ```
 
 **Calculate:**
-```
+
+```text
 total_affected = direct + indirect + config + tests
 blast_radius_percentage = (total_affected / total_project_files) × 100
+
 ```
 
 **Classification:**
-```
+
+```text
 < 10%:  SMALL (Low risk, localized change)
 10-30%: MEDIUM (Moderate risk, significant change)
 30-50%: LARGE (High risk, major change)
 > 50%:  CRITICAL (Very high risk, affects majority)
+
 ```
 
 **Output Format:**
-```
+
+```text
 Blast Radius Analysis: {concern_type}
 
 Impact Breakdown:
@@ -209,6 +228,7 @@ High-Impact Files (top 10):
   1. {file}: {impact_count} dependents
   2. {file}: {impact_count} dependents
   ...
+
 ```
 
 ---
@@ -251,6 +271,7 @@ High-Impact Files (top 10):
     }
   }
 }
+
 ```
 
 ---
@@ -272,6 +293,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b1-assessment-complete.json`
   "blast_classification": "{classification}",
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -289,7 +311,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b1-assessment-complete.json`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 03b1-abstraction-assessment
 
@@ -302,6 +324,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b1-assessment-complete.json`
 
   Proceeding to Migration Strategy...
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

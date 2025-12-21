@@ -35,15 +35,18 @@ Calculate effort based on abstraction level, blast radius, and strategy.
 **Effort Components:**
 
 ### 1. Abstraction Refactoring (if needed)
-```
+
+```text
 Based on abstraction level:
   LOW (1-3):   2-4 weeks (create interfaces, DI, isolate)
   MEDIUM (4-6): 1-2 weeks (enhance existing, fix coupling)
   HIGH (7-10):  0 weeks (already abstracted)
+
 ```
 
 ### 2. New Implementation Setup
-```
+
+```text
 Infrastructure setup: 1-2 weeks
   - Environment configuration
   - Dependency installation
@@ -58,42 +61,52 @@ Testing setup: 1-2 weeks
   - Unit test stubs
   - Integration test framework
   - Mock/stub configuration
+
 ```
 
 ### 3. Migration Execution
-```
+
+```text
 Per component migration:
   Simple component: 0.5-1 day
   Medium component: 1-2 days
   Complex component: 3-5 days
 
 Total: {component_count} components × average_days
+
 ```
 
 ### 4. Testing & Validation
-```
+
+```text
 Unit testing:       1-2 weeks
 Integration testing: 1-2 weeks
 E2E testing:        0.5-1 week
 Performance testing: 0.5-1 week
+
 ```
 
 ### 5. Documentation & Training
-```
+
+```text
 Technical docs:  3-5 days
 Runbooks:        2-3 days
 Team training:   1-2 days
+
 ```
 
 **Calculate Totals:**
-```
+
+```text
 base_effort = refactoring + setup + migration + testing + docs
 buffer = base_effort × 0.20 (20% buffer for unknowns)
 total_effort = base_effort + buffer
+
 ```
 
 **Output:**
-```
+
+```text
 Effort Estimation:
 
 Component Breakdown:
@@ -112,6 +125,7 @@ Component Breakdown:
 Person-Days: {total_days} days
 Recommended Team Size: {n} developers
 Calendar Duration: {months} months
+
 ```
 
 ---
@@ -124,42 +138,51 @@ Define measurable criteria for migration success.
 ⏸️ **[STOP: DEFINE_SUCCESS_CRITERIA]**
 
 **Functional Criteria:**
-```
+
+```text
 □ All {count} components migrated to new implementation
 □ 100% feature parity with legacy implementation
 □ Zero data loss during migration
 □ All API contracts maintained (no breaking changes)
 □ All existing tests passing
 □ New implementation-specific tests added
+
 ```
 
 **Performance Criteria:**
-```
+
+```text
 □ Response time: ≤ {current_p95}ms (same or better)
 □ Throughput: ≥ {current_rps} requests/sec
 □ Resource usage: ≤ {current_usage} (CPU/memory)
 □ Error rate: < 0.1%
+
 ```
 
 **Operational Criteria:**
-```
+
+```text
 □ Monitoring dashboards operational for new implementation
 □ Alerting rules configured and tested
 □ Rollback procedure documented and tested
 □ Runbooks created for common issues
 □ On-call documentation updated
+
 ```
 
 **Business Criteria:**
-```
+
+```text
 □ Zero customer-reported issues related to migration
 □ No service interruptions during migration
 □ Team trained on new implementation
 □ Documentation complete and reviewed
+
 ```
 
 **Output:**
-```
+
+```text
 Success Criteria:
 
 FUNCTIONAL (Must Pass):
@@ -184,6 +207,7 @@ BUSINESS (Validation):
   ✓ Zero customer issues
   ✓ No interruptions
   ✓ Team trained
+
 ```
 
 ---
@@ -262,6 +286,7 @@ BUSINESS (Validation):
     }
   }
 }
+
 ```
 
 ### Save State
@@ -303,6 +328,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b-cross-cutting-complete.json`
   "state_saved": ".analysis/.state/03b-cross-cutting.json",
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -320,7 +346,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b-cross-cutting-complete.json`
 
 ## Completion Marker
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   STAGE COMPLETE: CROSS_CUTTING_ANALYSIS
 
@@ -342,6 +368,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b-cross-cutting-complete.json`
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:CROSS_CUTTING_ANALYSIS
+
 ```
 
 ---

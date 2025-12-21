@@ -52,6 +52,7 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 **File:** `{path}:{lines}`
 
 **Query Methods:**
+
 | Method | Type | Complexity | Evidence |
 |--------|------|------------|----------|
 | {method} | {ORM/Native SQL} | {L/M/H} | `{line}` |
@@ -60,6 +61,7 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 - {N+1 queries, missing indexes, etc. with evidence}
 
 ---
+
 ```
 
 **Checkpoint:** `.analysis/.checkpoints/report-chunk-4.json`
@@ -114,6 +116,7 @@ Output: `✓ Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 | {documentation} | `{file}:{line}` | {benefit} |
 
 ---
+
 ```
 
 **Checkpoint:** `.analysis/.checkpoints/report-chunk-5.json`
@@ -181,6 +184,7 @@ Output: `✓ Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 | {issue} | {sev} | {impact} | `{files}` | {fix} |
 
 ---
+
 ```
 
 **Checkpoint:** `.analysis/.checkpoints/report-chunk-6.json`
@@ -207,6 +211,7 @@ Write: `.analysis/.checkpoints/04b-complete.json`
   "positive_findings": {count},
   "status": "complete"
 }
+
 ```
 
 ---
@@ -218,7 +223,7 @@ Output: `✓ Checkpoint verified: 04b (Chunks 4-6)`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 04b-report-chunks-4-6
 
@@ -232,6 +237,7 @@ Output: `✓ Checkpoint verified: 04b (Chunks 4-6)`
 
   Proceeding to Chunks 7-9...
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

@@ -126,7 +126,8 @@ Each stage is split into focused sub-prompts (~100-200 lines each) for better AI
 ### STOP Marker Protocol
 
 When you encounter:
-```
+
+```text
 ---
 ⏸️ **[STOP: ACTION_NAME]**
 ---
@@ -144,7 +145,7 @@ When you encounter:
 
 **Before loading any sub-prompt, verify:**
 
-```
+```text
 1. Previous checkpoint exists
 2. Previous checkpoint status = "complete"
 3. Required state data is available
@@ -277,6 +278,7 @@ Scope A   Scope B
 4. Load previous state and continue
 
 **Example:**
+
 ```text
 Last checkpoint: 02c-config-complete.json
 Resume from: 02d-test-audit.md
@@ -316,6 +318,7 @@ Resume from: 02d-test-audit.md
 When complete, all artifacts are saved to: `.analysis/{project}-{timestamp}/`
 
 ### Scope A Artifacts
+
 - `analysis-report.md` - Comprehensive analysis
 - `EXECUTIVE-SUMMARY.md` - High-level overview
 - `functional-spec-legacy.md` - Legacy system spec
@@ -326,6 +329,7 @@ When complete, all artifacts are saved to: `.analysis/{project}-{timestamp}/`
 - `metrics-summary.json` - Metrics and statistics
 
 ### Scope B Artifacts
+
 - `analysis-report.md` - Comprehensive analysis
 - `EXECUTIVE-SUMMARY.md` - High-level overview
 - `abstraction-assessment.md` - Abstraction analysis

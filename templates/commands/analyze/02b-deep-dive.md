@@ -90,15 +90,18 @@ Analyze ALL security-related files (80% coverage minimum):
    - Missing rate limiting
 
 **Progress Output (every 5 files):**
-```
+
+```text
 [Phase 2 - Deep Dive: Authentication]
 ✓ 5/{total} security files analyzed
 ✓ 10/{total} security files analyzed
 ...
+
 ```
 
 **Output Format:**
-```
+
+```text
 Authentication System Analysis:
 
 Type: {Custom JWT | OAuth 2.0 | Session-based | etc}
@@ -114,6 +117,7 @@ Security Issues Found:
   🟢 LOW: {issue} (file:line)
 
 Coverage: {analyzed}/{total} files ({percentage}%)
+
 ```
 
 ---
@@ -163,15 +167,18 @@ Analyze ALL database-related files (80% coverage minimum):
    - Unbounded queries
 
 **Progress Output (every 5 files):**
-```
+
+```text
 [Phase 2 - Deep Dive: Database]
 ✓ 5/{total} database files analyzed
 ✓ 10/{total} database files analyzed
 ...
+
 ```
 
 **Output Format:**
-```
+
+```text
 Database Layer Analysis:
 
 ORM: {Hibernate/JPA | Sequelize | Prisma | etc}
@@ -192,6 +199,7 @@ Performance Issues Found:
 
 Migrations: {tool} ({count} migration files)
 Coverage: {analyzed}/{total} files ({percentage}%)
+
 ```
 
 ---
@@ -238,15 +246,18 @@ Analyze ALL API endpoint files (70% coverage minimum):
    - Missing rate limiting
 
 **Progress Output (every 10 endpoints):**
-```
+
+```text
 [Phase 2 - Deep Dive: API Endpoints]
 ✓ 10/{total} endpoints documented
 ✓ 20/{total} endpoints documented
 ...
+
 ```
 
 **Output Format:**
-```
+
+```text
 API Surface Analysis:
 
 Style: {REST | GraphQL | RPC | Mixed}
@@ -271,6 +282,7 @@ API Issues Found:
   🟡 MEDIUM: {issue} (file:line)
 
 Coverage: {analyzed}/{total} files ({percentage}%)
+
 ```
 
 ---
@@ -308,7 +320,8 @@ Analyze key business logic files (60% coverage minimum):
    - Event publishing
 
 **Output Format:**
-```
+
+```text
 Business Logic Analysis:
 
 Key Workflows: {count}
@@ -324,6 +337,7 @@ External Integrations: {count}
   {Integration2}: {purpose} (file:line)
 
 Coverage: {analyzed}/{total} files ({percentage}%)
+
 ```
 
 ---
@@ -380,6 +394,7 @@ Merge all deep dive findings:
     }
   }
 }
+
 ```
 
 ---
@@ -409,6 +424,7 @@ Write checkpoint file: `.analysis/.checkpoints/02b-deep-dive-complete.json`
   },
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -427,7 +443,7 @@ Write checkpoint file: `.analysis/.checkpoints/02b-deep-dive-complete.json`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 02b-deep-dive (Phase 2)
 
@@ -446,6 +462,7 @@ Write checkpoint file: `.analysis/.checkpoints/02b-deep-dive-complete.json`
 
   Proceeding to Phase 3: Configuration Analysis
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

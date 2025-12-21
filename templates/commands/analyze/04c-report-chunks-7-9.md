@@ -68,6 +68,7 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 | {pkg} | {current} | {latest} | {H/M/L} | {count} |
 
 ---
+
 ```
 
 **Checkpoint:** `.analysis/.checkpoints/report-chunk-7.json`
@@ -116,6 +117,7 @@ Output: `✓ Chunk 7/9: Upgrade Paths ({lines} lines)`
 **Score:** {score}%
 
 **Formula:**
+
 ```
 Score = 100 - (Complexity × 10) + Abstraction Bonus
 
@@ -123,9 +125,11 @@ Components:
   Complexity Factor: {score}/10
   Abstraction Level: {level}
   Abstraction Bonus: {bonus}
-```
+
+```text
 
 **Factors:**
+
 | Factor | Score | Weight | Contribution |
 |--------|-------|--------|--------------|
 | Tech Stack Gap | {score} | 25% | {value} |
@@ -139,11 +143,14 @@ Components:
 **Score:** {score}%
 
 **Formula:**
+
 ```
 Score = 50 + Abstraction Penalty - (Feature Count / 10)
-```
+
+```text
 
 **Factors:**
+
 | Factor | Assessment | Impact |
 |--------|------------|--------|
 | Feature Complexity | {level} | {impact} |
@@ -156,14 +163,17 @@ Score = 50 + Abstraction Penalty - (Feature Count / 10)
 **Score:** {score}% ⭐
 
 **Formula:**
+
 ```
 Score = (Inline + Greenfield) / 2 + 10 (flexibility bonus)
-```
+
+```text
 
 **Rationale:**
 {Why hybrid might be suitable}
 
 ---
+
 ```
 
 **Checkpoint:** `.analysis/.checkpoints/report-chunk-8.json`
@@ -270,6 +280,7 @@ Output: `✓ Chunk 8/9: Modernization & Feasibility ({lines} lines)`
 ---
 
 *End of Analysis Report*
+
 ```
 
 **Checkpoint:** `.analysis/.checkpoints/report-chunk-9.json`
@@ -296,6 +307,7 @@ Write: `.analysis/.checkpoints/04c-complete.json`
   "confidence": {percentage},
   "status": "complete"
 }
+
 ```
 
 ---
@@ -307,7 +319,7 @@ Output: `✓ Checkpoint verified: 04c (Chunks 7-9, Report Generation Complete)`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 04c-report-chunks-7-9
 
@@ -325,6 +337,7 @@ Output: `✓ Checkpoint verified: 04c (Chunks 7-9, Report Generation Complete)`
 
   Proceeding to Report Verification...
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

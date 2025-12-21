@@ -46,6 +46,7 @@ Example: /home/user/my-legacy-app
 OR: C:\Users\user\my-legacy-app
 
 Your path: ___
+
 ```
 
 **WAIT FOR USER RESPONSE - DO NOT PROCEED UNTIL USER PROVIDES ANSWER.**
@@ -86,6 +87,7 @@ This could include:
 
 Type "none" if you don't have additional context, or provide your information below:
 ___
+
 ```
 
 **WAIT FOR USER RESPONSE - DO NOT PROCEED UNTIL USER PROVIDES ANSWER.**
@@ -118,6 +120,7 @@ What type of analysis do you need?
       → Suitable for: auth migration, database swap, caching layer, etc.
 
 Your choice: ___
+
 ```
 
 **WAIT FOR USER RESPONSE - DO NOT PROCEED UNTIL USER PROVIDES ANSWER.**
@@ -171,6 +174,7 @@ What do you want to migrate to?
 Examples: "Okta", "PostgreSQL 15 with Prisma ORM", "Redis 7.x", "AWS", "OpenShift"
 
 Your answer: ___
+
 ```
 
 **WAIT FOR ALL THREE RESPONSES.**
@@ -201,6 +205,7 @@ Your answer: ___
   ${CONCERN_TYPE:+--concern-type "$CONCERN_TYPE"} \
   ${CURRENT_IMPL:+--current-impl "$CURRENT_IMPL"} \
   ${TARGET_IMPL:+--target-impl "$TARGET_IMPL"}
+
 ```
 
 **For Windows (PowerShell)**:
@@ -216,6 +221,7 @@ if ($CURRENT_IMPL) { $params.CurrentImpl = $CURRENT_IMPL }
 if ($TARGET_IMPL) { $params.TargetImpl = $TARGET_IMPL }
 
 .specify\scripts\powershell\analyze-project.ps1 @params
+
 ```
 
 **What the script does:**
@@ -248,16 +254,21 @@ After the script completes successfully, load all generated JSON files:
 
 ```bash
 # Load project metadata
+
 cat .analysis/{project}-{timestamp}/project-metadata.json
 
 # Load tech stack
+
 cat .analysis/{project}-{timestamp}/tech-stack.json
 
 # Load file structure
+
 cat .analysis/{project}-{timestamp}/file-structure.json
 
 # Load bootstrap state
+
 cat .analysis/.state/00-bootstrap.json
+
 ```
 
 **Extract and merge into state:**
@@ -315,6 +326,7 @@ Workspace: {analysis_dir}
 
 ✓ All data generated successfully
 ✓ Ready for Stage 2: Deep File Analysis
+
 ```
 
 ---
@@ -386,6 +398,7 @@ Generate JSON state object with all collected and loaded data:
     "metadata_path": "/path/to/.analysis/legacy-app-2025-11-19-143022/project-metadata.json"
   }
 }
+
 ```
 
 ---
@@ -405,6 +418,7 @@ STAGE_COMPLETE:SETUP_AND_SCOPE
 STATE_PATH: .analysis/.state/01-setup-and-scope.json
 CHAIN_ID: {chain_id}
 NEXT_STAGE: 02-file-analysis.md
+
 ```
 
 ---

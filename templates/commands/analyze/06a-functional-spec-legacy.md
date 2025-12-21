@@ -59,17 +59,17 @@ Generate Sections 1, 2, and 3.
 
 Generate the following sections:
 
-**Section 1: Introduction**
+#### Section 1: Introduction
 - Project name and purpose
 - Document scope and audience
 - Legacy system overview
 
-**Section 2: Executive Summary**
+#### Section 2: Executive Summary
 - High-level functionality summary
 - Key capabilities
 - System boundaries
 
-**Section 3: Scope**
+#### Section 3: Scope
 - In-scope functionality
 - Out-of-scope items
 - Assumptions
@@ -79,9 +79,11 @@ Write to: `.analysis/{dir}/functional-spec-legacy.md`
 **Verify:** Read file, confirm no placeholders, all sections complete.
 
 **Output:**
-```
+
+```text
 functional-spec-legacy.md Chunk 1/5 complete: Introduction + Summary + Scope
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -98,6 +100,7 @@ Write: `.analysis/.checkpoints/func-legacy-chunk-1.json`
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -112,6 +115,7 @@ Generate Section 4.1 (CRITICAL priority features).
 Extract all CRITICAL features from analysis-report.md Phase 2.
 
 **For each feature:**
+
 ```markdown
 ### US-{id}: {Feature Name}
 
@@ -129,6 +133,7 @@ Extract all CRITICAL features from analysis-report.md Phase 2.
 **Acceptance Criteria:**
 - [ ] {criterion 1}
 - [ ] {criterion 2}
+
 ```
 
 Append to: `.analysis/{dir}/functional-spec-legacy.md`
@@ -136,10 +141,12 @@ Append to: `.analysis/{dir}/functional-spec-legacy.md`
 **Verify:** Read file, confirm all CRITICAL features documented with file:line references.
 
 **Output:**
-```
+
+```text
 functional-spec-legacy.md Chunk 2/5 complete: User Stories (CRITICAL)
   - Features: [COUNT]
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -157,6 +164,7 @@ Write: `.analysis/.checkpoints/func-legacy-chunk-2.json`
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -168,37 +176,44 @@ Generate Sections 4.2 and 5.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_3]**
 
-**Section 4.2: STANDARD Features**
+#### Section 4.2: STANDARD Features
 - Extract all STANDARD priority features
 - Same user story format as CRITICAL
 - Include file:line references
 
-**Section 5: Business Rules**
+#### Section 5: Business Rules
+
 ```markdown
 ## 5. Business Rules
 
 ### BR-001: {Rule Name}
+
 **Category:** {Validation | Calculation | Authorization | Workflow}
 **Source:** {file}:{line}
 **Description:** {plain English description}
 **Pseudocode:**
+
 ```
 IF condition THEN
   action
 ELSE
   alternative
 END IF
-```
+
+```text
+
 ```
 
 Append to: `.analysis/{dir}/functional-spec-legacy.md`
 
 **Output:**
-```
+
+```text
 functional-spec-legacy.md Chunk 3/5 complete: STANDARD Features + Rules
   - Features: [COUNT]
   - Rules: [COUNT]
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -216,7 +231,8 @@ Generate Sections 6 and 7.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_4]**
 
-**Section 6: Non-Functional Requirements**
+#### Section 6: Non-Functional Requirements
+
 | Category | Current State | Evidence |
 |----------|--------------|----------|
 | Performance | {metrics} | {file:line} |
@@ -224,9 +240,11 @@ Generate Sections 6 and 7.
 | Scalability | {approach} | {file:line} |
 | Reliability | {mechanisms} | {file:line} |
 
-**Section 7: Data Requirements**
+#### Section 7: Data Requirements
+
 ```markdown
 ### Entity: {Name}
+
 **Source:** {file}:{line}
 
 | Field | Type | Constraints |
@@ -235,16 +253,19 @@ Generate Sections 6 and 7.
 
 **Relationships:**
 - {relationship description}
+
 ```
 
 Append to: `.analysis/{dir}/functional-spec-legacy.md`
 
 **Output:**
-```
+
+```text
 functional-spec-legacy.md Chunk 4/5 complete: NFRs + Data
   - NFR Categories: [COUNT]
   - Entities: [COUNT]
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -262,17 +283,17 @@ Generate Sections 8, 9, and 10.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_5]**
 
-**Section 8: Acceptance Criteria**
+#### Section 8: Acceptance Criteria
 - System-level acceptance tests
 - Integration verification points
 - Performance benchmarks
 
-**Section 9: Assumptions**
+#### Section 9: Assumptions
 - Technical assumptions
 - Business assumptions
 - Environmental assumptions
 
-**Section 10: Constraints**
+#### Section 10: Constraints
 - Technical constraints
 - Business constraints
 - Regulatory constraints
@@ -285,13 +306,15 @@ Append to: `.analysis/{dir}/functional-spec-legacy.md`
 - All features have file:line references
 
 **Output:**
-```
+
+```text
 functional-spec-legacy.md Chunk 5/5 complete: Acceptance + Assumptions + Constraints
   - Lines: [COUNT]
 
 functional-spec-legacy.md COMPLETE (5/5 chunks)
    Total features: [COUNT]
    Total lines: [COUNT]
+
 ```
 
 ---
@@ -309,6 +332,7 @@ Write: `.analysis/.checkpoints/func-legacy-complete.json`
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -325,7 +349,7 @@ Write: `.analysis/.checkpoints/func-legacy-complete.json`
 
 ## Completion Marker
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   ARTIFACT COMPLETE: FUNCTIONAL-SPEC-LEGACY.md
 
@@ -339,6 +363,7 @@ Write: `.analysis/.checkpoints/func-legacy-complete.json`
 ═══════════════════════════════════════════════════════════
 
 ARTIFACT_COMPLETE:FUNCTIONAL_SPEC_LEGACY
+
 ```
 
 ---

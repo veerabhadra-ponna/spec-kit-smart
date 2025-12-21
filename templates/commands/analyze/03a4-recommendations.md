@@ -32,7 +32,8 @@ Based on feasibility scores and complexity analysis, generate recommendations.
 ### Recommendation Logic
 
 **Primary Recommendation Selection:**
-```
+
+```text
 IF hybrid_feasibility > 70% AND complexity >= MEDIUM:
   PRIMARY = "Hybrid/Strangler Fig Pattern"
   REASON = "Allows incremental migration with lower risk"
@@ -48,6 +49,7 @@ ELSE IF greenfield_feasibility > 80% AND complexity >= HIGH:
 ELSE:
   PRIMARY = "Phased Hybrid Approach"
   REASON = "Balanced approach for moderate complexity"
+
 ```
 
 ### Generate Recommendations
@@ -134,13 +136,14 @@ ELSE:
     ]
   }
 }
+
 ```
 
 ---
 
 ## Step 2: Display Recommendations to User
 
-```
+```text
 ═══════════════════════════════════════════════════════════
 MODERNIZATION RECOMMENDATIONS
 ═══════════════════════════════════════════════════════════
@@ -203,6 +206,7 @@ TOP RISKS
   🟢 {risk_3}: {mitigation_3}
 
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---
@@ -286,6 +290,7 @@ Merge all Stage 3A data into comprehensive state:
     "success_criteria": ["{list}"]
   }
 }
+
 ```
 
 ### Save State
@@ -327,6 +332,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
   "state_saved": ".analysis/.state/03a-full-app.json",
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -348,7 +354,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
 
 ## Completion Marker
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   STAGE COMPLETE: FULL_APP_ANALYSIS
 
@@ -366,6 +372,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:FULL_APP_ANALYSIS
+
 ```
 
 ---

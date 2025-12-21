@@ -163,7 +163,8 @@ For EACH category, scan 15-20% of files and extract:
 ✓ 20/120 core files scanned (Controllers)
 ✓ 30/120 core files scanned (Services)
 ...
-```text
+
+```
 
 **Example output after scanning**:
 
@@ -173,7 +174,8 @@ For EACH category, scan 15-20% of files and extract:
 
 ✓ Scanned src/services/UserService.java
   Found: Business Logic[User Management], DB[JPA Repository], Cache[Redis]
-```text
+
+```
 
 ---
 
@@ -228,7 +230,8 @@ Authentication System Analysis:
   * No rate limiting on /api/auth/login (HIGH risk)
   * JWT secret in application.properties (MEDIUM risk)
   * Missing CSRF protection (MEDIUM risk)
-```text
+
+```
 
 #### Database Deep Dive
 
@@ -259,7 +262,8 @@ Database Layer Analysis:
   * Missing index on orders.user_id (MEDIUM)
   * Eager loading for Order.items (MEDIUM)
 - Migrations: Flyway (23 migration scripts)
-```text
+
+```
 
 #### API Endpoints Deep Dive
 
@@ -297,7 +301,8 @@ API Issues:
 - Inconsistent error responses
 - Missing rate limiting
 - No API documentation
-```text
+
+```
 
 ### Step 2.3: Progress Reporting
 
@@ -310,7 +315,8 @@ API Issues:
 ✓ Auth flow complete: Custom JWT with bcrypt
 ✓ 10/25 database files analyzed
 ...
-```text
+
+```
 
 ---
 
@@ -391,7 +397,8 @@ Security:
 - CORS: Allowed origins: http://localhost:3000
 - Session: 24h timeout, HTTP-only cookies
 - Rate Limit: 100 req/min per IP (not enforced)
-```text
+
+```
 
 ---
 
@@ -444,7 +451,8 @@ Gaps:
 - Low security test coverage
 - Missing integration tests for external APIs
 - No performance/load tests
-```text
+
+```
 
 ---
 
@@ -458,33 +466,38 @@ Run dependency audit in parallel with file analysis.
 
 ```bash
 mvn dependency:tree -DoutputFile=deps.txt
-```text
+
+```
 
 **Java (Gradle)**:
 
 ```bash
 gradle dependencies > deps.txt
-```text
+
+```
 
 **Node.js**:
 
 ```bash
 npm audit --json > npm-audit.json
 npm list --depth=0 > deps.txt
-```text
+
+```
 
 **.NET**:
 
 ```bash
 dotnet list package --vulnerable --include-transitive > deps.txt
-```text
+
+```
 
 **Python**:
 
 ```bash
 pip list --format=json > deps.json
 safety check --json > safety-audit.json
-```text
+
+```
 
 ### Step 2: Analyze Dependencies
 
@@ -519,7 +532,8 @@ Vulnerable: 5 packages (CRITICAL: 1, HIGH: 2, MEDIUM: 2)
 Deprecated:
 - Moment.js (use date-fns or Luxon)
 - Request (use axios or node-fetch)
-```text
+
+```
 
 ---
 
@@ -601,7 +615,8 @@ Generate comprehensive patterns object:
     }
   }
 }
-```text
+
+```
 
 ---
 
@@ -633,7 +648,8 @@ Track analysis completeness:
     }
   }
 }
-```text
+
+```
 
 ---
 
@@ -658,7 +674,8 @@ Track analysis completeness:
     "license_issues": []
   }
 }
-```text
+
+```
 
 ---
 
@@ -708,7 +725,8 @@ Merge with previous state and add file analysis data:
     "security_findings": 18
   }
 }
-```text
+
+```
 
 ---
 
@@ -719,6 +737,7 @@ When file analysis is complete and quality gates pass, output:
 ```text
 STAGE_COMPLETE:FILE_ANALYSIS
 STATE_PATH: .analysis/.state/02-file-analysis.json
+
 ```
 
 Save the state JSON to `.analysis/.state/02-file-analysis.json`.
@@ -825,6 +844,7 @@ STATE_PATH: .analysis/.state/02-file-analysis.json
 Next stage: Branching based on analysis_scope
   - If scope = A: 03a-full-app.md
   - If scope = B: 03b-cross-cutting.md
+
 ```
 
 ---

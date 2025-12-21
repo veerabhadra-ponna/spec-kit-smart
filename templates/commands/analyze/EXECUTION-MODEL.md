@@ -22,6 +22,7 @@ This document explains **how the sub-prompt architecture executes** in the Claud
 
 ```bash
 /analyze-project /path/to/project
+
 ```
 
 ### 2. Script Execution (Pre-AI)
@@ -30,6 +31,7 @@ The bash/PowerShell script runs FIRST:
 
 ```bash
 .specify/scripts/bash/analyze-project.sh /path/to/project
+
 ```
 
 **Script Actions**:
@@ -62,6 +64,7 @@ FOR each sub-prompt in [01a, 01b, 01c, 02a, 02b, 02c, 02d, 02e, 03a1-4/03b1-3, 0
     7. AI verifies checkpoint (read back, validate JSON)
     8. AI proceeds to next sub-prompt
 ENDFOR
+
 ```
 
 ### 4. State Flow Diagram
@@ -100,6 +103,7 @@ Stage 6: Scope-Specific Artifacts
     ↓  IF scope=B: 06e sub-prompt → .state/06-scope-artifacts.json
 
 COMPLETE
+
 ```
 
 ## Critical Dependencies
@@ -132,6 +136,7 @@ COMPLETE
 Instructions here. Do NOT proceed until action is complete.
 
 ---
+
 ```
 
 ### Types
@@ -165,13 +170,14 @@ Every sub-prompt ends with:
 
 Write: `.analysis/.checkpoints/{name}-complete.json`
 
-```json
+```
 {
   "sub_prompt": "{name}",
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
-```
+
+```text
 
 ### Verify Checkpoint
 
@@ -184,6 +190,7 @@ Write: `.analysis/.checkpoints/{name}-complete.json`
 
 **IF verified:** Output: `✓ Checkpoint verified: {name}`
 **IF failed:** Retry once, then STOP and report error
+
 ```
 
 ### Why Verification Matters
@@ -224,6 +231,7 @@ With verification:
 │   └── stage-prompts-complete.json
 └── {project}-{timestamp}/
     └── ... (analysis artifacts)
+
 ```
 
 ### Stage vs Checkpoint
@@ -245,6 +253,7 @@ if (state.analysis_scope === "A") {
     // Load: 03b1, 03b2, 03b3
     // Cross-cutting concern migration
 }
+
 ```
 
 Stage 6 also branches:
@@ -255,6 +264,7 @@ if (state.analysis_scope === "A") {
 } else if (state.analysis_scope === "B") {
     // Load: 06e
 }
+
 ```
 
 ## Error Handling
@@ -281,13 +291,17 @@ If analysis is interrupted, AI can resume:
 
 ```bash
 # Check last completed checkpoint
+
 ls -lt .analysis/.checkpoints/*-complete.json | head -1
 
 # Load last state
+
 cat .analysis/.state/02-file-analysis.json
 
 # Resume from next sub-prompt
+
 # If last checkpoint is 02c-config-complete.json, resume from 02d-test-audit.md
+
 ```
 
 ## Performance Characteristics

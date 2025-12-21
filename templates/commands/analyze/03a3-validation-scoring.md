@@ -34,7 +34,7 @@ Display the scope summary and ask user to confirm what's IN and OUT of scope.
 
 Present this confirmation EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 SCOPE VALIDATION
 
@@ -71,6 +71,7 @@ Is this scope correct?
 
 Your choice [Y/N]: ___
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -81,10 +82,11 @@ Your choice [Y/N]: ___
 
 **IF user chooses [N]:**
 
-```
+```text
 Which question(s) do you want to change?
 Enter question numbers separated by commas (e.g., "1, 5, 9"):
 ___
+
 ```
 
 **For each question to change:**
@@ -114,66 +116,81 @@ Calculate complexity scores for the modernization based on Stage 2 findings and 
 ### Calculate Each Factor
 
 **Codebase Size Score:**
-```
+
+```text
 IF LOC < 10,000: Score = 2
 IF LOC 10,000-50,000: Score = 4
 IF LOC 50,000-100,000: Score = 6
 IF LOC 100,000-500,000: Score = 8
 IF LOC > 500,000: Score = 10
+
 ```
 
 **Tech Stack Change Score:**
-```
+
+```text
 IF keeping same language: Score = 1
 IF minor version upgrade: Score = 2
 IF major version upgrade: Score = 4
 IF same family language: Score = 6
 IF different language: Score = 8
 IF different paradigm: Score = 10
+
 ```
 
 **Database Migration Score:**
-```
+
+```text
 IF keeping same DB: Score = 1
 IF same DB type upgrade: Score = 3
 IF same DB type different vendor: Score = 5
 IF different DB type (SQL→SQL): Score = 7
 IF different DB paradigm (SQL→NoSQL): Score = 10
+
 ```
 
 **Integration Count Score:**
-```
+
+```text
 Score = MIN(10, integration_count)
+
 ```
 
 **Test Coverage Gap Score:**
-```
+
+```text
 Score = 10 - (current_coverage / 10)
 Example: 40% coverage → Score = 6
+
 ```
 
 **Security Changes Score:**
-```
+
+```text
 IF keeping current auth: Score = 1
 IF upgrading same approach: Score = 3
 IF switching to standard (OAuth): Score = 5
 IF switching to external provider: Score = 7
 IF complete auth overhaul: Score = 9
+
 ```
 
 ### Calculate Overall Complexity
 
-```
+```text
 Overall = (Size × 0.15) + (Stack × 0.25) + (DB × 0.20) +
           (Integration × 0.15) + (Testing × 0.10) + (Security × 0.15)
+
 ```
 
 **Complexity Rating:**
-```
+
+```text
 1.0-3.0: LOW - Straightforward modernization
 3.1-5.0: MEDIUM - Moderate effort required
 5.1-7.0: HIGH - Significant effort and risk
 7.1-10.0: VERY HIGH - Major undertaking, consider phasing
+
 ```
 
 ---
@@ -191,13 +208,15 @@ Calculate feasibility for different modernization approaches.
 - Breaking changes in upgrades (30%)
 
 **Formula:**
-```
+
+```text
 inline_feasibility = 100 - (complexity_score × 10) + abstraction_bonus
 
 abstraction_bonus:
   HIGH abstraction: +20
   MEDIUM abstraction: +10
   LOW abstraction: 0
+
 ```
 
 ### Approach 2: Greenfield Rewrite
@@ -209,13 +228,15 @@ abstraction_bonus:
 - Timeline pressure (assumed moderate)
 
 **Formula:**
-```
+
+```text
 greenfield_feasibility = 50 + (abstraction_penalty) - (feature_count / 10)
 
 abstraction_penalty:
   LOW abstraction: +30 (easier to rewrite than refactor)
   MEDIUM abstraction: +15
   HIGH abstraction: 0 (refactor is easier than rewrite)
+
 ```
 
 ### Approach 3: Hybrid (Strangler Fig)
@@ -227,16 +248,18 @@ abstraction_penalty:
 - Data isolation
 
 **Formula:**
-```
+
+```text
 hybrid_feasibility = (inline_feasibility + greenfield_feasibility) / 2 + 10
 (Hybrid gets bonus for flexibility)
+
 ```
 
 ---
 
 ## Step 4: Display Scoring Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
 COMPLEXITY & FEASIBILITY ANALYSIS
 ═══════════════════════════════════════════════════════════
@@ -266,6 +289,7 @@ RECOMMENDATION PREVIEW
   Confidence: {percentage}%
 
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---
@@ -301,6 +325,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a3-scoring-complete.json`
   "preliminary_recommendation": "{approach}",
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -319,7 +344,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a3-scoring-complete.json`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 03a3-validation-scoring
 
@@ -329,6 +354,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a3-scoring-complete.json`
 
   Proceeding to Final Recommendations...
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

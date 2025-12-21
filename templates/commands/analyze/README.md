@@ -25,6 +25,7 @@ This directory contains the **chained prompt workflow** for the `analyze-project
 prompts   prompts       prompts     prompts    prompts     prompts
    ↓          ↓             ↓           ↓          ↓           ↓
  State      State         State       State      State      Complete
+
 ```
 
 ### Why Sub-Prompts?
@@ -166,6 +167,7 @@ Each sub-prompt:
     ├── analysis-report.md                # AI-generated (Stage 4)
     ├── EXECUTIVE-SUMMARY.md              # AI-generated (Stage 5)
     └── ... (other artifacts)
+
 ```
 
 ## Execution Flow
@@ -183,11 +185,13 @@ FOR each sub-prompt in stage order:
     7. AI verifies checkpoint (read back)
     8. AI proceeds to next sub-prompt
 ENDFOR
+
 ```
 
 ### STOP Marker Protocol
 
 When AI encounters:
+
 ```markdown
 ---
 ⏸️ **[STOP: ACTION_NAME]**
@@ -195,6 +199,7 @@ When AI encounters:
 Instructions here.
 
 ---
+
 ```
 
 AI MUST:
@@ -210,6 +215,7 @@ AI MUST:
 2. READ checkpoint file back
 3. VERIFY JSON is parseable and status = "complete"
 4. IF failed: retry once, then STOP and report error
+
 ```
 
 ## Recovery & Resume
@@ -220,6 +226,7 @@ AI MUST:
 
    ```bash
    ls -la .analysis/.checkpoints/
+
    ```
 
 2. **Find last complete checkpoint**:
@@ -227,6 +234,7 @@ AI MUST:
    ```bash
    # Look for most recent *-complete.json
    ls -lt .analysis/.checkpoints/*-complete.json | head -1
+
    ```
 
 3. **Resume from next sub-prompt**:
@@ -238,6 +246,7 @@ AI MUST:
 Last completed: 02c-config-complete.json
 Resume from: 02d-test-audit.md
 Chain ID: a3f7c8d1
+
 ```
 
 ## Key Improvements in v3.1
@@ -257,11 +266,13 @@ Chain ID: a3f7c8d1
 Present prompt above. Do NOT proceed until user provides response.
 
 ---
+
 ```
 
 ### 3. Checkpoint Verification
 
 Every sub-prompt ends with:
+
 ```markdown
 ### Verify Checkpoint
 
@@ -270,6 +281,7 @@ Every sub-prompt ends with:
 3. Confirm `status` = "complete"
 
 ⏸️ **[STOP: CHECKPOINT_VERIFY]**
+
 ```
 
 ### 4. RFC 2119 Keywords
@@ -282,6 +294,7 @@ Every sub-prompt ends with:
 ### 5. Consistent Sub-Prompt Structure
 
 Every sub-prompt follows:
+
 ```markdown
 ---
 stage: {stage_name}
@@ -294,18 +307,23 @@ next: {next_sub_prompt}
 # Stage X.Y: {Title}
 
 ## Pre-Check
+
 {Verify previous checkpoint}
 
 ## Task
+
 {Single focused task}
 
 ⏸️ **[STOP: ACTION]**
 
 ## Checkpoint
+
 {Write, read, verify}
 
 ## Next
+
 {Proceed to next sub-prompt}
+
 ```
 
 ## Why This Works
@@ -338,7 +356,9 @@ Each sub-prompt loads only what it needs from previous checkpoints, avoiding con
 
 ```bash
 # Test checkpoint functions
+
 ./tests/integration-test-chain.sh
+
 ```
 
 ### Validation Checklist

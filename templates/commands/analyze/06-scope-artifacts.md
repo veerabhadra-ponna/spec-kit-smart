@@ -131,6 +131,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
        "timestamp": "2025-11-15T10:30:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -138,6 +139,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    ```text
    functional-spec-legacy.md Chunk 1/5 complete: Introduction + Summary + Scope
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 2: User Stories (Part 1) - CRITICAL Features
@@ -167,6 +169,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
        "timestamp": "2025-11-15T10:45:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -175,6 +178,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    functional-spec-legacy.md Chunk 2/5 complete: User Stories (CRITICAL)
      - Features: [COUNT]
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 3: User Stories (Part 2) - STANDARD Features + Business Rules
@@ -201,6 +205,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
        "timestamp": "2025-11-15T11:00:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -209,6 +214,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    functional-spec-legacy.md Chunk 3/5 complete: STANDARD Features + Rules
      - Features: [COUNT]
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 4: NFRs + Data Requirements
@@ -235,6 +241,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
        "timestamp": "2025-11-15T11:15:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -242,6 +249,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    ```text
    functional-spec-legacy.md Chunk 4/5 complete: NFRs + Data
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 5: Acceptance Criteria + Assumptions + Constraints
@@ -269,6 +277,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
        "status": "complete",
        "all_chunks_complete": true
      }
+
      ```
 
 3. **MANDATORY - Display progress and final summary**:
@@ -280,6 +289,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    functional-spec-legacy.md COMPLETE (5/5 chunks)
       Total features: [COUNT]
       Total lines: [COUNT]
+
    ```
 
 **Progress**: `Generated: functional-spec-legacy.md ({lines} lines, {chunks} chunks)`
@@ -372,6 +382,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    2. functional-spec-target.md - TARGET system (what will be built)
 
    Now proceeding to technical-spec.md...
+
 ```
 
 **Progress**: `Generated: functional-spec-target.md ({lines} lines, {chunks} chunks)`
@@ -414,6 +425,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
        "timestamp": "2025-11-15T10:30:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -422,6 +434,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    technical-spec.md Chunk 1/5 complete: Architecture + Comparison
      - Diagrams: [COUNT]
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 2: Target Tech Stack + Data Architecture
@@ -450,6 +463,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
        "timestamp": "2025-11-15T10:45:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -457,6 +471,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    ```text
    technical-spec.md Chunk 2/5 complete: Tech Stack + Data
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 3: API Design + Integration Points
@@ -483,6 +498,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
        "timestamp": "2025-11-15T11:00:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -491,6 +507,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    technical-spec.md Chunk 3/5 complete: API + Integrations
      - Endpoints: [COUNT]
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 4: Security + Authentication + Deployment
@@ -517,6 +534,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
        "timestamp": "2025-11-15T11:15:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -524,6 +542,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    ```text
    technical-spec.md Chunk 4/5 complete: Security + Deployment
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 5: Testing Strategy + Observability + Migration Risks
@@ -551,6 +570,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
        "status": "complete",
        "all_chunks_complete": true
      }
+
      ```
 
 3. **MANDATORY - Display progress and final summary**:
@@ -561,6 +581,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
 
    technical-spec.md COMPLETE (5/5 chunks)
       Total lines: [COUNT]
+
    ```
 
 **Progress**: `Generated: technical-spec.md ({lines} lines, {chunks} chunks)`
@@ -644,6 +665,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 ## Migration Readiness
 
 {assessment of readiness for migration}
+
 ```
 
 **Instructions**:
@@ -692,6 +714,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
        "timestamp": "2025-11-15T10:30:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -701,6 +724,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
      - Approach: [APPROACH]
      - Phases: [COUNT]
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 2: Technical Implementation + Testing
@@ -729,6 +753,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
        "timestamp": "2025-11-15T10:45:00Z",
        "status": "complete"
      }
+
      ```
 
 3. **MANDATORY - Display progress**:
@@ -738,6 +763,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
      - Setup steps: [COUNT]
      - Code changes: [COUNT]
      - Lines: [COUNT]
+
    ```
 
 #### Chunk 3: Deployment + Operations + Success Criteria
@@ -765,6 +791,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
        "status": "complete",
        "all_chunks_complete": true
      }
+
      ```
 
 3. **MANDATORY - Display progress and final summary**:
@@ -775,6 +802,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
    concern-migration-plan.md COMPLETE (3/3 chunks)
       Total lines: [COUNT]
+
    ```
 
 **Progress**: `Generated: concern-migration-plan.md ({lines} lines, {chunks} chunks)`
@@ -811,6 +839,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 ## Post-Rollback Actions
 
 {cleanup and next steps}
+
 ```
 
 **Progress**: `Generated: rollback-procedure.md`
@@ -867,6 +896,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
   "total_scope_artifacts": 7,
   "all_artifacts_complete": true
 }
+
 ```
 
 ---
@@ -880,6 +910,7 @@ STATE_PATH: .analysis/.state/06-scope-artifacts.json
 === ANALYSIS CHAIN COMPLETE ===
 Chain ID: {chain_id}
 All stages successfully completed.
+
 ```
 
 ---

@@ -33,7 +33,8 @@ Analyze ALL configuration files completely. Configuration contains crucial infor
 Locate configuration files by pattern:
 
 **File Patterns:**
-```
+
+```text
 *.properties         # Java properties
 *.yml, *.yaml        # YAML configs
 *.json               # JSON configs
@@ -46,6 +47,7 @@ config/*             # Config directories
 settings/*           # Settings directories
 application*         # Spring application files
 appsettings*         # .NET config files
+
 ```
 
 ---
@@ -90,7 +92,8 @@ Analyze all application configuration files (100% coverage):
    - Environment overrides
 
 **Output Format:**
-```
+
+```text
 Application Configuration Analysis:
 
 Profiles/Environments Detected: {list}
@@ -114,6 +117,7 @@ Performance:
   Thread Pool: {size}
   Cache TTL: {duration}
   Request Timeout: {duration}
+
 ```
 
 ---
@@ -157,7 +161,8 @@ Analyze all build configuration files:
    - Deployment scripts
 
 **Output Format:**
-```
+
+```text
 Build Configuration Analysis:
 
 Build Tool: {Maven/Gradle/npm/etc}
@@ -175,6 +180,7 @@ Scripts/Tasks:
   build: {command}
   test: {command}
   deploy: {command if exists}
+
 ```
 
 ---
@@ -216,7 +222,8 @@ Analyze all infrastructure/deployment configuration:
    - Deployment steps
 
 **Output Format:**
-```
+
+```text
 Infrastructure Configuration Analysis:
 
 Container:
@@ -234,6 +241,7 @@ CI/CD:
   Platform: {GitHub Actions/Jenkins/GitLab/etc}
   Stages: {list}
   Deployment: {method}
+
 ```
 
 ---
@@ -294,6 +302,7 @@ Create comprehensive settings inventory:
     "coverage": "100%"
   }
 }
+
 ```
 
 ---
@@ -315,6 +324,7 @@ Write checkpoint file: `.analysis/.checkpoints/02c-config-complete.json`
   "coverage": "100%",
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -333,7 +343,7 @@ Write checkpoint file: `.analysis/.checkpoints/02c-config-complete.json`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 02c-config-analysis (Phase 3)
 
@@ -352,6 +362,7 @@ Write checkpoint file: `.analysis/.checkpoints/02c-config-complete.json`
 
   Proceeding to Phase 4: Test & Dependency Audit
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

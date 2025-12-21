@@ -111,7 +111,8 @@ Abstraction Patterns Found:
 ...
 
 Migration Complexity: {LOW | MEDIUM | HIGH}
-```text
+
+```
 
 ---
 
@@ -145,7 +146,8 @@ Determine how many files would be affected by migration.
 Total Affected Files = Direct + Indirect + Config + Tests
 
 Blast Radius % = (Total Affected / Total Project Files) * 100
-```text
+
+```
 
 ### Classification
 
@@ -168,7 +170,8 @@ Total Affected Files: {total} out of {project_total}
 Blast Radius: {percentage}% ({SMALL | MEDIUM | LARGE | CRITICAL})
 
 Risk Level: {LOW | MEDIUM | HIGH | VERY HIGH}
-```text
+
+```
 
 ---
 
@@ -253,7 +256,8 @@ Phase 4 - Cleanup (5%):
 - Duration: {weeks/months}
 
 Total Estimated Timeline: {total_timeline}
-```text
+
+```
 
 ---
 
@@ -296,7 +300,8 @@ MEDIUM Risks:
 
 LOW Risks:
 - {risk}: {description} (Mitigation: {mitigation})
-```text
+
+```
 
 ---
 
@@ -346,7 +351,8 @@ Total: {total_weeks} weeks ({total_days} person-days)
 
 Team Size Recommendation: {developers} developers
 Calendar Duration: {months} months (with {team_size} team)
-```text
+
+```
 
 ---
 
@@ -378,7 +384,8 @@ Business:
 - [ ] Zero customer-reported issues
 - [ ] No service interruptions
 - [ ] Team trained on new system
-```text
+
+```
 
 ---
 
@@ -426,7 +433,8 @@ Business:
     }
   }
 }
-```text
+
+```
 
 ---
 
@@ -435,6 +443,7 @@ Business:
 ```text
 STAGE_COMPLETE:CROSS_CUTTING
 STATE_PATH: .analysis/.state/03b-cross-cutting.json
+
 ```
 
 ---

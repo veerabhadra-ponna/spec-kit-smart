@@ -30,7 +30,7 @@ Collect all required inputs from the user through explicit prompts. Each input r
 
 Present this prompt to user EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 PROJECT PATH
 
@@ -43,6 +43,7 @@ Examples:
 
 Your path: ___
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -58,11 +59,13 @@ When user provides path:
 3. Check path is a directory (not a file)
 
 **IF validation fails:**
-```
+
+```text
 ❌ Error: Invalid project path
    Reason: {path does not exist | not readable | not a directory}
 
 Please provide a valid path: ___
+
 ```
 
 Re-prompt until valid path provided.
@@ -78,7 +81,7 @@ Re-prompt until valid path provided.
 
 Present this prompt to user EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 ADDITIONAL CONTEXT (Optional)
 
@@ -96,6 +99,7 @@ This could include:
 Type your context below, or type "none" to skip:
 ___
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -116,7 +120,7 @@ ___
 
 Present this prompt to user EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 ANALYSIS SCOPE
 
@@ -140,6 +144,7 @@ What type of analysis do you need?
 
 Your choice [A/B]: ___
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -149,10 +154,12 @@ Your choice [A/B]: ___
 ### Validate Analysis Scope
 
 **IF** user response is NOT "A" or "B" (case-insensitive):
-```
+
+```text
 ❌ Invalid selection. Please choose [A] or [B].
 
 Your choice [A/B]: ___
+
 ```
 
 Re-prompt until valid choice received.
@@ -170,7 +177,7 @@ Re-prompt until valid choice received.
 
 Present these prompts to user EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 CONCERN DETAILS
 
@@ -208,6 +215,7 @@ Please provide details about the concern:
 
    Target implementation: ___
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for ALL THREE responses. DO NOT proceed until all answered.**
@@ -246,6 +254,7 @@ Write checkpoint file: `.analysis/.checkpoints/01b-inputs-complete.json`
   },
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -265,7 +274,7 @@ Write checkpoint file: `.analysis/.checkpoints/01b-inputs-complete.json`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 01b-input-collection
 
@@ -277,6 +286,7 @@ Write checkpoint file: `.analysis/.checkpoints/01b-inputs-complete.json`
 
   Next: 01c-script-execution.md
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ## Next Substage

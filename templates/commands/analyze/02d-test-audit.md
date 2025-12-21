@@ -50,13 +50,15 @@ Identify the testing frameworks in use:
 | Go testing | Go | `*_test.go`, `testing.T` |
 
 **Output:**
-```
+
+```text
 Test Framework Detection:
 
 Primary Framework: {framework}
 Version: {version if detectable}
 Configuration File: {path if exists}
 Additional Frameworks: {list if multiple}
+
 ```
 
 ---
@@ -93,7 +95,8 @@ Analyze test files and estimate coverage:
    - Negative tests (error cases)
 
 **Output Format:**
-```
+
+```text
 Test Coverage Analysis:
 
 Test Files: {count}
@@ -118,6 +121,7 @@ Test Quality:
   Mocking Used: {yes/no}
   Parameterized Tests: {count}
   Error Case Tests: {count}
+
 ```
 
 ---
@@ -142,7 +146,8 @@ Identify files and modules WITHOUT corresponding tests:
    - Error handling paths
 
 **Output Format:**
-```
+
+```text
 Test Coverage Gaps:
 
 Untested Files: {count}/{total} ({percentage}%)
@@ -158,6 +163,7 @@ Moderate Gaps (MEDIUM priority):
 
 Low Priority Gaps:
   🟢 {UtilityHelper.java} - Utility class
+
 ```
 
 ---
@@ -197,7 +203,8 @@ Perform comprehensive dependency security and freshness audit:
 - Snyk database patterns
 
 **Output Format:**
-```
+
+```text
 Dependency Audit:
 
 Total Dependencies: {count}
@@ -244,6 +251,7 @@ DEPRECATED PACKAGES
 ═══════════════════════════════════════════════════════════
 
 {package} - Deprecated, use {replacement}
+
 ```
 
 ---
@@ -308,6 +316,7 @@ Create comprehensive audit summary:
     ]
   }
 }
+
 ```
 
 ---
@@ -332,6 +341,7 @@ Write checkpoint file: `.analysis/.checkpoints/02d-test-audit-complete.json`
   "critical_vulns": {count},
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -350,7 +360,7 @@ Write checkpoint file: `.analysis/.checkpoints/02d-test-audit-complete.json`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 02d-test-audit (Phase 4)
 
@@ -369,6 +379,7 @@ Write checkpoint file: `.analysis/.checkpoints/02d-test-audit-complete.json`
 
   Proceeding to Quality Gates
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

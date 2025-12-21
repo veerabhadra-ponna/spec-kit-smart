@@ -28,7 +28,7 @@ Execute the analyze-project script with collected inputs, then load and merge th
 
 Detect OS and run the appropriate script with collected inputs.
 
-### For Unix/Linux/macOS (bash):
+### For Unix/Linux/macOS (bash)
 
 ```bash
 .specify/scripts/bash/analyze-project.sh "$PROJECT_PATH" \
@@ -37,9 +37,10 @@ Detect OS and run the appropriate script with collected inputs.
   ${CONCERN_TYPE:+--concern-type "$CONCERN_TYPE"} \
   ${CURRENT_IMPL:+--current-impl "$CURRENT_IMPL"} \
   ${TARGET_IMPL:+--target-impl "$TARGET_IMPL"}
+
 ```
 
-### For Windows (PowerShell):
+### For Windows (PowerShell)
 
 ```powershell
 $params = @{
@@ -52,6 +53,7 @@ if ($CURRENT_IMPL) { $params.CurrentImpl = $CURRENT_IMPL }
 if ($TARGET_IMPL) { $params.TargetImpl = $TARGET_IMPL }
 
 .specify\scripts\powershell\analyze-project.ps1 @params
+
 ```
 
 ---
@@ -60,7 +62,8 @@ if ($TARGET_IMPL) { $params.TargetImpl = $TARGET_IMPL }
 Execute the script and capture output.
 
 **Expected Script Output:**
-```
+
+```text
 [analyze-project] Starting analysis...
 [analyze-project] Project: {project_name}
 [analyze-project] Creating workspace: .analysis/{project}-{timestamp}/
@@ -74,10 +77,12 @@ Execute the script and capture output.
 [analyze-project] Bootstrap state: .analysis/.state/00-bootstrap.json
 [analyze-project] Chain ID: {8-char-hex}
 [analyze-project] Complete!
+
 ```
 
 **IF script fails:**
-```
+
+```text
 ❌ Error: Analysis script failed
 
 Error details:
@@ -89,6 +94,7 @@ Possible causes:
   • Permission issues
 
 Please resolve the issue and retry.
+
 ```
 
 STOP workflow until issue resolved.
@@ -110,6 +116,7 @@ Extract from script output:
 
 ```bash
 cat .analysis/.state/00-bootstrap.json
+
 ```
 
 Extract:
@@ -121,6 +128,7 @@ Extract:
 
 ```bash
 cat {$ANALYSIS_DIR}/project-metadata.json
+
 ```
 
 Extract:
@@ -135,6 +143,7 @@ Extract:
 
 ```bash
 cat {$ANALYSIS_DIR}/tech-stack.json
+
 ```
 
 Extract:
@@ -148,6 +157,7 @@ Extract:
 
 ```bash
 cat {$ANALYSIS_DIR}/file-structure.json
+
 ```
 
 Extract:
@@ -162,7 +172,8 @@ Extract:
 Load all four JSON files and validate they are parseable.
 
 **IF any JSON file missing or invalid:**
-```
+
+```text
 ❌ Error: Failed to load JSON files
 
 Missing/Invalid files:
@@ -172,6 +183,7 @@ The script may have failed silently. Please check:
   1. {$ANALYSIS_DIR}/ directory exists
   2. All 4 JSON files were created
   3. JSON files are valid (try: jq . {file})
+
 ```
 
 STOP workflow until resolved.
@@ -180,7 +192,7 @@ STOP workflow until resolved.
 
 ## Step 3: Display Summary to User
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   ANALYSIS SETUP COMPLETE
 ═══════════════════════════════════════════════════════════
@@ -229,6 +241,7 @@ STOP workflow until resolved.
   ✓ All data generated successfully
   ✓ Ready for Stage 2: Deep File Analysis
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---
@@ -296,6 +309,7 @@ Create the complete Stage 1 state object:
     "metadata_path": "{analysis_dir}/project-metadata.json"
   }
 }
+
 ```
 
 ### Save State
@@ -325,6 +339,7 @@ Write checkpoint file: `.analysis/.checkpoints/01c-script-complete.json`
   "state_saved": ".analysis/.state/01-setup-and-scope.json",
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -346,7 +361,7 @@ Write checkpoint file: `.analysis/.checkpoints/01c-script-complete.json`
 
 ## Completion Marker
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   STAGE COMPLETE: SETUP_AND_SCOPE
 
@@ -357,6 +372,7 @@ Write checkpoint file: `.analysis/.checkpoints/01c-script-complete.json`
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:SETUP_AND_SCOPE
+
 ```
 
 ---

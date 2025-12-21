@@ -69,17 +69,17 @@ Generate Sections 1, 2, and 3 for TARGET system.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_1]**
 
-**Section 1: Introduction**
+#### Section 1: Introduction
 - Project name: {name} (Modernized)
 - Target system overview
 - Modernization goals from user preferences
 
-**Section 2: Executive Summary**
+#### Section 2: Executive Summary
 - High-level target functionality
 - Key improvements over legacy
 - New capabilities
 
-**Section 3: Scope**
+#### Section 3: Scope
 - IN SCOPE: Components with explicit target preferences
 - OUT OF SCOPE: Components to keep as-is
 - Migration boundaries
@@ -89,11 +89,13 @@ Write to: `.analysis/{dir}/functional-spec-target.md`
 **Verify:** Read file, confirm scope boundaries match user's answers.
 
 **Output:**
-```
+
+```text
 functional-spec-target.md Chunk 1/5 complete: Introduction + Summary + Scope
   - In Scope Components: [COUNT]
   - Out of Scope Components: [COUNT]
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -112,6 +114,7 @@ Write: `.analysis/.checkpoints/func-target-chunk-1.json`
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -146,16 +149,19 @@ For each CRITICAL feature from legacy spec:
 **Acceptance Criteria:**
 - [ ] {criterion with target tech}
 - [ ] {performance improvement}
+
 ```
 
 Append to: `.analysis/{dir}/functional-spec-target.md`
 
 **Output:**
-```
+
+```text
 functional-spec-target.md Chunk 2/5 complete: User Stories (CRITICAL)
   - Features: [COUNT]
   - Enhancements: [COUNT]
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -173,16 +179,18 @@ Generate Sections 4.2 and 5 with target stack considerations.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_3]**
 
-**Section 4.2: STANDARD Features (Modernized)**
+#### Section 4.2: STANDARD Features (Modernized)
 - Same format as CRITICAL
 - Include modernization changes where applicable
 - Note OUT OF SCOPE items explicitly
 
-**Section 5: Business Rules (Preserved + Enhanced)**
+#### Section 5: Business Rules (Preserved + Enhanced)
+
 ```markdown
 ## 5. Business Rules
 
 ### BR-001: {Rule Name}
+
 **Category:** {category}
 **Preservation:** {EXACT | ENHANCED | REPLACED}
 **Legacy Source:** {file}:{line}
@@ -196,17 +204,20 @@ Generate Sections 4.2 and 5 with target stack considerations.
 
 **Rationale:**
 {why preserved/enhanced/replaced}
+
 ```
 
 Append to: `.analysis/{dir}/functional-spec-target.md`
 
 **Output:**
-```
+
+```text
 functional-spec-target.md Chunk 3/5 complete: STANDARD Features + Rules
   - Features: [COUNT]
   - Rules Preserved: [COUNT]
   - Rules Enhanced: [COUNT]
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -224,7 +235,7 @@ Generate Sections 6 and 7 using user's target preferences.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_4]**
 
-**Section 6: Non-Functional Requirements (Target)**
+#### Section 6: Non-Functional Requirements (Target)
 
 Use user's answers from 10 questions:
 - Q5: Deployment target
@@ -240,27 +251,32 @@ Use user's answers from 10 questions:
 | Scalability | {target approach} | Q5: {answer} |
 | Observability | {target stack} | Q8: {answer} |
 
-**Section 7: Data Requirements (Target)**
+#### Section 7: Data Requirements (Target)
 
 Use user's answer from Q2 (Database):
+
 ```markdown
 ### Entity: {Name} (Migrated)
+
 **Target Database:** {Q2 answer}
 **Migration Notes:** {considerations}
 
 | Field | Type | Target Type | Migration |
 |-------|------|-------------|-----------|
 | {field} | {legacy} | {target} | {notes} |
+
 ```
 
 Append to: `.analysis/{dir}/functional-spec-target.md`
 
 **Output:**
-```
+
+```text
 functional-spec-target.md Chunk 4/5 complete: NFRs + Data
   - Target Database: {Q2 answer}
   - Target Deployment: {Q5 answer}
   - Lines: [COUNT]
+
 ```
 
 ---
@@ -278,17 +294,17 @@ Generate Sections 8, 9, and 10.
 ---
 ⏸️ **[STOP: GENERATE_CHUNK_5]**
 
-**Section 8: Acceptance Criteria (Target)**
+#### Section 8: Acceptance Criteria (Target)
 - Migration success criteria
 - Feature parity verification
 - Performance benchmarks vs legacy
 
-**Section 9: Assumptions (Target)**
+#### Section 9: Assumptions (Target)
 - Target environment assumptions
 - Migration path assumptions
 - Team capability assumptions
 
-**Section 10: Constraints (Target)**
+#### Section 10: Constraints (Target)
 - Timeline constraints
 - Budget constraints
 - Technology constraints from user preferences
@@ -302,13 +318,15 @@ Append to: `.analysis/{dir}/functional-spec-target.md`
 - No placeholders or TODOs
 
 **Output:**
-```
+
+```text
 functional-spec-target.md Chunk 5/5 complete: Acceptance + Assumptions + Constraints
   - Lines: [COUNT]
 
 functional-spec-target.md COMPLETE (5/5 chunks)
    Total features: [COUNT]
    Total lines: [COUNT]
+
 ```
 
 ---
@@ -327,6 +345,7 @@ Write: `.analysis/.checkpoints/func-target-complete.json`
   "timestamp": "{ISO-8601}",
   "status": "complete"
 }
+
 ```
 
 ---
@@ -343,7 +362,7 @@ Write: `.analysis/.checkpoints/func-target-complete.json`
 
 ## Both Functional Specs Complete
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   BOTH FUNCTIONAL SPECS COMPLETE
 
@@ -356,6 +375,7 @@ Write: `.analysis/.checkpoints/func-target-complete.json`
 ═══════════════════════════════════════════════════════════
 
 ARTIFACT_COMPLETE:FUNCTIONAL_SPEC_TARGET
+
 ```
 
 ---

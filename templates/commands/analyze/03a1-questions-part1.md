@@ -50,7 +50,7 @@ Ask the first 5 modernization questions to understand the user's target technolo
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 1 of 10: Target Language/Runtime
 
@@ -74,6 +74,7 @@ Your choice: ___
 TIP: Type the letter (A-H) or specify your preference.
      Type "skip" to use current language.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -83,6 +84,7 @@ TIP: Type the letter (A-H) or specify your preference.
 ### Record Q1 Response
 
 Store user's choice in:
+
 ```json
 {
   "q1_language": {
@@ -91,6 +93,7 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -102,7 +105,7 @@ Store user's choice in:
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 2 of 10: Target Database
 
@@ -125,6 +128,7 @@ Your choice: ___
 TIP: Type the letter (A-H) or specify your preference.
      Type "skip" to use current database.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -134,6 +138,7 @@ TIP: Type the letter (A-H) or specify your preference.
 ### Record Q2 Response
 
 Store user's choice in:
+
 ```json
 {
   "q2_database": {
@@ -142,6 +147,7 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -153,7 +159,7 @@ Store user's choice in:
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 3 of 10: Message Bus / Async Communication
 
@@ -176,6 +182,7 @@ Your choice: ___
 
 TIP: Type "skip" if async is not needed.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -185,6 +192,7 @@ TIP: Type "skip" if async is not needed.
 ### Record Q3 Response
 
 Store user's choice in:
+
 ```json
 {
   "q3_message_bus": {
@@ -193,6 +201,7 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -204,7 +213,7 @@ Store user's choice in:
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 4 of 10: Package Manager / Build Tool
 
@@ -238,6 +247,7 @@ Your choice: ___
 
 TIP: Type "skip" to use current build tool.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -247,6 +257,7 @@ TIP: Type "skip" to use current build tool.
 ### Record Q4 Response
 
 Store user's choice in:
+
 ```json
 {
   "q4_package_manager": {
@@ -255,6 +266,7 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -266,7 +278,7 @@ Store user's choice in:
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 5 of 10: Deployment Target
 
@@ -289,6 +301,7 @@ Your choice: ___
 
 TIP: Type "skip" to use current deployment method.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -298,6 +311,7 @@ TIP: Type "skip" to use current deployment method.
 ### Record Q5 Response
 
 Store user's choice in:
+
 ```json
 {
   "q5_deployment": {
@@ -306,6 +320,7 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -330,6 +345,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a1-questions-complete.json`
   },
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -347,7 +363,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a1-questions-complete.json`
 
 ## Progress Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 03a1-questions-part1
 
@@ -362,6 +378,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a1-questions-complete.json`
 
   Proceeding to Questions 6-10...
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

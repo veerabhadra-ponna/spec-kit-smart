@@ -47,6 +47,7 @@ Check for existing partial report:
 if [ -f ".analysis/{analysis_dir}/analysis-report.md" ]; then
   # Check which chunks exist
 fi
+
 ```
 
 **IF resuming:** Skip completed chunks, continue from first incomplete.
@@ -93,6 +94,7 @@ Write to: `.analysis/{analysis_dir}/analysis-report.md`
 {List with versions and file counts}
 
 **Frameworks:**
+
 | Framework | Version | Purpose | Evidence |
 |-----------|---------|---------|----------|
 | {name} | {version} | {purpose} | {file:line} |
@@ -139,6 +141,7 @@ Write to: `.analysis/{analysis_dir}/analysis-report.md`
 {Detected deployment method with evidence}
 
 ---
+
 ```
 
 ### Verify Chunk 1 Written
@@ -148,6 +151,7 @@ Write to: `.analysis/{analysis_dir}/analysis-report.md`
 3. Confirm no placeholders
 
 **Checkpoint:**
+
 ```json
 {
   "chunk": 1,
@@ -156,6 +160,7 @@ Write to: `.analysis/{analysis_dir}/analysis-report.md`
   "lines": {count},
   "status": "complete"
 }
+
 ```
 
 Write to: `.analysis/.checkpoints/report-chunk-1.json`
@@ -208,6 +213,7 @@ Generate Phase 2.1 content. Document every controller and API endpoint.
 - Admin-only endpoints: {count}
 
 ---
+
 ```
 
 ### Verify Chunk 2
@@ -217,6 +223,7 @@ Generate Phase 2.1 content. Document every controller and API endpoint.
 3. Count endpoints documented
 
 **Checkpoint:**
+
 ```json
 {
   "chunk": 2,
@@ -227,6 +234,7 @@ Generate Phase 2.1 content. Document every controller and API endpoint.
   "lines": {count},
   "status": "complete"
 }
+
 ```
 
 Write to: `.analysis/.checkpoints/report-chunk-2.json`
@@ -269,6 +277,7 @@ Generate Phase 2.2 content. Document services and business logic.
 - {responsibility 2}
 
 **Key Methods:**
+
 | Method | Purpose | Complexity | Evidence |
 |--------|---------|------------|----------|
 | `{method}` | {purpose} | {LOW/MEDIUM/HIGH} | `{file}:{line}` |
@@ -289,6 +298,7 @@ Generate Phase 2.2 content. Document services and business logic.
    - Exit: {outcome}
 
 ---
+
 ```
 
 ### Verify Chunk 3
@@ -298,6 +308,7 @@ Generate Phase 2.2 content. Document services and business logic.
 3. Count services documented
 
 **Checkpoint:**
+
 ```json
 {
   "chunk": 3,
@@ -309,6 +320,7 @@ Generate Phase 2.2 content. Document services and business logic.
   "lines": {count},
   "status": "complete"
 }
+
 ```
 
 Write to: `.analysis/.checkpoints/report-chunk-3.json`
@@ -335,6 +347,7 @@ Write: `.analysis/.checkpoints/04a-complete.json`
   "total_lines": {count},
   "status": "complete"
 }
+
 ```
 
 ### Verify Substage
@@ -348,7 +361,7 @@ Write: `.analysis/.checkpoints/04a-complete.json`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 04a-report-chunks-1-3
 
@@ -362,6 +375,7 @@ Write: `.analysis/.checkpoints/04a-complete.json`
 
   Proceeding to Chunks 4-6...
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

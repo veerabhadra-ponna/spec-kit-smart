@@ -30,10 +30,12 @@ Aggregate results from all previous phases:
 
 ```bash
 # Load all checkpoint files
+
 cat .analysis/.checkpoints/02a-category-scan-complete.json
 cat .analysis/.checkpoints/02b-deep-dive-complete.json
 cat .analysis/.checkpoints/02c-config-complete.json
 cat .analysis/.checkpoints/02d-test-audit-complete.json
+
 ```
 
 ---
@@ -50,16 +52,19 @@ Verify each quality gate. All gates MUST pass before proceeding.
 **Requirement:** At least 70% of important files analyzed
 
 **Calculation:**
-```
+
+```text
 Important Files = Controllers + Services + Models + Repositories + Security + Configs
 Coverage = (Files Analyzed / Important Files) × 100
+
 ```
 
 **Check:**
 - [ ] Coverage ≥ 70%
 
 **IF FAILED:**
-```
+
+```text
 ❌ Quality Gate Failed: Minimum File Coverage
 
 Current: {percentage}% (required: 70%)
@@ -70,6 +75,7 @@ Action Required:
   of the following areas:
   - {area1}: {current}% → need {target}%
   - {area2}: {current}% → need {target}%
+
 ```
 
 STOP - Do not proceed until gate passes.
@@ -86,7 +92,8 @@ STOP - Do not proceed until gate passes.
 - [ ] Infrastructure configs analyzed (if present)
 
 **IF FAILED:**
-```
+
+```text
 ❌ Quality Gate Failed: Configuration Analysis
 
 Missing config files:
@@ -96,6 +103,7 @@ Missing config files:
 Action Required:
   Return to Phase 3 (02c-config-analysis.md) and analyze
   missing configuration files.
+
 ```
 
 STOP - Do not proceed until gate passes.
@@ -107,9 +115,11 @@ STOP - Do not proceed until gate passes.
 **Requirement:** At least 50 feature descriptions with file:line references
 
 **Calculation:**
-```
+
+```text
 Features = Endpoints + Workflows + Business Rules + Integrations
 Each feature must have at least one file:line reference
+
 ```
 
 **Check:**
@@ -117,7 +127,8 @@ Each feature must have at least one file:line reference
 - [ ] All features have file:line references
 
 **IF FAILED:**
-```
+
+```text
 ❌ Quality Gate Failed: Feature Descriptions
 
 Current: {count} features (required: 50)
@@ -128,6 +139,7 @@ Action Required:
   - Controllers/API endpoints
   - Service methods
   - Business rules
+
 ```
 
 STOP - Do not proceed until gate passes.
@@ -150,7 +162,8 @@ STOP - Do not proceed until gate passes.
 - [ ] Categorized by severity (HIGH/MEDIUM/LOW)
 
 **IF FAILED:**
-```
+
+```text
 ❌ Quality Gate Failed: Technical Debt Analysis
 
 Current: {count} items (required: 20)
@@ -162,6 +175,7 @@ Action Required:
   - Code duplication
   - Missing validations
   - Security anti-patterns
+
 ```
 
 STOP - Do not proceed until gate passes.
@@ -183,7 +197,8 @@ STOP - Do not proceed until gate passes.
 - [ ] Security findings ≥ 10
 
 **IF FAILED:**
-```
+
+```text
 ❌ Quality Gate Failed: Security Analysis
 
 Current: {count} findings (required: 10)
@@ -196,6 +211,7 @@ Action Required:
   - Output encoding
   - Encryption usage
   - Sensitive data handling
+
 ```
 
 STOP - Do not proceed until gate passes.
@@ -212,7 +228,8 @@ STOP - Do not proceed until gate passes.
 - [ ] Outdated packages identified
 
 **IF FAILED:**
-```
+
+```text
 ❌ Quality Gate Failed: Dependency Audit
 
 Missing:
@@ -221,6 +238,7 @@ Missing:
 Action Required:
   Return to Phase 4 (02d-test-audit.md) and complete
   dependency analysis.
+
 ```
 
 STOP - Do not proceed until gate passes.
@@ -369,6 +387,7 @@ Merge all phase results into comprehensive state:
     "all_passed": true
   }
 }
+
 ```
 
 ### Save State
@@ -388,7 +407,8 @@ Write to: `.analysis/.state/02-file-analysis.json`
 4. Confirm `quality_gates.all_passed` = true
 
 **IF verification fails:**
-```
+
+```text
 ❌ State verification failed
 
 Issues:
@@ -397,6 +417,7 @@ Issues:
 
 Action Required:
   Regenerate state file with complete data.
+
 ```
 
 ---
@@ -430,6 +451,7 @@ Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
   "state_saved": ".analysis/.state/02-file-analysis.json",
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -452,7 +474,7 @@ Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
 
 ## Completion Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   STAGE COMPLETE: FILE_ANALYSIS
 
@@ -486,6 +508,7 @@ Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:FILE_ANALYSIS
+
 ```
 
 ---

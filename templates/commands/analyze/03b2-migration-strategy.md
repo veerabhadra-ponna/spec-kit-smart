@@ -49,31 +49,36 @@ Select migration strategy based on abstraction level and blast radius.
 **Strategy Descriptions:**
 
 ### Direct Replacement
+
 - **When:** HIGH abstraction + SMALL blast radius
 - **Approach:** Swap implementation directly behind existing interface
 - **Duration:** Days to 1-2 weeks
 - **Risk:** LOW
 
 ### Phased Migration
+
 - **When:** HIGH abstraction + larger blast radius
 - **Approach:** Migrate module by module, using existing interfaces
 - **Duration:** 2-6 weeks
 - **Risk:** LOW to MEDIUM
 
 ### Refactor Then Replace
+
 - **When:** MEDIUM abstraction + SMALL blast radius
 - **Approach:** First create proper abstractions, then swap
 - **Duration:** 2-4 weeks
 - **Risk:** MEDIUM
 
 ### Strangler Fig Pattern
+
 - **When:** MEDIUM/LOW abstraction + MEDIUM+ blast radius
 - **Approach:** New implementation alongside old, gradual cutover
 - **Duration:** 4-12 weeks
 - **Risk:** MEDIUM to HIGH
 
 **Output Selected Strategy:**
-```
+
+```text
 Migration Strategy Selection:
 
 Inputs:
@@ -87,6 +92,7 @@ Rationale:
 
 Alternative Considered: {alternative}
   Why Not: {reason}
+
 ```
 
 ---
@@ -101,6 +107,7 @@ Create detailed phase plan using 50/30/15/5 value distribution.
 **Phase Template:**
 
 ### Phase 1: Foundation & Pilot (50% Value)
+
 **Duration:** 30-40% of timeline
 **Focus:**
 - Set up target implementation infrastructure
@@ -120,6 +127,7 @@ Create detailed phase plan using 50/30/15/5 value distribution.
 - Rollback successful when tested
 
 ### Phase 2: Expansion (30% Value)
+
 **Duration:** 25-30% of timeline
 **Focus:**
 - Migrate 3-5 additional components
@@ -138,6 +146,7 @@ Create detailed phase plan using 50/30/15/5 value distribution.
 - Performance within 10% of baseline
 
 ### Phase 3: Completion (15% Value)
+
 **Duration:** 15-20% of timeline
 **Focus:**
 - Migrate remaining components
@@ -156,6 +165,7 @@ Create detailed phase plan using 50/30/15/5 value distribution.
 - Tests passing
 
 ### Phase 4: Optimization (5% Value)
+
 **Duration:** 10-15% of timeline
 **Focus:**
 - Performance tuning
@@ -169,7 +179,8 @@ Create detailed phase plan using 50/30/15/5 value distribution.
 - Team trained
 
 **Output:**
-```
+
+```text
 Migration Phases ({strategy}):
 
 Phase 1 - Foundation & Pilot (50%)
@@ -191,6 +202,7 @@ Phase 4 - Optimization (5%)
   Duration: {weeks} weeks
   Focus: Performance, docs, cleanup
   Exit Criteria: Production stable 30 days
+
 ```
 
 ---
@@ -205,7 +217,8 @@ Identify and categorize migration risks.
 **Risk Categories:**
 
 ### Technical Risks
-```
+
+```text
 For each, rate: Probability (H/M/L) × Impact (H/M/L)
 
 1. Breaking Changes
@@ -227,10 +240,12 @@ For each, rate: Probability (H/M/L) × Impact (H/M/L)
    - Downstream systems impacted
    - External API changes needed
    - Protocol mismatches
+
 ```
 
 ### Business Risks
-```
+
+```text
 1. User Experience Disruption
    - Downtime during migration
    - Feature degradation
@@ -245,10 +260,12 @@ For each, rate: Probability (H/M/L) × Impact (H/M/L)
    - Team unfamiliar with target
    - Documentation lag
    - Support burden
+
 ```
 
 ### Operational Risks
-```
+
+```text
 1. Rollback Complexity
    - Can't rollback cleanly
    - Data divergence
@@ -263,10 +280,12 @@ For each, rate: Probability (H/M/L) × Impact (H/M/L)
    - Running dual systems
    - Extended timeline
    - Additional resources
+
 ```
 
 **Output Format:**
-```
+
+```text
 Risk Assessment:
 
 🔴 HIGH RISKS (Probability × Impact = HIGH)
@@ -291,6 +310,7 @@ Risk Assessment:
 ─────────────────────────────────────────────────────────────
   1. {risk_name}
      ...
+
 ```
 
 ---
@@ -347,6 +367,7 @@ Risk Assessment:
     }
   }
 }
+
 ```
 
 ---
@@ -369,6 +390,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b2-strategy-complete.json`
   "low_risks": {count},
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -383,7 +405,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b2-strategy-complete.json`
 
 ## Output Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 03b2-migration-strategy
 
@@ -400,6 +422,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b2-strategy-complete.json`
 
   Proceeding to Effort & Success Criteria...
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

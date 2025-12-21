@@ -32,7 +32,7 @@ Ask questions 6-10 to complete the modernization preferences. These cover infras
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 6 of 10: Infrastructure as Code (IaC)
 
@@ -73,6 +73,7 @@ Your choice: ___
 
 TIP: Type "skip" to proceed without IaC.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -89,6 +90,7 @@ TIP: Type "skip" to proceed without IaC.
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -100,7 +102,7 @@ TIP: Type "skip" to proceed without IaC.
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 7 of 10: Containerization Strategy
 
@@ -120,6 +122,7 @@ Your choice: ___
 
 TIP: Type "skip" to use current approach.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -136,6 +139,7 @@ TIP: Type "skip" to use current approach.
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -147,7 +151,7 @@ TIP: Type "skip" to use current approach.
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 8 of 10: Observability Stack
 
@@ -185,6 +189,7 @@ Example: "A/B/C" for Prometheus, Loki, Jaeger
 
 TIP: Type "skip" to determine based on deployment target.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -205,6 +210,7 @@ TIP: Type "skip" to determine based on deployment target.
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -216,7 +222,7 @@ TIP: Type "skip" to determine based on deployment target.
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 9 of 10: Security & Authentication
 
@@ -240,6 +246,7 @@ Your choice: ___
 
 TIP: Type "skip" to keep current auth approach.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -256,6 +263,7 @@ TIP: Type "skip" to keep current auth approach.
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -267,7 +275,7 @@ TIP: Type "skip" to keep current auth approach.
 
 Present this question EXACTLY as written:
 
-```
+```text
 ════════════════════════════════════════════════════════════
 QUESTION 10 of 10: Testing Strategy
 
@@ -291,6 +299,7 @@ Your choice: ___
 
 TIP: Type "skip" to use current approach.
 ════════════════════════════════════════════════════════════
+
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -308,6 +317,7 @@ TIP: Type "skip" to use current approach.
     "rationale": "{user's reason if provided}"
   }
 }
+
 ```
 
 ---
@@ -338,6 +348,7 @@ Merge all Q1-Q10 responses into modernization preferences:
     }
   }
 }
+
 ```
 
 ---
@@ -363,6 +374,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a2-questions-complete.json`
   "all_questions_complete": true,
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -381,7 +393,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a2-questions-complete.json`
 
 ## Progress Summary
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 03a2-questions-part2
 
@@ -403,6 +415,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a2-questions-complete.json`
 
   Proceeding to Scope Validation & Scoring...
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ---

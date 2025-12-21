@@ -32,8 +32,10 @@ Search for AGENTS.md in the locations listed above.
 2. Note the version number (line 3-4)
 3. Internalize all guidelines
 4. Output confirmation:
-   ```
+
+   ```text
    ✓ Read AGENTS.md v[X.X] - Following all guidelines
+
    ```
 
 **IF AGENTS.md DOES NOT EXIST:**
@@ -48,15 +50,19 @@ Search for AGENTS.md in the locations listed above.
 Check that required scripts exist:
 
 **For Unix/Linux/macOS:**
+
 ```bash
 ls -la .specify/scripts/bash/analyze-project.sh
 ls -la .specify/scripts/bash/enumerate-project.sh
+
 ```
 
 **For Windows:**
+
 ```powershell
 Test-Path .specify\scripts\powershell\analyze-project.ps1
 Test-Path .specify\scripts\powershell\enumerate-project.ps1
+
 ```
 
 ---
@@ -78,6 +84,7 @@ Verify or create the analysis directory structure:
 ```bash
 mkdir -p .analysis/.state
 mkdir -p .analysis/.checkpoints
+
 ```
 
 ---
@@ -97,6 +104,7 @@ Write checkpoint file: `.analysis/.checkpoints/01a-init-complete.json`
   "toolkit_verified": true,
   "status": "complete"
 }
+
 ```
 
 ### Verify Checkpoint
@@ -115,13 +123,14 @@ Write checkpoint file: `.analysis/.checkpoints/01a-init-complete.json`
 
 ## Output
 
-```
+```text
 ═══════════════════════════════════════════════════════════
   SUBSTAGE COMPLETE: 01a-initialization
   AGENTS.md: {verified v[X.X] | not found}
   Toolkit: verified
   Next: 01b-input-collection.md
 ═══════════════════════════════════════════════════════════
+
 ```
 
 ## Next Substage
