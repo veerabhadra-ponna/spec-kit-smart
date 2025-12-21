@@ -1171,4 +1171,675 @@ def emit_complete(message, next_steps):
 
 ---
 
+## 10. Enforced Chunking Architecture
+
+### 10.1 The Chunking Problem
+
+**Current behavior with prompt-based chunking:**
+
+```
+Prompt instruction:
+"Generate the analysis report in 9 chunks:
+1. Executive Summary
+2. Technology Stack
+3. Architecture Patterns
+4. File Analysis Results
+5. Technical Debt
+6. Security Findings
+7. Dependency Audit
+8. Test Coverage
+9. Recommendations"
+
+What models do:
+├── Opus 4.5: Sometimes follows chunking (70%)
+├── Sonnet 4: Often ignores, generates at once (40% follow)
+├── Lower models: Almost always ignore chunking
+└── Result: Incomplete/truncated output for large projects
+```
+
+**Root cause:** Models treat chunking as a suggestion, not a requirement. They optimize for "complete faster" and attempt everything in one pass.
+
+### 10.2 Enforced Chunking via Progressive EXE
+
+With the EXE architecture, chunking is **enforced by design**:
+
+```
+speckit analyze-project --stage=8
+├── --chunk=1  →  "Generate Executive Summary ONLY"
+├── --chunk=2  →  "Generate Technology Stack ONLY"
+├── --chunk=3  →  "Generate Architecture Patterns ONLY"
+├── --chunk=4  →  "Generate File Analysis Results ONLY"
+├── --chunk=5  →  "Generate Technical Debt ONLY"
+├── --chunk=6  →  "Generate Security Findings ONLY"
+├── --chunk=7  →  "Generate Dependency Audit ONLY"
+├── --chunk=8  →  "Generate Test Coverage ONLY"
+└── --chunk=9  →  "Generate Recommendations ONLY"
+```
+
+**Each chunk is a separate command.** The model physically cannot generate multiple chunks because it only receives instructions for one at a time.
+
+### 10.3 Chunk Flow Example
+
+```
+Agent runs: speckit analyze-project --stage=8 --chunk=1 --chain=abc123
+
+EXE outputs:
+┌────────────────────────────────────────────────────────────────┐
+│ REPORT CHUNK: 1/9 - Executive Summary                          │
+│                                                                │
+│ Generate ONLY the Executive Summary section (50-100 lines).    │
+│                                                                │
+│ Include:                                                       │
+│ - Project name: {project_name}                                 │
+│ - Analysis scope: {scope}                                      │
+│ - Key findings summary (3-5 sentences)                         │
+│ - Critical metrics:                                            │
+│   * Files analyzed: {files_count}                              │
+│   * Tech debt items: {debt_count}                              │
+│   * Security issues: {security_count}                          │
+│ - Primary recommendation preview                               │
+│                                                                │
+│ Write to: .analysis/{workspace}/analysis-report.md             │
+│ Mode: CREATE (new file)                                        │
+│                                                                │
+│ NEXT: speckit analyze-project --stage=8 --chunk=2 --chain=abc  │
+└────────────────────────────────────────────────────────────────┘
+
+Agent: Generates ~80 lines of Executive Summary
+Agent: Creates analysis-report.md with content
+Agent runs: speckit analyze-project --stage=8 --chunk=2 --chain=abc123
+
+EXE outputs:
+┌────────────────────────────────────────────────────────────────┐
+│ REPORT CHUNK: 2/9 - Technology Stack                           │
+│                                                                │
+│ Generate ONLY the Technology Stack section (80-120 lines).     │
+│                                                                │
+│ Data from tech-stack.json:                                     │
+│ {                                                              │
+│   "languages": ["java-11", "javascript-es6"],                  │
+│   "frameworks": {                                              │
+│     "backend": ["spring-boot-2.7.5"],                          │
+│     "frontend": ["react-16.8.0"]                               │
+│   },                                                           │
+│   "build_tools": ["maven-3.8.6"]                               │
+│ }                                                              │
+│                                                                │
+│ Include version analysis and upgrade recommendations.          │
+│                                                                │
+│ Write to: .analysis/{workspace}/analysis-report.md             │
+│ Mode: APPEND                                                   │
+│                                                                │
+│ NEXT: speckit analyze-project --stage=8 --chunk=3 --chain=abc  │
+└────────────────────────────────────────────────────────────────┘
+
+... continues until chunk 9 ...
+
+Agent runs: speckit analyze-project --stage=8 --chunk=9 --chain=abc123
+
+EXE outputs:
+┌────────────────────────────────────────────────────────────────┐
+│ REPORT CHUNK: 9/9 - Recommendations (FINAL)                    │
+│                                                                │
+│ Generate ONLY the Recommendations section (100-150 lines).     │
+│                                                                │
+│ Requirements:                                                  │
+│ - Primary recommendation with confidence score (0-100)         │
+│ - Justify the score based on analysis findings                 │
+│ - 3-5 secondary recommendations with priority                  │
+│ - Actionable next steps                                        │
+│ - Risk assessment for each recommendation                      │
+│                                                                │
+│ Write to: .analysis/{workspace}/analysis-report.md             │
+│ Mode: APPEND                                                   │
+│                                                                │
+│ After writing, run verification:                               │
+│ NEXT: speckit analyze-project --stage=8 --verify --chain=abc   │
+└────────────────────────────────────────────────────────────────┘
+```
+
+### 10.4 Benefits of Enforced Chunking
+
+| Aspect | Prompt-Based Chunking | EXE-Enforced Chunking |
+|--------|----------------------|----------------------|
+| Model compliance | 40-70% | 100% (physically enforced) |
+| Large project handling | Fails/truncates | Works reliably |
+| Context per chunk | Entire doc context | Only chunk context |
+| Recovery on failure | Start over | Resume from chunk |
+| Progress visibility | None until complete | Per-chunk progress |
+| Output quality | Rushed, incomplete | Focused, complete |
+
+### 10.5 Chunk Size Guidelines
+
+| Document Type | Total Size | Chunks | Lines per Chunk |
+|---------------|------------|--------|-----------------|
+| Analysis Report | 3000+ lines | 9 | 300-400 |
+| Functional Spec | 1500+ lines | 6 | 250-300 |
+| Technical Spec | 1200+ lines | 5 | 240-300 |
+| Migration Plan | 800+ lines | 4 | 200-250 |
+
+### 10.6 Python Implementation
+
+```python
+# speckit/commands/analyze.py
+
+@app.command()
+def analyze_project(
+    stage: int = typer.Option(1),
+    chunk: int = typer.Option(None),
+    verify: bool = typer.Option(False),
+    chain_id: str = typer.Option(None),
+):
+    if stage == 8 and chunk is not None:
+        state = ChainState.load(chain_id)
+
+        chunk_configs = [
+            ("Executive Summary", "CREATE", 50, 100),
+            ("Technology Stack", "APPEND", 80, 120),
+            ("Architecture Patterns", "APPEND", 150, 200),
+            ("File Analysis Results", "APPEND", 200, 300),
+            ("Technical Debt", "APPEND", 150, 200),
+            ("Security Findings", "APPEND", 100, 150),
+            ("Dependency Audit", "APPEND", 80, 120),
+            ("Test Coverage", "APPEND", 60, 100),
+            ("Recommendations", "APPEND", 100, 150),
+        ]
+
+        if chunk > len(chunk_configs):
+            # All chunks complete, move to verification
+            emit_stage(
+                stage_num=8,
+                total_stages=9,
+                title="Report Generation Complete",
+                content="All chunks generated. Running verification...",
+                next_cmd=f"speckit analyze-project --stage=8 --verify --chain={chain_id}"
+            )
+            return
+
+        name, mode, min_lines, max_lines = chunk_configs[chunk - 1]
+        context = get_chunk_context(state, chunk)
+
+        emit_chunk(
+            chunk_num=chunk,
+            total_chunks=len(chunk_configs),
+            title=name,
+            content=get_chunk_prompt(name, context),
+            file_path=f"{state.workspace}/analysis-report.md",
+            mode=mode,
+            line_range=(min_lines, max_lines),
+            next_cmd=f"speckit analyze-project --stage=8 --chunk={chunk+1} --chain={chain_id}"
+        )
+        return
+
+    if stage == 8 and verify:
+        # Verify all chunks were generated correctly
+        report_path = Path(state.workspace) / "analysis-report.md"
+        issues = verify_report(report_path)
+
+        if issues:
+            emit_stage(
+                stage_num=8,
+                title="Verification Failed",
+                content=f"Issues found:\n" + "\n".join(f"- {i}" for i in issues),
+                next_cmd=f"speckit analyze-project --stage=8 --fix --chain={chain_id}"
+            )
+        else:
+            emit_stage(
+                stage_num=8,
+                title="Verification Passed",
+                content="Report complete and verified.",
+                next_cmd=f"speckit analyze-project --stage=9 --chain={chain_id}"
+            )
+        return
+
+def emit_chunk(chunk_num, total_chunks, title, content, file_path, mode, line_range, next_cmd):
+    min_lines, max_lines = line_range
+    print(f"REPORT CHUNK: {chunk_num}/{total_chunks} - {title}")
+    print()
+    print(f"Generate ONLY this section ({min_lines}-{max_lines} lines).")
+    print()
+    print(content)
+    print()
+    print(f"Write to: {file_path}")
+    print(f"Mode: {mode}")
+    print()
+    print(f"NEXT: {next_cmd}")
+```
+
+---
+
+## 11. Template Handling in Zero-Prompt Architecture
+
+### 11.1 Template vs Prompt Distinction
+
+| Type | Purpose | Handling |
+|------|---------|----------|
+| **Prompts** | Instructions for agent | EXE outputs as stage fragments |
+| **Templates** | Structure for output files | EXE injects inline or extracts |
+
+### 11.2 Template Injection Strategies
+
+**Strategy A: Inline (for templates < 100 lines)**
+
+```
+EXE outputs:
+┌────────────────────────────────────────────────────────────────┐
+│ STAGE: 2/3 - Generate Constitution                             │
+│                                                                │
+│ Create file: memory/constitution.md                            │
+│                                                                │
+│ Use this template:                                             │
+│ ══════════════════════════════════════════════════════════════ │
+│ # Project Constitution v{version}                              │
+│ Ratified: {date}                                               │
+│                                                                │
+│ ## Principles                                                  │
+│                                                                │
+│ {for each principle:}                                          │
+│ ### {principle_name}                                           │
+│ {MUST|SHOULD|MAY} {description}                                │
+│                                                                │
+│ ## Governance                                                  │
+│ - Amendment requires team review                               │
+│ - Version follows semver                                       │
+│ ══════════════════════════════════════════════════════════════ │
+│                                                                │
+│ Fill with:                                                     │
+│ - version: 1.0.0                                               │
+│ - date: 2025-12-21                                             │
+│ - principles: {user_provided_principles}                       │
+│                                                                │
+│ NEXT: speckit constitution --stage=3                           │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Strategy B: Extract (for templates > 100 lines)**
+
+```
+EXE behavior:
+1. Extracts embedded template to filesystem
+2. Outputs reference in stage
+
+EXE outputs:
+┌────────────────────────────────────────────────────────────────┐
+│ STAGE: 8/9 - Generate Analysis Report                          │
+│                                                                │
+│ Template extracted to:                                         │
+│   .analysis/templates/analysis-report-template.md              │
+│                                                                │
+│ 1. Read the template                                           │
+│ 2. Fill all {placeholders} with data below                     │
+│ 3. Save to: .analysis/project/analysis-report.md               │
+│                                                                │
+│ Data for template:                                             │
+│ - project_name: legacy-app                                     │
+│ - files_analyzed: 187                                          │
+│ - patterns: auth(JWT), db(PostgreSQL)                          │
+│ - tech_debt_items: 34                                          │
+│ - security_findings: 18                                        │
+│                                                                │
+│ NEXT: speckit analyze-project --stage=9 --chain=abc123         │
+└────────────────────────────────────────────────────────────────┘
+```
+
+### 11.3 Template Size Guidelines
+
+| Template | Lines | Strategy |
+|----------|-------|----------|
+| constitution-template.md | ~50 | Inline |
+| spec-template.md | ~80 | Inline |
+| plan-template.md | ~60 | Inline |
+| tasks-template.md | ~40 | Inline |
+| analysis-report-template.md | ~300 | Extract |
+| functional-spec-template.md | ~200 | Extract |
+| technical-spec-template.md | ~250 | Extract |
+
+### 11.4 Python Implementation for Templates
+
+```python
+# speckit/templates.py
+import sys
+from pathlib import Path
+
+def get_embedded_template(name: str) -> str:
+    """Load template from embedded assets."""
+    if getattr(sys, 'frozen', False):
+        base = Path(sys._MEIPASS) / 'assets' / 'templates'
+    else:
+        base = Path(__file__).parent / 'assets' / 'templates'
+    return (base / f'{name}.md').read_text()
+
+def extract_template(name: str, dest_dir: Path) -> Path:
+    """Extract template to filesystem for agent to use."""
+    content = get_embedded_template(name)
+    template_dir = dest_dir / 'templates'
+    template_dir.mkdir(parents=True, exist_ok=True)
+    dest_path = template_dir / f'{name}.md'
+    dest_path.write_text(content)
+    return dest_path
+
+def emit_with_template(
+    stage_info: dict,
+    template_name: str,
+    context: dict,
+    inline_threshold: int = 100
+):
+    """Emit stage with template - inline if small, extract if large."""
+    template_content = get_embedded_template(template_name)
+    line_count = len(template_content.splitlines())
+
+    if line_count <= inline_threshold:
+        # Inline the template
+        print(f"STAGE: {stage_info['num']}/{stage_info['total']} - {stage_info['title']}")
+        print()
+        print("Use this template:")
+        print("═" * 60)
+        print(template_content)
+        print("═" * 60)
+        print()
+        print("Fill with:")
+        for key, value in context.items():
+            print(f"  {key}: {value}")
+    else:
+        # Extract to filesystem
+        dest_path = extract_template(template_name, Path(context.get('workspace', '.')))
+        print(f"STAGE: {stage_info['num']}/{stage_info['total']} - {stage_info['title']}")
+        print()
+        print(f"Template extracted to: {dest_path}")
+        print()
+        print("Data for template:")
+        for key, value in context.items():
+            print(f"  {key}: {value}")
+
+    print()
+    print(f"NEXT: {stage_info['next_cmd']}")
+```
+
+---
+
+## 12. Release Package and Process Changes
+
+### 12.1 Current Release Structure
+
+```
+GitHub Release (Current):
+└── spec-kit-template-{agent}-{version}.zip
+    ├── .specify/
+    │   ├── scripts/
+    │   │   ├── bash/           # 15 scripts (194K)
+    │   │   └── powershell/     # 12 scripts (154K)
+    │   └── prompts/            # 11+ prompt files (50K)
+    ├── templates/
+    │   ├── commands/           # Command prompts
+    │   │   └── analyze/        # Staged prompts
+    │   └── analyze/            # Templates
+    ├── src/specify_cli/        # Python CLI
+    └── ...other files
+```
+
+**Current process:**
+1. Update scripts and prompts in repo
+2. Create version tag
+3. GitHub Action builds ZIP per agent
+4. Upload ZIPs to release
+
+### 12.2 New Release Structure (Zero-Prompt)
+
+```
+GitHub Release (New):
+├── speckit-linux-x86_64           # Linux AMD64 binary (~25MB)
+├── speckit-linux-arm64            # Linux ARM64 binary (~25MB)
+├── speckit-darwin-x86_64          # macOS Intel binary (~25MB)
+├── speckit-darwin-arm64           # macOS Apple Silicon (~25MB)
+├── speckit-darwin-universal       # macOS Universal binary (~45MB)
+├── speckit-windows-x86_64.exe     # Windows 64-bit (~30MB)
+├── speckit-source.tar.gz          # Source for pip/pipx install
+│
+└── launcher-templates/            # Minimal launcher files per agent
+    ├── claude/
+    │   └── commands/
+    │       ├── speckitsmart.constitution.md  (3 lines)
+    │       ├── speckitsmart.specify.md       (3 lines)
+    │       ├── speckitsmart.plan.md          (3 lines)
+    │       └── ...                           (3 lines each)
+    ├── copilot/
+    │   └── ...
+    └── gemini/
+        └── ...
+```
+
+### 12.3 What's Inside the EXE
+
+```
+speckit (compiled binary)
+├── Python 3.11 runtime (bundled)
+├── Dependencies (typer, rich, etc.)
+├── speckit package
+│   ├── cli.py
+│   ├── commands/
+│   │   ├── constitution.py
+│   │   ├── specify.py
+│   │   ├── plan.py
+│   │   ├── analyze.py
+│   │   └── ...
+│   └── core/
+│       ├── state.py
+│       ├── config.py
+│       └── utils.py
+│
+└── Embedded Assets (frozen)
+    ├── prompts/              # All prompt fragments
+    │   ├── constitution/
+    │   │   ├── stage1.md
+    │   │   ├── stage2.md
+    │   │   └── stage3.md
+    │   ├── analyze-project/
+    │   │   ├── stage1.md
+    │   │   ├── stage2.md
+    │   │   └── ...stage9 chunks...
+    │   └── .../
+    │
+    └── templates/            # All output templates
+        ├── constitution-template.md
+        ├── analysis-report-template.md
+        ├── functional-spec-template.md
+        └── ...
+```
+
+### 12.4 New CI/CD Pipeline
+
+```yaml
+# .github/workflows/release-binaries.yml
+name: Build and Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  build-binaries:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: linux-x86_64
+            artifact: speckit-linux-x86_64
+          - os: ubuntu-latest
+            target: linux-arm64
+            artifact: speckit-linux-arm64
+            # Uses cross-compilation
+          - os: macos-latest
+            target: darwin-universal
+            artifact: speckit-darwin-universal
+          - os: windows-latest
+            target: windows-x86_64
+            artifact: speckit-windows-x86_64.exe
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyinstaller
+          pip install -e .
+
+      - name: Build binary
+        run: |
+          pyinstaller \
+            --onefile \
+            --name ${{ matrix.artifact }} \
+            --add-data "speckit/assets:assets" \
+            speckit/__main__.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.artifact }}
+
+  build-launchers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate launcher files
+        run: |
+          python scripts/generate-launchers.py
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: launcher-templates
+          path: dist/launchers/
+
+  create-release:
+    needs: [build-binaries, build-launchers]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            speckit-linux-x86_64/speckit-linux-x86_64
+            speckit-linux-arm64/speckit-linux-arm64
+            speckit-darwin-universal/speckit-darwin-universal
+            speckit-windows-x86_64.exe/speckit-windows-x86_64.exe
+            launcher-templates.zip
+```
+
+### 12.5 Launcher Generator Script
+
+```python
+# scripts/generate-launchers.py
+"""Generate minimal 3-line launcher files for each agent."""
+
+from pathlib import Path
+
+AGENTS = {
+    "claude": ".claude/commands",
+    "copilot": ".github/copilot/commands",
+    "gemini": ".gemini/commands",
+    "cursor-agent": ".cursor/commands",
+    "windsurf": ".windsurf/commands",
+}
+
+COMMANDS = [
+    ("constitution", "Create or update project constitution"),
+    ("specify", "Create baseline specification"),
+    ("plan", "Create implementation plan"),
+    ("clarify", "Ask structured questions"),
+    ("tasks", "Generate actionable tasks"),
+    ("implement", "Execute implementation"),
+    ("analyze-project", "Analyze existing project"),
+    ("checklist", "Generate quality checklist"),
+    ("analyze", "Cross-artifact consistency check"),
+]
+
+LAUNCHER_TEMPLATE = """---
+description: {description}
+---
+Run: `speckit {command}`
+Follow all instructions in the output.
+"""
+
+def generate_launchers():
+    dist = Path("dist/launchers")
+
+    for agent, cmd_path in AGENTS.items():
+        agent_dir = dist / agent / cmd_path
+        agent_dir.mkdir(parents=True, exist_ok=True)
+
+        for command, description in COMMANDS:
+            launcher_content = LAUNCHER_TEMPLATE.format(
+                description=description,
+                command=command
+            )
+
+            launcher_file = agent_dir / f"speckitsmart.{command}.md"
+            launcher_file.write_text(launcher_content)
+            print(f"Generated: {launcher_file}")
+
+if __name__ == "__main__":
+    generate_launchers()
+```
+
+### 12.6 Installation Flow Changes
+
+**Current flow:**
+```bash
+# Install CLI
+pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
+
+# Initialize project (downloads ZIP with scripts + prompts)
+speckitsmart init my-project --ai claude
+```
+
+**New flow:**
+```bash
+# Option A: Download binary directly
+curl -L https://github.com/.../releases/latest/speckit-linux-x86_64 -o speckit
+chmod +x speckit
+sudo mv speckit /usr/local/bin/
+
+# Option B: Install via pip (builds from source)
+pipx install git+https://github.com/.../spec-kit-smart.git
+
+# Initialize project (downloads only launcher files)
+speckit init my-project --ai claude
+```
+
+### 12.7 Size Comparison
+
+| Component | Current | New (EXE) | Change |
+|-----------|---------|-----------|--------|
+| Scripts (bash) | 194K | 0 (embedded) | -194K |
+| Scripts (powershell) | 154K | 0 (embedded) | -154K |
+| Prompts | ~50K | 0 (embedded) | -50K |
+| Templates | ~30K | 0 (embedded) | -30K |
+| Python CLI | ~50K | 0 (embedded) | -50K |
+| **Downloaded files** | **~480K** | **~33 lines** | **-99.9%** |
+| EXE binary | N/A | ~25MB | New |
+
+**Trade-off:** Larger binary, but near-zero deployment files and guaranteed consistency.
+
+### 12.8 Backward Compatibility
+
+For users who want the old script-based approach:
+
+```bash
+# Install source package (includes scripts)
+pip install spec-kit-smart[scripts]
+
+# Or download source release
+curl -L .../releases/latest/speckit-source.tar.gz | tar xz
+```
+
+---
+
 *End of Assessment Document*
