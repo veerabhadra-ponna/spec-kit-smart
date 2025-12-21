@@ -18,7 +18,7 @@ console = Console()
 
 # Create main Typer app
 app = typer.Typer(
-    name="speckit",
+    name="speckitadv",
     help="Spec Kit Smart - Zero-Prompt Architecture CLI for AI-powered development",
     add_completion=True,
     # Note: no_args_is_help removed - commands default to stage 1 with current directory
@@ -28,7 +28,7 @@ app = typer.Typer(
 def version_callback(value: bool) -> None:
     """Show version and exit."""
     if value:
-        console.print(f"speckit version {__version__}")
+        console.print(f"speckitadv version {__version__}")
         raise typer.Exit()
 
 

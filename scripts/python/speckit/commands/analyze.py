@@ -126,11 +126,13 @@ def run_analyze_project(
     total_stages = TOTAL_STAGES.get(effective_scope, 9)
 
     # Build context for prompt rendering
+    analysis_dir = state.analysis_dir
     render_context = {
         "chain_id": chain_id,
         "stage": stage,
         "total_stages": total_stages,
         "project_path": str(state.project_path),
+        "analysis_dir": str(analysis_dir) if analysis_dir else "",
         "scope": effective_scope,
         "context": context or state.get("context") or "",
         "concern_type": concern_type or state.get("concern_type") or "",
@@ -218,7 +220,10 @@ Run the following command to begin:""",
     # Run verification if this is the final stage and verify flag is set
     if next_cmd is None and verify:
         from speckit.commands.project import verify_analysis_report
-        report_path = state.project_path / ".analysis" / "analysis-report.md"
+        if analysis_dir:
+            report_path = Path(analysis_dir) / "analysis-report.md"
+        else:
+            report_path = state.project_path / ".analysis" / "analysis-report.md"
         if report_path.exists():
             print("\n")  # Add spacing
             verify_analysis_report(str(report_path))
@@ -285,13 +290,14 @@ def _emit_chunk_stage(
         else:
             next_cmd = None
 
-    # Emit chunk
+    # Emit chunk - use analysis_dir if available
+    analysis_dir = context.get("analysis_dir", ".analysis")
     emit_chunk(
         chunk_num=chunk,
         total_chunks=total_chunks,
         title=f"{_get_stage_title(stage)} - Chunk {chunk}",
         content=rendered,
-        file_path=f".analysis/reports/stage{stage}-chunk{chunk}.md",
+        file_path=f"{analysis_dir}/stage{stage}-chunk{chunk}.md",
         mode="append" if chunk > 1 else "create",
         line_range=((chunk-1)*50+1, chunk*50),
         next_cmd=next_cmd,
