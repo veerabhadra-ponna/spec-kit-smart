@@ -1,0 +1,364 @@
+"""
+Spec Kit Smart CLI
+
+Main entry point for the speckit command-line interface.
+Implements the zero-prompt architecture with progressive stage injection.
+"""
+
+from pathlib import Path
+from typing import Optional
+
+import typer
+from rich.console import Console
+
+from speckit import __version__
+
+# Create console for rich output
+console = Console()
+
+# Create main Typer app
+app = typer.Typer(
+    name="speckit",
+    help="Spec Kit Smart - Zero-Prompt Architecture CLI for AI-powered development",
+    add_completion=True,
+    no_args_is_help=True,
+)
+
+
+def version_callback(value: bool) -> None:
+    """Show version and exit."""
+    if value:
+        console.print(f"speckit version {__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-v",
+        callback=version_callback,
+        is_eager=True,
+        help="Show version and exit",
+    ),
+    debug: bool = typer.Option(
+        False,
+        "--debug",
+        "-d",
+        help="Enable debug output",
+    ),
+) -> None:
+    """
+    Spec Kit Smart - Zero-Prompt Architecture CLI
+
+    This CLI provides progressive prompt injection for AI agents.
+    All prompts, templates, and logic are embedded in this tool.
+    """
+    pass
+
+
+# ============================================================================
+# ANALYZE-PROJECT Command
+# ============================================================================
+
+
+@app.command("analyze-project")
+def analyze_project(
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-9)"),
+    chunk: Optional[int] = typer.Option(None, "--chunk", "-c", help="Report chunk number (1-9)"),
+    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path to analyze"),
+    scope: Optional[str] = typer.Option(None, "--scope", help="Analysis scope: A (full) or B (cross-cutting)"),
+    context: Optional[str] = typer.Option(None, "--context", help="Additional context"),
+    concern_type: Optional[str] = typer.Option(None, "--concern-type", help="Cross-cutting concern type"),
+    current_impl: Optional[str] = typer.Option(None, "--current-impl", help="Current implementation"),
+    target_impl: Optional[str] = typer.Option(None, "--target-impl", help="Target implementation"),
+    verify: bool = typer.Option(False, "--verify", help="Run verification after report generation"),
+) -> None:
+    """
+    Analyze an existing project for modernization.
+
+    This command implements a progressive workflow with enforced chunking.
+    AI agents receive focused prompts (50-80 lines) at each stage.
+    """
+    from speckit.commands.analyze import run_analyze_project
+
+    run_analyze_project(
+        stage=stage,
+        chunk=chunk,
+        chain_id=chain_id,
+        path=path,
+        scope=scope,
+        context=context,
+        concern_type=concern_type,
+        current_impl=current_impl,
+        target_impl=target_impl,
+        verify=verify,
+    )
+
+
+# ============================================================================
+# CONSTITUTION Command
+# ============================================================================
+
+
+@app.command("constitution")
+def constitution(
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
+    principles: Optional[str] = typer.Option(None, "--principles", help="User-provided principles"),
+    defaults: bool = typer.Option(False, "--defaults", help="Use default principles"),
+) -> None:
+    """
+    Create or update the project constitution.
+
+    Defines non-negotiable project principles and governance.
+    """
+    from speckit.commands.constitution import run_constitution
+
+    run_constitution(stage=stage, principles=principles, defaults=defaults)
+
+
+# ============================================================================
+# SPECIFY Command
+# ============================================================================
+
+
+@app.command("specify")
+def specify(
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
+    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+) -> None:
+    """
+    Create baseline specification.
+
+    Defines what needs to be built before planning how.
+    """
+    from speckit.core.emit import emit_stage
+
+    # Placeholder - implement in commands/specify.py
+    emit_stage(
+        stage_num=stage,
+        total_stages=4,
+        title="Specify - Coming Soon",
+        content="This command is under development.",
+        next_cmd="speckit specify --stage=2",
+    )
+
+
+# ============================================================================
+# PLAN Command
+# ============================================================================
+
+
+@app.command("plan")
+def plan(
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
+    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+) -> None:
+    """
+    Create implementation plan.
+
+    Designs how to build what was specified.
+    """
+    from speckit.core.emit import emit_stage
+
+    # Placeholder - implement in commands/plan.py
+    emit_stage(
+        stage_num=stage,
+        total_stages=4,
+        title="Plan - Coming Soon",
+        content="This command is under development.",
+        next_cmd="speckit plan --stage=2",
+    )
+
+
+# ============================================================================
+# TASKS Command
+# ============================================================================
+
+
+@app.command("tasks")
+def tasks(
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
+    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+) -> None:
+    """
+    Generate actionable tasks.
+
+    Breaks down the plan into implementable units.
+    """
+    from speckit.core.emit import emit_stage
+
+    # Placeholder - implement in commands/tasks.py
+    emit_stage(
+        stage_num=stage,
+        total_stages=3,
+        title="Tasks - Coming Soon",
+        content="This command is under development.",
+        next_cmd="speckit tasks --stage=2",
+    )
+
+
+# ============================================================================
+# IMPLEMENT Command
+# ============================================================================
+
+
+@app.command("implement")
+def implement(
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
+    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+) -> None:
+    """
+    Execute implementation.
+
+    Implements tasks with quality checks.
+    """
+    from speckit.core.emit import emit_stage
+
+    # Placeholder - implement in commands/implement.py
+    emit_stage(
+        stage_num=stage,
+        total_stages=4,
+        title="Implement - Coming Soon",
+        content="This command is under development.",
+        next_cmd="speckit implement --stage=2",
+    )
+
+
+# ============================================================================
+# CLARIFY Command
+# ============================================================================
+
+
+@app.command("clarify")
+def clarify(
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
+    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+) -> None:
+    """
+    Ask structured questions.
+
+    Resolves ambiguities before implementation.
+    """
+    from speckit.core.emit import emit_stage
+
+    # Placeholder - implement in commands/clarify.py
+    emit_stage(
+        stage_num=stage,
+        total_stages=3,
+        title="Clarify - Coming Soon",
+        content="This command is under development.",
+        next_cmd="speckit clarify --stage=2",
+    )
+
+
+# ============================================================================
+# CHECKLIST Command
+# ============================================================================
+
+
+@app.command("checklist")
+def checklist(
+    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-2)"),
+    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+) -> None:
+    """
+    Generate quality checklist.
+
+    Creates validation checklists for requirements.
+    """
+    from speckit.core.emit import emit_stage
+
+    # Placeholder - implement in commands/checklist.py
+    emit_stage(
+        stage_num=stage,
+        total_stages=2,
+        title="Checklist - Coming Soon",
+        content="This command is under development.",
+        next_cmd="speckit checklist --stage=2",
+    )
+
+
+# ============================================================================
+# INIT Command
+# ============================================================================
+
+
+@app.command("init")
+def init(
+    project_name: Optional[str] = typer.Argument(None, help="Project name or '.' for current directory"),
+    ai: Optional[str] = typer.Option(None, "--ai", help="AI assistant: claude, copilot, gemini, etc."),
+    here: bool = typer.Option(False, "--here", help="Initialize in current directory"),
+    no_git: bool = typer.Option(False, "--no-git", help="Skip git initialization"),
+) -> None:
+    """
+    Initialize a new Spec Kit project.
+
+    Downloads launcher files for the specified AI assistant.
+    """
+    from speckit.core.emit import emit_complete
+
+    # Placeholder - implement full init logic
+    emit_complete(
+        message="Init command is under development.",
+        next_steps=[
+            "Use the existing speckitsmart CLI for now",
+            "pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git",
+        ],
+    )
+
+
+# ============================================================================
+# DEBUG Commands
+# ============================================================================
+
+
+@app.command("list-fragments")
+def list_fragments_cmd(
+    command: str = typer.Argument(..., help="Command name (e.g., analyze-project)"),
+) -> None:
+    """
+    List available prompt fragments for a command.
+
+    Debug utility to inspect available stages.
+    """
+    from speckit.core.prompts import list_fragments, get_stage_order, count_fragment_lines
+
+    fragments = list_fragments(command)
+    ordered = get_stage_order(command)
+
+    console.print(f"\n[bold]Prompt fragments for '{command}':[/bold]\n")
+
+    for stage in ordered:
+        lines = count_fragment_lines(command, stage)
+        status = "[green]✓[/green]" if lines > 0 else "[red]✗[/red]"
+        console.print(f"  {status} {stage} ({lines} lines)")
+
+    console.print(f"\n[dim]Total: {len(fragments)} fragments[/dim]\n")
+
+
+@app.command("show-fragment")
+def show_fragment_cmd(
+    command: str = typer.Argument(..., help="Command name"),
+    stage: str = typer.Argument(..., help="Stage identifier"),
+) -> None:
+    """
+    Show content of a prompt fragment.
+
+    Debug utility to inspect fragment content.
+    """
+    from speckit.core.prompts import get_prompt_fragment
+
+    try:
+        content = get_prompt_fragment(command, stage)
+        console.print(f"\n[bold]Fragment: {command}/{stage}[/bold]\n")
+        console.print(content)
+    except FileNotFoundError as e:
+        console.print(f"[red]Error:[/red] {e}")
+        raise typer.Exit(1)
+
+
+if __name__ == "__main__":
+    app()

@@ -1131,6 +1131,88 @@ Phase 3: Commands    Phase 4: Fragments
 
 ---
 
+## Implementation Progress Log
+
+### Session 2025-12-21 (Current)
+
+#### Completed
+
+**Phase 1: Project Foundation** ✅
+- Created package structure: `scripts/python/speckit/`
+- Created `pyproject.toml` with dependencies (typer, rich, pydantic)
+- Created `__init__.py` and `__main__.py` entry points
+- Verified package installs correctly
+
+**Phase 2: Core Infrastructure** ✅
+- Created `core/emit.py` - Stage emission system with box-drawing output
+- Created `core/state.py` - Chain state management with Pydantic validation
+- Created `core/config.py` - Configuration loading with defaults
+- Created `core/utils.py` - Utility functions (repo root, run_command, etc.)
+- Created `core/templates.py` - Template loading and extraction
+- Created `core/prompts.py` - Prompt fragment system
+
+**Phase 3: Commands** 🟡 In Progress
+- Created `cli.py` with Typer app - all commands defined
+- Created `commands/analyze.py` - Full analyze-project workflow with stages/chunks
+- Created `commands/constitution.py` - 3-stage constitution workflow
+- Remaining commands using placeholder emit_stage
+
+**Phase 4: Prompt Fragments** ⚠️ Needs Revision
+- 34 fragments created externally for analyze-project
+- **ISSUE: Fragments do NOT meet design spec** (see below)
+
+---
+
+## Critical Issue: Fragmentation Gap
+
+### Problem
+
+The external fragmentation of `analyze-project` prompts does NOT match the design spec:
+
+| Requirement | Design Target | Actual | Status |
+|-------------|---------------|--------|--------|
+| Fragment size | 50-100 lines | 138-920 lines | ❌ 2-10x too large |
+| Main prompts | Fragmented | NOT fragmented (228-1210 lines) | ❌ Not started |
+| Templates | Handled | NOT fragmented (453-1153 lines) | ⚠️ Acceptable (different handling) |
+
+### analyze-project Fragments (Current State)
+
+| Fragment | Lines | Target | Gap |
+|----------|-------|--------|-----|
+| 01a-initialization | 138 | 50-80 | 1.7x |
+| 01b-input-collection | 294 | 50-80 | 3.7x |
+| 02b-deep-dive | 472 | 50-80 | 5.9x |
+| 06-scope-artifacts | 920 | 50-80 | 11.5x |
+| 02-file-analysis | 870 | 50-80 | 10.9x |
+| 04-report-generation | 755 | 50-80 | 9.4x |
+
+### Main Prompts (NOT Fragmented)
+
+| File | Lines | Action Needed |
+|------|-------|---------------|
+| implement.md | 657 | Split into ~8 fragments |
+| specify.md | 483 | Split into ~6 fragments |
+| plan.md | 350 | Split into ~4 fragments |
+| tasks.md | 324 | Split into ~4 fragments |
+| constitution.md | 233 | Split into ~3 fragments |
+| clarify.md | 228 | Split into ~3 fragments |
+| checklist.md | 228 | Split into ~3 fragments |
+
+### Recommendations
+
+1. **Re-fragment analyze-project prompts** - Further subdivide into 50-80 line chunks
+2. **Fragment main prompts** - Apply same fragmentation pattern
+3. **Templates are OK** - Use inline/extract threshold (100 lines) already implemented
+
+### Impact
+
+Without proper fragmentation:
+- Progressive injection won't reduce cognitive load for models
+- Lower models (Sonnet 4) may still fail to follow complex instructions
+- Chunking enforcement loses effectiveness
+
+---
+
 ## Session Recovery Checkpoints
 
 If session is interrupted, resume from the last completed task. Check:
@@ -1139,7 +1221,7 @@ If session is interrupted, resume from the last completed task. Check:
 2. `git log --oneline -5` - See recent commits
 3. Check this file for last ✅ status
 
-**Current Checkpoint:** Phase 1 Not Started
+**Current Checkpoint:** Phase 3 In Progress - Commands created, need proper fragmentation
 
 ---
 

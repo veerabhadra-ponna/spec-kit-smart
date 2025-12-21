@@ -1,0 +1,339 @@
+"""
+Analyze-Project Command
+
+Implements the progressive analysis workflow with enforced chunking.
+This is the most complex command with 9 stages and dynamic branching.
+"""
+
+from pathlib import Path
+from typing import Optional
+
+from speckit.core.emit import emit_stage, emit_chunk, emit_error, emit_complete
+from speckit.core.prompts import (
+    get_prompt_fragment,
+    render_prompt,
+    fragment_exists,
+    get_next_stage,
+    get_stage_order,
+)
+from speckit.core.state import ChainState
+from speckit.core.utils import generate_chain_id, get_repo_root
+
+
+# Stage mapping: numeric stage -> fragment identifier
+STAGE_MAP = {
+    1: "01a-initialization",
+    2: "02a-category-scan",
+    3: "02b-deep-dive",
+    4: "03a-patterns",
+    5: "03b-anti-patterns",
+    6: "04a-gap-analysis",
+    7: "04b-modernization",
+    8: "05a-dependency-scan",
+    9: "05b-pattern-analysis",
+}
+
+# Chunk map for stages that have multiple report chunks
+CHUNK_MAP = {
+    6: {  # Stage 6 has report chunks
+        1: "06-scope-artifacts",
+        2: "06-scope-artifacts",  # Same fragment, different chunk
+        3: "06-scope-artifacts",
+    },
+}
+
+# Total stages by scope
+TOTAL_STAGES = {
+    "A": 9,  # Full analysis
+    "B": 6,  # Cross-cutting concern only
+}
+
+
+def run_analyze_project(
+    stage: int = 1,
+    chunk: Optional[int] = None,
+    chain_id: Optional[str] = None,
+    path: Optional[str] = None,
+    scope: Optional[str] = None,
+    context: Optional[str] = None,
+    concern_type: Optional[str] = None,
+    current_impl: Optional[str] = None,
+    target_impl: Optional[str] = None,
+    verify: bool = False,
+) -> None:
+    """
+    Execute analyze-project workflow at specified stage.
+
+    This function implements progressive prompt injection:
+    - Each invocation outputs ONLY the prompt for current stage
+    - Prompt is 50-80 lines max (focused, digestible)
+    - State is persisted between invocations
+    - AI agent runs next command from output
+
+    Args:
+        stage: Current workflow stage (1-9)
+        chunk: Report chunk number for chunked stages
+        chain_id: Chain ID for state persistence
+        path: Project path to analyze
+        scope: Analysis scope (A=full, B=cross-cutting)
+        context: Additional context
+        concern_type: Type of cross-cutting concern (for scope B)
+        current_impl: Current implementation details
+        target_impl: Target implementation details
+        verify: Run verification after generation
+    """
+    # Initialize or load chain state
+    if chain_id:
+        try:
+            state = ChainState.load(chain_id)
+        except FileNotFoundError:
+            emit_error(
+                "Chain state not found",
+                f"No state found for chain ID: {chain_id}",
+                recovery_cmd=f"speckit analyze-project --stage=1 --path={path or '.'}",
+            )
+            return
+    else:
+        # New workflow - initialize state
+        project_path = Path(path) if path else Path.cwd()
+        if not project_path.exists():
+            emit_error(
+                "Project path not found",
+                f"Path does not exist: {project_path}",
+                recovery_cmd="speckit analyze-project --stage=1 --path=<valid-path>",
+            )
+            return
+
+        state = ChainState.initialize(project_path)
+        chain_id = state.chain_id
+
+    # Determine total stages based on scope
+    effective_scope = scope or state.get("scope") or "A"
+    total_stages = TOTAL_STAGES.get(effective_scope, 9)
+
+    # Build context for prompt rendering
+    render_context = {
+        "chain_id": chain_id,
+        "stage": stage,
+        "total_stages": total_stages,
+        "project_path": str(state.project_path),
+        "scope": effective_scope,
+        "context": context or state.get("context") or "",
+        "concern_type": concern_type or state.get("concern_type") or "",
+        "current_impl": current_impl or state.get("current_impl") or "",
+        "target_impl": target_impl or state.get("target_impl") or "",
+    }
+
+    # Handle chunked stages
+    if chunk is not None:
+        _emit_chunk_stage(stage, chunk, chain_id, render_context, state)
+        return
+
+    # Get fragment for current stage
+    fragment_id = STAGE_MAP.get(stage)
+    if not fragment_id:
+        emit_error(
+            "Invalid stage",
+            f"Stage {stage} is not valid for analyze-project",
+            recovery_cmd=f"speckit analyze-project --stage=1 --chain={chain_id}",
+        )
+        return
+
+    # Load and render prompt fragment
+    try:
+        fragment = get_prompt_fragment("analyze-project", fragment_id)
+    except FileNotFoundError:
+        # Try alternate path
+        try:
+            fragment = get_prompt_fragment("analyze", fragment_id)
+        except FileNotFoundError:
+            emit_error(
+                "Fragment not found",
+                f"Prompt fragment not found: {fragment_id}",
+                recovery_cmd=f"speckit analyze-project --stage={stage} --chain={chain_id}",
+            )
+            return
+
+    rendered = render_prompt(fragment, render_context)
+
+    # Determine next command
+    next_stage = stage + 1 if stage < total_stages else None
+    if next_stage:
+        next_cmd = f"speckit analyze-project --stage={next_stage} --chain={chain_id}"
+    else:
+        next_cmd = None
+
+    # Check if this stage has chunks (report generation)
+    if stage in CHUNK_MAP:
+        # This stage requires chunking - redirect to chunk 1
+        next_cmd = f"speckit analyze-project --stage={stage} --chunk=1 --chain={chain_id}"
+        emit_stage(
+            stage_num=stage,
+            total_stages=total_stages,
+            title=_get_stage_title(stage),
+            content=f"""This stage requires chunked report generation.
+
+Starting chunked output mode. Each chunk will contain a focused section.
+
+Run the following command to begin:""",
+            next_cmd=next_cmd,
+        )
+        return
+
+    # Save state for this stage
+    state.save(
+        stage_name=f"stage_{stage}",
+        data={
+            "stage": stage,
+            "scope": effective_scope,
+            "context": context,
+            "rendered_prompt_lines": len(rendered.splitlines()),
+        },
+    )
+
+    # Emit the stage prompt
+    emit_stage(
+        stage_num=stage,
+        total_stages=total_stages,
+        title=_get_stage_title(stage),
+        content=rendered,
+        next_cmd=next_cmd,
+        context=render_context if stage == 1 else None,  # Show context on first stage
+    )
+
+
+def _emit_chunk_stage(
+    stage: int,
+    chunk: int,
+    chain_id: str,
+    context: dict,
+    state: ChainState,
+) -> None:
+    """
+    Emit a specific chunk of a chunked stage.
+
+    Enforced chunking ensures the AI can't skip chunks.
+    Each chunk is a separate command invocation.
+    """
+    chunk_info = CHUNK_MAP.get(stage)
+    if not chunk_info:
+        emit_error(
+            "Stage not chunked",
+            f"Stage {stage} does not support chunking",
+            recovery_cmd=f"speckit analyze-project --stage={stage} --chain={chain_id}",
+        )
+        return
+
+    total_chunks = len(chunk_info)
+    if chunk < 1 or chunk > total_chunks:
+        emit_error(
+            "Invalid chunk",
+            f"Chunk {chunk} is not valid (1-{total_chunks})",
+            recovery_cmd=f"speckit analyze-project --stage={stage} --chunk=1 --chain={chain_id}",
+        )
+        return
+
+    fragment_id = chunk_info.get(chunk)
+
+    # Load fragment and extract chunk-specific content
+    try:
+        fragment = get_prompt_fragment("analyze", fragment_id)
+    except FileNotFoundError:
+        emit_error(
+            "Fragment not found",
+            f"Chunk fragment not found: {fragment_id}",
+            recovery_cmd=f"speckit analyze-project --stage={stage} --chain={chain_id}",
+        )
+        return
+
+    # Chunk the fragment content
+    chunk_content = _extract_chunk(fragment, chunk, total_chunks)
+    rendered = render_prompt(chunk_content, context)
+
+    # Determine next command
+    if chunk < total_chunks:
+        next_cmd = f"speckit analyze-project --stage={stage} --chunk={chunk + 1} --chain={chain_id}"
+    else:
+        # Move to next stage
+        next_stage = stage + 1 if stage < context["total_stages"] else None
+        if next_stage:
+            next_cmd = f"speckit analyze-project --stage={next_stage} --chain={chain_id}"
+        else:
+            next_cmd = None
+
+    # Emit chunk
+    emit_chunk(
+        chunk_num=chunk,
+        total_chunks=total_chunks,
+        title=f"{_get_stage_title(stage)} - Chunk {chunk}",
+        content=rendered,
+        file_path=f".speckit/reports/stage{stage}-chunk{chunk}.md",
+        mode="append" if chunk > 1 else "create",
+        line_range=((chunk-1)*50+1, chunk*50),
+        next_cmd=next_cmd,
+    )
+
+
+def _extract_chunk(fragment: str, chunk: int, total_chunks: int) -> str:
+    """
+    Extract a specific chunk from a large fragment.
+
+    Divides content into roughly equal sections.
+    """
+    lines = fragment.splitlines()
+    total_lines = len(lines)
+
+    # Find section boundaries (markdown headers)
+    sections = []
+    current_section_start = 0
+
+    for i, line in enumerate(lines):
+        if line.startswith("## ") or line.startswith("### "):
+            if i > current_section_start:
+                sections.append((current_section_start, i))
+            current_section_start = i
+
+    # Add final section
+    if current_section_start < total_lines:
+        sections.append((current_section_start, total_lines))
+
+    # Distribute sections across chunks
+    if not sections:
+        # No sections found - divide by lines
+        chunk_size = total_lines // total_chunks
+        start = (chunk - 1) * chunk_size
+        end = start + chunk_size if chunk < total_chunks else total_lines
+        return "\n".join(lines[start:end])
+
+    # Assign sections to chunks
+    sections_per_chunk = max(1, len(sections) // total_chunks)
+    start_section = (chunk - 1) * sections_per_chunk
+    end_section = start_section + sections_per_chunk if chunk < total_chunks else len(sections)
+
+    if start_section >= len(sections):
+        return "# Chunk Complete\n\nNo additional content for this chunk."
+
+    start_line = sections[start_section][0]
+    end_line = sections[min(end_section, len(sections)) - 1][1] if end_section <= len(sections) else total_lines
+
+    return "\n".join(lines[start_line:end_line])
+
+
+def _get_stage_title(stage: int) -> str:
+    """Get human-readable title for a stage."""
+    titles = {
+        1: "Project Initialization",
+        2: "Category Scan",
+        3: "Deep Dive Analysis",
+        4: "Pattern Recognition",
+        5: "Anti-Pattern Detection",
+        6: "Gap Analysis",
+        7: "Modernization Opportunities",
+        8: "Dependency Scan",
+        9: "Pattern Analysis",
+    }
+    return titles.get(stage, f"Stage {stage}")
+
+
+# Export function for CLI
+analyze_project = run_analyze_project
