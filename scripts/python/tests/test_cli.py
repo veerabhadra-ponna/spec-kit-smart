@@ -2,6 +2,7 @@
 Tests for speckit CLI.
 """
 
+import re
 import pytest
 from typer.testing import CliRunner
 
@@ -10,6 +11,12 @@ from speckit import __version__
 
 
 runner = CliRunner()
+
+
+def strip_ansi(text: str) -> str:
+    """Remove ANSI escape codes from text."""
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return ansi_escape.sub('', text)
 
 
 class TestVersion:
@@ -37,11 +44,12 @@ class TestHelp:
         assert result.exit_code == 0
         assert "Spec Kit Smart" in result.stdout
 
-    def test_no_args_shows_help(self):
-        """Should show help when no args provided."""
+    def test_no_args_runs_default(self):
+        """Should run without args (commands default to stage 1)."""
         result = runner.invoke(app, [])
-        # Should show help due to no_args_is_help=True
-        assert "Usage:" in result.stdout or result.exit_code == 0
+        # Without no_args_is_help, CLI runs but may show help for subcommand selection
+        # Exit code 0 means success, 2 means CLI needs subcommand
+        assert result.exit_code in (0, 2)
 
 
 class TestAnalyzeProjectCommand:
@@ -51,8 +59,9 @@ class TestAnalyzeProjectCommand:
         """Should display help for analyze-project."""
         result = runner.invoke(app, ["analyze-project", "--help"])
         assert result.exit_code == 0
-        assert "analyze" in result.stdout.lower()
-        assert "--stage" in result.stdout
+        output = strip_ansi(result.stdout)
+        assert "analyze" in output.lower()
+        assert "--stage" in output
 
     def test_default_stage(self):
         """Should accept default stage parameter."""
@@ -85,7 +94,7 @@ class TestSpecifyCommand:
         """Should display help for specify."""
         result = runner.invoke(app, ["specify", "--help"])
         assert result.exit_code == 0
-        assert "--stage" in result.stdout
+        assert "--stage" in strip_ansi(result.stdout)
 
 
 class TestPlanCommand:
@@ -95,7 +104,7 @@ class TestPlanCommand:
         """Should display help for plan."""
         result = runner.invoke(app, ["plan", "--help"])
         assert result.exit_code == 0
-        assert "--stage" in result.stdout
+        assert "--stage" in strip_ansi(result.stdout)
 
 
 class TestTasksCommand:
@@ -105,7 +114,7 @@ class TestTasksCommand:
         """Should display help for tasks."""
         result = runner.invoke(app, ["tasks", "--help"])
         assert result.exit_code == 0
-        assert "--stage" in result.stdout
+        assert "--stage" in strip_ansi(result.stdout)
 
 
 class TestImplementCommand:
@@ -115,7 +124,7 @@ class TestImplementCommand:
         """Should display help for implement."""
         result = runner.invoke(app, ["implement", "--help"])
         assert result.exit_code == 0
-        assert "--stage" in result.stdout
+        assert "--stage" in strip_ansi(result.stdout)
 
 
 class TestClarifyCommand:
@@ -125,7 +134,7 @@ class TestClarifyCommand:
         """Should display help for clarify."""
         result = runner.invoke(app, ["clarify", "--help"])
         assert result.exit_code == 0
-        assert "--stage" in result.stdout
+        assert "--stage" in strip_ansi(result.stdout)
 
 
 class TestChecklistCommand:
@@ -135,7 +144,7 @@ class TestChecklistCommand:
         """Should display help for checklist."""
         result = runner.invoke(app, ["checklist", "--help"])
         assert result.exit_code == 0
-        assert "--stage" in result.stdout
+        assert "--stage" in strip_ansi(result.stdout)
 
 
 class TestListFragmentsCommand:
@@ -212,4 +221,5 @@ class TestCommandConsistency:
         ]
         for cmd in stage_commands:
             result = runner.invoke(app, [cmd, "--help"])
-            assert "--chain" in result.stdout, f"Command {cmd} missing --chain option"
+            output = strip_ansi(result.stdout)
+            assert "--chain" in output, f"Command {cmd} missing --chain option"
