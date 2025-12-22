@@ -140,6 +140,9 @@ def run_analyze_project(
 
     # Build context for prompt rendering
     analysis_dir = state.analysis_dir
+    # Resolve implementation values (provide both short and long variable names for prompts)
+    resolved_current = current_impl or state.get("current_impl") or ""
+    resolved_target = target_impl or state.get("target_impl") or ""
     render_context = {
         "chain_id": chain_id,
         "stage": stage,
@@ -149,8 +152,12 @@ def run_analyze_project(
         "scope": effective_scope,
         "context": context or state.get("context") or "",
         "concern_type": concern_type or state.get("concern_type") or "",
-        "current_impl": current_impl or state.get("current_impl") or "",
-        "target_impl": target_impl or state.get("target_impl") or "",
+        # Short names (used in some prompts)
+        "current_impl": resolved_current,
+        "target_impl": resolved_target,
+        # Long names (used in other prompts)
+        "current_implementation": resolved_current,
+        "target_implementation": resolved_target,
     }
 
     # Handle chunked stages

@@ -22,7 +22,7 @@ Both methods require PYTHONPATH to resolve imports:
 ```bash
 # From repo root - set PYTHONPATH first
 PYTHONPATH=scripts/python python scripts/python/speckit/cli.py --help
-PYTHONPATH=scripts/python python scripts/python/speckit/cli.py init demo-project --ai claude --ignore-agent-tools
+PYTHONPATH=scripts/python python scripts/python/speckit/cli.py init demo-project --ai claude
 ```
 
 Or use module style:
@@ -30,7 +30,7 @@ Or use module style:
 ```bash
 # From repo root - set PYTHONPATH first
 PYTHONPATH=scripts/python python -m speckit.cli --help
-PYTHONPATH=scripts/python python -m speckit.cli init demo-project --ai claude --ignore-agent-tools
+PYTHONPATH=scripts/python python -m speckit.cli init demo-project --ai claude
 ```
 
 ## 3. Use Editable Install (Isolated Environment)
@@ -73,14 +73,14 @@ If you're in another directory, use an absolute path:
 
 ```bash
 pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitadv --help
-pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitadv init demo-anywhere --ai copilot --ignore-agent-tools
+pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitadv init demo-anywhere --ai copilot
 ```
 
 Set an environment variable for convenience:
 
 ```bash
 export SPEC_KIT_SRC=/mnt/c/GitHub/spec-kit-smart
-pipx run --spec "$SPEC_KIT_SRC" speckitadv init demo-env --ai copilot --ignore-agent-tools
+pipx run --spec "$SPEC_KIT_SRC" speckitadv init demo-env --ai copilot
 ```
 
 (Optional) Define a shell function:
@@ -134,24 +134,26 @@ When testing `init --here` in a dirty directory, create a temp workspace:
 mkdir /tmp/spec-test && cd /tmp/spec-test
 
 # Option 1: Use absolute path to script (requires PYTHONPATH)
-PYTHONPATH=/path/to/spec-kit-smart/scripts/python python /path/to/spec-kit-smart/scripts/python/speckit/cli.py init --here --ai claude --ignore-agent-tools
+PYTHONPATH=/path/to/spec-kit-smart/scripts/python python /path/to/spec-kit-smart/scripts/python/speckit/cli.py init --here --ai claude
 
 # Option 2: Use PYTHONPATH for module style
-PYTHONPATH=/path/to/spec-kit-smart/scripts/python python -m speckit.cli init --here --ai claude --ignore-agent-tools
+PYTHONPATH=/path/to/spec-kit-smart/scripts/python python -m speckit.cli init --here --ai claude
 ```
 
 Or use pipx for a cleaner isolated test.
 
-## 9. Debug Network / TLS Skips
+## 9. Network Issues
 
-If you need to bypass TLS validation while experimenting:
+If you encounter network issues while testing:
 
 ```bash
-speckitadv check --skip-tls
-speckitadv init demo --skip-tls --ai gemini --ignore-agent-tools
-```
+# Use corporate proxy settings
+export HTTPS_PROXY=http://proxy.company.com:8080
+speckitadv init demo --ai gemini
 
-(Use only for local experimentation.)
+# Or update certificates
+pip install --upgrade certifi truststore
+```
 
 ## 10. Rapid Edit Loop Summary
 
@@ -178,7 +180,7 @@ rm -rf .venv dist build *.egg-info
 | `ModuleNotFoundError: typer` | Run `pip install -e .` after activating venv |
 | Launcher files missing | Re-run init or check agent command directory |
 | Git step skipped | You passed `--no-git` or Git not installed |
-| TLS errors on corporate network | Try `--skip-tls` (not for production) |
+| TLS errors on corporate network | Set HTTPS_PROXY or update certifi/truststore |
 | Chain ID mismatch error | Only the latest chain is retained. Start a new workflow or use the current chain ID shown in the error |
 
 ## 13. Next Steps

@@ -1066,11 +1066,6 @@ speckitadv init . --force --ai claude
 speckitadv init --here --force --ai claude
 ```
 
-The CLI will check if you have the selected AI agent's CLI tool installed (for CLI-based agents). If you do not, or you prefer to get the templates without checking for the right tools, use `--ignore-agent-tools` with your command:
-
-```bash
-speckitadv init <project_name> --ai claude --ignore-agent-tools
-```
 
 ### **STEP 1:** Establish project principles
 

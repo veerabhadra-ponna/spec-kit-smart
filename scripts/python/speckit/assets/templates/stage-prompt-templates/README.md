@@ -37,12 +37,12 @@ For detailed requirements, see functional-spec.md.
 
 | File | Toolkit Stage | Purpose |
 | ------ | --------------- | --------- |
-| `constitution-prompt.md` | /speckit.constitution | Extract principles from legacy |
-| ~~`specify-prompt.md`~~ | /speckit.specify | **Use `functional-spec.md` directly** |
-| ~~`plan-prompt.md`~~ | /speckit.plan | **Use `technical-spec.md` directly** |
-| `clarify-prompt.md` | /speckit.clarify | Use legacy code as source of truth |
-| `tasks-prompt.md` | /speckit.tasks | Break down with legacy complexity |
-| `implement-prompt.md` | /speckit.implement | Reference legacy code during implementation |
+| `constitution-prompt.md` | /speckitadv.constitution | Extract principles from legacy |
+| ~~`specify-prompt.md`~~ | /speckitadv.specify | **Use `functional-spec.md` directly** |
+| ~~`plan-prompt.md`~~ | /speckitadv.plan | **Use `technical-spec.md` directly** |
+| `clarify-prompt.md` | /speckitadv.clarify | Use legacy code as source of truth |
+| `tasks-prompt.md` | /speckitadv.tasks | Break down with legacy complexity |
+| `implement-prompt.md` | /speckitadv.implement | Reference legacy code during implementation |
 
 ## Key Principle: "Legacy Code as Source of Truth"
 

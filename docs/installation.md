@@ -47,13 +47,6 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git spec
 pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <project_name> --ai codebuddy
 ```
 
-### Ignore Agent Tools Check
-
-If you prefer to get the templates without checking for the right tools:
-
-```bash
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <project_name> --ai claude --ignore-agent-tools
-```
 
 ## Verification
 

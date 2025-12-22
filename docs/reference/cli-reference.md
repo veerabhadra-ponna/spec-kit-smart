@@ -15,13 +15,9 @@ The `speckitadv` CLI provides tools for initializing projects and checking prere
 | ------------------------ | ---------- | ------------------------------------------------------------------------------ |
 | `<project-name>`       | Argument | Name for your new project directory (optional if using `--here`, or use `.` for current directory) |
 | `--ai`                 | Option   | AI assistant to use: `claude`, `gemini`, `copilot`, `cursor-agent`, `qwen`, `opencode`, `codex`, `windsurf`, `kilocode`, `auggie`, `roo`, `codebuddy`, `amp`, or `q` |
-| `--ignore-agent-tools` | Flag     | Skip checks for AI agent tools like Claude Code                             |
 | `--no-git`             | Flag     | Skip git repository initialization                                          |
 | `--here`               | Flag     | Initialize project in the current directory instead of creating a new one   |
 | `--force`              | Flag     | Force merge/overwrite when initializing in current directory (skip confirmation) |
-| `--skip-tls`           | Flag     | Skip SSL/TLS verification (not recommended)                                 |
-| `--debug`              | Flag     | Enable detailed debug output for troubleshooting                            |
-| `--github-token`       | Option   | GitHub token for API requests (or set GH_TOKEN/GITHUB_TOKEN env variable)  |
 
 ## Examples
 
@@ -53,12 +49,6 @@ speckitadv init --here --force --ai copilot
 
 # Skip git initialization
 speckitadv init my-project --ai gemini --no-git
-
-# Enable debug output for troubleshooting
-speckitadv init my-project --ai claude --debug
-
-# Use GitHub token for API requests (helpful for corporate environments)
-speckitadv init my-project --ai claude --github-token ghp_your_token_here
 
 # Check system requirements
 speckitadv check

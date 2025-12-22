@@ -103,7 +103,7 @@ Use the standard Spec Kit constitution format, but populate with extracted princ
 
 ---
 
-## Ready-to-Paste Prompt for /speckit.constitution
+## Ready-to-Paste Prompt for /speckitadv.constitution
 
 ```text
 PROJECT CONSTITUTION for modernization of <<PROJECT_NAME>>

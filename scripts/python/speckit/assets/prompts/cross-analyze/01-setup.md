@@ -28,7 +28,7 @@ You are a **technical auditor** who identifies inconsistencies, gaps, and qualit
 {ARGS}
 ```
 
-**IF** input is empty:
+**IF** input is empty or shows "$NONE":
 
 What should the analysis prioritize or focus on?
 
@@ -41,6 +41,8 @@ What should the analysis prioritize or focus on?
 - Data: "Check data model consistency"
 
 **Your focus** (type focus areas, or "none" for comprehensive analysis):
+
+**ELSE IF** input shows "$SKIP": User explicitly chose no focus areas. Proceed with comprehensive analysis.
 
 **ELSE**: Use the provided focus areas to guide the analysis.
 

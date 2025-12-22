@@ -54,13 +54,10 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 **Solution**:
 
 ```bash
-# Option 1: Use --skip-tls flag (not recommended for production)
-speckitadv init my-project --skip-tls
-
-# Option 2: Update certificates (recommended)
+# Option 1: Update certificates (recommended)
 pip install --upgrade certifi truststore
 
-# Option 3: Use corporate proxy settings
+# Option 2: Use corporate proxy settings
 export HTTPS_PROXY=http://proxy.company.com:8080
 pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 ```

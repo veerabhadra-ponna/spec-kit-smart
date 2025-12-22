@@ -2,7 +2,7 @@
 stage: input_collection
 requires: 01a-initialization checkpoint
 outputs: user_inputs
-version: 3.1.0
+version: 3.2.0
 next: 01c-script-execution.md
 ---
 
@@ -11,6 +11,35 @@ next: 01c-script-execution.md
 ## Purpose
 
 Collect all required inputs from the user through explicit prompts. Each input requires user response before proceeding.
+
+---
+
+## Pre-Check: CLI-Provided Values
+
+Check if inputs were already collected via CLI interactive mode:
+
+**Context variables to check:**
+
+- `{project_path}` - Project path (required)
+- `{scope}` - Analysis scope A or B (required)
+- `{context}` - Additional context (optional, may be "$SKIP" or empty)
+- `{concern_type}` - Concern type for scope B (conditional)
+- `{current_impl}` - Current implementation for scope B (conditional)
+- `{target_impl}` - Target implementation for scope B (conditional)
+
+**IF** `{project_path}` is a valid path (not empty, not "$NONE") **AND** `{scope}` is "A" or "B":
+
+- Skip all interactive input prompts below
+- Use CLI-provided values directly:
+  - `$PROJECT_PATH` = `{project_path}`
+  - `$ANALYSIS_SCOPE` = `{scope}`
+  - `$ADDITIONAL_CONTEXT` = `{context}` (use empty string if "$SKIP" or "$NONE")
+  - `$CONCERN_TYPE` = `{concern_type}` (for scope B)
+  - `$CURRENT_IMPL` = `{current_impl}` (for scope B)
+  - `$TARGET_IMPL` = `{target_impl}` (for scope B)
+- Proceed directly to "Checkpoint: Input Collection Complete" section
+
+**ELSE:** Continue with interactive prompts below.
 
 ---
 
