@@ -1,6 +1,6 @@
 [project]
 name = "speckitadv"
-version = "2.1.0"
+version = "2.1.1"
 description = "Spec Kit Smart - Zero-Prompt Architecture CLI for AI-powered development"
 readme = "README.md"
 requires-python = ">=3.11"

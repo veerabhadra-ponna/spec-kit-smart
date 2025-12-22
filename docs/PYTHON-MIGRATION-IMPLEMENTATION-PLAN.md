@@ -250,7 +250,6 @@ Dependencies: Phase 1
 
 Functions:
 - `get_repo_root()` - Find git repository root
-- `detect_os()` - Detect operating system
 - `safe_json_loads()` - Parse JSON safely
 - `generate_chain_id()` - Generate unique chain ID
 
@@ -378,7 +377,7 @@ Dependencies: Phase 2
 ```
 
 ```text
-Task 3.1.2: Implement global options (--version, --help, --debug)
+Task 3.1.2: Implement global options (--version, --help)
 Status: ⬜
 Dependencies: 3.1.1
 ```

@@ -30,7 +30,7 @@ This document explains **how the sub-prompt architecture executes** in the Claud
 The speckitadv CLI command runs FIRST:
 
 ```bash
-speckitadv analyze-project --path /path/to/project
+speckitadv analyze-project --path /path/to/project --scope A
 ```
 
 **Command Actions**:

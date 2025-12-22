@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1] - 2025-12-22
+
+### Fixed
+
+- Cross-cutting inputs (concern_type, current_impl, target_impl) now persisted in chain state
+- EXECUTION-MODEL.md updated to include required --scope flag
+- Migration plan doc updated to remove stale detect_os() and --debug references
+
+### Removed
+
+- OS detection code (detect_os, osEnv config) - Python CLI is cross-platform by default
+
 ## [2.1.0] - 2025-12-21
 
 ### Added
