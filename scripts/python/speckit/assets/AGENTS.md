@@ -109,14 +109,21 @@ Problem → Action
 Each command runs in stages. The CLI outputs focused prompts (50-80 lines) per stage:
 
 ```bash
-# Stage 1: Initialize
+# Example: constitution workflow
 speckitadv constitution --stage=1
+speckitadv constitution --stage=2 --defaults  # or --principles="..."
+speckitadv constitution --stage=3
 
-# Stage 2: Continue with chain ID from stage 1
-speckitadv constitution --stage=2 --chain=abc12345
+# Example: analyze-project workflow (uses --chain for state)
+speckitadv analyze-project --stage=1 --path=/project --scope=A
+speckitadv analyze-project --stage=2 --chain=abc12345
+```
 
-# Stage 3: Complete
-speckitadv constitution --stage=3 --chain=abc12345
+**Command Options:** Each command has different options. Use `--help` to see valid options:
+
+```bash
+speckitadv constitution --help   # Shows: --stage, --principles, --defaults
+speckitadv analyze-project --help # Shows: --stage, --chain, --path, --scope, etc.
 ```
 
 **Debug Commands:**

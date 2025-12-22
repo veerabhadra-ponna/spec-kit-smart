@@ -91,6 +91,7 @@ Confirm input collected:
 ## NEXT
 
 ```text
-
-speckitadv specify --stage=3 --chain={{chain_id}} --jira={{jira}} --feature="{{feature}}"
+speckitadv specify --stage=3 --chain={{chain_id}}
 ```
+
+**Note:** JIRA and feature info collected here will be used by subsequent stages via AI context.

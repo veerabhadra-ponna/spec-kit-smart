@@ -93,4 +93,4 @@ Audience: [audience]
 
 Checklist ready for requirements validation.
 
-**Note**: Each `/checklist` run creates a NEW file. Use descriptive domain names.
+**Note**: Each `/speckitadv.checklist` run creates a NEW file. Use descriptive domain names.
