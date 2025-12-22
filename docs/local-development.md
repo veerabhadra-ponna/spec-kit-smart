@@ -133,8 +133,8 @@ When testing `init --here` in a dirty directory, create a temp workspace:
 ```bash
 mkdir /tmp/spec-test && cd /tmp/spec-test
 
-# Option 1: Use absolute path to script (works from anywhere)
-python /path/to/spec-kit-smart/scripts/python/speckit/cli.py init --here --ai claude --ignore-agent-tools
+# Option 1: Use absolute path to script (requires PYTHONPATH)
+PYTHONPATH=/path/to/spec-kit-smart/scripts/python python /path/to/spec-kit-smart/scripts/python/speckit/cli.py init --here --ai claude --ignore-agent-tools
 
 # Option 2: Use PYTHONPATH for module style
 PYTHONPATH=/path/to/spec-kit-smart/scripts/python python -m speckit.cli init --here --ai claude --ignore-agent-tools
@@ -157,7 +157,7 @@ speckitadv init demo --skip-tls --ai gemini --ignore-agent-tools
 
 | Action | Command |
 | -------- | --------- |
-| Run CLI directly | `python scripts/python/speckit/cli.py --help` |
+| Run CLI directly | `PYTHONPATH=scripts/python python scripts/python/speckit/cli.py --help` |
 | Editable install | `pip install -e .` then `speckitadv ...` |
 | Local pipx run | `pipx run --spec /path/to/repo speckitadv ...` |
 | Git branch pipx | `pipx run --spec git+URL@branch speckitadv ...` |

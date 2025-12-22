@@ -4,7 +4,6 @@ Utility Functions
 Common utilities used across the speckit package.
 """
 
-import hashlib
 import json
 import os
 import platform

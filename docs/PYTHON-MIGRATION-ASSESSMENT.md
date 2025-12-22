@@ -277,13 +277,13 @@ python -m nuitka \
 
 ```text
 GitHub Release Assets:
-├── speckit-linux-x86_64        (Linux AMD64)
-├── speckit-linux-arm64         (Linux ARM64)
-├── speckit-darwin-x86_64       (macOS Intel)
-├── speckit-darwin-arm64        (macOS Apple Silicon)
-├── speckit-darwin-universal    (macOS Universal)
-├── speckit-windows-x86_64.exe  (Windows 64-bit)
-└── speckit.py                  (Source, for pipx install)
+├── speckitadv-linux-x86_64        (Linux AMD64)
+├── speckitadv-linux-arm64         (Linux ARM64)
+├── speckitadv-darwin-x86_64       (macOS Intel)
+├── speckitadv-darwin-arm64        (macOS Apple Silicon)
+├── speckitadv-darwin-universal    (macOS Universal)
+├── speckitadv-windows-x86_64.exe  (Windows 64-bit)
+└── speckitadv.py                  (Source, for pipx install)
 ```
 
 ### 4.4 Compilation CI/CD Pipeline
@@ -297,11 +297,11 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            artifact: speckit-linux-x86_64
+            artifact: speckitadv-linux-x86_64
           - os: macos-latest
-            artifact: speckit-darwin-universal
+            artifact: speckitadv-darwin-universal
           - os: windows-latest
-            artifact: speckit-windows-x86_64.exe
+            artifact: speckitadv-windows-x86_64.exe
 
     steps:
       - uses: actions/checkout@v4
