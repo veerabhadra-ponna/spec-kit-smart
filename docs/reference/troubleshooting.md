@@ -32,9 +32,9 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 
 **Solution**:
 
-1. Check if `.speckitadv-state.json.backup` exists and restore it
-2. If no backup, restart with `/speckitadv.orchestrate --reset`
-3. Future prevention: Commit `.speckitadv-state.json` regularly
+1. Delete the corrupted state file: `rm .speckitadv-state.json`
+2. Re-run `/speckitadv.orchestrate` to start fresh
+3. Future prevention: Commit `.speckitadv-state.json` regularly to enable git recovery
 
 ### Issue: Guidelines not loading in prompts
 

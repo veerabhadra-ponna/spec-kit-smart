@@ -82,9 +82,9 @@ pipx run --spec "$SPEC_KIT_SRC" speckitadv init demo-env --ai copilot --ignore-a
 (Optional) Define a shell function:
 
 ```bash
-specify-dev() { pipx run --spec /mnt/c/GitHub/spec-kit-smart specify "$@"; }
+speckitadv-dev() { pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitadv "$@"; }
 # Then
-specify-dev --help
+speckitadv-dev --help
 ```
 
 ## 5. Testing Python CLI
@@ -146,8 +146,8 @@ speckitadv init demo --skip-tls --ai gemini --ignore-agent-tools
 | -------- | --------- |
 | Run CLI directly | `python -m speckit.cli --help` |
 | Editable install | `pip install -e .` then `speckitadv ...` |
-| Local pipx run | `pipx run --spec /path/to/repo specify ...` |
-| Git branch pipx | `pipx run --spec git+URL@branch specify ...` |
+| Local pipx run | `pipx run --spec /path/to/repo speckitadv ...` |
+| Git branch pipx | `pipx run --spec git+URL@branch speckitadv ...` |
 | Build wheel | `python -m build` |
 
 ## 11. Cleaning Up

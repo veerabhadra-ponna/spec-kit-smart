@@ -131,6 +131,14 @@ class ChainState:
             else:
                 raise FileNotFoundError(f"No state files found for chain: {chain_id}")
 
+        # Validate that loaded state matches requested chain_id
+        loaded_chain_id = chain._data.get("chain_id")
+        if loaded_chain_id and loaded_chain_id != chain_id:
+            raise ValueError(
+                f"Chain ID mismatch: requested '{chain_id}' but found '{loaded_chain_id}'. "
+                f"The latest state belongs to a different chain."
+            )
+
         return chain
 
     def save(self, stage_name: str, data: dict[str, Any]) -> Path:

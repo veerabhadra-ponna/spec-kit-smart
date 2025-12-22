@@ -172,8 +172,23 @@ def run_analyze_project(
 
     rendered = render_prompt(fragment, render_context)
 
-    # Determine next command
-    next_stage = stage + 1 if stage < total_stages else None
+    # Determine next command with scope-aware branching
+    # Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
+    # Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)
+    if stage < total_stages:
+        if stage == 8:
+            # After quality gates, branch based on scope
+            next_stage = 9 if effective_scope == "A" else 10
+        elif stage == 9:
+            # After Full App (scope A), skip Cross-cutting
+            next_stage = 11
+        elif stage == 10:
+            # After Cross-cutting (scope B), continue to reports
+            next_stage = 11
+        else:
+            next_stage = stage + 1
+    else:
+        next_stage = None
     if next_stage:
         next_cmd = f"speckitadv analyze-project --stage={next_stage} --chain={chain_id}"
     else:
