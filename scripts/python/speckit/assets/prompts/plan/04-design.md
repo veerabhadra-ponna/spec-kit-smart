@@ -95,7 +95,7 @@ Artifacts generated:
   - specs/{{feature}}/quickstart.md
 
 Next command:
-  speckit tasks --chain={{chain_id}}
+  speckitadv tasks --chain={{chain_id}}
 ```
 
 ---

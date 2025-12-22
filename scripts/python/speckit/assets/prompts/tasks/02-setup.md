@@ -77,5 +77,5 @@ Note: Not all projects have all documents. Generate tasks from available docs.
 
 ```text
 
-speckit tasks --stage=3 --chain={{chain_id}}
+speckitadv tasks --stage=3 --chain={{chain_id}}
 ```

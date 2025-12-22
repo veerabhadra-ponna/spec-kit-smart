@@ -185,7 +185,7 @@ AGENT_FILES = {
     "claude": ("CLAUDE.md", "Claude Code"),
     "gemini": ("GEMINI.md", "Gemini CLI"),
     "copilot": (".github/copilot-instructions.md", "GitHub Copilot"),
-    "cursor-agent": (".cursor/rules/specify-rules.mdc", "Cursor IDE"),
+    "cursor-agent": (".cursor/commands/specify-rules.md", "Cursor IDE"),
     "qwen": ("QWEN.md", "Qwen Code"),
     "opencode": ("AGENTS.md", "opencode"),
     "codex": ("AGENTS.md", "Codex CLI"),

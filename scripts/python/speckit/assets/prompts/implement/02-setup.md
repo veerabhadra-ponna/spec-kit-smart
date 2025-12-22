@@ -88,5 +88,5 @@ Scan `{{feature_dir}}/checklists/`:
 
 ```text
 
-speckit implement --stage=3 --chain={{chain_id}}
+speckitadv implement --stage=3 --chain={{chain_id}}
 ```

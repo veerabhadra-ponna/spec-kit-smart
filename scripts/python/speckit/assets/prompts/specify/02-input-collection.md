@@ -84,5 +84,5 @@ Confirm input collected:
 
 ```text
 
-speckit specify --stage=3 --chain={{chain_id}} --jira={{jira}} --feature="{{feature}}"
+speckitadv specify --stage=3 --chain={{chain_id}} --jira={{jira}} --feature="{{feature}}"
 ```

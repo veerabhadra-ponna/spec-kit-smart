@@ -73,12 +73,12 @@ The specification has been created. No further stages.
 
 ```text
 
-speckit clarify --chain={{chain_id}}
+speckitadv clarify --chain={{chain_id}}
 ```
 
 or
 
 ```text
 
-speckit plan --chain={{chain_id}}
+speckitadv plan --chain={{chain_id}}
 ```

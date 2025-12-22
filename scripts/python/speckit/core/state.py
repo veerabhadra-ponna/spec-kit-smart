@@ -6,12 +6,12 @@ Enables session recovery and progress tracking.
 """
 
 import json
-import hashlib
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 from pydantic import BaseModel, ConfigDict, Field
+
+from speckit.core.utils import generate_chain_id
 
 
 class StateSchema(BaseModel):
@@ -46,14 +46,8 @@ class ChainState:
 
     def __init__(self, state_dir: Path, chain_id: Optional[str] = None):
         self.state_dir = state_dir
-        self.chain_id = chain_id or self._generate_id()
+        self.chain_id = chain_id or generate_chain_id()
         self._data: dict[str, Any] = {}
-
-    @staticmethod
-    def _generate_id() -> str:
-        """Generate unique chain ID (8 hex chars)."""
-        timestamp = str(time.time()).encode()
-        return hashlib.md5(timestamp).hexdigest()[:8]
 
     @classmethod
     def initialize(cls, project_path: Path, workspace_root: Optional[Path] = None) -> "ChainState":

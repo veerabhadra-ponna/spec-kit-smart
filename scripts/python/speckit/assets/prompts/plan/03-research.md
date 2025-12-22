@@ -95,5 +95,5 @@ Verify:
 
 ```text
 
-speckit plan --stage=4 --chain={{chain_id}}
+speckitadv plan --stage=4 --chain={{chain_id}}
 ```

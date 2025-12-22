@@ -73,5 +73,5 @@ Read `FEATURE_SPEC` for ambiguity scanning.
 
 ```text
 
-speckit clarify --stage=2 --chain={{chain_id}}
+speckitadv clarify --stage=2 --chain={{chain_id}}
 ```

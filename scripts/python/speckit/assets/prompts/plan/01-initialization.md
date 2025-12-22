@@ -81,5 +81,5 @@ Check `/.guidelines/` directory:
 
 ```text
 
-speckit plan --stage=2 --chain={{chain_id}}
+speckitadv plan --stage=2 --chain={{chain_id}}
 ```

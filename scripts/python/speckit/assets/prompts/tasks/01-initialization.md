@@ -70,5 +70,5 @@ Check `/.guidelines/` directory based on tech stack:
 
 ```text
 
-speckit tasks --stage=2 --chain={{chain_id}}
+speckitadv tasks --stage=2 --chain={{chain_id}}
 ```

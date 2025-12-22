@@ -82,5 +82,5 @@ Parse JSON output for:
 
 ```text
 
-speckit plan --stage=3 --chain={{chain_id}}
+speckitadv plan --stage=3 --chain={{chain_id}}
 ```

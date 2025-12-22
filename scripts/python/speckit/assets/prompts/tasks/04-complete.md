@@ -74,7 +74,7 @@ Format validation: PASSED
 Organization: PASSED
 
 Next command:
-  speckit implement --chain={{chain_id}}
+  speckitadv implement --chain={{chain_id}}
 ```
 
 ---

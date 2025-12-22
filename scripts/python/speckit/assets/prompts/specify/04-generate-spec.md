@@ -94,5 +94,5 @@ Write spec to `{{spec_file}}`.
 
 ```text
 
-speckit specify --stage=5 --chain={{chain_id}}
+speckitadv specify --stage=5 --chain={{chain_id}}
 ```

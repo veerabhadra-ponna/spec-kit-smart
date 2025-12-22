@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from speckit.core.state import ChainState, StateSchema
+from speckit.core.utils import generate_chain_id
 
 
 class TestStateSchema:
@@ -68,16 +69,16 @@ class TestStateSchema:
 
 
 class TestChainStateGenerateId:
-    """Tests for chain ID generation."""
+    """Tests for chain ID generation (uses generate_chain_id from utils)."""
 
     def test_generates_8_char_id(self):
         """Should generate 8-character ID."""
-        chain_id = ChainState._generate_id()
+        chain_id = generate_chain_id()
         assert len(chain_id) == 8
 
     def test_generates_hex_id(self):
         """Should generate valid hex ID."""
-        chain_id = ChainState._generate_id()
+        chain_id = generate_chain_id()
         int(chain_id, 16)  # Should not raise
 
 

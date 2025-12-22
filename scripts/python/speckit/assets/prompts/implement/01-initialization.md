@@ -81,5 +81,5 @@ When writing code:
 
 ```text
 
-speckit implement --stage=2 --chain={{chain_id}}
+speckitadv implement --stage=2 --chain={{chain_id}}
 ```

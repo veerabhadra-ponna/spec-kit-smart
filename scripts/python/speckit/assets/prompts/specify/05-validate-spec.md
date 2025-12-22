@@ -90,5 +90,5 @@ Review spec against each checklist item:
 
 ```text
 
-speckit specify --stage=6 --chain={{chain_id}}
+speckitadv specify --stage=6 --chain={{chain_id}}
 ```

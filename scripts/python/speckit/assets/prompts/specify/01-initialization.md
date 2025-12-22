@@ -75,5 +75,5 @@ Confirm initialization:
 
 ```text
 
-speckit specify --stage=2 --chain={{chain_id}}
+speckitadv specify --stage=2 --chain={{chain_id}}
 ```

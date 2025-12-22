@@ -91,5 +91,5 @@ JSON output format:
 
 ```text
 
-speckit specify --stage=4 --chain={{chain_id}}
+speckitadv specify --stage=4 --chain={{chain_id}}
 ```

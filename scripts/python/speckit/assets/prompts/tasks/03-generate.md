@@ -87,5 +87,5 @@ Write to `{{feature_dir}}/tasks.md`
 
 ```text
 
-speckit tasks --stage=4 --chain={{chain_id}}
+speckitadv tasks --stage=4 --chain={{chain_id}}
 ```

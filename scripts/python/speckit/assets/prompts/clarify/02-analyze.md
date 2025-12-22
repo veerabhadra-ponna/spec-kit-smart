@@ -109,5 +109,5 @@ After each answer:
 
 ```text
 
-speckit clarify --stage=3 --chain={{chain_id}}
+speckitadv clarify --stage=3 --chain={{chain_id}}
 ```
