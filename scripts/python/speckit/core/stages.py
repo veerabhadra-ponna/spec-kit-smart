@@ -165,25 +165,25 @@ def _get_next_steps(command: str) -> list[str]:
     """Get suggested next steps for a command."""
     next_steps_map = {
         "constitution": [
-            "Review constitution.md",
-            "Run /specify to create feature specifications",
+            "Review memory/constitution.md",
+            "Run /speckitadv.specify to create feature specifications",
         ],
         "specify": [
             "Review spec.md for accuracy",
-            "Run /clarify if clarifications remain",
-            "Run /plan to create implementation plan",
+            "Run /speckitadv.clarify if clarifications remain",
+            "Run /speckitadv.plan to create implementation plan",
         ],
         "clarify": [
             "Review updated spec",
-            "Run /plan to create implementation plan",
+            "Run /speckitadv.plan to create implementation plan",
         ],
         "plan": [
             "Review design artifacts",
-            "Run /tasks to generate task breakdown",
+            "Run /speckitadv.tasks to generate task breakdown",
         ],
         "tasks": [
             "Review tasks.md",
-            "Run /implement to execute tasks",
+            "Run /speckitadv.implement to execute tasks",
         ],
         "implement": [
             "Review code changes",

@@ -64,14 +64,14 @@ Parse JSON output for:
 - `SPECS_DIR` - feature specs directory
 - `BRANCH` - current feature branch
 
-**NOTE**: SPECS_DIR already exists from /specify - do NOT create.
+**NOTE**: SPECS_DIR already exists from /speckitadv.specify - do NOT create.
 
 ---
 
 ## Step 3: Load Context
 
 1. Read `FEATURE_SPEC` (the specification)
-2. Read `/memory/constitution.md` (principles)
+2. Read `memory/constitution.md` (principles)
 3. Read `IMPL_PLAN` template
 
 ---

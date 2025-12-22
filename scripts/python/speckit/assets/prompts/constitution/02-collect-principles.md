@@ -23,9 +23,9 @@ Structure the collected principles for constitution generation.
 
 Stage 2 requires either --defaults or --principles flag.
 Re-run with:
-  speckitadv constitution --stage=2 --chain={chain_id} --defaults
+  speckitadv constitution --stage=2 --defaults
   OR
-  speckitadv constitution --stage=2 --chain={chain_id} --principles="Your principles here"
+  speckitadv constitution --stage=2 --principles="Your principles here"
 ```
 
 **STOP** - Do not proceed until principles are provided via CLI flags.
@@ -79,5 +79,5 @@ Confirm principles are ready for constitution generation:
 Run the next stage to generate the constitution:
 
 ```text
-speckitadv constitution --stage=3 --chain={chain_id}
+speckitadv constitution --stage=3
 ```

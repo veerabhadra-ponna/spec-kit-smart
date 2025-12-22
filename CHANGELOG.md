@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Constitution CLI example in AGENTS.md incorrectly showed `--chain` option
+- Specify prompts referenced non-existent `--jira` and `--feature` CLI options
+- Next steps in stages.py used `/specify` format instead of `/speckitadv.specify`
+- Constitution.py used `--chain` option that doesn't exist for constitution command
+- Clarify and checklist prompts updated to use `/speckitadv.*` slash command format
+- Plan prompt path reference corrected from `/memory/constitution.md` to `memory/constitution.md`
+
 ## [2.1.1] - 2025-12-22
 
 ### Fixed

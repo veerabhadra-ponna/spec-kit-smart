@@ -16,7 +16,7 @@ Create the formal constitution document from collected principles.
 
 ## Step 1: Load Template
 
-Load the constitution template from `/memory/constitution.md`.
+Load the constitution template from `memory/constitution.md`.
 
 If template doesn't exist, use this structure:
 
@@ -71,7 +71,7 @@ Before saving, verify:
 
 ## Step 4: Save and Report
 
-Write constitution to `/memory/constitution.md`.
+Write constitution to `memory/constitution.md`.
 
 Output completion summary:
 
