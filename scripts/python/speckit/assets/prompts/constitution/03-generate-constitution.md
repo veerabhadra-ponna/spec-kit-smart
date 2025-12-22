@@ -87,8 +87,8 @@ Suggested commit message:
   docs: create project constitution v1.0.0
 
 Next steps:
-  - Review constitution.md
-  - Run /specify to create feature specifications
+  - Review memory/constitution.md
+  - Run /speckitadv.specify to create feature specifications
 ```
 
 ---

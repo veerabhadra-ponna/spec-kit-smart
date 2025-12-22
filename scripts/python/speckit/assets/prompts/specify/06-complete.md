@@ -39,8 +39,8 @@ Quality Checklist: [All passed / N items pending]
 
 Next steps:
   1. Review spec.md for accuracy
-  2. Run /clarify if clarifications remain
-  3. Run /plan to create implementation plan
+  2. Run /speckitadv.clarify if clarifications remain
+  3. Run /speckitadv.plan to create implementation plan
 
 Suggested commit:
   git add . && git commit -m "docs: create spec for {{feature_name}}"
@@ -60,8 +60,8 @@ Suggested commit:
 - Checkout existing branch if found
 
 **If clarifications abandoned:**
-- Run `/clarify` to resume
-- Or proceed to `/plan` if critical items resolved
+- Run `/speckitadv.clarify` to resume
+- Or proceed to `/speckitadv.plan` if critical items resolved
 
 ---
 

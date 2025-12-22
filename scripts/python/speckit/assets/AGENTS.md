@@ -110,7 +110,7 @@ Each command runs in stages. The CLI outputs focused prompts (50-80 lines) per s
 
 ```bash
 # Stage 1: Initialize
-speckitadv constitution --stage=1 --path=/project
+speckitadv constitution --stage=1
 
 # Stage 2: Continue with chain ID from stage 1
 speckitadv constitution --stage=2 --chain=abc12345

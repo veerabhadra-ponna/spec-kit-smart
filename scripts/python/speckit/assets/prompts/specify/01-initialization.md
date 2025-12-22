@@ -73,7 +73,19 @@ Confirm initialization:
 
 ## NEXT
 
-```text
+Run Stage 2 with the feature description from the user's request:
 
-speckitadv specify --stage=2 --chain={{chain_id}}
+```bash
+speckitadv specify --stage=2 --chain={{chain_id}} --feature="<user's feature description>"
 ```
+
+**JIRA is optional.** If user provided a JIRA number, include it:
+
+```bash
+speckitadv specify --stage=2 --chain={{chain_id}} --jira="C12345-7890" --feature="<description>"
+```
+
+**IMPORTANT:**
+- Extract the feature description from the user's initial request (e.g., `/speckitadv.specify Build a photo album app`)
+- Pass it via `--feature` flag to avoid interactive prompting
+- JIRA is optional - omit `--jira` if not provided

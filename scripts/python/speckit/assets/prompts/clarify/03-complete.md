@@ -59,8 +59,8 @@ Outstanding items: [list or "None"]
 
 Next steps:
   - Review updated spec
-  - Run /plan to create implementation plan
-  - Run /clarify again if new ambiguities emerge
+  - Run /speckitadv.plan to create implementation plan
+  - Run /speckitadv.clarify again if new ambiguities emerge
 ```
 
 ---
@@ -68,8 +68,8 @@ Next steps:
 ## Behavior Notes
 
 - **If no ambiguities found**: Report "No critical ambiguities detected" and suggest proceeding
-- **If spec missing**: Instruct user to run `/specify` first
-- **Multiple sessions supported**: Can run `/clarify` again later
+- **If spec missing**: Instruct user to run `/speckitadv.specify` first
+- **Multiple sessions supported**: Can run `/speckitadv.clarify` again later
 
 ---
 

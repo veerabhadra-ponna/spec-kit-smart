@@ -14,9 +14,27 @@ Structure the collected principles for constitution generation.
 
 ---
 
+## Pre-Check: Verify Principles Provided
+
+**IF** `{principles}` is empty or shows only "$NONE":
+
+```text
+⚠️ ERROR: No principles provided
+
+Stage 2 requires either --defaults or --principles flag.
+Re-run with:
+  speckitadv constitution --stage=2 --chain={chain_id} --defaults
+  OR
+  speckitadv constitution --stage=2 --chain={chain_id} --principles="Your principles here"
+```
+
+**STOP** - Do not proceed until principles are provided via CLI flags.
+
+---
+
 ## Collected Principles
 
-The following principles have been collected (via CLI or interactive prompt):
+The following principles have been collected:
 
 {principles}
 
