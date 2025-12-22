@@ -273,25 +273,6 @@ python -m nuitka \
 - C compiler required for building
 - Less mature than PyInstaller
 
-### 4.3 Cross-Platform Distribution Strategy
-
-```text
-GitHub Release Assets:
-├── linux-x86_64/
-│   └── speckitadv              (Linux AMD64)
-├── linux-arm64/
-│   └── speckitadv              (Linux ARM64)
-├── darwin-x86_64/
-│   └── speckitadv              (macOS Intel)
-├── darwin-arm64/
-│   └── speckitadv              (macOS Apple Silicon)
-├── darwin-universal/
-│   └── speckitadv              (macOS Universal)
-├── windows-x86_64/
-│   └── speckitadv.exe          (Windows 64-bit)
-└── speckitadv.py               (Source, for pipx install)
-```
-
 ---
 
 ## 5. Embedding Prompts in EXE
