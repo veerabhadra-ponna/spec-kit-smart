@@ -92,5 +92,5 @@ Run the next stage to generate the constitution:
 
 ```text
 
-speckit constitution --stage=3 --chain={{chain_id}}
+speckitadv constitution --stage=3 --chain={{chain_id}}
 ```

@@ -72,5 +72,5 @@ Run the next stage to collect principles:
 
 ```text
 
-speckit constitution --stage=2 --chain={{chain_id}}
+speckitadv constitution --stage=2 --chain={{chain_id}}
 ```

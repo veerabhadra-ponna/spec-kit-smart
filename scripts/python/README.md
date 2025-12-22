@@ -16,7 +16,7 @@ Zero-prompt architecture CLI for AI-powered development workflows.
 ```bash
 cd scripts/python
 pip install -e .
-speckit --version
+speckitadv --version
 ```
 
 ### Build Executable
@@ -33,7 +33,7 @@ pyinstaller speckit.spec
 ### List Available Commands
 
 ```bash
-speckit --help
+speckitadv --help
 ```
 
 ### Available Commands
@@ -53,26 +53,26 @@ speckit --help
 
 ```bash
 # Start constitution workflow
-speckit constitution --stage=1
+speckitadv constitution --stage=1
 
 # AI agent follows instructions, then runs:
-speckit constitution --stage=2 --chain=<chain_id>
+speckitadv constitution --stage=2 --chain=<chain_id>
 
 # Continue through stages...
-speckit constitution --stage=3 --chain=<chain_id>
+speckitadv constitution --stage=3 --chain=<chain_id>
 ```
 
 ### Example: Specify Workflow
 
 ```bash
 # Stage 1: Initialize and understand role
-speckit specify --stage=1 --path=/path/to/project
+speckitadv specify --stage=1 --path=/path/to/project
 
 # AI reads instructions, runs stage 2
-speckit specify --stage=2 --chain=abc123
+speckitadv specify --stage=2 --chain=abc123
 
 # Continue through all 6 stages
-speckit specify --stage=3 --chain=abc123
+speckitadv specify --stage=3 --chain=abc123
 # ... until complete
 ```
 
@@ -80,10 +80,10 @@ speckit specify --stage=3 --chain=abc123
 
 ```bash
 # List fragments for a command
-speckit list-fragments constitution
+speckitadv list-fragments constitution
 
 # Show fragment content
-speckit show-fragment constitution 01-initialization
+speckitadv show-fragment constitution 01-initialization
 ```
 
 ## How It Works

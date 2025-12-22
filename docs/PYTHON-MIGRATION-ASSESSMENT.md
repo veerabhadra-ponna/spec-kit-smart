@@ -490,7 +490,7 @@ Instead of loading the entire 850+ line staged prompt at once, the EXE outputs p
 │                                                                 │
 │  User: "Run /speckitadv.analyze-project"                      │
 │                                                                 │
-│  Agent: Runs → speckit analyze --stage=init                     │
+│  Agent: Runs → speckitadv analyze --stage=init                  │
 │                                                                 │
 │  EXE Output:                                                    │
 │  ┌─────────────────────────────────────────────────────────────┐│
@@ -503,13 +503,13 @@ Instead of loading the entire 850+ line staged prompt at once, the EXE outputs p
 │  │ 3. ANALYSIS_SCOPE - [A] Full or [B] Cross-cutting           ││
 │  │                                                             ││
 │  │ When user provides inputs, run:                             ││
-│  │   speckit analyze --stage=collect --path="$PATH" ...        ││
+│  │   speckitadv analyze --stage=collect --path="$PATH" ...     ││
 │  │                                                             ││
 │  │ PROMPT_FRAGMENT:END                                         ││
 │  └─────────────────────────────────────────────────────────────┘│
 │                                                                 │
 │  Agent: Follows instructions, collects user input               │
-│  Agent: Runs → speckit analyze --stage=collect --path=/path     │
+│  Agent: Runs → speckitadv analyze --stage=collect --path=/path  │
 │                                                                 │
 │  EXE Output:                                                    │
 │  ┌─────────────────────────────────────────────────────────────┐│
@@ -524,13 +524,13 @@ Instead of loading the entire 850+ line staged prompt at once, the EXE outputs p
 │  │ - Services (28 files)                                       ││
 │  │ ...                                                         ││
 │  │ When complete, run:                                         ││
-│  │   speckit analyze --stage=file-analysis --chain=abc123      ││
+│  │   speckitadv analyze --stage=file-analysis --chain=abc123   ││
 │  │                                                             ││
 │  │ PROMPT_FRAGMENT:END                                         ││
 │  └─────────────────────────────────────────────────────────────┘│
 │                                                                 │
 │  Agent: Performs file analysis, saves state                     │
-│  Agent: Runs → speckit analyze --stage=file-analysis ...        │
+│  Agent: Runs → speckitadv analyze --stage=file-analysis ...     │
 │                                                                 │
 │  ... continues until ...                                        │
 │                                                                 │
@@ -568,7 +568,7 @@ def analyze(
         print("PROMPT_FRAGMENT:START")
         print(prompt)
         print("PROMPT_FRAGMENT:END")
-        print(f"NEXT_COMMAND: speckit analyze --stage=collect --path=<USER_PATH> --scope=<USER_SCOPE>")
+        print(f"NEXT_COMMAND: speckitadv analyze --stage=collect --path=<USER_PATH> --scope=<USER_SCOPE>")
         return
 
     if stage == "collect":
@@ -583,7 +583,7 @@ def analyze(
         print(get_stage_prompt("02-file-analysis",
               context={"files": data["file_count"], "categories": data["categories"]}))
         print("PROMPT_FRAGMENT:END")
-        print(f"NEXT_COMMAND: speckit analyze --stage=file-analysis --chain={state.chain_id}")
+        print(f"NEXT_COMMAND: speckitadv analyze --stage=file-analysis --chain={state.chain_id}")
         return
 
     if stage == "file-analysis":
@@ -595,7 +595,7 @@ def analyze(
         print("PROMPT_FRAGMENT:START")
         print(get_stage_prompt(next_stage, context=state.to_dict()))
         print("PROMPT_FRAGMENT:END")
-        print(f"NEXT_COMMAND: speckit analyze --stage={next_stage} --chain={chain_id}")
+        print(f"NEXT_COMMAND: speckitadv analyze --stage={next_stage} --chain={chain_id}")
         return
 
     # ... more stages ...
@@ -629,7 +629,7 @@ Analyze the files listed in `file-manifest.json`. Focus on:
 - Note security concerns
 
 ### When Complete
-Run: `speckit analyze --stage=file-analysis --chain={chain_id}`
+Run: `speckitadv analyze --stage=file-analysis --chain={chain_id}`
 
 Provide your findings as JSON in the command output.
 ```
@@ -938,7 +938,7 @@ Provide your findings as:
 When complete, run:
 
 ```bash
-speckit analyze --stage=auth-complete --chain={chain_id} --findings='<YOUR_JSON>'
+speckitadv analyze --stage=auth-complete --chain={chain_id} --findings='<YOUR_JSON>'
 ```text
 
 ```
@@ -976,7 +976,7 @@ Instead of having prompt files that the agent reads, the EXE **outputs** all pro
 ---
 description: {command_description}
 ---
-Run: `speckit {command_name}`
+Run: `speckitadv {command_name}`
 Follow all instructions in the output.
 ```
 
@@ -984,39 +984,39 @@ Follow all instructions in the output.
 
 | Command | Launcher | EXE Command |
 |---------|----------|-------------|
-| constitution | 3 lines | `speckit constitution` |
-| specify | 3 lines | `speckit specify` |
-| plan | 3 lines | `speckit plan` |
-| clarify | 3 lines | `speckit clarify` |
-| tasks | 3 lines | `speckit tasks` |
-| implement | 3 lines | `speckit implement` |
-| analyze-project | 3 lines | `speckit analyze-project` |
-| checklist | 3 lines | `speckit checklist` |
-| analyze | 3 lines | `speckit analyze` |
+| constitution | 3 lines | `speckitadv constitution` |
+| specify | 3 lines | `speckitadv specify` |
+| plan | 3 lines | `speckitadv plan` |
+| clarify | 3 lines | `speckitadv clarify` |
+| tasks | 3 lines | `speckitadv tasks` |
+| implement | 3 lines | `speckitadv implement` |
+| analyze-project | 3 lines | `speckitadv analyze-project` |
+| checklist | 3 lines | `speckitadv checklist` |
+| analyze | 3 lines | `speckitadv analyze` |
 
 ### 9.4 Progressive Injection for ALL Commands
 
 #### Even simple commands benefit
 
 ```text
-speckit constitution
+speckitadv constitution
 ├── Stage 1: Collect principles (40 lines)
 ├── Stage 2: Generate file (50 lines)
 └── Stage 3: Verify & complete (30 lines)
 
-speckit specify
+speckitadv specify
 ├── Stage 1: Gather requirements (50 lines)
 ├── Stage 2: Structure spec (60 lines)
 ├── Stage 3: Write sections (50 lines)
 └── Stage 4: Validate (30 lines)
 
-speckit plan
+speckitadv plan
 ├── Stage 1: Load spec context (40 lines)
 ├── Stage 2: Design approach (60 lines)
 ├── Stage 3: Generate plan (50 lines)
 └── Stage 4: Review (30 lines)
 
-speckit analyze-project
+speckitadv analyze-project
 ├── Stage 1: Collect inputs (50 lines)
 ├── Stage 2: Run enumeration (40 lines)
 ├── Stage 3: Analyze files - auth (60 lines)
@@ -1034,9 +1034,9 @@ speckit analyze-project
 User: /speckitadv.constitution
 
 Agent reads launcher (3 lines):
-  "Run: speckit constitution"
+  "Run: speckitadv constitution"
 
-Agent runs: speckit constitution
+Agent runs: speckitadv constitution
 
 EXE outputs:
 ┌────────────────────────────────────────────────────────────────┐
@@ -1054,14 +1054,14 @@ EXE outputs:
 │ If user says "use defaults" or provides empty input,           │
 │ pass --defaults flag.                                          │
 │                                                                │
-│ NEXT: speckit constitution --stage=2 --principles="<INPUT>"    │
-│   OR: speckit constitution --stage=2 --defaults                │
+│ NEXT: speckitadv constitution --stage=2 --principles="<INPUT>" │
+│   OR: speckitadv constitution --stage=2 --defaults             │
 └────────────────────────────────────────────────────────────────┘
 
 Agent: "Please provide your project principles..."
 User: "Test-First: MUST write tests before code"
 
-Agent runs: speckit constitution --stage=2 --principles="Test-First: MUST write tests before code"
+Agent runs: speckitadv constitution --stage=2 --principles="Test-First: MUST write tests before code"
 
 EXE outputs:
 ┌────────────────────────────────────────────────────────────────┐
@@ -1081,11 +1081,11 @@ EXE outputs:
 │ ---                                                            │
 │                                                                │
 │ After writing file:                                            │
-│ NEXT: speckit constitution --stage=3                           │
+│ NEXT: speckitadv constitution --stage=3                        │
 └────────────────────────────────────────────────────────────────┘
 
 Agent: Creates memory/constitution.md
-Agent runs: speckit constitution --stage=3
+Agent runs: speckitadv constitution --stage=3
 
 EXE outputs:
 ┌────────────────────────────────────────────────────────────────┐
@@ -1134,8 +1134,8 @@ def constitution(
             total_stages=3,
             title="Collect Principles",
             content=STAGE_1_PROMPT,
-            next_cmd="speckit constitution --stage=2 --principles='<INPUT>'",
-            alt_cmd="speckit constitution --stage=2 --defaults"
+            next_cmd="speckitadv constitution --stage=2 --principles='<INPUT>'",
+            alt_cmd="speckitadv constitution --stage=2 --defaults"
         )
         return
 
@@ -1150,7 +1150,7 @@ def constitution(
             total_stages=3,
             title="Generate Constitution",
             content=f"Create file: memory/constitution.md\n\nContent:\n{constitution_content}",
-            next_cmd="speckit constitution --stage=3"
+            next_cmd="speckitadv constitution --stage=3"
         )
         return
 
@@ -1225,7 +1225,7 @@ What models do:
 With the EXE architecture, chunking is **enforced by design**:
 
 ```text
-speckit analyze-project --stage=8
+speckitadv analyze-project --stage=8
 ├── --chunk=1  →  "Generate Executive Summary ONLY"
 ├── --chunk=2  →  "Generate Technology Stack ONLY"
 ├── --chunk=3  →  "Generate Architecture Patterns ONLY"
@@ -1242,7 +1242,7 @@ speckit analyze-project --stage=8
 ### 10.3 Chunk Flow Example
 
 ```text
-Agent runs: speckit analyze-project --stage=8 --chunk=1 --chain=abc123
+Agent runs: speckitadv analyze-project --stage=8 --chunk=1 --chain=abc123
 
 EXE outputs:
 ┌────────────────────────────────────────────────────────────────┐
@@ -1263,12 +1263,12 @@ EXE outputs:
 │ Write to: .analysis/{workspace}/analysis-report.md             │
 │ Mode: CREATE (new file)                                        │
 │                                                                │
-│ NEXT: speckit analyze-project --stage=8 --chunk=2 --chain=abc  │
+│ NEXT: speckitadv analyze-project --stage=8 --chunk=2 --chain=abc│
 └────────────────────────────────────────────────────────────────┘
 
 Agent: Generates ~80 lines of Executive Summary
 Agent: Creates analysis-report.md with content
-Agent runs: speckit analyze-project --stage=8 --chunk=2 --chain=abc123
+Agent runs: speckitadv analyze-project --stage=8 --chunk=2 --chain=abc123
 
 EXE outputs:
 ┌────────────────────────────────────────────────────────────────┐
@@ -1291,12 +1291,12 @@ EXE outputs:
 │ Write to: .analysis/{workspace}/analysis-report.md             │
 │ Mode: APPEND                                                   │
 │                                                                │
-│ NEXT: speckit analyze-project --stage=8 --chunk=3 --chain=abc  │
+│ NEXT: speckitadv analyze-project --stage=8 --chunk=3 --chain=abc│
 └────────────────────────────────────────────────────────────────┘
 
 ... continues until chunk 9 ...
 
-Agent runs: speckit analyze-project --stage=8 --chunk=9 --chain=abc123
+Agent runs: speckitadv analyze-project --stage=8 --chunk=9 --chain=abc123
 
 EXE outputs:
 ┌────────────────────────────────────────────────────────────────┐
@@ -1315,7 +1315,7 @@ EXE outputs:
 │ Mode: APPEND                                                   │
 │                                                                │
 │ After writing, run verification:                               │
-│ NEXT: speckit analyze-project --stage=8 --verify --chain=abc   │
+│ NEXT: speckitadv analyze-project --stage=8 --verify --chain=abc│
 └────────────────────────────────────────────────────────────────┘
 ```
 
@@ -1373,7 +1373,7 @@ def analyze_project(
                 total_stages=9,
                 title="Report Generation Complete",
                 content="All chunks generated. Running verification...",
-                next_cmd=f"speckit analyze-project --stage=8 --verify --chain={chain_id}"
+                next_cmd=f"speckitadv analyze-project --stage=8 --verify --chain={chain_id}"
             )
             return
 
@@ -1388,7 +1388,7 @@ def analyze_project(
             file_path=f"{state.workspace}/analysis-report.md",
             mode=mode,
             line_range=(min_lines, max_lines),
-            next_cmd=f"speckit analyze-project --stage=8 --chunk={chunk+1} --chain={chain_id}"
+            next_cmd=f"speckitadv analyze-project --stage=8 --chunk={chunk+1} --chain={chain_id}"
         )
         return
 
@@ -1402,14 +1402,14 @@ def analyze_project(
                 stage_num=8,
                 title="Verification Failed",
                 content=f"Issues found:\n" + "\n".join(f"- {i}" for i in issues),
-                next_cmd=f"speckit analyze-project --stage=8 --fix --chain={chain_id}"
+                next_cmd=f"speckitadv analyze-project --stage=8 --fix --chain={chain_id}"
             )
         else:
             emit_stage(
                 stage_num=8,
                 title="Verification Passed",
                 content="Report complete and verified.",
-                next_cmd=f"speckit analyze-project --stage=9 --chain={chain_id}"
+                next_cmd=f"speckitadv analyze-project --stage=9 --chain={chain_id}"
             )
         return
 
@@ -1470,7 +1470,7 @@ EXE outputs:
 │ - date: 2025-12-21                                             │
 │ - principles: {user_provided_principles}                       │
 │                                                                │
-│ NEXT: speckit constitution --stage=3                           │
+│ NEXT: speckitadv constitution --stage=3                        │
 └────────────────────────────────────────────────────────────────┘
 ```
 
@@ -1499,7 +1499,7 @@ EXE outputs:
 │ - tech_debt_items: 34                                          │
 │ - security_findings: 18                                        │
 │                                                                │
-│ NEXT: speckit analyze-project --stage=9 --chain=abc123         │
+│ NEXT: speckitadv analyze-project --stage=9 --chain=abc123      │
 └────────────────────────────────────────────────────────────────┘
 ```
 
@@ -1786,7 +1786,7 @@ COMMANDS = [
 LAUNCHER_TEMPLATE = """---
 description: {description}
 ---
-Run: `speckit {command}`
+Run: `speckitadv {command}`
 Follow all instructions in the output.
 """
 
@@ -1835,7 +1835,7 @@ sudo mv speckit /usr/local/bin/
 pipx install git+https://github.com/.../spec-kit-smart.git
 
 # Initialize project (downloads only launcher files)
-speckit init my-project --ai claude
+speckitadv init my-project --ai claude
 ```
 
 ### 12.7 Size Comparison
