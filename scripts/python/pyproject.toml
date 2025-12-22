@@ -1,5 +1,5 @@
 [project]
-name = "speckit"
+name = "speckitadv"
 version = "2.1.0"
 description = "Spec Kit Smart - Zero-Prompt Architecture CLI for AI-powered development"
 readme = "README.md"
