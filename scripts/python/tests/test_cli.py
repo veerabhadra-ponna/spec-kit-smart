@@ -110,6 +110,12 @@ class TestSpecifyCommand:
         output = strip_ansi(result.stdout)
         assert "--feature is required" in output
 
+    def test_feature_without_jira_succeeds(self):
+        """Should accept --feature without --jira (JIRA is optional)."""
+        result = runner.invoke(app, ["specify", "--stage", "2", "--feature", "Add user auth"])
+        # Should succeed - JIRA is optional, command outputs stage prompt
+        assert result.exit_code == 0
+
 
 class TestPlanCommand:
     """Tests for plan command."""

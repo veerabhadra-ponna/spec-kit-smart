@@ -30,8 +30,8 @@ def collect_specify_input() -> tuple[Optional[str], Optional[str]]:
     ))
 
     console.print("\n[bold]Format:[/bold]")
-    console.print("  JIRA: C12345-7890 (exactly 5 digits, dash, 4 digits)")
-    console.print("  FEATURE: <your description>")
+    console.print("  JIRA: C12345-7890 (optional - press Enter to skip)")
+    console.print("  FEATURE: <your description> (required)")
 
     console.print("\n[bold]Good feature descriptions:[/bold]")
     console.print('  [green]✓[/green] "Add user authentication with email/password and OAuth2"')
