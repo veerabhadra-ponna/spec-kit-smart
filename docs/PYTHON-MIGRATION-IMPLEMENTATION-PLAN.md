@@ -851,24 +851,24 @@ Dependencies: 5.2.2
 **Status:** ✅
 
 ```text
-Task 5.4.1: Modify init to download launchers only
+Task 5.3.1: Modify init to download launchers only
 Status: ⬜
-Dependencies: 5.2.3, 5.3.3
+Dependencies: 5.2.3
 ```
 
 Current: Downloads full ZIP with scripts + prompts
 New: Downloads only 3-line launcher files
 
 ```text
-Task 5.4.2: Add binary auto-detection and installation option
+Task 5.3.2: Add binary auto-detection and installation option
 Status: ⬜
-Dependencies: 5.4.1
+Dependencies: 5.3.1
 ```
 
 ```text
-Task 5.4.3: Test init command end-to-end
+Task 5.3.3: Test init command end-to-end
 Status: ⬜
-Dependencies: 5.4.2
+Dependencies: 5.3.2
 ```
 
 ---
@@ -920,19 +920,19 @@ Dependencies: 6.1.1
 ```text
 Task 6.2.1: Test on Linux (Ubuntu)
 Status: ⬜
-Dependencies: 5.3.4
+Dependencies: 5.3.3
 ```
 
 ```text
 Task 6.2.2: Test on macOS (Intel and Apple Silicon)
 Status: ⬜
-Dependencies: 5.3.4
+Dependencies: 5.3.3
 ```
 
 ```text
 Task 6.2.3: Test on Windows
 Status: ⬜
-Dependencies: 5.3.4
+Dependencies: 5.3.3
 ```
 
 ### 6.3 AI Model Testing
