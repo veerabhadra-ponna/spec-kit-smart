@@ -6,7 +6,6 @@ Loads configuration from memory/config.json and environment variables.
 
 import json
 import os
-import platform
 from pathlib import Path
 from typing import Any, Optional
 
@@ -18,7 +17,6 @@ from speckit.core.utils import get_repo_root
 class WorkflowConfig(BaseModel):
     """Workflow configuration options."""
 
-    os_env: str = "auto"  # auto, windows, unix
     enable_check_artifactory: bool = True
 
 
@@ -82,43 +80,12 @@ class Config:
 
     def _apply_env_overrides(self) -> None:
         """Apply environment variable overrides."""
-        # OS environment override
-        os_env = os.getenv("SPEC_KIT_OS_ENV") or os.getenv("SPEC_KIT_PLATFORM")
-        if os_env:
-            self._config.workflow.os_env = os_env
-
         # Artifactory check override
         check_artifactory = os.getenv("SPEC_KIT_CHECK_ARTIFACTORY")
         if check_artifactory is not None:
             self._config.workflow.enable_check_artifactory = (
                 check_artifactory.lower() in ("true", "1", "yes")
             )
-
-    @property
-    def os_env(self) -> str:
-        """Get the configured OS environment."""
-        env = self._config.workflow.os_env
-        if env == "auto":
-            return self.detect_os()
-        return env
-
-    @staticmethod
-    def detect_os() -> str:
-        """Detect the current operating system."""
-        system = platform.system().lower()
-        if system == "windows":
-            return "windows"
-        return "unix"  # Linux, Darwin, etc.
-
-    @property
-    def is_windows(self) -> bool:
-        """Check if running on Windows."""
-        return self.os_env == "windows"
-
-    @property
-    def is_unix(self) -> bool:
-        """Check if running on Unix-like system."""
-        return self.os_env == "unix"
 
     @property
     def check_artifactory(self) -> bool:

@@ -6,10 +6,8 @@ Common utilities used across the speckit package.
 
 import json
 import os
-import platform
 import secrets
 import subprocess
-import time
 from pathlib import Path
 from typing import Any, Optional
 
@@ -40,19 +38,6 @@ def get_repo_root(start_path: Optional[Path] = None) -> Path:
 
 # Alias for backward compatibility
 find_repo_root = get_repo_root
-
-
-def detect_os() -> str:
-    """
-    Detect the current operating system.
-
-    Returns:
-        "windows" or "unix"
-    """
-    system = platform.system().lower()
-    if system == "windows":
-        return "windows"
-    return "unix"  # Linux, Darwin, FreeBSD, etc.
 
 
 def generate_chain_id() -> str:

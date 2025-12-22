@@ -107,7 +107,6 @@ Additional commands for enhanced quality and validation:
 | Variable         | Description                                                                                    |
 | ------------------ | ------------------------------------------------------------------------------------------------ |
 | `SPECIFY_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches. **Must be set in the context of the agent you're working with prior to using `/speckitadv.plan` or follow-up commands.** |
-| `SPEC_KIT_PLATFORM` | Force platform detection: `windows`, `unix`, or `auto` (default). Use to override automatic script selection. |
 | `GH_TOKEN` / `GITHUB_TOKEN` | GitHub personal access token for API requests. Required when rate limits are reached or for private repositories. |
 
 ## Related Documentation

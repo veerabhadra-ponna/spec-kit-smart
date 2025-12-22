@@ -56,10 +56,6 @@
       "properties": {
         "enableCheckArtifactory": {
           "type": "boolean"
-        },
-        "osEnv": {
-          "type": "string",
-          "enum": ["auto", "windows", "unix"]
         }
       }
     },

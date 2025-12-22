@@ -16,7 +16,6 @@ from speckit.core.state import ChainState
 from speckit.core.config import Config
 from speckit.core.utils import (
     get_repo_root,
-    detect_os,
     generate_chain_id,
     safe_json_loads,
     safe_json_dumps,
@@ -59,7 +58,6 @@ __all__ = [
     "Config",
     # Utilities
     "get_repo_root",
-    "detect_os",
     "generate_chain_id",
     "safe_json_loads",
     "safe_json_dumps",

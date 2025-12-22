@@ -3,12 +3,10 @@ Tests for speckit.core.utils module.
 """
 
 import json
-import platform
 from pathlib import Path
 import pytest
 
 from speckit.core.utils import (
-    detect_os,
     generate_chain_id,
     safe_json_loads,
     safe_json_dumps,
@@ -20,28 +18,6 @@ from speckit.core.utils import (
     get_relative_path,
     count_lines,
 )
-
-
-class TestDetectOS:
-    """Tests for detect_os function."""
-
-    def test_returns_string(self):
-        """Should return a string."""
-        result = detect_os()
-        assert isinstance(result, str)
-
-    def test_returns_valid_value(self):
-        """Should return 'windows' or 'unix'."""
-        result = detect_os()
-        assert result in ("windows", "unix")
-
-    def test_matches_platform(self):
-        """Should match current platform."""
-        result = detect_os()
-        if platform.system().lower() == "windows":
-            assert result == "windows"
-        else:
-            assert result == "unix"
 
 
 class TestGenerateChainId:

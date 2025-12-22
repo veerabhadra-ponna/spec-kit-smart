@@ -8,8 +8,7 @@
     "description": "Project type determines which corporate guidelines profile to use: 'corporate' for internal/proprietary projects, 'personal' for open-source/public projects"
   },
   "workflow": {
-    "enableCheckArtifactory": false,
-    "osEnv": "windows"
+    "enableCheckArtifactory": false
   },
   "branching": {
     "pattern": "feature/<jira>-<shortname>",
