@@ -132,10 +132,15 @@ When testing `init --here` in a dirty directory, create a temp workspace:
 
 ```bash
 mkdir /tmp/spec-test && cd /tmp/spec-test
-python -m speckit.cli init --here --ai claude --ignore-agent-tools  # if repo copied here
+
+# Option 1: Use absolute path to script (works from anywhere)
+python /path/to/spec-kit-smart/scripts/python/speckit/cli.py init --here --ai claude --ignore-agent-tools
+
+# Option 2: Use PYTHONPATH for module style
+PYTHONPATH=/path/to/spec-kit-smart/scripts/python python -m speckit.cli init --here --ai claude --ignore-agent-tools
 ```
 
-Or copy only the modified CLI portion if you want a lighter sandbox.
+Or use pipx for a cleaner isolated test.
 
 ## 9. Debug Network / TLS Skips
 

@@ -47,12 +47,18 @@ CHUNK_MAP = {
         2: "03b2-migration-strategy",
         3: "03b3-effort-success",
     },
-    16: {  # Stage 6: Scope-specific artifacts (5 sub-prompts for A, 1 for B)
+}
+
+# Stage 16 chunks are scope-specific
+STAGE_16_CHUNKS = {
+    "A": {  # Full app: 4 sub-prompts for functional/technical specs
         1: "06a-functional-spec-legacy",
         2: "06b-functional-spec-target",
         3: "06c-technical-spec",
         4: "06d-stage-prompts",
-        5: "06e-cross-cutting-artifacts",
+    },
+    "B": {  # Cross-cutting: 1 sub-prompt for cross-cutting artifacts
+        1: "06e-cross-cutting-artifacts",
     },
 }
 
@@ -195,7 +201,9 @@ def run_analyze_project(
         next_cmd = None
 
     # Check if this stage has chunks (report generation)
-    if stage in CHUNK_MAP:
+    # Stage 16 uses scope-specific chunk map
+    has_chunks = stage in CHUNK_MAP or stage == 16
+    if has_chunks:
         # This stage requires chunking - redirect to chunk 1
         next_cmd = f"speckitadv analyze-project --stage={stage} --chunk=1 --chain={chain_id}"
         emit_stage(
@@ -259,7 +267,13 @@ def _emit_chunk_stage(
     Enforced chunking ensures the AI can't skip chunks.
     Each chunk is a separate command invocation.
     """
-    chunk_info = CHUNK_MAP.get(stage)
+    # Get chunk info - stage 16 uses scope-specific chunk map
+    if stage == 16:
+        effective_scope = context.get("scope", "A")
+        chunk_info = STAGE_16_CHUNKS.get(effective_scope, STAGE_16_CHUNKS["A"])
+    else:
+        chunk_info = CHUNK_MAP.get(stage)
+
     if not chunk_info:
         emit_error(
             "Stage not chunked",

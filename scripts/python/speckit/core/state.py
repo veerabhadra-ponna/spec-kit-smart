@@ -101,6 +101,10 @@ class ChainState:
         """
         Load existing chain state.
 
+        Note: Only the latest chain is retained in state files. When a new chain
+        starts, it overwrites previous chain state. This method validates that
+        the requested chain_id matches the current state.
+
         Args:
             chain_id: Chain ID to load
             workspace_root: Optional root for .analysis directory
@@ -109,7 +113,8 @@ class ChainState:
             Loaded ChainState instance
 
         Raises:
-            FileNotFoundError: If chain state not found
+            FileNotFoundError: If state directory or files not found
+            ValueError: If chain_id doesn't match current state
         """
         workspace_root = workspace_root or Path.cwd()
         state_dir = workspace_root / ".analysis" / ".state"
@@ -119,45 +124,30 @@ class ChainState:
 
         chain = cls(state_dir, chain_id)
 
-        # Search for state file matching the requested chain_id
-        # This allows resuming older chains even when newer ones exist
-        state_files = list(state_dir.glob("*.json"))
-        matching_file = None
-
-        for state_file in state_files:
-            try:
-                data = json.loads(state_file.read_text())
-                if data.get("chain_id") == chain_id:
-                    # Found matching chain - use most recent stage file for this chain
-                    if matching_file is None:
-                        matching_file = state_file
-                        chain._data = data
-                    elif data.get("timestamp", "") > chain._data.get("timestamp", ""):
-                        matching_file = state_file
-                        chain._data = data
-            except (json.JSONDecodeError, OSError):
-                continue
-
-        if matching_file:
-            return chain
-
-        # No matching chain found - raise helpful error
-        if state_files:
-            # Check what chains exist
-            existing_chains = set()
-            for state_file in state_files:
-                try:
-                    data = json.loads(state_file.read_text())
-                    if cid := data.get("chain_id"):
-                        existing_chains.add(cid)
-                except (json.JSONDecodeError, OSError):
-                    continue
-            raise FileNotFoundError(
-                f"No state found for chain: {chain_id}. "
-                f"Available chains: {', '.join(sorted(existing_chains)) or 'none'}"
-            )
+        # Load from latest.json (primary) or most recent state file
+        latest_path = state_dir / "latest.json"
+        if latest_path.exists():
+            chain._data = json.loads(latest_path.read_text())
         else:
-            raise FileNotFoundError(f"No state files found in: {state_dir}")
+            # Fallback: find most recent state file by modification time
+            state_files = sorted(
+                state_dir.glob("*.json"),
+                key=lambda f: f.stat().st_mtime,
+                reverse=True
+            )
+            if state_files:
+                chain._data = json.loads(state_files[0].read_text())
+            else:
+                raise FileNotFoundError(f"No state files found in: {state_dir}")
+
+        # Validate chain_id matches
+        loaded_chain_id = chain._data.get("chain_id")
+        if loaded_chain_id and loaded_chain_id != chain_id:
+            raise ValueError(
+                f"Chain ID mismatch: requested '{chain_id}' but current state "
+                f"belongs to chain '{loaded_chain_id}'. Only the latest chain "
+                f"is retained. Start a new chain or use the current chain ID."
+            )
 
         return chain
 
