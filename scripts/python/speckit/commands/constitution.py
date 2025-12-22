@@ -2,261 +2,260 @@
 Constitution Command
 
 Creates and manages project constitution with non-negotiable principles.
-Implements a 3-stage workflow: gather, structure, finalize.
+Implements a 3-stage workflow: initialize, collect, generate.
+
+Uses embedded prompt assets and supports interactive mode.
 """
 
 from pathlib import Path
 from typing import Optional
 
+import typer
+from rich.console import Console
+from rich.panel import Panel
+from rich.prompt import Confirm, Prompt
+from rich.text import Text
+
 from speckit.core.emit import emit_stage, emit_error
-from speckit.core.prompts import get_prompt_fragment, render_prompt
-from speckit.core.utils import get_repo_root
+from speckit.core.prompts import get_prompt_fragment, render_prompt, get_stage_order
+from speckit.core.state import ChainState
+
+console = Console()
 
 
-# Default principles when --defaults is used
-DEFAULT_PRINCIPLES = """
-1. Code Quality: All code must pass linting and type checking
-2. Testing: Minimum 80% test coverage for new code
-3. Documentation: Public APIs must have docstrings
-4. Security: No secrets in code, use environment variables
-5. Compatibility: Support latest stable version of dependencies
-"""
+# Default principles - displayed to user before applying
+DEFAULT_PRINCIPLES = [
+    ("Good Engineering", "MUST follow SOLID, DRY, separation of concerns"),
+    ("Lean & Simple", "MUST avoid over-engineering and unnecessary abstractions"),
+    ("Readability First", "MUST prioritize code clarity over cleverness"),
+    ("Self-Documenting", "MUST write code that explains itself through naming"),
+    ("Intent Documentation", "MUST document WHY, not WHAT"),
+    ("Test Behavior", "MUST write tests that verify behavior, not implementation"),
+    ("Explicit Errors", "MUST handle errors explicitly, no silent failures"),
+]
 
-# Stage configuration
-TOTAL_STAGES = 3
 
-STAGE_MAP = {
-    1: "01-gather-principles",
-    2: "02-structure",
-    3: "03-finalize",
-}
+def _display_defaults() -> None:
+    """Display default principles to user."""
+    console.print("\n[bold cyan]Default Constitution Principles:[/bold cyan]\n")
+    for name, desc in DEFAULT_PRINCIPLES:
+        console.print(f"  [green]•[/green] [bold]{name}[/bold]: {desc}")
+    console.print()
+
+
+def _format_principles_for_prompt(principles: list[tuple[str, str]]) -> str:
+    """Format principles list for prompt injection."""
+    return "\n".join(f"- {name}: {desc}" for name, desc in principles)
+
+
+def _interactive_collect() -> tuple[str, bool]:
+    """
+    Interactive mode: ask user for principles or use defaults.
+
+    Returns:
+        Tuple of (principles_text, used_defaults)
+    """
+    console.print("\n[bold]Constitution Setup[/bold]\n")
+    console.print("A constitution defines non-negotiable principles for your project.")
+    console.print("These principles guide all technical decisions and code reviews.\n")
+
+    # Show defaults first
+    _display_defaults()
+
+    # Ask user preference
+    use_defaults = Confirm.ask(
+        "[bold]Use default principles?[/bold]",
+        default=True,
+    )
+
+    if use_defaults:
+        console.print("\n[dim]ℹ️  Using default principles. Run with --principles to customize later.[/dim]\n")
+        return _format_principles_for_prompt(DEFAULT_PRINCIPLES), True
+
+    # Custom principles mode
+    console.print("\n[bold]Enter your principles[/bold] (one per line, format: 'Name: Description')")
+    console.print("[dim]Press Enter twice when done, or Ctrl+C to cancel.[/dim]\n")
+
+    lines = []
+    while True:
+        try:
+            line = Prompt.ask("", default="")
+            if not line:
+                if lines:
+                    break
+                continue
+            lines.append(line)
+        except KeyboardInterrupt:
+            console.print("\n[yellow]Cancelled. Using defaults.[/yellow]")
+            return _format_principles_for_prompt(DEFAULT_PRINCIPLES), True
+
+    if not lines:
+        console.print("[yellow]No principles entered. Using defaults.[/yellow]")
+        return _format_principles_for_prompt(DEFAULT_PRINCIPLES), True
+
+    return "\n".join(f"- {line}" for line in lines), False
 
 
 def run_constitution(
     stage: int = 1,
     principles: Optional[str] = None,
     defaults: bool = False,
+    chain_id: Optional[str] = None,
 ) -> None:
     """
     Execute constitution workflow at specified stage.
 
-    Stage 1: Gather principles (from user or defaults)
-    Stage 2: Structure into formal constitution format
-    Stage 3: Finalize and write constitution file
+    Stage 1: Initialize and verify AGENTS.md
+    Stage 2: Collect principles (interactive or from args)
+    Stage 3: Generate formal constitution document
 
     Args:
         stage: Current workflow stage (1-3)
         principles: User-provided principles text
-        defaults: Use default principles
+        defaults: Use default principles (skip interactive)
+        chain_id: Chain ID for state persistence
     """
+    # Get ordered stages from embedded prompts
+    stages = get_stage_order("constitution")
+
+    if not stages:
+        emit_error(
+            "No fragments found",
+            "No prompt fragments found for constitution command",
+            recovery_cmd="speckitadv list-fragments constitution",
+        )
+        return
+
+    total_stages = len(stages)
+
     # Validate stage
-    if stage < 1 or stage > TOTAL_STAGES:
+    if stage < 1 or stage > total_stages:
         emit_error(
             "Invalid stage",
-            f"Stage must be between 1 and {TOTAL_STAGES}",
+            f"Stage must be between 1 and {total_stages}",
             recovery_cmd="speckitadv constitution --stage=1",
         )
         return
 
-    # Determine project root
-    repo_root = get_repo_root()
-    if not repo_root:
-        repo_root = Path.cwd()
+    # Get stage identifier
+    stage_id = stages[stage - 1]
+
+    # Initialize or load chain state
+    if chain_id:
+        try:
+            state = ChainState.load(chain_id)
+        except FileNotFoundError:
+            emit_error(
+                "Chain state not found",
+                f"No state found for chain ID: {chain_id}",
+                recovery_cmd="speckitadv constitution --stage=1",
+            )
+            return
+        except ValueError as e:
+            emit_error(
+                "Chain ID mismatch",
+                str(e),
+                recovery_cmd="speckitadv constitution --stage=1",
+            )
+            return
+    else:
+        state = ChainState.initialize(Path.cwd())
+        chain_id = state.chain_id
 
     # Build context
     context = {
+        "chain_id": chain_id,
         "stage": stage,
-        "total_stages": TOTAL_STAGES,
-        "project_path": str(repo_root),
+        "total_stages": total_stages,
+        "project_path": str(state.project_path or Path.cwd()),
         "principles": "",
+        "used_defaults": False,
     }
 
-    # Handle principles input
-    if defaults:
-        context["principles"] = DEFAULT_PRINCIPLES.strip()
-    elif principles:
-        context["principles"] = principles
-
-    # Stage 1: Gather principles
-    if stage == 1:
-        _emit_stage_1(context)
-        return
-
-    # Stage 2: Structure principles
+    # Stage 2 special handling: collect principles
     if stage == 2:
+        if principles:
+            # Principles provided via CLI
+            context["principles"] = principles
+            context["used_defaults"] = False
+        elif defaults:
+            # Defaults explicitly requested
+            _display_defaults()
+            console.print("[dim]ℹ️  Applied default constitution principles.[/dim]\n")
+            context["principles"] = _format_principles_for_prompt(DEFAULT_PRINCIPLES)
+            context["used_defaults"] = True
+        else:
+            # Interactive mode - no args provided
+            collected, used_defaults = _interactive_collect()
+            context["principles"] = collected
+            context["used_defaults"] = used_defaults
+
         if not context["principles"]:
             emit_error(
                 "No principles provided",
-                "Stage 2 requires principles from stage 1",
-                recovery_cmd="speckitadv constitution --stage=1 --defaults",
+                "Stage 2 requires principles",
+                recovery_cmd="speckitadv constitution --stage=2 --defaults",
             )
             return
-        _emit_stage_2(context)
+
+    # Load prompt fragment from embedded assets
+    try:
+        fragment = get_prompt_fragment("constitution", stage_id)
+    except FileNotFoundError:
+        emit_error(
+            "Fragment not found",
+            f"Prompt fragment not found: constitution/{stage_id}",
+            recovery_cmd="speckitadv list-fragments constitution",
+        )
         return
 
-    # Stage 3: Finalize
-    if stage == 3:
-        _emit_stage_3(context)
-        return
+    # Render with context
+    rendered = render_prompt(fragment, context)
 
+    # Extract title from fragment
+    title = _extract_title(rendered, stage_id)
 
-def _emit_stage_1(context: dict) -> None:
-    """Stage 1: Gather project principles."""
-    content = """# Gather Project Principles
+    # Determine next command
+    if stage < total_stages:
+        next_cmd = f"speckitadv constitution --stage={stage + 1} --chain={chain_id}"
+    else:
+        next_cmd = None
 
-You are creating a project constitution - the non-negotiable rules.
+    # Save state
+    state.save(
+        stage_name=stage_id,
+        data={
+            "stage": stage,
+            "stage_id": stage_id,
+            "command": "constitution",
+            "principles": context.get("principles", ""),
+            "used_defaults": context.get("used_defaults", False),
+        },
+    )
 
-## Task
-
-Review the project and identify core principles:
-
-1. **Code Standards**
-   - Linting rules
-   - Type checking requirements
-   - Naming conventions
-
-2. **Quality Gates**
-   - Test coverage requirements
-   - Documentation requirements
-   - Review requirements
-
-3. **Security Requirements**
-   - Secret handling
-   - Dependency policies
-   - Access controls
-
-4. **Architecture Constraints**
-   - Required patterns
-   - Forbidden anti-patterns
-   - Integration rules
-
-## Output
-
-List 5-10 non-negotiable principles for this project.
-Format each as: "CATEGORY: Principle statement"
-
-## Example
-
-```
-CODE_QUALITY: All functions must have type hints
-TESTING: No PR merges without 80% coverage
-SECURITY: No hardcoded secrets, use .env files
-```
-"""
-
+    # Emit stage output
     emit_stage(
-        stage_num=1,
-        total_stages=context["total_stages"],
-        title="Gather Project Principles",
-        content=content,
-        next_cmd="speckitadv constitution --stage=2 --principles='<paste-principles-here>'",
-        alt_cmd="speckitadv constitution --stage=2 --defaults",
+        stage_num=stage,
+        total_stages=total_stages,
+        title=title,
+        content=rendered,
+        next_cmd=next_cmd or "Workflow complete - review memory/constitution.md",
+        context={"chain_id": chain_id} if stage == 1 else None,
     )
 
 
-def _emit_stage_2(context: dict) -> None:
-    """Stage 2: Structure principles into constitution format."""
-    principles = context.get("principles", "")
+def _extract_title(content: str, fallback: str) -> str:
+    """Extract title from markdown content."""
+    for line in content.split("\n"):
+        line = line.strip()
+        if line.startswith("# "):
+            return line[2:].strip()
 
-    content = f"""# Structure Constitution
-
-Take the gathered principles and structure them formally.
-
-## Input Principles
-
-{principles}
-
-## Task
-
-Create a formal constitution with:
-
-1. **Preamble** - Project mission and scope
-2. **Article I: Code Standards** - Formatting, linting, types
-3. **Article II: Quality Gates** - Testing, coverage, reviews
-4. **Article III: Security** - Secrets, dependencies, access
-5. **Article IV: Architecture** - Patterns, constraints
-6. **Article V: Amendments** - How to update this constitution
-
-## Format
-
-Use this markdown structure:
-
-```markdown
-# Project Constitution
-
-## Preamble
-[Project mission]
-
-## Article I: Code Standards
-- 1.1 [First principle]
-- 1.2 [Second principle]
-
-## Article II: Quality Gates
-...
-```
-
-## Output
-
-Write the complete constitution to: `memory/constitution.md`
-"""
-
-    emit_stage(
-        stage_num=2,
-        total_stages=context["total_stages"],
-        title="Structure Constitution",
-        content=content,
-        next_cmd="speckitadv constitution --stage=3",
-    )
-
-
-def _emit_stage_3(context: dict) -> None:
-    """Stage 3: Finalize and verify constitution."""
-    content = """# Finalize Constitution
-
-Review and finalize the constitution.
-
-## Task
-
-1. **Read** `memory/constitution.md`
-2. **Verify** all principles are covered
-3. **Check** formatting is consistent
-4. **Add** timestamp and version
-
-## Required Additions
-
-Add this footer to the constitution:
-
-```markdown
----
-
-## Metadata
-
-- Version: 1.0.0
-- Created: [DATE]
-- Last Updated: [DATE]
-- Approved By: [NAME or "Pending Review"]
-```
-
-## Validation Checklist
-
-- [ ] All 5 articles present
-- [ ] Each article has at least 2 principles
-- [ ] Language is clear and unambiguous
-- [ ] No contradictions between principles
-- [ ] Metadata section added
-
-## Output
-
-Confirm the constitution is complete and ready for use.
-"""
-
-    emit_stage(
-        stage_num=3,
-        total_stages=context["total_stages"],
-        title="Finalize Constitution",
-        content=content,
-        next_cmd=None,  # Workflow complete
-    )
+    # Convert stage_id to title: "01-initialization" -> "Initialization"
+    parts = fallback.split("-", 1)
+    if len(parts) > 1:
+        return parts[1].replace("-", " ").title()
+    return fallback.title()
 
 
 # Export for CLI

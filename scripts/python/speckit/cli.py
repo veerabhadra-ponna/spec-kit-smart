@@ -108,15 +108,17 @@ def constitution(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
     principles: Optional[str] = typer.Option(None, "--principles", help="User-provided principles"),
     defaults: bool = typer.Option(False, "--defaults", help="Use default principles"),
+    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
 ) -> None:
     """
     Create or update the project constitution.
 
     Defines non-negotiable project principles and governance.
+    Runs interactively if no --principles or --defaults provided.
     """
     from speckit.commands.constitution import run_constitution
 
-    run_constitution(stage=stage, principles=principles, defaults=defaults)
+    run_constitution(stage=stage, principles=principles, defaults=defaults, chain_id=chain_id)
 
 
 # ============================================================================

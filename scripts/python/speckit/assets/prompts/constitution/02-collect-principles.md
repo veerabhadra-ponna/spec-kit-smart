@@ -10,78 +10,48 @@ next: 03-generate-constitution.md
 
 ## Purpose
 
-Gather project principles from user input or apply defaults.
+Structure the collected principles for constitution generation.
 
 ---
 
-## Check for User Input
+## Collected Principles
 
-**IF arguments were provided** (JIRA number, principles, or metadata):
-- Parse the provided principles
-- Extract project metadata (name, team, ratification date)
-- Continue to Step 2
+The following principles have been collected (via CLI or interactive prompt):
 
-**IF no arguments provided** (interactive mode):
+{principles}
 
-Prompt user with this format:
-
-```text
-Please provide your constitution principles, or press Enter for defaults.
-
-Option 1: Provide custom principles (copy and fill in):
-
-PRINCIPLES (one per line, format: "Name: Description"):
-Library-First: MUST use existing libraries over custom code
-Test-First: MUST write tests before implementation
-Keep It Simple: MUST minimize abstraction layers
-
-PROJECT METADATA:
-Project name: MyApp
-Team: Engineering Team
-Ratification date: 2025-01-15
-
-Option 2: Use defaults
-Simply provide empty input or type "use defaults".
-```
-
-**WAIT FOR USER RESPONSE before proceeding.**
+Source: {used_defaults:User input}
 
 ---
 
-## Step 2: Apply Defaults (if needed)
+## Task
 
-**Detection criteria for "no input":**
-- User provides empty/whitespace-only input
-- User explicitly says "use defaults", "skip", or similar
-- User provides project metadata but zero principles
+Review and validate the principles above:
 
-**Default Principles:**
-- Good Engineering: MUST follow SOLID, DRY, separation of concerns
-- Lean & Simple: MUST avoid over-engineering and unnecessary abstractions
-- Readability First: MUST prioritize code clarity over cleverness
-- Self-Documenting: MUST write code that explains itself through naming
-- Intent Documentation: MUST document WHY, not WHAT
-- Test Behavior: MUST write tests that verify behavior, not implementation
-- Explicit Errors: MUST handle errors explicitly, no silent failures
+1. **Check completeness** - Are all key areas covered?
+   - Code quality and standards
+   - Testing requirements
+   - Documentation standards
+   - Security practices
+   - Architecture constraints
 
-**When defaults applied, show user:**
+2. **Check clarity** - Is each principle:
+   - Specific and measurable?
+   - Using normative language (MUST, SHOULD, MAY)?
+   - Actionable in code reviews?
 
-```text
-
-ℹ️ Applied default constitution principles. Run again with custom principles to override.
-```
+3. **Identify gaps** - Suggest additional principles if critical areas are missing
 
 ---
 
 ## Output
 
-Confirm principles collected:
+Confirm principles are ready for constitution generation:
 
 ```text
-
-✓ Principles collected: [N] principles
-  - Source: [User input / Defaults]
-  - Project: [Name or TBD]
+✓ Principles validated: [N] principles
+  - Quality coverage: [Complete/Needs additions]
+  - Ready for constitution generation
 ```
 
 ---
@@ -91,6 +61,5 @@ Confirm principles collected:
 Run the next stage to generate the constitution:
 
 ```text
-
-speckitadv constitution --stage=3 --chain={{chain_id}}
+speckitadv constitution --stage=3 --chain={chain_id}
 ```
