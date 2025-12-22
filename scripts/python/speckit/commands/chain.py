@@ -251,15 +251,17 @@ def run_chain_state_command(
     elif command == "validate":
         if not state_json:
             console.print("[red]Error:[/red] validate requires state_json")
-            return
+            raise SystemExit(1)
         try:
             state = json.loads(state_json)
             if validate_state(state):
                 console.print("[green]✓[/green] Valid state")
             else:
                 console.print("[red]✗[/red] Invalid state")
+                raise SystemExit(1)
         except json.JSONDecodeError:
             console.print("[red]Error:[/red] Invalid JSON")
+            raise SystemExit(1)
 
     else:
         console.print(f"[red]Error:[/red] Unknown command: {command}")
