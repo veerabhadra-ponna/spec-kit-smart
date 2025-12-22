@@ -38,10 +38,7 @@ dev = [
 ]
 
 [project.scripts]
-# Primary command name
 speckitadv = "speckit.cli:app"
-# Aliases for convenience
-speckit = "speckit.cli:app"
 
 [build-system]
 requires = ["hatchling"]
