@@ -14,9 +14,15 @@ Run setup scripts and load design documents.
 
 ---
 
-## Step 1: Collect Preferences (if interactive)
+## Step 1: Collect Preferences
 
-**IF no arguments**, prompt user:
+**Arguments provided:**
+
+```text
+PREFERENCES: {preferences:$NONE}
+```
+
+**IF preferences above show "$NONE"**, prompt user interactively:
 
 ```text
 Provide task generation preferences:
@@ -36,6 +42,8 @@ Examples:
 ```
 
 **WAIT FOR USER RESPONSE.**
+
+**IF preferences were provided above** (not "$NONE"), use them directly and skip prompting.
 
 ---
 

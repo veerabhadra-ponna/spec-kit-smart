@@ -14,9 +14,15 @@ Run setup scripts and check checklist status.
 
 ---
 
-## Step 1: Collect Notes (if interactive)
+## Step 1: Collect Notes
 
-**IF no arguments**, prompt user:
+**Arguments provided:**
+
+```text
+NOTES: {notes:$NONE}
+```
+
+**IF notes above show "$NONE"**, prompt user interactively:
 
 ```text
 Provide implementation notes:
@@ -35,6 +41,8 @@ Examples:
 ```
 
 **WAIT FOR RESPONSE.**
+
+**IF notes were provided above** (not "$NONE"), use them directly and skip prompting.
 
 ---
 

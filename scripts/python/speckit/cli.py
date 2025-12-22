@@ -191,14 +191,14 @@ def plan(
     Create implementation plan.
 
     Designs how to build what was specified.
-    Runs interactively if no --constraints provided at stage 1.
+    Runs interactively if no --constraints provided at stage 2.
     """
     from speckit.core.stages import run_staged_command
 
     context = {}
 
-    # Interactive mode for stage 1
-    if stage == 1 and not constraints and not chain_id:
+    # Interactive mode for stage 2 (where constraints are collected per fragment)
+    if stage == 2 and not constraints and not chain_id:
         from speckit.core.interactive import collect_plan_constraints
 
         collected = collect_plan_constraints()
@@ -226,14 +226,14 @@ def tasks(
     Generate actionable tasks.
 
     Breaks down the plan into implementable units.
-    Runs interactively if no --preferences provided at stage 1.
+    Runs interactively if no --preferences provided at stage 2.
     """
     from speckit.core.stages import run_staged_command
 
     context = {}
 
-    # Interactive mode for stage 1
-    if stage == 1 and not preferences and not chain_id:
+    # Interactive mode for stage 2 (where preferences are collected per fragment)
+    if stage == 2 and not preferences and not chain_id:
         from speckit.core.interactive import collect_tasks_preferences
 
         collected = collect_tasks_preferences()
@@ -261,14 +261,14 @@ def implement(
     Execute implementation.
 
     Implements tasks with quality checks.
-    Runs interactively if no --notes provided at stage 1.
+    Runs interactively if no --notes provided at stage 2.
     """
     from speckit.core.stages import run_staged_command
 
     context = {}
 
-    # Interactive mode for stage 1
-    if stage == 1 and not notes and not chain_id:
+    # Interactive mode for stage 2 (where notes are collected per fragment)
+    if stage == 2 and not notes and not chain_id:
         from speckit.core.interactive import collect_implement_notes
 
         collected = collect_implement_notes()

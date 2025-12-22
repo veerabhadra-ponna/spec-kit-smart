@@ -14,9 +14,15 @@ Run setup scripts and load context for planning.
 
 ---
 
-## Step 1: Collect Constraints (if interactive)
+## Step 1: Collect Constraints
 
-**IF no arguments provided**, prompt user:
+**Arguments provided:**
+
+```text
+CONSTRAINTS: {constraints:$NONE}
+```
+
+**IF constraints above show "$NONE"**, prompt user interactively:
 
 ```text
 Please provide any planning constraints:
@@ -37,6 +43,8 @@ Valid constraint types:
 ```
 
 **WAIT FOR USER RESPONSE.**
+
+**IF constraints were provided above** (not "$NONE"), use them directly and skip prompting.
 
 ---
 

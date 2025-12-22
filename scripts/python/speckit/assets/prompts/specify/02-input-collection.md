@@ -16,12 +16,18 @@ Collect the JIRA number and feature description from user.
 
 ## Check for Arguments
 
-**IF arguments were provided** (contains JIRA and FEATURE):
-- Parse JIRA number (format: C12345-7890)
-- Extract feature description
-- Continue to next stage
+**Arguments provided:**
 
-**IF no arguments** (interactive mode):
+```text
+JIRA: {jira:$NONE}
+FEATURE: {feature:$NONE}
+```
+
+**IF both values above are NOT "$NONE":**
+- Use provided JIRA and FEATURE values
+- Skip to "Validate Input" section below
+
+**IF either shows "$NONE"** (interactive mode):
 
 Prompt user with this format:
 
@@ -47,6 +53,8 @@ Bad examples (too vague):
 ```
 
 **WAIT FOR USER RESPONSE.**
+
+**IF values were provided above** (not "$NONE"), use them directly.
 
 ---
 
