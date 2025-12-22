@@ -277,13 +277,19 @@ python -m nuitka \
 
 ```text
 GitHub Release Assets:
-├── speckitadv-linux-x86_64        (Linux AMD64)
-├── speckitadv-linux-arm64         (Linux ARM64)
-├── speckitadv-darwin-x86_64       (macOS Intel)
-├── speckitadv-darwin-arm64        (macOS Apple Silicon)
-├── speckitadv-darwin-universal    (macOS Universal)
-├── speckitadv-windows-x86_64.exe  (Windows 64-bit)
-└── speckitadv.py                  (Source, for pipx install)
+├── linux-x86_64/
+│   └── speckitadv              (Linux AMD64)
+├── linux-arm64/
+│   └── speckitadv              (Linux ARM64)
+├── darwin-x86_64/
+│   └── speckitadv              (macOS Intel)
+├── darwin-arm64/
+│   └── speckitadv              (macOS Apple Silicon)
+├── darwin-universal/
+│   └── speckitadv              (macOS Universal)
+├── windows-x86_64/
+│   └── speckitadv.exe          (Windows 64-bit)
+└── speckitadv.py               (Source, for pipx install)
 ```
 
 ### 4.4 Compilation CI/CD Pipeline
@@ -297,11 +303,14 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
         include:
           - os: ubuntu-latest
-            artifact: speckitadv-linux-x86_64
+            platform: linux-x86_64
+            binary: speckitadv
           - os: macos-latest
-            artifact: speckitadv-darwin-universal
+            platform: darwin-universal
+            binary: speckitadv
           - os: windows-latest
-            artifact: speckitadv-windows-x86_64.exe
+            platform: windows-x86_64
+            binary: speckitadv.exe
 
     steps:
       - uses: actions/checkout@v4
@@ -313,12 +322,12 @@ jobs:
         run: pip install pyinstaller
 
       - name: Build binary
-        run: pyinstaller --onefile --name ${{ matrix.artifact }} speckit/__main__.py
+        run: pyinstaller --onefile --name speckitadv speckit/__main__.py
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact }}
-          path: dist/${{ matrix.artifact }}
+          name: ${{ matrix.platform }}
+          path: dist/${{ matrix.binary }}
 ```
 
 ---
