@@ -139,19 +139,7 @@ speckitadv constitution --stage=3 --chain=abc12345
 
 ## 3. Document Structure & Priority
 
-**Project Structure:**
-
-```text
-project-root/
-├── memory/
-│   ├── config.json                     # Project configuration
-│   └── constitution.md                 # Immutable principles
-├── .guidelines/                        # Corporate/project guidelines
-└── specs/[###-feature-name]/
-    ├── spec.md                         # WHAT/WHY (requirements)
-    ├── plan.md                         # HOW (architecture)
-    └── data-model.md, contracts/, research.md, quickstart.md, tasks.md
-```
+**Project Structure:** `memory/` (config.json, constitution.md), `.guidelines/`, `specs/[###-feature-name]/` (spec.md, plan.md, data-model.md, contracts/, research.md, quickstart.md, tasks.md)
 
 **Priority (Highest→Lowest):**
 
@@ -211,23 +199,16 @@ project-root/
 - **MUST** extract common patterns into shared utilities
 - **SHOULD** document reusable components for discoverability
 
-**Inline Documentation (MUST/MUST NOT):**
+**Inline Documentation:**
 
-**MUST document:**
+| MUST Document | MUST NOT Document |
+| ------------- | ----------------- |
+| Classes (purpose, responsibilities) | Entities/DTOs/POCOs (self-documenting) |
+| Important methods (non-obvious behavior, business logic) | Trivial getters/setters |
+| Complex logic (WHY, not WHAT) | Obvious implementations (CRUD, standard patterns) |
+| Business rules (spec references) | Clear implementation details |
 
-- Classes: Purpose and responsibilities
-- Important methods: Non-obvious behavior, business logic, complex algorithms
-- Complex logic: WHY (intent/rationale), not WHAT (implementation)
-- Business rules: References to spec sections or business requirements
-
-**MUST NOT document:**
-
-- Entities, DTOs, POCOs, data models (self-documenting via naming)
-- Trivial getters/setters or simple property accessors
-- Obvious implementations (simple CRUD operations, standard patterns)
-- Implementation details that are clear from reading the code
-
-**Documentation Style:** Explain intent and rationale (WHY), not mechanics (WHAT). Example: `// Cache invalidation required per GDPR data retention policy (spec.md L45)` NOT `// This function clears the cache`
+**Style:** Explain intent (WHY), not mechanics (WHAT). Example: `// Cache invalidation per GDPR policy (spec.md L45)` NOT `// clears cache`
 
 ### 4.4 Minimal Changes
 

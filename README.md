@@ -1066,7 +1066,6 @@ speckitadv init . --force --ai claude
 speckitadv init --here --force --ai claude
 ```
 
-
 ### **STEP 1:** Establish project principles
 
 Go to the project folder and run your AI agent. In our example, we're using `claude`.

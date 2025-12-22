@@ -47,7 +47,6 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git spec
 pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <project_name> --ai codebuddy
 ```
 
-
 ## Verification
 
 After initialization, you should see the following commands available in your AI agent:
