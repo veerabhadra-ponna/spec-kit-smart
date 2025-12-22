@@ -24,28 +24,56 @@ console = Console()
 
 
 # Default principles - displayed to user before applying
-DEFAULT_PRINCIPLES = [
-    ("Good Engineering", "MUST follow SOLID, DRY, separation of concerns"),
-    ("Lean & Simple", "MUST avoid over-engineering and unnecessary abstractions"),
-    ("Readability First", "MUST prioritize code clarity over cleverness"),
-    ("Self-Documenting", "MUST write code that explains itself through naming"),
-    ("Intent Documentation", "MUST document WHY, not WHAT"),
-    ("Test Behavior", "MUST write tests that verify behavior, not implementation"),
-    ("Explicit Errors", "MUST handle errors explicitly, no silent failures"),
-]
+# Matches original templates/commands/constitution.md from main branch
+DEFAULT_PRINCIPLES = {
+    "Engineering Principles": [
+        ("Good Engineering", "MUST follow established software engineering principles (SOLID, DRY, separation of concerns)"),
+        ("Lean & Simple", "MUST keep solutions lean - avoid over-engineering, unnecessary abstractions, or premature optimization"),
+        ("Minimal Dependencies", "MUST minimize external dependencies - use standard libraries first, evaluate necessity before adding packages"),
+    ],
+    "Code Quality": [
+        ("Readability First", "MUST prioritize code readability over cleverness - clear is better than concise"),
+        ("Composition Over Inheritance", "SHOULD prefer composition patterns over deep inheritance hierarchies"),
+        ("Code Reuse", "MUST check for existing methods before creating duplicates - refactor to enable reuse when needed"),
+    ],
+    "Documentation": [
+        ("Self-Documenting Code", "MUST write code that explains itself through naming and structure"),
+        ("Intent Documentation", "MUST document WHY (intent/rationale), not WHAT (implementation details)"),
+        ("Selective Comments", "MUST document classes, important methods, and complex logic - MUST NOT document entities, DTOs, or trivial code"),
+    ],
+    "Testing & Quality": [
+        ("Test Behavior", "MUST write tests that verify behavior, not implementation details"),
+        ("Explicit Error Handling", "MUST handle errors explicitly - no silent failures or swallowed exceptions"),
+    ],
+    "Versioning": [
+        ("LTS Versions", "SHOULD default to latest LTS (Long-Term Support) versions for languages and frameworks when not specified"),
+    ],
+}
 
 
 def _display_defaults() -> None:
     """Display default principles to user."""
     console.print("\n[bold cyan]Default Constitution Principles:[/bold cyan]\n")
-    for name, desc in DEFAULT_PRINCIPLES:
-        console.print(f"  [green]•[/green] [bold]{name}[/bold]: {desc}")
-    console.print()
+    for category, principles in DEFAULT_PRINCIPLES.items():
+        console.print(f"  [bold yellow]{category}:[/bold yellow]")
+        for name, desc in principles:
+            console.print(f"    [green]✓[/green] [bold]{name}[/bold] - {desc}")
+        console.print()
 
 
-def _format_principles_for_prompt(principles: list[tuple[str, str]]) -> str:
-    """Format principles list for prompt injection."""
-    return "\n".join(f"- {name}: {desc}" for name, desc in principles)
+def _format_principles_for_prompt(principles: dict[str, list[tuple[str, str]]] | list[tuple[str, str]]) -> str:
+    """Format principles for prompt injection."""
+    if isinstance(principles, dict):
+        # Categorized principles (default format)
+        lines = []
+        for category, items in principles.items():
+            lines.append(f"\n{category}:")
+            for name, desc in items:
+                lines.append(f"- {name}: {desc}")
+        return "\n".join(lines)
+    else:
+        # Flat list of principles
+        return "\n".join(f"- {name}: {desc}" for name, desc in principles)
 
 
 def _interactive_collect() -> tuple[str, bool]:

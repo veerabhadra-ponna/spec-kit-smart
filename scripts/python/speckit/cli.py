@@ -81,8 +81,21 @@ def analyze_project(
 
     This command implements a progressive workflow with enforced chunking.
     AI agents receive focused prompts (50-80 lines) at each stage.
+    Runs interactively if no --path/--scope provided at stage 1.
     """
     from speckit.commands.analyze import run_analyze_project
+
+    # Interactive mode for stage 1 if required inputs missing
+    if stage == 1 and not path and not chain_id:
+        from speckit.core.interactive import collect_analyze_project_input
+
+        inputs = collect_analyze_project_input()
+        path = inputs.get("path")
+        scope = inputs.get("scope")
+        context = inputs.get("context")
+        concern_type = inputs.get("concern_type")
+        current_impl = inputs.get("current_impl")
+        target_impl = inputs.get("target_impl")
 
     run_analyze_project(
         stage=stage,
@@ -131,15 +144,35 @@ def specify(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-6)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    jira: Optional[str] = typer.Option(None, "--jira", "-j", help="JIRA number (format: C12345-7890)"),
+    feature: Optional[str] = typer.Option(None, "--feature", "-f", help="Feature description"),
 ) -> None:
     """
     Create baseline specification.
 
     Defines what needs to be built before planning how.
+    Runs interactively if no --jira/--feature provided at stage 2.
     """
     from speckit.core.stages import run_staged_command
 
-    run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path)
+    context = {}
+
+    # Interactive mode for stage 2 (input collection)
+    if stage == 2 and not jira and not feature:
+        from speckit.core.interactive import collect_specify_input
+
+        collected_jira, collected_feature = collect_specify_input()
+        if collected_feature:
+            context["jira"] = collected_jira or ""
+            context["feature"] = collected_feature
+        else:
+            console.print("[red]Error:[/red] Feature description is required")
+            raise typer.Exit(1)
+    elif jira or feature:
+        context["jira"] = jira or ""
+        context["feature"] = feature or ""
+
+    run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
 
 
 # ============================================================================
@@ -152,15 +185,29 @@ def plan(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    constraints: Optional[str] = typer.Option(None, "--constraints", "-c", help="Planning constraints"),
 ) -> None:
     """
     Create implementation plan.
 
     Designs how to build what was specified.
+    Runs interactively if no --constraints provided at stage 1.
     """
     from speckit.core.stages import run_staged_command
 
-    run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path)
+    context = {}
+
+    # Interactive mode for stage 1
+    if stage == 1 and not constraints and not chain_id:
+        from speckit.core.interactive import collect_plan_constraints
+
+        collected = collect_plan_constraints()
+        if collected:
+            context["constraints"] = collected
+    elif constraints:
+        context["constraints"] = constraints
+
+    run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
 
 
 # ============================================================================
@@ -173,15 +220,29 @@ def tasks(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    preferences: Optional[str] = typer.Option(None, "--preferences", help="Task generation preferences"),
 ) -> None:
     """
     Generate actionable tasks.
 
     Breaks down the plan into implementable units.
+    Runs interactively if no --preferences provided at stage 1.
     """
     from speckit.core.stages import run_staged_command
 
-    run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path)
+    context = {}
+
+    # Interactive mode for stage 1
+    if stage == 1 and not preferences and not chain_id:
+        from speckit.core.interactive import collect_tasks_preferences
+
+        collected = collect_tasks_preferences()
+        if collected:
+            context["preferences"] = collected
+    elif preferences:
+        context["preferences"] = preferences
+
+    run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
 
 
 # ============================================================================
@@ -194,15 +255,29 @@ def implement(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-5)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    notes: Optional[str] = typer.Option(None, "--notes", "-n", help="Implementation notes"),
 ) -> None:
     """
     Execute implementation.
 
     Implements tasks with quality checks.
+    Runs interactively if no --notes provided at stage 1.
     """
     from speckit.core.stages import run_staged_command
 
-    run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path)
+    context = {}
+
+    # Interactive mode for stage 1
+    if stage == 1 and not notes and not chain_id:
+        from speckit.core.interactive import collect_implement_notes
+
+        collected = collect_implement_notes()
+        if collected:
+            context["notes"] = collected
+    elif notes:
+        context["notes"] = notes
+
+    run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
 
 
 # ============================================================================
@@ -305,6 +380,7 @@ def analyze(
     Performs non-destructive analysis across spec.md, plan.md, and tasks.md
     to identify inconsistencies, gaps, and quality issues before implementation.
     Run after /speckitadv.tasks and before /speckitadv.implement.
+    Runs interactively if no focus argument provided.
 
     Stages:
       1 - Setup and artifact loading
@@ -312,6 +388,12 @@ def analyze(
       3 - Report generation
     """
     from speckit.core.prompts import get_prompt_fragment
+
+    # Interactive mode for stage 1 if no focus provided
+    if stage == 1 and not focus:
+        from speckit.core.interactive import collect_analyze_focus
+
+        focus = collect_analyze_focus()
 
     stage_map = {1: "01-setup", 2: "02-detection", 3: "03-report"}
     stage_key = stage_map.get(stage, "01-setup")
