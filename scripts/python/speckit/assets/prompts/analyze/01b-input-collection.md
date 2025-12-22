@@ -27,16 +27,29 @@ Check if inputs were already collected via CLI interactive mode:
 - `{current_impl}` - Current implementation for scope B (conditional)
 - `{target_impl}` - Target implementation for scope B (conditional)
 
-**IF** `{project_path}` is a valid path (not empty, not "$NONE") **AND** `{scope}` is "A" or "B":
+**IF** `{project_path}` is a valid path (not empty, not "$NONE") **AND** `{scope}` is "A":
 
 - Skip all interactive input prompts below
 - Use CLI-provided values directly:
   - `$PROJECT_PATH` = `{project_path}`
   - `$ANALYSIS_SCOPE` = `{scope}`
   - `$ADDITIONAL_CONTEXT` = `{context}` (use empty string if "$SKIP" or "$NONE")
-  - `$CONCERN_TYPE` = `{concern_type}` (for scope B)
-  - `$CURRENT_IMPL` = `{current_impl}` (for scope B)
-  - `$TARGET_IMPL` = `{target_impl}` (for scope B)
+- Proceed directly to "Checkpoint: Input Collection Complete" section
+
+**IF** `{project_path}` is valid **AND** `{scope}` is "B" **AND** all scope-B fields are set:
+
+- `{concern_type}` is not empty and not "$NONE"
+- `{current_impl}` is not empty and not "$NONE"
+- `{target_impl}` is not empty and not "$NONE"
+
+Then skip interactive prompts and use:
+
+- `$PROJECT_PATH` = `{project_path}`
+- `$ANALYSIS_SCOPE` = `{scope}`
+- `$ADDITIONAL_CONTEXT` = `{context}` (use empty string if "$SKIP" or "$NONE")
+- `$CONCERN_TYPE` = `{concern_type}`
+- `$CURRENT_IMPL` = `{current_impl}`
+- `$TARGET_IMPL` = `{target_impl}`
 - Proceed directly to "Checkpoint: Input Collection Complete" section
 
 **ELSE:** Continue with interactive prompts below.

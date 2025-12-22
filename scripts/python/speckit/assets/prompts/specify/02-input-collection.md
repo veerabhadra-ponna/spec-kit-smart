@@ -23,23 +23,25 @@ JIRA: {jira:$NONE}
 FEATURE: {feature:$NONE}
 ```
 
-**IF both values above are NOT "$NONE":**
-- Use provided JIRA and FEATURE values
+**IF FEATURE is NOT "$NONE":**
+
+- Use provided FEATURE value
+- Use JIRA if provided (empty string means no JIRA)
 - Skip to "Validate Input" section below
 
-**IF either shows "$NONE"** (interactive mode):
+**IF FEATURE shows "$NONE"** (interactive mode):
 
 Prompt user with this format:
 
 ```text
 Please provide the following information:
 
-JIRA: C12345-7890
+JIRA: C12345-7890 (optional - press Enter to skip)
 FEATURE: Add user authentication with email/password and OAuth2
 
 Format rules:
-- Line 1: JIRA: C12345-7890 (exactly 5 digits, dash, 4 digits)
-- Line 2: FEATURE: <your description>
+- Line 1: JIRA: C12345-7890 (optional, or leave blank)
+- Line 2: FEATURE: <your description> (required)
 
 Good examples:
 ✅ "Add user authentication with email/password and OAuth2"
@@ -54,19 +56,17 @@ Bad examples (too vague):
 
 **WAIT FOR USER RESPONSE.**
 
-**IF values were provided above** (not "$NONE"), use them directly.
-
 ---
 
 ## Validate Input
 
 Check the provided input:
 
-1. **JIRA format**: Must match `C[0-9]{5}-[0-9]{4}` pattern
-   - Valid: C12345-7890
-   - Invalid: JIRA-123, 12345
+1. **JIRA format** (optional): If provided, must match `C[0-9]{5}-[0-9]{4}` pattern
+   - Valid: C12345-7890, or empty/blank (no JIRA)
+   - Invalid: JIRA-123, 12345 (wrong format)
 
-2. **Feature description**: Must be specific and actionable
+2. **Feature description** (required): Must be specific and actionable
    - Contains action verb (add, create, implement, build, fix)
    - Describes a concrete outcome
    - Not vague or abstract
@@ -82,7 +82,7 @@ Confirm input collected:
 ```text
 
 ✓ Input collected
-  - JIRA: [number]
+  - JIRA: [number or "none"]
   - Feature: [short summary]
 ```
 
