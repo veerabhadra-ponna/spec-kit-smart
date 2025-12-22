@@ -1,7 +1,6 @@
 # AI Agent Guidelines
 
 **Version:** 3.0
-**Last Updated:** 2025-12-21
 
 ---
 
@@ -253,14 +252,7 @@ project-root/
 - **MAY** use current stable version for libraries without explicit LTS designation
 - **MUST NOT** use pre-release, beta, or nightly versions without explicit spec approval
 
-**LTS Examples:**
-
-- Node.js: 20.x (LTS), 22.x (LTS) - prefer latest LTS
-- Python: 3.11, 3.12 - prefer latest stable
-- Java: 17 (LTS), 21 (LTS) - prefer latest LTS
-- .NET: 6.0 (LTS), 8.0 (LTS) - prefer latest LTS
-- React: Latest stable major version (no formal LTS)
-- PostgreSQL: Latest stable major version
+**LTS Examples:** Node.js 20/22, Python 3.11/3.12, Java 17/21, .NET 6/8 - always prefer latest LTS.
 
 ### 4.6 Read-Only Defaults & Guardrails
 
