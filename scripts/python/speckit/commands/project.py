@@ -219,7 +219,7 @@ def enumerate_project(
     manifest = {
         "scan_info": {
             "project_path": str(project_path),
-            "scanner": "python-speckit",
+            "scanner": "python-speckitadv",
             "script_version": "2.0.0",
             "scan_start": scan_start,
             "scan_end": scan_end,

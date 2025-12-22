@@ -220,14 +220,16 @@ def run_chain_state_command(
         if state:
             print(json.dumps(state, indent=2))
         else:
-            console.print("[yellow]State not found[/yellow]")
+            console.print("[red]Error:[/red] State not found", stderr=True)
+            raise SystemExit(1)
 
     elif command == "load-latest":
         state = load_latest_state()
         if state:
             print(json.dumps(state, indent=2))
         else:
-            console.print("[yellow]No state found[/yellow]")
+            console.print("[red]Error:[/red] No state found", stderr=True)
+            raise SystemExit(1)
 
     elif command == "last-stage":
         print(get_last_completed_stage())

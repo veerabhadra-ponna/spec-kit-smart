@@ -846,49 +846,7 @@ Status: ⬜
 Dependencies: 5.2.2
 ```
 
-### 5.3 CI/CD Pipeline
-
-**Status:** ✅
-
-```text
-Task 5.3.1: Create .github/workflows/build-binaries.yml
-Status: ⬜
-Dependencies: 5.1.4
-```
-
-Matrix build:
-- ubuntu-latest → speckit-linux-x86_64
-- ubuntu-latest (cross) → speckit-linux-arm64
-- macos-latest → speckit-darwin-universal
-- windows-latest → speckit-windows-x86_64.exe
-
-```text
-Task 5.3.2: Create .github/workflows/test.yml
-Status: ⬜
-Dependencies: Phase 3
-```
-
-Run tests on all PRs.
-
-```text
-Task 5.3.3: Create release automation
-Status: ⬜
-Dependencies: 5.3.1, 5.2.2
-```
-
-On tag push:
-- Build all binaries
-- Generate launchers
-- Create GitHub release
-- Upload all artifacts
-
-```text
-Task 5.3.4: Test full release pipeline
-Status: ⬜
-Dependencies: 5.3.3
-```
-
-### 5.4 Update Init Command
+### 5.3 Update Init Command
 
 **Status:** ✅
 
@@ -1098,7 +1056,7 @@ Phase 3: Commands    Phase 4: Fragments
 ### Phase 1 Complete When ✅
 
 - [x] Package installs with `pip install -e .`
-- [x] `speckit --version` works
+- [x] `speckitadv --version` works
 
 ### Phase 2 Complete When ✅
 
