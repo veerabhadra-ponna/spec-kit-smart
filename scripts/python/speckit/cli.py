@@ -86,16 +86,24 @@ def analyze_project(
     from speckit.commands.analyze import run_analyze_project
 
     # Interactive mode for stage 1 if required inputs missing
-    if stage == 1 and not path and not chain_id:
+    if stage == 1 and not chain_id:
         from speckit.core.interactive import collect_analyze_project_input
 
-        inputs = collect_analyze_project_input()
-        path = inputs.get("path")
-        scope = inputs.get("scope")
-        context = inputs.get("context")
-        concern_type = inputs.get("concern_type")
-        current_impl = inputs.get("current_impl")
-        target_impl = inputs.get("target_impl")
+        if not path:
+            # No path provided - collect all inputs interactively
+            inputs = collect_analyze_project_input()
+            path = inputs.get("path")
+            scope = inputs.get("scope")
+            context = inputs.get("context")
+            concern_type = inputs.get("concern_type")
+            current_impl = inputs.get("current_impl")
+            target_impl = inputs.get("target_impl")
+        elif not scope:
+            # Path provided but scope missing - require scope
+            console.print("[red]Error:[/red] --scope is required when --path is provided")
+            console.print("  Use --scope A for full application analysis")
+            console.print("  Use --scope B for cross-cutting concern migration")
+            raise typer.Exit(1)
 
     run_analyze_project(
         stage=stage,
@@ -169,8 +177,13 @@ def specify(
             console.print("[red]Error:[/red] Feature description is required")
             raise typer.Exit(1)
     elif jira or feature:
+        # Validate that feature is provided when using CLI args
+        if not feature:
+            console.print("[red]Error:[/red] --feature is required when using CLI arguments")
+            console.print("  Example: speckitadv specify --stage 2 --feature 'Build user auth'")
+            raise typer.Exit(1)
         context["jira"] = jira or ""
-        context["feature"] = feature or ""
+        context["feature"] = feature
 
     run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
 
