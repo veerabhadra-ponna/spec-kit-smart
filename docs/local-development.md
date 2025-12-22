@@ -15,18 +15,22 @@ git checkout -b your-feature-branch
 
 ## 2. Run the CLI Directly (Fastest Feedback)
 
-You can execute the CLI via the module entrypoint without installing anything:
+You can execute the CLI directly without installing, using either method:
+
+Script file style (simplest):
 
 ```bash
 # From repo root
-python -m speckit.cli --help
-python -m speckit.cli init demo-project --ai claude --ignore-agent-tools
+python scripts/python/speckit/cli.py --help
+python scripts/python/speckit/cli.py init demo-project --ai claude --ignore-agent-tools
 ```
 
-If you prefer invoking the script file style (uses shebang):
+Module style (requires PYTHONPATH):
 
 ```bash
-python scripts/python/speckit/cli.py init demo-project
+# From repo root - set PYTHONPATH first
+PYTHONPATH=scripts/python python -m speckit.cli --help
+PYTHONPATH=scripts/python python -m speckit.cli init demo-project --ai claude --ignore-agent-tools
 ```
 
 ## 3. Use Editable Install (Isolated Environment)
@@ -103,7 +107,11 @@ The `speckitadv` CLI handles all operations cross-platform - no shell scripts ne
 Currently no enforced lint config is bundled, but you can quickly sanity check importability:
 
 ```bash
+# After editable install (pip install -e .)
 python -c "import speckit; print('Import OK')"
+
+# Or without install
+PYTHONPATH=scripts/python python -c "import speckit; print('Import OK')"
 ```
 
 ## 7. Build a Wheel Locally (Optional)
@@ -144,7 +152,7 @@ speckitadv init demo --skip-tls --ai gemini --ignore-agent-tools
 
 | Action | Command |
 | -------- | --------- |
-| Run CLI directly | `python -m speckit.cli --help` |
+| Run CLI directly | `python scripts/python/speckit/cli.py --help` |
 | Editable install | `pip install -e .` then `speckitadv ...` |
 | Local pipx run | `pipx run --spec /path/to/repo speckitadv ...` |
 | Git branch pipx | `pipx run --spec git+URL@branch speckitadv ...` |

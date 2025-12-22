@@ -298,8 +298,22 @@ def _emit_chunk_stage(
     if chunk < total_chunks:
         next_cmd = f"speckitadv analyze-project --stage={stage} --chunk={chunk + 1} --chain={chain_id}"
     else:
-        # Move to next stage
-        next_stage = stage + 1 if stage < context["total_stages"] else None
+        # Move to next stage with scope-aware branching
+        # Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
+        # Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)
+        effective_scope = context.get("scope", "A")
+        total_stages = context.get("total_stages", 16)
+        if stage < total_stages:
+            if stage == 9:
+                # After Full App (scope A), skip Cross-cutting
+                next_stage = 11
+            elif stage == 10:
+                # After Cross-cutting (scope B), continue to reports
+                next_stage = 11
+            else:
+                next_stage = stage + 1
+        else:
+            next_stage = None
         if next_stage:
             next_cmd = f"speckitadv analyze-project --stage={next_stage} --chain={chain_id}"
         else:

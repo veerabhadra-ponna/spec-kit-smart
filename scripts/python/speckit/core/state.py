@@ -119,25 +119,45 @@ class ChainState:
 
         chain = cls(state_dir, chain_id)
 
-        # Load latest state
-        latest_path = state_dir / "latest.json"
-        if latest_path.exists():
-            chain._data = json.loads(latest_path.read_text())
-        else:
-            # Find most recent state file
-            state_files = sorted(state_dir.glob("*.json"), reverse=True)
-            if state_files:
-                chain._data = json.loads(state_files[0].read_text())
-            else:
-                raise FileNotFoundError(f"No state files found for chain: {chain_id}")
+        # Search for state file matching the requested chain_id
+        # This allows resuming older chains even when newer ones exist
+        state_files = list(state_dir.glob("*.json"))
+        matching_file = None
 
-        # Validate that loaded state matches requested chain_id
-        loaded_chain_id = chain._data.get("chain_id")
-        if loaded_chain_id and loaded_chain_id != chain_id:
-            raise ValueError(
-                f"Chain ID mismatch: requested '{chain_id}' but found '{loaded_chain_id}'. "
-                f"The latest state belongs to a different chain."
+        for state_file in state_files:
+            try:
+                data = json.loads(state_file.read_text())
+                if data.get("chain_id") == chain_id:
+                    # Found matching chain - use most recent stage file for this chain
+                    if matching_file is None:
+                        matching_file = state_file
+                        chain._data = data
+                    elif data.get("timestamp", "") > chain._data.get("timestamp", ""):
+                        matching_file = state_file
+                        chain._data = data
+            except (json.JSONDecodeError, OSError):
+                continue
+
+        if matching_file:
+            return chain
+
+        # No matching chain found - raise helpful error
+        if state_files:
+            # Check what chains exist
+            existing_chains = set()
+            for state_file in state_files:
+                try:
+                    data = json.loads(state_file.read_text())
+                    if cid := data.get("chain_id"):
+                        existing_chains.add(cid)
+                except (json.JSONDecodeError, OSError):
+                    continue
+            raise FileNotFoundError(
+                f"No state found for chain: {chain_id}. "
+                f"Available chains: {', '.join(sorted(existing_chains)) or 'none'}"
             )
+        else:
+            raise FileNotFoundError(f"No state files found in: {state_dir}")
 
         return chain
 
