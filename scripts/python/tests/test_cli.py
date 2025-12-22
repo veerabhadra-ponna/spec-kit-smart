@@ -70,6 +70,13 @@ class TestAnalyzeProjectCommand:
         # May fail due to missing project, but should parse args
         assert "--stage" not in result.stdout or result.exit_code in (0, 1)
 
+    def test_path_without_scope_errors(self, tmp_path):
+        """Should error when --path provided without --scope."""
+        result = runner.invoke(app, ["analyze-project", "--path", str(tmp_path)])
+        assert result.exit_code == 1
+        output = strip_ansi(result.stdout)
+        assert "--scope is required" in output
+
 
 class TestConstitutionCommand:
     """Tests for constitution command."""
@@ -95,6 +102,13 @@ class TestSpecifyCommand:
         result = runner.invoke(app, ["specify", "--help"])
         assert result.exit_code == 0
         assert "--stage" in strip_ansi(result.stdout)
+
+    def test_jira_without_feature_errors(self):
+        """Should error when --jira provided without --feature."""
+        result = runner.invoke(app, ["specify", "--jira", "PROJ-123"])
+        assert result.exit_code == 1
+        output = strip_ansi(result.stdout)
+        assert "--feature is required" in output
 
 
 class TestPlanCommand:

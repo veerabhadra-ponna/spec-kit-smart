@@ -45,8 +45,7 @@ def get_default_config() -> str:
     "guidelineProfile": "personal"
   },
   "workflow": {
-    "enableCheckArtifactory": false,
-    "osEnv": "auto"
+    "enableCheckArtifactory": false
   },
   "branching": {
     "pattern": "feature/<num>-<jira>-<shortname>",

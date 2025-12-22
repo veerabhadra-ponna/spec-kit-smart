@@ -479,7 +479,7 @@ The reverse engineering system uses **AI-guided analysis** with orchestration sc
    - **[A] Full Application Modernization** - Comprehensive analysis of entire codebase
    - **[B] Cross-Cutting Concern Migration** - Targeted analysis of specific concern (9 types)
 3. → Orchestration command (cross-platform):
-   - `speckitadv analyze-project --path <project-path>`
+   - `speckitadv analyze-project --path <project-path> --scope A|B`
 4. → AI-guided analysis workflow:
    - **Quick tech stack detection** - Identify current technologies
    - **Interactive modernization questions** (10 questions with conditional logic)
