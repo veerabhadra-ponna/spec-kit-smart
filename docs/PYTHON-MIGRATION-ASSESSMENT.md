@@ -292,44 +292,6 @@ GitHub Release Assets:
 └── speckitadv.py               (Source, for pipx install)
 ```
 
-### 4.4 Compilation CI/CD Pipeline
-
-```yaml
-# .github/workflows/build-binaries.yml
-jobs:
-  build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        include:
-          - os: ubuntu-latest
-            platform: linux-x86_64
-            binary: speckitadv
-          - os: macos-latest
-            platform: darwin-universal
-            binary: speckitadv
-          - os: windows-latest
-            platform: windows-x86_64
-            binary: speckitadv.exe
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install pyinstaller
-
-      - name: Build binary
-        run: pyinstaller --onefile --name speckitadv speckit/__main__.py
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.platform }}
-          path: dist/${{ matrix.binary }}
-```
-
 ---
 
 ## 5. Embedding Prompts in EXE
