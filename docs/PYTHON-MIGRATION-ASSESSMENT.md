@@ -224,7 +224,7 @@ dist/
 ```bash
 # Single-file executable
 pyinstaller --onefile \
-  --name speckit \
+  --name speckitadv \
   --add-data "prompts:prompts" \
   --add-data "templates:templates" \
   speckit/__main__.py
@@ -253,11 +253,12 @@ pyinstaller --onefile \
 python -m nuitka \
   --standalone \
   --onefile \
+  --output-filename=speckitadv \
   --include-data-dir=prompts=prompts \
   --include-data-dir=templates=templates \
   speckit/__main__.py
 
-# Result: dist/speckitadv.bin (~15MB, faster startup)
+# Result: dist/speckitadv (~15MB, faster startup)
 ```
 
 #### Advantages

@@ -17,15 +17,15 @@ git checkout -b your-feature-branch
 
 You can execute the CLI directly without installing, using either method:
 
-Script file style (simplest):
+Both methods require PYTHONPATH to resolve imports:
 
 ```bash
-# From repo root
-python scripts/python/speckit/cli.py --help
-python scripts/python/speckit/cli.py init demo-project --ai claude --ignore-agent-tools
+# From repo root - set PYTHONPATH first
+PYTHONPATH=scripts/python python scripts/python/speckit/cli.py --help
+PYTHONPATH=scripts/python python scripts/python/speckit/cli.py init demo-project --ai claude --ignore-agent-tools
 ```
 
-Module style (requires PYTHONPATH):
+Or use module style:
 
 ```bash
 # From repo root - set PYTHONPATH first
@@ -49,7 +49,7 @@ source .venv/bin/activate  # Linux/Mac/Git Bash
 # Install project in editable mode
 pip install -e .
 
-# Now 'specify' entrypoint is available
+# Now 'speckitadv' entrypoint is available
 speckitadv --help
 ```
 
@@ -179,6 +179,7 @@ rm -rf .venv dist build *.egg-info
 | Launcher files missing | Re-run init or check agent command directory |
 | Git step skipped | You passed `--no-git` or Git not installed |
 | TLS errors on corporate network | Try `--skip-tls` (not for production) |
+| Chain ID mismatch error | Only the latest chain is retained. Start a new workflow or use the current chain ID shown in the error |
 
 ## 13. Next Steps
 
