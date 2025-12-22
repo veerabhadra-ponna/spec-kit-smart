@@ -74,6 +74,13 @@ def run_staged_command(
                 recovery_cmd=f"speckitadv {command} --stage=1 --path={path or '.'}",
             )
             return
+        except ValueError as e:
+            emit_error(
+                "Chain ID mismatch",
+                str(e),
+                recovery_cmd=f"speckitadv {command} --stage=1 --path={path or '.'}",
+            )
+            return
     else:
         # New workflow - initialize state
         project_path = Path(path) if path else Path.cwd()

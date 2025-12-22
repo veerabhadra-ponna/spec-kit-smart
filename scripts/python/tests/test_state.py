@@ -151,6 +151,27 @@ class TestChainStateLoad:
         with pytest.raises(FileNotFoundError):
             ChainState.load("nonexistent", workspace_root=tmp_path)
 
+    def test_load_mismatched_chain_id(self, tmp_path):
+        """Should raise ValueError when chain ID doesn't match current state."""
+        # Initialize a chain
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+        original = ChainState.initialize(project_path, workspace_root=tmp_path)
+        original_id = original.chain_id
+
+        # Try to load with a different chain ID
+        wrong_id = "deadbeef"
+        assert wrong_id != original_id
+
+        with pytest.raises(ValueError) as exc_info:
+            ChainState.load(wrong_id, workspace_root=tmp_path)
+
+        # Verify error message contains helpful info
+        error_msg = str(exc_info.value)
+        assert "mismatch" in error_msg.lower()
+        assert wrong_id in error_msg
+        assert original_id in error_msg
+
 
 class TestChainStateSave:
     """Tests for ChainState.save method."""

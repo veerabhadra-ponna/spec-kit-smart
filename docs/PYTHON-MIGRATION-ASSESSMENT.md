@@ -229,7 +229,7 @@ pyinstaller --onefile \
   --add-data "templates:templates" \
   speckit/__main__.py
 
-# Result: dist/speckit (~25MB)
+# Result: dist/speckitadv (~25MB)
 ```
 
 #### Advantages
@@ -257,7 +257,7 @@ python -m nuitka \
   --include-data-dir=templates=templates \
   speckit/__main__.py
 
-# Result: dist/speckit.bin (~15MB, faster startup)
+# Result: dist/speckitadv.bin (~15MB, faster startup)
 ```
 
 #### Advantages
