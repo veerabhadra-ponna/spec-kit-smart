@@ -198,12 +198,10 @@ def plan(
     context = {}
 
     # Interactive mode for stage 2 (where constraints are collected per fragment)
-    if stage == 2 and not constraints and not chain_id:
+    if stage == 2 and not constraints:
         from speckit.core.interactive import collect_plan_constraints
 
-        collected = collect_plan_constraints()
-        if collected:
-            context["constraints"] = collected
+        context["constraints"] = collect_plan_constraints()
     elif constraints:
         context["constraints"] = constraints
 
@@ -233,12 +231,10 @@ def tasks(
     context = {}
 
     # Interactive mode for stage 2 (where preferences are collected per fragment)
-    if stage == 2 and not preferences and not chain_id:
+    if stage == 2 and not preferences:
         from speckit.core.interactive import collect_tasks_preferences
 
-        collected = collect_tasks_preferences()
-        if collected:
-            context["preferences"] = collected
+        context["preferences"] = collect_tasks_preferences()
     elif preferences:
         context["preferences"] = preferences
 
@@ -268,12 +264,10 @@ def implement(
     context = {}
 
     # Interactive mode for stage 2 (where notes are collected per fragment)
-    if stage == 2 and not notes and not chain_id:
+    if stage == 2 and not notes:
         from speckit.core.interactive import collect_implement_notes
 
-        collected = collect_implement_notes()
-        if collected:
-            context["notes"] = collected
+        context["notes"] = collect_implement_notes()
     elif notes:
         context["notes"] = notes
 

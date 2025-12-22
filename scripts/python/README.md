@@ -68,12 +68,38 @@ speckitadv constitution --stage=3 --chain=<chain_id>
 # Stage 1: Initialize and understand role
 speckitadv specify --stage=1 --path=/path/to/project
 
-# AI reads instructions, runs stage 2
+# AI reads instructions, runs stage 2 (interactive if no args)
 speckitadv specify --stage=2 --chain=abc123
+
+# Or provide arguments directly:
+speckitadv specify --stage=2 --chain=abc123 --jira=C12345-7890 --feature="Add user auth"
 
 # Continue through all 6 stages
 speckitadv specify --stage=3 --chain=abc123
 # ... until complete
+```
+
+### Interactive Mode Options
+
+Commands support optional arguments that enable interactive prompts when not provided:
+
+| Command | Option | Description |
+|---------|--------|-------------|
+| `specify` | `--jira`, `--feature` | JIRA number and feature description |
+| `plan` | `--constraints` | Planning constraints (tech, architecture, etc.) |
+| `tasks` | `--preferences` | Task generation preferences |
+| `implement` | `--notes` | Implementation notes and priorities |
+| `constitution` | `--defaults`, `--principles` | Use default or custom principles |
+| `analyze-project` | `--path`, `--scope`, `--context` | Project path and analysis scope |
+
+When these options are omitted at the appropriate stage, the CLI prompts interactively:
+
+```bash
+# Interactive mode - prompts for JIRA and feature
+speckitadv specify --stage=2 --chain=abc123
+
+# Non-interactive - uses provided values
+speckitadv specify --stage=2 --chain=abc123 --jira=C12345-7890 --feature="OAuth2"
 ```
 
 ### Debug Commands

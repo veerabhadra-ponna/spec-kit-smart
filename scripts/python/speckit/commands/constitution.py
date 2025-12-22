@@ -102,16 +102,24 @@ def _interactive_collect() -> tuple[str, bool]:
 
     # Custom principles mode
     console.print("\n[bold]Enter your principles[/bold] (one per line, format: 'Name: Description')")
-    console.print("[dim]Press Enter twice when done, or Ctrl+C to cancel.[/dim]\n")
+    console.print("[dim]Enter a blank line when done, or Ctrl+C to cancel.[/dim]\n")
 
     lines = []
+    blank_count = 0
     while True:
         try:
             line = Prompt.ask("", default="")
             if not line:
+                blank_count += 1
                 if lines:
+                    # At least one principle entered, blank line ends input
                     break
+                elif blank_count >= 2:
+                    # Two consecutive blank lines with no input = use defaults
+                    console.print("[yellow]No principles entered. Using defaults.[/yellow]")
+                    return _format_principles_for_prompt(DEFAULT_PRINCIPLES), True
                 continue
+            blank_count = 0
             lines.append(line)
         except KeyboardInterrupt:
             console.print("\n[yellow]Cancelled. Using defaults.[/yellow]")
@@ -197,7 +205,7 @@ def run_constitution(
         "total_stages": total_stages,
         "project_path": str(state.project_path or Path.cwd()),
         "principles": "",
-        "used_defaults": False,
+        "source": "User input",  # Will be updated based on how principles are provided
     }
 
     # Stage 2 special handling: collect principles
@@ -205,18 +213,18 @@ def run_constitution(
         if principles:
             # Principles provided via CLI
             context["principles"] = principles
-            context["used_defaults"] = False
+            context["source"] = "User input (CLI)"
         elif defaults:
             # Defaults explicitly requested
             _display_defaults()
             console.print("[dim]ℹ️  Applied default constitution principles.[/dim]\n")
             context["principles"] = _format_principles_for_prompt(DEFAULT_PRINCIPLES)
-            context["used_defaults"] = True
+            context["source"] = "Defaults (--defaults flag)"
         else:
             # Interactive mode - no args provided
             collected, used_defaults = _interactive_collect()
             context["principles"] = collected
-            context["used_defaults"] = used_defaults
+            context["source"] = "Defaults (interactive)" if used_defaults else "User input (interactive)"
 
         if not context["principles"]:
             emit_error(
@@ -257,7 +265,7 @@ def run_constitution(
             "stage_id": stage_id,
             "command": "constitution",
             "principles": context.get("principles", ""),
-            "used_defaults": context.get("used_defaults", False),
+            "source": context.get("source", "User input"),
         },
     )
 

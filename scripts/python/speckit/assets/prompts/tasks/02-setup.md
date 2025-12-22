@@ -22,7 +22,9 @@ Run setup scripts and load design documents.
 PREFERENCES: {preferences:$NONE}
 ```
 
-**IF preferences above show "$NONE"**, prompt user interactively:
+**IF preferences show "$SKIP"**: User explicitly chose no preferences. Use standard task breakdown by user story with default sizing.
+
+**IF preferences show "$NONE"**: No arguments provided. Prompt user interactively:
 
 ```text
 Provide task generation preferences:
@@ -43,7 +45,7 @@ Examples:
 
 **WAIT FOR USER RESPONSE.**
 
-**IF preferences were provided above** (not "$NONE"), use them directly and skip prompting.
+**IF preferences have actual value** (not "$NONE" or "$SKIP"): Use them directly and skip prompting.
 
 ---
 

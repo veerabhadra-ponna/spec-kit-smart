@@ -20,7 +20,7 @@ The following principles have been collected (via CLI or interactive prompt):
 
 {principles}
 
-Source: {used_defaults:User input}
+Source: {source:User input}
 
 ---
 

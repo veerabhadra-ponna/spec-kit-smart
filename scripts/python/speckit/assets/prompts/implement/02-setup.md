@@ -22,7 +22,9 @@ Run setup scripts and check checklist status.
 NOTES: {notes:$NONE}
 ```
 
-**IF notes above show "$NONE"**, prompt user interactively:
+**IF notes show "$SKIP"**: User explicitly chose no notes. Execute the task plan using standard best practices.
+
+**IF notes show "$NONE"**: No arguments provided. Prompt user interactively:
 
 ```text
 Provide implementation notes:
@@ -42,7 +44,7 @@ Examples:
 
 **WAIT FOR RESPONSE.**
 
-**IF notes were provided above** (not "$NONE"), use them directly and skip prompting.
+**IF notes have actual value** (not "$NONE" or "$SKIP"): Use them directly and skip prompting.
 
 ---
 

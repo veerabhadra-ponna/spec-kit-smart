@@ -22,7 +22,9 @@ Run setup scripts and load context for planning.
 CONSTRAINTS: {constraints:$NONE}
 ```
 
-**IF constraints above show "$NONE"**, prompt user interactively:
+**IF constraints show "$SKIP"**: User explicitly chose no constraints. Proceed with standard best practices from the specification.
+
+**IF constraints show "$NONE"**: No arguments provided. Prompt user interactively:
 
 ```text
 Please provide any planning constraints:
@@ -44,7 +46,7 @@ Valid constraint types:
 
 **WAIT FOR USER RESPONSE.**
 
-**IF constraints were provided above** (not "$NONE"), use them directly and skip prompting.
+**IF constraints have actual value** (not "$NONE" or "$SKIP"): Use them directly and skip prompting.
 
 ---
 

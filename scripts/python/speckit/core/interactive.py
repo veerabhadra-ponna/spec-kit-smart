@@ -68,12 +68,12 @@ def collect_specify_input() -> tuple[Optional[str], Optional[str]]:
     return jira if jira else None, feature
 
 
-def collect_plan_constraints() -> Optional[str]:
+def collect_plan_constraints() -> str:
     """
     Collect planning constraints interactively.
 
     Returns:
-        Constraints string or None if user chooses to skip
+        Constraints string, or "$SKIP" if user chooses to skip
     """
     console.print(Panel.fit(
         "[bold]Planning Constraints[/bold]\n\n"
@@ -96,17 +96,17 @@ def collect_plan_constraints() -> Optional[str]:
 
     if response.lower() == "none":
         console.print("[dim]Proceeding with standard best practices from the specification.[/dim]\n")
-        return None
+        return "$SKIP"
 
     return response
 
 
-def collect_tasks_preferences() -> Optional[str]:
+def collect_tasks_preferences() -> str:
     """
     Collect task generation preferences interactively.
 
     Returns:
-        Preferences string or None if user chooses to skip
+        Preferences string, or "$SKIP" if user chooses to skip
     """
     console.print(Panel.fit(
         "[bold]Task Generation Preferences[/bold]\n\n"
@@ -129,17 +129,17 @@ def collect_tasks_preferences() -> Optional[str]:
 
     if response.lower() == "none":
         console.print("[dim]Using standard task breakdown by user story with default sizing.[/dim]\n")
-        return None
+        return "$SKIP"
 
     return response
 
 
-def collect_implement_notes() -> Optional[str]:
+def collect_implement_notes() -> str:
     """
     Collect implementation notes interactively.
 
     Returns:
-        Notes string or None if user chooses to skip
+        Notes string, or "$SKIP" if user chooses to skip
     """
     console.print(Panel.fit(
         "[bold]Implementation Notes[/bold]\n\n"
@@ -162,17 +162,17 @@ def collect_implement_notes() -> Optional[str]:
 
     if response.lower() == "none":
         console.print("[dim]Executing the task plan using standard best practices.[/dim]\n")
-        return None
+        return "$SKIP"
 
     return response
 
 
-def collect_analyze_focus() -> Optional[str]:
+def collect_analyze_focus() -> str:
     """
     Collect analysis focus areas interactively.
 
     Returns:
-        Focus string or None for comprehensive analysis
+        Focus string, or "$SKIP" for comprehensive analysis
     """
     console.print(Panel.fit(
         "[bold]Analysis Focus[/bold]\n\n"
@@ -195,7 +195,7 @@ def collect_analyze_focus() -> Optional[str]:
 
     if response.lower() == "none":
         console.print("[dim]Running comprehensive cross-artifact analysis.[/dim]\n")
-        return None
+        return "$SKIP"
 
     return response
 
