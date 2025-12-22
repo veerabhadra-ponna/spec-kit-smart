@@ -1086,6 +1086,9 @@ This step creates or updates the `memory/constitution.md` file with your project
 
 With your project principles established, you can now create the functional specifications. Use the `/speckitadv.specify` command and then provide the concrete requirements for the project you want to develop.
 
+>[!NOTE]
+>When prompted for a JIRA number, this is **optional**. Press Enter to skip if your team doesn't use JIRA integration.
+>
 >[!IMPORTANT]
 >Be as explicit as possible about *what* you are trying to build and *why*. **Do not focus on the tech stack at this point**.
 
