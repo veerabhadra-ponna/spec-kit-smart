@@ -115,18 +115,21 @@ class TestChainStateInitialize:
         assert len(chain.chain_id) == 8
 
     def test_saves_bootstrap_state(self, tmp_path):
-        """Should save initial bootstrap state."""
+        """Should save initial bootstrap state with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
+        # Default command is analyze-project
         chain = ChainState.initialize(project_path, workspace_root=tmp_path)
 
-        bootstrap_file = tmp_path / ".analysis" / ".state" / "00-bootstrap.json"
+        # Bootstrap file now has command prefix
+        bootstrap_file = tmp_path / ".analysis" / ".state" / "analyze-project-00-bootstrap.json"
         assert bootstrap_file.exists()
 
         data = json.loads(bootstrap_file.read_text())
         assert data["stage"] == "00-bootstrap"
         assert data["project_name"] == "project"
+        assert data["command"] == "analyze-project"
 
 
 class TestChainStateLoad:
@@ -152,7 +155,7 @@ class TestChainStateLoad:
             ChainState.load("nonexistent", workspace_root=tmp_path)
 
     def test_load_mismatched_chain_id(self, tmp_path):
-        """Should raise ValueError when chain ID doesn't match current state."""
+        """Should raise FileNotFoundError when chain ID doesn't match any state."""
         # Initialize a chain
         project_path = tmp_path / "project"
         project_path.mkdir()
@@ -163,28 +166,29 @@ class TestChainStateLoad:
         wrong_id = "deadbeef"
         assert wrong_id != original_id
 
-        with pytest.raises(ValueError) as exc_info:
+        # Now raises FileNotFoundError since we search for matching chain_id
+        with pytest.raises(FileNotFoundError) as exc_info:
             ChainState.load(wrong_id, workspace_root=tmp_path)
 
         # Verify error message contains helpful info
         error_msg = str(exc_info.value)
-        assert "mismatch" in error_msg.lower()
         assert wrong_id in error_msg
-        assert original_id in error_msg
 
 
 class TestChainStateSave:
     """Tests for ChainState.save method."""
 
     def test_saves_stage_file(self, tmp_path):
-        """Should save stage-specific file."""
+        """Should save stage-specific file with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
+        # Default command is analyze-project
         chain = ChainState.initialize(project_path, workspace_root=tmp_path)
         chain.save("01-test-stage", {"custom": "data"})
 
-        stage_file = tmp_path / ".analysis" / ".state" / "01-test-stage.json"
+        # Stage file now has command prefix
+        stage_file = tmp_path / ".analysis" / ".state" / "analyze-project-01-test-stage.json"
         assert stage_file.exists()
 
     def test_updates_latest_file(self, tmp_path):
@@ -202,16 +206,18 @@ class TestChainStateSave:
         assert data["stage"] == "01-test-stage"
 
     def test_tracks_stages_complete(self, tmp_path):
-        """Should track completed stages."""
+        """Should track completed stages with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
+        # Default command is analyze-project
         chain = ChainState.initialize(project_path, workspace_root=tmp_path)
         chain.save("01-first", {})
         chain.save("02-second", {})
 
-        assert "01-first" in chain._data["stages_complete"]
-        assert "02-second" in chain._data["stages_complete"]
+        # Stages are prefixed with command name
+        assert "analyze-project-01-first" in chain._data["stages_complete"]
+        assert "analyze-project-02-second" in chain._data["stages_complete"]
 
     def test_merges_data(self, tmp_path):
         """Should merge new data with existing."""
@@ -272,7 +278,7 @@ class TestChainStateHelpers:
         assert chain.get("missing_key", "default") == "default"
 
     def test_get_last_stage(self, tmp_path):
-        """Should return last completed stage."""
+        """Should return last completed stage with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
@@ -280,18 +286,20 @@ class TestChainStateHelpers:
         chain.save("01-first", {})
         chain.save("02-second", {})
 
-        assert chain.get_last_stage() == "02-second"
+        # Returns command-prefixed stage name
+        assert chain.get_last_stage() == "analyze-project-02-second"
 
     def test_is_complete(self, tmp_path):
-        """Should check stage completion."""
+        """Should check stage completion with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
         chain = ChainState.initialize(project_path, workspace_root=tmp_path)
         chain.save("01-done", {})
 
-        assert chain.is_complete("01-done") is True
-        assert chain.is_complete("02-not-done") is False
+        # Use command-prefixed stage name
+        assert chain.is_complete("analyze-project-01-done") is True
+        assert chain.is_complete("analyze-project-02-not-done") is False
 
     def test_to_dict(self, tmp_path):
         """Should return state as dict."""
@@ -317,3 +325,218 @@ class TestChainStateHelpers:
         assert isinstance(result, str)
         parsed = json.loads(result)
         assert parsed["chain_id"] == chain.chain_id
+
+
+class TestStateLocationRouting:
+    """Tests for command-specific state locations."""
+
+    def test_analyze_project_uses_analysis_state(self, tmp_path):
+        """analyze-project should use .analysis/.state/"""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        chain = ChainState.initialize(project_path, command="analyze-project", workspace_root=tmp_path)
+
+        assert chain.state_dir == tmp_path / ".analysis" / ".state"
+        assert (tmp_path / ".analysis" / ".state").exists()
+
+    def test_constitution_uses_memory_state(self, tmp_path):
+        """constitution should use memory/.state/"""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        chain = ChainState.initialize(project_path, command="constitution", workspace_root=tmp_path)
+
+        assert chain.state_dir == tmp_path / "memory" / ".state"
+        assert (tmp_path / "memory" / ".state").exists()
+        # Constitution should save bootstrap
+        bootstrap_file = tmp_path / "memory" / ".state" / "constitution-00-bootstrap.json"
+        assert bootstrap_file.exists()
+
+    def test_feature_command_uses_pending_initially(self, tmp_path):
+        """Feature commands should use specs/.pending/.state/ initially."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        chain = ChainState.initialize(project_path, command="specify", workspace_root=tmp_path)
+
+        assert chain.state_dir == tmp_path / "specs" / ".pending" / ".state"
+        # Feature commands don't save bootstrap
+        bootstrap_file = tmp_path / "specs" / ".pending" / ".state" / "specify-00-bootstrap.json"
+        assert not bootstrap_file.exists()
+
+    def test_feature_command_skips_early_stages(self, tmp_path):
+        """Feature commands should not persist state for stages 1-2."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        chain = ChainState.initialize(project_path, command="specify", workspace_root=tmp_path)
+
+        # Stage 1 - should not persist
+        result = chain.save("01-initialization", {"data": "test"}, stage_num=1)
+        assert result is None
+
+        # Stage 2 - should not persist
+        result = chain.save("02-input-collection", {"data": "test"}, stage_num=2)
+        assert result is None
+
+        # Stage 3 - should persist
+        result = chain.save("03-branch-setup", {"data": "test"}, stage_num=3)
+        assert result is not None
+        assert result.exists()
+
+    def test_set_feature_dir_updates_state_location(self, tmp_path):
+        """set_feature_dir should update state directory."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_dir.mkdir(parents=True)
+
+        chain = ChainState.initialize(project_path, command="specify", workspace_root=tmp_path)
+
+        # Initially uses pending
+        assert chain.state_dir == tmp_path / "specs" / ".pending" / ".state"
+
+        # Set feature dir
+        chain.set_feature_dir(feature_dir)
+
+        # Now uses feature-specific state dir
+        assert chain.state_dir == feature_dir / ".state"
+        assert (feature_dir / ".state").exists()
+
+    def test_load_finds_constitution_state(self, tmp_path):
+        """ChainState.load should find constitution state in memory/.state/"""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Initialize constitution
+        chain = ChainState.initialize(project_path, command="constitution", workspace_root=tmp_path)
+        chain_id = chain.chain_id
+
+        # Load it back
+        loaded = ChainState.load(chain_id, command="constitution", workspace_root=tmp_path)
+
+        assert loaded.chain_id == chain_id
+        assert loaded.command == "constitution"
+
+    def test_set_feature_dir_migrates_state_from_pending(self, tmp_path):
+        """set_feature_dir should migrate state from pending and clean up."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Create feature directory
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_dir.mkdir(parents=True)
+
+        # Initialize specify chain (goes to pending)
+        chain = ChainState.initialize(project_path, command="specify", workspace_root=tmp_path)
+        chain_id = chain.chain_id
+
+        # Save stage 3 state (this is when feature folder would be created)
+        chain.save("03-branch-setup", {"data": "test"}, stage_num=3)
+
+        # Verify state is in pending
+        pending_state = tmp_path / "specs" / ".pending" / ".state"
+        assert pending_state.exists()
+        assert (pending_state / "latest.json").exists()
+
+        # Now set feature dir (simulates what happens after create-feature)
+        chain.set_feature_dir(feature_dir)
+
+        # State should be in feature directory
+        feature_state = feature_dir / ".state"
+        assert feature_state.exists()
+        assert (feature_state / "latest.json").exists()
+
+        # Pending should be cleaned up (or only contain other chains' state)
+        # Check our chain's state was removed from pending
+        if pending_state.exists():
+            for state_file in pending_state.glob("*.json"):
+                import json
+                data = json.loads(state_file.read_text())
+                assert data.get("chain_id") != chain_id, "Chain state should be migrated from pending"
+
+    def test_set_feature_dir_cleans_pending_when_initialized_with_feature_dir(self, tmp_path):
+        """set_feature_dir should clean up empty pending even when chain started with feature_dir."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Create empty pending state dir (simulates leftover from previous failed workflow)
+        pending_state = tmp_path / "specs" / ".pending" / ".state"
+        pending_state.mkdir(parents=True)
+
+        # Create feature directory
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_dir.mkdir(parents=True)
+
+        # Initialize chain DIRECTLY with feature_dir (simulates stage 4 restart with --feature-dir)
+        chain = ChainState.initialize(
+            project_path, command="specify", workspace_root=tmp_path, feature_dir=feature_dir
+        )
+
+        # State should be in feature directory directly
+        assert chain.state_dir == feature_dir / ".state"
+
+        # Now call set_feature_dir (as stages.py does)
+        chain.set_feature_dir(feature_dir, workspace_root=tmp_path)
+
+        # Pending should be cleaned up since it's empty
+        assert not pending_state.exists(), "Empty .pending/.state should be removed"
+        assert not (tmp_path / "specs" / ".pending").exists(), "Empty .pending should be removed"
+
+    def test_load_scans_feature_directories(self, tmp_path):
+        """ChainState.load should find state in feature directories."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Create feature directory with state
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_state = feature_dir / ".state"
+        feature_state.mkdir(parents=True)
+
+        # Create state file directly in feature directory
+        chain_id = "test1234"
+        state_data = {
+            "chain_id": chain_id,
+            "command": "specify",
+            "stage": "03-branch-setup",
+            "timestamp": "2025-01-01T00:00:00",
+        }
+        import json
+        (feature_state / "latest.json").write_text(json.dumps(state_data))
+
+        # Load should find it
+        loaded = ChainState.load(chain_id, command="specify", workspace_root=tmp_path)
+        assert loaded.chain_id == chain_id
+        assert loaded.state_dir == feature_state
+
+    def test_load_skips_malformed_json(self, tmp_path):
+        """ChainState.load should skip malformed JSON files and continue searching."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Create a malformed JSON file in the first location
+        malformed_state = tmp_path / "specs" / ".pending" / ".state"
+        malformed_state.mkdir(parents=True)
+        (malformed_state / "latest.json").write_text("{ invalid json }")
+
+        # Create valid state in a feature directory
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_state = feature_dir / ".state"
+        feature_state.mkdir(parents=True)
+
+        chain_id = "test5678"
+        state_data = {
+            "chain_id": chain_id,
+            "command": "specify",
+            "stage": "03-branch-setup",
+            "timestamp": "2025-01-01T00:00:00",
+        }
+        import json
+        (feature_state / "latest.json").write_text(json.dumps(state_data))
+
+        # Load should skip malformed file and find the valid one
+        loaded = ChainState.load(chain_id, command="specify", workspace_root=tmp_path)
+        assert loaded.chain_id == chain_id
+        assert loaded.state_dir == feature_state

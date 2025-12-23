@@ -1,6 +1,6 @@
 ---
 stage: report_generation_1
-requires: 03a-full-app.json OR 03b-cross-cutting.json
+requires: analyze-project-03a-full-app.json OR analyze-project-03b-cross-cutting.json
 outputs: report_chunks_1_3
 version: 3.1.0
 next: 04b-report-chunks-4-6.md
@@ -17,8 +17,8 @@ Generate the first three chunks of the analysis report: Project Discovery, Contr
 ## Pre-Check: Verify Previous Stage
 
 1. Load state from either:
-   - `.analysis/.state/03a-full-app.json` (if scope = A)
-   - `.analysis/.state/03b-cross-cutting.json` (if scope = B)
+   - `.analysis/.state/analyze-project-03a-full-app.json` (if scope = A)
+   - `.analysis/.state/analyze-project-03b-cross-cutting.json` (if scope = B)
 2. Confirm stage 3 is complete
 3. Load analysis results and preferences
 

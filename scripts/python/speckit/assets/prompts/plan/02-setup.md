@@ -2,7 +2,7 @@
 stage: setup
 requires: initialization
 outputs: feature_spec, impl_plan, specs_dir
-version: 1.0.0
+version: 1.1.0
 next: 03-research.md
 ---
 
@@ -10,7 +10,7 @@ next: 03-research.md
 
 ## Purpose
 
-Run setup scripts and load context for planning.
+Run setup scripts, collect constraints, and create plan.md template.
 
 ---
 
@@ -22,49 +22,42 @@ Run setup scripts and load context for planning.
 CONSTRAINTS: {constraints:$NONE}
 ```
 
-**IF constraints show "$SKIP"**: User explicitly chose no constraints. Proceed with standard best practices from the specification.
+**IF constraints show "$SKIP" or "none"**: User chose no constraints. Proceed with standard best practices from the specification.
 
-**IF constraints show "$NONE"**: No arguments provided. Prompt user interactively:
+**IF constraints have actual value** (not "$NONE" or "$SKIP"): Use them directly.
+
+**IF constraints show "$NONE"**: Ask the user for constraints:
 
 ```text
-Please provide any planning constraints:
+What planning constraints should I consider?
 
-CONSTRAINTS:
-- Must use PostgreSQL for database
-- Performance requirement: < 200ms response time
+Examples:
+- Technology: "Must use PostgreSQL", "Prefer Redis for caching"
+- Architecture: "Prefer microservices", "Use event-driven architecture"
+- Performance: "< 200ms response time", "Support 10,000 concurrent users"
+- Integration: "Must integrate with existing auth system"
+- Compliance: "Must be GDPR compliant", "PII must be encrypted at rest"
 
-Format: Each constraint on its own line with dash (-).
-Type "none" to proceed without constraints.
-
-Valid constraint types:
-- Technology: "Must use PostgreSQL", "Prefer Redis"
-- Architecture: "Prefer microservices", "Event-driven"
-- Performance: "< 200ms response", "10,000 users"
-- Integration: "Use existing auth system"
-- Compliance: "GDPR compliant", "Encrypt PII"
+Reply with your constraints, or "none" to proceed without additional constraints.
 ```
 
-**WAIT FOR USER RESPONSE.**
-
-**IF constraints have actual value** (not "$NONE" or "$SKIP"): Use them directly and skip prompting.
+**WAIT FOR USER RESPONSE** before proceeding.
 
 ---
 
 ## Step 2: Run Setup Script
 
-Execute from repo root (cross-platform):
+Execute from repo root:
 
 ```bash
 speckitadv setup-plan --json
 ```
 
 Parse JSON output for:
+
 - `FEATURE_SPEC` - path to spec.md
-- `IMPL_PLAN` - path to plan.md template
 - `SPECS_DIR` - feature specs directory
 - `BRANCH` - current feature branch
-
-**NOTE**: SPECS_DIR already exists from /speckitadv.specify - do NOT create.
 
 ---
 
@@ -72,25 +65,33 @@ Parse JSON output for:
 
 1. Read `FEATURE_SPEC` (the specification)
 2. Read `memory/constitution.md` (principles)
-3. Read `IMPL_PLAN` template
+
+---
+
+## Step 4: Create Plan Template
+
+The CLI automatically copies the plan template to the feature directory:
+
+{{copy-template:plan-template.md:plan.md}}
+
+Now edit `{{feature_dir}}/plan.md` with these initial replacements:
+
+- Replace `[FEATURE]` with the feature name from spec.md
+- Replace `[DATE]` with today's date
+- Replace `[###-feature-name]` with the actual feature directory name
+- Keep all other `[...]` placeholders - they will be filled in subsequent stages
+
+**IMPORTANT**: Subsequent stages will fill in remaining sections.
 
 ---
 
 ## Output
 
 ```text
-
 ✓ Setup complete
-  - Spec: {{feature_spec}}
-  - Plan template: {{impl_plan}}
+  - Spec: <path to spec.md>
+  - Plan: {{feature_dir}}/plan.md (template created)
   - Constraints: [N] loaded
 ```
 
----
-
-## NEXT
-
-```text
-
-speckitadv plan --stage=3 --chain={{chain_id}}
-```
+Then run the next command shown below.

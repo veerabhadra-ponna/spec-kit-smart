@@ -1,6 +1,6 @@
 ---
 stage: full_app_questions_1
-requires: 02-file-analysis.json
+requires: analyze-project-02-file-analysis.json
 condition: state.analysis_scope == "A"
 outputs: modernization_prefs_1_5
 version: 3.1.0
@@ -17,7 +17,7 @@ Ask the first 5 modernization questions to understand the user's target technolo
 
 ## Pre-Check: Verify Previous Stage
 
-1. Read `.analysis/.state/02-file-analysis.json`
+1. Read `.analysis/.state/analyze-project-02-file-analysis.json`
 2. Confirm `stages_complete` includes "file_analysis"
 3. Confirm `analysis_scope` = "A"
 

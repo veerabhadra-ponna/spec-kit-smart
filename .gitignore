@@ -55,6 +55,7 @@ sdd-*/
 /.vs
 .analysis/
 .guidelines-analysis/
+memory/
 
 # Node.js
 node_modules/

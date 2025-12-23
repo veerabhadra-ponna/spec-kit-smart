@@ -1,6 +1,6 @@
 ---
 stage: common_artifacts
-requires: 04-report.json
+requires: analyze-project-04-report.json
 outputs: common_artifacts_complete
 version: 3.1.0
 next: 06a-functional-spec-legacy.md (scope A) OR 06e-cross-cutting-artifacts.md (scope B)
@@ -16,7 +16,7 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 
 ## Pre-Check
 
-1. Read `.analysis/.state/04-report.json`
+1. Read `.analysis/.state/analyze-project-04-report.json`
 2. Confirm `verification_passed` = true
 3. Load `analysis_scope` to determine next stage
 
@@ -191,7 +191,7 @@ Generate metrics for tracking. Write to: `{analysis_dir}/metrics-summary.json`
 
 ```
 
-Write to: `.analysis/.state/05-artifacts.json`
+Write to: `.analysis/.state/analyze-project-05-artifacts.json`
 
 ---
 

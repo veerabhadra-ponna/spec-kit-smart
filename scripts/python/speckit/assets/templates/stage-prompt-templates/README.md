@@ -1,7 +1,19 @@
-# Stage-Specific Prompts for Modernization Workflow
+# Stage-Specific Prompt Templates for Modernization Workflow
 
-This directory contains **4 stage-specific prompts** that inject legacy code context
+This directory contains **4 stage-specific prompt templates** that inject legacy code context
 into each stage of the Toolkit workflow.
+
+## Template Injection
+
+These templates are included in analyze prompts via `{{include:stage-prompt-templates/X-template.md}}`
+syntax and are injected by the CLI at runtime. For example, in `06d-stage-prompts.md`:
+
+```markdown
+{{include:stage-prompt-templates/constitution-prompt-template.md}}
+{{include:stage-prompt-templates/clarify-prompt-template.md}}
+{{include:stage-prompt-templates/tasks-prompt-template.md}}
+{{include:stage-prompt-templates/implement-prompt-template.md}}
+```
 
 **Note**: We do NOT generate prompts for the `specify` and `plan` stages. Instead, use
 the `functional-spec.md` and `technical-spec.md` documents directly, as they contain
@@ -33,16 +45,16 @@ Focus on CRITICAL features (FR-CRIT-*) for Phase 1:
 For detailed requirements, see functional-spec.md.
 ```
 
-## Stage Prompts Available
+## Template Files
 
 | File | Toolkit Stage | Purpose |
 | ------ | --------------- | --------- |
-| `constitution-prompt.md` | /speckitadv.constitution | Extract principles from legacy |
-| ~~`specify-prompt.md`~~ | /speckitadv.specify | **Use `functional-spec.md` directly** |
-| ~~`plan-prompt.md`~~ | /speckitadv.plan | **Use `technical-spec.md` directly** |
-| `clarify-prompt.md` | /speckitadv.clarify | Use legacy code as source of truth |
-| `tasks-prompt.md` | /speckitadv.tasks | Break down with legacy complexity |
-| `implement-prompt.md` | /speckitadv.implement | Reference legacy code during implementation |
+| `constitution-prompt-template.md` | /speckitadv.constitution | Extract principles from legacy |
+| ~~`specify-prompt-template.md`~~ | /speckitadv.specify | **Use `functional-spec.md` directly** |
+| ~~`plan-prompt-template.md`~~ | /speckitadv.plan | **Use `technical-spec.md` directly** |
+| `clarify-prompt-template.md` | /speckitadv.clarify | Use legacy code as source of truth |
+| `tasks-prompt-template.md` | /speckitadv.tasks | Break down with legacy complexity |
+| `implement-prompt-template.md` | /speckitadv.implement | Reference legacy code during implementation |
 
 ## Key Principle: "Legacy Code as Source of Truth"
 

@@ -1007,14 +1007,14 @@ EXE outputs:
 │ If user says "use defaults" or provides empty input,           │
 │ pass --defaults flag.                                          │
 │                                                                │
-│ NEXT: speckitadv constitution --stage=2 --principles="<INPUT>" │
-│   OR: speckitadv constitution --stage=2 --defaults             │
+│ NEXT: speckitadv constitution --stage=2 --chain={chain_id} --principles="<INPUT>" │
+│   OR: speckitadv constitution --stage=2 --chain={chain_id} --defaults             │
 └────────────────────────────────────────────────────────────────┘
 
 Agent: "Please provide your project principles..."
 User: "Test-First: MUST write tests before code"
 
-Agent runs: speckitadv constitution --stage=2 --principles="Test-First: MUST write tests before code"
+Agent runs: speckitadv constitution --stage=2 --chain={chain_id} --principles="Test-First: MUST write tests before code"
 
 EXE outputs:
 ┌────────────────────────────────────────────────────────────────┐
@@ -1034,11 +1034,11 @@ EXE outputs:
 │ ---                                                            │
 │                                                                │
 │ After writing file:                                            │
-│ NEXT: speckitadv constitution --stage=3                        │
+│ NEXT: speckitadv constitution --stage=3 --chain={chain_id}     │
 └────────────────────────────────────────────────────────────────┘
 
 Agent: Creates memory/constitution.md
-Agent runs: speckitadv constitution --stage=3
+Agent runs: speckitadv constitution --stage=3 --chain={chain_id}
 
 EXE outputs:
 ┌────────────────────────────────────────────────────────────────┐
@@ -1087,8 +1087,8 @@ def constitution(
             total_stages=3,
             title="Collect Principles",
             content=STAGE_1_PROMPT,
-            next_cmd="speckitadv constitution --stage=2 --principles='<INPUT>'",
-            alt_cmd="speckitadv constitution --stage=2 --defaults"
+            next_cmd="speckitadv constitution --stage=2 --chain={chain_id} --principles='<INPUT>'",
+            alt_cmd="speckitadv constitution --stage=2 --chain={chain_id} --defaults"
         )
         return
 
@@ -1103,7 +1103,7 @@ def constitution(
             total_stages=3,
             title="Generate Constitution",
             content=f"Create file: memory/constitution.md\n\nContent:\n{constitution_content}",
-            next_cmd="speckitadv constitution --stage=3"
+            next_cmd="speckitadv constitution --stage=3 --chain={chain_id}"
         )
         return
 
@@ -1423,7 +1423,7 @@ EXE outputs:
 │ - date: 2025-12-21                                             │
 │ - principles: {user_provided_principles}                       │
 │                                                                │
-│ NEXT: speckitadv constitution --stage=3                        │
+│ NEXT: speckitadv constitution --stage=3 --chain={chain_id}     │
 └────────────────────────────────────────────────────────────────┘
 ```
 

@@ -1,6 +1,6 @@
 ---
 stage: cross_cutting_analysis
-requires: 02-file-analysis.json
+requires: analyze-project-02-file-analysis.json
 condition: state.analysis_scope == "B"
 outputs: concern_state
 version: 1.0.0
@@ -33,7 +33,7 @@ For Cross-Cutting Concern Migration (scope = B), perform deep-dive analysis of t
 
 ## Previous State
 
-Load state from: `.analysis/.state/02-file-analysis.json`
+Load state from: `.analysis/.state/analyze-project-02-file-analysis.json`
 
 Required fields:
 - `analysis_scope` must be "B"
@@ -442,7 +442,7 @@ Business:
 
 ```text
 STAGE_COMPLETE:CROSS_CUTTING
-STATE_PATH: .analysis/.state/03b-cross-cutting.json
+STATE_PATH: .analysis/.state/analyze-project-03b-cross-cutting.json
 
 ```
 

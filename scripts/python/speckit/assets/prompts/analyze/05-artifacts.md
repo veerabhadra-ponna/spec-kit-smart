@@ -1,6 +1,6 @@
 ---
 stage: common_artifact_generation
-requires: 04-report.json
+requires: analyze-project-04-report.json
 outputs: common_artifacts_complete
 version: 1.0.0
 ---
@@ -32,7 +32,7 @@ Generate common artifacts that are required for both analysis scopes. Scope-spec
 
 ## Previous State
 
-Load state from: `.analysis/.state/04-report.json`
+Load state from: `.analysis/.state/analyze-project-04-report.json`
 
 Required:
 - `report_generated` must be `true`
@@ -240,7 +240,7 @@ Before proceeding to Stage 6, verify:
 
 ```text
 STAGE_COMPLETE:COMMON_ARTIFACTS
-STATE_PATH: .analysis/.state/05-artifacts.json
+STATE_PATH: .analysis/.state/analyze-project-05-artifacts.json
 
 ```
 

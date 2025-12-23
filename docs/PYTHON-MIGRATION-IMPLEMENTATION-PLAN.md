@@ -812,17 +812,17 @@ Dependencies: 5.1.3
 
 ### 5.2 Launcher File Generation
 
-**Status:** ✅
+**Status:** ❌ Cancelled (GitHub release workflow deprecated)
 
 ```text
 Task 5.2.1: Create scripts/generate-launchers.py
-Status: ⬜
+Status: ❌ Cancelled - GitHub release workflow no longer used
 Dependencies: None
 ```
 
 ```text
 Task 5.2.2: Generate launchers for all agents
-Status: ⬜
+Status: ❌ Cancelled - GitHub release workflow no longer used
 Dependencies: 5.2.1
 ```
 

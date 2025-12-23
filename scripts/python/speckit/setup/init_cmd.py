@@ -244,6 +244,15 @@ def create_project_structure(
         shutil.copytree(guidelines_src, guidelines_dest)
         console.print("[green]Copied .guidelines/ baseline[/green]")
 
+    # Copy VS Code settings template
+    vscode_dir = project_path / ".vscode"
+    vscode_settings = vscode_dir / "settings.json"
+    vscode_template = get_assets_base() / "templates" / "vscode-settings.json"
+    if vscode_template.exists() and (not vscode_settings.exists() or force):
+        vscode_dir.mkdir(exist_ok=True)
+        shutil.copy2(vscode_template, vscode_settings)
+        console.print("[green]Copied VS Code settings template[/green]")
+
     # Create basic .gitignore
     gitignore_file = project_path / ".gitignore"
     if not gitignore_file.exists():
@@ -257,7 +266,8 @@ Thumbs.db
 
 # IDE
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 *.swp
 """
         gitignore_file.write_text(gitignore_content, encoding="utf-8")
@@ -296,6 +306,8 @@ def show_success_message(project_path: Path, agent: str, is_current_dir: bool = 
     guidelines_branch.add("stack-mapping.json")
     memory_branch = tree.add("[cyan]memory/[/cyan]")
     memory_branch.add("config.json")
+    vscode_branch = tree.add("[cyan].vscode/[/cyan]")
+    vscode_branch.add("settings.json")
     tree.add("AGENTS.md")
     tree.add(".gitignore")
 

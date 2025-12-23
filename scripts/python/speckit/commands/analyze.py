@@ -105,7 +105,7 @@ def run_analyze_project(
     # Initialize or load chain state
     if chain_id:
         try:
-            state = ChainState.load(chain_id)
+            state = ChainState.load(chain_id, command="analyze-project")
         except FileNotFoundError:
             emit_error(
                 "Chain state not found",
@@ -131,7 +131,7 @@ def run_analyze_project(
             )
             return
 
-        state = ChainState.initialize(project_path)
+        state = ChainState.initialize(project_path, command="analyze-project")
         chain_id = state.chain_id
 
     # Determine total stages based on scope

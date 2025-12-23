@@ -392,7 +392,7 @@ Merge all phase results into comprehensive state:
 
 ### Save State
 
-Write to: `.analysis/.state/02-file-analysis.json`
+Write to: `.analysis/.state/analyze-project-02-file-analysis.json`
 
 ---
 
@@ -401,7 +401,7 @@ Write to: `.analysis/.state/02-file-analysis.json`
 ---
 ⏸️ **[STOP: VERIFY_STATE_SAVED]**
 
-1. Read `.analysis/.state/02-file-analysis.json`
+1. Read `.analysis/.state/analyze-project-02-file-analysis.json`
 2. Validate JSON is parseable
 3. Confirm all required fields present
 4. Confirm `quality_gates.all_passed` = true
@@ -448,7 +448,7 @@ Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
     "security_findings": {count},
     "vulnerabilities": {count}
   },
-  "state_saved": ".analysis/.state/02-file-analysis.json",
+  "state_saved": ".analysis/.state/analyze-project-02-file-analysis.json",
   "status": "complete"
 }
 
@@ -466,7 +466,7 @@ Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
 **IF checkpoint verified:**
   Output: `✓ Checkpoint verified: 02-file-analysis`
   Output: `✓ All quality gates passed`
-  Output: `✓ State saved: 02-file-analysis.json`
+  Output: `✓ State saved: analyze-project-02-file-analysis.json`
 
 **IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
@@ -503,7 +503,7 @@ Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
   ✓ Security: PASS ({count} ≥ 10)
   ✓ Dependencies: PASS (audit complete)
 
-  State: .analysis/.state/02-file-analysis.json
+  State: .analysis/.state/analyze-project-02-file-analysis.json
 
 ═══════════════════════════════════════════════════════════
 

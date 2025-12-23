@@ -2,7 +2,7 @@
 stage: generate
 requires: setup
 outputs: task_list
-version: 1.0.0
+version: 1.1.0
 next: 04-complete.md
 ---
 
@@ -69,12 +69,31 @@ Components:
 
 ---
 
+## Step: Write Tasks File
+
+Use the **Write tool** to create `{{feature_dir}}/tasks.md` with **complete content**.
+
+**IMPORTANT:** Generate actual tasks from the user stories in spec.md. Do NOT include sample/placeholder tasks.
+
+**Template structure:**
+
+{{include:tasks-template.md}}
+
+**Generation rules:**
+
+- Replace ALL sample tasks with actual feature-specific tasks
+- Remove all HTML comments (`<!-- ... -->`) from output
+- Generate tasks from the actual user stories in spec.md
+- Use sequential task IDs (T001, T002...)
+- Mark parallelizable tasks with [P]
+- Label user story tasks with [US1], [US2], etc.
+- Include exact file paths in descriptions
+
+---
+
 ## Output
 
-Write to `{{feature_dir}}/tasks.md`
-
 ```text
-
 ✓ Tasks generated
   - Total: [N] tasks
   - Phases: [N] phases

@@ -18,9 +18,9 @@ Finalize the specification workflow and report results.
 
 Compile the workflow results:
 
-- **Branch**: `feature/{{number}}-{{jira}}-{{short_name}}`
-- **Spec file**: `specs/{{number}}-{{jira}}-{{short_name}}/spec.md`
-- **Checklist**: `specs/{{number}}-{{jira}}-{{short_name}}/checklists/requirements.md`
+- **Branch**: Current git branch name
+- **Spec file**: `{{feature_dir}}/spec.md`
+- **Checklist**: `{{feature_dir}}/checklists/requirements.md`
 
 ---
 
@@ -29,11 +29,10 @@ Compile the workflow results:
 Output final summary:
 
 ```text
-
 ✅ Specification created successfully
 
-Branch: feature/{{number}}-{{jira}}-{{short_name}}
-Spec: specs/{{number}}-{{jira}}-{{short_name}}/spec.md
+Branch: <current git branch>
+Spec: {{feature_dir}}/spec.md
 
 Quality Checklist: [All passed / N items pending]
 
@@ -43,7 +42,7 @@ Next steps:
   3. Run /speckitadv.plan to create implementation plan
 
 Suggested commit:
-  git add . && git commit -m "docs: create spec for {{feature_name}}"
+  git add . && git commit -m "docs: create spec for <feature name>"
 ```
 
 ---
@@ -51,34 +50,23 @@ Suggested commit:
 ## Step 3: Error Recovery Notes
 
 **If branch created but spec incomplete:**
+
 - Fix validation issues
 - Re-run validation without re-creating branch
 
 **If script execution failed:**
-- Check if branch exists: `git branch | grep {{short_name}}`
+
+- Check if branch exists: `git branch`
 - Check if spec dir exists: `ls specs/`
 - Checkout existing branch if found
 
 **If clarifications abandoned:**
-- Run `/speckitadv.clarify` to resume
-- Or proceed to `/speckitadv.plan` if critical items resolved
+
+- Run `speckitadv clarify` to resume
+- Or proceed to `speckitadv plan` if critical items resolved
 
 ---
 
 ## WORKFLOW COMPLETE
 
 The specification has been created. No further stages.
-
-**Recommended next command:**
-
-```text
-
-speckitadv clarify --chain={{chain_id}}
-```
-
-or
-
-```text
-
-speckitadv plan --chain={{chain_id}}
-```

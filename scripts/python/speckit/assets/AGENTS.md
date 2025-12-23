@@ -109,22 +109,50 @@ Problem → Action
 Each command runs in stages. The CLI outputs focused prompts (50-80 lines) per stage:
 
 ```bash
-# Example: constitution workflow
+# Example: constitution workflow (NOTE: no --path option, uses --chain for state)
 speckitadv constitution --stage=1
-speckitadv constitution --stage=2 --defaults  # or --principles="..."
-speckitadv constitution --stage=3
+speckitadv constitution --stage=2 --chain=abc12345 --defaults  # or --principles="..."
+speckitadv constitution --stage=3 --chain=abc12345
 
 # Example: analyze-project workflow (uses --chain for state)
 speckitadv analyze-project --stage=1 --path=/project --scope=A
 speckitadv analyze-project --stage=2 --chain=abc12345
+
+# Example: specify workflow (stateless until stage 3)
+speckitadv specify --stage=1
+speckitadv specify --stage=2        # Collects --feature and --jira inputs
+speckitadv specify --stage=3 --feature="Add user auth" --jira="C12345-7890"  # Creates feature folder
+speckitadv specify --stage=4 --chain=abc12345  # Uses --chain from stage 3+
 ```
 
-**Command Options:** Each command has different options. Use `--help` to see valid options:
+**State Location by Command:**
 
-```bash
-speckitadv constitution --help   # Shows: --stage, --principles, --defaults
-speckitadv analyze-project --help # Shows: --stage, --chain, --path, --scope, etc.
-```
+| Command | State Location | Notes |
+|---------|----------------|-------|
+| `analyze-project` | `.analysis/.state/` | All stages persisted |
+| `constitution` | `memory/.state/` | All stages persisted |
+| `specify`, `plan`, `tasks`, `implement` | `specs/{feature}/.state/` | Stages 1-2 stateless, stage 3+ persisted after feature folder exists |
+
+State files are prefixed with command name to avoid collisions: `constitution-01-initialization.json`
+
+**Note:** For feature-scoped commands, the feature directory is auto-detected after stage 3 creates it. State is automatically migrated from `specs/.pending/.state/` to `specs/{feature}/.state/`.
+
+**Important - Passing Inputs Between Stateless Stages:** Since stages 1-2 don't persist state, inputs collected in stage 2 (like `--feature` and `--jira` for specify) must be explicitly passed to stage 3 via CLI options. The NEXT command in stage 2 prompts will instruct you to include these values.
+
+**Command Options Reference:**
+
+| Command | Available Options |
+|---------|-------------------|
+| `constitution` | `--stage`, `--chain`, `--defaults`, `--principles` |
+| `analyze-project` | `--stage`, `--chain`, `--chunk`, `--path`, `--scope`, `--context`, `--concern-type`, `--current-impl`, `--target-impl`, `--verify` |
+| `specify` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--jira`, `--feature` |
+| `plan` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--constraints` |
+| `tasks` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--preferences` |
+| `implement` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--notes` |
+| `clarify` | `--stage`, `--chain`, `--path` |
+| `checklist` | `--stage`, `--chain`, `--path` |
+
+**Note:** Use `speckitadv <command> --help` for full option details.
 
 **Debug Commands:**
 

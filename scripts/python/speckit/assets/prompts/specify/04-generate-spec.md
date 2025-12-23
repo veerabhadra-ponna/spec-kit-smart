@@ -2,7 +2,7 @@
 stage: generate-spec
 requires: branch-setup
 outputs: spec_file
-version: 1.0.0
+version: 1.2.0
 next: 05-validate-spec.md
 ---
 
@@ -10,19 +10,28 @@ next: 05-validate-spec.md
 
 ## Purpose
 
-Parse the feature description and generate a complete specification.
+Create spec.md using a chunked approach to handle large specifications.
 
 ---
 
-## Step 1: Load Template
+## Step 1: Create Spec Template
 
-Load `templates/spec-template.md` to understand required sections.
+The CLI automatically copies the spec template to the feature directory:
+
+{{copy-template:spec-template.md:spec.md}}
+
+Now edit `{{feature_dir}}/spec.md` with these initial replacements:
+
+- Replace `[Feature Name]` with feature name
+- Replace `[date]` with today's date
+- Keep all other `[...]` placeholders for now
 
 ---
 
 ## Step 2: Parse Feature Description
 
 Extract from the feature description:
+
 - **Actors**: Who uses this feature?
 - **Actions**: What can they do?
 - **Data**: What information is involved?
@@ -30,37 +39,81 @@ Extract from the feature description:
 
 ---
 
-## Step 3: Fill Sections
+## Step 3: Fill Sections (Chunk 1 - Header & Overview)
 
-**User Scenarios & Testing:**
-- Define primary user flows
-- Include happy path and error cases
+Edit `{{feature_dir}}/spec.md` to fill:
+
+- **Title and metadata** section
+- **Overview** section (brief description)
+- **Scope** section (In Scope / Out of Scope)
+
+---
+
+## Step 4: Fill Sections (Chunk 2 - User Stories)
+
+Edit `{{feature_dir}}/spec.md` to fill:
+
+- **User Stories** section with format:
+  - Priority (P1/P2/P3)
+  - "As a [user], I want [goal] so that [benefit]"
+  - Acceptance scenarios in Given/When/Then format
+
+**Guidelines:**
+
+- P1 = Must have (MVP)
+- P2 = Should have
+- P3 = Nice to have
 - Each scenario must be testable
 
-**Functional Requirements:**
+---
+
+## Step 5: Fill Sections (Chunk 3 - Requirements)
+
+Edit `{{feature_dir}}/spec.md` to fill:
+
+- **Functional Requirements** (FR-001, FR-002, etc.)
+- **Non-Functional Requirements** (if applicable)
+- **Assumptions** section
+
+**Guidelines:**
+
 - Each requirement independently testable
 - Use reasonable defaults for unspecified details
-- Document assumptions in Assumptions section
+- Document assumptions
 
-**Success Criteria:**
+---
+
+## Step 6: Fill Sections (Chunk 4 - Technical Context)
+
+Edit `{{feature_dir}}/spec.md` to fill:
+
+- **Technical Context** section
+- **Success Criteria** section
+
+**Success Criteria Guidelines:**
+
 - Measurable outcomes (time, percentage, count)
 - Technology-agnostic (no frameworks, APIs)
 - User-focused (business perspective)
 
-**Examples of good criteria:**
+**Good examples:**
+
 - "Users can complete checkout in under 3 minutes"
 - "System supports 10,000 concurrent users"
-- "95% of searches return results in under 1 second"
 
-**Bad criteria (too technical):**
+**Bad examples (too technical):**
+
 - "API response time is under 200ms"
 - "Redis cache hit rate above 80%"
 
 ---
 
-## Step 4: Handle Ambiguities
+## Step 7: Handle Ambiguities
+
+Review the spec for unclear items:
 
 **Only mark with [NEEDS CLARIFICATION] if:**
+
 - Choice significantly impacts scope or UX
 - Multiple reasonable interpretations exist
 - No reasonable default applies
@@ -70,6 +123,7 @@ Extract from the feature description:
 Prioritize: scope > security > user experience > technical
 
 **Make informed guesses for:**
+
 - Data retention (industry standard)
 - Performance (standard web expectations)
 - Error handling (user-friendly messages)
@@ -77,22 +131,29 @@ Prioritize: scope > security > user experience > technical
 
 ---
 
-## Output
+## Step 8: Final Validation
 
-Write spec to `{{spec_file}}`.
+Verify spec.md is complete:
 
-```text
-
-✓ Specification generated
-  - Sections: [N] completed
-  - Clarifications needed: [0-3]
+```bash
+# Check for remaining placeholders
+grep -E '\[.*\]' {{feature_dir}}/spec.md | grep -v 'NEEDS CLARIFICATION'
 ```
+
+**All placeholders must be replaced** (except [NEEDS CLARIFICATION] markers).
 
 ---
 
-## NEXT
+## Output
+
+After completing all chunks:
 
 ```text
-
-speckitadv specify --stage=5 --chain={{chain_id}}
+✓ Specification generated
+  - File: {{feature_dir}}/spec.md
+  - User stories: [N]
+  - Requirements: [N]
+  - Clarifications needed: [0-3]
 ```
+
+Then run the next command shown below.

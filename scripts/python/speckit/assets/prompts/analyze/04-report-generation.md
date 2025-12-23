@@ -1,6 +1,6 @@
 ---
 stage: report_generation
-requires: 03*-*.json
+requires: analyze-project-03*-*.json
 outputs: report_generated
 version: 1.0.0
 ---
@@ -33,8 +33,8 @@ Generate the comprehensive `analysis-report.md` file using completion-based chun
 ## Previous State
 
 Load state from either:
-- `.analysis/.state/03a-full-app.json` (if scope = A)
-- `.analysis/.state/03b-cross-cutting.json` (if scope = B)
+- `.analysis/.state/analyze-project-03a-full-app.json` (if scope = A)
+- `.analysis/.state/analyze-project-03b-cross-cutting.json` (if scope = B)
 
 ---
 
@@ -744,7 +744,7 @@ Proceeding to Stage 5 (Artifact Generation)...
 
 ```text
 STAGE_COMPLETE:REPORT
-STATE_PATH: .analysis/.state/04-report.json
+STATE_PATH: .analysis/.state/analyze-project-04-report.json
 
 ```
 

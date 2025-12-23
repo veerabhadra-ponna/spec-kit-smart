@@ -97,6 +97,7 @@ Scan `{{feature_dir}}/checklists/`:
 ## NEXT
 
 ```text
-
-speckitadv implement --stage=3 --chain={{chain_id}}
+speckitadv implement --stage=3
 ```
+
+**Note:** State persistence begins at stage 3.

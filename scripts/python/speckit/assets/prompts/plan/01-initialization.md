@@ -68,18 +68,10 @@ Check `/.guidelines/` directory:
 ## Output
 
 ```text
-
 ✓ Initialization complete
   - Role: Software Architect
   - Tech stack: [detected stacks]
   - Guidelines: [loaded / not found]
 ```
 
----
-
-## NEXT
-
-```text
-
-speckitadv plan --stage=2 --chain={{chain_id}}
-```
+Then run the next command shown below.

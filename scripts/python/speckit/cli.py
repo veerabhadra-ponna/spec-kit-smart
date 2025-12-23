@@ -152,6 +152,7 @@ def specify(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-6)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
     jira: Optional[str] = typer.Option(None, "--jira", "-j", help="JIRA number (format: C12345-7890)"),
     feature: Optional[str] = typer.Option(None, "--feature", "-f", help="Feature description"),
 ) -> None:
@@ -164,6 +165,14 @@ def specify(
     from speckit.core.stages import run_staged_command
 
     context = {}
+
+    # Stage 3 requires --feature (collected in stage 2, passed here since state is stateless)
+    if stage == 3 and not feature:
+        console.print("[red]Error:[/red] --feature is required for stage 3")
+        console.print("  Stage 2 should have collected this value. Run stage 3 with:")
+        console.print("  speckitadv specify --stage=3 --feature='your feature description'")
+        console.print("  (--jira is optional)")
+        raise typer.Exit(1)
 
     # Interactive mode for stage 2 (input collection)
     if stage == 2 and not jira and not feature:
@@ -185,7 +194,7 @@ def specify(
         context["jira"] = jira or ""
         context["feature"] = feature
 
-    run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
+    run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -198,27 +207,24 @@ def plan(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
     constraints: Optional[str] = typer.Option(None, "--constraints", "-c", help="Planning constraints"),
 ) -> None:
     """
     Create implementation plan.
 
     Designs how to build what was specified.
-    Runs interactively if no --constraints provided at stage 2.
+    Constraints are collected by the AI agent via the stage 2 prompt.
     """
     from speckit.core.stages import run_staged_command
 
     context = {}
 
-    # Interactive mode for stage 2 (where constraints are collected per fragment)
-    if stage == 2 and not constraints:
-        from speckit.core.interactive import collect_plan_constraints
-
-        context["constraints"] = collect_plan_constraints()
-    elif constraints:
+    # Pass constraints to context if provided via CLI
+    if constraints:
         context["constraints"] = constraints
 
-    run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
+    run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -231,27 +237,24 @@ def tasks(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
     preferences: Optional[str] = typer.Option(None, "--preferences", help="Task generation preferences"),
 ) -> None:
     """
     Generate actionable tasks.
 
     Breaks down the plan into implementable units.
-    Runs interactively if no --preferences provided at stage 2.
+    Preferences are collected by the AI agent via the stage 2 prompt.
     """
     from speckit.core.stages import run_staged_command
 
     context = {}
 
-    # Interactive mode for stage 2 (where preferences are collected per fragment)
-    if stage == 2 and not preferences:
-        from speckit.core.interactive import collect_tasks_preferences
-
-        context["preferences"] = collect_tasks_preferences()
-    elif preferences:
+    # Pass preferences to context if provided via CLI
+    if preferences:
         context["preferences"] = preferences
 
-    run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
+    run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -264,27 +267,24 @@ def implement(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-5)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
     notes: Optional[str] = typer.Option(None, "--notes", "-n", help="Implementation notes"),
 ) -> None:
     """
     Execute implementation.
 
     Implements tasks with quality checks.
-    Runs interactively if no --notes provided at stage 2.
+    Notes are collected by the AI agent via the stage 2 prompt.
     """
     from speckit.core.stages import run_staged_command
 
     context = {}
 
-    # Interactive mode for stage 2 (where notes are collected per fragment)
-    if stage == 2 and not notes:
-        from speckit.core.interactive import collect_implement_notes
-
-        context["notes"] = collect_implement_notes()
-    elif notes:
+    # Pass notes to context if provided via CLI
+    if notes:
         context["notes"] = notes
 
-    run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
+    run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -387,7 +387,7 @@ def analyze(
     Performs non-destructive analysis across spec.md, plan.md, and tasks.md
     to identify inconsistencies, gaps, and quality issues before implementation.
     Run after /speckitadv.tasks and before /speckitadv.implement.
-    Runs interactively if no focus argument provided.
+    Focus areas are collected by the AI agent via the stage prompt.
 
     Stages:
       1 - Setup and artifact loading
@@ -395,12 +395,6 @@ def analyze(
       3 - Report generation
     """
     from speckit.core.prompts import get_prompt_fragment
-
-    # Interactive mode for stage 1 if no focus provided
-    if stage == 1 and not focus:
-        from speckit.core.interactive import collect_analyze_focus
-
-        focus = collect_analyze_focus()
 
     stage_map = {1: "01-setup", 2: "02-detection", 3: "03-report"}
     stage_key = stage_map.get(stage, "01-setup")
@@ -779,6 +773,8 @@ def chain_state(
     command: str = typer.Argument(..., help="Command: generate-id, init, save, load, load-latest, last-stage, is-complete, chain-id, init-state, validate"),
     stage: Optional[str] = typer.Argument(None, help="Stage name or chain ID (for some commands)"),
     state_json: Optional[str] = typer.Option(None, "--state", "-s", help="State JSON (for save/validate)"),
+    cmd: Optional[str] = typer.Option(None, "--cmd", help="Workflow command (analyze-project, constitution, specify, plan, tasks, implement)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory for feature-scoped commands"),
 ) -> None:
     """
     Manage chain state for workflow persistence.
@@ -787,7 +783,7 @@ def chain_state(
     """
     from speckit.commands.chain import run_chain_state_command
 
-    run_chain_state_command(command, stage, state_json)
+    run_chain_state_command(command, stage, state_json, cmd=cmd, feature_dir=feature_dir)
 
 
 if __name__ == "__main__":

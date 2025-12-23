@@ -2,7 +2,7 @@
 stage: validate-spec
 requires: generate-spec
 outputs: checklist_file, validation_passed
-version: 1.0.0
+version: 1.1.0
 next: 06-complete.md
 ---
 
@@ -16,12 +16,12 @@ Validate the specification against quality criteria.
 
 ## Step 1: Create Quality Checklist
 
-Generate checklist at `{{feature_dir}}/checklists/requirements.md`:
+Use the **Write tool** to create `{{feature_dir}}/checklists/requirements.md` with the following structure:
 
 ```markdown
-# Specification Quality Checklist: {{feature_name}}
+# Specification Quality Checklist: <feature name from spec.md>
 
-**Created**: {{date}}
+**Created**: <today's date>
 **Feature**: [Link to spec.md]
 
 ## Content Quality
@@ -78,17 +78,9 @@ Review spec against each checklist item:
 ## Output
 
 ```text
-
 ✓ Validation complete
   - Passed: [N]/[Total] items
   - Clarifications: [0-3] pending
 ```
 
----
-
-## NEXT
-
-```text
-
-speckitadv specify --stage=6 --chain={{chain_id}}
-```
+Then run the next command shown below.

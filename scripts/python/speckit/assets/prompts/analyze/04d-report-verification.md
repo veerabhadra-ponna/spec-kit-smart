@@ -125,7 +125,7 @@ Read the complete analysis-report.md and verify each item:
 
 ```
 
-Write to: `.analysis/.state/04-report.json`
+Write to: `.analysis/.state/analyze-project-04-report.json`
 
 ---
 
@@ -141,7 +141,7 @@ Write: `.analysis/.checkpoints/04-report-complete.json`
   "chunks_generated": 9,
   "total_lines": {count},
   "verification_passed": true,
-  "state_saved": ".analysis/.state/04-report.json",
+  "state_saved": ".analysis/.state/analyze-project-04-report.json",
   "status": "complete"
 }
 

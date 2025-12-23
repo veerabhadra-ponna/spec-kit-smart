@@ -1,8 +1,8 @@
 ---
 stage: branch-setup
 requires: input-collection
-outputs: branch_name, spec_dir
-version: 1.0.0
+outputs: branch_name, spec_dir, feature_dir
+version: 1.1.0
 next: 04-generate-spec.md
 ---
 
@@ -78,18 +78,12 @@ JSON output format:
 
 ## Output
 
-```text
+After running `create-feature`, output:
 
+```text
 ✓ Branch created
-  - Branch: feature/{{number}}-{{jira}}-{{short_name}}
-  - Spec dir: specs/{{number}}-{{jira}}-{{short_name}}/
+  - Branch: <BRANCH_NAME from JSON output>
+  - Spec dir: <SPEC_FILE directory from JSON output>
 ```
 
----
-
-## NEXT
-
-```text
-
-speckitadv specify --stage=4 --chain={{chain_id}}
-```
+Then run the next command shown below.

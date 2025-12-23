@@ -295,7 +295,7 @@ Merge all Stage 3A data into comprehensive state:
 
 ### Save State
 
-Write to: `.analysis/.state/03a-full-app.json`
+Write to: `.analysis/.state/analyze-project-03a-full-app.json`
 
 ---
 
@@ -304,7 +304,7 @@ Write to: `.analysis/.state/03a-full-app.json`
 ---
 ⏸️ **[STOP: VERIFY_STATE_SAVED]**
 
-1. Read `.analysis/.state/03a-full-app.json`
+1. Read `.analysis/.state/analyze-project-03a-full-app.json`
 2. Validate JSON is parseable
 3. Confirm all required sections present
 4. Confirm `stages_complete` includes "full_app_analysis"
@@ -329,7 +329,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
   "complexity_rating": "{rating}",
   "primary_recommendation": "{approach}",
   "confidence": {percentage},
-  "state_saved": ".analysis/.state/03a-full-app.json",
+  "state_saved": ".analysis/.state/analyze-project-03a-full-app.json",
   "status": "complete"
 }
 
@@ -346,7 +346,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
 
 **IF checkpoint verified:**
   Output: `✓ Checkpoint verified: 03a-full-app`
-  Output: `✓ State saved: 03a-full-app.json`
+  Output: `✓ State saved: analyze-project-03a-full-app.json`
 
 **IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
@@ -366,7 +366,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
     Complexity: {rating}
     Primary Recommendation: {approach} ({confidence}%)
 
-  State: .analysis/.state/03a-full-app.json
+  State: .analysis/.state/analyze-project-03a-full-app.json
 
   Proceeding to Stage 4: Report Generation
 ═══════════════════════════════════════════════════════════

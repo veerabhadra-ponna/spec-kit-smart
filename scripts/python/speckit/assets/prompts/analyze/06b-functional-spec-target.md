@@ -19,7 +19,7 @@ Generate functional specification documenting WHAT the MODERNIZED system WILL do
 
 1. Read `.analysis/.checkpoints/func-legacy-complete.json`
 2. Confirm `status` = "complete"
-3. Load user's modernization preferences from `.analysis/.state/03a-full-app.json`
+3. Load user's modernization preferences from `.analysis/.state/analyze-project-03a-full-app.json`
 
 **IF not complete:** STOP - Return to 06a-functional-spec-legacy.md
 
@@ -29,10 +29,12 @@ Generate functional specification documenting WHAT the MODERNIZED system WILL do
 
 **Primary Sources:**
 - `{analysis_dir}/analysis-report.md` (feature catalog)
-- `.analysis/.state/03a-full-app.json` (10 modernization preferences)
+- `.analysis/.state/analyze-project-03a-full-app.json` (10 modernization preferences)
 - User's scope validation answers
 
-**Template:** Use embedded template: functional-spec-template.md`
+**Template:**
+
+{{include:functional-spec-template.md}}
 
 ---
 

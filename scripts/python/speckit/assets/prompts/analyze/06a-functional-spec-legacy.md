@@ -1,6 +1,6 @@
 ---
 stage: functional_spec_legacy
-requires: 05-artifacts.json
+requires: analyze-project-05-artifacts.json
 condition: state.analysis_scope == "A"
 outputs: functional_spec_legacy_complete
 version: 3.1.0
@@ -17,7 +17,7 @@ Generate functional specification documenting WHAT the LEGACY/EXISTING system CU
 
 ## Pre-Check
 
-1. Read `.analysis/.state/05-artifacts.json`
+1. Read `.analysis/.state/analyze-project-05-artifacts.json`
 2. Confirm `common_artifacts_complete` = true
 3. Confirm `analysis_scope` = "A"
 4. Load `analysis_dir` path
@@ -32,7 +32,9 @@ Generate functional specification documenting WHAT the LEGACY/EXISTING system CU
 - `{analysis_dir}/analysis-report.md` Phase 2 (Feature Catalog)
 - `{analysis_dir}/analysis-report.md` Phase 3 (Positive Findings)
 
-**Template:** Use embedded template: functional-spec-template.md`
+**Template:**
+
+{{include:functional-spec-template.md}}
 
 ---
 

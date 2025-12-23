@@ -7,7 +7,9 @@ from pathlib import Path
 
 from speckit.core.prompts import (
     get_prompts_base,
+    get_templates_base,
     get_prompt_fragment,
+    load_template,
     render_prompt,
     list_fragments,
     get_stage_order,
@@ -120,6 +122,89 @@ class TestRenderPrompt:
         result = render_prompt(fragment, context)
 
         assert "Value: " in result
+
+    def test_template_include(self):
+        """Should include template from assets/templates/."""
+        # Use a known template
+        fragment = "Before\n{{include:spec-template.md}}\nAfter"
+        context = {}
+
+        result = render_prompt(fragment, context)
+
+        # Template content should be included
+        assert "Before" in result
+        assert "After" in result
+        # Skip if template not found in test environment
+        if "[Template not found" in result:
+            pytest.skip("Template not found in test environment")
+        assert "Feature Specification" in result
+
+    def test_template_include_not_found_graceful(self):
+        """Should show error message for missing template in non-strict mode."""
+        fragment = "Before\n{{include:nonexistent-template.md}}\nAfter"
+        context = {}
+
+        result = render_prompt(fragment, context)
+
+        assert "Before" in result
+        assert "After" in result
+        assert "[Template not found: nonexistent-template.md]" in result
+
+    def test_template_include_strict_mode_raises(self):
+        """Should raise FileNotFoundError in strict mode for missing template."""
+        fragment = "Before\n{{include:nonexistent-template.md}}\nAfter"
+        context = {}
+
+        with pytest.raises(FileNotFoundError) as exc_info:
+            render_prompt(fragment, context, strict=True)
+
+        assert "nonexistent-template.md" in str(exc_info.value)
+
+    def test_template_include_strict_mode_success(self):
+        """Should succeed in strict mode when template exists."""
+        fragment = "Before\n{{include:spec-template.md}}\nAfter"
+        context = {}
+
+        try:
+            result = render_prompt(fragment, context, strict=True)
+            assert "Before" in result
+            assert "After" in result
+            assert "Feature Specification" in result
+            assert "[Template not found" not in result
+        except FileNotFoundError:
+            pytest.skip("Template not found in test environment")
+
+
+class TestGetTemplatesBase:
+    """Tests for get_templates_base function."""
+
+    def test_returns_path(self):
+        """Should return a Path object."""
+        result = get_templates_base()
+        assert isinstance(result, Path)
+
+    def test_path_contains_templates(self):
+        """Should return path containing 'templates'."""
+        result = get_templates_base()
+        assert "templates" in str(result)
+
+
+class TestLoadTemplate:
+    """Tests for load_template function."""
+
+    def test_existing_template(self):
+        """Should load existing template."""
+        try:
+            content = load_template("spec-template.md")
+            assert isinstance(content, str)
+            assert len(content) > 0
+        except FileNotFoundError:
+            pytest.skip("Template not found in test environment")
+
+    def test_nonexistent_template(self):
+        """Should raise FileNotFoundError for missing template."""
+        with pytest.raises(FileNotFoundError):
+            load_template("nonexistent-template.md")
 
 
 class TestListFragments:
@@ -238,3 +323,84 @@ class TestCountFragmentLines:
         """Should return 0 for nonexistent fragment."""
         result = count_fragment_lines("fake", "fake")
         assert result == 0
+
+
+class TestCopyTemplateDirective:
+    """Tests for copy-template directive in render_prompt."""
+
+    def test_copy_template_success(self, tmp_path):
+        """Should copy template to feature_dir."""
+        # Create a test feature_dir
+        feature_dir = tmp_path / "specs" / "001-test-feature"
+        feature_dir.mkdir(parents=True)
+
+        fragment = "Before\n{{copy-template:spec-template.md:spec.md}}\nAfter"
+        context = {"feature_dir": str(feature_dir)}
+
+        try:
+            result = render_prompt(fragment, context)
+
+            assert "Before" in result
+            assert "After" in result
+
+            # Template should be copied
+            copied_file = feature_dir / "spec.md"
+            if "[Template not found" not in result:
+                assert copied_file.exists()
+                content = copied_file.read_text()
+                assert "Feature Specification" in content
+        except FileNotFoundError:
+            pytest.skip("Template not found in test environment")
+
+    def test_copy_template_default_destination(self, tmp_path):
+        """Should use default destination when not specified."""
+        feature_dir = tmp_path / "specs" / "001-test-feature"
+        feature_dir.mkdir(parents=True)
+
+        # Without :dest.md, should use template name minus '-template'
+        fragment = "{{copy-template:plan-template.md}}"
+        context = {"feature_dir": str(feature_dir)}
+
+        try:
+            result = render_prompt(fragment, context)
+
+            # If template exists, should copy to plan.md
+            copied_file = feature_dir / "plan.md"
+            if "[Template not found" not in result:
+                assert copied_file.exists()
+        except FileNotFoundError:
+            pytest.skip("Template not found in test environment")
+
+    def test_copy_template_no_feature_dir(self):
+        """Should show error when feature_dir not set."""
+        fragment = "{{copy-template:spec-template.md:spec.md}}"
+        context = {}  # No feature_dir
+
+        result = render_prompt(fragment, context)
+
+        assert "[Cannot copy template: feature_dir not set]" in result
+
+    def test_copy_template_not_found_graceful(self, tmp_path):
+        """Should show error for missing template in non-strict mode."""
+        feature_dir = tmp_path / "specs" / "001-test-feature"
+        feature_dir.mkdir(parents=True)
+
+        fragment = "{{copy-template:nonexistent-template.md:dest.md}}"
+        context = {"feature_dir": str(feature_dir)}
+
+        result = render_prompt(fragment, context)
+
+        assert "[Template not found: nonexistent-template.md]" in result
+
+    def test_copy_template_strict_mode_raises(self, tmp_path):
+        """Should raise FileNotFoundError in strict mode for missing template."""
+        feature_dir = tmp_path / "specs" / "001-test-feature"
+        feature_dir.mkdir(parents=True)
+
+        fragment = "{{copy-template:nonexistent-template.md:dest.md}}"
+        context = {"feature_dir": str(feature_dir)}
+
+        with pytest.raises(FileNotFoundError) as exc_info:
+            render_prompt(fragment, context, strict=True)
+
+        assert "nonexistent-template.md" in str(exc_info.value)

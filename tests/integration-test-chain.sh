@@ -46,8 +46,8 @@ fail() {
 cleanup() {
     echo ""
     echo "Cleaning up test files..."
-    rm -rf .analysis/.state/test-*
-    rm -rf .analysis/.state/00-bootstrap.json
+    rm -rf .analysis/.state/analyze-project-test-*
+    rm -rf .analysis/.state/analyze-project-00-bootstrap.json
 }
 
 # Set trap for cleanup
@@ -80,7 +80,7 @@ echo "-------------------------"
 test_state='{"chain_id":"'$CHAIN_ID'","stage":"test","timestamp":"2025-11-14T12:00:00Z","counter":1}'
 speckitadv chain-state save test-state --state="$test_state" > /dev/null 2>&1
 
-if [[ -f ".analysis/.state/test-state.json" ]]; then
+if [[ -f ".analysis/.state/analyze-project-test-state.json" ]]; then
     pass "State file created"
 else
     fail "State file creation"
@@ -185,6 +185,7 @@ bootstrap='{
 }'
 speckitadv chain-state save 00-bootstrap --state="$bootstrap" > /dev/null 2>&1
 
+# Note: Files are now command-prefixed (analyze-project-00-bootstrap.json)
 if speckitadv chain-state load 00-bootstrap 2>/dev/null | jq -e '.project_path' > /dev/null 2>&1; then
     pass "Bootstrap state created and accessible"
 else

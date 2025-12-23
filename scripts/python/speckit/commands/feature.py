@@ -353,7 +353,11 @@ def create_spec_directory(
     config: dict,
 ) -> tuple[Path, str]:
     """
-    Create spec directory with template files.
+    Create spec directory structure (without template files).
+
+    Template files (spec.md, plan.md, tasks.md) are created by AI during
+    the specify workflow stages, not here. This ensures AI writes complete
+    content rather than editing placeholders.
 
     Returns:
         Tuple of (spec_dir_path, spec_file_path)
@@ -376,171 +380,17 @@ def create_spec_directory(
     feature_dir = specs_dir / dir_name
     feature_dir.mkdir(parents=True, exist_ok=True)
 
-    # Copy template if exists, otherwise create empty spec.md
-    template_path = project_root / "memory" / "templates" / "spec-template.md"
+    # Spec file path (AI will create this in stage 4)
     spec_file = feature_dir / "spec.md"
 
-    if template_path.exists():
-        spec_file.write_text(template_path.read_text(encoding="utf-8"), encoding="utf-8")
-    else:
-        # Create default spec template
-        spec_content = f"""# Feature Specification
+    # NOTE: We intentionally do NOT create spec.md, plan.md, tasks.md,
+    # or requirements.md here. These are created by AI during the workflow
+    # stages to ensure complete content is written rather than placeholder
+    # templates being edited.
 
-**Feature**: {description}
-**Number**: {feature_num}
-**Created**: {datetime.now().strftime('%Y-%m-%d')}
-{f'**JIRA**: {jira}' if jira else ''}
-
----
-
-## Overview
-
-[Brief description of the feature]
-
----
-
-## User Stories
-
-### US-1: [Story Title]
-
-**As a** [type of user]
-**I want** [goal]
-**So that** [benefit]
-
-**Acceptance Criteria:**
-- [ ] Criterion 1
-- [ ] Criterion 2
-
----
-
-## Technical Notes
-
-[Any technical considerations or constraints]
-
----
-
-## Dependencies
-
-- [ ] Dependency 1
-- [ ] Dependency 2
-
----
-
-## Out of Scope
-
-- Item 1
-- Item 2
-"""
-        spec_file.write_text(spec_content, encoding="utf-8")
-
-    # Create plan.md template
-    plan_file = feature_dir / "plan.md"
-    if not plan_file.exists():
-        plan_content = f"""# Implementation Plan
-
-**Feature**: {description}
-**Number**: {feature_num}
-**Created**: {datetime.now().strftime('%Y-%m-%d')}
-
----
-
-## Approach
-
-[High-level implementation approach]
-
----
-
-## Phases
-
-### Phase 1: [Phase Name]
-
-- [ ] Task 1
-- [ ] Task 2
-
-### Phase 2: [Phase Name]
-
-- [ ] Task 3
-- [ ] Task 4
-
----
-
-## Technical Decisions
-
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| | | |
-
----
-
-## Risks
-
-| Risk | Mitigation |
-|------|------------|
-| | |
-"""
-        plan_file.write_text(plan_content, encoding="utf-8")
-
-    # Create tasks.md template
-    tasks_file = feature_dir / "tasks.md"
-    if not tasks_file.exists():
-        tasks_content = f"""# Task Breakdown
-
-**Feature**: {description}
-**Number**: {feature_num}
-**Created**: {datetime.now().strftime('%Y-%m-%d')}
-
----
-
-## Tasks
-
-### Phase 1
-
-- [ ] **Task 1**: [Description]
-  - Estimate: [X hours]
-  - Files: [files to modify]
-
-- [ ] **Task 2**: [Description]
-  - Estimate: [X hours]
-  - Files: [files to modify]
-
----
-
-## Checklist
-
-- [ ] All tasks completed
-- [ ] Tests written
-- [ ] Documentation updated
-- [ ] Code reviewed
-"""
-        tasks_file.write_text(tasks_content, encoding="utf-8")
-
-    # Create checklists directory and requirements.md
+    # Create checklists directory (requirements.md created by AI in stage 5)
     checklists_dir = feature_dir / "checklists"
     checklists_dir.mkdir(exist_ok=True)
-
-    requirements_file = checklists_dir / "requirements.md"
-    if not requirements_file.exists():
-        requirements_content = """# Requirements Checklist
-
-## Completeness
-
-- [ ] All user stories have acceptance criteria
-- [ ] Edge cases are documented
-- [ ] Error handling is specified
-
-## Clarity
-
-- [ ] No ambiguous terms
-- [ ] Examples provided where needed
-- [ ] Technical terms are defined
-
-## Consistency
-
-- [ ] No conflicting requirements
-- [ ] Aligns with existing patterns
-- [ ] Follows project conventions
-"""
-        requirements_file.write_text(requirements_content, encoding="utf-8")
 
     return feature_dir, str(spec_file)
 
@@ -566,9 +416,9 @@ def run_create_feature(
     jira_config = config["branching"]["jira"]
 
     # Validate JIRA if required
-    if jira_config["required"] and not jira:
+    if jira_config.get("required", False) and not jira:
         console.print(
-            f"[red]Error:[/red] JIRA number is required by configuration",
+            "[red]Error:[/red] JIRA number is required by configuration",
             file=console.stderr,
         )
         console.print(
@@ -581,8 +431,13 @@ def run_create_feature(
     if jira:
         is_valid, error_msg = validate_jira_number(jira, config)
         if not is_valid:
-            console.print(f"[red]Error:[/red] {error_msg}", file=console.stderr)
-            raise SystemExit(1)
+            # Check if strict format validation is enabled
+            if jira_config.get("strict_format", False):
+                console.print(f"[red]Error:[/red] {error_msg}", file=console.stderr)
+                raise SystemExit(1)
+            else:
+                # Just warn, don't block
+                console.print(f"[yellow]Warning:[/yellow] {error_msg}")
 
     # Generate short name if not provided
     if not short_name:

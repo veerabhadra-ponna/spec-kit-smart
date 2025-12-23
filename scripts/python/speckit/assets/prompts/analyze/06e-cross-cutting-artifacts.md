@@ -1,6 +1,6 @@
 ---
 stage: cross_cutting_artifacts
-requires: 05-artifacts.json
+requires: analyze-project-05-artifacts.json
 condition: state.analysis_scope == "B"
 outputs: cross_cutting_complete
 version: 3.1.0
@@ -17,10 +17,10 @@ Generate artifacts specific to Cross-Cutting Concern Migration (Scope B). This i
 
 ## Pre-Check
 
-1. Read `.analysis/.state/05-artifacts.json`
+1. Read `.analysis/.state/analyze-project-05-artifacts.json`
 2. Confirm `common_artifacts_complete` = true
 3. Confirm `analysis_scope` = "B"
-4. Load concern details from `.analysis/.state/03b-cross-cutting.json`
+4. Load concern details from `.analysis/.state/analyze-project-03b-cross-cutting.json`
 
 **IF not complete:** STOP - Return to 05a-executive-summary.md
 
@@ -46,7 +46,9 @@ From Stage 3B state, extract:
 
 **Purpose:** Detailed abstraction analysis for the concern
 
-**Template:** Use embedded template: concern-analysis-template.md`
+**Template:**
+
+{{include:concern-analysis-template.md}}
 
 Generate:
 
@@ -177,7 +179,9 @@ Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
 ---
 ⏸️ **[STOP: GENERATE_MIGRATION_PLAN_CHUNK_1]**
 
-**Template:** Use embedded template: concern-migration-plan-template.md`
+**Template:**
+
+{{include:concern-migration-plan-template.md}}
 
 ```markdown
 # Migration Plan: {Concern Type}
@@ -650,7 +654,7 @@ Write: `.analysis/.checkpoints/cross-cutting-artifacts-complete.json`
 
 ```
 
-Write to: `.analysis/.state/06-scope-artifacts.json`
+Write to: `.analysis/.state/analyze-project-06-scope-artifacts.json`
 
 ---
 
@@ -671,7 +675,7 @@ Write to: `.analysis/.state/06-scope-artifacts.json`
     ✓ concern-migration-plan.md
     ✓ rollback-procedure.md
 
-  State: .analysis/.state/06-scope-artifacts.json
+  State: .analysis/.state/analyze-project-06-scope-artifacts.json
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:SCOPE_ARTIFACTS

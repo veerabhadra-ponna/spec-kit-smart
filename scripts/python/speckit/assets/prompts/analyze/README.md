@@ -140,14 +140,14 @@ Each sub-prompt:
 ```text
 .analysis/
 ├── .state/                               # Chain state files
-│   ├── 00-bootstrap.json                 # Script-generated (chain_id, paths)
-│   ├── 01-setup-and-scope.json           # Stage 1 output
-│   ├── 02-file-analysis.json             # Stage 2 output
-│   ├── 03a-full-app.json                 # Stage 3A output (if scope=A)
-│   ├── 03b-cross-cutting.json            # Stage 3B output (if scope=B)
-│   ├── 04-report.json                    # Stage 4 output
-│   ├── 05-artifacts.json                 # Stage 5 output
-│   └── 06-scope-artifacts.json           # Stage 6 output
+│   ├── analyze-project-00-bootstrap.json                 # Script-generated (chain_id, paths)
+│   ├── analyze-project-01-setup-and-scope.json           # Stage 1 output
+│   ├── analyze-project-02-file-analysis.json             # Stage 2 output
+│   ├── analyze-project-03a-full-app.json                 # Stage 3A output (if scope=A)
+│   ├── analyze-project-03b-cross-cutting.json            # Stage 3B output (if scope=B)
+│   ├── analyze-project-04-report.json                    # Stage 4 output
+│   ├── analyze-project-05-artifacts.json                 # Stage 5 output
+│   └── analyze-project-06-scope-artifacts.json           # Stage 6 output
 ├── .checkpoints/                         # Sub-prompt checkpoints (NEW in v3.1)
 │   ├── 01a-init-complete.json
 │   ├── 01b-inputs-complete.json
@@ -248,6 +248,21 @@ Resume from: 02d-test-audit.md
 Chain ID: a3f7c8d1
 
 ```
+
+## Template Injection
+
+Stage 6 prompts use `{{include:template.md}}` syntax to inject reusable templates at runtime:
+
+| Prompt | Templates Included |
+|--------|-------------------|
+| `06-scope-artifacts.md` | functional-spec-template.md, technical-spec-template.md, stage-prompt-templates/* |
+| `06a-functional-spec-legacy.md` | functional-spec-template.md |
+| `06b-functional-spec-target.md` | functional-spec-template.md |
+| `06c-technical-spec.md` | technical-spec-template.md |
+| `06d-stage-prompts.md` | stage-prompt-templates/*.md (4 templates) |
+| `06e-cross-cutting-artifacts.md` | concern-analysis-template.md, concern-migration-plan-template.md |
+
+Templates are loaded from `assets/templates/` by the CLI and injected into prompts at emission time.
 
 ## Key Improvements in v3.1
 

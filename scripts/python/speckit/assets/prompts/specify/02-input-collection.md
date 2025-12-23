@@ -80,18 +80,11 @@ Check the provided input:
 Confirm input collected:
 
 ```text
-
 ✓ Input collected
   - JIRA: [number or "none"]
   - Feature: [short summary]
 ```
 
----
+Then run the next command shown below.
 
-## NEXT
-
-```text
-speckitadv specify --stage=3 --chain={{chain_id}}
-```
-
-**Note:** JIRA and feature info collected here will be used by subsequent stages via AI context.
+**IMPORTANT**: Pass `--feature` (required) and `--jira` (optional) to stage 3. State persistence begins at stage 3.
