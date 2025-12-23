@@ -457,6 +457,34 @@ class TestStateLocationRouting:
                 data = json.loads(state_file.read_text())
                 assert data.get("chain_id") != chain_id, "Chain state should be migrated from pending"
 
+    def test_set_feature_dir_cleans_pending_when_initialized_with_feature_dir(self, tmp_path):
+        """set_feature_dir should clean up empty pending even when chain started with feature_dir."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Create empty pending state dir (simulates leftover from previous failed workflow)
+        pending_state = tmp_path / "specs" / ".pending" / ".state"
+        pending_state.mkdir(parents=True)
+
+        # Create feature directory
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_dir.mkdir(parents=True)
+
+        # Initialize chain DIRECTLY with feature_dir (simulates stage 4 restart with --feature-dir)
+        chain = ChainState.initialize(
+            project_path, command="specify", workspace_root=tmp_path, feature_dir=feature_dir
+        )
+
+        # State should be in feature directory directly
+        assert chain.state_dir == feature_dir / ".state"
+
+        # Now call set_feature_dir (as stages.py does)
+        chain.set_feature_dir(feature_dir, workspace_root=tmp_path)
+
+        # Pending should be cleaned up since it's empty
+        assert not pending_state.exists(), "Empty .pending/.state should be removed"
+        assert not (tmp_path / "specs" / ".pending").exists(), "Empty .pending should be removed"
+
     def test_load_scans_feature_directories(self, tmp_path):
         """ChainState.load should find state in feature directories."""
         project_path = tmp_path / "project"

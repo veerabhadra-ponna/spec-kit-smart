@@ -406,18 +406,20 @@ class ChainState:
                     except (json.JSONDecodeError, OSError):
                         continue
 
-                # Clean up pending directory if empty
-                if old_state_dir.name == ".state":
-                    pending_dir = old_state_dir.parent
-                    if pending_dir.name == ".pending":
-                        try:
-                            # Remove .state if empty
-                            if not any(old_state_dir.iterdir()):
-                                old_state_dir.rmdir()
-                            # Remove .pending if empty
-                            if pending_dir.exists() and not any(pending_dir.iterdir()):
-                                pending_dir.rmdir()
-                        except OSError:
-                            pass  # Directory not empty or permission issue
+            # Always clean up pending directory if empty (even if no migration occurred)
+            # This handles the case where chain was initialized directly with feature_dir
+            workspace = workspace_root or Path.cwd()
+            pending_state_dir = workspace / "specs" / ".pending" / ".state"
+            pending_dir = workspace / "specs" / ".pending"
+
+            try:
+                # Remove .state if empty
+                if pending_state_dir.exists() and not any(pending_state_dir.iterdir()):
+                    pending_state_dir.rmdir()
+                # Remove .pending if empty
+                if pending_dir.exists() and not any(pending_dir.iterdir()):
+                    pending_dir.rmdir()
+            except OSError:
+                pass  # Directory not empty or permission issue
 
             self.state_dir = new_state_dir
