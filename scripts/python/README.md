@@ -77,12 +77,17 @@ speckitadv specify --stage=2 --jira=C12345-7890 --feature="Add user auth"
 # Stage 3: Create feature branch (requires --feature from stage 2)
 speckitadv specify --stage=3 --feature="Add user auth" --jira=C12345-7890
 
-# Stage 4+: Continue with chain ID from stage 3
-speckitadv specify --stage=4 --chain=abc123
+# Stage 4+: Chain auto-resumes from state (--chain optional)
+speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
 # ... until complete
 ```
 
-**Note:** Stages 1-2 are stateless. Pass `--feature` and `--jira` from stage 2 to stage 3.
+**Notes:**
+
+- Stages 1-2 are stateless. Pass `--feature` and `--jira` from stage 2 to stage 3.
+- Stage 3 creates the feature folder and persists state.
+- Stage 4+ auto-detects chain from state. Use `--chain` or `--feature-dir` to
+  disambiguate when multiple features exist.
 
 ### Interactive Mode Options
 

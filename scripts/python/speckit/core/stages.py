@@ -5,8 +5,11 @@ Provides a generic handler for commands that use the fragment system.
 Each command can use this to load and emit its staged prompts.
 """
 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
+
+from rich.console import Console
 
 from speckit.core.emit import emit_stage, emit_error, emit_complete
 from speckit.core.prompts import (
@@ -19,12 +22,23 @@ from speckit.core.state import ChainState, FEATURE_SCOPED_COMMANDS, FEATURE_STAT
 
 import json
 
+console = Console()
+
+
+@dataclass
+class ChainMatch:
+    """Result of chain auto-detection."""
+
+    chain_id: str
+    source: str  # Description of where it was found
+    total_matches: int  # How many matching chains were found
+
 
 def _find_existing_chain_for_command(
     command: str,
     feature_dir: Optional[Path] = None,
     workspace_root: Optional[Path] = None,
-) -> Optional[str]:
+) -> Optional[ChainMatch]:
     """
     Find an existing chain_id for a command without requiring --chain flag.
 
@@ -42,10 +56,11 @@ def _find_existing_chain_for_command(
         workspace_root: Optional workspace root
 
     Returns:
-        chain_id if found, None otherwise
+        ChainMatch with chain_id, source, and total matches count; None if not found
     """
     root = workspace_root or Path.cwd()
     specs_dir = root / "specs"
+    all_matches: list[tuple[str, str]] = []  # (chain_id, source)
 
     # 1. Check provided feature directory first
     if feature_dir:
@@ -54,7 +69,15 @@ def _find_existing_chain_for_command(
             try:
                 data = json.loads(state_file.read_text())
                 if data.get("command") == command:
-                    return data.get("chain_id")
+                    chain_id = data.get("chain_id")
+                    if chain_id:
+                        # When feature_dir is explicitly provided, return immediately
+                        # (no ambiguity - user specified the feature)
+                        return ChainMatch(
+                            chain_id=chain_id,
+                            source=feature_dir.name,
+                            total_matches=1,
+                        )
             except (json.JSONDecodeError, OSError):
                 pass
 
@@ -67,7 +90,9 @@ def _find_existing_chain_for_command(
         try:
             data = json.loads(pending_state.read_text())
             if data.get("command") == command:
-                return data.get("chain_id")
+                chain_id = data.get("chain_id")
+                if chain_id:
+                    all_matches.append((chain_id, ".pending"))
         except (json.JSONDecodeError, OSError):
             pass
 
@@ -79,11 +104,22 @@ def _find_existing_chain_for_command(
                 try:
                     data = json.loads(state_file.read_text())
                     if data.get("command") == command:
-                        return data.get("chain_id")
+                        chain_id = data.get("chain_id")
+                        if chain_id:
+                            all_matches.append((chain_id, subdir.name))
                 except (json.JSONDecodeError, OSError):
                     continue
 
-    return None
+    if not all_matches:
+        return None
+
+    # Return the first match (most recent by sorted order) with total count
+    first_chain_id, first_source = all_matches[0]
+    return ChainMatch(
+        chain_id=first_chain_id,
+        source=first_source,
+        total_matches=len(all_matches),
+    )
 
 
 def _detect_feature_dir_for_chain(chain_id: str, workspace_root: Optional[Path] = None) -> Optional[Path]:
@@ -182,9 +218,18 @@ def run_staged_command(
     # For feature-scoped commands at stage 4+, auto-resume chain if not explicitly provided
     # This ensures deterministic behavior even if AI doesn't pass --chain
     if not chain_id and command in FEATURE_SCOPED_COMMANDS and stage >= FEATURE_STATE_MIN_STAGE + 1:
-        auto_chain = _find_existing_chain_for_command(command, feature_dir_path)
-        if auto_chain:
-            chain_id = auto_chain
+        chain_match = _find_existing_chain_for_command(command, feature_dir_path)
+        if chain_match:
+            chain_id = chain_match.chain_id
+            # Warn if multiple matching chains found (ambiguous selection)
+            if chain_match.total_matches > 1:
+                console.print(
+                    f"[yellow]⚠ Multiple {command} chains found ({chain_match.total_matches}). "
+                    f"Auto-resuming: {chain_match.chain_id} from {chain_match.source}[/yellow]"
+                )
+                console.print(
+                    f"[dim]  Use --chain=<id> or --feature-dir to specify explicitly.[/dim]"
+                )
 
     # Initialize or load chain state
     if chain_id:

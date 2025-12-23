@@ -6,7 +6,7 @@ import json
 import pytest
 from pathlib import Path
 
-from speckit.core.stages import _find_existing_chain_for_command
+from speckit.core.stages import _find_existing_chain_for_command, ChainMatch
 
 
 class TestFindExistingChainForCommand:
@@ -30,7 +30,10 @@ class TestFindExistingChainForCommand:
             "specify", feature_dir=feature_dir, workspace_root=tmp_path
         )
 
-        assert result == "abc12345"
+        assert result is not None
+        assert result.chain_id == "abc12345"
+        assert result.source == "001-my-feature"
+        assert result.total_matches == 1  # Feature dir is explicit, no ambiguity
 
     def test_finds_chain_in_pending(self, tmp_path):
         """Should find chain_id from pending state directory."""
@@ -47,7 +50,10 @@ class TestFindExistingChainForCommand:
 
         result = _find_existing_chain_for_command("specify", workspace_root=tmp_path)
 
-        assert result == "pending123"
+        assert result is not None
+        assert result.chain_id == "pending123"
+        assert result.source == ".pending"
+        assert result.total_matches == 1
 
     def test_scans_feature_directories(self, tmp_path):
         """Should scan feature directories when no feature_dir provided."""
@@ -73,7 +79,10 @@ class TestFindExistingChainForCommand:
         # Should find the most recent (sorted by name, reverse order)
         result = _find_existing_chain_for_command("specify", workspace_root=tmp_path)
 
-        assert result == "newer222"
+        assert result is not None
+        assert result.chain_id == "newer222"
+        assert result.source == "002-newer-feature"
+        assert result.total_matches == 2  # Both features have matching command
 
     def test_ignores_different_command(self, tmp_path):
         """Should ignore state files from different commands."""
@@ -119,7 +128,9 @@ class TestFindExistingChainForCommand:
 
         result = _find_existing_chain_for_command("specify", workspace_root=tmp_path)
 
-        assert result == "valid123"
+        assert result is not None
+        assert result.chain_id == "valid123"
+        assert result.total_matches == 1
 
     def test_feature_dir_takes_priority(self, tmp_path):
         """Feature directory state should take priority over pending."""
@@ -149,4 +160,56 @@ class TestFindExistingChainForCommand:
             "specify", feature_dir=feature_dir, workspace_root=tmp_path
         )
 
-        assert result == "feature456"
+        assert result is not None
+        assert result.chain_id == "feature456"
+        assert result.total_matches == 1  # Explicit feature_dir means no ambiguity
+
+    def test_reports_multiple_matches(self, tmp_path):
+        """Should report total_matches when multiple features have matching command."""
+        # Create three feature directories with matching command
+        for i, name in enumerate(["001-feature-a", "002-feature-b", "003-feature-c"]):
+            feature_state = tmp_path / "specs" / name / ".state"
+            feature_state.mkdir(parents=True)
+            (feature_state / "latest.json").write_text(json.dumps({
+                "chain_id": f"chain{i}",
+                "command": "specify",
+                "stage": "04-generate-spec",
+                "timestamp": "2025-01-01T00:00:00",
+            }))
+
+        result = _find_existing_chain_for_command("specify", workspace_root=tmp_path)
+
+        assert result is not None
+        assert result.chain_id == "chain2"  # 003-feature-c is sorted last (reverse)
+        assert result.source == "003-feature-c"
+        assert result.total_matches == 3
+
+    def test_pending_included_in_match_count(self, tmp_path):
+        """Pending state should be included in total_matches count."""
+        # Create pending state
+        pending_state = tmp_path / "specs" / ".pending" / ".state"
+        pending_state.mkdir(parents=True)
+        (pending_state / "latest.json").write_text(json.dumps({
+            "chain_id": "pending123",
+            "command": "specify",
+            "stage": "03-branch-setup",
+            "timestamp": "2025-01-01T00:00:00",
+        }))
+
+        # Create feature state
+        feature_state = tmp_path / "specs" / "001-my-feature" / ".state"
+        feature_state.mkdir(parents=True)
+        (feature_state / "latest.json").write_text(json.dumps({
+            "chain_id": "feature456",
+            "command": "specify",
+            "stage": "04-generate-spec",
+            "timestamp": "2025-01-02T00:00:00",
+        }))
+
+        # Without explicit feature_dir, should find both
+        result = _find_existing_chain_for_command("specify", workspace_root=tmp_path)
+
+        assert result is not None
+        assert result.chain_id == "pending123"  # Pending is checked first
+        assert result.source == ".pending"
+        assert result.total_matches == 2  # pending + feature
