@@ -262,9 +262,10 @@ def is_stage_complete(
     stage_name: str,
     command: str = "analyze-project",
     repo_root: Optional[Path] = None,
+    feature_dir: Optional[Path] = None,
 ) -> bool:
     """Check if a stage is complete."""
-    state_dir = get_state_dir(command, repo_root)
+    state_dir = get_state_dir(command, repo_root, feature_dir)
     file_stage_name = f"{command}-{stage_name}" if command else stage_name
     state_file = state_dir / f"{file_stage_name}.json"
     return state_file.exists()
@@ -273,9 +274,10 @@ def is_stage_complete(
 def get_chain_id_from_state(
     command: str = "",
     repo_root: Optional[Path] = None,
+    feature_dir: Optional[Path] = None,
 ) -> str:
     """Get chain ID from latest state."""
-    state = load_latest_state(command, repo_root)
+    state = load_latest_state(command, repo_root, feature_dir)
     if state:
         return state.get("chain_id", "unknown")
     return "unknown"
@@ -379,10 +381,10 @@ def run_chain_state_command(
         if not stage:
             console.print("[red]Error:[/red] is-complete requires stage name")
             return
-        print("true" if is_stage_complete(stage) else "false")
+        print("true" if is_stage_complete(stage, command=workflow_cmd, feature_dir=feature_dir_path) else "false")
 
     elif command == "chain-id":
-        print(get_chain_id_from_state())
+        print(get_chain_id_from_state(command=workflow_cmd, feature_dir=feature_dir_path))
 
     elif command == "init-state":
         if not stage:

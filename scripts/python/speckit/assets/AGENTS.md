@@ -137,6 +137,8 @@ State files are prefixed with command name to avoid collisions: `constitution-01
 
 **Note:** For feature-scoped commands, the feature directory is auto-detected after stage 3 creates it. State is automatically migrated from `specs/.pending/.state/` to `specs/{feature}/.state/`.
 
+**Important - Passing Inputs Between Stateless Stages:** Since stages 1-2 don't persist state, inputs collected in stage 2 (like `--feature` and `--jira` for specify) must be explicitly passed to stage 3 via CLI options. The NEXT command in stage 2 prompts will instruct you to include these values.
+
 **Command Options:** Each command has different options. Use `--help` to see valid options:
 
 ```bash
