@@ -1,6 +1,6 @@
 ---
 stage: report_generation
-requires: 03*-*.json
+requires: analyze-project-03*-*.json
 outputs: report_generated
 version: 1.0.0
 ---

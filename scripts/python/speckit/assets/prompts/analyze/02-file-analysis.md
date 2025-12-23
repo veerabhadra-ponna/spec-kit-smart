@@ -1,6 +1,6 @@
 ---
 stage: file_analysis
-requires: 01-setup-and-scope.json
+requires: analyze-project-01-setup-and-scope.json
 outputs: analysis_state
 version: 2.0.0
 ---

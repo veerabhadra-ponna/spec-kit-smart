@@ -1,6 +1,6 @@
 ---
 stage: scope_artifact_generation
-requires: 05-artifacts.json
+requires: analyze-project-05-artifacts.json
 outputs: all_artifacts_complete
 version: 1.0.0
 ---

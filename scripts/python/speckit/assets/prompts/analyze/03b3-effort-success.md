@@ -338,7 +338,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b-cross-cutting-complete.json`
 
 **IF checkpoint verified:**
   Output: `✓ Checkpoint verified: 03b-cross-cutting`
-  Output: `✓ State saved: 03b-cross-cutting.json`
+  Output: `✓ State saved: analyze-project-03b-cross-cutting.json`
 
 **IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 

@@ -1,6 +1,6 @@
 ---
 stage: file_analysis_phase1
-requires: 01-setup-and-scope.json
+requires: analyze-project-01-setup-and-scope.json
 outputs: category_patterns
 version: 3.1.0
 next: 02b-deep-dive.md

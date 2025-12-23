@@ -1,6 +1,6 @@
 ---
 stage: full_app_questions_1
-requires: 02-file-analysis.json
+requires: analyze-project-02-file-analysis.json
 condition: state.analysis_scope == "A"
 outputs: modernization_prefs_1_5
 version: 3.1.0

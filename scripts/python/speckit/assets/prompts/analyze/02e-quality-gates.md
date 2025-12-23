@@ -466,7 +466,7 @@ Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
 **IF checkpoint verified:**
   Output: `✓ Checkpoint verified: 02-file-analysis`
   Output: `✓ All quality gates passed`
-  Output: `✓ State saved: 02-file-analysis.json`
+  Output: `✓ State saved: analyze-project-02-file-analysis.json`
 
 **IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 

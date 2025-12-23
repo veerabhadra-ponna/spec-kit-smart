@@ -1,6 +1,6 @@
 ---
 stage: cross_cutting_analysis
-requires: 02-file-analysis.json
+requires: analyze-project-02-file-analysis.json
 condition: state.analysis_scope == "B"
 outputs: concern_state
 version: 1.0.0

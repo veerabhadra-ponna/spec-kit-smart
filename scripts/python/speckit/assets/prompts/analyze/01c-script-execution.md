@@ -312,7 +312,7 @@ Write checkpoint file: `.analysis/.checkpoints/01c-script-complete.json`
   "chain_id": "{chain_id}",
   "analysis_dir": "{analysis_dir}",
   "json_files_loaded": [
-    "00-bootstrap.json",
+    "analyze-project-00-bootstrap.json",
     "project-metadata.json",
     "tech-stack.json",
     "file-structure.json"
@@ -335,7 +335,7 @@ Write checkpoint file: `.analysis/.checkpoints/01c-script-complete.json`
 
 **IF both checkpoints verified:**
   Output: `✓ Checkpoint verified: 01c-script-execution`
-  Output: `✓ State saved: 01-setup-and-scope.json`
+  Output: `✓ State saved: analyze-project-01-setup-and-scope.json`
 **IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---

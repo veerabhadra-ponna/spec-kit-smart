@@ -1,6 +1,6 @@
 ---
 stage: common_artifacts
-requires: 04-report.json
+requires: analyze-project-04-report.json
 outputs: common_artifacts_complete
 version: 3.1.0
 next: 06a-functional-spec-legacy.md (scope A) OR 06e-cross-cutting-artifacts.md (scope B)

@@ -1,6 +1,6 @@
 ---
 stage: common_artifact_generation
-requires: 04-report.json
+requires: analyze-project-04-report.json
 outputs: common_artifacts_complete
 version: 1.0.0
 ---

@@ -274,7 +274,7 @@ From `file-structure.json`:
 - `entry_points`
 - `analysis_priority`
 
-From `00-bootstrap.json`:
+From `analyze-project-00-bootstrap.json`:
 - `chain_id`
 
 ---

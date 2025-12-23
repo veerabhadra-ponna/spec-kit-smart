@@ -1,6 +1,6 @@
 ---
 stage: full_application_analysis
-requires: 02-file-analysis.json
+requires: analyze-project-02-file-analysis.json
 condition: state.analysis_scope == "A"
 outputs: full_app_state
 version: 1.0.0

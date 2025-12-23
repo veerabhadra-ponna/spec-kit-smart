@@ -1,6 +1,6 @@
 ---
 stage: cross_cutting_artifacts
-requires: 05-artifacts.json
+requires: analyze-project-05-artifacts.json
 condition: state.analysis_scope == "B"
 outputs: cross_cutting_complete
 version: 3.1.0

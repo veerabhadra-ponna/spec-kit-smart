@@ -1,6 +1,6 @@
 ---
 stage: functional_spec_legacy
-requires: 05-artifacts.json
+requires: analyze-project-05-artifacts.json
 condition: state.analysis_scope == "A"
 outputs: functional_spec_legacy_complete
 version: 3.1.0

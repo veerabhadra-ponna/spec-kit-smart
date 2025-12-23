@@ -346,7 +346,7 @@ Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
 
 **IF checkpoint verified:**
   Output: `✓ Checkpoint verified: 03a-full-app`
-  Output: `✓ State saved: 03a-full-app.json`
+  Output: `✓ State saved: analyze-project-03a-full-app.json`
 
 **IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
