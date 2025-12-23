@@ -127,11 +127,12 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
     - {variable} - Simple substitution
     - {variable:default} - With default value
     - {{escaped}} - Literal braces (preserved as single braces)
-    - {{include:template.md}} - Include template file from assets/templates/
+    - {{include:template.md}} - Include template file inline from assets/templates/
+    - {{copy-template:source.md:dest.md}} - Copy template to feature_dir/dest.md
 
     Args:
         fragment: Prompt fragment content
-        context: Variables to substitute
+        context: Variables to substitute (must include 'feature_dir' for copy-template)
         strict: If True, raise FileNotFoundError for missing templates (for CI/tests).
                 If False (default), return placeholder text for graceful degradation.
 
@@ -146,7 +147,37 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
     result = fragment
     missing_templates: list[str] = []
 
-    # First, handle template includes: {{include:path/to/template.md}}
+    # Handle template copy: {{copy-template:source.md:dest.md}}
+    # This copies the template to feature_dir/dest.md and returns a confirmation
+    def copy_template(match: re.Match) -> str:
+        template_path = match.group(1).strip()
+        dest_filename = match.group(2).strip() if match.group(2) else template_path.replace("-template", "")
+        feature_dir = context.get("feature_dir", "")
+
+        if not feature_dir:
+            return f"[Cannot copy template: feature_dir not set]"
+
+        try:
+            template_content = load_template(template_path)
+            dest_path = Path(feature_dir) / dest_filename
+
+            # Ensure directory exists
+            dest_path.parent.mkdir(parents=True, exist_ok=True)
+
+            # Write the template content
+            dest_path.write_text(template_content, encoding="utf-8")
+
+            return f"✓ Template copied: `{dest_path}`"
+        except FileNotFoundError:
+            if strict:
+                missing_templates.append(template_path)
+            return f"[Template not found: {template_path}]"
+        except OSError as e:
+            return f"[Failed to copy template: {e}]"
+
+    result = re.sub(r"\{\{copy-template:([^:}]+)(?::([^}]+))?\}\}", copy_template, result)
+
+    # Handle template includes: {{include:path/to/template.md}}
     # This must happen before escaping braces
     def include_template(match: re.Match) -> str:
         template_path = match.group(1).strip()

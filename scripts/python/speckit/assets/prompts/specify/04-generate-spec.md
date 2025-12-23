@@ -16,15 +16,11 @@ Create spec.md using a chunked approach to handle large specifications.
 
 ## Step 1: Create Spec Template
 
-First, get the template structure:
+The CLI automatically copies the spec template to the feature directory:
 
-```bash
-speckitadv show-fragment specify spec-template
-```
+{{copy-template:spec-template.md:spec.md}}
 
-Use the **Write tool** to create `{{feature_dir}}/spec.md` with the template content.
-
-Make these initial replacements:
+Now edit `{{feature_dir}}/spec.md` with these initial replacements:
 
 - Replace `[Feature Name]` with feature name
 - Replace `[date]` with today's date

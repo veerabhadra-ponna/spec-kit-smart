@@ -70,21 +70,18 @@ Parse JSON output for:
 
 ## Step 4: Create Plan Template
 
-Use the **Write tool** to copy the plan template to `{{feature_dir}}/plan.md`:
+The CLI automatically copies the plan template to the feature directory:
 
-```bash
-# Get the template content
-speckitadv show-fragment plan plan-template
-```
+{{copy-template:plan-template.md:plan.md}}
 
-Write the template content to `{{feature_dir}}/plan.md` with these initial replacements:
+Now edit `{{feature_dir}}/plan.md` with these initial replacements:
 
 - Replace `[FEATURE]` with the feature name from spec.md
 - Replace `[DATE]` with today's date
 - Replace `[###-feature-name]` with the actual feature directory name
 - Keep all other `[...]` placeholders - they will be filled in subsequent stages
 
-**IMPORTANT**: The plan.md file MUST be created in this stage. Subsequent stages will fill in sections.
+**IMPORTANT**: Subsequent stages will fill in remaining sections.
 
 ---
 
