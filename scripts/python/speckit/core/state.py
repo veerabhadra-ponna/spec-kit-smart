@@ -247,7 +247,12 @@ class ChainState:
                 f"Searched in: {[str(d) for d in state_dirs_to_try]}"
             )
 
-        chain = cls(state_dir, chain_id, command=loaded_data.get("command", command))
+        # Use the passed command (the NEW command using this chain) if provided,
+        # only fall back to stored command if none specified.
+        # This allows chain reuse across commands (specify -> plan -> tasks -> implement)
+        # while keeping each command's stages correctly prefixed.
+        actual_command = command if command else loaded_data.get("command", "")
+        chain = cls(state_dir, chain_id, command=actual_command)
         chain._data = loaded_data
 
         return chain

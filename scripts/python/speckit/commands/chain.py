@@ -253,6 +253,15 @@ def get_last_completed_stage(
     if not stage_files:
         return "none"
 
+    # Filter by command prefix if command is specified
+    # This ensures last-stage returns correct result when multiple commands
+    # share the same state directory (e.g., feature-scoped commands)
+    if command:
+        prefix = f"{command}-"
+        filtered = [f for f in stage_files if f.startswith(prefix)]
+        if filtered:
+            stage_files = filtered
+
     # Sort and get last
     stage_files.sort(reverse=True)
     return stage_files[0].replace(".json", "")
