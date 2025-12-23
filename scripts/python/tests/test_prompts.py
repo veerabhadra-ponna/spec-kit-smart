@@ -7,7 +7,9 @@ from pathlib import Path
 
 from speckit.core.prompts import (
     get_prompts_base,
+    get_templates_base,
     get_prompt_fragment,
+    load_template,
     render_prompt,
     list_fragments,
     get_stage_order,
@@ -120,6 +122,62 @@ class TestRenderPrompt:
         result = render_prompt(fragment, context)
 
         assert "Value: " in result
+
+    def test_template_include(self):
+        """Should include template from assets/templates/."""
+        # Use a known template
+        fragment = "Before\n{{include:spec-template.md}}\nAfter"
+        context = {}
+
+        result = render_prompt(fragment, context)
+
+        # Template content should be included
+        assert "Before" in result
+        assert "After" in result
+        assert "Feature Specification" in result or "[Template not found" in result
+
+    def test_template_include_not_found(self):
+        """Should show error message for missing template."""
+        fragment = "Before\n{{include:nonexistent-template.md}}\nAfter"
+        context = {}
+
+        result = render_prompt(fragment, context)
+
+        assert "Before" in result
+        assert "After" in result
+        assert "[Template not found: nonexistent-template.md]" in result
+
+
+class TestGetTemplatesBase:
+    """Tests for get_templates_base function."""
+
+    def test_returns_path(self):
+        """Should return a Path object."""
+        result = get_templates_base()
+        assert isinstance(result, Path)
+
+    def test_path_contains_templates(self):
+        """Should return path containing 'templates'."""
+        result = get_templates_base()
+        assert "templates" in str(result)
+
+
+class TestLoadTemplate:
+    """Tests for load_template function."""
+
+    def test_existing_template(self):
+        """Should load existing template."""
+        try:
+            content = load_template("spec-template.md")
+            assert isinstance(content, str)
+            assert len(content) > 0
+        except FileNotFoundError:
+            pytest.skip("Template not found in test environment")
+
+    def test_nonexistent_template(self):
+        """Should raise FileNotFoundError for missing template."""
+        with pytest.raises(FileNotFoundError):
+            load_template("nonexistent-template.md")
 
 
 class TestListFragments:

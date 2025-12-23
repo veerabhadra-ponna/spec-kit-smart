@@ -38,6 +38,48 @@ def get_prompts_base() -> Path:
     return package_assets
 
 
+def get_templates_base() -> Path:
+    """
+    Get the base path for templates.
+
+    Returns:
+        Path to templates directory (handles dev, pip install, and frozen modes)
+    """
+    if getattr(sys, "frozen", False):
+        # Running as compiled executable (PyInstaller)
+        return Path(sys._MEIPASS) / "assets" / "templates"  # type: ignore
+
+    # Check for package assets first (pip install)
+    package_assets = Path(__file__).parent.parent / "assets" / "templates"
+    if package_assets.exists():
+        return package_assets
+
+    # Default to package assets path
+    return package_assets
+
+
+def load_template(template_path: str) -> str:
+    """
+    Load a template file from assets/templates/.
+
+    Args:
+        template_path: Relative path to template (e.g., "spec-template.md" or "stage-prompt-templates/clarify-prompt-template.md")
+
+    Returns:
+        Template content
+
+    Raises:
+        FileNotFoundError: If template not found
+    """
+    templates_base = get_templates_base()
+    full_path = templates_base / template_path
+
+    if full_path.exists():
+        return full_path.read_text(encoding="utf-8")
+
+    raise FileNotFoundError(f"Template not found: {template_path}")
+
+
 def get_prompt_fragment(command: str, stage: str) -> str:
     """
     Load a prompt fragment for a specific command and stage.
@@ -79,12 +121,13 @@ def get_prompt_fragment(command: str, stage: str) -> str:
 
 def render_prompt(fragment: str, context: dict) -> str:
     """
-    Render a prompt fragment with context variables.
+    Render a prompt fragment with context variables and template includes.
 
     Supports:
     - {variable} - Simple substitution
     - {variable:default} - With default value
-    - {{escaped}} - Literal braces
+    - {{escaped}} - Literal braces (preserved as single braces)
+    - {{include:template.md}} - Include template file from assets/templates/
 
     Args:
         fragment: Prompt fragment content
@@ -93,15 +136,28 @@ def render_prompt(fragment: str, context: dict) -> str:
     Returns:
         Rendered prompt
     """
+    import re
+
     result = fragment
 
-    # Handle escaped braces first (convert to placeholders)
+    # First, handle template includes: {{include:path/to/template.md}}
+    # This must happen before escaping braces
+    def include_template(match: re.Match) -> str:
+        template_path = match.group(1).strip()
+        try:
+            template_content = load_template(template_path)
+            # Recursively render the included template (for nested includes and variables)
+            return render_prompt(template_content, context)
+        except FileNotFoundError:
+            return f"[Template not found: {template_path}]"
+
+    result = re.sub(r"\{\{include:([^}]+)\}\}", include_template, result)
+
+    # Handle escaped braces (convert to placeholders)
     result = result.replace("{{", "\x00LBRACE\x00")
     result = result.replace("}}", "\x00RBRACE\x00")
 
     # Handle default values: {key:default}
-    import re
-
     def replace_with_default(match: re.Match) -> str:
         key = match.group(1)
         default = match.group(2) if match.group(2) else ""

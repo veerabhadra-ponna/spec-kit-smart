@@ -75,58 +75,19 @@ Use the **Write tool** to create `{{feature_dir}}/tasks.md` with **complete cont
 
 **IMPORTANT:** Generate actual tasks from the user stories in spec.md. Do NOT include sample/placeholder tasks.
 
-**Template structure** (fill in with actual tasks):
+**Template structure:**
 
-```markdown
-# Tasks: [FEATURE NAME]
-
-**Input**: Design documents from `{{feature_dir}}/`
-**Prerequisites**: plan.md, spec.md (for user stories)
-
-## Format: `[ID] [P?] [Story] Description`
-
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story (e.g., US1, US2)
-- Include exact file paths
-
-## Phase 1: Setup (Shared Infrastructure)
-
-- [ ] T001 Create project structure per plan
-- [ ] T002 Initialize project with dependencies
-- [ ] T003 [P] Configure linting/formatting
-
----
-
-## Phase 2: Foundational (Blocking Prerequisites)
-
-- [ ] T004 Setup database/migrations
-- [ ] T005 [P] Implement auth framework
-- [ ] T006 [P] Setup API routing
-
----
-
-## Phase 3: User Story 1 - [Title] (P1)
-
-- [ ] T007 [P] [US1] Create model in src/models/
-- [ ] T008 [US1] Implement service in src/services/
-- [ ] T009 [US1] Implement endpoint in src/api/
-
----
-
-[Repeat for additional user stories]
-
-## Phase N: Polish
-
-- [ ] TXXX Documentation updates
-- [ ] TXXX Code cleanup
-```
+{{include:tasks-template.md}}
 
 **Generation rules:**
 
-- Tasks from actual user stories in spec.md
-- Sequential IDs (T001, T002...)
-- [P] for parallelizable tasks
-- [US1], [US2] labels for story tasks
+- Replace ALL sample tasks with actual feature-specific tasks
+- Remove all HTML comments (`<!-- ... -->`) from output
+- Generate tasks from the actual user stories in spec.md
+- Use sequential task IDs (T001, T002...)
+- Mark parallelizable tasks with [P]
+- Label user story tasks with [US1], [US2], etc.
+- Include exact file paths in descriptions
 
 ---
 
