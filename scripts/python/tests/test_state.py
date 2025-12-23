@@ -325,3 +325,97 @@ class TestChainStateHelpers:
         assert isinstance(result, str)
         parsed = json.loads(result)
         assert parsed["chain_id"] == chain.chain_id
+
+
+class TestStateLocationRouting:
+    """Tests for command-specific state locations."""
+
+    def test_analyze_project_uses_analysis_state(self, tmp_path):
+        """analyze-project should use .analysis/.state/"""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        chain = ChainState.initialize(project_path, command="analyze-project", workspace_root=tmp_path)
+
+        assert chain.state_dir == tmp_path / ".analysis" / ".state"
+        assert (tmp_path / ".analysis" / ".state").exists()
+
+    def test_constitution_uses_memory_state(self, tmp_path):
+        """constitution should use memory/.state/"""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        chain = ChainState.initialize(project_path, command="constitution", workspace_root=tmp_path)
+
+        assert chain.state_dir == tmp_path / "memory" / ".state"
+        assert (tmp_path / "memory" / ".state").exists()
+        # Constitution should save bootstrap
+        bootstrap_file = tmp_path / "memory" / ".state" / "constitution-00-bootstrap.json"
+        assert bootstrap_file.exists()
+
+    def test_feature_command_uses_pending_initially(self, tmp_path):
+        """Feature commands should use specs/.pending/.state/ initially."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        chain = ChainState.initialize(project_path, command="specify", workspace_root=tmp_path)
+
+        assert chain.state_dir == tmp_path / "specs" / ".pending" / ".state"
+        # Feature commands don't save bootstrap
+        bootstrap_file = tmp_path / "specs" / ".pending" / ".state" / "specify-00-bootstrap.json"
+        assert not bootstrap_file.exists()
+
+    def test_feature_command_skips_early_stages(self, tmp_path):
+        """Feature commands should not persist state for stages 1-2."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        chain = ChainState.initialize(project_path, command="specify", workspace_root=tmp_path)
+
+        # Stage 1 - should not persist
+        result = chain.save("01-initialization", {"data": "test"}, stage_num=1)
+        assert result is None
+
+        # Stage 2 - should not persist
+        result = chain.save("02-input-collection", {"data": "test"}, stage_num=2)
+        assert result is None
+
+        # Stage 3 - should persist
+        result = chain.save("03-branch-setup", {"data": "test"}, stage_num=3)
+        assert result is not None
+        assert result.exists()
+
+    def test_set_feature_dir_updates_state_location(self, tmp_path):
+        """set_feature_dir should update state directory."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_dir.mkdir(parents=True)
+
+        chain = ChainState.initialize(project_path, command="specify", workspace_root=tmp_path)
+
+        # Initially uses pending
+        assert chain.state_dir == tmp_path / "specs" / ".pending" / ".state"
+
+        # Set feature dir
+        chain.set_feature_dir(feature_dir)
+
+        # Now uses feature-specific state dir
+        assert chain.state_dir == feature_dir / ".state"
+        assert (feature_dir / ".state").exists()
+
+    def test_load_finds_constitution_state(self, tmp_path):
+        """ChainState.load should find constitution state in memory/.state/"""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Initialize constitution
+        chain = ChainState.initialize(project_path, command="constitution", workspace_root=tmp_path)
+        chain_id = chain.chain_id
+
+        # Load it back
+        loaded = ChainState.load(chain_id, command="constitution", workspace_root=tmp_path)
+
+        assert loaded.chain_id == chain_id
+        assert loaded.command == "constitution"

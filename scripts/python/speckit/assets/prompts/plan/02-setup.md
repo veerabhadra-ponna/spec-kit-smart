@@ -91,6 +91,7 @@ Parse JSON output for:
 ## NEXT
 
 ```text
-
-speckitadv plan --stage=3 --chain={{chain_id}}
+speckitadv plan --stage=3
 ```
+
+**Note:** State persistence begins at stage 3.

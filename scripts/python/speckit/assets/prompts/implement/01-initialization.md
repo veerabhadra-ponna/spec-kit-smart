@@ -80,6 +80,7 @@ When writing code:
 ## NEXT
 
 ```text
-
-speckitadv implement --stage=2 --chain={{chain_id}}
+speckitadv implement --stage=2
 ```
+
+**Note:** State is not persisted until stage 3 (after feature context is established).

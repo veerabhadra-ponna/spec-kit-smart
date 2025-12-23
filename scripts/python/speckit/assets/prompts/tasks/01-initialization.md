@@ -69,6 +69,7 @@ Check `/.guidelines/` directory based on tech stack:
 ## NEXT
 
 ```text
-
-speckitadv tasks --stage=2 --chain={{chain_id}}
+speckitadv tasks --stage=2
 ```
+
+**Note:** State is not persisted until stage 3 (after feature context is established).

@@ -80,6 +80,7 @@ Check `/.guidelines/` directory:
 ## NEXT
 
 ```text
-
-speckitadv plan --stage=2 --chain={{chain_id}}
+speckitadv plan --stage=2
 ```
+
+**Note:** State is not persisted until stage 3 (after feature context is established).

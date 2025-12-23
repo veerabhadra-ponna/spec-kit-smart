@@ -100,8 +100,8 @@ class ChainState:
         elif command in FEATURE_SCOPED_COMMANDS:
             if feature_dir:
                 return feature_dir / ".state"
-            # No feature dir yet - return None (state not persisted for early stages)
-            return workspace_root / "specs" / ".pending"
+            # No feature dir yet - use pending location (state not persisted for early stages)
+            return workspace_root / "specs" / ".pending" / ".state"
         else:
             # Default fallback
             return workspace_root / ".analysis" / ".state"

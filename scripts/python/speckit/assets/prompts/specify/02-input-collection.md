@@ -91,7 +91,7 @@ Confirm input collected:
 ## NEXT
 
 ```text
-speckitadv specify --stage=3 --chain={{chain_id}}
+speckitadv specify --stage=3
 ```
 
-**Note:** JIRA and feature info collected here will be used by subsequent stages via AI context.
+**Note:** JIRA and feature info collected here will be used by subsequent stages via AI context. State persistence begins at stage 3 after the feature folder is created.
