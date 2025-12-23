@@ -422,8 +422,8 @@ class ChainState:
                 for state_file in list(pending_state_dir.glob("*.json")):
                     try:
                         data = json.loads(state_file.read_text())
-                        # Remove files for same command (orphaned from failed/restarted workflows)
-                        if data.get("command") == self.command:
+                        # Only remove files for current chain (not other chains of same command)
+                        if data.get("chain_id") == self.chain_id:
                             state_file.unlink()
                     except (json.JSONDecodeError, OSError):
                         continue

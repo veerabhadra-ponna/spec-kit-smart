@@ -349,7 +349,7 @@ class TestCopyTemplateDirective:
                 assert copied_file.exists()
                 content = copied_file.read_text()
                 assert "Feature Specification" in content
-        except Exception:
+        except FileNotFoundError:
             pytest.skip("Template not found in test environment")
 
     def test_copy_template_default_destination(self, tmp_path):
@@ -368,7 +368,7 @@ class TestCopyTemplateDirective:
             copied_file = feature_dir / "plan.md"
             if "[Template not found" not in result:
                 assert copied_file.exists()
-        except Exception:
+        except FileNotFoundError:
             pytest.skip("Template not found in test environment")
 
     def test_copy_template_no_feature_dir(self):

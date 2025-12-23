@@ -89,29 +89,6 @@ speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
 - Stage 4+ auto-detects chain from state. Use `--chain` or `--feature-dir` to
   disambiguate when multiple features exist.
 
-### Interactive Mode Options
-
-Commands support optional arguments that enable interactive prompts when not provided:
-
-| Command | Option | Description |
-|---------|--------|-------------|
-| `specify` | `--jira`, `--feature` | JIRA number and feature description |
-| `plan` | `--constraints` | Planning constraints (tech, architecture, etc.) |
-| `tasks` | `--preferences` | Task generation preferences |
-| `implement` | `--notes` | Implementation notes and priorities |
-| `constitution` | `--defaults`, `--principles` | Use default or custom principles |
-| `analyze-project` | `--path`, `--scope`, `--context` | Project path and analysis scope |
-
-When these options are omitted at the appropriate stage, the CLI prompts interactively:
-
-```bash
-# Interactive mode - prompts for JIRA and feature
-speckitadv specify --stage=2 --chain=abc123
-
-# Non-interactive - uses provided values
-speckitadv specify --stage=2 --chain=abc123 --jira=C12345-7890 --feature="OAuth2"
-```
-
 ### Debug Commands
 
 ```bash
@@ -166,6 +143,25 @@ Templates are loaded from `assets/templates/` and support:
 - Nested includes (templates can include other templates)
 - Variable substitution (`{variable}` or `{variable:default}`)
 - Recursive rendering
+
+### Template Copying
+
+For deterministic file creation, prompts can use `{{copy-template:...}}` to copy
+template files to the feature directory:
+
+```markdown
+{{copy-template:spec-template.md:spec.md}}
+```
+
+This copies `assets/templates/spec-template.md` to `{feature_dir}/spec.md`.
+The destination filename is optional - if omitted, `-template` is stripped from
+the source name (e.g., `plan-template.md` becomes `plan.md`).
+
+This approach ensures:
+
+- Deterministic file creation (CLI copies, not AI agent)
+- Template content is not embedded in prompts (reduces prompt size)
+- AI agent fills the copied template in subsequent steps
 
 ## Building for Distribution
 
