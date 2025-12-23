@@ -20,6 +20,72 @@ from speckit.core.state import ChainState, FEATURE_SCOPED_COMMANDS, FEATURE_STAT
 import json
 
 
+def _find_existing_chain_for_command(
+    command: str,
+    feature_dir: Optional[Path] = None,
+    workspace_root: Optional[Path] = None,
+) -> Optional[str]:
+    """
+    Find an existing chain_id for a command without requiring --chain flag.
+
+    This enables deterministic chain resumption for stage 4+ when the AI
+    doesn't pass --chain explicitly.
+
+    Search order:
+    1. Feature directory state (if --feature-dir provided)
+    2. Pending state directory
+    3. Any feature directory with matching command state
+
+    Args:
+        command: Command name (specify, plan, etc.)
+        feature_dir: Optional feature directory to check first
+        workspace_root: Optional workspace root
+
+    Returns:
+        chain_id if found, None otherwise
+    """
+    root = workspace_root or Path.cwd()
+    specs_dir = root / "specs"
+
+    # 1. Check provided feature directory first
+    if feature_dir:
+        state_file = feature_dir / ".state" / "latest.json"
+        if state_file.exists():
+            try:
+                data = json.loads(state_file.read_text())
+                if data.get("command") == command:
+                    return data.get("chain_id")
+            except (json.JSONDecodeError, OSError):
+                pass
+
+    if not specs_dir.exists():
+        return None
+
+    # 2. Check pending state
+    pending_state = specs_dir / ".pending" / ".state" / "latest.json"
+    if pending_state.exists():
+        try:
+            data = json.loads(pending_state.read_text())
+            if data.get("command") == command:
+                return data.get("chain_id")
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    # 3. Scan feature directories for matching command state
+    for subdir in sorted(specs_dir.iterdir(), reverse=True):  # Most recent first
+        if subdir.is_dir() and not subdir.name.startswith("."):
+            state_file = subdir / ".state" / "latest.json"
+            if state_file.exists():
+                try:
+                    data = json.loads(state_file.read_text())
+                    if data.get("command") == command:
+                        return data.get("chain_id")
+                except (json.JSONDecodeError, OSError):
+                    continue
+
+    return None
+
+
 def _detect_feature_dir_for_chain(chain_id: str, workspace_root: Optional[Path] = None) -> Optional[Path]:
     """
     Auto-detect feature directory by scanning specs/ for state files with matching chain_id,
@@ -112,6 +178,13 @@ def run_staged_command(
 
     # Convert feature_dir to Path if provided
     feature_dir_path = Path(feature_dir) if feature_dir else None
+
+    # For feature-scoped commands at stage 4+, auto-resume chain if not explicitly provided
+    # This ensures deterministic behavior even if AI doesn't pass --chain
+    if not chain_id and command in FEATURE_SCOPED_COMMANDS and stage >= FEATURE_STATE_MIN_STAGE + 1:
+        auto_chain = _find_existing_chain_for_command(command, feature_dir_path)
+        if auto_chain:
+            chain_id = auto_chain
 
     # Initialize or load chain state
     if chain_id:
