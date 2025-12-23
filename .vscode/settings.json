@@ -263,8 +263,11 @@
       // SPEC KIT CLI & UV TOOL
       // ====================================================================
 
-      // Spec Kit CLI
+      // Spec Kit CLI (legacy)
       "specify*",
+
+      // Spec Kit Advanced CLI (Python)
+      "speckitadv*",
 
       // UV Python tool installer
       "uv*",

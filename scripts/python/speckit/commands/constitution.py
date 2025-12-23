@@ -230,7 +230,7 @@ def run_constitution(
             emit_error(
                 "No principles provided",
                 "Stage 2 requires principles",
-                recovery_cmd="speckitadv constitution --stage=2 --defaults",
+                recovery_cmd=f"speckitadv constitution --stage=2 --chain={chain_id} --defaults",
             )
             return
 

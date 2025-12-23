@@ -49,7 +49,7 @@ You should see: `✓ Initialized state directory: .analysis/.state`
 
 **Expected outcome**:
 
-- State file created at `.analysis/.state/test-stage-1.json`
+- State file created at `.analysis/.state/analyze-project-test-stage-1.json`
 - State contains: `{"chain_id":"test1234", "counter":1, ...}`
 
 ---
@@ -68,7 +68,7 @@ You should see: `✓ Initialized state directory: .analysis/.state`
 
 **Expected outcome**:
 
-- State file created at `.analysis/.state/test-stage-2.json`
+- State file created at `.analysis/.state/analyze-project-test-stage-2.json`
 - State contains: `{"chain_id":"test1234", "counter":2, ...}`
 - Stage 2 successfully loaded and modified Stage 1 state
 
@@ -82,7 +82,7 @@ After completing both stages, verify the test succeeded:
 cd /home/user/spec-kit-smart
 
 echo "=== Checking State Files ==="
-ls -la .analysis/.state/test-stage-*.json
+ls -la .analysis/.state/analyze-project-test-stage-*.json
 
 echo ""
 echo "=== Stage 1 Final State ==="
@@ -140,7 +140,7 @@ After test completes, clean up test files:
 
 ```bash
 cd /home/user/spec-kit-smart
-rm -f .analysis/.state/test-stage-*.json
+rm -f .analysis/.state/analyze-project-test-stage-*.json
 ```text
 
 ---

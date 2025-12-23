@@ -69,12 +69,12 @@ Output:
 
 ```text
 STAGE_COMPLETE:TEST_STAGE_1
-STATE_PATH: .analysis/.state/test-stage-1.json
+STATE_PATH: .analysis/.state/analyze-project-test-stage-1.json
 ```text
 
 ## Success Criteria
 
 - State JSON created with all required fields
-- State saved successfully to .analysis/.state/test-stage-1.json
+- State saved successfully to .analysis/.state/analyze-project-test-stage-1.json
 - State can be loaded back
 - Completion marker output

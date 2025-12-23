@@ -12,7 +12,7 @@ Test if AI can load state from previous stage, modify it, and save updated state
 
 ## Previous State
 
-Load state from: `.analysis/.state/test-stage-1.json`
+Load state from: `.analysis/.state/analyze-project-test-stage-1.json`
 
 ## Task
 
@@ -103,7 +103,7 @@ Output:
 
 ```text
 STAGE_COMPLETE:TEST_STAGE_2
-STATE_PATH: .analysis/.state/test-stage-2.json
+STATE_PATH: .analysis/.state/analyze-project-test-stage-2.json
 CHAIN_TEST_SUCCESS: Both stages completed successfully
 ```text
 
@@ -111,7 +111,7 @@ CHAIN_TEST_SUCCESS: Both stages completed successfully
 
 - Stage 1 state loaded successfully
 - State modifications applied correctly
-- Updated state saved to .analysis/.state/test-stage-2.json
+- Updated state saved to .analysis/.state/analyze-project-test-stage-2.json
 - Both state files can be loaded independently
 - Counter incremented from 1 to 2
 - Completion marker output

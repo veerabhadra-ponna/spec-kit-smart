@@ -213,14 +213,14 @@ With verification:
 ```text
 .analysis/
 ├── .state/
-│   ├── 00-bootstrap.json       # Created by setup script
-│   ├── 01-setup-and-scope.json # Created by AI (Stage 1)
-│   ├── 02-file-analysis.json   # Created by AI (Stage 2)
-│   ├── 03a-full-app.json       # Created by AI (Stage 3A) OR
-│   ├── 03b-cross-cutting.json  # Created by AI (Stage 3B)
-│   ├── 04-report.json          # Created by AI (Stage 4)
-│   ├── 05-artifacts.json       # Created by AI (Stage 5)
-│   └── 06-scope-artifacts.json # Created by AI (Stage 6)
+│   ├── analyze-project-00-bootstrap.json       # Created by setup script
+│   ├── analyze-project-01-setup-and-scope.json # Created by AI (Stage 1)
+│   ├── analyze-project-02-file-analysis.json   # Created by AI (Stage 2)
+│   ├── analyze-project-03a-full-app.json       # Created by AI (Stage 3A) OR
+│   ├── analyze-project-03b-cross-cutting.json  # Created by AI (Stage 3B)
+│   ├── analyze-project-04-report.json          # Created by AI (Stage 4)
+│   ├── analyze-project-05-artifacts.json       # Created by AI (Stage 5)
+│   └── analyze-project-06-scope-artifacts.json # Created by AI (Stage 6)
 ├── .checkpoints/
 │   ├── 01a-init-complete.json
 │   ├── 01b-inputs-complete.json

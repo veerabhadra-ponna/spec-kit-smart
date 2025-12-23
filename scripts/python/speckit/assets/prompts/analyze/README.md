@@ -140,14 +140,14 @@ Each sub-prompt:
 ```text
 .analysis/
 ├── .state/                               # Chain state files
-│   ├── 00-bootstrap.json                 # Script-generated (chain_id, paths)
-│   ├── 01-setup-and-scope.json           # Stage 1 output
-│   ├── 02-file-analysis.json             # Stage 2 output
-│   ├── 03a-full-app.json                 # Stage 3A output (if scope=A)
-│   ├── 03b-cross-cutting.json            # Stage 3B output (if scope=B)
-│   ├── 04-report.json                    # Stage 4 output
-│   ├── 05-artifacts.json                 # Stage 5 output
-│   └── 06-scope-artifacts.json           # Stage 6 output
+│   ├── analyze-project-00-bootstrap.json                 # Script-generated (chain_id, paths)
+│   ├── analyze-project-01-setup-and-scope.json           # Stage 1 output
+│   ├── analyze-project-02-file-analysis.json             # Stage 2 output
+│   ├── analyze-project-03a-full-app.json                 # Stage 3A output (if scope=A)
+│   ├── analyze-project-03b-cross-cutting.json            # Stage 3B output (if scope=B)
+│   ├── analyze-project-04-report.json                    # Stage 4 output
+│   ├── analyze-project-05-artifacts.json                 # Stage 5 output
+│   └── analyze-project-06-scope-artifacts.json           # Stage 6 output
 ├── .checkpoints/                         # Sub-prompt checkpoints (NEW in v3.1)
 │   ├── 01a-init-complete.json
 │   ├── 01b-inputs-complete.json
