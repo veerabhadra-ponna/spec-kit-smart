@@ -102,4 +102,4 @@ speckitadv specify --stage=3 --feature="<collected-feature-description>" --jira=
 speckitadv specify --stage=3 --feature="Add user authentication" --jira="C12345-7890"
 ```
 
-**Note:** State persistence begins at stage 3 after the feature folder is created. The `--feature` and `--jira` values are required for stage 3 to create the feature branch and directory.
+**Note:** State persistence begins at stage 3 after the feature folder is created. The `--feature` value is required for stage 3 to create the feature branch and directory. The `--jira` value is optional.
