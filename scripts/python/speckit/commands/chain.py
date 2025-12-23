@@ -259,8 +259,11 @@ def get_last_completed_stage(
     if command:
         prefix = f"{command}-"
         filtered = [f for f in stage_files if f.startswith(prefix)]
-        if filtered:
-            stage_files = filtered
+        if not filtered:
+            # No stages found for this command - return "none" instead of
+            # falling back to stages from other commands
+            return "none"
+        stage_files = filtered
 
     # Sort and get last
     stage_files.sort(reverse=True)

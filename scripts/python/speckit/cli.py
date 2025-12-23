@@ -170,7 +170,8 @@ def specify(
     if stage == 3 and not feature:
         console.print("[red]Error:[/red] --feature is required for stage 3")
         console.print("  Stage 2 should have collected this value. Run stage 3 with:")
-        console.print("  speckitadv specify --stage=3 --feature='your feature description' --jira='C12345-7890'")
+        console.print("  speckitadv specify --stage=3 --feature='your feature description'")
+        console.print("  (--jira is optional)")
         raise typer.Exit(1)
 
     # Interactive mode for stage 2 (input collection)
