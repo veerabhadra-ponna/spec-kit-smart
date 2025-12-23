@@ -80,6 +80,9 @@ def _find_existing_chain_for_command(
                         )
             except (json.JSONDecodeError, OSError):
                 pass
+        # Explicit --feature-dir provided but no matching state found
+        # Do NOT fall through to search other directories - respect user intent
+        return None
 
     if not specs_dir.exists():
         return None

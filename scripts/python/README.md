@@ -157,7 +157,15 @@ Prompts can include templates using `{{include:template.md}}` syntax:
 ```
 
 The CLI injects template content at runtime via `render_prompt()` in `core/prompts.py`.
-Templates are loaded from `assets/templates/` and support:
+
+**Template Search Order** (project overrides first):
+
+1. `memory/templates/` - Project-level customizations
+2. `.specify/templates/` - Project-level customizations
+3. `templates/` - Repository-level templates
+4. CLI embedded templates - Default fallback
+
+Templates support:
 
 - Nested includes (templates can include other templates)
 - Variable substitution (`{variable}` or `{variable:default}`)
@@ -172,9 +180,10 @@ template files to the feature directory:
 {{copy-template:spec-template.md:spec.md}}
 ```
 
-This copies `assets/templates/spec-template.md` to `{feature_dir}/spec.md`.
-The destination filename is optional - if omitted, `-template` is stripped from
-the source name (e.g., `plan-template.md` becomes `plan.md`).
+This copies the template to `{feature_dir}/spec.md`, searching the same override
+locations as template includes. The destination filename is optional - if omitted,
+`-template` is stripped from the source name (e.g., `plan-template.md` becomes
+`plan.md`).
 
 This approach ensures:
 

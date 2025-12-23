@@ -169,6 +169,17 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
     result = fragment
     missing_templates: list[str] = []
 
+    # Determine workspace root from context for template override resolution
+    # This ensures templates are found even when CLI runs from outside the project
+    workspace_root = None
+    if context.get("project_path"):
+        workspace_root = Path(context["project_path"])
+    elif context.get("feature_dir"):
+        # Derive from feature_dir (specs/XXX -> project root)
+        feature_path = Path(context["feature_dir"])
+        if feature_path.parent.name == "specs":
+            workspace_root = feature_path.parent.parent
+
     # Handle template copy: {{copy-template:source.md:dest.md}}
     # This copies the template to feature_dir/dest.md and returns a confirmation
     def copy_template(match: re.Match) -> str:
@@ -180,7 +191,7 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
             return f"[Cannot copy template: feature_dir not set]"
 
         try:
-            template_content = load_template(template_path)
+            template_content = load_template(template_path, workspace_root=workspace_root)
             dest_path = Path(feature_dir) / dest_filename
 
             # Ensure directory exists
@@ -204,7 +215,7 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
     def include_template(match: re.Match) -> str:
         template_path = match.group(1).strip()
         try:
-            template_content = load_template(template_path)
+            template_content = load_template(template_path, workspace_root=workspace_root)
             # Recursively render the included template (for nested includes and variables)
             return render_prompt(template_content, context, strict=strict)
         except FileNotFoundError:
