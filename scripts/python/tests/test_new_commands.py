@@ -25,6 +25,7 @@ from speckit.commands.workflow import (
     get_feature_paths,
     extract_plan_field,
     format_technology_stack,
+    run_setup_plan,
 )
 
 runner = CliRunner()
@@ -95,6 +96,37 @@ class TestSetupPlanCommand:
         result = runner.invoke(app, ["setup-plan", "--help"])
         assert result.exit_code == 0
         assert "Set up plan file" in result.stdout
+
+    def test_setup_plan_skips_existing_plan(self, tmp_path, monkeypatch):
+        """Should skip copy and warn if plan.md already exists."""
+        # Set up a mock feature directory structure
+        feature_dir = tmp_path / "specs" / "001-test-feature"
+        feature_dir.mkdir(parents=True)
+
+        # Pre-create plan.md with custom content
+        plan_file = feature_dir / "plan.md"
+        original_content = "# Custom Plan\n\nDo not overwrite!"
+        plan_file.write_text(original_content)
+
+        # Mock get_feature_paths to return our test paths
+        monkeypatch.setattr(
+            "speckit.commands.workflow.get_feature_paths",
+            lambda: {
+                "REPO_ROOT": tmp_path,
+                "CURRENT_BRANCH": "001-test-feature",
+                "HAS_GIT": False,
+                "FEATURE_DIR": feature_dir,
+                "IMPL_PLAN": plan_file,
+                "FEATURE_SPEC": feature_dir / "spec.md",
+            },
+        )
+
+        # Run setup-plan
+        result = run_setup_plan()
+
+        # Plan file should NOT be overwritten
+        assert plan_file.read_text() == original_content
+        assert str(plan_file) == result["IMPL_PLAN"]
 
 
 class TestUpdateAgentContextCommand:
