@@ -68,16 +68,21 @@ speckitadv constitution --stage=3 --chain=<chain_id>
 # Stage 1: Initialize and understand role
 speckitadv specify --stage=1 --path=/path/to/project
 
-# AI reads instructions, runs stage 2 (interactive if no args)
-speckitadv specify --stage=2 --chain=abc123
+# Stage 2: Collect inputs (interactive if no args)
+speckitadv specify --stage=2
 
 # Or provide arguments directly:
-speckitadv specify --stage=2 --chain=abc123 --jira=C12345-7890 --feature="Add user auth"
+speckitadv specify --stage=2 --jira=C12345-7890 --feature="Add user auth"
 
-# Continue through all 6 stages
-speckitadv specify --stage=3 --chain=abc123
+# Stage 3: Create feature branch (requires --feature from stage 2)
+speckitadv specify --stage=3 --feature="Add user auth" --jira=C12345-7890
+
+# Stage 4+: Continue with chain ID from stage 3
+speckitadv specify --stage=4 --chain=abc123
 # ... until complete
 ```
+
+**Note:** Stages 1-2 are stateless. Pass `--feature` and `--jira` from stage 2 to stage 3.
 
 ### Interactive Mode Options
 

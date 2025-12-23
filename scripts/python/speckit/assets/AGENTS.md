@@ -120,8 +120,8 @@ speckitadv analyze-project --stage=2 --chain=abc12345
 
 # Example: specify workflow (stateless until stage 3)
 speckitadv specify --stage=1
-speckitadv specify --stage=2        # No --chain (state not persisted yet)
-speckitadv specify --stage=3        # Creates feature folder, starts persisting state
+speckitadv specify --stage=2        # Collects --feature and --jira inputs
+speckitadv specify --stage=3 --feature="Add user auth" --jira="C12345-7890"  # Creates feature folder
 speckitadv specify --stage=4 --chain=abc12345  # Uses --chain from stage 3+
 ```
 
