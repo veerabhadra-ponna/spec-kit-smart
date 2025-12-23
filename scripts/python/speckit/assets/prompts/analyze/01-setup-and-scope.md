@@ -213,7 +213,7 @@ speckitadv analyze-project --path "$PROJECT_PATH" \
 4. Detects technology stack and generates `tech-stack.json`
 5. Analyzes file structure and generates `file-structure.json`
 6. Consolidates all inputs into `project-metadata.json`
-7. Creates bootstrap state (`.analysis/.state/00-bootstrap.json`)
+7. Creates bootstrap state (`.analysis/.state/analyze-project-00-bootstrap.json`)
 
 **Parse script output** for:
 
@@ -248,7 +248,7 @@ cat .analysis/{project}-{timestamp}/file-structure.json
 
 # Load bootstrap state
 
-cat .analysis/.state/00-bootstrap.json
+cat .analysis/.state/analyze-project-00-bootstrap.json
 
 ```
 
@@ -386,7 +386,7 @@ Generate JSON state object with all collected and loaded data:
 
 ## Save State
 
-Save the complete state to `.analysis/.state/01-setup-and-scope.json`
+Save the complete state to `.analysis/.state/analyze-project-01-setup-and-scope.json`
 
 ---
 
@@ -396,7 +396,7 @@ When setup and input collection is complete, output:
 
 ```text
 STAGE_COMPLETE:SETUP_AND_SCOPE
-STATE_PATH: .analysis/.state/01-setup-and-scope.json
+STATE_PATH: .analysis/.state/analyze-project-01-setup-and-scope.json
 CHAIN_ID: {chain_id}
 NEXT_STAGE: 02-file-analysis.md
 

@@ -17,7 +17,7 @@ For Cross-Cutting Concern Migration, assess the abstraction level of the current
 
 ## Pre-Check: Verify Previous Stage
 
-1. Read `.analysis/.state/02-file-analysis.json`
+1. Read `.analysis/.state/analyze-project-02-file-analysis.json`
 2. Confirm `stages_complete` includes "file_analysis"
 3. Confirm `analysis_scope` = "B"
 4. Load `concern_details` from state:

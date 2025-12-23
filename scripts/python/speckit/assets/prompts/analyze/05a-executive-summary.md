@@ -16,7 +16,7 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 
 ## Pre-Check
 
-1. Read `.analysis/.state/04-report.json`
+1. Read `.analysis/.state/analyze-project-04-report.json`
 2. Confirm `verification_passed` = true
 3. Load `analysis_scope` to determine next stage
 
@@ -191,7 +191,7 @@ Generate metrics for tracking. Write to: `{analysis_dir}/metrics-summary.json`
 
 ```
 
-Write to: `.analysis/.state/05-artifacts.json`
+Write to: `.analysis/.state/analyze-project-05-artifacts.json`
 
 ---
 

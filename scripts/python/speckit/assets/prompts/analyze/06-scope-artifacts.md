@@ -32,7 +32,7 @@ Generate scope-specific artifacts based on analysis scope (A or B). This stage r
 
 ## Previous State
 
-Load state from: `.analysis/.state/05-artifacts.json`
+Load state from: `.analysis/.state/analyze-project-05-artifacts.json`
 
 Required:
 
@@ -905,7 +905,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 ```text
 STAGE_COMPLETE:SCOPE_ARTIFACTS
-STATE_PATH: .analysis/.state/06-scope-artifacts.json
+STATE_PATH: .analysis/.state/analyze-project-06-scope-artifacts.json
 
 === ANALYSIS CHAIN COMPLETE ===
 Chain ID: {chain_id}

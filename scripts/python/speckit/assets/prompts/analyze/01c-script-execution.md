@@ -55,7 +55,7 @@ Execute the script and capture output.
 [analyze-project] Generated: tech-stack.json
 [analyze-project] Generated: file-structure.json
 [analyze-project] Generated: project-metadata.json
-[analyze-project] Bootstrap state: .analysis/.state/00-bootstrap.json
+[analyze-project] Bootstrap state: .analysis/.state/analyze-project-00-bootstrap.json
 [analyze-project] Chain ID: {8-char-hex}
 [analyze-project] Complete!
 
@@ -96,7 +96,7 @@ Extract from script output:
 ### Load Bootstrap State
 
 ```bash
-cat .analysis/.state/00-bootstrap.json
+cat .analysis/.state/analyze-project-00-bootstrap.json
 
 ```
 
@@ -295,7 +295,7 @@ Create the complete Stage 1 state object:
 
 ### Save State
 
-Write to: `.analysis/.state/01-setup-and-scope.json`
+Write to: `.analysis/.state/analyze-project-01-setup-and-scope.json`
 
 ---
 
@@ -317,7 +317,7 @@ Write checkpoint file: `.analysis/.checkpoints/01c-script-complete.json`
     "tech-stack.json",
     "file-structure.json"
   ],
-  "state_saved": ".analysis/.state/01-setup-and-scope.json",
+  "state_saved": ".analysis/.state/analyze-project-01-setup-and-scope.json",
   "status": "complete"
 }
 
@@ -327,7 +327,7 @@ Write checkpoint file: `.analysis/.checkpoints/01c-script-complete.json`
 
 1. Read `.analysis/.checkpoints/01c-script-complete.json`
 2. Validate JSON is parseable
-3. Read `.analysis/.state/01-setup-and-scope.json`
+3. Read `.analysis/.state/analyze-project-01-setup-and-scope.json`
 4. Validate state file exists and is valid JSON
 
 ---
@@ -347,7 +347,7 @@ Write checkpoint file: `.analysis/.checkpoints/01c-script-complete.json`
   STAGE COMPLETE: SETUP_AND_SCOPE
 
   Chain ID: {chain_id}
-  State: .analysis/.state/01-setup-and-scope.json
+  State: .analysis/.state/analyze-project-01-setup-and-scope.json
 
   Proceeding to Stage 2: Deep File Analysis
 ═══════════════════════════════════════════════════════════

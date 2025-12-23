@@ -17,7 +17,7 @@ Generate functional specification documenting WHAT the LEGACY/EXISTING system CU
 
 ## Pre-Check
 
-1. Read `.analysis/.state/05-artifacts.json`
+1. Read `.analysis/.state/analyze-project-05-artifacts.json`
 2. Confirm `common_artifacts_complete` = true
 3. Confirm `analysis_scope` = "A"
 4. Load `analysis_dir` path

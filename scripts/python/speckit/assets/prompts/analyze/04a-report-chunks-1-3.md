@@ -17,8 +17,8 @@ Generate the first three chunks of the analysis report: Project Discovery, Contr
 ## Pre-Check: Verify Previous Stage
 
 1. Load state from either:
-   - `.analysis/.state/03a-full-app.json` (if scope = A)
-   - `.analysis/.state/03b-cross-cutting.json` (if scope = B)
+   - `.analysis/.state/analyze-project-03a-full-app.json` (if scope = A)
+   - `.analysis/.state/analyze-project-03b-cross-cutting.json` (if scope = B)
 2. Confirm stage 3 is complete
 3. Load analysis results and preferences
 

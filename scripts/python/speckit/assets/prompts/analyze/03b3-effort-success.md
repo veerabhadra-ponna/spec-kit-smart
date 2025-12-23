@@ -291,7 +291,7 @@ BUSINESS (Validation):
 
 ### Save State
 
-Write to: `.analysis/.state/03b-cross-cutting.json`
+Write to: `.analysis/.state/analyze-project-03b-cross-cutting.json`
 
 ---
 
@@ -300,7 +300,7 @@ Write to: `.analysis/.state/03b-cross-cutting.json`
 ---
 ⏸️ **[STOP: VERIFY_STATE_SAVED]**
 
-1. Read `.analysis/.state/03b-cross-cutting.json`
+1. Read `.analysis/.state/analyze-project-03b-cross-cutting.json`
 2. Validate JSON is parseable
 3. Confirm all required sections present
 4. Confirm `stages_complete` includes "cross_cutting_analysis"
@@ -325,7 +325,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b-cross-cutting-complete.json`
   "blast_radius": "{classification}",
   "strategy": "{strategy}",
   "total_effort_weeks": {n},
-  "state_saved": ".analysis/.state/03b-cross-cutting.json",
+  "state_saved": ".analysis/.state/analyze-project-03b-cross-cutting.json",
   "status": "complete"
 }
 
@@ -362,7 +362,7 @@ Write checkpoint file: `.analysis/.checkpoints/03b-cross-cutting-complete.json`
     Duration: {weeks} weeks
     Effort: {person_days} person-days
 
-  State: .analysis/.state/03b-cross-cutting.json
+  State: .analysis/.state/analyze-project-03b-cross-cutting.json
 
   Proceeding to Stage 4: Report Generation
 ═══════════════════════════════════════════════════════════

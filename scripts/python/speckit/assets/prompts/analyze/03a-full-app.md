@@ -35,7 +35,7 @@ For Full Application Modernization (scope = A), ask 10 progressive questions abo
 
 ## Previous State
 
-Load state from: `.analysis/.state/02-file-analysis.json`
+Load state from: `.analysis/.state/analyze-project-02-file-analysis.json`
 
 Required fields:
 - `analysis_scope` must be "A"
@@ -724,7 +724,7 @@ Based on scores, generate prioritized recommendations:
 
 ```text
 STAGE_COMPLETE:FULL_APP
-STATE_PATH: .analysis/.state/03a-full-app.json
+STATE_PATH: .analysis/.state/analyze-project-03a-full-app.json
 
 ```
 

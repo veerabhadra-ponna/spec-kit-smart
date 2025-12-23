@@ -19,7 +19,7 @@ Scan 15-20% of files in EACH category to identify patterns. This phase provides 
 
 ## Pre-Check: Verify Previous Stage
 
-1. Read `.analysis/.state/01-setup-and-scope.json`
+1. Read `.analysis/.state/analyze-project-01-setup-and-scope.json`
 2. Confirm `stages_complete` includes "setup_and_scope"
 3. Load all values into memory:
    - `chain_id`

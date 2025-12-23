@@ -43,7 +43,7 @@ speckitadv analyze-project --path /path/to/project --scope A
    - Creates `.analysis/.state/` directory
    - Creates `.analysis/.checkpoints/` directory
    - Generates unique chain ID
-   - Saves bootstrap state to `.analysis/.state/00-bootstrap.json`
+   - Saves bootstrap state to `.analysis/.state/analyze-project-00-bootstrap.json`
 6. Hands off to AI
 
 ### 3. AI Execution (Sub-Prompt Workflow)
@@ -70,36 +70,36 @@ ENDFOR
 
 ```text
 Bootstrap State (from script)
-    ↓  .analysis/.state/00-bootstrap.json
+    ↓  .analysis/.state/analyze-project-00-bootstrap.json
 
 Stage 1: Setup and Scope
     ↓  01a-initialization.md → .checkpoints/01a-init-complete.json
     ↓  01b-input-collection.md → .checkpoints/01b-inputs-complete.json
-    ↓  01c-script-execution.md → .state/01-setup-and-scope.json
+    ↓  01c-script-execution.md → .state/analyze-project-01-setup-and-scope.json
 
 Stage 2: File Analysis
     ↓  02a-category-scan.md → .checkpoints/02a-category-complete.json
     ↓  02b-deep-dive.md → .checkpoints/02b-deepdive-complete.json
     ↓  02c-config-analysis.md → .checkpoints/02c-config-complete.json
     ↓  02d-test-audit.md → .checkpoints/02d-test-complete.json
-    ↓  02e-quality-gates.md → .state/02-file-analysis.json
+    ↓  02e-quality-gates.md → .state/analyze-project-02-file-analysis.json
 
 Stage 3: Branch (based on analysis_scope)
-    ↓  IF scope=A: 03a1-4 sub-prompts → .state/03a-full-app.json
-    ↓  IF scope=B: 03b1-3 sub-prompts → .state/03b-cross-cutting.json
+    ↓  IF scope=A: 03a1-4 sub-prompts → .state/analyze-project-03a-full-app.json
+    ↓  IF scope=B: 03b1-3 sub-prompts → .state/analyze-project-03b-cross-cutting.json
 
 Stage 4: Report Generation
     ↓  04a-report-chunks-1-3.md → .checkpoints/04a-chunks-complete.json
     ↓  04b-report-chunks-4-6.md → .checkpoints/04b-chunks-complete.json
     ↓  04c-report-chunks-7-9.md → .checkpoints/04c-chunks-complete.json
-    ↓  04d-report-verification.md → .state/04-report.json
+    ↓  04d-report-verification.md → .state/analyze-project-04-report.json
 
 Stage 5: Common Artifacts
-    ↓  05a-executive-summary.md → .state/05-artifacts.json
+    ↓  05a-executive-summary.md → .state/analyze-project-05-artifacts.json
 
 Stage 6: Scope-Specific Artifacts
-    ↓  IF scope=A: 06a-d sub-prompts → .state/06-scope-artifacts.json
-    ↓  IF scope=B: 06e sub-prompt → .state/06-scope-artifacts.json
+    ↓  IF scope=A: 06a-d sub-prompts → .state/analyze-project-06-scope-artifacts.json
+    ↓  IF scope=B: 06e sub-prompt → .state/analyze-project-06-scope-artifacts.json
 
 COMPLETE
 
@@ -295,7 +295,7 @@ ls -lt .analysis/.checkpoints/*-complete.json | head -1
 
 # Load last state
 
-cat .analysis/.state/02-file-analysis.json
+cat .analysis/.state/analyze-project-02-file-analysis.json
 
 # Resume from next sub-prompt
 

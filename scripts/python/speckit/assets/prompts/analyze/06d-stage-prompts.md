@@ -328,7 +328,7 @@ Write: `.analysis/.checkpoints/stage-prompts-complete.json`
 
 ```
 
-Write to: `.analysis/.state/06-scope-artifacts.json`
+Write to: `.analysis/.state/analyze-project-06-scope-artifacts.json`
 
 ---
 
@@ -349,7 +349,7 @@ Write to: `.analysis/.state/06-scope-artifacts.json`
     ✓ stage-prompts/tasks-prompt.md
     ✓ stage-prompts/implement-prompt.md
 
-  State: .analysis/.state/06-scope-artifacts.json
+  State: .analysis/.state/analyze-project-06-scope-artifacts.json
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:SCOPE_ARTIFACTS

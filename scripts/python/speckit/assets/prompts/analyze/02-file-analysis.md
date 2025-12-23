@@ -36,7 +36,7 @@ This stage has **dedicated focus** for maximum attention and completion rate.
 
 ## Previous State
 
-Load state from: `.analysis/.state/01-setup-and-scope.json`
+Load state from: `.analysis/.state/analyze-project-01-setup-and-scope.json`
 
 You should have:
 - `chain_id` - Analysis chain identifier
@@ -736,11 +736,11 @@ When file analysis is complete and quality gates pass, output:
 
 ```text
 STAGE_COMPLETE:FILE_ANALYSIS
-STATE_PATH: .analysis/.state/02-file-analysis.json
+STATE_PATH: .analysis/.state/analyze-project-02-file-analysis.json
 
 ```
 
-Save the state JSON to `.analysis/.state/02-file-analysis.json`.
+Save the state JSON to `.analysis/.state/analyze-project-02-file-analysis.json`.
 
 ---
 
@@ -768,7 +768,7 @@ Save the state JSON to `.analysis/.state/02-file-analysis.json`.
 ```text
 === Stage 2: Deep File Analysis ===
 
-Previous state loaded from: .analysis/.state/01-setup-and-scope.json
+Previous state loaded from: .analysis/.state/analyze-project-01-setup-and-scope.json
 Chain ID: a3f7c8d1
 
 Starting comprehensive file analysis...
@@ -839,7 +839,7 @@ Verifying quality gates...
 ✓ All quality gates passed
 
 STAGE_COMPLETE:FILE_ANALYSIS
-STATE_PATH: .analysis/.state/02-file-analysis.json
+STATE_PATH: .analysis/.state/analyze-project-02-file-analysis.json
 
 Next stage: Branching based on analysis_scope
   - If scope = A: 03a-full-app.md

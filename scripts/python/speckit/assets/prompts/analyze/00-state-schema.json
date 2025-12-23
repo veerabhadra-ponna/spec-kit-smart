@@ -37,6 +37,14 @@
         "type": "string"
       }
     },
+    "command": {
+      "type": "string",
+      "description": "The workflow command that created this state (e.g., analyze-project, constitution)"
+    },
+    "feature_dir": {
+      "type": "string",
+      "description": "Path to feature directory for feature-scoped commands (specify, plan, tasks, implement)"
+    },
     "agents_md": {
       "type": "object",
       "properties": {
