@@ -166,6 +166,13 @@ def specify(
 
     context = {}
 
+    # Stage 3 requires --feature (collected in stage 2, passed here since state is stateless)
+    if stage == 3 and not feature:
+        console.print("[red]Error:[/red] --feature is required for stage 3")
+        console.print("  Stage 2 should have collected this value. Run stage 3 with:")
+        console.print("  speckitadv specify --stage=3 --feature='your feature description' --jira='C12345-7890'")
+        raise typer.Exit(1)
+
     # Interactive mode for stage 2 (input collection)
     if stage == 2 and not jira and not feature:
         from speckit.core.interactive import collect_specify_input

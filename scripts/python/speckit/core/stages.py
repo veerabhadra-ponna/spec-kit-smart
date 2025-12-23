@@ -143,10 +143,14 @@ def run_staged_command(
     elif command in FEATURE_SCOPED_COMMANDS and stage >= FEATURE_STATE_MIN_STAGE:
         # Auto-detect feature directory by scanning specs/ for matching chain_id
         # This handles the case where stage 3 created the folder but --feature-dir wasn't passed
-        detected_dir = _detect_feature_dir_for_chain(state.chain_id)
-        if detected_dir:
-            state.set_feature_dir(detected_dir)
-            feature_dir_path = detected_dir
+        # NOTE: Skip auto-detect for specify stage 3 - the folder is created BY that stage
+        # For specify, auto-detect only at stage 4+ (after create-feature has run)
+        should_auto_detect = not (command == "specify" and stage == FEATURE_STATE_MIN_STAGE)
+        if should_auto_detect:
+            detected_dir = _detect_feature_dir_for_chain(state.chain_id)
+            if detected_dir:
+                state.set_feature_dir(detected_dir)
+                feature_dir_path = detected_dir
 
     # Build render context
     render_context = {
