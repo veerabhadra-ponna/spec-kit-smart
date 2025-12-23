@@ -30,7 +30,7 @@ Use the Bash tool to load state:
 
 ```bash
 cd /home/user/spec-kit-smart
-./scripts/bash/chain-state.sh load test-stage-1
+speckitadv chain-state load test-stage-1
 ```text
 
 ### Step 2: Verify State
@@ -73,7 +73,7 @@ Use the Bash tool to save:
 
 ```bash
 cd /home/user/spec-kit-smart
-./scripts/bash/chain-state.sh save test-stage-2 '{
+speckitadv chain-state save test-stage-2 --state='{
   "chain_id": "test1234",
   "stage": "test_stage_2",
   "timestamp": "2025-11-14T12:05:00Z",
@@ -91,10 +91,10 @@ Load both states to verify:
 ```bash
 cd /home/user/spec-kit-smart
 echo "=== Stage 1 State ==="
-./scripts/bash/chain-state.sh load test-stage-1
+speckitadv chain-state load test-stage-1
 echo ""
 echo "=== Stage 2 State ==="
-./scripts/bash/chain-state.sh load test-stage-2
+speckitadv chain-state load test-stage-2
 ```text
 
 ### Step 6: Output Completion Marker

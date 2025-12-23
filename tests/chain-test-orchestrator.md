@@ -10,8 +10,8 @@ This test validates the core assumption of our chained prompt architecture: that
 
 ## Prerequisites
 
-1. State management scripts exist:
-   - `scripts/bash/chain-state.sh`
+1. State management CLI exists:
+   - `speckitadv chain-state` command
 
 2. State directory will be created:
    - `.analysis/.state/`
@@ -28,7 +28,7 @@ First, ensure we're in the correct directory and initialize state management:
 
 ```bash
 cd /home/user/spec-kit-smart
-./scripts/bash/chain-state.sh init
+speckitadv chain-state init
 ```text
 
 You should see: `✓ Initialized state directory: .analysis/.state`
@@ -86,16 +86,16 @@ ls -la .analysis/.state/analyze-project-test-stage-*.json
 
 echo ""
 echo "=== Stage 1 Final State ==="
-./scripts/bash/chain-state.sh load test-stage-1
+speckitadv chain-state load test-stage-1
 
 echo ""
 echo "=== Stage 2 Final State ==="
-./scripts/bash/chain-state.sh load test-stage-2
+speckitadv chain-state load test-stage-2
 
 echo ""
 echo "=== Verification ==="
 # Check counter incremented
-stage2_counter=$(./scripts/bash/chain-state.sh load test-stage-2 | jq -r '.counter')
+stage2_counter=$(speckitadv chain-state load test-stage-2 | jq -r '.counter')
 if [[ "$stage2_counter" == "2" ]]; then
     echo "✅ TEST PASSED: Counter incremented correctly (1 → 2)"
 else
@@ -103,7 +103,7 @@ else
 fi
 
 # Check both stages in complete list
-stages_complete=$(./scripts/bash/chain-state.sh load test-stage-2 | jq -r '.stages_complete | length')
+stages_complete=$(speckitadv chain-state load test-stage-2 | jq -r '.stages_complete | length')
 if [[ "$stages_complete" == "2" ]]; then
     echo "✅ TEST PASSED: Both stages recorded in stages_complete"
 else
@@ -149,7 +149,7 @@ rm -f .analysis/.state/analyze-project-test-stage-*.json
 
 1. **File Loading**: AI can use Read tool to load stage prompts
 2. **Instruction Following**: AI executes all steps in each stage
-3. **State Management**: AI can call chain-state.sh to save/load state
+3. **State Management**: AI can call speckitadv chain-state to save/load state
 4. **State Persistence**: State survives between stages
 5. **State Mutation**: AI can modify and update state correctly
 6. **Sequential Execution**: Stages execute in correct order

@@ -14,7 +14,7 @@ Test if AI can create and save state in first stage.
 
 1. Generate a chain ID (any 8-character hex string)
 2. Create initial state JSON
-3. Save state using chain-state.sh
+3. Save state using speckitadv chain-state
 4. Output completion marker
 
 ## Steps
@@ -44,7 +44,7 @@ Use the Bash tool to save state:
 
 ```bash
 cd /home/user/spec-kit-smart
-./scripts/bash/chain-state.sh save test-stage-1 '{
+speckitadv chain-state save test-stage-1 --state='{
   "chain_id": "test1234",
   "stage": "test_stage_1",
   "timestamp": "2025-11-14T12:00:00Z",
@@ -60,7 +60,7 @@ Load the state back to verify:
 
 ```bash
 cd /home/user/spec-kit-smart
-./scripts/bash/chain-state.sh load test-stage-1
+speckitadv chain-state load test-stage-1
 ```text
 
 ### Step 5: Output Completion Marker
