@@ -109,10 +109,10 @@ Problem → Action
 Each command runs in stages. The CLI outputs focused prompts (50-80 lines) per stage:
 
 ```bash
-# Example: constitution workflow (NOTE: no --path option)
+# Example: constitution workflow (NOTE: no --path option, uses --chain for state)
 speckitadv constitution --stage=1
-speckitadv constitution --stage=2 --defaults  # or --principles="..."
-speckitadv constitution --stage=3
+speckitadv constitution --stage=2 --chain=abc12345 --defaults  # or --principles="..."
+speckitadv constitution --stage=3 --chain=abc12345
 
 # Example: analyze-project workflow (uses --chain for state)
 speckitadv analyze-project --stage=1 --path=/project --scope=A

@@ -251,12 +251,12 @@ def run_constitution(
     # Extract title from fragment
     title = _extract_title(rendered, stage_id)
 
-    # Determine next command (constitution doesn't use --chain)
+    # Determine next command
     if stage < total_stages:
         if stage == 1:
-            next_cmd = "speckitadv constitution --stage=2 --defaults  # or --principles='...'"
+            next_cmd = f"speckitadv constitution --stage=2 --chain={chain_id} --defaults  # or --principles='...'"
         else:
-            next_cmd = f"speckitadv constitution --stage={stage + 1}"
+            next_cmd = f"speckitadv constitution --stage={stage + 1} --chain={chain_id}"
     else:
         next_cmd = None
 
