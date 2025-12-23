@@ -15,7 +15,7 @@ from speckit.core.prompts import (
     get_stage_order,
     fragment_exists,
 )
-from speckit.core.state import ChainState
+from speckit.core.state import ChainState, FEATURE_SCOPED_COMMANDS, FEATURE_STATE_MIN_STAGE
 
 
 def run_staged_command(
@@ -66,7 +66,7 @@ def run_staged_command(
     # Initialize or load chain state
     if chain_id:
         try:
-            state = ChainState.load(chain_id)
+            state = ChainState.load(chain_id, command=command)
         except FileNotFoundError:
             emit_error(
                 "Chain state not found",
@@ -84,7 +84,7 @@ def run_staged_command(
     else:
         # New workflow - initialize state
         project_path = Path(path) if path else Path.cwd()
-        state = ChainState.initialize(project_path)
+        state = ChainState.initialize(project_path, command=command)
         chain_id = state.chain_id
 
     # Build render context
@@ -115,11 +115,18 @@ def run_staged_command(
 
     # Determine next command
     if stage < total_stages:
-        next_cmd = f"speckitadv {command} --stage={stage + 1} --chain={chain_id}"
+        next_stage = stage + 1
+        # For feature-scoped commands, don't include --chain until state is persisted
+        # State is only persisted from stage 3+ (after feature folder exists)
+        # So stages 1 and 2 don't output --chain (state not saved yet)
+        if command in FEATURE_SCOPED_COMMANDS and stage < FEATURE_STATE_MIN_STAGE:
+            next_cmd = f"speckitadv {command} --stage={next_stage}"
+        else:
+            next_cmd = f"speckitadv {command} --stage={next_stage} --chain={chain_id}"
     else:
         next_cmd = None
 
-    # Save state for this stage
+    # Save state for this stage (may be skipped for early stages of feature commands)
     state.save(
         stage_name=stage_id,
         data={
@@ -127,6 +134,7 @@ def run_staged_command(
             "stage_id": stage_id,
             "command": command,
         },
+        stage_num=stage,
     )
 
     # Check if this is the final stage

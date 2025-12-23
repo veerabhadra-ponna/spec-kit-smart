@@ -115,18 +115,21 @@ class TestChainStateInitialize:
         assert len(chain.chain_id) == 8
 
     def test_saves_bootstrap_state(self, tmp_path):
-        """Should save initial bootstrap state."""
+        """Should save initial bootstrap state with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
+        # Default command is analyze-project
         chain = ChainState.initialize(project_path, workspace_root=tmp_path)
 
-        bootstrap_file = tmp_path / ".analysis" / ".state" / "00-bootstrap.json"
+        # Bootstrap file now has command prefix
+        bootstrap_file = tmp_path / ".analysis" / ".state" / "analyze-project-00-bootstrap.json"
         assert bootstrap_file.exists()
 
         data = json.loads(bootstrap_file.read_text())
         assert data["stage"] == "00-bootstrap"
         assert data["project_name"] == "project"
+        assert data["command"] == "analyze-project"
 
 
 class TestChainStateLoad:
@@ -152,7 +155,7 @@ class TestChainStateLoad:
             ChainState.load("nonexistent", workspace_root=tmp_path)
 
     def test_load_mismatched_chain_id(self, tmp_path):
-        """Should raise ValueError when chain ID doesn't match current state."""
+        """Should raise FileNotFoundError when chain ID doesn't match any state."""
         # Initialize a chain
         project_path = tmp_path / "project"
         project_path.mkdir()
@@ -163,28 +166,29 @@ class TestChainStateLoad:
         wrong_id = "deadbeef"
         assert wrong_id != original_id
 
-        with pytest.raises(ValueError) as exc_info:
+        # Now raises FileNotFoundError since we search for matching chain_id
+        with pytest.raises(FileNotFoundError) as exc_info:
             ChainState.load(wrong_id, workspace_root=tmp_path)
 
         # Verify error message contains helpful info
         error_msg = str(exc_info.value)
-        assert "mismatch" in error_msg.lower()
         assert wrong_id in error_msg
-        assert original_id in error_msg
 
 
 class TestChainStateSave:
     """Tests for ChainState.save method."""
 
     def test_saves_stage_file(self, tmp_path):
-        """Should save stage-specific file."""
+        """Should save stage-specific file with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
+        # Default command is analyze-project
         chain = ChainState.initialize(project_path, workspace_root=tmp_path)
         chain.save("01-test-stage", {"custom": "data"})
 
-        stage_file = tmp_path / ".analysis" / ".state" / "01-test-stage.json"
+        # Stage file now has command prefix
+        stage_file = tmp_path / ".analysis" / ".state" / "analyze-project-01-test-stage.json"
         assert stage_file.exists()
 
     def test_updates_latest_file(self, tmp_path):
@@ -202,16 +206,18 @@ class TestChainStateSave:
         assert data["stage"] == "01-test-stage"
 
     def test_tracks_stages_complete(self, tmp_path):
-        """Should track completed stages."""
+        """Should track completed stages with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
+        # Default command is analyze-project
         chain = ChainState.initialize(project_path, workspace_root=tmp_path)
         chain.save("01-first", {})
         chain.save("02-second", {})
 
-        assert "01-first" in chain._data["stages_complete"]
-        assert "02-second" in chain._data["stages_complete"]
+        # Stages are prefixed with command name
+        assert "analyze-project-01-first" in chain._data["stages_complete"]
+        assert "analyze-project-02-second" in chain._data["stages_complete"]
 
     def test_merges_data(self, tmp_path):
         """Should merge new data with existing."""
@@ -272,7 +278,7 @@ class TestChainStateHelpers:
         assert chain.get("missing_key", "default") == "default"
 
     def test_get_last_stage(self, tmp_path):
-        """Should return last completed stage."""
+        """Should return last completed stage with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
@@ -280,18 +286,20 @@ class TestChainStateHelpers:
         chain.save("01-first", {})
         chain.save("02-second", {})
 
-        assert chain.get_last_stage() == "02-second"
+        # Returns command-prefixed stage name
+        assert chain.get_last_stage() == "analyze-project-02-second"
 
     def test_is_complete(self, tmp_path):
-        """Should check stage completion."""
+        """Should check stage completion with command prefix."""
         project_path = tmp_path / "project"
         project_path.mkdir()
 
         chain = ChainState.initialize(project_path, workspace_root=tmp_path)
         chain.save("01-done", {})
 
-        assert chain.is_complete("01-done") is True
-        assert chain.is_complete("02-not-done") is False
+        # Use command-prefixed stage name
+        assert chain.is_complete("analyze-project-01-done") is True
+        assert chain.is_complete("analyze-project-02-not-done") is False
 
     def test_to_dict(self, tmp_path):
         """Should return state as dict."""

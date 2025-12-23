@@ -179,7 +179,7 @@ def run_constitution(
     # Initialize or load chain state
     if chain_id:
         try:
-            state = ChainState.load(chain_id)
+            state = ChainState.load(chain_id, command="constitution")
         except FileNotFoundError:
             emit_error(
                 "Chain state not found",
@@ -195,7 +195,7 @@ def run_constitution(
             )
             return
     else:
-        state = ChainState.initialize(Path.cwd())
+        state = ChainState.initialize(Path.cwd(), command="constitution")
         chain_id = state.chain_id
 
     # Build context
