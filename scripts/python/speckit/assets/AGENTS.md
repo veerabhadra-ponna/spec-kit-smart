@@ -139,12 +139,20 @@ State files are prefixed with command name to avoid collisions: `constitution-01
 
 **Important - Passing Inputs Between Stateless Stages:** Since stages 1-2 don't persist state, inputs collected in stage 2 (like `--feature` and `--jira` for specify) must be explicitly passed to stage 3 via CLI options. The NEXT command in stage 2 prompts will instruct you to include these values.
 
-**Command Options:** Each command has different options. Use `--help` to see valid options:
+**Command Options Reference:**
 
-```bash
-speckitadv constitution --help   # Shows: --stage, --principles, --defaults
-speckitadv analyze-project --help # Shows: --stage, --chain, --path, --scope, etc.
-```
+| Command | Available Options |
+|---------|-------------------|
+| `constitution` | `--stage`, `--chain`, `--defaults`, `--principles` |
+| `analyze-project` | `--stage`, `--chain`, `--path`, `--scope`, `--context`, `--concern-type`, `--current-impl`, `--target-impl`, `--verify` |
+| `specify` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--jira`, `--feature` |
+| `plan` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--constraints` |
+| `tasks` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--preferences` |
+| `implement` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--notes` |
+| `clarify` | `--stage`, `--chain`, `--path` |
+| `checklist` | `--stage`, `--chain`, `--path` |
+
+**Note:** Use `speckitadv <command> --help` for full option details.
 
 **Debug Commands:**
 
