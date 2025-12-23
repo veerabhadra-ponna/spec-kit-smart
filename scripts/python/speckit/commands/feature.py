@@ -383,37 +383,14 @@ def create_spec_directory(
     # Spec file path (AI will create this in stage 4)
     spec_file = feature_dir / "spec.md"
 
-    # NOTE: We intentionally do NOT create spec.md, plan.md, tasks.md here.
-    # These are created by AI during the specify workflow stages to ensure
-    # complete content is written rather than placeholder templates.
+    # NOTE: We intentionally do NOT create spec.md, plan.md, tasks.md,
+    # or requirements.md here. These are created by AI during the workflow
+    # stages to ensure complete content is written rather than placeholder
+    # templates being edited.
 
-    # Create checklists directory and requirements.md
+    # Create checklists directory (requirements.md created by AI in stage 5)
     checklists_dir = feature_dir / "checklists"
     checklists_dir.mkdir(exist_ok=True)
-
-    requirements_file = checklists_dir / "requirements.md"
-    if not requirements_file.exists():
-        requirements_content = """# Requirements Checklist
-
-## Completeness
-
-- [ ] All user stories have acceptance criteria
-- [ ] Edge cases are documented
-- [ ] Error handling is specified
-
-## Clarity
-
-- [ ] No ambiguous terms
-- [ ] Examples provided where needed
-- [ ] Technical terms are defined
-
-## Consistency
-
-- [ ] No conflicting requirements
-- [ ] Aligns with existing patterns
-- [ ] Follows project conventions
-"""
-        requirements_file.write_text(requirements_content, encoding="utf-8")
 
     return feature_dir, str(spec_file)
 
@@ -439,9 +416,9 @@ def run_create_feature(
     jira_config = config["branching"]["jira"]
 
     # Validate JIRA if required
-    if jira_config["required"] and not jira:
+    if jira_config.get("required", False) and not jira:
         console.print(
-            f"[red]Error:[/red] JIRA number is required by configuration",
+            "[red]Error:[/red] JIRA number is required by configuration",
             file=console.stderr,
         )
         console.print(
@@ -454,8 +431,13 @@ def run_create_feature(
     if jira:
         is_valid, error_msg = validate_jira_number(jira, config)
         if not is_valid:
-            console.print(f"[red]Error:[/red] {error_msg}", file=console.stderr)
-            raise SystemExit(1)
+            # Check if strict format validation is enabled
+            if jira_config.get("strict_format", False):
+                console.print(f"[red]Error:[/red] {error_msg}", file=console.stderr)
+                raise SystemExit(1)
+            else:
+                # Just warn, don't block
+                console.print(f"[yellow]Warning:[/yellow] {error_msg}")
 
     # Generate short name if not provided
     if not short_name:

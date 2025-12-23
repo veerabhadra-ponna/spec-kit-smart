@@ -2,7 +2,7 @@
 stage: generate
 requires: setup
 outputs: task_list
-version: 1.0.0
+version: 1.1.0
 next: 04-complete.md
 ---
 
@@ -69,12 +69,70 @@ Components:
 
 ---
 
+## Step: Write Tasks File
+
+Use the **Write tool** to create `{{feature_dir}}/tasks.md` with **complete content**.
+
+**IMPORTANT:** Generate actual tasks from the user stories in spec.md. Do NOT include sample/placeholder tasks.
+
+**Template structure** (fill in with actual tasks):
+
+```markdown
+# Tasks: [FEATURE NAME]
+
+**Input**: Design documents from `{{feature_dir}}/`
+**Prerequisites**: plan.md, spec.md (for user stories)
+
+## Format: `[ID] [P?] [Story] Description`
+
+- **[P]**: Can run in parallel (different files, no dependencies)
+- **[Story]**: Which user story (e.g., US1, US2)
+- Include exact file paths
+
+## Phase 1: Setup (Shared Infrastructure)
+
+- [ ] T001 Create project structure per plan
+- [ ] T002 Initialize project with dependencies
+- [ ] T003 [P] Configure linting/formatting
+
+---
+
+## Phase 2: Foundational (Blocking Prerequisites)
+
+- [ ] T004 Setup database/migrations
+- [ ] T005 [P] Implement auth framework
+- [ ] T006 [P] Setup API routing
+
+---
+
+## Phase 3: User Story 1 - [Title] (P1)
+
+- [ ] T007 [P] [US1] Create model in src/models/
+- [ ] T008 [US1] Implement service in src/services/
+- [ ] T009 [US1] Implement endpoint in src/api/
+
+---
+
+[Repeat for additional user stories]
+
+## Phase N: Polish
+
+- [ ] TXXX Documentation updates
+- [ ] TXXX Code cleanup
+```
+
+**Generation rules:**
+
+- Tasks from actual user stories in spec.md
+- Sequential IDs (T001, T002...)
+- [P] for parallelizable tasks
+- [US1], [US2] labels for story tasks
+
+---
+
 ## Output
 
-Write to `{{feature_dir}}/tasks.md`
-
 ```text
-
 ✓ Tasks generated
   - Total: [N] tasks
   - Phases: [N] phases

@@ -1,8 +1,8 @@
 ---
 stage: branch-setup
 requires: input-collection
-outputs: branch_name, spec_dir
-version: 1.0.0
+outputs: branch_name, spec_dir, feature_dir
+version: 1.1.0
 next: 04-generate-spec.md
 ---
 
@@ -76,13 +76,25 @@ JSON output format:
 
 ---
 
+## Step 4: Save Feature Directory to Chain State
+
+After creating the feature directory, save it to chain state for subsequent stages:
+
+```bash
+speckitadv chain-state save specify-branch-setup --cmd=specify \
+  --feature-dir="specs/{{number}}-{{jira}}-{{short_name}}" \
+  --state='{"feature_dir": "specs/{{number}}-{{jira}}-{{short_name}}", "branch_name": "{{branch_name}}", "spec_file": "{{spec_file}}"}'
+```
+
+---
+
 ## Output
 
 ```text
-
 ✓ Branch created
   - Branch: feature/{{number}}-{{jira}}-{{short_name}}
   - Spec dir: specs/{{number}}-{{jira}}-{{short_name}}/
+  - State saved
 ```
 
 ---
@@ -90,8 +102,5 @@ JSON output format:
 ## NEXT
 
 ```text
-
-speckitadv specify --stage=4 --chain={{chain_id}}
+speckitadv specify --stage=4 --chain={{chain_id}} --feature-dir=specs/{{number}}-{{jira}}-{{short_name}}
 ```
-
-**Note:** The feature directory is auto-detected from the created spec folder.

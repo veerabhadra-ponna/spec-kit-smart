@@ -81,86 +81,77 @@ Prioritize: scope > security > user experience > technical
 
 ## Step 4: Write Specification File
 
-Use the **Write tool** to create `{{spec_file}}` with complete content.
+Use the **Write tool** to create `{{spec_file}}` with **complete content**.
 
-**Template structure** (fill in all sections based on feature description):
+**IMPORTANT:** Replace ALL placeholders with actual feature-specific content. Do NOT include placeholder text like `[Brief Title]` or `[initial state]` in the final output.
+
+**Template structure** (fill in all sections):
 
 ```markdown
-# Feature Specification
+# Feature Specification: [FEATURE NAME]
 
-**Feature**: {{feature}}
-**Number**: {{feature_num}}
+**Feature Branch**: `{{branch_name}}`
 **Created**: {{date}}
-**JIRA**: {{jira}}
+**Status**: Draft
+**Input**: User description: "{{feature}}"
+
+## User Scenarios & Testing
+
+### User Story 1 - [Brief Title] (Priority: P1)
+
+[Describe this user journey in plain language]
+
+**Why this priority**: [Explain the value and why it has this priority level]
+
+**Independent Test**: [How this can be tested independently]
+
+**Acceptance Scenarios**:
+
+1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+2. **Given** [initial state], **When** [action], **Then** [expected outcome]
 
 ---
 
-## Overview
+### User Story 2 - [Brief Title] (Priority: P2)
 
-[Write 2-3 sentences describing the feature purpose and value]
-
----
-
-## User Stories
-
-### US-1: [Descriptive Story Title]
-
-**As a** [specific user type]
-**I want** [concrete goal]
-**So that** [measurable benefit]
-
-**Acceptance Criteria:**
-
-- [ ] [Specific, testable criterion]
-- [ ] [Specific, testable criterion]
-
-[Add more user stories as needed - typically 3-5]
+[Repeat structure for additional stories - typically 3-5 total]
 
 ---
 
-## Functional Requirements
+### Edge Cases
 
-### FR-1: [Requirement Name]
+- What happens when [boundary condition]?
+- How does system handle [error scenario]?
 
-[Detailed description of the requirement]
+## Requirements
 
-**Validation:**
+### Functional Requirements
 
-- [How to verify this requirement is met]
+- **FR-001**: System MUST [specific capability]
+- **FR-002**: System MUST [specific capability]
+- **FR-003**: Users MUST be able to [key interaction]
 
-[Add more requirements as needed]
+### Key Entities (if feature involves data)
 
----
-
-## Technical Notes
-
-[Technical considerations, constraints, or architecture notes]
-
----
-
-## Dependencies
-
-- [ ] [Specific dependency with rationale]
-
----
-
-## Out of Scope
-
-- [Explicitly excluded item]
-
----
-
-## Assumptions
-
-- [Assumption made during specification]
-
----
+- **[Entity 1]**: [What it represents, key attributes]
+- **[Entity 2]**: [Relationships to other entities]
 
 ## Success Criteria
 
-- [Measurable outcome 1]
-- [Measurable outcome 2]
+### Measurable Outcomes
+
+- **SC-001**: [Measurable metric, e.g., "Users can complete task in under 2 minutes"]
+- **SC-002**: [Performance metric, e.g., "System handles 1000 concurrent users"]
+- **SC-003**: [User satisfaction metric, e.g., "90% success rate on first attempt"]
 ```
+
+**Writing guidelines:**
+
+- Write complete user stories with priorities (P1, P2, P3)
+- Include acceptance scenarios in Given/When/Then format
+- Add functional requirements with FR-XXX numbering
+- Define measurable, technology-agnostic success criteria
+- Mark unclear items with [NEEDS CLARIFICATION] (max 3)
 
 ---
 
