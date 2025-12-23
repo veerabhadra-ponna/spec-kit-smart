@@ -144,7 +144,7 @@ State files are prefixed with command name to avoid collisions: `constitution-01
 | Command | Available Options |
 |---------|-------------------|
 | `constitution` | `--stage`, `--chain`, `--defaults`, `--principles` |
-| `analyze-project` | `--stage`, `--chain`, `--path`, `--scope`, `--context`, `--concern-type`, `--current-impl`, `--target-impl`, `--verify` |
+| `analyze-project` | `--stage`, `--chain`, `--chunk`, `--path`, `--scope`, `--context`, `--concern-type`, `--current-impl`, `--target-impl`, `--verify` |
 | `specify` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--jira`, `--feature` |
 | `plan` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--constraints` |
 | `tasks` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--preferences` |
