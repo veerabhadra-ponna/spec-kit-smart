@@ -152,6 +152,7 @@ def specify(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-6)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
     jira: Optional[str] = typer.Option(None, "--jira", "-j", help="JIRA number (format: C12345-7890)"),
     feature: Optional[str] = typer.Option(None, "--feature", "-f", help="Feature description"),
 ) -> None:
@@ -185,7 +186,7 @@ def specify(
         context["jira"] = jira or ""
         context["feature"] = feature
 
-    run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
+    run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -198,6 +199,7 @@ def plan(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
     constraints: Optional[str] = typer.Option(None, "--constraints", "-c", help="Planning constraints"),
 ) -> None:
     """
@@ -218,7 +220,7 @@ def plan(
     elif constraints:
         context["constraints"] = constraints
 
-    run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
+    run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -231,6 +233,7 @@ def tasks(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
     preferences: Optional[str] = typer.Option(None, "--preferences", help="Task generation preferences"),
 ) -> None:
     """
@@ -251,7 +254,7 @@ def tasks(
     elif preferences:
         context["preferences"] = preferences
 
-    run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
+    run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -264,6 +267,7 @@ def implement(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-5)"),
     chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
     notes: Optional[str] = typer.Option(None, "--notes", "-n", help="Implementation notes"),
 ) -> None:
     """
@@ -284,7 +288,7 @@ def implement(
     elif notes:
         context["notes"] = notes
 
-    run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path, context=context if context else None)
+    run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================

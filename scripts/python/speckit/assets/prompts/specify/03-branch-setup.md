@@ -93,3 +93,5 @@ JSON output format:
 
 speckitadv specify --stage=4 --chain={{chain_id}}
 ```
+
+**Note:** The feature directory is auto-detected from the created spec folder.

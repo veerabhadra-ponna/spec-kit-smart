@@ -131,9 +131,11 @@ speckitadv specify --stage=4 --chain=abc12345  # Uses --chain from stage 3+
 |---------|----------------|-------|
 | `analyze-project` | `.analysis/.state/` | All stages persisted |
 | `constitution` | `memory/.state/` | All stages persisted |
-| `specify`, `plan`, `tasks`, `implement` | `specs/{feature}/.state/` | Stages 1-2 stateless, stage 3+ persisted |
+| `specify`, `plan`, `tasks`, `implement` | `specs/{feature}/.state/` | Stages 1-2 stateless, stage 3+ persisted after feature folder exists |
 
 State files are prefixed with command name to avoid collisions: `constitution-01-initialization.json`
+
+**Note:** For feature-scoped commands, the feature directory is auto-detected after stage 3 creates it. State is automatically migrated from `specs/.pending/.state/` to `specs/{feature}/.state/`.
 
 **Command Options:** Each command has different options. Use `--help` to see valid options:
 

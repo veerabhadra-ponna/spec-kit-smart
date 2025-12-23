@@ -234,7 +234,8 @@ def get_last_completed_stage(
     for state_dir in state_dirs:
         for f in state_dir.glob("*.json"):
             # Match: command-NN-stage.json or NN-stage.json
-            if re.match(r"(\w+-)?(\d{2}[ab]?-.*)\.json", f.name) and f.name != "latest.json":
+            # Use [\w-]* to handle hyphenated commands like "analyze-project"
+            if re.match(r"(?:[a-zA-Z][\w-]*-)?(\d{2}[ab]?-.*)\.json$", f.name) and f.name != "latest.json":
                 stage_files.append(f.name)
 
     if not stage_files:

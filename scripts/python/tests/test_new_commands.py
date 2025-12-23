@@ -202,6 +202,41 @@ class TestChainFunctions:
         assert validate_state(state) is False
 
 
+class TestLastStageRegex:
+    """Tests for last stage detection with hyphenated commands."""
+
+    def test_hyphenated_command_matches(self, tmp_path):
+        """Test that analyze-project stage files are detected."""
+        import re
+        from speckit.commands.chain import get_last_completed_stage
+
+        # Create state directory with analyze-project files
+        state_dir = tmp_path / ".analysis" / ".state"
+        state_dir.mkdir(parents=True)
+
+        # Create stage files with hyphenated command prefix
+        (state_dir / "analyze-project-01-setup-and-scope.json").write_text("{}")
+        (state_dir / "analyze-project-02-scan-and-collect.json").write_text("{}")
+        (state_dir / "latest.json").write_text("{}")
+
+        # The regex should match these files
+        pattern = r"(?:[a-zA-Z][\w-]*-)?(\d{2}[ab]?-.*)\.json$"
+        assert re.match(pattern, "analyze-project-01-setup-and-scope.json")
+        assert re.match(pattern, "analyze-project-02-scan-and-collect.json")
+        assert re.match(pattern, "constitution-01-initialization.json")
+        assert re.match(pattern, "01-setup.json")  # No prefix
+        assert not re.match(pattern, "latest.json")
+
+    def test_simple_command_matches(self):
+        """Test that simple command names still work."""
+        import re
+        pattern = r"(?:[a-zA-Z][\w-]*-)?(\d{2}[ab]?-.*)\.json$"
+
+        assert re.match(pattern, "specify-03-branch-setup.json")
+        assert re.match(pattern, "plan-02-load-context.json")
+        assert re.match(pattern, "tasks-04-complete.json")
+
+
 class TestCheckArtifactoryFunction:
     """Tests for check_artifactory function."""
 

@@ -205,6 +205,16 @@ class ChainState:
         if feature_dir and feature_dir.exists():
             state_dirs_to_try.append(feature_dir / ".state")
 
+        # For feature-scoped commands, also scan specs/ for feature directories with state
+        if command in FEATURE_SCOPED_COMMANDS:
+            specs_dir = workspace_root / "specs"
+            if specs_dir.exists():
+                for subdir in sorted(specs_dir.iterdir(), reverse=True):  # Most recent first
+                    if subdir.is_dir() and not subdir.name.startswith("."):
+                        feature_state_dir = subdir / ".state"
+                        if feature_state_dir.exists():
+                            state_dirs_to_try.append(feature_state_dir)
+
         # Fallback locations
         state_dirs_to_try.extend([
             workspace_root / "memory" / ".state",
@@ -352,19 +362,53 @@ class ChainState:
         path = self._data.get("feature_dir")
         return Path(path) if path else None
 
-    def set_feature_dir(self, feature_dir: Path) -> None:
+    def set_feature_dir(self, feature_dir: Path, workspace_root: Optional[Path] = None) -> None:
         """
         Set feature directory and update state location.
 
         Called when feature folder is created (stage 3 of specify).
         Updates the state directory to use the feature folder.
+        Migrates any existing state from pending and cleans up pending.
 
         Args:
             feature_dir: Path to the feature directory (e.g., specs/001-user-auth/)
+            workspace_root: Optional workspace root for finding pending state
         """
+        old_state_dir = self.state_dir
         self._data["feature_dir"] = str(feature_dir.absolute())
 
         # Update state directory to feature-scoped location
         if self.command in FEATURE_SCOPED_COMMANDS:
-            self.state_dir = feature_dir / ".state"
-            self.state_dir.mkdir(parents=True, exist_ok=True)
+            new_state_dir = feature_dir / ".state"
+            new_state_dir.mkdir(parents=True, exist_ok=True)
+
+            # Migrate state files from old location (pending) if different
+            if old_state_dir != new_state_dir and old_state_dir.exists():
+                for state_file in old_state_dir.glob("*.json"):
+                    # Check if this state file belongs to our chain
+                    try:
+                        data = json.loads(state_file.read_text())
+                        if data.get("chain_id") == self.chain_id:
+                            # Copy to new location
+                            new_file = new_state_dir / state_file.name
+                            new_file.write_text(state_file.read_text())
+                            # Remove from old location
+                            state_file.unlink()
+                    except (json.JSONDecodeError, OSError):
+                        continue
+
+                # Clean up pending directory if empty
+                if old_state_dir.name == ".state":
+                    pending_dir = old_state_dir.parent
+                    if pending_dir.name == ".pending":
+                        try:
+                            # Remove .state if empty
+                            if not any(old_state_dir.iterdir()):
+                                old_state_dir.rmdir()
+                            # Remove .pending if empty
+                            if pending_dir.exists() and not any(pending_dir.iterdir()):
+                                pending_dir.rmdir()
+                        except OSError:
+                            pass  # Directory not empty or permission issue
+
+            self.state_dir = new_state_dir

@@ -419,3 +419,66 @@ class TestStateLocationRouting:
 
         assert loaded.chain_id == chain_id
         assert loaded.command == "constitution"
+
+    def test_set_feature_dir_migrates_state_from_pending(self, tmp_path):
+        """set_feature_dir should migrate state from pending and clean up."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Create feature directory
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_dir.mkdir(parents=True)
+
+        # Initialize specify chain (goes to pending)
+        chain = ChainState.initialize(project_path, command="specify", workspace_root=tmp_path)
+        chain_id = chain.chain_id
+
+        # Save stage 3 state (this is when feature folder would be created)
+        chain.save("03-branch-setup", {"data": "test"}, stage_num=3)
+
+        # Verify state is in pending
+        pending_state = tmp_path / "specs" / ".pending" / ".state"
+        assert pending_state.exists()
+        assert (pending_state / "latest.json").exists()
+
+        # Now set feature dir (simulates what happens after create-feature)
+        chain.set_feature_dir(feature_dir)
+
+        # State should be in feature directory
+        feature_state = feature_dir / ".state"
+        assert feature_state.exists()
+        assert (feature_state / "latest.json").exists()
+
+        # Pending should be cleaned up (or only contain other chains' state)
+        # Check our chain's state was removed from pending
+        if pending_state.exists():
+            for state_file in pending_state.glob("*.json"):
+                import json
+                data = json.loads(state_file.read_text())
+                assert data.get("chain_id") != chain_id, "Chain state should be migrated from pending"
+
+    def test_load_scans_feature_directories(self, tmp_path):
+        """ChainState.load should find state in feature directories."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Create feature directory with state
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_state = feature_dir / ".state"
+        feature_state.mkdir(parents=True)
+
+        # Create state file directly in feature directory
+        chain_id = "test1234"
+        state_data = {
+            "chain_id": chain_id,
+            "command": "specify",
+            "stage": "03-branch-setup",
+            "timestamp": "2025-01-01T00:00:00",
+        }
+        import json
+        (feature_state / "latest.json").write_text(json.dumps(state_data))
+
+        # Load should find it
+        loaded = ChainState.load(chain_id, command="specify", workspace_root=tmp_path)
+        assert loaded.chain_id == chain_id
+        assert loaded.state_dir == feature_state

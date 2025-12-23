@@ -17,12 +17,68 @@ from speckit.core.prompts import (
 )
 from speckit.core.state import ChainState, FEATURE_SCOPED_COMMANDS, FEATURE_STATE_MIN_STAGE
 
+import json
+
+
+def _detect_feature_dir_for_chain(chain_id: str, workspace_root: Optional[Path] = None) -> Optional[Path]:
+    """
+    Auto-detect feature directory by scanning specs/ for state files with matching chain_id,
+    or by finding the most recently created feature folder.
+
+    This handles the case where stage 3 created the folder but --feature-dir wasn't passed.
+    """
+    root = workspace_root or Path.cwd()
+    specs_dir = root / "specs"
+    if not specs_dir.exists():
+        return None
+
+    # Check pending state for stored feature_dir
+    pending_state = specs_dir / ".pending" / ".state" / "latest.json"
+    if pending_state.exists():
+        try:
+            data = json.loads(pending_state.read_text())
+            if data.get("chain_id") == chain_id and data.get("feature_dir"):
+                feature_path = Path(data["feature_dir"])
+                if feature_path.exists():
+                    return feature_path
+        except (json.JSONDecodeError, OSError):
+            pass
+
+    # Scan feature directories for matching chain_id in state
+    for subdir in sorted(specs_dir.iterdir(), reverse=True):  # Most recent first by name
+        if subdir.is_dir() and not subdir.name.startswith("."):
+            state_file = subdir / ".state" / "latest.json"
+            if state_file.exists():
+                try:
+                    data = json.loads(state_file.read_text())
+                    if data.get("chain_id") == chain_id:
+                        return subdir
+                except (json.JSONDecodeError, OSError):
+                    continue
+
+    # Fallback: find most recently modified feature folder that has spec.md
+    # This handles the case where create-feature just ran but state wasn't saved yet
+    candidates = []
+    for subdir in specs_dir.iterdir():
+        if subdir.is_dir() and not subdir.name.startswith("."):
+            spec_file = subdir / "spec.md"
+            if spec_file.exists():
+                candidates.append((subdir, spec_file.stat().st_mtime))
+
+    if candidates:
+        # Return the most recently modified
+        candidates.sort(key=lambda x: x[1], reverse=True)
+        return candidates[0][0]
+
+    return None
+
 
 def run_staged_command(
     command: str,
     stage: int = 1,
     chain_id: Optional[str] = None,
     path: Optional[str] = None,
+    feature_dir: Optional[str] = None,
     context: Optional[dict] = None,
 ) -> None:
     """
@@ -36,6 +92,7 @@ def run_staged_command(
         stage: Current stage number (1-indexed)
         chain_id: Optional chain ID for state persistence
         path: Optional project path
+        feature_dir: Optional feature directory path (for feature-scoped commands stage 3+)
         context: Optional additional context variables
     """
     # Get ordered list of stages for this command
@@ -63,10 +120,13 @@ def run_staged_command(
     # Get the stage identifier (e.g., "01-initialization")
     stage_id = stages[stage - 1]
 
+    # Convert feature_dir to Path if provided
+    feature_dir_path = Path(feature_dir) if feature_dir else None
+
     # Initialize or load chain state
     if chain_id:
         try:
-            state = ChainState.load(chain_id, command=command)
+            state = ChainState.load(chain_id, command=command, feature_dir=feature_dir_path)
         except FileNotFoundError:
             emit_error(
                 "Chain state not found",
@@ -84,8 +144,19 @@ def run_staged_command(
     else:
         # New workflow - initialize state
         project_path = Path(path) if path else Path.cwd()
-        state = ChainState.initialize(project_path, command=command)
+        state = ChainState.initialize(project_path, command=command, feature_dir=feature_dir_path)
         chain_id = state.chain_id
+
+    # Update feature directory if provided (for stage 3+ of feature-scoped commands)
+    if feature_dir_path and command in FEATURE_SCOPED_COMMANDS:
+        state.set_feature_dir(feature_dir_path)
+    elif command in FEATURE_SCOPED_COMMANDS and stage >= FEATURE_STATE_MIN_STAGE:
+        # Auto-detect feature directory by scanning specs/ for matching chain_id
+        # This handles the case where stage 3 created the folder but --feature-dir wasn't passed
+        detected_dir = _detect_feature_dir_for_chain(state.chain_id)
+        if detected_dir:
+            state.set_feature_dir(detected_dir)
+            feature_dir_path = detected_dir
 
     # Build render context
     render_context = {
@@ -94,6 +165,7 @@ def run_staged_command(
         "total_stages": total_stages,
         "project_path": str(state.project_path or Path.cwd()),
         "command": command,
+        "feature_dir": str(feature_dir_path) if feature_dir_path else (str(state.feature_dir) if state.feature_dir else ""),
         **(context or {}),
     }
 
@@ -123,6 +195,9 @@ def run_staged_command(
             next_cmd = f"speckitadv {command} --stage={next_stage}"
         else:
             next_cmd = f"speckitadv {command} --stage={next_stage} --chain={chain_id}"
+            # Include --feature-dir for feature-scoped commands when we have a feature directory
+            if command in FEATURE_SCOPED_COMMANDS and feature_dir_path:
+                next_cmd += f" --feature-dir={feature_dir_path}"
     else:
         next_cmd = None
 
