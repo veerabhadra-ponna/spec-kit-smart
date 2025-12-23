@@ -803,5 +803,33 @@ def chain_state(
     run_chain_state_command(command, stage, state_json, cmd=cmd, feature_dir=feature_dir)
 
 
+# ============================================================================
+# GENERATE-LAUNCHERS Command
+# ============================================================================
+
+
+@app.command("generate-launchers")
+def generate_launchers_cmd(
+    output_dir: Optional[str] = typer.Option(None, "--output-dir", "-o", help="Output directory (default: ./launchers)"),
+    agent: Optional[str] = typer.Option(None, "--agent", "-a", help="Specific agent to generate for"),
+    list_agents: bool = typer.Option(False, "--list", "-l", help="List available agents"),
+) -> None:
+    """
+    Generate launcher files for AI agents.
+
+    Creates launcher files for various AI agent platforms
+    (Claude, Copilot, Cursor, Gemini, etc.) that invoke speckitadv commands.
+
+    Examples:
+        speckitadv generate-launchers
+        speckitadv generate-launchers --agent claude
+        speckitadv generate-launchers --output-dir ./my-launchers
+        speckitadv generate-launchers --list
+    """
+    from speckit.commands.launchers import run_generate_launchers
+
+    run_generate_launchers(output_dir=output_dir, agent=agent, list_agents=list_agents)
+
+
 if __name__ == "__main__":
     app()

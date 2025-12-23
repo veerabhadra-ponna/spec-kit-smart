@@ -48,6 +48,7 @@ speckitadv --help
 | `clarify` | Ask structured questions | 3 |
 | `checklist` | Generate quality checklist | 3 |
 | `analyze-project` | Analyze existing project | 9+ |
+| `generate-launchers` | Generate launcher files for AI agents | - |
 
 ### Basic Workflow
 
