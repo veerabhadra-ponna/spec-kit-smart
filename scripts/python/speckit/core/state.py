@@ -205,8 +205,14 @@ class ChainState:
         if feature_dir and feature_dir.exists():
             state_dirs_to_try.append(feature_dir / ".state")
 
-        # For feature-scoped commands, also scan specs/ for feature directories with state
+        # For feature-scoped commands, always include pending state directory
+        # (stage 3 saves here before feature folder exists, stage 4+ needs to find it)
         if command in FEATURE_SCOPED_COMMANDS:
+            pending_state = workspace_root / "specs" / ".pending" / ".state"
+            if pending_state.exists():
+                state_dirs_to_try.append(pending_state)
+
+            # Also scan specs/ for feature directories with state
             specs_dir = workspace_root / "specs"
             if specs_dir.exists():
                 for subdir in sorted(specs_dir.iterdir(), reverse=True):  # Most recent first
@@ -406,11 +412,21 @@ class ChainState:
                     except (json.JSONDecodeError, OSError):
                         continue
 
-            # Always clean up pending directory if empty (even if no migration occurred)
-            # This handles the case where chain was initialized directly with feature_dir
+            # Clean up pending directory - remove orphaned state files for same command
+            # This handles abandoned/restarted workflows that left stale state
             workspace = workspace_root or Path.cwd()
             pending_state_dir = workspace / "specs" / ".pending" / ".state"
             pending_dir = workspace / "specs" / ".pending"
+
+            if pending_state_dir.exists():
+                for state_file in list(pending_state_dir.glob("*.json")):
+                    try:
+                        data = json.loads(state_file.read_text())
+                        # Remove files for same command (orphaned from failed/restarted workflows)
+                        if data.get("command") == self.command:
+                            state_file.unlink()
+                    except (json.JSONDecodeError, OSError):
+                        continue
 
             try:
                 # Remove .state if empty
