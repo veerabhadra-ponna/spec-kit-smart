@@ -783,6 +783,8 @@ def chain_state(
     command: str = typer.Argument(..., help="Command: generate-id, init, save, load, load-latest, last-stage, is-complete, chain-id, init-state, validate"),
     stage: Optional[str] = typer.Argument(None, help="Stage name or chain ID (for some commands)"),
     state_json: Optional[str] = typer.Option(None, "--state", "-s", help="State JSON (for save/validate)"),
+    cmd: Optional[str] = typer.Option(None, "--cmd", help="Workflow command (analyze-project, constitution, specify, plan, tasks, implement)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory for feature-scoped commands"),
 ) -> None:
     """
     Manage chain state for workflow persistence.
@@ -791,7 +793,7 @@ def chain_state(
     """
     from speckit.commands.chain import run_chain_state_command
 
-    run_chain_state_command(command, stage, state_json)
+    run_chain_state_command(command, stage, state_json, cmd=cmd, feature_dir=feature_dir)
 
 
 if __name__ == "__main__":

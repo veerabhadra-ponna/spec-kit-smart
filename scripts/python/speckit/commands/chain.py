@@ -89,9 +89,10 @@ def find_all_state_dirs(repo_root: Optional[Path] = None) -> list[Path]:
 def init_state_dir(
     command: str = "analyze-project",
     repo_root: Optional[Path] = None,
+    feature_dir: Optional[Path] = None,
 ) -> Path:
     """Initialize state directory for a command."""
-    state_dir = get_state_dir(command, repo_root)
+    state_dir = get_state_dir(command, repo_root, feature_dir)
     state_dir.mkdir(parents=True, exist_ok=True)
     console.print(f"[green]✓[/green] Initialized state directory: {state_dir}")
     return state_dir
@@ -113,6 +114,7 @@ def save_state(
     state: dict,
     command: str = "analyze-project",
     repo_root: Optional[Path] = None,
+    feature_dir: Optional[Path] = None,
 ) -> bool:
     """
     Save state to file.
@@ -122,6 +124,7 @@ def save_state(
         state: State dictionary to save
         command: Command name for state location and file prefix
         repo_root: Optional repository root
+        feature_dir: Optional feature directory for feature-scoped commands
 
     Returns:
         True if successful
@@ -130,7 +133,7 @@ def save_state(
         console.print("[red]✗[/red] State validation failed - cannot save")
         return False
 
-    state_dir = get_state_dir(command, repo_root)
+    state_dir = get_state_dir(command, repo_root, feature_dir)
     state_dir.mkdir(parents=True, exist_ok=True)
 
     # Use command-prefixed filename
@@ -156,6 +159,7 @@ def load_state(
     stage_name: str,
     command: str = "analyze-project",
     repo_root: Optional[Path] = None,
+    feature_dir: Optional[Path] = None,
 ) -> Optional[dict]:
     """
     Load state from file.
@@ -164,11 +168,12 @@ def load_state(
         stage_name: Stage identifier
         command: Command name for state location and file prefix
         repo_root: Optional repository root
+        feature_dir: Optional feature directory for feature-scoped commands
 
     Returns:
         State dictionary or None if not found
     """
-    state_dir = get_state_dir(command, repo_root)
+    state_dir = get_state_dir(command, repo_root, feature_dir)
     file_stage_name = f"{command}-{stage_name}" if command else stage_name
     state_file = state_dir / f"{file_stage_name}.json"
 
@@ -185,15 +190,21 @@ def load_state(
 def load_latest_state(
     command: str = "",
     repo_root: Optional[Path] = None,
+    feature_dir: Optional[Path] = None,
 ) -> Optional[dict]:
     """
     Load the latest state.
 
     If command is specified, searches that command's state dir first.
     Otherwise searches all state directories.
+
+    Args:
+        command: Workflow command name
+        repo_root: Optional repository root
+        feature_dir: Optional feature directory for feature-scoped commands
     """
     if command:
-        state_dir = get_state_dir(command, repo_root)
+        state_dir = get_state_dir(command, repo_root, feature_dir)
         latest_file = state_dir / "latest.json"
         if latest_file.exists():
             try:
@@ -218,10 +229,11 @@ def load_latest_state(
 def get_last_completed_stage(
     command: str = "",
     repo_root: Optional[Path] = None,
+    feature_dir: Optional[Path] = None,
 ) -> str:
     """Get the last completed stage name."""
     if command:
-        state_dir = get_state_dir(command, repo_root)
+        state_dir = get_state_dir(command, repo_root, feature_dir)
         state_dirs = [state_dir] if state_dir.exists() else []
     else:
         state_dirs = find_all_state_dirs(repo_root)
@@ -305,17 +317,31 @@ def run_chain_state_command(
     stage: Optional[str] = None,
     state_json: Optional[str] = None,
     new_fields_json: Optional[str] = None,
+    cmd: Optional[str] = None,
+    feature_dir: Optional[str] = None,
 ) -> None:
     """
     Run chain state management command.
 
     Replaces chain-state.sh CLI functionality.
+
+    Args:
+        command: The chain-state subcommand to run
+        stage: Stage name or chain ID (for some commands)
+        state_json: State JSON (for save/validate)
+        new_fields_json: New fields JSON (for merge)
+        cmd: Workflow command (analyze-project, constitution, specify, etc.)
+        feature_dir: Feature directory for feature-scoped commands
     """
+    # Default to analyze-project for backward compatibility
+    workflow_cmd = cmd or "analyze-project"
+    feature_dir_path = Path(feature_dir) if feature_dir else None
+
     if command == "generate-id":
         print(generate_chain_id())
 
     elif command == "init":
-        init_state_dir()
+        init_state_dir(workflow_cmd, feature_dir=feature_dir_path)
 
     elif command == "save":
         if not stage or not state_json:
@@ -323,7 +349,7 @@ def run_chain_state_command(
             return
         try:
             state = json.loads(state_json)
-            save_state(stage, state)
+            save_state(stage, state, command=workflow_cmd, feature_dir=feature_dir_path)
         except json.JSONDecodeError:
             console.print("[red]Error:[/red] Invalid JSON")
 
@@ -331,7 +357,7 @@ def run_chain_state_command(
         if not stage:
             console.print("[red]Error:[/red] load requires stage name")
             return
-        state = load_state(stage)
+        state = load_state(stage, command=workflow_cmd, feature_dir=feature_dir_path)
         if state:
             print(json.dumps(state, indent=2))
         else:
@@ -339,7 +365,7 @@ def run_chain_state_command(
             raise SystemExit(1)
 
     elif command == "load-latest":
-        state = load_latest_state()
+        state = load_latest_state(command=workflow_cmd, feature_dir=feature_dir_path)
         if state:
             print(json.dumps(state, indent=2))
         else:
@@ -347,7 +373,7 @@ def run_chain_state_command(
             raise SystemExit(1)
 
     elif command == "last-stage":
-        print(get_last_completed_stage())
+        print(get_last_completed_stage(command=workflow_cmd, feature_dir=feature_dir_path))
 
     elif command == "is-complete":
         if not stage:

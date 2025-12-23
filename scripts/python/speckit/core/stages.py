@@ -23,10 +23,12 @@ import json
 def _detect_feature_dir_for_chain(chain_id: str, workspace_root: Optional[Path] = None) -> Optional[Path]:
     """
     Auto-detect feature directory by scanning specs/ for state files with matching chain_id,
-    or by finding the most recently created feature folder.
+    or by matching the current git branch to a feature directory.
 
     This handles the case where stage 3 created the folder but --feature-dir wasn't passed.
     """
+    from speckit.setup.check_cmd import find_feature_dir
+
     root = workspace_root or Path.cwd()
     specs_dir = root / "specs"
     if not specs_dir.exists():
@@ -56,21 +58,9 @@ def _detect_feature_dir_for_chain(chain_id: str, workspace_root: Optional[Path] 
                 except (json.JSONDecodeError, OSError):
                     continue
 
-    # Fallback: find most recently modified feature folder that has spec.md
-    # This handles the case where create-feature just ran but state wasn't saved yet
-    candidates = []
-    for subdir in specs_dir.iterdir():
-        if subdir.is_dir() and not subdir.name.startswith("."):
-            spec_file = subdir / "spec.md"
-            if spec_file.exists():
-                candidates.append((subdir, spec_file.stat().st_mtime))
-
-    if candidates:
-        # Return the most recently modified
-        candidates.sort(key=lambda x: x[1], reverse=True)
-        return candidates[0][0]
-
-    return None
+    # Fallback: use git branch name to find matching feature directory
+    # This is safer than mtime as it uses explicit naming convention
+    return find_feature_dir(root)
 
 
 def run_staged_command(

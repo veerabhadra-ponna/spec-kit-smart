@@ -231,11 +231,15 @@ class ChainState:
 
             latest_path = try_dir / "latest.json"
             if latest_path.exists():
-                data = json.loads(latest_path.read_text())
-                if data.get("chain_id") == chain_id:
-                    state_dir = try_dir
-                    loaded_data = data
-                    break
+                try:
+                    data = json.loads(latest_path.read_text())
+                    if data.get("chain_id") == chain_id:
+                        state_dir = try_dir
+                        loaded_data = data
+                        break
+                except (json.JSONDecodeError, OSError):
+                    # Skip malformed or unreadable files, try next directory
+                    continue
 
         if not state_dir or not loaded_data:
             raise FileNotFoundError(

@@ -482,3 +482,33 @@ class TestStateLocationRouting:
         loaded = ChainState.load(chain_id, command="specify", workspace_root=tmp_path)
         assert loaded.chain_id == chain_id
         assert loaded.state_dir == feature_state
+
+    def test_load_skips_malformed_json(self, tmp_path):
+        """ChainState.load should skip malformed JSON files and continue searching."""
+        project_path = tmp_path / "project"
+        project_path.mkdir()
+
+        # Create a malformed JSON file in the first location
+        malformed_state = tmp_path / "specs" / ".pending" / ".state"
+        malformed_state.mkdir(parents=True)
+        (malformed_state / "latest.json").write_text("{ invalid json }")
+
+        # Create valid state in a feature directory
+        feature_dir = tmp_path / "specs" / "001-my-feature"
+        feature_state = feature_dir / ".state"
+        feature_state.mkdir(parents=True)
+
+        chain_id = "test5678"
+        state_data = {
+            "chain_id": chain_id,
+            "command": "specify",
+            "stage": "03-branch-setup",
+            "timestamp": "2025-01-01T00:00:00",
+        }
+        import json
+        (feature_state / "latest.json").write_text(json.dumps(state_data))
+
+        # Load should skip malformed file and find the valid one
+        loaded = ChainState.load(chain_id, command="specify", workspace_root=tmp_path)
+        assert loaded.chain_id == chain_id
+        assert loaded.state_dir == feature_state
