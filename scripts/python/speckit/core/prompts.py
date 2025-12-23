@@ -119,7 +119,7 @@ def get_prompt_fragment(command: str, stage: str) -> str:
     raise FileNotFoundError(f"Prompt fragment not found: {command}/{stage}")
 
 
-def render_prompt(fragment: str, context: dict) -> str:
+def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
     """
     Render a prompt fragment with context variables and template includes.
 
@@ -132,13 +132,19 @@ def render_prompt(fragment: str, context: dict) -> str:
     Args:
         fragment: Prompt fragment content
         context: Variables to substitute
+        strict: If True, raise FileNotFoundError for missing templates (for CI/tests).
+                If False (default), return placeholder text for graceful degradation.
 
     Returns:
         Rendered prompt
+
+    Raises:
+        FileNotFoundError: If strict=True and a template is not found
     """
     import re
 
     result = fragment
+    missing_templates: list[str] = []
 
     # First, handle template includes: {{include:path/to/template.md}}
     # This must happen before escaping braces
@@ -147,11 +153,17 @@ def render_prompt(fragment: str, context: dict) -> str:
         try:
             template_content = load_template(template_path)
             # Recursively render the included template (for nested includes and variables)
-            return render_prompt(template_content, context)
+            return render_prompt(template_content, context, strict=strict)
         except FileNotFoundError:
+            if strict:
+                missing_templates.append(template_path)
             return f"[Template not found: {template_path}]"
 
     result = re.sub(r"\{\{include:([^}]+)\}\}", include_template, result)
+
+    # In strict mode, fail after processing all includes to report all missing templates
+    if strict and missing_templates:
+        raise FileNotFoundError(f"Missing templates: {', '.join(missing_templates)}")
 
     # Handle escaped braces (convert to placeholders)
     result = result.replace("{{", "\x00LBRACE\x00")

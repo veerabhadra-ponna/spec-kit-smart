@@ -134,10 +134,13 @@ class TestRenderPrompt:
         # Template content should be included
         assert "Before" in result
         assert "After" in result
-        assert "Feature Specification" in result or "[Template not found" in result
+        # Skip if template not found in test environment
+        if "[Template not found" in result:
+            pytest.skip("Template not found in test environment")
+        assert "Feature Specification" in result
 
-    def test_template_include_not_found(self):
-        """Should show error message for missing template."""
+    def test_template_include_not_found_graceful(self):
+        """Should show error message for missing template in non-strict mode."""
         fragment = "Before\n{{include:nonexistent-template.md}}\nAfter"
         context = {}
 
@@ -146,6 +149,30 @@ class TestRenderPrompt:
         assert "Before" in result
         assert "After" in result
         assert "[Template not found: nonexistent-template.md]" in result
+
+    def test_template_include_strict_mode_raises(self):
+        """Should raise FileNotFoundError in strict mode for missing template."""
+        fragment = "Before\n{{include:nonexistent-template.md}}\nAfter"
+        context = {}
+
+        with pytest.raises(FileNotFoundError) as exc_info:
+            render_prompt(fragment, context, strict=True)
+
+        assert "nonexistent-template.md" in str(exc_info.value)
+
+    def test_template_include_strict_mode_success(self):
+        """Should succeed in strict mode when template exists."""
+        fragment = "Before\n{{include:spec-template.md}}\nAfter"
+        context = {}
+
+        try:
+            result = render_prompt(fragment, context, strict=True)
+            assert "Before" in result
+            assert "After" in result
+            assert "Feature Specification" in result
+            assert "[Template not found" not in result
+        except FileNotFoundError:
+            pytest.skip("Template not found in test environment")
 
 
 class TestGetTemplatesBase:
