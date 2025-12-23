@@ -184,9 +184,9 @@ class TestFindExistingChainForCommand:
         assert result.source == "003-feature-c"
         assert result.total_matches == 3
 
-    def test_pending_included_in_match_count(self, tmp_path):
-        """Pending state should be included in total_matches count."""
-        # Create pending state
+    def test_feature_directories_preferred_over_pending(self, tmp_path):
+        """Feature directories should be checked first, pending only as fallback."""
+        # Create pending state (stale/abandoned workflow)
         pending_state = tmp_path / "specs" / ".pending" / ".state"
         pending_state.mkdir(parents=True)
         (pending_state / "latest.json").write_text(json.dumps({
@@ -196,7 +196,7 @@ class TestFindExistingChainForCommand:
             "timestamp": "2025-01-01T00:00:00",
         }))
 
-        # Create feature state
+        # Create feature state (properly migrated workflow)
         feature_state = tmp_path / "specs" / "001-my-feature" / ".state"
         feature_state.mkdir(parents=True)
         (feature_state / "latest.json").write_text(json.dumps({
@@ -206,10 +206,10 @@ class TestFindExistingChainForCommand:
             "timestamp": "2025-01-02T00:00:00",
         }))
 
-        # Without explicit feature_dir, should find both
+        # Feature directories are checked first; pending is only fallback
         result = _find_existing_chain_for_command("specify", workspace_root=tmp_path)
 
         assert result is not None
-        assert result.chain_id == "pending123"  # Pending is checked first
-        assert result.source == ".pending"
-        assert result.total_matches == 2  # pending + feature
+        assert result.chain_id == "feature456"  # Feature dirs checked first
+        assert result.source == "001-my-feature"
+        assert result.total_matches == 1  # Only feature dirs counted when they match

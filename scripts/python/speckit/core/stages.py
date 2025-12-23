@@ -84,19 +84,8 @@ def _find_existing_chain_for_command(
     if not specs_dir.exists():
         return None
 
-    # 2. Check pending state
-    pending_state = specs_dir / ".pending" / ".state" / "latest.json"
-    if pending_state.exists():
-        try:
-            data = json.loads(pending_state.read_text())
-            if data.get("command") == command:
-                chain_id = data.get("chain_id")
-                if chain_id:
-                    all_matches.append((chain_id, ".pending"))
-        except (json.JSONDecodeError, OSError):
-            pass
-
-    # 3. Scan feature directories for matching command state
+    # 2. Scan feature directories FIRST for matching command state
+    # Feature directories represent properly migrated state and should take precedence
     for subdir in sorted(specs_dir.iterdir(), reverse=True):  # Most recent first
         if subdir.is_dir() and not subdir.name.startswith("."):
             state_file = subdir / ".state" / "latest.json"
@@ -109,6 +98,20 @@ def _find_existing_chain_for_command(
                             all_matches.append((chain_id, subdir.name))
                 except (json.JSONDecodeError, OSError):
                     continue
+
+    # 3. Check pending state only if NO feature directories matched
+    # This prevents stale pending state from abandoned workflows taking precedence
+    if not all_matches:
+        pending_state = specs_dir / ".pending" / ".state" / "latest.json"
+        if pending_state.exists():
+            try:
+                data = json.loads(pending_state.read_text())
+                if data.get("command") == command:
+                    chain_id = data.get("chain_id")
+                    if chain_id:
+                        all_matches.append((chain_id, ".pending"))
+            except (json.JSONDecodeError, OSError):
+                pass
 
     if not all_matches:
         return None
@@ -258,12 +261,13 @@ def run_staged_command(
     # Update feature directory if provided (for stage 3+ of feature-scoped commands)
     if feature_dir_path and command in FEATURE_SCOPED_COMMANDS:
         state.set_feature_dir(feature_dir_path)
-    elif command in FEATURE_SCOPED_COMMANDS and stage >= FEATURE_STATE_MIN_STAGE:
+    elif command in FEATURE_SCOPED_COMMANDS:
         # Auto-detect feature directory by scanning specs/ for matching chain_id
         # This handles the case where stage 3 created the folder but --feature-dir wasn't passed
-        # NOTE: Skip auto-detect for specify stage 3 - the folder is created BY that stage
-        # For specify, auto-detect only at stage 4+ (after create-feature has run)
-        should_auto_detect = not (command == "specify" and stage == FEATURE_STATE_MIN_STAGE)
+        # NOTE: For specify, skip auto-detect at stage 3 - the folder is created BY that stage
+        # For other commands (plan, tasks, implement), the feature folder should already exist
+        # from a prior specify workflow, so allow auto-detect at any stage
+        should_auto_detect = command != "specify" or stage > FEATURE_STATE_MIN_STAGE
         if should_auto_detect:
             detected_dir = _detect_feature_dir_for_chain(state.chain_id)
             if detected_dir:
