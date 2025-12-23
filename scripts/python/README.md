@@ -89,6 +89,25 @@ speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
 - Stage 4+ auto-detects chain from state. Use `--chain` or `--feature-dir` to
   disambiguate when multiple features exist.
 
+### Auto-Resume for Feature Commands
+
+All feature-scoped commands (`specify`, `plan`, `tasks`, `implement`) support
+automatic chain and feature directory detection:
+
+- **Chain auto-resume**: At stage 4+, if `--chain` is not provided, the CLI
+  scans feature directories for matching command state and resumes automatically.
+- **Feature directory detection**: For `plan`, `tasks`, and `implement`, the
+  feature directory is auto-detected at any stage (since it was created by
+  a prior `specify` workflow).
+- **Ambiguity warnings**: When multiple matching chains or features exist,
+  the CLI warns and shows how to specify explicitly.
+
+```bash
+# Example: plan workflow auto-detects feature from prior specify
+speckitadv plan --stage=1
+speckitadv plan --stage=2  # Auto-detects feature_dir from git branch or state
+```
+
 ### Debug Commands
 
 ```bash

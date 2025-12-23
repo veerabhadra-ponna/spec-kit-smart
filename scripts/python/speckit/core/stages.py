@@ -165,7 +165,15 @@ def _detect_feature_dir_for_chain(chain_id: str, workspace_root: Optional[Path] 
 
     # Fallback: use git branch name to find matching feature directory
     # This is safer than mtime as it uses explicit naming convention
-    return find_feature_dir(root)
+    fallback_dir = find_feature_dir(root)
+    if fallback_dir:
+        console.print(
+            f"[yellow]⚠ Feature directory auto-detected via git branch/naming: {fallback_dir.name}[/yellow]"
+        )
+        console.print(
+            f"[dim]  Use --feature-dir to specify explicitly if this is incorrect.[/dim]"
+        )
+    return fallback_dir
 
 
 def run_staged_command(

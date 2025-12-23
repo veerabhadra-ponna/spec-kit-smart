@@ -58,24 +58,46 @@ def get_templates_base() -> Path:
     return package_assets
 
 
-def load_template(template_path: str) -> str:
+def load_template(template_path: str, workspace_root: Path = None) -> str:
     """
-    Load a template file from assets/templates/.
+    Load a template file, checking project overrides before CLI embedded templates.
+
+    Search order (matching workflow.py behavior):
+    1. memory/templates/ (project-level)
+    2. .specify/templates/ (project-level)
+    3. templates/ (project-level)
+    4. CLI embedded templates (fallback - from speckit package)
 
     Args:
-        template_path: Relative path to template (e.g., "spec-template.md" or "stage-prompt-templates/clarify-prompt-template.md")
+        template_path: Relative path to template (e.g., "spec-template.md")
+        workspace_root: Optional workspace root for finding project overrides
 
     Returns:
         Template content
 
     Raises:
-        FileNotFoundError: If template not found
+        FileNotFoundError: If template not found in any location
     """
-    templates_base = get_templates_base()
-    full_path = templates_base / template_path
+    from speckit.core.utils import find_repo_root
 
-    if full_path.exists():
-        return full_path.read_text(encoding="utf-8")
+    # Determine workspace root for project overrides
+    if workspace_root is None:
+        try:
+            workspace_root = find_repo_root()
+        except (FileNotFoundError, RuntimeError):
+            workspace_root = Path.cwd()
+
+    # Search paths in priority order (project overrides first)
+    search_paths = [
+        workspace_root / "memory" / "templates" / template_path,
+        workspace_root / ".specify" / "templates" / template_path,
+        workspace_root / "templates" / template_path,
+        get_templates_base() / template_path,  # Fallback to CLI embedded templates
+    ]
+
+    for full_path in search_paths:
+        if full_path.exists():
+            return full_path.read_text(encoding="utf-8")
 
     raise FileNotFoundError(f"Template not found: {template_path}")
 
