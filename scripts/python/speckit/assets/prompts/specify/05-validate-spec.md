@@ -19,9 +19,9 @@ Validate the specification against quality criteria.
 Use the **Write tool** to create `{{feature_dir}}/checklists/requirements.md` with the following structure:
 
 ```markdown
-# Specification Quality Checklist: {{feature_name}}
+# Specification Quality Checklist: <feature name from spec.md>
 
-**Created**: {{date}}
+**Created**: <today's date>
 **Feature**: [Link to spec.md]
 
 ## Content Quality
@@ -78,17 +78,9 @@ Review spec against each checklist item:
 ## Output
 
 ```text
-
 ✓ Validation complete
   - Passed: [N]/[Total] items
   - Clarifications: [0-3] pending
 ```
 
----
-
-## NEXT
-
-```text
-
-speckitadv specify --stage=6 --chain={{chain_id}}
-```
+Then run the next command shown below.

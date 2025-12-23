@@ -107,16 +107,10 @@ After writing the file:
 
 ```text
 ✓ Specification generated
-  - File: {{spec_file}}
+  - File: <path to spec.md>
   - User stories: [N]
   - Requirements: [N]
   - Clarifications needed: [0-3]
 ```
 
----
-
-## NEXT
-
-```text
-speckitadv specify --stage=5 --chain={{chain_id}}
-```
+Then run the next command shown below.

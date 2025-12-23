@@ -76,31 +76,14 @@ JSON output format:
 
 ---
 
-## Step 4: Save Feature Directory to Chain State
-
-After creating the feature directory, save it to chain state for subsequent stages:
-
-```bash
-speckitadv chain-state save specify-branch-setup --cmd=specify \
-  --feature-dir="specs/{{number}}-{{jira}}-{{short_name}}" \
-  --state='{"feature_dir": "specs/{{number}}-{{jira}}-{{short_name}}", "branch_name": "{{branch_name}}", "spec_file": "{{spec_file}}"}'
-```
-
----
-
 ## Output
+
+After running `create-feature`, output:
 
 ```text
 ✓ Branch created
-  - Branch: feature/{{number}}-{{jira}}-{{short_name}}
-  - Spec dir: specs/{{number}}-{{jira}}-{{short_name}}/
-  - State saved
+  - Branch: <BRANCH_NAME from JSON output>
+  - Spec dir: <SPEC_FILE directory from JSON output>
 ```
 
----
-
-## NEXT
-
-```text
-speckitadv specify --stage=4 --chain={{chain_id}} --feature-dir=specs/{{number}}-{{jira}}-{{short_name}}
-```
+Then run the next command shown below.
