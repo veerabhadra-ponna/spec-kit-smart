@@ -404,3 +404,25 @@ class TestCopyTemplateDirective:
             render_prompt(fragment, context, strict=True)
 
         assert "nonexistent-template.md" in str(exc_info.value)
+
+    def test_copy_template_skips_existing_file(self, tmp_path):
+        """Should skip copy and warn if destination file already exists."""
+        feature_dir = tmp_path / "specs" / "001-test-feature"
+        feature_dir.mkdir(parents=True)
+
+        # Pre-create the destination file with custom content
+        dest_file = feature_dir / "spec.md"
+        original_content = "# User's custom spec content\n\nDo not overwrite!"
+        dest_file.write_text(original_content)
+
+        fragment = "{{copy-template:spec-template.md:spec.md}}"
+        context = {"feature_dir": str(feature_dir)}
+
+        result = render_prompt(fragment, context)
+
+        # Should show warning instead of success message
+        assert "⚠ Template already exists:" in result
+        assert "(not overwritten)" in result
+
+        # Original content should be preserved
+        assert dest_file.read_text() == original_content

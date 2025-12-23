@@ -265,6 +265,12 @@ def run_staged_command(
             return
     else:
         # New workflow - initialize state
+        # Warn if --feature-dir was explicitly provided but no matching state was found
+        if feature_dir_path and command in FEATURE_SCOPED_COMMANDS:
+            console.print(
+                f"[yellow]⚠ No existing {command} chain found in {feature_dir_path.name}. "
+                f"Starting new workflow.[/yellow]"
+            )
         project_path = Path(path) if path else Path.cwd()
         state = ChainState.initialize(project_path, command=command, feature_dir=feature_dir_path)
         chain_id = state.chain_id

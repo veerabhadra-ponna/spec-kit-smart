@@ -213,3 +213,25 @@ class TestFindExistingChainForCommand:
         assert result.chain_id == "feature456"  # Feature dirs checked first
         assert result.source == "001-my-feature"
         assert result.total_matches == 1  # Only feature dirs counted when they match
+
+    def test_explicit_feature_dir_no_match_returns_none(self, tmp_path):
+        """When explicit --feature-dir has no matching state, return None (don't search elsewhere)."""
+        # Create pending state (should NOT be found)
+        pending_state = tmp_path / "specs" / ".pending" / ".state"
+        pending_state.mkdir(parents=True)
+        (pending_state / "latest.json").write_text(json.dumps({
+            "chain_id": "pending123",
+            "command": "specify",
+            "stage": "03-branch-setup",
+        }))
+
+        # Create an explicit feature directory WITHOUT state
+        feature_dir = tmp_path / "specs" / "001-empty-feature"
+        feature_dir.mkdir(parents=True)
+
+        # Explicit --feature-dir should return None when no match (don't fall through)
+        result = _find_existing_chain_for_command(
+            "specify", feature_dir=feature_dir, workspace_root=tmp_path
+        )
+
+        assert result is None  # Respect user intent, don't search other dirs
