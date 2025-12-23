@@ -249,6 +249,21 @@ Chain ID: a3f7c8d1
 
 ```
 
+## Template Injection
+
+Stage 6 prompts use `{{include:template.md}}` syntax to inject reusable templates at runtime:
+
+| Prompt | Templates Included |
+|--------|-------------------|
+| `06-scope-artifacts.md` | functional-spec-template.md, technical-spec-template.md, stage-prompt-templates/* |
+| `06a-functional-spec-legacy.md` | functional-spec-template.md |
+| `06b-functional-spec-target.md` | functional-spec-template.md |
+| `06c-technical-spec.md` | technical-spec-template.md |
+| `06d-stage-prompts.md` | stage-prompt-templates/*.md (4 templates) |
+| `06e-cross-cutting-artifacts.md` | concern-analysis-template.md, concern-migration-plan-template.md |
+
+Templates are loaded from `assets/templates/` by the CLI and injected into prompts at emission time.
+
 ## Key Improvements in v3.1
 
 ### 1. Sub-Prompt Architecture

@@ -137,11 +137,30 @@ speckit/
 ├── core/
 │   ├── emit.py         # Stage emission system
 │   ├── state.py        # Chain state management
-│   ├── prompts.py      # Prompt fragment loading
+│   ├── prompts.py      # Prompt fragment loading + template injection
 │   ├── stages.py       # Generic stage handler
 │   └── ...
 └── assets/             # (Embedded in EXE)
+    ├── prompts/        # Stage prompts for each workflow
+    └── templates/      # Reusable templates (spec, plan, tasks, etc.)
 ```
+
+### Template Injection
+
+Prompts can include templates using `{{include:template.md}}` syntax:
+
+```markdown
+**Template:**
+
+{{include:spec-template.md}}
+```
+
+The CLI injects template content at runtime via `render_prompt()` in `core/prompts.py`.
+Templates are loaded from `assets/templates/` and support:
+
+- Nested includes (templates can include other templates)
+- Variable substitution (`{variable}` or `{variable:default}`)
+- Recursive rendering
 
 ## Building for Distribution
 
