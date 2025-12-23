@@ -80,26 +80,11 @@ Check the provided input:
 Confirm input collected:
 
 ```text
-
 ✓ Input collected
   - JIRA: [number or "none"]
   - Feature: [short summary]
 ```
 
----
+Then run the next command shown below.
 
-## NEXT
-
-Run stage 3 with the collected inputs:
-
-```bash
-speckitadv specify --stage=3 --feature="<collected-feature-description>" --jira="<collected-jira-or-empty>"
-```
-
-**Example:** If JIRA is C12345-7890 and feature is "Add user authentication":
-
-```bash
-speckitadv specify --stage=3 --feature="Add user authentication" --jira="C12345-7890"
-```
-
-**Note:** State persistence begins at stage 3 after the feature folder is created. The `--feature` value is required for stage 3 to create the feature branch and directory. The `--jira` value is optional.
+**IMPORTANT**: Pass `--feature` (required) and `--jira` (optional) to stage 3. State persistence begins at stage 3.

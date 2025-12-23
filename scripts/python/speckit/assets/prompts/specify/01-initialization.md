@@ -63,30 +63,11 @@ You are a **meticulous requirements analyst** extracting precise requirements.
 Confirm initialization:
 
 ```text
-
 ✓ Initialization complete
   - AGENTS.md: [Found/Not found]
   - Role: Requirements Analyst
 ```
 
----
+Then run the next command shown below.
 
-## NEXT
-
-Run Stage 2 with the feature description from the user's request:
-
-```bash
-speckitadv specify --stage=2 --feature="<user's feature description>"
-```
-
-**JIRA is optional.** If user provided a JIRA number, include it:
-
-```bash
-speckitadv specify --stage=2 --jira="C12345-7890" --feature="<description>"
-```
-
-**IMPORTANT:**
-- Extract the feature description from the user's initial request (e.g., `/speckitadv.specify Build a photo album app`)
-- Pass it via `--feature` flag to avoid interactive prompting
-- JIRA is optional - omit `--jira` if not provided
-- State is not persisted until stage 3 (after feature folder is created)
+**IMPORTANT**: Extract the feature description from the user's initial request and pass it via `--feature` flag. JIRA is optional.

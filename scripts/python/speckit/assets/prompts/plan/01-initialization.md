@@ -68,19 +68,10 @@ Check `/.guidelines/` directory:
 ## Output
 
 ```text
-
 ✓ Initialization complete
   - Role: Software Architect
   - Tech stack: [detected stacks]
   - Guidelines: [loaded / not found]
 ```
 
----
-
-## NEXT
-
-```text
-speckitadv plan --stage=2
-```
-
-**Note:** State is not persisted until stage 3 (after feature context is established).
+Then run the next command shown below.

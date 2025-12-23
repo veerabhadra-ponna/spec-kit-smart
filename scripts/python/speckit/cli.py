@@ -214,18 +214,14 @@ def plan(
     Create implementation plan.
 
     Designs how to build what was specified.
-    Runs interactively if no --constraints provided at stage 2.
+    Constraints are collected by the AI agent via the stage 2 prompt.
     """
     from speckit.core.stages import run_staged_command
 
     context = {}
 
-    # Interactive mode for stage 2 (where constraints are collected per fragment)
-    if stage == 2 and not constraints:
-        from speckit.core.interactive import collect_plan_constraints
-
-        context["constraints"] = collect_plan_constraints()
-    elif constraints:
+    # Pass constraints to context if provided via CLI
+    if constraints:
         context["constraints"] = constraints
 
     run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
@@ -248,18 +244,14 @@ def tasks(
     Generate actionable tasks.
 
     Breaks down the plan into implementable units.
-    Runs interactively if no --preferences provided at stage 2.
+    Preferences are collected by the AI agent via the stage 2 prompt.
     """
     from speckit.core.stages import run_staged_command
 
     context = {}
 
-    # Interactive mode for stage 2 (where preferences are collected per fragment)
-    if stage == 2 and not preferences:
-        from speckit.core.interactive import collect_tasks_preferences
-
-        context["preferences"] = collect_tasks_preferences()
-    elif preferences:
+    # Pass preferences to context if provided via CLI
+    if preferences:
         context["preferences"] = preferences
 
     run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
@@ -282,18 +274,14 @@ def implement(
     Execute implementation.
 
     Implements tasks with quality checks.
-    Runs interactively if no --notes provided at stage 2.
+    Notes are collected by the AI agent via the stage 2 prompt.
     """
     from speckit.core.stages import run_staged_command
 
     context = {}
 
-    # Interactive mode for stage 2 (where notes are collected per fragment)
-    if stage == 2 and not notes:
-        from speckit.core.interactive import collect_implement_notes
-
-        context["notes"] = collect_implement_notes()
-    elif notes:
+    # Pass notes to context if provided via CLI
+    if notes:
         context["notes"] = notes
 
     run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
@@ -399,7 +387,7 @@ def analyze(
     Performs non-destructive analysis across spec.md, plan.md, and tasks.md
     to identify inconsistencies, gaps, and quality issues before implementation.
     Run after /speckitadv.tasks and before /speckitadv.implement.
-    Runs interactively if no focus argument provided.
+    Focus areas are collected by the AI agent via the stage prompt.
 
     Stages:
       1 - Setup and artifact loading
@@ -407,12 +395,6 @@ def analyze(
       3 - Report generation
     """
     from speckit.core.prompts import get_prompt_fragment
-
-    # Interactive mode for stage 1 if no focus provided
-    if stage == 1 and not focus:
-        from speckit.core.interactive import collect_analyze_focus
-
-        focus = collect_analyze_focus()
 
     stage_map = {1: "01-setup", 2: "02-detection", 3: "03-report"}
     stage_key = stage_map.get(stage, "01-setup")

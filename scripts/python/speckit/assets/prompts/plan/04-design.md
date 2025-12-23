@@ -2,68 +2,132 @@
 stage: design
 requires: research
 outputs: data_model, contracts, quickstart
-version: 1.0.0
+version: 1.1.0
 next: null
 ---
 
-# Stage 4: Design (Phase 1)
+# Stage 4: Design & Complete Plan
 
 ## Purpose
 
-Generate design artifacts: data model, API contracts, quickstart.
+1. Fill remaining plan.md sections (Chunks 2 and 3)
+2. Generate supporting artifacts (data-model.md, contracts/, quickstart.md)
 
 ---
 
 ## Prerequisites
 
-Verify `research.md` is complete before proceeding.
+Verify before proceeding:
+
+- [ ] `{{feature_dir}}/plan.md` exists with template
+- [ ] `{{feature_dir}}/research.md` is complete
+- [ ] Summary, Technical Context, Constitution Check are filled
 
 ---
 
-## Step 1: Generate Data Model
+## Step 1: Fill Plan Sections (Chunk 2 of 3)
 
-Create `data-model.md`:
+Edit `{{feature_dir}}/plan.md` to fill these sections:
+
+### 1.1 Project Structure
+
+- Choose appropriate structure (single/web/mobile)
+- Remove unused options
+- Fill actual directory paths
+
+### 1.2 High-Level Architecture
+
+- Create component interaction diagram (Mermaid)
+- Define architecture pattern and justification
+- Fill component responsibilities table
+
+### 1.3 Cross-Cutting Concerns
+
+Fill applicable subsections (delete if not needed):
+
+- Error Handling
+- Security
+- Observability
+- Caching Strategy
+- Resilience Patterns
+- API Design
+- Configuration
+
+**IMPORTANT**: Replace ALL `[...]` placeholders with actual content.
+
+---
+
+## Step 2: Fill Plan Sections (Chunk 3 of 3)
+
+Continue editing `{{feature_dir}}/plan.md`:
+
+### 2.1 Data Architecture
+
+- Data Model (entities, relationships)
+- Database Schema (with DDL)
+- Data Flow Diagram
+- Data Validation rules
+
+### 2.2 Integration Architecture
+
+- External Dependencies table
+- Integration Patterns
+- Failure Handling table
+- API Contracts
+
+### 2.3 Migration/Rollout Plan (if applicable)
+
+- Backward Compatibility
+- User Communication
+
+### 2.4 Risk Assessment (if applicable)
+
+- Risks table
+- Assumptions table
+- Dependencies & Blockers
+- Open Questions
+
+**IMPORTANT**: Replace ALL remaining `[...]` placeholders. Delete sections marked "CONDITIONAL" if not applicable.
+
+---
+
+## Step 3: Generate Supporting Artifacts
+
+### 3.1 Create data-model.md
+
+Use the **Write tool** to create `{{feature_dir}}/data-model.md`:
 
 ```markdown
-# Data Model: {{feature_name}}
+# Data Model: <feature name>
 
 ## Entity: [Name]
+
 **Fields:**
+
 - field1: type (constraints)
 - field2: type (constraints)
 
 **Relationships:**
+
 - has_many: [Entity]
 - belongs_to: [Entity]
 
 **Validation:**
-- [rule from requirements]
 
-**State transitions** (if applicable):
-- state1 -> state2 (on event)
+- [rule from requirements]
 ```
 
----
+### 3.2 Create contracts/ Directory
 
-## Step 2: Generate API Contracts
+Create API contract files in `{{feature_dir}}/contracts/`:
 
-For each user action in spec, create endpoint:
-
-Create files in `/contracts/`:
 - OpenAPI spec (for REST)
-- GraphQL schema (for GraphQL)
+- GraphQL schema (if applicable)
 
-Include for each endpoint:
-- Request format
-- Response format
-- Error responses
-- Authentication requirements
+### 3.3 Create quickstart.md
 
----
+Use the **Write tool** to create `{{feature_dir}}/quickstart.md`:
 
-## Step 3: Create Quickstart
-
-Create `quickstart.md` with:
 - Local development setup
 - Environment variables
 - Database setup
@@ -72,34 +136,37 @@ Create `quickstart.md` with:
 
 ---
 
-## Step 4: Update Agent Context
+## Step 4: Final Validation
 
-Run agent update command (cross-platform):
+Verify plan.md is complete:
 
 ```bash
-speckitadv update-agent-context {{agent_type}}
+# Check for remaining placeholders
+grep -E '\[.*\]|NEEDS CLARIFICATION|ACTION REQUIRED' {{feature_dir}}/plan.md
 ```
+
+**All placeholders must be replaced or sections deleted.**
 
 ---
 
 ## Output
 
 ```text
-
 ✅ Planning complete
 
 Artifacts generated:
-  - specs/{{feature}}/research.md
-  - specs/{{feature}}/data-model.md
-  - specs/{{feature}}/contracts/
-  - specs/{{feature}}/quickstart.md
+  - {{feature_dir}}/plan.md (all sections filled)
+  - {{feature_dir}}/research.md
+  - {{feature_dir}}/data-model.md
+  - {{feature_dir}}/contracts/
+  - {{feature_dir}}/quickstart.md
 
 Next command:
-  speckitadv tasks --chain={{chain_id}}
+  speckitadv tasks
 ```
 
 ---
 
 ## WORKFLOW COMPLETE
 
-Planning is done. Proceed to task generation.
+Planning is done. Proceed to task generation with `speckitadv tasks`.

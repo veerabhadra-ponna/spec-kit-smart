@@ -2,7 +2,7 @@
 stage: generate-spec
 requires: branch-setup
 outputs: spec_file
-version: 1.1.0
+version: 1.2.0
 next: 05-validate-spec.md
 ---
 
@@ -10,11 +10,29 @@ next: 05-validate-spec.md
 
 ## Purpose
 
-Parse the feature description and generate a complete specification file.
+Create spec.md using a chunked approach to handle large specifications.
 
 ---
 
-## Step 1: Parse Feature Description
+## Step 1: Create Spec Template
+
+First, get the template structure:
+
+```bash
+speckitadv show-fragment specify spec-template
+```
+
+Use the **Write tool** to create `{{feature_dir}}/spec.md` with the template content.
+
+Make these initial replacements:
+
+- Replace `[Feature Name]` with feature name
+- Replace `[date]` with today's date
+- Keep all other `[...]` placeholders for now
+
+---
+
+## Step 2: Parse Feature Description
 
 Extract from the feature description:
 
@@ -25,40 +43,78 @@ Extract from the feature description:
 
 ---
 
-## Step 2: Generate Content
+## Step 3: Fill Sections (Chunk 1 - Header & Overview)
 
-**User Scenarios & Testing:**
+Edit `{{feature_dir}}/spec.md` to fill:
 
-- Define primary user flows
-- Include happy path and error cases
+- **Title and metadata** section
+- **Overview** section (brief description)
+- **Scope** section (In Scope / Out of Scope)
+
+---
+
+## Step 4: Fill Sections (Chunk 2 - User Stories)
+
+Edit `{{feature_dir}}/spec.md` to fill:
+
+- **User Stories** section with format:
+  - Priority (P1/P2/P3)
+  - "As a [user], I want [goal] so that [benefit]"
+  - Acceptance scenarios in Given/When/Then format
+
+**Guidelines:**
+
+- P1 = Must have (MVP)
+- P2 = Should have
+- P3 = Nice to have
 - Each scenario must be testable
 
-**Functional Requirements:**
+---
+
+## Step 5: Fill Sections (Chunk 3 - Requirements)
+
+Edit `{{feature_dir}}/spec.md` to fill:
+
+- **Functional Requirements** (FR-001, FR-002, etc.)
+- **Non-Functional Requirements** (if applicable)
+- **Assumptions** section
+
+**Guidelines:**
 
 - Each requirement independently testable
 - Use reasonable defaults for unspecified details
-- Document assumptions in Assumptions section
+- Document assumptions
 
-**Success Criteria:**
+---
+
+## Step 6: Fill Sections (Chunk 4 - Technical Context)
+
+Edit `{{feature_dir}}/spec.md` to fill:
+
+- **Technical Context** section
+- **Success Criteria** section
+
+**Success Criteria Guidelines:**
 
 - Measurable outcomes (time, percentage, count)
 - Technology-agnostic (no frameworks, APIs)
 - User-focused (business perspective)
 
-**Examples of good criteria:**
+**Good examples:**
 
 - "Users can complete checkout in under 3 minutes"
 - "System supports 10,000 concurrent users"
-- "95% of searches return results in under 1 second"
 
-**Bad criteria (too technical):**
+**Bad examples (too technical):**
 
 - "API response time is under 200ms"
 - "Redis cache hit rate above 80%"
 
 ---
 
-## Step 3: Handle Ambiguities
+## Step 7: Handle Ambiguities
+
+Review the spec for unclear items:
 
 **Only mark with [NEEDS CLARIFICATION] if:**
 
@@ -79,35 +135,26 @@ Prioritize: scope > security > user experience > technical
 
 ---
 
-## Step 4: Write Specification File
+## Step 8: Final Validation
 
-Use the **Write tool** to create `{{spec_file}}` with **complete content**.
+Verify spec.md is complete:
 
-**IMPORTANT:** Replace ALL placeholders with actual feature-specific content. Do NOT include placeholder text like `[Brief Title]` or `[initial state]` in the final output.
+```bash
+# Check for remaining placeholders
+grep -E '\[.*\]' {{feature_dir}}/spec.md | grep -v 'NEEDS CLARIFICATION'
+```
 
-**Template structure:**
-
-{{include:spec-template.md}}
-
-**Writing guidelines:**
-
-- Replace ALL `[placeholder]` text with actual content
-- Remove all HTML comments (`<!-- ... -->`) from output
-- Write complete user stories with priorities (P1, P2, P3)
-- Include acceptance scenarios in Given/When/Then format
-- Add functional requirements with FR-XXX numbering
-- Define measurable, technology-agnostic success criteria
-- Mark unclear items with [NEEDS CLARIFICATION] (max 3)
+**All placeholders must be replaced** (except [NEEDS CLARIFICATION] markers).
 
 ---
 
 ## Output
 
-After writing the file:
+After completing all chunks:
 
 ```text
 ✓ Specification generated
-  - File: <path to spec.md>
+  - File: {{feature_dir}}/spec.md
   - User stories: [N]
   - Requirements: [N]
   - Clarifications needed: [0-3]
