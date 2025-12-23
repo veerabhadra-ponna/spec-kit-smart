@@ -60,7 +60,6 @@ speckitadv setup-plan --json
 
 Parse JSON output for:
 - `FEATURE_SPEC` - path to spec.md
-- `IMPL_PLAN` - path to plan.md template
 - `SPECS_DIR` - feature specs directory
 - `BRANCH` - current feature branch
 
@@ -72,7 +71,10 @@ Parse JSON output for:
 
 1. Read `FEATURE_SPEC` (the specification)
 2. Read `memory/constitution.md` (principles)
-3. Read `IMPL_PLAN` template
+
+**Plan Template Structure:**
+
+{{include:plan-template.md}}
 
 ---
 
@@ -82,7 +84,6 @@ Parse JSON output for:
 
 ✓ Setup complete
   - Spec: {{feature_spec}}
-  - Plan template: {{impl_plan}}
   - Constraints: [N] loaded
 ```
 

@@ -101,7 +101,9 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
 
 **Source**: Extract features from analysis-report.md
 
-**Template**: Use embedded template: functional-spec-template.md` for structure
+**Template:**
+
+{{include:functional-spec-template.md}}
 
 **Chunking Strategy** (Generate in 5 chunks):
 
@@ -395,7 +397,9 @@ BOTH FUNCTIONAL SPECS COMPLETE
 
 **Source**: analysis-report.md + user's modernization preferences (from 10 questions)
 
-**Template**: Use embedded template: technical-spec-template.md` for structure
+**Template:**
+
+{{include:technical-spec-template.md}}
 
 **Chunking Strategy** (Generate in 5 chunks):
 
@@ -592,40 +596,37 @@ BOTH FUNCTIONAL SPECS COMPLETE
 
 **Purpose**: Staged implementation prompts for Spec Kit workflow integration
 
-**Templates**: Read from embedded template ``
-
 Generate 4 stage prompt files for Spec Kit workflow:
 
 **constitution-prompt.md**: Extract project principles from legacy code
 
-- Template: embedded template `constitution-prompt-template.md`
+- Template: {{include:stage-prompt-templates/constitution-prompt-template.md}}
 - Fill with: Project values, coding standards, architecture decisions extracted from analysis
 - Purpose: Use with `/speckitadv.constitution` command
 
 **clarify-prompt.md**: Use legacy code as source of truth for clarifications
 
-- Template: embedded template `clarify-prompt-template.md`
+- Template: {{include:stage-prompt-templates/clarify-prompt-template.md}}
 - Fill with: Legacy code references (file:line), ambiguity resolution patterns, critical behaviors
 - Purpose: Use with `/speckitadv.clarify` command when specs are unclear
 
 **tasks-prompt.md**: Break down implementation with legacy complexity awareness
 
-- Template: embedded template `tasks-prompt-template.md`
+- Template: {{include:stage-prompt-templates/tasks-prompt-template.md}}
 - Fill with: Legacy feature complexity scores, migration task breakdowns, effort estimates
 - Purpose: Use with `/speckitadv.tasks` command
 
 **implement-prompt.md**: Reference legacy code during implementation
 
-- Template: embedded template `implement-prompt-template.md`
+- Template: {{include:stage-prompt-templates/implement-prompt-template.md}}
 - Fill with: Legacy code patterns (with file:line), must-preserve behaviors, edge cases
 - Purpose: Use with `/speckitadv.implement` command
 
 **Instructions**:
 
-1. Read all 4 templates from embedded template ``
-2. Fill each template with specific data from analysis-report.md
-3. Include file:line references for all legacy code examples
-4. Mark CRITICAL behaviors that must be preserved exactly
+1. Fill each template with specific data from analysis-report.md
+2. Include file:line references for all legacy code examples
+3. Mark CRITICAL behaviors that must be preserved exactly
 
 **Progress**: `Generated: stage-prompts/ (4 files)`
 
@@ -637,7 +638,9 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **Purpose**: Detailed abstraction analysis for the concern
 
-**Template**: Use embedded template: concern-analysis-template.md` for structure
+**Template:**
+
+{{include:concern-analysis-template.md}}
 
 **Content**:
 
@@ -670,7 +673,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **Instructions**:
 
-1. Use embedded template: concern-analysis-template.md`
+1. Use the template above
 2. Fill in all sections using data from Stage 3B
 3. Provide detailed analysis with code references
 
@@ -684,7 +687,9 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 **Source**: Recommended strategy from Stage 6B + TARGET_IMPLEMENTATION
 
-**Template**: Use embedded template: concern-migration-plan-template.md` for structure
+**Template:**
+
+{{include:concern-migration-plan-template.md}}
 
 **Chunking Strategy** (Generate in 3 chunks):
 

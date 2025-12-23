@@ -27,12 +27,13 @@ Generate staged implementation prompts for Spec Kit workflow integration. These 
 
 ## Templates
 
-Templates are embedded in CLI
+{{include:stage-prompt-templates/constitution-prompt-template.md}}
 
-- `constitution-prompt-template.md`
-- `clarify-prompt-template.md`
-- `tasks-prompt-template.md`
-- `implement-prompt-template.md`
+{{include:stage-prompt-templates/clarify-prompt-template.md}}
+
+{{include:stage-prompt-templates/tasks-prompt-template.md}}
+
+{{include:stage-prompt-templates/implement-prompt-template.md}}
 
 ---
 
@@ -49,7 +50,7 @@ Create: `{analysis_dir}/stage-prompts/`
 
 **Purpose:** Extract project principles from legacy code for `/speckitadv.constitution` command
 
-**Template:** embedded template `constitution-prompt-template.md`
+**Template:** Use constitution-prompt template above
 
 **Content to extract:**
 
@@ -99,7 +100,7 @@ Write to: `{analysis_dir}/stage-prompts/constitution-prompt.md`
 
 **Purpose:** Use legacy code as source of truth for clarifications with `/speckitadv.clarify` command
 
-**Template:** embedded template `clarify-prompt-template.md`
+**Template:** Use clarify-prompt template above
 
 **Content to extract:**
 
@@ -155,7 +156,7 @@ Write to: `{analysis_dir}/stage-prompts/clarify-prompt.md`
 
 **Purpose:** Break down implementation with legacy complexity awareness for `/speckitadv.tasks` command
 
-**Template:** embedded template `tasks-prompt-template.md`
+**Template:** Use tasks-prompt template above
 
 **Content to extract:**
 
@@ -216,7 +217,7 @@ Write to: `{analysis_dir}/stage-prompts/tasks-prompt.md`
 
 **Purpose:** Reference legacy code during implementation for `/speckitadv.implement` command
 
-**Template:** embedded template `implement-prompt-template.md`
+**Template:** Use implement-prompt template above
 
 **Content to extract:**
 

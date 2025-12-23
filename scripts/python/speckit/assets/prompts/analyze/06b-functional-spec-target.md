@@ -32,7 +32,9 @@ Generate functional specification documenting WHAT the MODERNIZED system WILL do
 - `.analysis/.state/analyze-project-03a-full-app.json` (10 modernization preferences)
 - User's scope validation answers
 
-**Template:** Use embedded template: functional-spec-template.md`
+**Template:**
+
+{{include:functional-spec-template.md}}
 
 ---
 

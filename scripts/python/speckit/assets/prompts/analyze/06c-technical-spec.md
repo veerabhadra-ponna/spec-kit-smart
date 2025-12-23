@@ -32,7 +32,9 @@ Generate technical specification documenting HOW to build the modernized system.
 - `.analysis/.state/analyze-project-03a-full-app.json` (10 modernization preferences)
 - Both functional specs for feature reference
 
-**Template:** Use embedded template: technical-spec-template.md`
+**Template:**
+
+{{include:technical-spec-template.md}}
 
 ---
 
