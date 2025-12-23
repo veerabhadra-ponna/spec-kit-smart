@@ -2,7 +2,7 @@
 
 This guide will help you get started with Spec-Driven Development using Spec Kit.
 
-> NEW: All automation scripts now provide both Bash (`.sh`) and PowerShell (`.ps1`) variants. The `speckitsmart` CLI auto-selects based on OS.
+> The toolkit now uses the `speckitadv` Python CLI for all workflow operations. No bash or PowerShell scripts required.
 
 ## The 4-Step Process
 
@@ -11,7 +11,7 @@ This guide will help you get started with Spec-Driven Development using Spec Kit
 Initialize your project depending on the coding agent you're using:
 
 ```bash
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <PROJECT_NAME>
 ```
 
 If `pipx` is blocked, use a virtual environment with standard `pip`:
@@ -21,36 +21,36 @@ python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
 
-speckitsmart init <PROJECT_NAME>
+speckitadv init <PROJECT_NAME>
 ```
 
-All packages include both Bash and PowerShell scripts. Your AI agent automatically uses the correct script type for your operating system.
+All packages include Python CLI launchers. The `speckitadv` CLI handles all workflow operations cross-platform.
 
 ### 2. Create the Spec
 
-Use the `/speckitsmart.specify` command to describe what you want to build. Focus on the **what** and **why**, not the tech stack.
+Use the `/speckitadv.specify` command to describe what you want to build. Focus on the **what** and **why**, not the tech stack.
 
 ```bash
-/speckitsmart.specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
+/speckitadv.specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
 ```
 
 ### 3. Create a Technical Implementation Plan
 
-Use the `/speckitsmart.plan` command to provide your tech stack and architecture choices.
+Use the `/speckitadv.plan` command to provide your tech stack and architecture choices.
 
 ```bash
-/speckitsmart.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
+/speckitadv.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
 ```
 
 ### 4. Break Down and Implement
 
-Use `/speckitsmart.tasks` to create an actionable task list, then ask your agent to implement the feature.
+Use `/speckitadv.tasks` to create an actionable task list, then ask your agent to implement the feature.
 
 ## Detailed Example: Building Taskify
 
 Here's a complete example of building a team productivity platform:
 
-### Step 1: Define Requirements with `/speckitsmart.specify`
+### Step 1: Define Requirements with `/speckitadv.specify`
 
 ```text
 Develop Taskify, a team productivity platform. It should allow users to create projects, add team members,
@@ -87,7 +87,7 @@ Also validate the specification checklist:
 Read the review and acceptance checklist, and check off each item in the checklist if the feature spec meets the criteria. Leave it empty if it does not.
 ```
 
-### Step 3: Generate Technical Plan with `/speckitsmart.plan`
+### Step 3: Generate Technical Plan with `/speckitadv.plan`
 
 Be specific about your tech stack and technical requirements:
 

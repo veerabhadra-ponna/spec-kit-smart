@@ -1,0 +1,15 @@
+# Ignore pytest cache directories
+.pytest_cache/
+**/pytest_cache/
+
+# Ignore node modules
+node_modules/
+
+# Ignore virtual environments
+.venv/
+venv/
+
+# Ignore build artifacts
+dist/
+build/
+*.egg-info/

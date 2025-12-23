@@ -24,7 +24,7 @@ This document provides example prompts and workflows for using the reverse engin
 ```text
 I have an existing Node.js project at /home/user/my-legacy-app that I want to modernize. Please analyze it comprehensively and provide recommendations on whether to upgrade in place or start fresh.
 
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 
 When prompted, use:
 - PROJECT_PATH: /home/user/my-legacy-app
@@ -48,7 +48,7 @@ When prompted, use:
 ```text
 I need to assess security vulnerabilities in my Python Django application before our compliance audit.
 
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 
 Settings:
 - PROJECT_PATH: /var/www/django-app
@@ -72,7 +72,7 @@ Settings:
 ```text
 I want a quick sanity check on our React frontend to see if there are any critical issues.
 
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 
 Use QUICK depth, focus on DEPENDENCIES and SECURITY.
 PROJECT_PATH: ./frontend
@@ -96,7 +96,7 @@ PROJECT_PATH: ./frontend
 ```text
 Our team is planning a major refactoring. I want to understand the current architecture quality and get suggestions for improvements.
 
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 PROJECT_PATH: /workspace/api-server
 ANALYSIS_DEPTH: COMPREHENSIVE
 FOCUS_AREAS: ARCHITECTURE
@@ -119,7 +119,7 @@ FOCUS_AREAS: ARCHITECTURE
 ```text
 Our application has performance issues. Users are complaining about slow page loads. Please analyze and identify bottlenecks.
 
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 PROJECT_PATH: /app
 ANALYSIS_DEPTH: COMPREHENSIVE
 FOCUS_AREAS: PERFORMANCE
@@ -142,7 +142,7 @@ FOCUS_AREAS: PERFORMANCE
 ```text
 I just want to understand our dependency health - what's outdated, what's vulnerable, what needs urgent attention.
 
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 PROJECT_PATH: .
 ANALYSIS_DEPTH: QUICK
 FOCUS_AREAS: DEPENDENCIES
@@ -176,7 +176,7 @@ FOCUS_AREAS: DEPENDENCIES
    ```text
    I want to create a new modern version of MyApp based on the analysis.
 
-   /speckitsmart.constitution
+   /speckitadv.constitution
 
    Please use the principles from .analysis/MyApp-2025-11-06/recommended-constitution.md as the foundation. These were derived from analyzing the existing codebase to preserve good patterns and eliminate anti-patterns.
 
@@ -188,7 +188,7 @@ FOCUS_AREAS: DEPENDENCIES
 1. **Create spec based on reverse-engineered requirements**:
 
 ```text
-   /speckitsmart.specify
+   /speckitadv.specify
 
    Based on the analysis report at .analysis/MyApp-2025-11-06/analysis-report.md, the existing application provides these capabilities:
 
@@ -259,7 +259,7 @@ FOCUS_AREAS: DEPENDENCIES
 ```text
 I have a Node.js 14 + React 16 application that needs upgrading. Node 14 is EOL and we want React 18's concurrent features.
 
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 PROJECT_PATH: /home/user/my-app
 ANALYSIS_DEPTH: STANDARD
 FOCUS_AREAS: ALL
@@ -361,7 +361,7 @@ Please help me execute the deployment checklist from the upgrade plan.
 
 We have a 10-year-old Java monolith that's becoming unmaintainable. I want to assess whether we should upgrade it or rewrite it.
 
-/speckitsmart.analyze-project
+/speckitadv.analyze-project
 PROJECT_PATH: /opt/legacy-monolith
 ANALYSIS_DEPTH: COMPREHENSIVE
 FOCUS_AREAS: ALL
@@ -402,7 +402,7 @@ Create a comprehensive list.
 
 ```
 
-/speckitsmart.constitution
+/speckitadv.constitution
 
 Based on the recommended constitution at .analysis/LegacyMonolith-2025-11-06/recommended-constitution.md:
 
@@ -428,7 +428,7 @@ Let's establish these principles for the new system:
 
 ```
 
-/speckitsmart.specify
+/speckitadv.specify
 
 Based on the reverse-engineered requirements from the analysis:
 
@@ -456,7 +456,7 @@ FR3: System must generate PDF invoices
 
 ```
 
-/speckitsmart.plan
+/speckitadv.plan
 
 Technology Stack for the new system:
 
@@ -555,7 +555,7 @@ Then execute:
 Let's start with the highest-priority module: [Module Name]
 
 Step 1: Create new service project
-/speckitsmart.orchestrate Create a modern [Module] service that replaces the [old component]
+/speckitadv.orchestrate Create a modern [Module] service that replaces the [old component]
 
 Step 2: Implement with best practices
 [Follow generated plan]
@@ -587,7 +587,7 @@ Step 6: Repeat for next module
 
 ```
 
-/speckitsmart.constitution
+/speckitadv.constitution
 
 Create a project constitution based on lessons learned from our legacy system.
 
@@ -619,7 +619,7 @@ Also add these additional principles specific to our team:
 
 ```
 
-/speckitsmart.specify
+/speckitadv.specify
 
 Create a specification for a modern replacement of [Old System Name].
 
@@ -642,7 +642,7 @@ The new system should follow the constitution we established and address all the
 
 ```
 
-/speckitsmart.plan
+/speckitadv.plan
 
 Technology choices for the modernized system:
 
@@ -775,7 +775,7 @@ Please help refactor this component.
 | LTS upgrade | STANDARD (ALL) | Follow upgrade-plan.md | 1-4 weeks |
 | Performance optimization | COMPREHENSIVE (PERFORMANCE) | Implement optimizations | 2-4 weeks |
 | Architecture refactoring | COMPREHENSIVE (ARCHITECTURE) | Create refactoring plan | 1-3 months |
-| Greenfield rewrite | COMPREHENSIVE (ALL) | /speckitsmart.orchestrate | 3-12 months |
+| Greenfield rewrite | COMPREHENSIVE (ALL) | /speckitadv.orchestrate | 3-12 months |
 | Dependency cleanup | QUICK (DEPENDENCIES) | Update packages | 1-2 days |
 
 ---

@@ -28,8 +28,8 @@ pipx install git+https://github.company.com/yourorg/spec-kit-smart.git
 Then use the tool directly:
 
 ```bash
-speckitsmart init <PROJECT_NAME>
-speckitsmart check
+speckitadv init <PROJECT_NAME>
+speckitadv check
 ```
 
 To upgrade:
@@ -45,7 +45,7 @@ When pipx is unavailable, use standard `pip`:
 ```bash
 python -m venv .venv && source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
 python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
-speckitsmart init <PROJECT_NAME>
+speckitadv init <PROJECT_NAME>
 ```
 
 ### Option 3: One-time Usage
@@ -54,10 +54,10 @@ Run directly without installing:
 
 ```bash
 # From public GitHub
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <PROJECT_NAME>
 
 # From GitHub Enterprise
-pipx run --spec git+https://github.company.com/yourorg/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
+pipx run --spec git+https://github.company.com/yourorg/spec-kit-smart.git speckitadv init <PROJECT_NAME>
 ```
 
 ### Option 4: Corporate Artifactory (Enterprise)
@@ -77,13 +77,13 @@ Create a new project or initialize in an existing directory:
 
 ```bash
 # Create new project
-speckitsmart init my-project --ai claude
+speckitadv init my-project --ai claude
 
 # Initialize in current directory
-speckitsmart init --here --ai claude
+speckitadv init --here --ai claude
 
 # Check prerequisites
-speckitsmart check
+speckitadv check
 ```
 
 The init command will:
@@ -99,22 +99,22 @@ Now let's build a simple feature using the standard Spec-Driven Development work
 
 ### 3.1 Establish Project Principles
 
-Launch your AI assistant in the project directory. The `/speckitsmart.*` commands are now available.
+Launch your AI assistant in the project directory. The `/speckitadv.*` commands are now available.
 
-Use `/speckitsmart.constitution` to create your project's governing principles:
+Use `/speckitadv.constitution` to create your project's governing principles:
 
 ```bash
-/speckitsmart.constitution Create principles focused on code quality, testing standards, user experience consistency, and performance requirements
+/speckitadv.constitution Create principles focused on code quality, testing standards, user experience consistency, and performance requirements
 ```
 
 This creates `.specify/memory/constitution.md` with guidelines that will guide all subsequent development.
 
 ### 3.2 Create the Spec
 
-Use `/speckitsmart.specify` to describe what you want to build. Focus on the **what** and **why**, not the tech stack:
+Use `/speckitadv.specify` to describe what you want to build. Focus on the **what** and **why**, not the tech stack:
 
 ```bash
-/speckitsmart.specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
+/speckitadv.specify Build an application that can help me organize my photos in separate photo albums. Albums are grouped by date and can be re-organized by dragging and dropping on the main page. Albums are never in other nested albums. Within each album, photos are previewed in a tile-like interface.
 ```
 
 The AI agent will:
@@ -125,10 +125,10 @@ The AI agent will:
 
 ### 3.3 Create Technical Implementation Plan
 
-Use `/speckitsmart.plan` to provide your tech stack and architecture choices:
+Use `/speckitadv.plan` to provide your tech stack and architecture choices:
 
 ```bash
-/speckitsmart.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
+/speckitadv.plan The application uses Vite with minimal number of libraries. Use vanilla HTML, CSS, and JavaScript as much as possible. Images are not uploaded anywhere and metadata is stored in a local SQLite database.
 ```
 
 This generates:
@@ -140,10 +140,10 @@ This generates:
 
 ### 3.4 Break Down into Tasks
 
-Use `/speckitsmart.tasks` to create an actionable task list:
+Use `/speckitadv.tasks` to create an actionable task list:
 
 ```bash
-/speckitsmart.tasks
+/speckitadv.tasks
 ```
 
 This generates `tasks.md` with:
@@ -155,10 +155,10 @@ This generates `tasks.md` with:
 
 ### 3.5 Execute Implementation
 
-Use `/speckitsmart.implement` to execute all tasks:
+Use `/speckitadv.implement` to execute all tasks:
 
 ```bash
-/speckitsmart.implement
+/speckitadv.implement
 ```
 
 The AI agent will:
@@ -200,31 +200,31 @@ flowchart LR
 
 **Required Commands** (Red):
 
-- `/speckitsmart.constitution` - Establish project principles
-- `/speckitsmart.specify` - Define what to build
-- `/speckitsmart.plan` - Create technical design
-- `/speckitsmart.tasks` - Generate actionable tasks
-- `/speckitsmart.implement` - Execute implementation
+- `/speckitadv.constitution` - Establish project principles
+- `/speckitadv.specify` - Define what to build
+- `/speckitadv.plan` - Create technical design
+- `/speckitadv.tasks` - Generate actionable tasks
+- `/speckitadv.implement` - Execute implementation
 
 **Optional Commands** (Yellow):
 
-- `/speckitsmart.clarify` - Resolve ambiguities (recommended before planning)
-- `/speckitsmart.analyze` - Validate consistency (recommended before implementation)
-- `/speckitsmart.checklist` - Quality validation (recommended after implementation)
+- `/speckitadv.clarify` - Resolve ambiguities (recommended before planning)
+- `/speckitadv.analyze` - Validate consistency (recommended before implementation)
+- `/speckitadv.checklist` - Quality validation (recommended after implementation)
 
 ## Alternative: Use the Orchestrator
 
 For complex features or multi-session work, use the Orchestrator to run the entire workflow with a single command:
 
 ```bash
-/speckitsmart.orchestrate Build a photo album application with drag-and-drop organization
+/speckitadv.orchestrate Build a photo album application with drag-and-drop organization
 ```
 
 The Orchestrator:
 
 - Runs all phases automatically (constitution → specify → plan → tasks → implement)
-- Saves progress to `.speckitsmart-state.json`
-- Enables seamless resumption with `/speckitsmart.resume`
+- Saves progress to `.speckitadv-state.json`
+- Enables seamless resumption with `/speckitadv.resume`
 - Handles token limits gracefully
 
 See [Orchestrator Workflow Guide](workflows/orchestrator.md) for details.

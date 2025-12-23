@@ -1,8 +1,8 @@
 # Local Development Guide
 
-This guide shows how to iterate on the `speckitsmart` CLI locally without publishing a release or committing to `main` first.
+This guide shows how to iterate on the `speckitadv` CLI locally without publishing a release or committing to `main` first.
 
-> Scripts now have both Bash (`.sh`) and PowerShell (`.ps1`) variants. The CLI auto-selects based on OS.
+> The toolkit uses the `speckitadv` Python CLI for all workflow operations. No bash or PowerShell scripts required.
 
 ## 1. Clone and Switch Branches
 
@@ -15,18 +15,22 @@ git checkout -b your-feature-branch
 
 ## 2. Run the CLI Directly (Fastest Feedback)
 
-You can execute the CLI via the module entrypoint without installing anything:
+You can execute the CLI directly without installing, using either method:
+
+Both methods require PYTHONPATH to resolve imports:
 
 ```bash
-# From repo root
-python -m src.specify_cli --help
-python -m src.specify_cli init demo-project --ai claude --ignore-agent-tools
+# From repo root - set PYTHONPATH first
+PYTHONPATH=scripts/python python scripts/python/speckit/cli.py --help
+PYTHONPATH=scripts/python python scripts/python/speckit/cli.py init demo-project --ai claude
 ```
 
-If you prefer invoking the script file style (uses shebang):
+Or use module style:
 
 ```bash
-python src/specify_cli/__init__.py init demo-project
+# From repo root - set PYTHONPATH first
+PYTHONPATH=scripts/python python -m speckit.cli --help
+PYTHONPATH=scripts/python python -m speckit.cli init demo-project --ai claude
 ```
 
 ## 3. Use Editable Install (Isolated Environment)
@@ -45,8 +49,8 @@ source .venv/bin/activate  # Linux/Mac/Git Bash
 # Install project in editable mode
 pip install -e .
 
-# Now 'specify' entrypoint is available
-speckitsmart --help
+# Now 'speckitadv' entrypoint is available
+speckitadv --help
 ```
 
 Re-running after code edits requires no reinstall because of editable mode.
@@ -57,10 +61,10 @@ Re-running after code edits requires no reinstall because of editable mode.
 
 ```bash
 # Run from local repository
-pipx run --spec /path/to/spec-kit-smart speckitsmart init test-project
+pipx run --spec /path/to/spec-kit-smart speckitadv init test-project
 
 # Run from specific Git branch
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@feature-branch speckitsmart init test-project
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@feature-branch speckitadv init test-project
 ```
 
 ### 4a. Absolute Path pipx (Run From Anywhere)
@@ -68,42 +72,46 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@feat
 If you're in another directory, use an absolute path:
 
 ```bash
-pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitsmart --help
-pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitsmart init demo-anywhere --ai copilot --ignore-agent-tools
+pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitadv --help
+pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitadv init demo-anywhere --ai copilot
 ```
 
 Set an environment variable for convenience:
 
 ```bash
 export SPEC_KIT_SRC=/mnt/c/GitHub/spec-kit-smart
-pipx run --spec "$SPEC_KIT_SRC" speckitsmart init demo-env --ai copilot --ignore-agent-tools
+pipx run --spec "$SPEC_KIT_SRC" speckitadv init demo-env --ai copilot
 ```
 
 (Optional) Define a shell function:
 
 ```bash
-specify-dev() { pipx run --spec /mnt/c/GitHub/spec-kit-smart specify "$@"; }
+speckitadv-dev() { pipx run --spec /mnt/c/GitHub/spec-kit-smart speckitadv "$@"; }
 # Then
-specify-dev --help
+speckitadv-dev --help
 ```
 
-## 5. Testing Script Permission Logic
+## 5. Testing Python CLI
 
-After running an `init`, check that shell scripts are executable on POSIX systems:
+After running an `init`, verify the launcher files are in place:
 
 ```bash
-ls -l scripts | grep .sh
-# Expect owner execute bit (e.g. -rwxr-xr-x)
+ls -la .specify/commands/
+# Or check agent-specific directory (e.g., .claude/commands/)
 ```
 
-On Windows you will instead use the `.ps1` scripts (no chmod needed).
+The `speckitadv` CLI handles all operations cross-platform - no shell scripts needed.
 
 ## 6. Run Lint / Basic Checks (Add Your Own)
 
 Currently no enforced lint config is bundled, but you can quickly sanity check importability:
 
 ```bash
-python -c "import specify_cli; print('Import OK')"
+# After editable install (pip install -e .)
+python -c "import speckit; print('Import OK')"
+
+# Or without install
+PYTHONPATH=scripts/python python -c "import speckit; print('Import OK')"
 ```
 
 ## 7. Build a Wheel Locally (Optional)
@@ -124,30 +132,37 @@ When testing `init --here` in a dirty directory, create a temp workspace:
 
 ```bash
 mkdir /tmp/spec-test && cd /tmp/spec-test
-python -m src.specify_cli init --here --ai claude --ignore-agent-tools  # if repo copied here
+
+# Option 1: Use absolute path to script (requires PYTHONPATH)
+PYTHONPATH=/path/to/spec-kit-smart/scripts/python python /path/to/spec-kit-smart/scripts/python/speckit/cli.py init --here --ai claude
+
+# Option 2: Use PYTHONPATH for module style
+PYTHONPATH=/path/to/spec-kit-smart/scripts/python python -m speckit.cli init --here --ai claude
 ```
 
-Or copy only the modified CLI portion if you want a lighter sandbox.
+Or use pipx for a cleaner isolated test.
 
-## 9. Debug Network / TLS Skips
+## 9. Network Issues
 
-If you need to bypass TLS validation while experimenting:
+If you encounter network issues while testing:
 
 ```bash
-speckitsmart check --skip-tls
-speckitsmart init demo --skip-tls --ai gemini --ignore-agent-tools
-```
+# Use corporate proxy settings
+export HTTPS_PROXY=http://proxy.company.com:8080
+speckitadv init demo --ai gemini
 
-(Use only for local experimentation.)
+# Or update certificates
+pip install --upgrade certifi truststore
+```
 
 ## 10. Rapid Edit Loop Summary
 
 | Action | Command |
 | -------- | --------- |
-| Run CLI directly | `python -m src.specify_cli --help` |
-| Editable install | `pip install -e .` then `speckitsmart ...` |
-| Local pipx run | `pipx run --spec /path/to/repo specify ...` |
-| Git branch pipx | `pipx run --spec git+URL@branch specify ...` |
+| Run CLI directly | `PYTHONPATH=scripts/python python scripts/python/speckit/cli.py --help` |
+| Editable install | `pip install -e .` then `speckitadv ...` |
+| Local pipx run | `pipx run --spec /path/to/repo speckitadv ...` |
+| Git branch pipx | `pipx run --spec git+URL@branch speckitadv ...` |
 | Build wheel | `python -m build` |
 
 ## 11. Cleaning Up
@@ -163,9 +178,10 @@ rm -rf .venv dist build *.egg-info
 | Symptom | Fix |
 | --------- | ----- |
 | `ModuleNotFoundError: typer` | Run `pip install -e .` after activating venv |
-| Scripts not executable (Linux) | Re-run init or `chmod +x scripts/*.sh` |
+| Launcher files missing | Re-run init or check agent command directory |
 | Git step skipped | You passed `--no-git` or Git not installed |
-| TLS errors on corporate network | Try `--skip-tls` (not for production) |
+| TLS errors on corporate network | Set HTTPS_PROXY or update certifi/truststore |
+| Chain ID mismatch error | Only the latest chain is retained. Start a new workflow or use the current chain ID shown in the error |
 
 ## 13. Next Steps
 

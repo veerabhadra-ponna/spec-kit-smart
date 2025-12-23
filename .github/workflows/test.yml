@@ -1,4 +1,4 @@
-name: Test Scripts
+name: Test
 
 on:
   push:
@@ -8,15 +8,38 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-scripts:
-    name: Validate repository scripts
+  test-python:
+    name: Python CLI Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scripts/python
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest
+
+      - name: Run tests
+        run: python -m pytest tests/ -v --tb=short
+
+  lint-markdown:
+    name: Markdown Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run bash script tests
-        run: tests/scripts/test-bash-scripts.sh
-
-      - name: Run PowerShell script tests
-        run: tests/scripts/test-powershell-scripts.sh
+      - name: Run markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v19
+        with:
+          globs: "**/*.md"

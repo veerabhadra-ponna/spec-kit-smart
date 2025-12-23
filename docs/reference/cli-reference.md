@@ -1,6 +1,6 @@
 # Specify CLI Reference
 
-The `speckitsmart` CLI provides tools for initializing projects and checking prerequisites for Spec-Driven Development.
+The `speckitadv` CLI provides tools for initializing projects and checking prerequisites for Spec-Driven Development.
 
 ## Commands
 
@@ -9,64 +9,54 @@ The `speckitsmart` CLI provides tools for initializing projects and checking pre
 | `init`      | Initialize a new Specify project from the latest template      |
 | `check`     | Check for installed tools (`git`, all supported AI agents, `code`, `code-insiders`) |
 
-## `speckitsmart init` Arguments & Options
+## `speckitadv init` Arguments & Options
 
 | Argument/Option        | Type     | Description                                                                  |
 | ------------------------ | ---------- | ------------------------------------------------------------------------------ |
 | `<project-name>`       | Argument | Name for your new project directory (optional if using `--here`, or use `.` for current directory) |
 | `--ai`                 | Option   | AI assistant to use: `claude`, `gemini`, `copilot`, `cursor-agent`, `qwen`, `opencode`, `codex`, `windsurf`, `kilocode`, `auggie`, `roo`, `codebuddy`, `amp`, or `q` |
-| `--ignore-agent-tools` | Flag     | Skip checks for AI agent tools like Claude Code                             |
 | `--no-git`             | Flag     | Skip git repository initialization                                          |
 | `--here`               | Flag     | Initialize project in the current directory instead of creating a new one   |
 | `--force`              | Flag     | Force merge/overwrite when initializing in current directory (skip confirmation) |
-| `--skip-tls`           | Flag     | Skip SSL/TLS verification (not recommended)                                 |
-| `--debug`              | Flag     | Enable detailed debug output for troubleshooting                            |
-| `--github-token`       | Option   | GitHub token for API requests (or set GH_TOKEN/GITHUB_TOKEN env variable)  |
 
 ## Examples
 
 ```bash
 # Basic project initialization
-speckitsmart init my-project
+speckitadv init my-project
 
 # Initialize with specific AI assistant
-speckitsmart init my-project --ai claude
+speckitadv init my-project --ai claude
 
 # Initialize with Cursor support
-speckitsmart init my-project --ai cursor-agent
+speckitadv init my-project --ai cursor-agent
 
 # Initialize with Windsurf support
-speckitsmart init my-project --ai windsurf
+speckitadv init my-project --ai windsurf
 
 # Initialize with Amp support
-speckitsmart init my-project --ai amp
+speckitadv init my-project --ai amp
 
 # Initialize in current directory
-speckitsmart init . --ai copilot
+speckitadv init . --ai copilot
 # or use the --here flag
-speckitsmart init --here --ai copilot
+speckitadv init --here --ai copilot
 
 # Force merge into current (non-empty) directory without confirmation
-speckitsmart init . --force --ai copilot
+speckitadv init . --force --ai copilot
 # or
-speckitsmart init --here --force --ai copilot
+speckitadv init --here --force --ai copilot
 
 # Skip git initialization
-speckitsmart init my-project --ai gemini --no-git
-
-# Enable debug output for troubleshooting
-speckitsmart init my-project --ai claude --debug
-
-# Use GitHub token for API requests (helpful for corporate environments)
-speckitsmart init my-project --ai claude --github-token ghp_your_token_here
+speckitadv init my-project --ai gemini --no-git
 
 # Check system requirements
-speckitsmart check
+speckitadv check
 ```
 
 ## Available Slash Commands
 
-After running `speckitsmart init`, your AI coding agent will have access to these slash commands for structured development:
+After running `speckitadv init`, your AI coding agent will have access to these slash commands for structured development:
 
 ### Orchestration Commands
 
@@ -74,17 +64,17 @@ After running `speckitsmart init`, your AI coding agent will have access to thes
 
 | Command                  | Description                                                           |
 | -------------------------- | ----------------------------------------------------------------------- |
-| `/speckitsmart.orchestrate`  | **Orchestrate the complete workflow** from feature description to implementation in a single command. Manages state, phase transitions, and provides interactive or automatic execution modes. |
-| `/speckitsmart.resume`       | **Restore context and resume work** after chat limit or interruption. Loads all artifacts and continues from exact stopping point with zero context loss. |
+| `/speckitadv.orchestrate`  | **Orchestrate the complete workflow** from feature description to implementation in a single command. Manages state, phase transitions, and provides interactive or automatic execution modes. |
+| `/speckitadv.resume`       | **Restore context and resume work** after chat limit or interruption. Loads all artifacts and continues from exact stopping point with zero context loss. |
 
 **Quick Start with Orchestrator:**
 
 ```bash
 # Run entire workflow in one command
-/speckitsmart.orchestrate Build a user authentication system with OAuth2 and JWT
+/speckitadv.orchestrate Build a user authentication system with OAuth2 and JWT
 
 # Or resume after chat limit/interruption
-/speckitsmart.resume
+/speckitadv.resume
 ```
 
 See [Orchestrator Workflow Guide](../workflows/orchestrator.md) for detailed usage.
@@ -95,11 +85,11 @@ Essential commands for the Spec-Driven Development workflow (can be used individ
 
 | Command                  | Description                                                           |
 | -------------------------- | ----------------------------------------------------------------------- |
-| `/speckitsmart.constitution`  | Create or update project governing principles and development guidelines |
-| `/speckitsmart.specify`       | Define what you want to build (requirements and user stories)        |
-| `/speckitsmart.plan`          | Create technical implementation plans with your chosen tech stack     |
-| `/speckitsmart.tasks`         | Generate actionable task lists for implementation                     |
-| `/speckitsmart.implement`     | Execute all tasks to build the feature according to the plan         |
+| `/speckitadv.constitution`  | Create or update project governing principles and development guidelines |
+| `/speckitadv.specify`       | Define what you want to build (requirements and user stories)        |
+| `/speckitadv.plan`          | Create technical implementation plans with your chosen tech stack     |
+| `/speckitadv.tasks`         | Generate actionable task lists for implementation                     |
+| `/speckitadv.implement`     | Execute all tasks to build the feature according to the plan         |
 
 ### Optional Commands
 
@@ -107,17 +97,16 @@ Additional commands for enhanced quality and validation:
 
 | Command                      | Description                                                           |
 | ------------------------------ | ----------------------------------------------------------------------- |
-| `/speckitsmart.clarify`           | Clarify underspecified areas (recommended before `/speckitsmart.plan`; formerly `/quizme`) |
-| `/speckitsmart.analyze`           | Cross-artifact consistency & coverage analysis (run after `/speckitsmart.tasks`, before `/speckitsmart.implement`) |
-| `/speckitsmart.checklist`         | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
-| `/speckitsmart.generate-guidelines` | **NEW**: Generate or update corporate coding guidelines by analyzing corporate documents and reference codebases (EXPERIMENTAL v1.0.0-alpha) |
+| `/speckitadv.clarify`           | Clarify underspecified areas (recommended before `/speckitadv.plan`; formerly `/quizme`) |
+| `/speckitadv.analyze`           | Cross-artifact consistency & coverage analysis (run after `/speckitadv.tasks`, before `/speckitadv.implement`) |
+| `/speckitadv.checklist`         | Generate custom quality checklists that validate requirements completeness, clarity, and consistency (like "unit tests for English") |
+| `/speckitadv.generate-guidelines` | **NEW**: Generate or update corporate coding guidelines by analyzing corporate documents and reference codebases (EXPERIMENTAL v1.0.0-alpha) |
 
 ## Environment Variables
 
 | Variable         | Description                                                                                    |
 | ------------------ | ------------------------------------------------------------------------------------------------ |
-| `SPECIFY_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches. **Must be set in the context of the agent you're working with prior to using `/speckitsmart.plan` or follow-up commands.** |
-| `SPEC_KIT_PLATFORM` | Force platform detection: `windows`, `unix`, or `auto` (default). Use to override automatic script selection. |
+| `SPECIFY_FEATURE` | Override feature detection for non-Git repositories. Set to the feature directory name (e.g., `001-photo-albums`) to work on a specific feature when not using Git branches. **Must be set in the context of the agent you're working with prior to using `/speckitadv.plan` or follow-up commands.** |
 | `GH_TOKEN` / `GITHUB_TOKEN` | GitHub personal access token for API requests. Required when rate limits are reached or for private repositories. |
 
 ## Related Documentation

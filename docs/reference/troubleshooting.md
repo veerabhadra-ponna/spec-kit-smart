@@ -4,16 +4,16 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 
 ## Common Issues
 
-### Issue: Command not found `/speckitsmart.constitution`
+### Issue: Command not found `/speckitadv.constitution`
 
 **Symptoms**: AI agent reports command doesn't exist
 
 **Solution**:
 
-1. Ensure you ran `speckitsmart init` in the project directory
+1. Ensure you ran `speckitadv init` in the project directory
 2. Check that the agent command directory exists (e.g., `.claude/commands/`, `.gemini/commands/`)
 3. Verify you're using the correct AI agent specified during init
-4. Run `speckitsmart check` to verify prerequisites
+4. Run `speckitadv check` to verify prerequisites
 
 ### Issue: Cannot push to branch `claude/xxx`
 
@@ -28,13 +28,13 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 
 ### Issue: State file corrupted after token limit
 
-**Symptoms**: `/speckitsmart.resume` fails to load state
+**Symptoms**: `/speckitadv.resume` fails to load state
 
 **Solution**:
 
-1. Check if `.speckitsmart-state.json.backup` exists and restore it
-2. If no backup, restart with `/speckitsmart.orchestrate --reset`
-3. Future prevention: Commit `.speckitsmart-state.json` regularly
+1. Delete the corrupted state file: `rm .speckitadv-state.json`
+2. Re-run `/speckitadv.orchestrate` to start fresh
+3. Future prevention: Commit `.speckitadv-state.json` regularly to enable git recovery
 
 ### Issue: Guidelines not loading in prompts
 
@@ -45,7 +45,7 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 1. Verify `.guidelines/` directory exists with appropriate files
 2. Check `.guidelines/stack-mapping.json` exists and paths match your project structure
 3. Ensure guidelines files follow naming convention: `<stack>-guidelines.md`
-4. Run `./scripts/bash/check-guidelines-compliance.sh` to validate setup
+4. Manually verify guidelines file structure matches your stack
 
 ### Issue: `pipx install` fails with SSL errors
 
@@ -54,38 +54,35 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 **Solution**:
 
 ```bash
-# Option 1: Use --skip-tls flag (not recommended for production)
-speckitsmart init my-project --skip-tls
-
-# Option 2: Update certificates (recommended)
+# Option 1: Update certificates (recommended)
 pip install --upgrade certifi truststore
 
-# Option 3: Use corporate proxy settings
+# Option 2: Use corporate proxy settings
 export HTTPS_PROXY=http://proxy.company.com:8080
 pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 ```
 
 ### Issue: Orchestrator skips phases unexpectedly
 
-**Symptoms**: `/speckitsmart.orchestrate` jumps over constitution or other phases
+**Symptoms**: `/speckitadv.orchestrate` jumps over constitution or other phases
 
 **Solution**:
 
 1. Check if artifacts already exist from previous runs (`.specify/specs/`)
 2. Orchestrator skips phases with existing artifacts unless `--force` is used
-3. Review `.speckitsmart-state.json` to see completed phases
+3. Review `.speckitadv-state.json` to see completed phases
 4. To restart: Delete state file and artifact directories
 
-### Issue: Cross-platform scripts fail on Windows
+### Issue: speckitadv command not found
 
-**Symptoms**: Bash scripts don't work on Windows
+**Symptoms**: The `speckitadv` CLI binary is not in PATH
 
 **Solution**:
 
-1. Set environment variable: `set SPEC_KIT_PLATFORM=windows` (CMD) or `$env:SPEC_KIT_PLATFORM="windows"` (PowerShell)
-2. Ensure PowerShell scripts have `.ps1` extension
-3. Check execution policy: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
-4. Use Git Bash as alternative for bash scripts on Windows
+1. Download the platform-specific binary from the releases page
+2. Add the binary location to your PATH
+3. Alternatively, use full path in launcher files: `/path/to/speckitadv`
+4. Verify with: `speckitadv --version`
 
 ## Git Credential Manager on Linux
 

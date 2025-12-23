@@ -1,0 +1,110 @@
+"""
+Configuration Management
+
+Loads configuration from memory/config.json and environment variables.
+"""
+
+import json
+import os
+from pathlib import Path
+from typing import Any, Optional
+
+from pydantic import BaseModel, ConfigDict, Field
+
+from speckit.core.utils import get_repo_root
+
+
+class WorkflowConfig(BaseModel):
+    """Workflow configuration options."""
+
+    enable_check_artifactory: bool = True
+
+
+class SpecKitConfig(BaseModel):
+    """Main configuration schema."""
+
+    model_config = ConfigDict(extra="allow")
+
+    workflow: WorkflowConfig = Field(default_factory=WorkflowConfig)
+
+
+class Config:
+    """
+    Configuration manager for Spec Kit.
+
+    Loads from:
+    1. memory/config.json (preferred - new location)
+    2. .specify/config.json (legacy fallback)
+    3. Environment variables (override)
+    """
+
+    def __init__(self, config_path: Optional[Path] = None):
+        self._config_path = config_path
+        self._config: SpecKitConfig = SpecKitConfig()
+        self._load()
+
+    def _load(self) -> None:
+        """Load configuration from file and environment."""
+        # Try to find config file
+        if self._config_path is None:
+            repo_root = self._find_repo_root()
+
+            # Search paths in priority order (memory/ is preferred)
+            search_paths = []
+            if repo_root:
+                search_paths.append(repo_root / "memory" / "config.json")
+                search_paths.append(repo_root / ".specify" / "config.json")
+            search_paths.append(Path.cwd() / "memory" / "config.json")
+            search_paths.append(Path.cwd() / ".specify" / "config.json")
+            search_paths.append(Path.cwd() / "config.json")
+
+            for path in search_paths:
+                if path.exists():
+                    self._config_path = path
+                    break
+
+        # Load from file if found
+        if self._config_path and self._config_path.exists():
+            try:
+                data = json.loads(self._config_path.read_text())
+                self._config = SpecKitConfig(**data)
+            except (json.JSONDecodeError, Exception):
+                pass  # Use defaults
+
+        # Apply environment overrides
+        self._apply_env_overrides()
+
+    def _find_repo_root(self) -> Path:
+        """Find git repository root using shared utility."""
+        return get_repo_root()
+
+    def _apply_env_overrides(self) -> None:
+        """Apply environment variable overrides."""
+        # Artifactory check override
+        check_artifactory = os.getenv("SPEC_KIT_CHECK_ARTIFACTORY")
+        if check_artifactory is not None:
+            self._config.workflow.enable_check_artifactory = (
+                check_artifactory.lower() in ("true", "1", "yes")
+            )
+
+    @property
+    def check_artifactory(self) -> bool:
+        """Check if artifactory checks are enabled."""
+        return self._config.workflow.enable_check_artifactory
+
+    def get(self, key: str, default: Any = None) -> Any:
+        """Get configuration value by dot-notation key."""
+        parts = key.split(".")
+        value: Any = self._config.model_dump()
+
+        for part in parts:
+            if isinstance(value, dict) and part in value:
+                value = value[part]
+            else:
+                return default
+
+        return value
+
+    def to_dict(self) -> dict[str, Any]:
+        """Return configuration as dictionary."""
+        return self._config.model_dump()

@@ -9,6 +9,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Constitution workflow now correctly uses `--chain` for state continuity across stages
+- Specify prompts referenced non-existent `--jira` and `--feature` CLI options
+- Next steps in stages.py used `/specify` format instead of `/speckitadv.specify`
+- Clarify and checklist prompts updated to use `/speckitadv.*` slash command format
+- Plan prompt path reference corrected from `/memory/constitution.md` to `memory/constitution.md`
+
+## [2.1.1] - 2025-12-22
+
+### Fixed
+
+- Cross-cutting inputs (concern_type, current_impl, target_impl) now persisted in chain state
+- EXECUTION-MODEL.md updated to include required --scope flag
+- Migration plan doc updated to remove stale detect_os() and --debug references
+
+### Removed
+
+- OS detection code (detect_os, osEnv config) - Python CLI is cross-platform by default
+
+## [2.1.0] - 2025-12-21
+
+### Added
+
+- `--verify` flag for `analyze-project` command to run verification after final stage
+- `analysis_dir` added to render context for prompt templates
+
+### Changed
+
+- CLI app name changed from `speckit` to `speckitadv` for consistency
+- Report paths now use `{analysis_dir}` from state instead of hardcoded paths
+- Constitution prompts updated to use `memory/constitution.md` instead of `.speckit/`
+- CLI help updated to show correct stage range (1-16)
+- Version output now shows `speckitadv version X.X.X`
+
+### Fixed
+
+- `TOTAL_STAGES["B"]` corrected to 16 so Scope B can reach Stage 16
+- Report verification now uses correct path from `analysis_dir`
+- Template lookup in `run_update_agent_context` now includes embedded assets
+- Removed stale `.specify/templates` references from prompts
+- Removed unused imports in `analyze.py` and `constitution.py`
+
+### Removed
+
+- CI/CD template examples (vary by corporate environment)
+- Empty `__init__.py` in stage-prompt-templates
+- Bash/PowerShell scripts replaced by Python CLI
+
+## [2.0.0] - 2025-12-20
+
+### Added
+
+- **Python CLI Migration**: Complete rewrite from bash/PowerShell to unified Python CLI
+- Progressive prompt injection architecture with 16 stages
+- Embedded assets (prompts, templates, guidelines) in CLI package
+- Chain state management for multi-stage workflows
+- `speckitadv` and `speckit` entrypoints
+
+### Changed
+
+- Config location preference: `memory/config.json` over `.specify/config.json`
+- Project structure: `memory/` replaces `.specify/memory/`
+
+---
+
+## [0.0.20+] - Legacy Bash/PowerShell releases
+
 ### Added
 
 - **Corporate Guidelines Phase 3: Multi-Stack Coordination**
@@ -31,7 +99,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated tasks.md prompt template with contextual guideline application
 - Updated analyze.md prompt template with stack-specific validation
 - Improved guideline structure documentation with version management
-- `speckitsmart init` now preserves an existing `.specify/memory/constitution.md` in current directories and surfaces a clear skip message
+- `speckitadv init` now preserves an existing `.specify/memory/constitution.md` in current directories and surfaces a clear skip message
 - Added pip-based installation examples for environments without `pipx`
 
 ## [0.0.20] - 2025-10-14
@@ -74,8 +142,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Support for using `.` as a shorthand for current directory in `speckitsmart init .` command, equivalent to `--here` flag but more intuitive for users.
-- Use the `/speckitsmart.` command prefix to easily discover Spec Kit-related commands.
+- Support for using `.` as a shorthand for current directory in `speckitadv init .` command, equivalent to `--here` flag but more intuitive for users.
+- Use the `/speckitadv.` command prefix to easily discover Spec Kit-related commands.
 - Refactor the prompts and templates to simplify their capabilities and how they are tracked. No more polluting things with tests when they are not needed.
 - Ensure that tasks are created per user story (simplifies testing and validation).
 - Add support for Visual Studio Code prompt shortcuts and automatic script execution.

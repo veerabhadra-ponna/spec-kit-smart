@@ -15,7 +15,7 @@
 The easiest way to get started is to initialize a new project:
 
 ```bash
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <PROJECT_NAME>
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <PROJECT_NAME>
 ```
 
 If `pipx` is not available in your environment, use a virtual environment (or `--user`) with standard `pip`:
@@ -25,15 +25,15 @@ python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 python -m pip install "spec-kit-smart @ git+https://github.com/veerabhadra-ponna/spec-kit-smart.git"
 
-speckitsmart init <PROJECT_NAME>
+speckitadv init <PROJECT_NAME>
 ```
 
 Or initialize in the current directory:
 
 ```bash
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init .
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init .
 # or use the --here flag
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init --here
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init --here
 ```
 
 ### Specify AI Agent
@@ -41,29 +41,21 @@ pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git spec
 You can proactively specify your AI agent during initialization:
 
 ```bash
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai claude
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai gemini
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai copilot
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai codebuddy
-```
-
-### Ignore Agent Tools Check
-
-If you prefer to get the templates without checking for the right tools:
-
-```bash
-pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitsmart init <project_name> --ai claude --ignore-agent-tools
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <project_name> --ai claude
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <project_name> --ai gemini
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <project_name> --ai copilot
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git speckitadv init <project_name> --ai codebuddy
 ```
 
 ## Verification
 
 After initialization, you should see the following commands available in your AI agent:
 
-- `/speckitsmart.specify` - Create specifications
-- `/speckitsmart.plan` - Generate implementation plans
-- `/speckitsmart.tasks` - Break down into actionable tasks
+- `/speckitadv.specify` - Create specifications
+- `/speckitadv.plan` - Generate implementation plans
+- `/speckitadv.tasks` - Break down into actionable tasks
 
-The `.specify/scripts` directory will contain both `.sh` and `.ps1` scripts.
+The `.specify/commands` directory will contain launcher files for the `speckitadv` CLI.
 
 ## Troubleshooting
 

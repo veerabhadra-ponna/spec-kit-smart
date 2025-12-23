@@ -12,7 +12,7 @@ Test if AI can load state from previous stage, modify it, and save updated state
 
 ## Previous State
 
-Load state from: `.analysis/.state/test-stage-1.json`
+Load state from: `.analysis/.state/analyze-project-test-stage-1.json`
 
 ## Task
 
@@ -30,7 +30,7 @@ Use the Bash tool to load state:
 
 ```bash
 cd /home/user/spec-kit-smart
-./scripts/bash/chain-state.sh load test-stage-1
+speckitadv chain-state load test-stage-1
 ```text
 
 ### Step 2: Verify State
@@ -73,7 +73,7 @@ Use the Bash tool to save:
 
 ```bash
 cd /home/user/spec-kit-smart
-./scripts/bash/chain-state.sh save test-stage-2 '{
+speckitadv chain-state save test-stage-2 --state='{
   "chain_id": "test1234",
   "stage": "test_stage_2",
   "timestamp": "2025-11-14T12:05:00Z",
@@ -91,10 +91,10 @@ Load both states to verify:
 ```bash
 cd /home/user/spec-kit-smart
 echo "=== Stage 1 State ==="
-./scripts/bash/chain-state.sh load test-stage-1
+speckitadv chain-state load test-stage-1
 echo ""
 echo "=== Stage 2 State ==="
-./scripts/bash/chain-state.sh load test-stage-2
+speckitadv chain-state load test-stage-2
 ```text
 
 ### Step 6: Output Completion Marker
@@ -103,7 +103,7 @@ Output:
 
 ```text
 STAGE_COMPLETE:TEST_STAGE_2
-STATE_PATH: .analysis/.state/test-stage-2.json
+STATE_PATH: .analysis/.state/analyze-project-test-stage-2.json
 CHAIN_TEST_SUCCESS: Both stages completed successfully
 ```text
 
@@ -111,7 +111,7 @@ CHAIN_TEST_SUCCESS: Both stages completed successfully
 
 - Stage 1 state loaded successfully
 - State modifications applied correctly
-- Updated state saved to .analysis/.state/test-stage-2.json
+- Updated state saved to .analysis/.state/analyze-project-test-stage-2.json
 - Both state files can be loaded independently
 - Counter incremented from 1 to 2
 - Completion marker output

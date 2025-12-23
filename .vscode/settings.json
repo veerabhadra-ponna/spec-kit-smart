@@ -3,37 +3,22 @@
   // VSCode Claude Auto-Approve Settings for Spec Kit
   // ========================================================================
   //
-  // This configuration enables auto-approval for Spec Kit commands with
-  // intelligent platform detection:
-  //
-  // PLATFORM DETECTION LOGIC:
-  //
-  // 1. Environment Variable Override (Optional):
-  //    - If SPEC_KIT_PLATFORM=unix → use bash scripts (skip auto-detection)
-  //    - If SPEC_KIT_PLATFORM=windows → use PowerShell scripts (skip auto-detection)
-  //    - If not set or 'auto' → proceed with auto-detection below
-  //
-  // 2. Auto-detect Operating System:
-  //    - Unix/Linux/macOS: Run `uname`. If successful → use bash
-  //    - Windows: Check $env:OS. If "Windows_NT" → use PowerShell
-  //
-  // All Spec Kit scripts (bash and PowerShell) are pre-approved, along with
+  // This configuration enables auto-approval for Spec Kit commands and
   // common development tools (git, npm, python, docker, etc.)
+  //
+  // NOTE: The speckitadv Python CLI is cross-platform by design. No
+  // platform-specific script selection is required.
   //
   // ========================================================================
 
   "claude.autoApprove": {
-    "description": "Auto-approve settings for Spec Kit toolkit commands and scripts with platform detection",
+    "description": "Auto-approve settings for Spec Kit toolkit commands and scripts",
     "patterns": [
       // ====================================================================
-      // PLATFORM DETECTION & OS COMMANDS
+      // OS DETECTION COMMANDS (for general use)
       // ====================================================================
 
-      // Environment variable check for SPEC_KIT_PLATFORM
-      "echo $SPEC_KIT_PLATFORM",
-      "$env:SPEC_KIT_PLATFORM",
-
-      // Auto-detect Operating System
+      // Detect Operating System
       "uname",
       "uname -a",
       "uname -s",
@@ -278,8 +263,11 @@
       // SPEC KIT CLI & UV TOOL
       // ====================================================================
 
-      // Spec Kit CLI
+      // Spec Kit CLI (legacy)
       "specify*",
+
+      // Spec Kit Advanced CLI (Python)
+      "speckitadv*",
 
       // UV Python tool installer
       "uv*",

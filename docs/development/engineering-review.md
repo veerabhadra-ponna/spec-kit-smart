@@ -1,9 +1,11 @@
 # Senior Engineering Review: Reverse Engineering & Modernization Feature
 
+> **⚠️ HISTORICAL**: This review predates the Python CLI implementation. The concerns about bash script implementation have been addressed by the `speckitadv` Python CLI which replaces all bash/PowerShell scripts. See [PYTHON-MIGRATION-ASSESSMENT.md](../PYTHON-MIGRATION-ASSESSMENT.md).
+
 **Reviewer**: Senior Engineering Lead & Architect
 **Review Date**: 2025-11-06
 **Feature**: Reverse Engineering & Modernization System
-**Status**: COMPREHENSIVE REVIEW
+**Status**: ADDRESSED (Python CLI)
 
 ---
 
@@ -28,7 +30,7 @@ The reverse engineering feature has a solid conceptual foundation and comprehens
 
 ### 🔴 CRITICAL-1: No Actual Implementation
 
-**Issue**: The `/speckit.analyze-project` command is a TEMPLATE ONLY. There's no actual code to:
+**Issue**: The `/speckitadv.analyze-project` command is a TEMPLATE ONLY. There's no actual code to:
 
 - Scan directories
 - Parse configuration files
@@ -203,19 +205,19 @@ def safe_file_read(path: str) -> Optional[str]:
 
 **Issue**: Reverse engineering is standalone. Doesn't integrate with:
 
-- `/speckit.constitution` (should auto-populate from analysis)
-- `/speckit.specify` (should use reverse-engineered requirements)
-- `/speckit.orchestrate` (no workflow integration)
+- `/speckitadv.constitution` (should auto-populate from analysis)
+- `/speckitadv.specify` (should use reverse-engineered requirements)
+- `/speckitadv.orchestrate` (no workflow integration)
 
 **Recommendation**: Add workflow integration:
 
 ```markdown
 # After analysis completes, offer next steps:
-/speckit.constitution --from-analysis .analysis/Project-2025-11-06/recommended-constitution.md
+/speckitadv.constitution --from-analysis .analysis/Project-2025-11-06/recommended-constitution.md
 
-/speckit.specify --from-analysis .analysis/Project-2025-11-06/analysis-report.md
+/speckitadv.specify --from-analysis .analysis/Project-2025-11-06/analysis-report.md
 
-/speckit.orchestrate --modernize --based-on .analysis/Project-2025-11-06/
+/speckitadv.orchestrate --modernize --based-on .analysis/Project-2025-11-06/
 ```text
 
 **Impact**: Poor user experience, manual copying required
@@ -301,7 +303,7 @@ scoring:
 
 ```bash
 # Compare current analysis with previous
-/speckit.analyze-project --compare-with .analysis/Project-2025-10-01/
+/speckitadv.analyze-project --compare-with .analysis/Project-2025-10-01/
 
 # Output diff:
 📊 Analysis Comparison: 2025-10-01 → 2025-11-06
@@ -621,7 +623,7 @@ Analyze existing projects for modernization opportunities.
 
 **Quick Start**:
 ```bash
-/speckit.analyze-project
+/speckitadv.analyze-project
 ```text
 
 **For full guide**: See [docs/reverse-engineering.md](docs/reverse-engineering.md)
@@ -728,7 +730,7 @@ class RustAnalyzer(LanguageAnalyzerPlugin):
 specify analyze /path/to/project --output analysis-report.md
 
 # AI agent can call it
-/speckit.analyze-project → calls → specify analyze
+/speckitadv.analyze-project → calls → specify analyze
 ```text
 
 ---
