@@ -353,7 +353,11 @@ def create_spec_directory(
     config: dict,
 ) -> tuple[Path, str]:
     """
-    Create spec directory with template files.
+    Create spec directory structure (without template files).
+
+    Template files (spec.md, plan.md, tasks.md) are created by AI during
+    the specify workflow stages, not here. This ensures AI writes complete
+    content rather than editing placeholders.
 
     Returns:
         Tuple of (spec_dir_path, spec_file_path)
@@ -376,143 +380,12 @@ def create_spec_directory(
     feature_dir = specs_dir / dir_name
     feature_dir.mkdir(parents=True, exist_ok=True)
 
-    # Copy template if exists, otherwise create empty spec.md
-    template_path = project_root / "memory" / "templates" / "spec-template.md"
+    # Spec file path (AI will create this in stage 4)
     spec_file = feature_dir / "spec.md"
 
-    if template_path.exists():
-        spec_file.write_text(template_path.read_text(encoding="utf-8"), encoding="utf-8")
-    else:
-        # Create default spec template
-        spec_content = f"""# Feature Specification
-
-**Feature**: {description}
-**Number**: {feature_num}
-**Created**: {datetime.now().strftime('%Y-%m-%d')}
-{f'**JIRA**: {jira}' if jira else ''}
-
----
-
-## Overview
-
-[Brief description of the feature]
-
----
-
-## User Stories
-
-### US-1: [Story Title]
-
-**As a** [type of user]
-**I want** [goal]
-**So that** [benefit]
-
-**Acceptance Criteria:**
-- [ ] Criterion 1
-- [ ] Criterion 2
-
----
-
-## Technical Notes
-
-[Any technical considerations or constraints]
-
----
-
-## Dependencies
-
-- [ ] Dependency 1
-- [ ] Dependency 2
-
----
-
-## Out of Scope
-
-- Item 1
-- Item 2
-"""
-        spec_file.write_text(spec_content, encoding="utf-8")
-
-    # Create plan.md template
-    plan_file = feature_dir / "plan.md"
-    if not plan_file.exists():
-        plan_content = f"""# Implementation Plan
-
-**Feature**: {description}
-**Number**: {feature_num}
-**Created**: {datetime.now().strftime('%Y-%m-%d')}
-
----
-
-## Approach
-
-[High-level implementation approach]
-
----
-
-## Phases
-
-### Phase 1: [Phase Name]
-
-- [ ] Task 1
-- [ ] Task 2
-
-### Phase 2: [Phase Name]
-
-- [ ] Task 3
-- [ ] Task 4
-
----
-
-## Technical Decisions
-
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
-| | | |
-
----
-
-## Risks
-
-| Risk | Mitigation |
-|------|------------|
-| | |
-"""
-        plan_file.write_text(plan_content, encoding="utf-8")
-
-    # Create tasks.md template
-    tasks_file = feature_dir / "tasks.md"
-    if not tasks_file.exists():
-        tasks_content = f"""# Task Breakdown
-
-**Feature**: {description}
-**Number**: {feature_num}
-**Created**: {datetime.now().strftime('%Y-%m-%d')}
-
----
-
-## Tasks
-
-### Phase 1
-
-- [ ] **Task 1**: [Description]
-  - Estimate: [X hours]
-  - Files: [files to modify]
-
-- [ ] **Task 2**: [Description]
-  - Estimate: [X hours]
-  - Files: [files to modify]
-
----
-
-## Checklist
-
-- [ ] All tasks completed
-- [ ] Tests written
-- [ ] Documentation updated
-- [ ] Code reviewed
-"""
-        tasks_file.write_text(tasks_content, encoding="utf-8")
+    # NOTE: We intentionally do NOT create spec.md, plan.md, tasks.md here.
+    # These are created by AI during the specify workflow stages to ensure
+    # complete content is written rather than placeholder templates.
 
     # Create checklists directory and requirements.md
     checklists_dir = feature_dir / "checklists"
