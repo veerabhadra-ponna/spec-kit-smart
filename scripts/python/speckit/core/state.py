@@ -515,7 +515,9 @@ class AnalysisStateManager:
         for stage_id, stage_info in state.stages.items():
             if stage_info.get("status") == "in_progress":
                 state.stages[stage_id]["status"] = "completed"
-                state.stages[stage_id]["completed"] = datetime.now().isoformat()
+                # Preserve existing completed timestamp for audit fidelity
+                if "completed" not in state.stages[stage_id] or state.stages[stage_id]["completed"] is None:
+                    state.stages[stage_id]["completed"] = datetime.now().isoformat()
                 if stage_id not in state.stages_complete:
                     state.stages_complete.append(stage_id)
 

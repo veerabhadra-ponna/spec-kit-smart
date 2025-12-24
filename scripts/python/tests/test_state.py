@@ -552,6 +552,30 @@ class TestMarkCompleteTimestamp:
         assert "10-analysis" in state.stages_complete
         assert "15-final" in state.stages_complete
 
+    def test_mark_complete_preserves_existing_timestamps(self, tmp_path):
+        """mark_complete() should preserve existing completed timestamps for audit fidelity."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Set a stage as in_progress with an existing completed timestamp
+        # (edge case: stage was completed before but status reverted to in_progress)
+        state = manager.load()
+        original_timestamp = "2025-01-15T14:30:00"
+        state.stages["08-finalize"] = {
+            "status": "in_progress",
+            "started": "2025-01-15T14:00:00",
+            "completed": original_timestamp,  # Pre-existing timestamp
+        }
+        manager.save(state)
+
+        # Now mark complete - should preserve the original timestamp
+        state = manager.mark_complete()
+
+        # Verify the original timestamp was preserved
+        assert state.stages["08-finalize"]["status"] == "completed"
+        assert state.stages["08-finalize"]["completed"] == original_timestamp
+
 
 class TestGetCurrentStageCompletedBehavior:
     """Tests for get_current_stage() returning completed stages."""
