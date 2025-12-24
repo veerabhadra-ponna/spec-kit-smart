@@ -9,6 +9,7 @@ Analysis folder pattern: .analysis/{project-name}-{timestamp}
 """
 
 import getpass
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -433,7 +434,15 @@ def _emit_chunk_stage(
     # Complete ALL lingering in_progress stages for self-healing consistency
     current_stage_id = STAGE_MAP.get(stage, f"stage_{stage}")
     if chunk == 1:
-        current_state = state_manager.load()
+        try:
+            current_state = state_manager.load()
+        except json.JSONDecodeError as e:
+            emit_error(
+                "Corrupted state file",
+                f"Analysis state file is corrupted: {e}",
+                recovery_cmd=f"rm {analysis_dir_path}/state.json && speckitadv analyze-project --stage=1",
+            )
+            return
         for stage_id, stage_info in current_state.stages.items():
             if stage_info.get("status") == "in_progress" and stage_id != current_stage_id:
                 state_manager.update_stage(
