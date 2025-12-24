@@ -67,7 +67,7 @@ def main(
 def analyze_project(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-16)"),
     chunk: Optional[int] = typer.Option(None, "--chunk", "-c", help="Report chunk number for chunked stages"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", "-a", help="Analysis folder path (auto-created on stage 1)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path to analyze"),
     scope: Optional[str] = typer.Option(None, "--scope", help="Analysis scope: A (full) or B (cross-cutting)"),
     context: Optional[str] = typer.Option(None, "--context", help="Additional context"),
@@ -81,12 +81,14 @@ def analyze_project(
 
     This command implements a progressive workflow with enforced chunking.
     AI agents receive focused prompts (50-80 lines) at each stage.
+
+    Uses folder-based state management. Analysis folder is auto-created on stage 1.
     Runs interactively if no --path/--scope provided at stage 1.
     """
     from speckit.commands.analyze import run_analyze_project
 
     # Interactive mode for stage 1 if required inputs missing
-    if stage == 1 and not chain_id:
+    if stage == 1 and not analysis_dir:
         from speckit.core.interactive import collect_analyze_project_input
 
         if not path:
@@ -108,7 +110,7 @@ def analyze_project(
     run_analyze_project(
         stage=stage,
         chunk=chunk,
-        chain_id=chain_id,
+        analysis_dir=analysis_dir,
         path=path,
         scope=scope,
         context=context,

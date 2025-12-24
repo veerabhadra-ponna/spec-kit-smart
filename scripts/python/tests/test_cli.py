@@ -243,8 +243,8 @@ class TestCommandConsistency:
             output = strip_ansi(result.stdout)
             assert "--feature-dir" in output, f"Command {cmd} missing --feature-dir option"
 
-    def test_analyze_project_has_chain_option(self):
-        """Analyze-project should have --chain option (uses ChainState)."""
+    def test_analyze_project_has_analysis_dir_option(self):
+        """Analyze-project should have --analysis-dir option."""
         result = runner.invoke(app, ["analyze-project", "--help"])
         output = strip_ansi(result.stdout)
-        assert "--chain" in output, "analyze-project missing --chain option"
+        assert "--analysis-dir" in output, "analyze-project missing --analysis-dir option"
