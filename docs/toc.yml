@@ -4,15 +4,26 @@
 
 # Getting started section
 - name: Getting Started
-  items:
-    - name: Installation
-      href: installation.md
-    - name: Quick Start
-      href: quickstart.md
+  href: getting-started.md
 
-# Development workflows
-- name: Development
+# Workflows
+- name: Workflows
   items:
-    - name: Local Development
-      href: local-development.md
+    - name: Orchestrator
+      href: workflows/orchestrator.md
+    - name: Reverse Engineering
+      href: reverse-engineering.md
 
+# Reference
+- name: Reference
+  items:
+    - name: CLI Reference
+      href: reference/cli-reference.md
+    - name: Troubleshooting
+      href: reference/troubleshooting.md
+    - name: Branching Strategy
+      href: branching-strategy.md
+
+# Examples
+- name: Examples
+  href: multi-stack-example.md
