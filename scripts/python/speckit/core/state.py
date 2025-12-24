@@ -455,7 +455,7 @@ class AnalysisStateManager:
 
         state.stages[stage]["status"] = status
 
-        if artifacts:
+        if artifacts is not None:
             state.stages[stage]["artifacts"] = artifacts
 
         # Capture timestamps for auditing and resume scenarios

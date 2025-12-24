@@ -231,8 +231,8 @@ def run_check(
         result["error"] = "No feature directory found. Nothing to resume."
 
     # Check if there's an error - return failure flag for automation/CI
-    # Check both lowercase "error" and uppercase "ERROR" (tasks.md required case)
-    has_error = "error" in result or "ERROR" in result
+    # Check lowercase "error", uppercase "ERROR", and "state_error" (corrupted state.json)
+    has_error = "error" in result or "ERROR" in result or "state_error" in result
 
     if output_json:
         print(json.dumps(result, indent=2))
@@ -279,6 +279,17 @@ def run_check(
 
     console.print(tree)
     console.print()
-    console.print("[bold green]speckitadv is ready to use![/bold green]")
 
-    return result, True
+    # Show error status if any errors were detected
+    if has_error:
+        if "error" in result:
+            console.print(f"[bold red]Error:[/bold red] {result['error']}")
+        if "ERROR" in result:
+            console.print(f"[bold red]Error:[/bold red] {result['ERROR']}")
+        if "state_error" in result:
+            console.print(f"[bold red]State Error:[/bold red] {result['state_error']}")
+            console.print(f"[dim]Recovery: {result.get('state_recovery', 'Check state.json')}[/dim]")
+    else:
+        console.print("[bold green]speckitadv is ready to use![/bold green]")
+
+    return result, not has_error
