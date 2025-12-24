@@ -400,11 +400,22 @@ class AnalysisStateManager:
         return self.state_file.exists()
 
     def load(self) -> AnalysisState:
-        """Load state from file."""
+        """Load state from file.
+
+        Raises:
+            FileNotFoundError: If state file doesn't exist
+            json.JSONDecodeError: If state file is corrupted (fail-fast)
+        """
         if not self.state_file.exists():
             raise FileNotFoundError(f"State file not found: {self.state_file}")
 
         content = self.state_file.read_text(encoding="utf-8")
+
+        # Validate JSON syntax first - fail fast on corruption
+        # (AnalysisState.from_json uses safe_json_loads which swallows errors)
+        import json
+        json.loads(content)  # Raises JSONDecodeError if invalid
+
         return AnalysisState.from_json(content)
 
     def save(self, state: AnalysisState) -> None:

@@ -114,6 +114,20 @@ def get_workflow_state(feature_dir: Path) -> dict:
     if not state_mgr.exists():
         return state_info
 
+    # Read and parse JSON directly to detect corruption
+    # (FeatureStateManager.load() uses safe_json_loads which swallows errors)
+    state_file = feature_dir / "state.json"
+    try:
+        raw_content = state_file.read_text(encoding="utf-8")
+        json.loads(raw_content)  # Validate JSON syntax first
+    except FileNotFoundError:
+        return state_info  # No state file yet
+    except json.JSONDecodeError as e:
+        # State file exists but is corrupted - surface this error
+        state_info["state_error"] = f"state.json is corrupted: {e}"
+        state_info["state_recovery"] = "Delete state.json and restart workflow, or manually fix the JSON syntax"
+        return state_info
+
     try:
         state = state_mgr.load()
         state_info["has_state"] = True
@@ -161,12 +175,8 @@ def get_workflow_state(feature_dir: Path) -> dict:
                 if next_match:
                     state_info["next_task_id"] = next_match.group(1)
 
-    except FileNotFoundError:
-        pass  # No state file yet - normal for new features
-    except json.JSONDecodeError as e:
-        # State file exists but is corrupted - surface this error
-        state_info["state_error"] = f"state.json is corrupted: {e}"
-        state_info["state_recovery"] = "Delete state.json and restart workflow, or manually fix the JSON syntax"
+    except Exception:
+        pass  # Unexpected error - return partial state_info
 
     return state_info
 

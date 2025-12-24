@@ -115,18 +115,36 @@ def run_analyze_project(
     state_manager = None
     state = None
 
+    import json
+
     if analysis_dir:
         analysis_dir_path = Path(analysis_dir)
         state_manager = AnalysisStateManager(analysis_dir_path)
         if state_manager.exists():
-            state = state_manager.load()
+            try:
+                state = state_manager.load()
+            except json.JSONDecodeError as e:
+                emit_error(
+                    "Corrupted state file",
+                    f"state.json is corrupted: {e}",
+                    recovery_cmd=f"rm {analysis_dir_path}/state.json && speckitadv analyze-project --path=<project-path>",
+                )
+                return
     else:
         # Try to find latest analysis folder
         try:
             analysis_dir_path = find_latest_analysis_folder()
             state_manager = AnalysisStateManager(analysis_dir_path)
             if state_manager.exists():
-                state = state_manager.load()
+                try:
+                    state = state_manager.load()
+                except json.JSONDecodeError as e:
+                    emit_error(
+                        "Corrupted state file",
+                        f"state.json is corrupted: {e}",
+                        recovery_cmd=f"rm {analysis_dir_path}/state.json && speckitadv analyze-project --path=<project-path>",
+                    )
+                    return
         except FileNotFoundError:
             pass  # No existing analysis - will create new one
 
