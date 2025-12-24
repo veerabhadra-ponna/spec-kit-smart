@@ -137,12 +137,22 @@ def run_analyze_project(
             # Check if workflow is already complete
             if stage is None:
                 from speckit.core.emit import emit_complete
-                emit_complete(
-                    title="Analysis Complete",
-                    summary="This analysis workflow has already been completed.",
-                    artifacts=[f"{analysis_dir_path}/analysis-report.md"],
-                    next_steps=["Review the analysis report", "Start a new analysis with --path=<project>"],
-                )
+                # Verify expected artifacts exist before declaring complete
+                report_path = analysis_dir_path / "analysis-report.md"
+                if report_path.exists():
+                    emit_complete(
+                        title="Analysis Complete",
+                        summary="This analysis workflow has already been completed.",
+                        artifacts=[str(report_path)],
+                        next_steps=["Review the analysis report", "Start a new analysis with --path=<project>"],
+                    )
+                else:
+                    # State says complete but artifacts missing - warn user
+                    emit_error(
+                        "Incomplete analysis",
+                        f"Workflow marked complete but analysis-report.md not found at {report_path}",
+                        recovery_cmd=f"speckitadv analyze-project --stage=16 --analysis-dir={analysis_dir_path}",
+                    )
                 return
         else:
             stage = 1  # New workflow starts at stage 1
@@ -299,9 +309,11 @@ Run the following command to begin:""",
 
     # Complete any previous in_progress stage before starting new one
     # This ensures stages are only marked complete AFTER work is done
+    # IMPORTANT: Only complete if it's a DIFFERENT stage (not re-running same stage)
+    current_stage_id = STAGE_MAP.get(stage, f"stage_{stage}")
     current_state = state_manager.load()
     for stage_id, stage_info in current_state.stages.items():
-        if stage_info.get("status") == "in_progress":
+        if stage_info.get("status") == "in_progress" and stage_id != current_stage_id:
             state_manager.update_stage(
                 stage=stage_id,
                 status="completed",
@@ -397,10 +409,12 @@ def _emit_chunk_stage(
     rendered = render_prompt(chunk_content, context)
 
     # On chunk 1, complete previous in_progress stage and mark current as in_progress
+    # IMPORTANT: Only complete if it's a DIFFERENT stage (not re-running same stage)
+    current_stage_id = STAGE_MAP.get(stage, f"stage_{stage}")
     if chunk == 1:
         current_state = state_manager.load()
         for stage_id, stage_info in current_state.stages.items():
-            if stage_info.get("status") == "in_progress":
+            if stage_info.get("status") == "in_progress" and stage_id != current_stage_id:
                 state_manager.update_stage(
                     stage=stage_id,
                     status="completed",
@@ -408,7 +422,7 @@ def _emit_chunk_stage(
                 break
         # Mark this chunked stage as in_progress
         state_manager.update_stage(
-            stage=STAGE_MAP.get(stage, f"stage_{stage}"),
+            stage=current_stage_id,
             status="in_progress",
             artifacts=[],
             stage_num=stage,
