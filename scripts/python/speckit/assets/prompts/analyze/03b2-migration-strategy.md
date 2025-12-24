@@ -1,9 +1,9 @@
 ---
 stage: cross_cutting_strategy
-requires: 03b1-abstraction-assessment complete
-condition: state.analysis_scope == "B"
+requires: 03b1-abstraction-assessment
+condition: scope == "B"
 outputs: migration_strategy
-version: 3.1.0
+version: 3.4.0
 next: 03b3-effort-success.md
 ---
 
@@ -15,13 +15,14 @@ Based on abstraction level and blast radius, recommend the optimal migration str
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `{analysis_dir}/state.json`
-2. Confirm `status` = "complete"
-3. Load abstraction score, level, blast radius, and classification
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03b1-abstraction-assessment.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope (must be "B"), context
+- Concern type, current implementation, target implementation
+- Abstraction analysis from previous stage is in artifacts
 
 ---
 

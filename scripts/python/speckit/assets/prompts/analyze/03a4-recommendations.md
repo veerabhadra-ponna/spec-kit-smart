@@ -1,9 +1,9 @@
 ---
 stage: full_app_recommendations
-requires: 03a3-validation-scoring complete
-condition: state.analysis_scope == "A"
+requires: 03a3-validation-scoring
+condition: scope == "A"
 outputs: full_app_complete
-version: 3.1.0
+version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
@@ -15,13 +15,13 @@ Generate prioritized modernization recommendations and compile the complete Stag
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `{analysis_dir}/state.json`
-2. Confirm `status` = "complete"
-3. Load complexity scores, feasibility scores, and scope validation
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03a3-validation-scoring.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- All previous stage artifacts available in analysis directory
 
 ---
 

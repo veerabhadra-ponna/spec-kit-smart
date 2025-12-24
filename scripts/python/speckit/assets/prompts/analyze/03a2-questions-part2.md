@@ -1,9 +1,9 @@
 ---
 stage: full_app_questions_2
-requires: 03a1-questions-part1 complete
-condition: state.analysis_scope == "A"
+requires: 03a1-questions-part1
+condition: scope == "A"
 outputs: modernization_prefs_6_10
-version: 3.1.0
+version: 3.4.0
 next: 03a3-validation-scoring.md
 ---
 
@@ -15,13 +15,13 @@ Ask questions 6-10 to complete the modernization preferences. These cover infras
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `{analysis_dir}/state.json`
-2. Confirm `status` = "complete"
-3. Load Q1-Q5 responses
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03a1-questions-part1.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- Q1-Q5 responses are in artifacts from previous stage
 
 ---
 

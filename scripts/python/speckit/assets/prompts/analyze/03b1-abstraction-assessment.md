@@ -1,9 +1,9 @@
 ---
 stage: cross_cutting_assessment
-requires: analyze-project-02-file-analysis.json
-condition: state.analysis_scope == "B"
+requires: 02e-quality-gates
+condition: scope == "B"
 outputs: abstraction_blast_radius
-version: 3.1.0
+version: 3.4.0
 next: 03b2-migration-strategy.md
 ---
 
@@ -15,17 +15,13 @@ For Cross-Cutting Concern Migration, assess the abstraction level of the current
 
 ---
 
-## Pre-Check: Verify Previous Stage
+## How Context Is Provided
 
-1. Read `.analysis/.state/analyze-project-02-file-analysis.json`
-2. Confirm `stages_complete` includes "file_analysis"
-3. Confirm `analysis_scope` = "B"
-4. Load `concern_details` from state:
-   - `concern_type`
-   - `current_implementation`
-   - `target_implementation`
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF scope is NOT "B":** STOP - Wrong branch. Go to 03a1-questions-part1.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope (must be "B"), context
+- Concern type, current implementation, target implementation
 
 ---
 

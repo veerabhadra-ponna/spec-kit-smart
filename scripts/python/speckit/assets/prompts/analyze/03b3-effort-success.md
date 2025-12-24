@@ -1,9 +1,9 @@
 ---
 stage: cross_cutting_effort
-requires: 03b2-migration-strategy complete
-condition: state.analysis_scope == "B"
+requires: 03b2-migration-strategy
+condition: scope == "B"
 outputs: cross_cutting_complete
-version: 3.1.0
+version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
@@ -15,13 +15,14 @@ Estimate development effort for the migration and define measurable success crit
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `{analysis_dir}/state.json`
-2. Confirm `status` = "complete"
-3. Load strategy, phases, and risks
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03b2-migration-strategy.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope (must be "B"), context
+- Concern type, current implementation, target implementation
+- Strategy and risk analysis from previous stages are in artifacts
 
 ---
 

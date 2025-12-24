@@ -1,9 +1,9 @@
 ---
 stage: full_app_validation
-requires: 03a2-questions-part2 complete
-condition: state.analysis_scope == "A"
+requires: 03a2-questions-part2
+condition: scope == "A"
 outputs: scoring_complete
-version: 3.1.0
+version: 3.4.0
 next: 03a4-recommendations.md
 ---
 
@@ -15,13 +15,13 @@ Validate the modernization scope with the user and calculate complexity/feasibil
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `{analysis_dir}/state.json`
-2. Confirm `status` = "complete"
-3. Load all Q1-Q10 responses and modernization preferences
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03a2-questions-part2.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- Q1-Q10 responses from previous stages are in artifacts
 
 ---
 
