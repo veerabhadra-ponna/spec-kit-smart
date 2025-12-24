@@ -106,5 +106,5 @@ Use the **Write tool** to create `{{feature_dir}}/tasks.md` with **complete cont
 
 ```text
 
-speckitadv tasks --stage=4 --chain={{chain_id}}
+speckitadv tasks --stage=4 --feature-dir={{feature_dir}}
 ```

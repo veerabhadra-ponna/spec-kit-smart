@@ -78,5 +78,5 @@ Combine arguments + answers:
 
 ```text
 
-speckitadv checklist --stage=3 --chain={{chain_id}}
+speckitadv checklist --stage=3 --feature-dir={{feature_dir}}
 ```

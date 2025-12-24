@@ -412,7 +412,7 @@ def run_orchestrate_command(folder: str = None):
 - [x] Constitution skips if complete
 - [x] Resume works from any entry point
 - [x] All tests pass (168 tests)
-- [ ] Documentation updated
+- [x] Documentation updated
 
 ## Implementation Status
 

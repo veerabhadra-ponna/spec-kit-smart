@@ -1,6 +1,6 @@
 # AI Agent Guidelines
 
-**Version:** 3.0
+**Version:** 3.1
 
 ---
 
@@ -13,9 +13,10 @@
 - CLI outputs progressive prompts (50-80 lines per stage)
 - Follow CLI instructions exactly
 
-**RULE 2**: Chain ID persistence
-- Save the chain ID returned by stage commands
-- Pass chain ID to subsequent stages: `speckitadv <command> --stage=N --chain=<id>`
+**RULE 2**: Feature folder state
+- Feature state is persisted in folder: `specs/{feature-folder}/.state/state.json`
+- Pass feature folder to subsequent stages: `speckitadv <command> --stage=N --feature-dir=<folder>`
+- Use `speckitadv create-feature` to create feature folders with proper naming
 
 ### File Operations
 
@@ -109,33 +110,34 @@ Problem → Action
 Each command runs in stages. The CLI outputs focused prompts (50-80 lines) per stage:
 
 ```bash
-# Example: constitution workflow (NOTE: no --path option, uses --chain for state)
+# Example: constitution workflow (stateless - checks file existence)
 speckitadv constitution --stage=1
-speckitadv constitution --stage=2 --chain=abc12345 --defaults  # or --principles="..."
-speckitadv constitution --stage=3 --chain=abc12345
+speckitadv constitution --stage=2 --defaults  # or --principles="..."
+speckitadv constitution --stage=3
 
-# Example: analyze-project workflow (uses --chain for state)
+# Example: analyze-project workflow (uses folder-based state)
 speckitadv analyze-project --stage=1 --path=/project --scope=A
-speckitadv analyze-project --stage=2 --chain=abc12345
+# Creates .analysis/{project}-{timestamp}/ folder
+speckitadv analyze-project --stage=2 --analysis-dir=.analysis/myproject-20251215-120000
 
 # Example: specify workflow (stateless until stage 3)
 speckitadv specify --stage=1
 speckitadv specify --stage=2        # Collects --feature and --jira inputs
-speckitadv specify --stage=3 --feature="Add user auth" --jira="C12345-7890"  # Creates feature folder
-speckitadv specify --stage=4 --chain=abc12345  # Uses --chain from stage 3+
+speckitadv specify --stage=3 --feature="Add user auth" --jira="C12345-7890"
+# AI calls: speckitadv create-feature "Add user auth" --jira="C12345-7890"
+# Creates specs/001-user-auth/ folder with state
+speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
 ```
 
 **State Location by Command:**
 
 | Command | State Location | Notes |
 |---------|----------------|-------|
-| `analyze-project` | `.analysis/.state/` | All stages persisted |
-| `constitution` | `memory/.state/` | All stages persisted |
-| `specify`, `plan`, `tasks`, `implement` | `specs/{feature}/.state/` | Stages 1-2 stateless, stage 3+ persisted after feature folder exists |
+| `analyze-project` | `.analysis/{project}-{timestamp}/state.json` | Folder-based state |
+| `constitution` | `memory/constitution.md` | File existence check only |
+| `specify`, `plan`, `tasks`, `implement`, `clarify`, `checklist` | `specs/{feature}/.state/state.json` | Single state file per feature |
 
-State files are prefixed with command name to avoid collisions: `constitution-01-initialization.json`
-
-**Note:** For feature-scoped commands, the feature directory is auto-detected after stage 3 creates it. State is automatically migrated from `specs/.pending/.state/` to `specs/{feature}/.state/`.
+**Note:** For feature-scoped commands, the feature directory is auto-detected (latest in `specs/`) when `--feature-dir` is not provided.
 
 **Important - Passing Inputs Between Stateless Stages:** Since stages 1-2 don't persist state, inputs collected in stage 2 (like `--feature` and `--jira` for specify) must be explicitly passed to stage 3 via CLI options. The NEXT command in stage 2 prompts will instruct you to include these values.
 
@@ -143,14 +145,14 @@ State files are prefixed with command name to avoid collisions: `constitution-01
 
 | Command | Available Options |
 |---------|-------------------|
-| `constitution` | `--stage`, `--chain`, `--defaults`, `--principles` |
-| `analyze-project` | `--stage`, `--chain`, `--chunk`, `--path`, `--scope`, `--context`, `--concern-type`, `--current-impl`, `--target-impl`, `--verify` |
-| `specify` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--jira`, `--feature` |
-| `plan` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--constraints` |
-| `tasks` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--preferences` |
-| `implement` | `--stage`, `--chain`, `--path`, `--feature-dir`, `--notes` |
-| `clarify` | `--stage`, `--chain`, `--path` |
-| `checklist` | `--stage`, `--chain`, `--path` |
+| `constitution` | `--stage`, `--defaults`, `--principles`, `--path` |
+| `analyze-project` | `--stage`, `--chunk`, `--path`, `--analysis-dir`, `--scope`, `--context`, `--concern-type`, `--current-impl`, `--target-impl`, `--verify` |
+| `specify` | `--stage`, `--path`, `--feature-dir`, `--jira`, `--feature` |
+| `plan` | `--stage`, `--path`, `--feature-dir`, `--constraints` |
+| `tasks` | `--stage`, `--path`, `--feature-dir`, `--preferences` |
+| `implement` | `--stage`, `--path`, `--feature-dir`, `--notes` |
+| `clarify` | `--stage`, `--path`, `--feature-dir` |
+| `checklist` | `--stage`, `--path`, `--feature-dir` |
 
 **Note:** Use `speckitadv <command> --help` for full option details.
 

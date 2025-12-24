@@ -74,7 +74,7 @@ Format validation: PASSED
 Organization: PASSED
 
 Next command:
-  speckitadv implement --chain={{chain_id}}
+  speckitadv implement --feature-dir={{feature_dir}}
 ```
 
 ---

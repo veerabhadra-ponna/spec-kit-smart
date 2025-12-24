@@ -72,5 +72,5 @@ Load only portions relevant to checklist focus.
 
 ```text
 
-speckitadv checklist --stage=2 --chain={{chain_id}}
+speckitadv checklist --stage=2 --feature-dir={{feature_dir}}
 ```

@@ -6,7 +6,7 @@ Zero-prompt architecture CLI for AI-powered development workflows.
 
 - **Progressive Prompt Injection**: Small, focused prompts (50-80 lines) at each stage
 - **Embedded Assets**: All prompts and templates bundled in single executable
-- **Chain State Management**: Persist workflow state between sessions
+- **Folder-Based State Management**: Simple state persistence using feature folders
 - **Cross-Platform**: Works on Linux, macOS, and Windows
 
 ## Installation
@@ -56,10 +56,10 @@ speckitadv --help
 speckitadv constitution --stage=1
 
 # AI agent follows instructions, then runs:
-speckitadv constitution --stage=2 --chain=<chain_id>
+speckitadv constitution --stage=2
 
 # Continue through stages...
-speckitadv constitution --stage=3 --chain=<chain_id>
+speckitadv constitution --stage=3
 ```
 
 ### Example: Specify Workflow
@@ -74,10 +74,11 @@ speckitadv specify --stage=2
 # Or provide arguments directly:
 speckitadv specify --stage=2 --jira=C12345-7890 --feature="Add user auth"
 
-# Stage 3: Create feature branch (requires --feature from stage 2)
-speckitadv specify --stage=3 --feature="Add user auth" --jira=C12345-7890
+# Stage 3: Create feature branch and folder
+# AI calls create-feature helper to create specs/001-user-auth/
+speckitadv specify --stage=3 --feature-dir=specs/001-user-auth
 
-# Stage 4+: Chain auto-resumes from state (--chain optional)
+# Stage 4+: Continue with feature-dir
 speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
 # ... until complete
 ```
@@ -85,27 +86,26 @@ speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
 **Notes:**
 
 - Stages 1-2 are stateless. Pass `--feature` and `--jira` from stage 2 to stage 3.
-- Stage 3 creates the feature folder and persists state.
-- Stage 4+ auto-detects chain from state. Use `--chain` or `--feature-dir` to
-  disambiguate when multiple features exist.
+- Stage 3 creates the feature folder via `create-feature` command and persists state.
+- Stage 4+ uses `--feature-dir` to specify which feature folder to use.
 
 ### Auto-Resume for Feature Commands
 
-All feature-scoped commands (`specify`, `plan`, `tasks`, `implement`) support
-automatic chain and feature directory detection:
+All feature-scoped commands (`specify`, `plan`, `tasks`, `implement`, `clarify`, `checklist`) support
+automatic feature directory detection:
 
-- **Chain auto-resume**: At stage 4+, if `--chain` is not provided, the CLI
-  scans feature directories for matching command state and resumes automatically.
-- **Feature directory detection**: For `plan`, `tasks`, and `implement`, the
-  feature directory is auto-detected at any stage (since it was created by
-  a prior `specify` workflow).
-- **Ambiguity warnings**: When multiple matching chains or features exist,
-  the CLI warns and shows how to specify explicitly.
+- **Feature directory detection**: The CLI auto-detects the latest feature folder
+  in `specs/` when `--feature-dir` is not provided.
+- **Explicit folder**: Use `--feature-dir=specs/001-user-auth` to work on a specific feature.
+- **Resume command**: Use `speckitadv resume` to continue from where you left off.
 
 ```bash
-# Example: plan workflow auto-detects feature from prior specify
+# Example: plan workflow auto-detects feature folder
 speckitadv plan --stage=1
-speckitadv plan --stage=2  # Auto-detects feature_dir from git branch or state
+speckitadv plan --stage=2  # Auto-detects latest feature folder
+
+# Or specify explicitly
+speckitadv plan --stage=2 --feature-dir=specs/001-user-auth
 ```
 
 ### Debug Commands
@@ -123,7 +123,7 @@ speckitadv show-fragment constitution 01-initialization
 1. **CLI emits stage prompt** (50-80 lines)
 2. **AI agent follows instructions** in the prompt
 3. **CLI provides next command** at end of each stage
-4. **Chain ID persists state** between invocations
+4. **Feature folder persists state** between invocations
 5. **Repeat until workflow complete**
 
 ## Architecture
@@ -134,10 +134,11 @@ speckit/
 ├── cli.py              # Typer CLI entry point
 ├── commands/           # Command implementations
 │   ├── analyze.py      # analyze-project command
-│   └── constitution.py # constitution command
+│   ├── constitution.py # constitution command
+│   └── feature.py      # create-feature helper
 ├── core/
 │   ├── emit.py         # Stage emission system
-│   ├── state.py        # Chain state management
+│   ├── state_v2.py     # Folder-based state management
 │   ├── prompts.py      # Prompt fragment loading + template injection
 │   ├── stages.py       # Generic stage handler
 │   └── ...
