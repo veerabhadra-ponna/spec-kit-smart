@@ -511,11 +511,16 @@ def _auto_detect_stage_from_state(state) -> int:
     """
     Auto-detect the next stage from analysis state.
 
+    Handles scope-aware branching:
+    - Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
+    - Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)
+
     Returns:
         Stage number to run (1-indexed)
     """
-    # Find highest completed stage
+    # Find highest completed stage and scope from state
     highest_completed = 0
+    effective_scope = "A"  # Default to scope A
     for stage_name, stage_info in state.stages.items():
         if stage_info.get("status") == "completed":
             # Extract stage number from "stage_N" format
@@ -524,9 +529,22 @@ def _auto_detect_stage_from_state(state) -> int:
                 highest_completed = max(highest_completed, stage_num)
             except (IndexError, ValueError):
                 pass
+        # Get scope from any stage that has it stored
+        if stage_info.get("scope"):
+            effective_scope = stage_info.get("scope")
 
-    # Return next stage after highest completed
-    # Handle scope-aware branching
+    # Apply scope-aware branching logic
+    if highest_completed == 8:
+        # After quality gates, branch based on scope
+        return 9 if effective_scope == "A" else 10
+    elif highest_completed == 9:
+        # After Full App (scope A), skip Cross-cutting to reports
+        return 11
+    elif highest_completed == 10:
+        # After Cross-cutting (scope B), continue to reports
+        return 11
+
+    # Default: next stage after highest completed
     next_stage = highest_completed + 1
     if next_stage > 16:
         return 16  # Cap at final stage

@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - get_next_action now checks clarify/checklist for in_progress status (resume works)
 - create-feature now exits with code 1 on JIRA validation failure
 - Non-chunked analyze-project stages now persist resolved metadata values
+- analyze-project auto-detection now handles scope-aware branching (A→9→11, B→10→11)
 - Specify prompts referenced non-existent `--jira` and `--feature` CLI options
 - Next steps in stages.py used `/specify` format instead of `/speckitadv.specify`
 - Clarify and checklist prompts updated to use `/speckitadv.*` slash command format
