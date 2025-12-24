@@ -32,6 +32,20 @@ Detailed implementation plan for Python CLI migration including:
 
 **Why Archived:** All phases completed successfully. The Python CLI is now the production implementation.
 
+### state-simplification-plan.md
+
+**Archived:** 2025-12-24
+**Status:** COMPLETE
+
+Implementation plan for folder-based state management including:
+
+- Design principles for folder-as-chain-ID approach
+- State schema design (FeatureState, AnalysisState)
+- CLI argument auto-detection from state
+- Config-driven naming patterns
+
+**Why Archived:** State simplification fully implemented in `core/state.py`. Folder-based state management is now the production approach.
+
 ## Related Current Documentation
 
 - [README.md](../../README.md) - Current user documentation
