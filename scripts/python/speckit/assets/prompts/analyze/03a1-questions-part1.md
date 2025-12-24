@@ -325,11 +325,9 @@ Store user's choice in:
 
 ---
 
-## Checkpoint: Questions 1-5 Complete
+## Create Checkpoint
 
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03a1-questions-complete.json`
+Write checkpoint file: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -350,14 +348,8 @@ Write checkpoint file: `.analysis/.checkpoints/03a1-questions-complete.json`
 
 ### Verify Checkpoint
 
-1. Read `.analysis/.checkpoints/03a1-questions-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm all 5 questions have responses
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 03a1-questions-part1`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 
@@ -385,4 +377,6 @@ Write checkpoint file: `.analysis/.checkpoints/03a1-questions-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **03a2-questions-part2.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

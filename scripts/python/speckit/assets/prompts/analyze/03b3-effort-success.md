@@ -17,7 +17,7 @@ Estimate development effort for the migration and define measurable success crit
 
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/03b2-strategy-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load strategy, phases, and risks
 
@@ -309,11 +309,9 @@ Write to: `.analysis/.state/analyze-project-03b-cross-cutting.json`
 
 ---
 
-## Checkpoint: Stage 3B Complete
+## Create Final Checkpoint
 
-### Create Final Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03b-cross-cutting-complete.json`
+Write checkpoint file: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -332,15 +330,6 @@ Write checkpoint file: `.analysis/.checkpoints/03b-cross-cutting-complete.json`
 ```
 
 ### Verify Checkpoint
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:**
-  Output: `✓ Checkpoint verified: 03b-cross-cutting`
-  Output: `✓ State saved: analyze-project-03b-cross-cutting.json`
-
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 
@@ -375,4 +364,6 @@ STAGE_COMPLETE:CROSS_CUTTING_ANALYSIS
 
 ## Next Stage
 
-Proceed immediately to: **04a-report-chunks-1-3.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

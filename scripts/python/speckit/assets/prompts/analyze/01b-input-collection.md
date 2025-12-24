@@ -10,8 +10,7 @@ next: 01c-script-execution.md
 
 ## Purpose
 
-Collect all required inputs from the user through explicit prompts.
-Each input requires user response before proceeding.
+Collect all required inputs from the user through explicit prompts. Each input requires user response before proceeding.
 
 ---
 
@@ -23,15 +22,34 @@ Check if inputs were already collected via CLI interactive mode:
 
 - `{project_path}` - Project path (required)
 - `{scope}` - Analysis scope A or B (required)
-- `{context}` - Additional context (optional, may be empty)
+- `{context}` - Additional context (optional, may be "$SKIP" or empty)
 - `{concern_type}` - Concern type for scope B (conditional)
 - `{current_impl}` - Current implementation for scope B (conditional)
 - `{target_impl}` - Target implementation for scope B (conditional)
 
-**IF** `{project_path}` is a valid path (not empty) **AND** `{scope}` is "A" or "B":
+**IF** `{project_path}` is a valid path (not empty, not "$NONE") **AND** `{scope}` is "A":
 
 - Skip all interactive input prompts below
-- Use CLI-provided values directly
+- Use CLI-provided values directly:
+  - `$PROJECT_PATH` = `{project_path}`
+  - `$ANALYSIS_SCOPE` = `{scope}`
+  - `$ADDITIONAL_CONTEXT` = `{context}` (use empty string if "$SKIP" or "$NONE")
+- Proceed directly to "Output Summary" section
+
+**IF** `{project_path}` is valid **AND** `{scope}` is "B" **AND** all scope-B fields are set:
+
+- `{concern_type}` is not empty and not "$NONE"
+- `{current_impl}` is not empty and not "$NONE"
+- `{target_impl}` is not empty and not "$NONE"
+
+Then skip interactive prompts and use:
+
+- `$PROJECT_PATH` = `{project_path}`
+- `$ANALYSIS_SCOPE` = `{scope}`
+- `$ADDITIONAL_CONTEXT` = `{context}` (use empty string if "$SKIP" or "$NONE")
+- `$CONCERN_TYPE` = `{concern_type}`
+- `$CURRENT_IMPL` = `{current_impl}`
+- `$TARGET_IMPL` = `{target_impl}`
 - Proceed directly to "Output Summary" section
 
 **ELSE:** Continue with interactive prompts below.
@@ -69,7 +87,7 @@ Your path: ___
 
 When user provides path:
 
-1. Check path exists
+1. Check path exists: `test -d "$PATH"` or `Test-Path "$PATH"`
 2. Check path is readable
 3. Check path is a directory (not a file)
 
@@ -83,6 +101,8 @@ Please provide a valid path: ___
 ```
 
 Re-prompt until valid path provided.
+
+**Store validated path:** `$PROJECT_PATH`
 
 ---
 
@@ -120,8 +140,8 @@ ___
 
 ### Process Additional Context
 
-- **IF** user types "none" (case-insensitive): Set context to empty
-- **ELSE**: Store user's text as additional context
+- **IF** user types "none" (case-insensitive): Set `$ADDITIONAL_CONTEXT = ""`
+- **ELSE**: Store user's text in `$ADDITIONAL_CONTEXT`
 
 ---
 
@@ -175,11 +195,13 @@ Your choice [A/B]: ___
 
 Re-prompt until valid choice received.
 
+**Store validated choice:** `$ANALYSIS_SCOPE` (uppercase: "A" or "B")
+
 ---
 
 ## Input 4: Concern Details (Conditional)
 
-**ONLY IF** scope is "B":
+**ONLY IF** `$ANALYSIS_SCOPE = "B"`:
 
 ---
 
@@ -231,6 +253,16 @@ Please provide details about the concern:
 
 ---
 
+### Store Concern Details
+
+- `$CONCERN_TYPE` = User's concern type
+- `$CURRENT_IMPL` = Current implementation
+- `$TARGET_IMPL` = Target implementation
+
+**IF** `$ANALYSIS_SCOPE = "A"`: Set all three to empty strings.
+
+---
+
 ## Output Summary
 
 ```text
@@ -238,10 +270,12 @@ Please provide details about the concern:
   SUBSTAGE COMPLETE: 01b-input-collection
 
   Collected Inputs:
-    Project Path: {project_path}
-    Analysis Scope: {scope} ({A=Full Application | B=Cross-Cutting})
-    Additional Context: {context or "none"}
-    Analysis Folder: {analysis_dir}
+    Project Path: {$PROJECT_PATH}
+    Analysis Scope: {A - Full Application | B - Cross-Cutting}
+    Additional Context: {provided | none}
+    {IF scope=B: Concern: {$CONCERN_TYPE} ({$CURRENT_IMPL} → {$TARGET_IMPL})}
+
+  Analysis Folder: {analysis_dir}
 
   Next: Run speckitadv analyze-project
 ═══════════════════════════════════════════════════════════

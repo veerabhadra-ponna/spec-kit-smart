@@ -16,7 +16,7 @@ Verify file analysis meets quality standards before proceeding. This is a mandat
 
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/02d-test-audit-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load all Phase 1-4 results
 
@@ -31,10 +31,10 @@ Aggregate results from all previous phases:
 ```bash
 # Load all checkpoint files
 
-cat .analysis/.checkpoints/02a-category-scan-complete.json
-cat .analysis/.checkpoints/02b-deep-dive-complete.json
-cat .analysis/.checkpoints/02c-config-complete.json
-cat .analysis/.checkpoints/02d-test-audit-complete.json
+cat {analysis_dir}/state.json
+cat {analysis_dir}/state.json
+cat {analysis_dir}/state.json
+cat {analysis_dir}/state.json
 
 ```
 
@@ -422,11 +422,9 @@ Action Required:
 
 ---
 
-## Checkpoint: Stage 2 Complete
+## Create Final Checkpoint
 
-### Create Final Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
+Write checkpoint file: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -456,19 +454,9 @@ Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
 
 ### Verify Checkpoint
 
-1. Read `.analysis/.checkpoints/02-file-analysis-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm all quality gates show "PASS"
 3. Confirm status = "complete"
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:**
-  Output: `✓ Checkpoint verified: 02-file-analysis`
-  Output: `✓ All quality gates passed`
-  Output: `✓ State saved: analyze-project-02-file-analysis.json`
-
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 

@@ -17,7 +17,7 @@ Generate staged implementation prompts for Spec Kit workflow integration. These 
 
 ## Pre-Check
 
-1. Read `.analysis/.checkpoints/tech-spec-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load analysis data from state files
 
@@ -275,7 +275,7 @@ Write to: `{analysis_dir}/stage-prompts/implement-prompt.md`
 
 ## Final Checkpoint
 
-Write: `.analysis/.checkpoints/stage-prompts-complete.json`
+Write: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -292,16 +292,6 @@ Write: `.analysis/.checkpoints/stage-prompts-complete.json`
 }
 
 ```
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-1. Read `.analysis/.checkpoints/stage-prompts-complete.json`
-2. Verify all 4 files exist in `{analysis_dir}/stage-prompts/`
-3. Confirm no placeholders in any file
-
-**IF verified:** Output: `✓ Checkpoint verified: stage-prompts`
-**IF failed:** Retry once, then STOP
 
 ---
 

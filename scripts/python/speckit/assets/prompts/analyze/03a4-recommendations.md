@@ -17,7 +17,7 @@ Generate prioritized modernization recommendations and compile the complete Stag
 
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/03a3-scoring-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load complexity scores, feasibility scores, and scope validation
 
@@ -313,11 +313,9 @@ Write to: `.analysis/.state/analyze-project-03a-full-app.json`
 
 ---
 
-## Checkpoint: Stage 3A Complete
+## Create Final Checkpoint
 
-### Create Final Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
+Write checkpoint file: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -337,18 +335,9 @@ Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
 
 ### Verify Checkpoint
 
-1. Read `.analysis/.checkpoints/03a-full-app-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm all substages completed
 3. Confirm status = complete
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:**
-  Output: `✓ Checkpoint verified: 03a-full-app`
-  Output: `✓ State saved: analyze-project-03a-full-app.json`
-
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 
@@ -379,4 +368,6 @@ STAGE_COMPLETE:FULL_APP_ANALYSIS
 
 ## Next Stage
 
-Proceed immediately to: **04a-report-chunks-1-3.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

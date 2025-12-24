@@ -121,7 +121,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
 
 2. **Create checkpoint marker**:
    - Create directory: `.analysis/.checkpoints/` (if not exists)
-   - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-1-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -159,7 +159,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    - Use str_replace to append (not overwrite)
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-2-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -195,7 +195,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    - Append Sections 4.2 & 5 content to functional-spec-legacy.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-3-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -231,7 +231,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    - Append Sections 6 & 7 content to functional-spec-legacy.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/functional-spec-chunk-4-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -266,7 +266,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    - Append Sections 8, 9 & 10 content to functional-spec-legacy.md
 
 2. **Create final checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/functional-spec-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -311,7 +311,7 @@ You just completed functional-spec-legacy.md. DO NOT STOP HERE.
 - [ ] functional-spec-legacy.md is complete (all 5 chunks)
 - [ ] All sections present (Introduction through Constraints)
 - [ ] No placeholders or TODOs
-- [ ] Checkpoint file exists: `.analysis/.checkpoints/functional-spec-complete.json`
+- [ ] Checkpoint file exists: `{analysis_dir}/state.json`
 
 ### NOW IMMEDIATELY PROCEED TO GENERATE functional-spec-target.md
 
@@ -417,7 +417,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
 
 2. **Create checkpoint marker**:
    - Create directory: `.analysis/.checkpoints/` (if not exists)
-   - Write JSON file: `.analysis/.checkpoints/technical-spec-chunk-1-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -455,7 +455,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    - Use str_replace to append (not overwrite)
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/technical-spec-chunk-2-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -490,7 +490,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    - Append Sections 6 & 7 content to technical-spec.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/technical-spec-chunk-3-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -526,7 +526,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    - Append Sections 8 & 9 content to technical-spec.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/technical-spec-chunk-4-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -561,7 +561,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    - Append Sections 10, 11 & 12 content to technical-spec.md
 
 2. **Create final checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/technical-spec-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -707,7 +707,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 
 2. **Create checkpoint marker**:
    - Create directory: `.analysis/.checkpoints/` (if not exists)
-   - Write JSON file: `.analysis/.checkpoints/concern-migration-plan-chunk-1-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -746,7 +746,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
    - Use str_replace to append (not overwrite)
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/concern-migration-plan-chunk-2-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -783,7 +783,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
    - Append Sections 7, 8, 9 & 10 content to concern-migration-plan.md
 
 2. **Create final checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/concern-migration-plan-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json

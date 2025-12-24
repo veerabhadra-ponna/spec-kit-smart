@@ -163,7 +163,7 @@ Write to: `{analysis_dir}/analysis-report.md`
 
 ```
 
-Write to: `.analysis/.checkpoints/report-chunk-1.json`
+Write to: `{analysis_dir}/state.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_1]**
@@ -237,7 +237,7 @@ Generate Phase 2.1 content. Document every controller and API endpoint.
 
 ```
 
-Write to: `.analysis/.checkpoints/report-chunk-2.json`
+Write to: `{analysis_dir}/state.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_2]**
@@ -323,7 +323,7 @@ Generate Phase 2.2 content. Document services and business logic.
 
 ```
 
-Write to: `.analysis/.checkpoints/report-chunk-3.json`
+Write to: `{analysis_dir}/state.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_3]**
@@ -337,7 +337,7 @@ Write to: `.analysis/.checkpoints/report-chunk-3.json`
 
 ### Create Substage Checkpoint
 
-Write: `.analysis/.checkpoints/04a-complete.json`
+Write: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -351,11 +351,6 @@ Write: `.analysis/.checkpoints/04a-complete.json`
 ```
 
 ### Verify Substage
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF verified:** Output: `✓ Checkpoint verified: 04a (Chunks 1-3)`
 
 ---
 
@@ -382,4 +377,6 @@ Write: `.analysis/.checkpoints/04a-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **04b-report-chunks-4-6.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

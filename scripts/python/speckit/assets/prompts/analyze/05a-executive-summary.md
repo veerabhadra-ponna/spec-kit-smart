@@ -197,12 +197,7 @@ Write to: `.analysis/.state/analyze-project-05-artifacts.json`
 
 ## Checkpoint
 
-Write: `.analysis/.checkpoints/05-artifacts-complete.json`
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-Output: `✓ Checkpoint verified: 05-common-artifacts`
+Write: `{analysis_dir}/state.json`
 
 ---
 

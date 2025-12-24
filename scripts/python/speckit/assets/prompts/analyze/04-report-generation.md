@@ -187,7 +187,7 @@ Complete sections:
 
 2. **Create checkpoint marker**:
    - Create directory: `.analysis/.checkpoints/` (if not exists)
-   - Write JSON file: `.analysis/.checkpoints/phase-1-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -229,7 +229,7 @@ Complete **Section 2.1: Controllers Analysis**:
    - Use str_replace to append (not overwrite)
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-2-1-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -270,7 +270,7 @@ Complete **Section 2.2: Services Analysis**:
    - Append Section 2.2 content to analysis-report.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-2-2-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -311,7 +311,7 @@ Complete **Section 2.3: Data Models & Repositories**:
    - Append Section 2.3 content to analysis-report.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-2-3-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -350,7 +350,7 @@ Complete **Section 3: What's Working Well**:
    - Append Section 3 content to analysis-report.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-3-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -392,7 +392,7 @@ Complete **Section 4: Technical Debt**:
    - Append Section 4 (all subsections 4.1-4.4) to analysis-report.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-4-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -436,7 +436,7 @@ Complete **Section 5: Upgrade Paths**:
    - Append Section 5 (all subsections 5.1-5.3) to analysis-report.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-5-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -482,7 +482,7 @@ Complete **Sections 6 & 7**:
    - Append Sections 6 & 7 to analysis-report.md
 
 2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-6-7-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json
@@ -529,7 +529,7 @@ Complete **Sections 8 & 9**:
    - Append Sections 8 & 9 to analysis-report.md
 
 2. **Create final checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/all-phases-complete.json`
+   - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
      ```json

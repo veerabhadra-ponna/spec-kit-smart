@@ -19,7 +19,7 @@ Analyze test coverage, test patterns, and perform comprehensive dependency audit
 
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/02c-config-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load configuration analysis results
 
@@ -321,11 +321,9 @@ Create comprehensive audit summary:
 
 ---
 
-## Checkpoint: Test & Dependency Audit Complete
+## Create Checkpoint
 
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/02d-test-audit-complete.json`
+Write checkpoint file: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -346,15 +344,9 @@ Write checkpoint file: `.analysis/.checkpoints/02d-test-audit-complete.json`
 
 ### Verify Checkpoint
 
-1. Read `.analysis/.checkpoints/02d-test-audit-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Validate all metrics captured
 3. Confirm status = complete
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 02d-test-audit`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 
@@ -386,4 +378,6 @@ Write checkpoint file: `.analysis/.checkpoints/02d-test-audit-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **02e-quality-gates.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

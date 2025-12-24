@@ -16,7 +16,7 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 
 ## Pre-Check
 
-1. Read `.analysis/.checkpoints/04a-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm chunks 1-3 complete
 3. Read current analysis-report.md
 
@@ -64,7 +64,7 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 
 ```
 
-**Checkpoint:** `.analysis/.checkpoints/report-chunk-4.json`
+**Checkpoint:** `{analysis_dir}/state.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_4]**
@@ -119,7 +119,7 @@ Output: `✓ Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 
 ```
 
-**Checkpoint:** `.analysis/.checkpoints/report-chunk-5.json`
+**Checkpoint:** `{analysis_dir}/state.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_5]**
@@ -187,7 +187,7 @@ Output: `✓ Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 
 ```
 
-**Checkpoint:** `.analysis/.checkpoints/report-chunk-6.json`
+**Checkpoint:** `{analysis_dir}/state.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_6]**
@@ -198,7 +198,7 @@ Output: `✓ Chunk 6/9: Tech Debt ({debt_count} debt, {sec_count} security, {lin
 
 ## Substage Checkpoint
 
-Write: `.analysis/.checkpoints/04b-complete.json`
+Write: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -213,11 +213,6 @@ Write: `.analysis/.checkpoints/04b-complete.json`
 }
 
 ```
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-Output: `✓ Checkpoint verified: 04b (Chunks 4-6)`
 
 ---
 
@@ -244,4 +239,6 @@ Output: `✓ Checkpoint verified: 04b (Chunks 4-6)`
 
 ## Next Substage
 
-Proceed immediately to: **04c-report-chunks-7-9.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

@@ -19,7 +19,7 @@ Focus on HIGH-PRIORITY areas with 60-80% file coverage. This is where detailed p
 
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/02a-category-scan-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load category patterns from Phase 1
 
@@ -399,11 +399,9 @@ Merge all deep dive findings:
 
 ---
 
-## Checkpoint: Deep Dive Complete
+## Create Checkpoint
 
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/02b-deep-dive-complete.json`
+Write checkpoint file: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -429,15 +427,9 @@ Write checkpoint file: `.analysis/.checkpoints/02b-deep-dive-complete.json`
 
 ### Verify Checkpoint
 
-1. Read `.analysis/.checkpoints/02b-deep-dive-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Validate all priority areas completed
 3. Confirm minimum coverage met
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 02b-deep-dive`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 
@@ -469,4 +461,6 @@ Write checkpoint file: `.analysis/.checkpoints/02b-deep-dive-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **02c-config-analysis.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

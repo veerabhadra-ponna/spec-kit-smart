@@ -276,11 +276,9 @@ High-Impact Files (top 10):
 
 ---
 
-## Checkpoint: Assessment Complete
+## Create Checkpoint
 
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03b1-assessment-complete.json`
+Write checkpoint file: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -298,14 +296,8 @@ Write checkpoint file: `.analysis/.checkpoints/03b1-assessment-complete.json`
 
 ### Verify Checkpoint
 
-1. Read `.analysis/.checkpoints/03b1-assessment-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm all fields populated
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 03b1-abstraction-assessment`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 
@@ -331,4 +323,6 @@ Write checkpoint file: `.analysis/.checkpoints/03b1-assessment-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **03b2-migration-strategy.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

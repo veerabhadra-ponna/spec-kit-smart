@@ -17,7 +17,7 @@ Based on abstraction level and blast radius, recommend the optimal migration str
 
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/03b1-assessment-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load abstraction score, level, blast radius, and classification
 
@@ -372,11 +372,9 @@ Risk Assessment:
 
 ---
 
-## Checkpoint: Strategy Complete
+## Create Checkpoint
 
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03b2-strategy-complete.json`
+Write checkpoint file: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -394,12 +392,6 @@ Write checkpoint file: `.analysis/.checkpoints/03b2-strategy-complete.json`
 ```
 
 ### Verify Checkpoint
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 03b2-migration-strategy`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 
@@ -429,4 +421,6 @@ Write checkpoint file: `.analysis/.checkpoints/03b2-strategy-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **03b3-effort-success.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

@@ -20,7 +20,7 @@ Analyze ALL configuration files completely. Configuration contains crucial infor
 
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/02b-deep-dive-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load deep dive patterns
 
@@ -307,11 +307,9 @@ Create comprehensive settings inventory:
 
 ---
 
-## Checkpoint: Configuration Analysis Complete
+## Create Checkpoint
 
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/02c-config-complete.json`
+Write checkpoint file: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -329,15 +327,9 @@ Write checkpoint file: `.analysis/.checkpoints/02c-config-complete.json`
 
 ### Verify Checkpoint
 
-1. Read `.analysis/.checkpoints/02c-config-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Validate all categories completed
 3. Confirm 100% coverage achieved
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 02c-config-analysis`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 
@@ -369,4 +361,6 @@ Write checkpoint file: `.analysis/.checkpoints/02c-config-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **02d-test-audit.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

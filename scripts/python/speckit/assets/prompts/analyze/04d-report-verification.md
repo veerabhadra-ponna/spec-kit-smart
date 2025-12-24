@@ -16,7 +16,7 @@ Verify the analysis report meets all quality standards before proceeding to arti
 
 ## Pre-Check
 
-1. Read `.analysis/.checkpoints/04c-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm all 9 chunks complete
 
 ---
@@ -131,7 +131,7 @@ Write to: `.analysis/.state/analyze-project-04-report.json`
 
 ## Final Checkpoint
 
-Write: `.analysis/.checkpoints/04-report-complete.json`
+Write: `{analysis_dir}/state.json`
 
 ```json
 {
@@ -146,13 +146,6 @@ Write: `.analysis/.checkpoints/04-report-complete.json`
 }
 
 ```
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF verified:**
-  Output: `✓ Checkpoint verified: 04-report-generation`
-  Output: `✓ Report verified and state saved`
 
 ---
 
@@ -178,4 +171,6 @@ STAGE_COMPLETE:REPORT_GENERATION
 
 ## Next Stage
 
-Proceed immediately to: **05a-executive-summary.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.
