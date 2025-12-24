@@ -148,6 +148,16 @@ def run_staged_command(
             )
         return
 
+    # Check if explicitly provided folder exists before checking state
+    # (resolve_feature_folder only throws for auto-detection, not explicit paths)
+    if feature_dir and not feature_path.exists():
+        emit_error(
+            "Feature folder not found",
+            f"Feature folder does not exist: {feature_path}",
+            recovery_cmd=f"speckitadv create-feature 'your feature description'",
+        )
+        return
+
     # Load or create state manager
     state_manager = FeatureStateManager(feature_path)
 

@@ -25,7 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Auto-detect stage returns 1 for pending status (was incorrectly returning 3)
 - Chunked analysis stages now persist completion status to state
+- Chunked analysis stages now persist metadata (scope, context, concern_type, etc.) to state
 - Folder selection is now deterministic when state file mtimes are equal
+- PyInstaller hidden import updated from `speckit.core.state` to `speckit.core.state_v2`
+- Better error message when explicit `--feature-dir` does not exist (check folder before state)
 - Specify prompts referenced non-existent `--jira` and `--feature` CLI options
 - Next steps in stages.py used `/specify` format instead of `/speckitadv.specify`
 - Clarify and checklist prompts updated to use `/speckitadv.*` slash command format

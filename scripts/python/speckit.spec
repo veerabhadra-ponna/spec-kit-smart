@@ -85,7 +85,7 @@ a = Analysis(
         'speckit.commands.workflow',
         'speckit.core',
         'speckit.core.emit',
-        'speckit.core.state',
+        'speckit.core.state_v2',
         'speckit.core.config',
         'speckit.core.utils',
         'speckit.core.templates',

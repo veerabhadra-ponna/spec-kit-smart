@@ -394,6 +394,14 @@ def _emit_chunk_stage(
             status="completed",
             artifacts=[],
         )
+        # Store metadata in stage info (matching non-chunked stage behavior)
+        state = state_manager.load()
+        state.stages[f"stage_{stage}"]["scope"] = context.get("scope", "A")
+        state.stages[f"stage_{stage}"]["context"] = context.get("context", "")
+        state.stages[f"stage_{stage}"]["concern_type"] = context.get("concern_type", "")
+        state.stages[f"stage_{stage}"]["current_impl"] = context.get("current_impl", "")
+        state.stages[f"stage_{stage}"]["target_impl"] = context.get("target_impl", "")
+        state_manager.save(state)
 
         # Move to next stage with scope-aware branching
         # Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
