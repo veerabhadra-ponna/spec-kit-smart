@@ -161,8 +161,12 @@ def get_workflow_state(feature_dir: Path) -> dict:
                 if next_match:
                     state_info["next_task_id"] = next_match.group(1)
 
-    except (FileNotFoundError, json.JSONDecodeError):
-        pass
+    except FileNotFoundError:
+        pass  # No state file yet - normal for new features
+    except json.JSONDecodeError as e:
+        # State file exists but is corrupted - surface this error
+        state_info["state_error"] = f"state.json is corrupted: {e}"
+        state_info["state_recovery"] = "Delete state.json and restart workflow, or manually fix the JSON syntax"
 
     return state_info
 
@@ -227,7 +231,8 @@ def run_check(
         result["error"] = "No feature directory found. Nothing to resume."
 
     # Check if there's an error - return failure flag for automation/CI
-    has_error = "error" in result
+    # Check both lowercase "error" and uppercase "ERROR" (tasks.md required case)
+    has_error = "error" in result or "ERROR" in result
 
     if output_json:
         print(json.dumps(result, indent=2))

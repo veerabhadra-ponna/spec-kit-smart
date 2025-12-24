@@ -458,6 +458,12 @@ class AnalysisStateManager:
         if artifacts:
             state.stages[stage]["artifacts"] = artifacts
 
+        # Capture timestamps for auditing and resume scenarios
+        if status == "in_progress":
+            state.stages[stage]["started"] = datetime.now().isoformat()
+        elif status == "completed":
+            state.stages[stage]["completed"] = datetime.now().isoformat()
+
         # Always update current stage tracking (not just in_progress)
         # This ensures get_context_for_prompt() returns correct values
         state.current_stage = stage
