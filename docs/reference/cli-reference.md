@@ -112,6 +112,6 @@ Additional commands for enhanced quality and validation:
 ## Related Documentation
 
 - [Getting Started Guide](../getting-started.md)
-- [Supported AI Agents](../README.md#-supported-ai-agents)
-- [Installation Options](../README.md#-get-started)
+- [Supported AI Agents](../README.md#supported-ai-agents)
+- [Installation Options](../README.md#get-started)
 - [Troubleshooting](troubleshooting.md)

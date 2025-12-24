@@ -98,6 +98,6 @@ Run `npx markdownlint-cli2 '**/*.md'` before commit (must return 0 errors). Uses
 
 ## Documentation Structure
 
-- **`docs/development/`**: For repo contributors (architecture, roadmap, engineering)
-- **`docs/`**: For toolkit users (guides, quickstart, installation)
+- **`docs/`**: User documentation (guides, reference, workflows)
+- **`docs/archived/`**: Historical planning documents (completed)
 - **`AGENTS.md`**: Repo dev instructions; toolkit AGENTS.md embedded in CLI

@@ -262,5 +262,5 @@ The analyze-project workflow also uses `state.json` for resumption. See [Reverse
 
 - [Getting Started Guide](../getting-started.md)
 - [Reverse Engineering](../reverse-engineering.md) - Analyze existing projects
-- [Standard Workflow](../README.md#workflow-diagram-spec-driven-development)
+- [Standard Workflow](../getting-started.md#36-workflow-diagram)
 - [Troubleshooting](../reference/troubleshooting.md)

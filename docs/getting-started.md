@@ -7,7 +7,7 @@ This guide will walk you through installing Spec Kit Smart and building your fir
 - **Linux, macOS, or Windows**
 - **Python 3.11+** ([Download](https://www.python.org/downloads/))
 - **Git** ([Download](https://git-scm.com/downloads))
-- **AI Coding Agent** (see [Supported AI Agents](../README.md#-supported-ai-agents))
+- **AI Coding Agent** (see [Supported AI Agents](../README.md#supported-ai-agents))
 
 ## Step 1: Install Specify CLI
 
@@ -264,9 +264,9 @@ See [Reverse Engineering Guide](reverse-engineering.md) for details.
 ### Learn More
 
 - [CLI Reference](reference/cli-reference.md) - Complete command documentation
-- [Supported AI Agents](../README.md#-supported-ai-agents) - Compatible AI tools
+- [Supported AI Agents](../README.md#supported-ai-agents) - Compatible AI tools
 - [Troubleshooting](reference/troubleshooting.md) - Common issues and solutions
-- [Glossary](../README.md#-glossary) - Key terminology
+- [Glossary](../README.md#glossary) - Key terminology
 
 ### Get Help
 

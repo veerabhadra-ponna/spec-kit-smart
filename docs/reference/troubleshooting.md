@@ -143,4 +143,4 @@ If you encounter an issue not covered in this guide:
 - [Getting Started Guide](../getting-started.md)
 - [CLI Reference](cli-reference.md)
 - [Orchestrator Workflow](../workflows/orchestrator.md)
-- [Glossary](../README.md#-glossary)
+- [Glossary](../README.md#glossary)
