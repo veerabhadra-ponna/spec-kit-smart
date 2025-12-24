@@ -5,6 +5,9 @@ Creates and manages project constitution with non-negotiable principles.
 Implements a 3-stage workflow: initialize, collect, generate.
 
 Uses embedded prompt assets and supports interactive mode.
+
+Note: Constitution uses file-existence check instead of chain state.
+If constitution.md exists and has no placeholders, it's considered complete.
 """
 
 from pathlib import Path
@@ -18,7 +21,7 @@ from rich.text import Text
 
 from speckit.core.emit import emit_stage, emit_error
 from speckit.core.prompts import get_prompt_fragment, render_prompt, get_stage_order
-from speckit.core.state import ChainState
+from speckit.core.state_v2 import check_constitution_complete
 
 console = Console()
 
@@ -136,7 +139,8 @@ def run_constitution(
     stage: int = 1,
     principles: Optional[str] = None,
     defaults: bool = False,
-    chain_id: Optional[str] = None,
+    chain_id: Optional[str] = None,  # Deprecated - kept for CLI compatibility
+    path: Optional[str] = None,
 ) -> None:
     """
     Execute constitution workflow at specified stage.
@@ -145,12 +149,25 @@ def run_constitution(
     Stage 2: Collect principles (interactive or from args)
     Stage 3: Generate formal constitution document
 
+    Note: Constitution uses file-existence check instead of chain state.
+    If constitution.md exists and has no placeholders, it's considered complete.
+    The chain_id parameter is deprecated and ignored.
+
     Args:
         stage: Current workflow stage (1-3)
         principles: User-provided principles text
         defaults: Use default principles (skip interactive)
-        chain_id: Chain ID for state persistence
+        chain_id: Deprecated - ignored (kept for CLI compatibility)
+        path: Project path (defaults to current directory)
     """
+    project_path = Path(path) if path else Path.cwd()
+
+    # Check if constitution already exists and is complete
+    is_complete, message = check_constitution_complete(project_path)
+    if is_complete:
+        console.print(f"[yellow]{message}[/yellow]")
+        return
+
     # Get ordered stages from embedded prompts
     stages = get_stage_order("constitution")
 
@@ -176,34 +193,11 @@ def run_constitution(
     # Get stage identifier
     stage_id = stages[stage - 1]
 
-    # Initialize or load chain state
-    if chain_id:
-        try:
-            state = ChainState.load(chain_id, command="constitution")
-        except FileNotFoundError:
-            emit_error(
-                "Chain state not found",
-                f"No state found for chain ID: {chain_id}",
-                recovery_cmd="speckitadv constitution --stage=1",
-            )
-            return
-        except ValueError as e:
-            emit_error(
-                "Chain ID mismatch",
-                str(e),
-                recovery_cmd="speckitadv constitution --stage=1",
-            )
-            return
-    else:
-        state = ChainState.initialize(Path.cwd(), command="constitution")
-        chain_id = state.chain_id
-
-    # Build context
+    # Build context (no chain_id needed)
     context = {
-        "chain_id": chain_id,
         "stage": stage,
         "total_stages": total_stages,
-        "project_path": str(state.project_path or Path.cwd()),
+        "project_path": str(project_path),
         "principles": "",
         "source": "User input",  # Will be updated based on how principles are provided
     }
@@ -230,7 +224,7 @@ def run_constitution(
             emit_error(
                 "No principles provided",
                 "Stage 2 requires principles",
-                recovery_cmd=f"speckitadv constitution --stage=2 --chain={chain_id} --defaults",
+                recovery_cmd="speckitadv constitution --stage=2 --defaults",
             )
             return
 
@@ -251,35 +245,22 @@ def run_constitution(
     # Extract title from fragment
     title = _extract_title(rendered, stage_id)
 
-    # Determine next command
+    # Determine next command (no chain_id needed)
     if stage < total_stages:
         if stage == 1:
-            next_cmd = f"speckitadv constitution --stage=2 --chain={chain_id} --defaults  # or --principles='...'"
+            next_cmd = "speckitadv constitution --stage=2 --defaults  # or --principles='...'"
         else:
-            next_cmd = f"speckitadv constitution --stage={stage + 1} --chain={chain_id}"
+            next_cmd = f"speckitadv constitution --stage={stage + 1}"
     else:
         next_cmd = None
 
-    # Save state
-    state.save(
-        stage_name=stage_id,
-        data={
-            "stage": stage,
-            "stage_id": stage_id,
-            "command": "constitution",
-            "principles": context.get("principles", ""),
-            "source": context.get("source", "User input"),
-        },
-    )
-
-    # Emit stage output
+    # Emit stage output (no state saving needed - constitution uses file existence)
     emit_stage(
         stage_num=stage,
         total_stages=total_stages,
         title=title,
         content=rendered,
         next_cmd=next_cmd or "Workflow complete - Run /speckitadv.specify next",
-        context={"chain_id": chain_id} if stage == 1 else None,
     )
 
 
