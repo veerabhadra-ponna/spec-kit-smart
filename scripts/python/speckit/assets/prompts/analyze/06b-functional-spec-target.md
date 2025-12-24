@@ -1,6 +1,6 @@
 ---
 stage: functional_spec_target
-requires: func-legacy-complete checkpoint
+requires: functional-spec-legacy complete
 condition: state.analysis_scope == "A"
 outputs: functional_spec_target_complete
 version: 3.1.0
@@ -298,25 +298,6 @@ functional-spec-target.md Chunk 5/5 complete: Acceptance + Assumptions + Constra
 functional-spec-target.md COMPLETE (5/5 chunks)
    Total features: [COUNT]
    Total lines: [COUNT]
-
-```
-
----
-
-## Final Checkpoint
-
-Write: `{analysis_dir}/state.json`
-
-```json
-{
-  "artifact": "functional-spec-target.md",
-  "chunks_complete": 5,
-  "total_features": {count},
-  "in_scope_components": {count},
-  "out_of_scope_components": {count},
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
 
 ```
 

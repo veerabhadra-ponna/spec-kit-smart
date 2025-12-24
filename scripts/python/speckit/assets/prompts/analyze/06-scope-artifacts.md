@@ -119,24 +119,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    - File path: `.analysis/{project}-{timestamp}/functional-spec-legacy.md`
    - Content: Complete sections 1-3
 
-2. **Create checkpoint marker**:
-   - Create directory: `{analysis_dir}/` (if not exists)
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "functional-spec-legacy.md",
-       "chunk": 1,
-       "total_chunks": 5,
-       "sections": "Introduction + Summary + Scope",
-       "timestamp": "2025-11-15T10:30:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    functional-spec-legacy.md Chunk 1/5 complete: Introduction + Summary + Scope
@@ -158,23 +141,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    - Append Section 4.1 content to the end
    - Use str_replace to append (not overwrite)
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "functional-spec-legacy.md",
-       "chunk": 2,
-       "total_chunks": 5,
-       "sections": "User Stories (CRITICAL)",
-       "timestamp": "2025-11-15T10:45:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    functional-spec-legacy.md Chunk 2/5 complete: User Stories (CRITICAL)
@@ -194,23 +161,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
 1. **Append to file** using Edit tool (str_replace):
    - Append Sections 4.2 & 5 content to functional-spec-legacy.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "functional-spec-legacy.md",
-       "chunk": 3,
-       "total_chunks": 5,
-       "sections": "STANDARD Features + Rules",
-       "timestamp": "2025-11-15T11:00:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    functional-spec-legacy.md Chunk 3/5 complete: STANDARD Features + Rules
@@ -230,23 +181,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
 1. **Append to file** using Edit tool (str_replace):
    - Append Sections 6 & 7 content to functional-spec-legacy.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "functional-spec-legacy.md",
-       "chunk": 4,
-       "total_chunks": 5,
-       "sections": "NFRs + Data",
-       "timestamp": "2025-11-15T11:15:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    functional-spec-legacy.md Chunk 4/5 complete: NFRs + Data
@@ -265,24 +200,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
 1. **Append to file** using Edit tool (str_replace):
    - Append Sections 8, 9 & 10 content to functional-spec-legacy.md
 
-2. **Create final checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "functional-spec-legacy.md",
-       "chunk": 5,
-       "total_chunks": 5,
-       "sections": "Acceptance Criteria + Assumptions + Constraints",
-       "timestamp": "2025-11-15T11:30:00Z",
-       "status": "complete",
-       "all_chunks_complete": true
-     }
-
-     ```
-
-3. **MANDATORY - Display progress and final summary**:
+2. **MANDATORY - Display progress and final summary**:
 
    ```text
    functional-spec-legacy.md Chunk 5/5 complete: Acceptance + Assumptions + Constraints
@@ -298,9 +216,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
 
 ---
 
-## CHECKPOINT: Legacy Spec Complete - Now Generate Target Spec
-
-MANDATORY CHECKPOINT - DO NOT SKIP
+## Legacy Spec Complete - Now Generate Target Spec
 
 You just completed functional-spec-legacy.md. DO NOT STOP HERE.
 
@@ -311,7 +227,6 @@ You just completed functional-spec-legacy.md. DO NOT STOP HERE.
 - [ ] functional-spec-legacy.md is complete (all 5 chunks)
 - [ ] All sections present (Introduction through Constraints)
 - [ ] No placeholders or TODOs
-- [ ] Checkpoint file exists: `{analysis_dir}/state.json`
 
 ### NOW IMMEDIATELY PROCEED TO GENERATE functional-spec-target.md
 
@@ -372,7 +287,7 @@ Review user's answers to 10 modernization questions and scope validation from St
 1. functional-spec-legacy.md (COMPLETED)
 2. functional-spec-target.md (GENERATING NOW - 5 chunks)
 
-Follow the same 5-chunk pattern as legacy spec with proper checkpoint markers.
+Follow the same 5-chunk pattern as legacy spec.
 
 **After completing ALL 5 chunks of functional-spec-target.md:**
 
@@ -415,24 +330,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    - File path: `.analysis/{project}-{timestamp}/technical-spec.md`
    - Content: Complete sections 1-3
 
-2. **Create checkpoint marker**:
-   - Create directory: `{analysis_dir}/` (if not exists)
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "technical-spec.md",
-       "chunk": 1,
-       "total_chunks": 5,
-       "sections": "Architecture + Comparison",
-       "timestamp": "2025-11-15T10:30:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    technical-spec.md Chunk 1/5 complete: Architecture + Comparison
@@ -454,23 +352,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    - Append Sections 4 & 5 content to the end
    - Use str_replace to append (not overwrite)
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "technical-spec.md",
-       "chunk": 2,
-       "total_chunks": 5,
-       "sections": "Tech Stack + Data",
-       "timestamp": "2025-11-15T10:45:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    technical-spec.md Chunk 2/5 complete: Tech Stack + Data
@@ -489,23 +371,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
 1. **Append to file** using Edit tool (str_replace):
    - Append Sections 6 & 7 content to technical-spec.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "technical-spec.md",
-       "chunk": 3,
-       "total_chunks": 5,
-       "sections": "API + Integrations",
-       "timestamp": "2025-11-15T11:00:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    technical-spec.md Chunk 3/5 complete: API + Integrations
@@ -525,23 +391,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
 1. **Append to file** using Edit tool (str_replace):
    - Append Sections 8 & 9 content to technical-spec.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "technical-spec.md",
-       "chunk": 4,
-       "total_chunks": 5,
-       "sections": "Security + Deployment",
-       "timestamp": "2025-11-15T11:15:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    technical-spec.md Chunk 4/5 complete: Security + Deployment
@@ -560,24 +410,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
 1. **Append to file** using Edit tool (str_replace):
    - Append Sections 10, 11 & 12 content to technical-spec.md
 
-2. **Create final checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "technical-spec.md",
-       "chunk": 5,
-       "total_chunks": 5,
-       "sections": "Testing + Observability + Risks",
-       "timestamp": "2025-11-15T11:30:00Z",
-       "status": "complete",
-       "all_chunks_complete": true
-     }
-
-     ```
-
-3. **MANDATORY - Display progress and final summary**:
+2. **MANDATORY - Display progress and final summary**:
 
    ```text
    technical-spec.md Chunk 5/5 complete: Testing + Observability + Risks
@@ -705,24 +538,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
    - File path: `.analysis/{project}-{timestamp}/concern-migration-plan.md`
    - Content: Complete sections 1-3
 
-2. **Create checkpoint marker**:
-   - Create directory: `{analysis_dir}/` (if not exists)
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "concern-migration-plan.md",
-       "chunk": 1,
-       "total_chunks": 3,
-       "sections": "Strategy + Phasing",
-       "timestamp": "2025-11-15T10:30:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
@@ -745,23 +561,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
    - Append Sections 4, 5 & 6 content to the end
    - Use str_replace to append (not overwrite)
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "concern-migration-plan.md",
-       "chunk": 2,
-       "total_chunks": 3,
-       "sections": "Implementation + Testing",
-       "timestamp": "2025-11-15T10:45:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
@@ -782,24 +582,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 1. **Append to file** using Edit tool (str_replace):
    - Append Sections 7, 8, 9 & 10 content to concern-migration-plan.md
 
-2. **Create final checkpoint marker**:
-   - Write JSON file: `{analysis_dir}/state.json`
-   - Content:
-
-     ```json
-     {
-       "artifact": "concern-migration-plan.md",
-       "chunk": 3,
-       "total_chunks": 3,
-       "sections": "Deployment + Operations + Success",
-       "timestamp": "2025-11-15T11:00:00Z",
-       "status": "complete",
-       "all_chunks_complete": true
-     }
-
-     ```
-
-3. **MANDATORY - Display progress and final summary**:
+2. **MANDATORY - Display progress and final summary**:
 
    ```text
    concern-migration-plan.md Chunk 3/3 complete: Deployment + Operations + Success
@@ -867,7 +650,6 @@ Generate 4 stage prompt files for Spec Kit workflow:
   - [ ] tasks-prompt.md
   - [ ] implement-prompt.md
 - [ ] All artifacts validated (no placeholders, no TODOs)
-- [ ] All checkpoint files created in `{analysis_dir}/`
 
 ### For Scope = B (Cross-Cutting Concern)
 
@@ -875,7 +657,6 @@ Generate 4 stage prompt files for Spec Kit workflow:
 - [ ] concern-migration-plan.md complete (all 3 chunks)
 - [ ] rollback-procedure.md generated
 - [ ] All artifacts validated (no placeholders, no TODOs)
-- [ ] All checkpoint files created in `{analysis_dir}/`
 
 **IF any checkbox is unchecked, STOP and fix the issue before proceeding.**
 

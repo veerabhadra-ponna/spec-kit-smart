@@ -1,6 +1,6 @@
 ---
 stage: technical_spec
-requires: func-target-complete checkpoint
+requires: functional-spec-target complete
 condition: state.analysis_scope == "A"
 outputs: technical_spec_complete
 version: 3.1.0
@@ -419,25 +419,6 @@ technical-spec.md Chunk 5/5 complete: Testing + Observability + Risks
 technical-spec.md COMPLETE (5/5 chunks)
    Total diagrams: [COUNT]
    Total lines: [COUNT]
-
-```
-
----
-
-## Final Checkpoint
-
-Write: `{analysis_dir}/state.json`
-
-```json
-{
-  "artifact": "technical-spec.md",
-  "chunks_complete": 5,
-  "total_sections": 12,
-  "diagram_count": {count},
-  "user_preferences_applied": ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8", "Q9", "Q10"],
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
 
 ```
 

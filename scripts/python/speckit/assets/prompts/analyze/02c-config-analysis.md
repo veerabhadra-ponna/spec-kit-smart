@@ -1,6 +1,6 @@
 ---
 stage: file_analysis_phase3
-requires: 02b-deep-dive checkpoint
+requires: 02b-deep-dive complete
 outputs: config_analysis
 version: 3.1.0
 next: 02d-test-audit.md

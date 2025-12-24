@@ -1,6 +1,6 @@
 ---
 stage: report_verification
-requires: 04c-complete checkpoint
+requires: 04c-report-chunks-7-9 complete
 outputs: report_verified
 version: 3.1.0
 next: 05a-executive-summary.md
@@ -126,26 +126,6 @@ Read the complete analysis-report.md and verify each item:
 ```
 
 Write to: `.analysis/.state/analyze-project-04-report.json`
-
----
-
-## Final Checkpoint
-
-Write: `{analysis_dir}/state.json`
-
-```json
-{
-  "stage": "04-report-generation",
-  "timestamp": "{ISO-8601}",
-  "substages_completed": ["04a", "04b", "04c", "04d"],
-  "chunks_generated": 9,
-  "total_lines": {count},
-  "verification_passed": true,
-  "state_saved": ".analysis/.state/analyze-project-04-report.json",
-  "status": "complete"
-}
-
-```
 
 ---
 

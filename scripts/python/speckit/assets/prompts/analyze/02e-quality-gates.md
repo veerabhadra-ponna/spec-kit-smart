@@ -1,6 +1,6 @@
 ---
 stage: file_analysis_verification
-requires: 02d-test-audit checkpoint
+requires: 02d-test-audit complete
 outputs: file_analysis_complete
 version: 3.1.0
 next: 03a-questions-part1.md OR 03b1-abstraction-assessment.md
@@ -29,13 +29,8 @@ Verify file analysis meets quality standards before proceeding. This is a mandat
 Aggregate results from all previous phases:
 
 ```bash
-# Load all checkpoint files
-
+# Load state from CLI-managed state.json
 cat {analysis_dir}/state.json
-cat {analysis_dir}/state.json
-cat {analysis_dir}/state.json
-cat {analysis_dir}/state.json
-
 ```
 
 ---

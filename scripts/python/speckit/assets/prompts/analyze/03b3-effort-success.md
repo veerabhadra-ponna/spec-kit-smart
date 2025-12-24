@@ -1,6 +1,6 @@
 ---
 stage: cross_cutting_effort
-requires: 03b2-strategy-complete checkpoint
+requires: 03b2-migration-strategy complete
 condition: state.analysis_scope == "B"
 outputs: cross_cutting_complete
 version: 3.1.0

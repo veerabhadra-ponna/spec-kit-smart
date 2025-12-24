@@ -1,6 +1,6 @@
 ---
 stage: full_app_questions_2
-requires: 03a1-questions-complete checkpoint
+requires: 03a1-questions-part1 complete
 condition: state.analysis_scope == "A"
 outputs: modernization_prefs_6_10
 version: 3.1.0

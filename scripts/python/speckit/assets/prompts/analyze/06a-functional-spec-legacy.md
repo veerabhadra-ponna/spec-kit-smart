@@ -278,24 +278,6 @@ functional-spec-legacy.md COMPLETE (5/5 chunks)
 
 ---
 
-## Final Checkpoint
-
-Write: `{analysis_dir}/state.json`
-
-```json
-{
-  "artifact": "functional-spec-legacy.md",
-  "chunks_complete": 5,
-  "total_features": {count},
-  "total_lines": {count},
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-
 ## Completion Marker
 
 ```text

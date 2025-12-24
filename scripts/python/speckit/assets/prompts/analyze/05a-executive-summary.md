@@ -195,12 +195,6 @@ Write to: `.analysis/.state/analyze-project-05-artifacts.json`
 
 ---
 
-## Checkpoint
-
-Write: `{analysis_dir}/state.json`
-
----
-
 ## Completion Marker
 
 ```text

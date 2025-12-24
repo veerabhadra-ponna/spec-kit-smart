@@ -1,6 +1,6 @@
 ---
 stage: stage_prompts
-requires: tech-spec-complete checkpoint
+requires: technical-spec complete
 condition: state.analysis_scope == "A"
 outputs: stage_prompts_complete
 version: 3.1.0
@@ -270,28 +270,6 @@ These behaviors must be implemented EXACTLY as in legacy:
 Write to: `{analysis_dir}/stage-prompts/implement-prompt.md`
 
 **Output:** `✓ Generated: implement-prompt.md`
-
----
-
-## Final Checkpoint
-
-Write: `{analysis_dir}/state.json`
-
-```json
-{
-  "artifact": "stage-prompts",
-  "files_generated": [
-    "constitution-prompt.md",
-    "clarify-prompt.md",
-    "tasks-prompt.md",
-    "implement-prompt.md"
-  ],
-  "total_files": 4,
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
 
 ---
 

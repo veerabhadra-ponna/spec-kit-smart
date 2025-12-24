@@ -1,6 +1,6 @@
 ---
 stage: report_generation_2
-requires: 04a-complete checkpoint
+requires: 04a-report-chunks-1-3 complete
 outputs: report_chunks_4_6
 version: 3.1.0
 next: 04c-report-chunks-7-9.md
@@ -64,8 +64,6 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 
 ```
 
-**Checkpoint:** `{analysis_dir}/state.json`
-
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_4]**
 
@@ -118,8 +116,6 @@ Output: `✓ Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 ---
 
 ```
-
-**Checkpoint:** `{analysis_dir}/state.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_5]**
@@ -187,32 +183,10 @@ Output: `✓ Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 
 ```
 
-**Checkpoint:** `{analysis_dir}/state.json`
-
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_6]**
 
 Output: `✓ Chunk 6/9: Tech Debt ({debt_count} debt, {sec_count} security, {lines} lines)`
-
----
-
-## Substage Checkpoint
-
-Write: `{analysis_dir}/state.json`
-
-```json
-{
-  "substage": "04b-report-chunks-4-6",
-  "timestamp": "{ISO-8601}",
-  "chunks_completed": [4, 5, 6],
-  "cumulative_lines": {count},
-  "tech_debt_items": {count},
-  "security_findings": {count},
-  "positive_findings": {count},
-  "status": "complete"
-}
-
-```
 
 ---
 

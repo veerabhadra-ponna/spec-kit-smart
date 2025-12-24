@@ -1,6 +1,6 @@
 ---
 stage: full_app_recommendations
-requires: 03a3-scoring-complete checkpoint
+requires: 03a3-validation-scoring complete
 condition: state.analysis_scope == "A"
 outputs: full_app_complete
 version: 3.1.0

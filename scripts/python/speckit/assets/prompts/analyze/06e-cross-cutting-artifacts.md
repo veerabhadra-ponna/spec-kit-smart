@@ -567,28 +567,6 @@ Write to: `{analysis_dir}/rollback-procedure.md`
 
 ---
 
-## Final Checkpoint
-
-Write: `{analysis_dir}/state.json`
-
-```json
-{
-  "artifacts_generated": [
-    "abstraction-assessment.md",
-    "concern-migration-plan.md",
-    "rollback-procedure.md"
-  ],
-  "concern_type": "{type}",
-  "migration": "{current} → {target}",
-  "strategy": "{strategy}",
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-
 ## Generate Stage 6 State (Scope B)
 
 ```json

@@ -1,6 +1,6 @@
 ---
 stage: file_analysis_phase2
-requires: 02a-category-scan checkpoint
+requires: 02a-category-scan complete
 outputs: deep_patterns
 version: 3.1.0
 next: 02c-config-analysis.md

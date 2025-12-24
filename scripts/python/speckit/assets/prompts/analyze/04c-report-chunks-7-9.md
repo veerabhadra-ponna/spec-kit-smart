@@ -1,6 +1,6 @@
 ---
 stage: report_generation_3
-requires: 04b-complete checkpoint
+requires: 04b-report-chunks-4-6 complete
 outputs: report_complete
 version: 3.1.0
 next: 04d-report-verification.md
@@ -70,8 +70,6 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 ---
 
 ```
-
-**Checkpoint:** `{analysis_dir}/state.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_7]**
@@ -173,8 +171,6 @@ Score = (Inline + Greenfield) / 2 + 10 (flexibility bonus)
 
 <!-- markdownlint-disable-next-line MD040 -->
 ```
-
-**Checkpoint:** `{analysis_dir}/state.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_8]**
@@ -281,32 +277,10 @@ Output: `✓ Chunk 8/9: Modernization & Feasibility ({lines} lines)`
 
 ```
 
-**Checkpoint:** `{analysis_dir}/state.json`
-
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_9]**
 
 Output: `✓ Chunk 9/9: Recommendations ({lines} lines)`
-
----
-
-## Substage Checkpoint
-
-Write: `{analysis_dir}/state.json`
-
-```json
-{
-  "substage": "04c-report-chunks-7-9",
-  "timestamp": "{ISO-8601}",
-  "chunks_completed": [7, 8, 9],
-  "all_chunks_complete": true,
-  "total_lines": {count},
-  "primary_recommendation": "{approach}",
-  "confidence": {percentage},
-  "status": "complete"
-}
-
-```
 
 ---
 

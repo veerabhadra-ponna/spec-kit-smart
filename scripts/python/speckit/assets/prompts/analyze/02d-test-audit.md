@@ -1,6 +1,6 @@
 ---
 stage: file_analysis_phase4
-requires: 02c-config-analysis checkpoint
+requires: 02c-config-analysis complete
 outputs: test_and_dependency_audit
 version: 3.1.0
 next: 02e-quality-gates.md

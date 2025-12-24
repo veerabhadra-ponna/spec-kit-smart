@@ -1,6 +1,6 @@
 ---
 stage: cross_cutting_strategy
-requires: 03b1-assessment-complete checkpoint
+requires: 03b1-abstraction-assessment complete
 condition: state.analysis_scope == "B"
 outputs: migration_strategy
 version: 3.1.0

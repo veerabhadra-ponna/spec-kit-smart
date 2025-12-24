@@ -1,6 +1,6 @@
 ---
 stage: full_app_validation
-requires: 03a2-questions-complete checkpoint
+requires: 03a2-questions-part2 complete
 condition: state.analysis_scope == "A"
 outputs: scoring_complete
 version: 3.1.0
