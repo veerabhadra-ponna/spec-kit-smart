@@ -990,9 +990,14 @@ Feasibility scores (0-100) are based on industry research and best practices, bu
 - Weights are generic (customization requires manual adjustment)
 - Thresholds (e.g., 80+ = highly feasible) may need adjustment for your context
 
-### 6. No Incremental Analysis
+### 6. State-Based Resumption
 
-Currently all-or-nothing analysis. Cannot resume from checkpoint if interrupted.
+Analysis supports resumption via state management:
+
+- Progress tracked in `.analysis/{project}-{timestamp}/state.json`
+- Resume latest: `speckitadv analyze-project`
+- Resume specific: `speckitadv analyze-project --analysis-dir=.analysis/folder`
+- All inputs (scope, context, concern type) persisted in state
 
 ### 7. Manual Report Assembly
 

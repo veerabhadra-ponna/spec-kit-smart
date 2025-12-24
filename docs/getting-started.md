@@ -229,6 +229,30 @@ The Orchestrator:
 
 See [Orchestrator Workflow Guide](workflows/orchestrator.md) for details.
 
+## Working with Existing Projects
+
+For existing codebases that need analysis, modernization, or reverse engineering, use the **analyze-project** workflow:
+
+```bash
+# Start new analysis
+speckitadv analyze-project /path/to/project
+
+# Resume in-progress analysis (auto-detects latest)
+speckitadv analyze-project
+
+# Resume specific analysis
+speckitadv analyze-project --analysis-dir=.analysis/project-20251224-164004
+```
+
+The analyze-project workflow:
+
+- Creates analysis folder: `.analysis/{project}-{timestamp}/`
+- Tracks progress in `state.json` for seamless resumption
+- Generates file manifest, tech stack detection, and category analysis
+- Supports Scope A (full application) and Scope B (cross-cutting concerns)
+
+See [Reverse Engineering Guide](reverse-engineering.md) for details.
+
 ## Next Steps
 
 ### Explore Advanced Features

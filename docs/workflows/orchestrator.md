@@ -241,8 +241,26 @@ One-command execution, automatic state management, zero context loss, flexible m
 /speckitadv.orchestrate <your-feature-description>
 ```
 
+## For Existing Projects
+
+The orchestrator workflow is for **building new features**. For analyzing **existing codebases**, use the analyze-project workflow:
+
+```bash
+# Analyze existing project
+speckitadv analyze-project /path/to/project
+
+# Resume analysis (auto-detects latest)
+speckitadv analyze-project
+
+# Resume specific analysis
+speckitadv analyze-project --analysis-dir=.analysis/project-20251224-164004
+```
+
+The analyze-project workflow also uses `state.json` for resumption. See [Reverse Engineering Guide](../reverse-engineering.md) for details.
+
 ## Related Documentation
 
 - [Getting Started Guide](../getting-started.md)
+- [Reverse Engineering](../reverse-engineering.md) - Analyze existing projects
 - [Standard Workflow](../README.md#workflow-diagram-spec-driven-development)
 - [Troubleshooting](../reference/troubleshooting.md)
