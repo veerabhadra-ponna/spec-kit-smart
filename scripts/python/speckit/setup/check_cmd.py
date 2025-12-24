@@ -116,7 +116,8 @@ def get_workflow_state(feature_dir: Path) -> dict:
 
     # Read and parse JSON directly to detect corruption
     # (FeatureStateManager.load() uses safe_json_loads which swallows errors)
-    state_file = feature_dir / "state.json"
+    # Note: FeatureStateManager stores state at {folder}/.state/state.json
+    state_file = feature_dir / ".state" / "state.json"
     try:
         raw_content = state_file.read_text(encoding="utf-8")
         json.loads(raw_content)  # Validate JSON syntax first
@@ -175,8 +176,9 @@ def get_workflow_state(feature_dir: Path) -> dict:
                 if next_match:
                     state_info["next_task_id"] = next_match.group(1)
 
-    except Exception:
-        pass  # Unexpected error - return partial state_info
+    except (AttributeError, KeyError) as e:
+        # Malformed state structure - log warning but return partial info
+        state_info["state_warning"] = f"Could not fully parse state: {e}"
 
     return state_info
 
@@ -290,6 +292,13 @@ def run_check(
     console.print(tree)
     console.print()
 
+    # Show warnings (non-fatal issues)
+    has_warning = any("warning" in key.lower() for key in result.keys())
+    if has_warning:
+        for key, value in result.items():
+            if "warning" in key.lower():
+                console.print(f"[bold yellow]{key}:[/bold yellow] {value}")
+
     # Show error status if any errors were detected
     if has_error:
         for key, value in result.items():
@@ -298,7 +307,9 @@ def run_check(
         # Show recovery hint if available
         if "state_recovery" in result:
             console.print(f"[dim]Recovery: {result['state_recovery']}[/dim]")
-    else:
+    elif not has_warning:
         console.print("[bold green]speckitadv is ready to use![/bold green]")
+    else:
+        console.print("[bold yellow]speckitadv is ready but has warnings.[/bold yellow]")
 
     return result, not has_error
