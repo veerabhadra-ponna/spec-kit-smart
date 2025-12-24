@@ -134,6 +134,16 @@ def run_analyze_project(
     if stage is None:
         if state:
             stage = _auto_detect_stage_from_state(state)
+            # Check if workflow is already complete
+            if stage is None:
+                from speckit.core.emit import emit_complete
+                emit_complete(
+                    title="Analysis Complete",
+                    summary="This analysis workflow has already been completed.",
+                    artifacts=[f"{analysis_dir_path}/analysis-report.md"],
+                    next_steps=["Review the analysis report", "Start a new analysis with --path=<project>"],
+                )
+                return
         else:
             stage = 1  # New workflow starts at stage 1
 
@@ -296,6 +306,10 @@ Run the following command to begin:""",
         context=render_context if stage == 1 else None,  # Show context on first stage
     )
 
+    # Mark workflow complete when final stage finishes
+    if next_cmd is None:
+        state_manager.mark_complete()
+
     # Run verification if this is the final stage and verify flag is set
     if next_cmd is None and verify:
         from speckit.commands.project import verify_analysis_report
@@ -396,6 +410,8 @@ def _emit_chunk_stage(
             next_cmd = "speckitadv analyze-project"
         else:
             next_cmd = None
+            # Mark workflow complete when final chunk of final stage finishes
+            state_manager.mark_complete()
 
     # Emit chunk - use analysis_dir from context
     analysis_dir = context.get("analysis_dir", str(analysis_dir_path))
@@ -479,7 +495,7 @@ def _get_stage_title(stage: int) -> str:
     return titles.get(stage, f"Stage {stage}")
 
 
-def _auto_detect_stage_from_state(state) -> int:
+def _auto_detect_stage_from_state(state) -> Optional[int]:
     """
     Auto-detect the next stage from analysis state.
 
@@ -489,11 +505,11 @@ def _auto_detect_stage_from_state(state) -> int:
     - Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)
 
     Returns:
-        Stage number to run (1-indexed)
+        Stage number to run (1-indexed), or None if workflow is complete
     """
-    # Check if workflow is complete
+    # Check if workflow is complete - nothing to run
     if state.workflow_complete:
-        return 16  # Return final stage
+        return None
 
     # Get scope from state.inputs (primary) or default to A
     effective_scope = state.inputs.scope or "A"
@@ -535,7 +551,7 @@ def _auto_detect_stage_from_state(state) -> int:
     # Default: next stage after highest completed
     next_stage = highest_completed + 1
     if next_stage > 16:
-        return 16  # Cap at final stage
+        return None  # All stages complete
 
     return next_stage
 
