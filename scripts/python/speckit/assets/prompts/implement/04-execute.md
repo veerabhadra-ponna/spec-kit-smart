@@ -101,5 +101,5 @@ After each phase:
 
 ```text
 
-speckitadv implement --stage=5 --feature-dir={{feature_dir}}
+speckitadv implement
 ```

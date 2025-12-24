@@ -81,5 +81,5 @@ Spec is clarified. Proceed to planning.
 
 ```text
 
-speckitadv plan --feature-dir={{feature_dir}}
+speckitadv plan
 ```

@@ -109,5 +109,5 @@ After each answer:
 
 ```text
 
-speckitadv clarify --stage=3 --feature-dir={{feature_dir}}
+speckitadv clarify
 ```

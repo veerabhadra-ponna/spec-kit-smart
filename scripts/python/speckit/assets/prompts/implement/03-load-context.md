@@ -73,5 +73,5 @@ From tasks.md extract:
 
 ```text
 
-speckitadv implement --stage=4 --feature-dir={{feature_dir}}
+speckitadv implement
 ```

@@ -1,6 +1,6 @@
 # AI Agent Guidelines
 
-**Version:** 3.1
+**Version:** 3.2
 
 ---
 
@@ -13,9 +13,10 @@
 - CLI outputs progressive prompts (50-80 lines per stage)
 - Follow CLI instructions exactly
 
-**RULE 2**: Feature folder state
+**RULE 2**: State-based auto-detection
 - Feature state is persisted in folder: `specs/{feature-folder}/.state/state.json`
-- Pass feature folder to subsequent stages: `speckitadv <command> --stage=N --feature-dir=<folder>`
+- CLI auto-detects stage and feature folder from state - no args needed after stage 2
+- Just run: `speckitadv <command>` - CLI reads state and continues from correct stage
 - Use `speckitadv create-feature` to create feature folders with proper naming
 
 ### File Operations
@@ -107,7 +108,9 @@ Problem → Action
 
 **Progressive Prompt Injection:**
 
-Each command runs in stages. The CLI outputs focused prompts (50-80 lines) per stage:
+Each command runs in stages. The CLI outputs focused prompts (50-80 lines) per stage.
+
+**Auto-Detection:** After state is created (stage 3+), CLI auto-detects stage and folder from state. No args needed!
 
 ```bash
 # Example: constitution workflow (stateless - checks file existence)
@@ -116,9 +119,9 @@ speckitadv constitution --stage=2 --defaults  # or --principles="..."
 speckitadv constitution --stage=3
 
 # Example: analyze-project workflow (uses folder-based state)
-speckitadv analyze-project --stage=1 --path=/project --scope=A
-# Creates .analysis/{project}-{timestamp}/ folder
-speckitadv analyze-project --stage=2 --analysis-dir=.analysis/myproject-20251215-120000
+speckitadv analyze-project --path=/project --scope=A  # Stage 1 - creates state
+speckitadv analyze-project  # CLI auto-detects stage 2 and folder from state
+speckitadv analyze-project  # CLI auto-detects stage 3...
 
 # Example: specify workflow (stateless until stage 3)
 speckitadv specify --stage=1
@@ -126,7 +129,8 @@ speckitadv specify --stage=2        # Collects --feature and --jira inputs
 speckitadv specify --stage=3 --feature="Add user auth" --jira="C12345-7890"
 # AI calls: speckitadv create-feature "Add user auth" --jira="C12345-7890"
 # Creates specs/001-user-auth/ folder with state
-speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
+speckitadv specify  # Stage 4+ auto-detected from state
+speckitadv plan     # Auto-detects feature folder and starts at correct stage
 ```
 
 **State Location by Command:**
@@ -137,22 +141,20 @@ speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
 | `constitution` | `memory/constitution.md` | File existence check only |
 | `specify`, `plan`, `tasks`, `implement`, `clarify`, `checklist` | `specs/{feature}/.state/state.json` | Single state file per feature |
 
-**Note:** For feature-scoped commands, the feature directory is auto-detected (latest in `specs/`) when `--feature-dir` is not provided.
+**Auto-Detection:** For feature-scoped commands (stages 3+), both stage and feature directory are auto-detected from state. For analyze-project, stage and analysis directory are auto-detected. Just run `speckitadv <command>` without args!
 
-**Important - Passing Inputs Between Stateless Stages:** Since stages 1-2 don't persist state, inputs collected in stage 2 (like `--feature` and `--jira` for specify) must be explicitly passed to stage 3 via CLI options. The NEXT command in stage 2 prompts will instruct you to include these values.
+**Early Stages (1-2):** Since stages 1-2 don't persist state, inputs collected in stage 2 (like `--feature` and `--jira` for specify) must be explicitly passed to stage 3. The NEXT command in stage 2 prompts will instruct you to include these values.
 
 **Command Options Reference:**
 
-| Command | Available Options |
-|---------|-------------------|
-| `constitution` | `--stage`, `--defaults`, `--principles`, `--path` |
-| `analyze-project` | `--stage`, `--chunk`, `--path`, `--analysis-dir`, `--scope`, `--context`, `--concern-type`, `--current-impl`, `--target-impl`, `--verify` |
-| `specify` | `--stage`, `--path`, `--feature-dir`, `--jira`, `--feature` |
-| `plan` | `--stage`, `--path`, `--feature-dir`, `--constraints` |
-| `tasks` | `--stage`, `--path`, `--feature-dir`, `--preferences` |
-| `implement` | `--stage`, `--path`, `--feature-dir`, `--notes` |
-| `clarify` | `--stage`, `--path`, `--feature-dir` |
-| `checklist` | `--stage`, `--path`, `--feature-dir` |
+Most options are auto-detected from state. Only pass when starting new workflows or overriding.
+
+| Command | Required Args | Optional (auto-detected) |
+|---------|---------------|--------------------------|
+| `constitution` | `--stage` (stateless) | `--defaults`/`--principles`, `--path` |
+| `analyze-project` | none (after stage 1) | `--stage`, `--chunk`, `--analysis-dir`, etc. |
+| `specify` | `--feature`, `--jira` at stage 3 | `--stage`, `--feature-dir` (stage 3+) |
+| `plan`, `tasks`, `implement`, `clarify`, `checklist` | none (stage 3+) | `--stage`, `--feature-dir`, user inputs |
 
 **Note:** Use `speckitadv <command> --help` for full option details.
 

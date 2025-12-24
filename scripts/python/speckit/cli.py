@@ -65,10 +65,10 @@ def main(
 
 @app.command("analyze-project")
 def analyze_project(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-16)"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     chunk: Optional[int] = typer.Option(None, "--chunk", "-c", help="Report chunk number for chunked stages"),
-    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", "-a", help="Analysis folder path (auto-created on stage 1)"),
-    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path to analyze"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", "-a", help="Analysis folder path (auto-detected if not provided)"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path to analyze (loaded from state if not provided)"),
     scope: Optional[str] = typer.Option(None, "--scope", help="Analysis scope: A (full) or B (cross-cutting)"),
     context: Optional[str] = typer.Option(None, "--context", help="Additional context"),
     concern_type: Optional[str] = typer.Option(None, "--concern-type", help="Cross-cutting concern type"),
@@ -82,13 +82,28 @@ def analyze_project(
     This command implements a progressive workflow with enforced chunking.
     AI agents receive focused prompts (50-80 lines) at each stage.
 
-    Uses folder-based state management. Analysis folder is auto-created on stage 1.
-    Runs interactively if no --path/--scope provided at stage 1.
+    Uses folder-based state management. All parameters are auto-detected
+    from state when not provided. Only specify args for new workflows.
     """
     from speckit.commands.analyze import run_analyze_project
+    from speckit.core.state_v2 import find_latest_analysis_folder, AnalysisStateManager
 
-    # Interactive mode for stage 1 if required inputs missing
-    if stage == 1 and not analysis_dir:
+    # Check if we're starting a new workflow (no existing state)
+    has_existing_state = False
+    if analysis_dir:
+        state_manager = AnalysisStateManager(Path(analysis_dir))
+        has_existing_state = state_manager.exists()
+    else:
+        try:
+            latest = find_latest_analysis_folder()
+            state_manager = AnalysisStateManager(latest)
+            has_existing_state = state_manager.exists()
+        except FileNotFoundError:
+            pass
+
+    # Interactive mode only for NEW workflows (stage 1, no existing state)
+    effective_stage = stage if stage is not None else (1 if not has_existing_state else None)
+    if effective_stage == 1 and not has_existing_state:
         from speckit.core.interactive import collect_analyze_project_input
 
         if not path:
@@ -154,9 +169,9 @@ def constitution(
 
 @app.command("specify")
 def specify(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-6)"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
     jira: Optional[str] = typer.Option(None, "--jira", "-j", help="JIRA number (format: C12345-7890)"),
     feature: Optional[str] = typer.Option(None, "--feature", "-f", help="Feature description"),
 ) -> None:
@@ -211,9 +226,9 @@ def specify(
 
 @app.command("plan")
 def plan(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
     constraints: Optional[str] = typer.Option(None, "--constraints", "-c", help="Planning constraints"),
 ) -> None:
     """
@@ -240,9 +255,9 @@ def plan(
 
 @app.command("tasks")
 def tasks(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
     preferences: Optional[str] = typer.Option(None, "--preferences", help="Task generation preferences"),
 ) -> None:
     """
@@ -269,9 +284,9 @@ def tasks(
 
 @app.command("implement")
 def implement(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-5)"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
     notes: Optional[str] = typer.Option(None, "--notes", "-n", help="Implementation notes"),
 ) -> None:
     """
@@ -298,9 +313,9 @@ def implement(
 
 @app.command("clarify")
 def clarify(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
 ) -> None:
     """
     Ask structured questions.
@@ -319,9 +334,9 @@ def clarify(
 
 @app.command("checklist")
 def checklist(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
 ) -> None:
     """
     Generate quality checklist.
@@ -367,7 +382,8 @@ def orchestrate(
                     console.print(f"[bold]Resuming orchestration for:[/bold] {folder_path.name}")
                     console.print(f"[bold]Next action:[/bold] {prompt} stage {stage}")
                     console.print("")
-                    console.print(f"Run: speckitadv {prompt} --stage={stage} --feature-dir={folder_path}")
+                    # CLI auto-detects stage and feature-dir from state
+                    console.print(f"Run: speckitadv {prompt}")
                     return
                 else:
                     console.print(f"[green]✓[/green] Feature {folder_path.name} is complete!")
@@ -451,7 +467,8 @@ def resume(
     if prompt:
         console.print(f"[bold]Next Action:[/bold] {prompt} stage {stage}")
         console.print("")
-        console.print(f"Run: speckitadv {prompt} --stage={stage} --feature-dir={folder_path}")
+        # CLI auto-detects stage and feature-dir from state
+        console.print(f"Run: speckitadv {prompt}")
     else:
         console.print("[green]✓ All prompts completed![/green]")
         console.print("")

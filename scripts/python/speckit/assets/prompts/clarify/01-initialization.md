@@ -73,5 +73,5 @@ Read `FEATURE_SPEC` for ambiguity scanning.
 
 ```text
 
-speckitadv clarify --stage=2 --feature-dir={{feature_dir}}
+speckitadv clarify --stage=2
 ```

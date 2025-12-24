@@ -36,7 +36,7 @@ FEATURE_STATE_MIN_STAGE = 3
 
 def run_staged_command(
     command: str,
-    stage: int = 1,
+    stage: Optional[int] = None,
     path: Optional[str] = None,
     feature_dir: Optional[str] = None,
     context: Optional[dict] = None,
@@ -48,13 +48,13 @@ def run_staged_command(
     renders it with context, and emits it for the AI agent.
 
     All staged commands use folder-based state management (FeatureStateManager).
-    The feature_dir parameter specifies which folder to use.
+    Stage and feature_dir are auto-detected from state when not provided.
 
     Args:
         command: Command name (e.g., "specify", "plan", "tasks", "implement")
-        stage: Current stage number (1-indexed)
+        stage: Current stage number (1-indexed). If None, auto-detected from state.
         path: Optional project path (for early stages)
-        feature_dir: Feature directory path (for stage 3+)
+        feature_dir: Feature directory path. If None, auto-detected.
         context: Optional additional context variables
     """
     # Get ordered list of stages for this command
@@ -69,6 +69,10 @@ def run_staged_command(
         return
 
     total_stages = len(stages)
+
+    # Try to auto-detect stage from state if not provided
+    if stage is None:
+        stage = _auto_detect_stage(command, feature_dir, stages)
 
     # Validate stage number
     if stage < 1 or stage > total_stages:
@@ -105,8 +109,12 @@ def run_staged_command(
         rendered = render_prompt(fragment, render_context)
         title = _extract_title(rendered, stage_id)
 
-        # Next command for early stages
-        next_cmd = f"speckitadv {command} --stage={stage + 1}"
+        # Next command for early stages (still need --stage since no state yet)
+        if stage + 1 < FEATURE_STATE_MIN_STAGE:
+            next_cmd = f"speckitadv {command} --stage={stage + 1}"
+        else:
+            # Stage 3+ will have state, so CLI can auto-detect - no args needed
+            next_cmd = f"speckitadv {command}"
 
         emit_stage(
             stage_num=stage,
@@ -195,9 +203,9 @@ def run_staged_command(
         status="in_progress",
     )
 
-    # Determine next command
+    # Determine next command - no args needed, CLI reads from state
     if stage < total_stages:
-        next_cmd = f"speckitadv {command} --stage={stage + 1} --feature-dir={feature_path}"
+        next_cmd = f"speckitadv {command}"
     else:
         next_cmd = None
 
@@ -223,6 +231,61 @@ def run_staged_command(
             content=rendered,
             next_cmd=next_cmd,
         )
+
+
+def _auto_detect_stage(
+    command: str,
+    feature_dir: Optional[str],
+    stages: list[str],
+) -> int:
+    """
+    Auto-detect the next stage from state file.
+
+    Returns:
+        Stage number to run (1-indexed)
+    """
+    # Try to find feature folder
+    try:
+        specs_dir = Path("specs")
+        feature_path = resolve_feature_folder(feature_dir, specs_dir)
+    except FileNotFoundError:
+        # No feature folder found - start at stage 1
+        return 1
+
+    # Try to load state
+    state_manager = FeatureStateManager(feature_path)
+    if not state_manager.exists():
+        # No state file - start at stage 1
+        return 1
+
+    try:
+        state = state_manager.load()
+    except Exception:
+        return 1
+
+    # Get current stage for this command from state
+    prompt_state = getattr(state, command, None)
+    if prompt_state is None:
+        return 1
+
+    # If completed, we're done
+    if prompt_state.status == "completed":
+        return len(stages)  # Return last stage (will show completion)
+
+    # If in_progress, find current stage index and continue
+    if prompt_state.current_stage:
+        try:
+            current_idx = stages.index(prompt_state.current_stage)
+            # Return next stage (current + 1, converted to 1-indexed)
+            return min(current_idx + 2, len(stages))
+        except ValueError:
+            pass
+
+    # If pending, start at stage 1 (or stage 3 if feature folder exists)
+    if prompt_state.status == "pending":
+        return FEATURE_STATE_MIN_STAGE
+
+    return 1
 
 
 def _extract_title(content: str, fallback: str) -> str:

@@ -74,7 +74,7 @@ Format validation: PASSED
 Organization: PASSED
 
 Next command:
-  speckitadv implement --feature-dir={{feature_dir}}
+  speckitadv implement
 ```
 
 ---

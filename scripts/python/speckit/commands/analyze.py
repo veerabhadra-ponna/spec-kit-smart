@@ -75,7 +75,7 @@ TOTAL_STAGES = {
 
 
 def run_analyze_project(
-    stage: int = 1,
+    stage: Optional[int] = None,
     chunk: Optional[int] = None,
     analysis_dir: Optional[str] = None,
     path: Optional[str] = None,
@@ -95,72 +95,98 @@ def run_analyze_project(
     - State is persisted in folder-based state management
     - AI agent runs next command from output
 
+    All arguments are auto-detected from state when not provided.
+    Only provide arguments when starting a new workflow or overriding state.
+
     Args:
-        stage: Current workflow stage (1-16)
+        stage: Current workflow stage (1-16). Auto-detected from state if None.
         chunk: Report chunk number for chunked stages
-        analysis_dir: Analysis folder path (auto-created on stage 1)
-        path: Project path to analyze
-        scope: Analysis scope (A=full, B=cross-cutting)
+        analysis_dir: Analysis folder path. Auto-detected (latest) if None.
+        path: Project path to analyze. Loaded from state if None.
+        scope: Analysis scope (A=full, B=cross-cutting). Loaded from state if None.
         context: Additional context
-        concern_type: Type of cross-cutting concern (for scope B)
-        current_impl: Current implementation details
-        target_impl: Target implementation details
+        concern_type: Type of cross-cutting concern. Loaded from state if None.
+        current_impl: Current implementation details. Loaded from state if None.
+        target_impl: Target implementation details. Loaded from state if None.
         verify: Run verification after final stage completes
     """
-    project_path = Path(path) if path else Path.cwd()
+    # Try to find existing analysis folder first
+    analysis_dir_path = None
+    state_manager = None
+    state = None
 
-    # Initialize or load analysis state
-    if stage == 1 and not analysis_dir:
-        # Stage 1 without analysis_dir = new workflow
+    if analysis_dir:
+        analysis_dir_path = Path(analysis_dir)
+        state_manager = AnalysisStateManager(analysis_dir_path)
+        if state_manager.exists():
+            state = state_manager.load()
+    else:
+        # Try to find latest analysis folder
+        try:
+            analysis_dir_path = find_latest_analysis_folder()
+            state_manager = AnalysisStateManager(analysis_dir_path)
+            if state_manager.exists():
+                state = state_manager.load()
+        except FileNotFoundError:
+            pass  # No existing analysis - will create new one
+
+    # Auto-detect stage from state if not provided
+    if stage is None:
+        if state:
+            stage = _auto_detect_stage_from_state(state)
+        else:
+            stage = 1  # New workflow starts at stage 1
+
+    # Determine project path
+    if path:
+        project_path = Path(path)
+    elif state and state.project_path:
+        project_path = Path(state.project_path)
+    else:
+        project_path = Path.cwd()
+
+    # Initialize new workflow if needed
+    if stage == 1 and state is None:
+        # Stage 1 without existing state = new workflow
         if not project_path.exists():
             emit_error(
                 "Project path not found",
                 f"Path does not exist: {project_path}",
-                recovery_cmd="speckitadv analyze-project --stage=1 --path=<valid-path>",
+                recovery_cmd="speckitadv analyze-project --path=<valid-path>",
             )
             return
 
         # Create new analysis folder with timestamp
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         project_name = project_path.name
-        analysis_folder = Path(".analysis") / f"{project_name}-{timestamp}"
-        state_manager = AnalysisStateManager(analysis_folder)
-        state = state_manager.initialize(project_path)
-        analysis_dir_path = analysis_folder
-    else:
-        # Resume workflow - find or use provided analysis folder
-        if analysis_dir:
-            analysis_dir_path = Path(analysis_dir)
-        else:
-            try:
-                analysis_dir_path = find_latest_analysis_folder()
-            except FileNotFoundError:
-                emit_error(
-                    "No analysis folder found",
-                    "No analysis folder found. Start a new analysis or specify with --analysis-dir",
-                    recovery_cmd="speckitadv analyze-project --stage=1 --path=<project-path>",
-                )
-                return
-
+        analysis_dir_path = Path(".analysis") / f"{project_name}-{timestamp}"
         state_manager = AnalysisStateManager(analysis_dir_path)
-        if not state_manager.exists():
-            emit_error(
-                "State not found",
-                f"No state found in analysis folder: {analysis_dir_path}",
-                recovery_cmd="speckitadv analyze-project --stage=1 --path=<project-path>",
-            )
-            return
-        state = state_manager.load()
-        project_path = Path(state.project_path) if state.project_path else project_path
+        state = state_manager.initialize(project_path)
+    elif state is None:
+        # Trying to resume but no state found
+        emit_error(
+            "No analysis found",
+            "No analysis in progress. Start a new analysis first.",
+            recovery_cmd="speckitadv analyze-project --path=<project-path>",
+        )
+        return
 
-    # Determine total stages based on scope
-    # Check state stages for previously set scope
+    # Load values from state, override with CLI args if provided
+    # Scope
     state_scope = None
+    state_concern_type = None
+    state_context = None
     for stage_name, stage_info in state.stages.items():
-        if "scope" in stage_info:
+        if stage_info.get("scope"):
             state_scope = stage_info.get("scope")
-            break
+        if stage_info.get("concern_type"):
+            state_concern_type = stage_info.get("concern_type")
+        if stage_info.get("context"):
+            state_context = stage_info.get("context")
+
     effective_scope = scope or state_scope or "A"
+    effective_concern_type = concern_type or state_concern_type or ""
+    effective_context = context or state_context or ""
     total_stages = TOTAL_STAGES.get(effective_scope, 16)
 
     # Resolve implementation values from state
@@ -182,8 +208,8 @@ def run_analyze_project(
         "total_stages": total_stages,
         "project_path": str(project_path),
         "scope": effective_scope,
-        "context": context or "",
-        "concern_type": concern_type or "",
+        "context": effective_context,
+        "concern_type": effective_concern_type,
         # Short names (used in some prompts)
         "current_impl": resolved_current,
         "target_impl": resolved_target,
@@ -241,8 +267,9 @@ def run_analyze_project(
             next_stage = stage + 1
     else:
         next_stage = None
+    # CLI auto-detects stage and analysis_dir from state - no args needed
     if next_stage:
-        next_cmd = f"speckitadv analyze-project --stage={next_stage} --analysis-dir={analysis_dir_path}"
+        next_cmd = "speckitadv analyze-project"
     else:
         next_cmd = None
 
@@ -251,7 +278,8 @@ def run_analyze_project(
     has_chunks = stage in CHUNK_MAP or stage == 16
     if has_chunks:
         # This stage requires chunking - redirect to chunk 1
-        next_cmd = f"speckitadv analyze-project --stage={stage} --chunk=1 --analysis-dir={analysis_dir_path}"
+        # Need --chunk since auto-detection doesn't handle chunks
+        next_cmd = f"speckitadv analyze-project --chunk=1"
         emit_stage(
             stage_num=stage,
             total_stages=total_stages,
@@ -356,8 +384,9 @@ def _emit_chunk_stage(
     rendered = render_prompt(chunk_content, context)
 
     # Determine next command
+    # CLI auto-detects stage and analysis_dir from state
     if chunk < total_chunks:
-        next_cmd = f"speckitadv analyze-project --stage={stage} --chunk={chunk + 1} --analysis-dir={analysis_dir_path}"
+        next_cmd = f"speckitadv analyze-project --chunk={chunk + 1}"
     else:
         # Move to next stage with scope-aware branching
         # Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
@@ -375,8 +404,9 @@ def _emit_chunk_stage(
                 next_stage = stage + 1
         else:
             next_stage = None
+        # CLI auto-detects from state - no args needed
         if next_stage:
-            next_cmd = f"speckitadv analyze-project --stage={next_stage} --analysis-dir={analysis_dir_path}"
+            next_cmd = "speckitadv analyze-project"
         else:
             next_cmd = None
 
@@ -460,6 +490,33 @@ def _get_stage_title(stage: int) -> str:
         16: "Scope Artifacts",
     }
     return titles.get(stage, f"Stage {stage}")
+
+
+def _auto_detect_stage_from_state(state) -> int:
+    """
+    Auto-detect the next stage from analysis state.
+
+    Returns:
+        Stage number to run (1-indexed)
+    """
+    # Find highest completed stage
+    highest_completed = 0
+    for stage_name, stage_info in state.stages.items():
+        if stage_info.get("status") == "completed":
+            # Extract stage number from "stage_N" format
+            try:
+                stage_num = int(stage_name.split("_")[1])
+                highest_completed = max(highest_completed, stage_num)
+            except (IndexError, ValueError):
+                pass
+
+    # Return next stage after highest completed
+    # Handle scope-aware branching
+    next_stage = highest_completed + 1
+    if next_stage > 16:
+        return 16  # Cap at final stage
+
+    return next_stage
 
 
 # Export function for CLI
