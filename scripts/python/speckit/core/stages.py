@@ -271,8 +271,11 @@ def _auto_detect_stage(
 
     try:
         state = state_manager.load()
-    except Exception:
+    except (AttributeError, KeyError):
+        # Malformed state structure - start fresh
         return 1
+    # Note: JSONDecodeError is NOT caught here - let it bubble up
+    # to surface corruption errors (fail-fast behavior)
 
     # Get current stage for this command from state
     prompt_state = getattr(state, command, None)

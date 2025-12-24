@@ -521,6 +521,37 @@ class TestMarkCompleteTimestamp:
         assert state.stages["16-completion"]["completed"] is not None
         assert state.workflow_complete is True
 
+    def test_mark_complete_finalizes_all_in_progress_stages(self, tmp_path):
+        """mark_complete() should finalize ALL in_progress stages (self-healing)."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Simulate inconsistent state with multiple in_progress stages
+        # (could happen from manual edits or interrupted operations)
+        state = manager.load()
+        state.stages["05-review"] = {"status": "in_progress", "started": "2025-01-01T10:00:00"}
+        state.stages["10-analysis"] = {"status": "in_progress", "started": "2025-01-01T11:00:00"}
+        state.stages["15-final"] = {"status": "in_progress", "started": "2025-01-01T12:00:00"}
+        manager.save(state)
+
+        # Now mark complete - should fix all in_progress stages
+        state = manager.mark_complete()
+
+        # Verify ALL stages were completed
+        assert state.stages["05-review"]["status"] == "completed"
+        assert state.stages["05-review"]["completed"] is not None
+        assert state.stages["10-analysis"]["status"] == "completed"
+        assert state.stages["10-analysis"]["completed"] is not None
+        assert state.stages["15-final"]["status"] == "completed"
+        assert state.stages["15-final"]["completed"] is not None
+        assert state.workflow_complete is True
+
+        # Verify all are in stages_complete
+        assert "05-review" in state.stages_complete
+        assert "10-analysis" in state.stages_complete
+        assert "15-final" in state.stages_complete
+
 
 class TestGetCurrentStageCompletedBehavior:
     """Tests for get_current_stage() returning completed stages."""
