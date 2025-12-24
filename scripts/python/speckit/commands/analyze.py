@@ -158,7 +158,8 @@ def run_analyze_project(
 
         # Create new analysis folder with timestamp
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        project_name = project_path.name
+        # Use resolve() to get actual directory name (Path(".").name returns empty string)
+        project_name = project_path.resolve().name
         analysis_dir_path = Path(".analysis") / f"{project_name}-{timestamp}"
         state_manager = AnalysisStateManager(analysis_dir_path)
         state = state_manager.initialize(project_path)
