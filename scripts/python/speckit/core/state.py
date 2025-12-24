@@ -461,7 +461,7 @@ class AnalysisStateManager:
         # Always update current stage tracking (not just in_progress)
         # This ensures get_context_for_prompt() returns correct values
         state.current_stage = stage
-        if stage_num:
+        if stage_num is not None:
             state.current_stage_num = stage_num
 
         # Track completed stages
@@ -484,18 +484,27 @@ class AnalysisStateManager:
         """Get current stage to resume from.
 
         Returns:
-            (stage_name, status) or (None, None) if not started
+            (stage_name, status) or (None, None) if complete or not started
         """
         state = self.load()
+
+        # Check if workflow is complete - nothing to resume
+        if state.workflow_complete:
+            return (None, None)
 
         # First check for in_progress stages
         for stage, info in state.stages.items():
             if info.get("status") == "in_progress":
                 return (stage, "in_progress")
 
-        # Return current_stage if set
+        # Return current_stage with its actual status from state.stages
         if state.current_stage:
-            return (state.current_stage, "pending")
+            stage_info = state.stages.get(state.current_stage, {})
+            actual_status = stage_info.get("status", "pending")
+            # If current stage is completed, no active work to resume
+            if actual_status == "completed":
+                return (None, None)
+            return (state.current_stage, actual_status)
 
         return (None, None)
 
