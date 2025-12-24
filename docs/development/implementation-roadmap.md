@@ -1,6 +1,6 @@
 # Implementation Roadmap: Reverse Engineering & Modernization Feature
 
-> **⚠️ HISTORICAL**: This roadmap is superseded by the Python CLI implementation. The `speckitadv` Python CLI now handles all analyze-project functionality. See [PYTHON-MIGRATION-IMPLEMENTATION-PLAN.md](../PYTHON-MIGRATION-IMPLEMENTATION-PLAN.md).
+> **⚠️ HISTORICAL**: This roadmap is superseded by the Python CLI implementation. The `speckitadv` Python CLI now handles all analyze-project functionality. See [PYTHON-MIGRATION-IMPLEMENTATION-PLAN.md](../archived/PYTHON-MIGRATION-IMPLEMENTATION-PLAN.md).
 
 **Created**: 2025-11-06
 **Last Updated**: 2025-11-06

@@ -26,7 +26,9 @@ This directory contains documentation **for developers working ON this repositor
 
 ## 📋 Current Documents
 
-### engineering-review.md
+### engineering-review.md (HISTORICAL)
+
+> **⚠️ HISTORICAL**: This document predates the Python CLI implementation and is preserved for reference only.
 
 Comprehensive technical review of the reverse engineering feature by senior engineering lead.
 
@@ -34,25 +36,31 @@ Comprehensive technical review of the reverse engineering feature by senior engi
 
 - Critical issues identified (4 critical, 8 high, 12 medium, 6 low)
 - Architectural concerns
-- Implementation recommendations
-- Action items prioritized by urgency
+- Implementation recommendations (now addressed in Python CLI)
 
-**When to read**: Before starting implementation work on reverse engineering feature
+**Status**: Superseded by Python CLI implementation
 
-### implementation-roadmap.md
+### implementation-roadmap.md (HISTORICAL)
 
-Detailed implementation plan for next 4-6 months.
+> **⚠️ HISTORICAL**: This roadmap is superseded by the Python CLI. See [archived migration docs](../archived/README.md).
+
+Original implementation plan for bash/PowerShell scripts.
 
 **Contains**:
 
-- 5 phases of development (16-20 weeks total)
-- Phase 1: Core Implementation (4-6 weeks, HIGH priority)
-- Phase 2: Language-Specific Analyzers (2-3 weeks, HIGH)
-- Phase 3: Incremental Analysis (1-2 weeks, MEDIUM)
-- Phase 4: Advanced Features (3-4 weeks, MEDIUM)
-- Phase 5: Enterprise Features (4-6 weeks, LOW)
+- 5 phases of development (originally planned)
+- Phase breakdowns and deliverables
 
-**When to read**: Planning sprint work or quarterly roadmap
+**Status**: Superseded by Python CLI implementation
+
+---
+
+## 📁 Archived Documentation
+
+Historical planning documents have been moved to [docs/archived/](../archived/):
+
+- **PYTHON-MIGRATION-ASSESSMENT.md** - Assessment of Python migration (COMPLETE)
+- **PYTHON-MIGRATION-IMPLEMENTATION-PLAN.md** - Implementation plan (COMPLETE)
 
 ---
 
@@ -164,5 +172,5 @@ Detailed implementation plan for next 4-6 months.
 
 ---
 
-**Last Updated**: 2025-11-06
+**Last Updated**: 2025-12-24
 **Maintained By**: Repository maintainers and contributors
