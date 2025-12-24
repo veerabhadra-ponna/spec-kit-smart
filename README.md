@@ -580,8 +580,7 @@ The reverse engineering system uses **AI-guided analysis** with orchestration sc
 
 ### Documentation (Reverse Engineering)
 
-- **📖 Complete Guide**: [docs/reverse-engineering.md](docs/reverse-engineering.md) - Comprehensive documentation
-- **💡 Examples & Prompts**: [docs/reverse-engineering-examples.md](docs/reverse-engineering-examples.md) - Practical workflows
+- **📖 Complete Guide**: [docs/reverse-engineering.md](docs/reverse-engineering.md) - Comprehensive guide with examples
 
 ---
 

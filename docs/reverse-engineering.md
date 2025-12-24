@@ -46,7 +46,7 @@
 - ⚠️ Some edge cases and error scenarios may not be fully handled
 - ⚠️ Performance characteristics unknown for very large projects (>500K LOC)
 
-**For full automation roadmap**, see [Implementation Roadmap](docs/development/implementation-roadmap.md) below.
+**For full automation roadmap**, see [Implementation Roadmap](archived/implementation-roadmap.md) (historical).
 
 ---
 
@@ -64,7 +64,7 @@
 - [Workflow Examples](#workflow-examples)
 - [Best Practices](#best-practices)
 - [Known Limitations](#known-limitations)
-- [Implementation Roadmap](docs/development/implementation-roadmap.md)
+- [Implementation Roadmap](archived/implementation-roadmap.md) (historical)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 ---
@@ -1193,15 +1193,11 @@ Questions or issues? Open a GitHub issue:
 
 For developers interested in implementing or contributing to this feature:
 
-- **Implementation Roadmap**: See [development/implementation-roadmap.md](./development/implementation-roadmap.md)
-  - 5-phase plan (16-21 weeks)
-  - Priority tasks for contributors
-  - Technical requirements and deliverables
+- **Implementation Roadmap**: See [archived/implementation-roadmap.md](./archived/implementation-roadmap.md) (historical)
+  - Original 5-phase plan (superseded by Python CLI)
 
-- **Engineering Review**: See [development/engineering-review.md](./development/engineering-review.md)
-  - Comprehensive technical assessment
-  - Issues identified and prioritized
-  - Architectural recommendations
+- **Engineering Review**: See [archived/engineering-review.md](./archived/engineering-review.md) (historical)
+  - Pre-Python CLI technical assessment
 
 - **Contributing**: See [CONTRIBUTING.md](../CONTRIBUTING.md) and [AGENTS.md](../AGENTS.md)
   - Contribution guidelines
