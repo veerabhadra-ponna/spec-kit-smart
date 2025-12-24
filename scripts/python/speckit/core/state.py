@@ -159,11 +159,21 @@ class FeatureStateManager:
         return self.state_file.exists()
 
     def load(self) -> FeatureState:
-        """Load state from file."""
+        """Load state from file.
+
+        Raises:
+            FileNotFoundError: If state file doesn't exist
+            json.JSONDecodeError: If state file is corrupted (fail-fast)
+        """
         if not self.state_file.exists():
             raise FileNotFoundError(f"State file not found: {self.state_file}")
 
         content = self.state_file.read_text(encoding="utf-8")
+
+        # Validate JSON syntax first - fail fast on corruption
+        # (FeatureState.from_json uses safe_json_loads which swallows errors)
+        json.loads(content)  # Raises JSONDecodeError if invalid
+
         return FeatureState.from_json(content)
 
     def save(self, state: FeatureState) -> None:
@@ -413,7 +423,6 @@ class AnalysisStateManager:
 
         # Validate JSON syntax first - fail fast on corruption
         # (AnalysisState.from_json uses safe_json_loads which swallows errors)
-        import json
         json.loads(content)  # Raises JSONDecodeError if invalid
 
         return AnalysisState.from_json(content)
@@ -492,7 +501,8 @@ class AnalysisStateManager:
     def mark_complete(self) -> AnalysisState:
         """Mark the entire workflow as complete.
 
-        Also completes any in_progress stage to ensure all work is recorded.
+        Also completes any in_progress stage to ensure all work is recorded,
+        including setting the completed timestamp for audit/duration tracking.
         """
         state = self.load()
 
@@ -500,6 +510,7 @@ class AnalysisStateManager:
         for stage_id, stage_info in state.stages.items():
             if stage_info.get("status") == "in_progress":
                 state.stages[stage_id]["status"] = "completed"
+                state.stages[stage_id]["completed"] = datetime.now().isoformat()
                 if stage_id not in state.stages_complete:
                     state.stages_complete.append(stage_id)
                 break
@@ -513,7 +524,8 @@ class AnalysisStateManager:
         """Get current stage to resume from.
 
         Returns:
-            (stage_name, status) or (None, None) if complete or not started
+            (stage_name, status) where status is "in_progress", "completed", or "pending"
+            (None, None) only if workflow_complete=True or no stages exist
         """
         state = self.load()
 
@@ -527,12 +539,12 @@ class AnalysisStateManager:
                 return (stage, "in_progress")
 
         # Return current_stage with its actual status from state.stages
+        # This allows callers to distinguish "completed stage, more work pending"
+        # from "workflow fully complete"
         if state.current_stage:
             stage_info = state.stages.get(state.current_stage, {})
             actual_status = stage_info.get("status", "pending")
-            # If current stage is completed, no active work to resume
-            if actual_status == "completed":
-                return (None, None)
+            # Return the stage with its status - caller can determine next action
             return (state.current_stage, actual_status)
 
         return (None, None)

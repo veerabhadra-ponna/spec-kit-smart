@@ -455,6 +455,116 @@ class TestAnalysisStateManager:
         assert "02a-category-scan" in state.stages_complete
 
 
+class TestCorruptedStateHandling:
+    """Tests for corrupted state.json handling (fail-fast behavior)."""
+
+    def test_feature_state_manager_corrupted_json(self, tmp_path):
+        """FeatureStateManager.load() should raise JSONDecodeError on corrupted JSON."""
+        folder = tmp_path / "specs" / "001-test"
+        state_dir = folder / ".state"
+        state_dir.mkdir(parents=True)
+
+        # Write corrupted JSON
+        (state_dir / "state.json").write_text("{invalid json content")
+
+        manager = FeatureStateManager(folder)
+        with pytest.raises(json.JSONDecodeError):
+            manager.load()
+
+    def test_analysis_state_manager_corrupted_json(self, tmp_path):
+        """AnalysisStateManager.load() should raise JSONDecodeError on corrupted JSON."""
+        folder = tmp_path / ".analysis" / "test-run"
+        folder.mkdir(parents=True)
+
+        # Write corrupted JSON
+        (folder / "state.json").write_text("not valid json {{{")
+
+        manager = AnalysisStateManager(folder)
+        with pytest.raises(json.JSONDecodeError):
+            manager.load()
+
+    def test_feature_state_manager_valid_json(self, tmp_path):
+        """FeatureStateManager.load() should succeed with valid JSON."""
+        folder = tmp_path / "specs" / "001-test"
+        state_dir = folder / ".state"
+        state_dir.mkdir(parents=True)
+
+        valid_state = {
+            "schema_version": 1,
+            "feature": {"short_name": "test", "description": "Test feature"},
+            "specify": {"status": "pending"},
+        }
+        (state_dir / "state.json").write_text(json.dumps(valid_state))
+
+        manager = FeatureStateManager(folder)
+        state = manager.load()
+        assert state.feature.short_name == "test"
+
+
+class TestMarkCompleteTimestamp:
+    """Tests for mark_complete() timestamp handling."""
+
+    def test_mark_complete_sets_stage_timestamp(self, tmp_path):
+        """mark_complete() should set completed timestamp for final in_progress stage."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Set a stage as in_progress (simulating the final stage)
+        manager.update_stage("16-completion", "in_progress", stage_num=16)
+
+        # Now mark complete
+        state = manager.mark_complete()
+
+        # Verify the stage has a completed timestamp
+        assert state.stages["16-completion"]["status"] == "completed"
+        assert state.stages["16-completion"]["completed"] is not None
+        assert state.workflow_complete is True
+
+
+class TestGetCurrentStageCompletedBehavior:
+    """Tests for get_current_stage() returning completed stages."""
+
+    def test_returns_completed_stage_when_workflow_not_complete(self, tmp_path):
+        """get_current_stage() should return (stage, 'completed') when stage is done but workflow isn't."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Complete a stage but don't mark workflow complete
+        manager.update_stage("03-analysis", "completed", stage_num=3)
+
+        stage, status = manager.get_current_stage()
+
+        # Should return the completed stage with its status, not (None, None)
+        assert stage == "03-analysis"
+        assert status == "completed"
+
+    def test_returns_none_when_workflow_complete(self, tmp_path):
+        """get_current_stage() should return (None, None) when workflow is complete."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+        manager.mark_complete()
+
+        stage, status = manager.get_current_stage()
+
+        assert stage is None
+        assert status is None
+
+    def test_returns_in_progress_stage(self, tmp_path):
+        """get_current_stage() should return in_progress stage when one exists."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+        manager.update_stage("05-review", "in_progress", stage_num=5)
+
+        stage, status = manager.get_current_stage()
+
+        assert stage == "05-review"
+        assert status == "in_progress"
+
+
 class TestAnalysisInputs:
     """Tests for AnalysisInputs dataclass."""
 

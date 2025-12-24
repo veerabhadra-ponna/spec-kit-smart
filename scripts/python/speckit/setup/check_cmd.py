@@ -124,9 +124,9 @@ def get_workflow_state(feature_dir: Path) -> dict:
     except FileNotFoundError:
         return state_info  # No state file yet
     except json.JSONDecodeError as e:
-        # State file exists but is corrupted - surface this error
-        state_info["state_error"] = f"state.json is corrupted: {e}"
-        state_info["state_recovery"] = "Delete state.json and restart workflow, or manually fix the JSON syntax"
+        # State file exists but is corrupted - surface this error with full path
+        state_info["state_error"] = f"{state_file} is corrupted: {e}"
+        state_info["state_recovery"] = f"Delete {state_file} and restart workflow, or manually fix the JSON syntax"
         return state_info
 
     try:

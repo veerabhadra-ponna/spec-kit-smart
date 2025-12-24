@@ -124,10 +124,11 @@ def run_analyze_project(
             try:
                 state = state_manager.load()
             except json.JSONDecodeError as e:
+                state_file_path = analysis_dir_path / "state.json"
                 emit_error(
                     "Corrupted state file",
-                    f"state.json is corrupted: {e}",
-                    recovery_cmd=f"rm {analysis_dir_path}/state.json && speckitadv analyze-project --path=<project-path>",
+                    f"{state_file_path} is corrupted: {e}",
+                    recovery_cmd=f"rm {state_file_path} && speckitadv analyze-project --path=<project-path>",
                 )
                 return
     else:
@@ -139,10 +140,11 @@ def run_analyze_project(
                 try:
                     state = state_manager.load()
                 except json.JSONDecodeError as e:
+                    state_file_path = analysis_dir_path / "state.json"
                     emit_error(
                         "Corrupted state file",
-                        f"state.json is corrupted: {e}",
-                        recovery_cmd=f"rm {analysis_dir_path}/state.json && speckitadv analyze-project --path=<project-path>",
+                        f"{state_file_path} is corrupted: {e}",
+                        recovery_cmd=f"rm {state_file_path} && speckitadv analyze-project --path=<project-path>",
                     )
                     return
         except FileNotFoundError:
