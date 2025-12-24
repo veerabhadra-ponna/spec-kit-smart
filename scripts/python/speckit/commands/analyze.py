@@ -388,6 +388,13 @@ def _emit_chunk_stage(
     if chunk < total_chunks:
         next_cmd = f"speckitadv analyze-project --chunk={chunk + 1}"
     else:
+        # Final chunk - mark stage as completed in state
+        state_manager.update_stage(
+            stage=f"stage_{stage}",
+            status="completed",
+            artifacts=[],
+        )
+
         # Move to next stage with scope-aware branching
         # Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
         # Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)

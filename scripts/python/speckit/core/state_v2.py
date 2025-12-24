@@ -402,7 +402,12 @@ def check_constitution_complete(project_path: Path = None) -> tuple:
 
 # Utility functions for finding folders
 def find_latest_feature_folder(specs_dir: Path = None) -> Path:
-    """Find the most recently modified feature folder in specs/."""
+    """Find the most recently modified feature folder in specs/.
+
+    Uses state.json mtime as primary sort key, folder name as secondary
+    for deterministic selection when mtimes are equal (e.g., in tests).
+    Folder names with higher numeric prefixes (e.g., 002-) win ties.
+    """
     if specs_dir is None:
         specs_dir = Path("specs")
 
@@ -419,13 +424,19 @@ def find_latest_feature_folder(specs_dir: Path = None) -> Path:
     if not folders:
         raise FileNotFoundError("No feature folders with state found")
 
-    # Sort by modification time, newest first
-    folders.sort(key=lambda x: x[1], reverse=True)
+    # Sort by (mtime DESC, folder_name DESC) for deterministic selection
+    # Folder names like "002-feature" sort higher than "001-feature"
+    folders.sort(key=lambda x: (x[1], x[0].name), reverse=True)
     return folders[0][0]
 
 
 def find_latest_analysis_folder(analysis_dir: Path = None) -> Path:
-    """Find the most recent analysis folder in .analysis/."""
+    """Find the most recent analysis folder in .analysis/.
+
+    Uses state.json mtime as primary sort key, folder name as secondary
+    for deterministic selection when mtimes are equal.
+    Folder names with timestamps (e.g., project-20251224-120000) sort naturally.
+    """
     if analysis_dir is None:
         analysis_dir = Path(".analysis")
 
@@ -442,8 +453,8 @@ def find_latest_analysis_folder(analysis_dir: Path = None) -> Path:
     if not folders:
         raise FileNotFoundError("No analysis folders with state found")
 
-    # Sort by modification time, newest first
-    folders.sort(key=lambda x: x[1], reverse=True)
+    # Sort by (mtime DESC, folder_name DESC) for deterministic selection
+    folders.sort(key=lambda x: (x[1], x[0].name), reverse=True)
     return folders[0][0]
 
 

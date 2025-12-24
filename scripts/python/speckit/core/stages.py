@@ -281,9 +281,9 @@ def _auto_detect_stage(
         except ValueError:
             pass
 
-    # If pending, start at stage 1 (or stage 3 if feature folder exists)
+    # If pending, start at stage 1 (workflow has not started yet)
     if prompt_state.status == "pending":
-        return FEATURE_STATE_MIN_STAGE
+        return 1
 
     return 1
 

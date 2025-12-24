@@ -9,13 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- State-based auto-detection for CLI arguments: stage, feature-dir, and analysis-dir
+  are now auto-detected from state files. No args needed after initial setup.
+- Deterministic folder selection with mtime tie-breaking using folder names
+
+### Changed
+
+- Simplified NEXT commands in prompts - stages 3+ no longer show --stage or --feature-dir
+- Resume and orchestrate commands now output simplified `speckitadv <command>` suggestions
+- AGENTS.md updated to v3.2 with auto-detection documentation
+
 ### Fixed
 
-- Constitution workflow now correctly uses `--chain` for state continuity across stages
+- Auto-detect stage returns 1 for pending status (was incorrectly returning 3)
+- Chunked analysis stages now persist completion status to state
+- Folder selection is now deterministic when state file mtimes are equal
 - Specify prompts referenced non-existent `--jira` and `--feature` CLI options
 - Next steps in stages.py used `/specify` format instead of `/speckitadv.specify`
 - Clarify and checklist prompts updated to use `/speckitadv.*` slash command format
 - Plan prompt path reference corrected from `/memory/constitution.md` to `memory/constitution.md`
+
+### Removed
+
+- `--chain` CLI option replaced by folder-based state (feature-dir, analysis-dir)
 
 ## [2.1.1] - 2025-12-22
 

@@ -66,7 +66,7 @@ speckitadv constitution --stage=3
 
 ```bash
 # Stage 1: Initialize and understand role
-speckitadv specify --stage=1 --path=/path/to/project
+speckitadv specify --stage=1
 
 # Stage 2: Collect inputs (interactive if no args)
 speckitadv specify --stage=2
@@ -76,35 +76,37 @@ speckitadv specify --stage=2 --jira=C12345-7890 --feature="Add user auth"
 
 # Stage 3: Create feature branch and folder
 # AI calls create-feature helper to create specs/001-user-auth/
-speckitadv specify --stage=3 --feature-dir=specs/001-user-auth
+speckitadv specify --stage=3 --feature="Add user auth" --jira="C12345-7890"
 
-# Stage 4+: Continue with feature-dir
-speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
-# ... until complete
+# Stage 4+: CLI auto-detects stage and feature folder from state!
+speckitadv specify  # Just run without args
+speckitadv specify  # CLI reads state, continues at correct stage
 ```
 
 **Notes:**
 
 - Stages 1-2 are stateless. Pass `--feature` and `--jira` from stage 2 to stage 3.
 - Stage 3 creates the feature folder via `create-feature` command and persists state.
-- Stage 4+ uses `--feature-dir` to specify which feature folder to use.
+- **Stage 3+ auto-detects** - CLI reads state file to determine stage and feature folder.
 
 ### Auto-Resume for Feature Commands
 
 All feature-scoped commands (`specify`, `plan`, `tasks`, `implement`, `clarify`, `checklist`) support
-automatic feature directory detection:
+automatic state detection:
 
-- **Feature directory detection**: The CLI auto-detects the latest feature folder
-  in `specs/` when `--feature-dir` is not provided.
-- **Explicit folder**: Use `--feature-dir=specs/001-user-auth` to work on a specific feature.
-- **Resume command**: Use `speckitadv resume` to continue from where you left off.
+- **Stage auto-detection**: CLI reads state file to determine which stage to run next.
+- **Feature directory detection**: CLI auto-detects the latest feature folder in `specs/`.
+- **Explicit overrides**: Use `--stage` or `--feature-dir` to override auto-detection.
+- **Resume command**: Use `speckitadv resume` to see what's next.
 
 ```bash
-# Example: plan workflow auto-detects feature folder
-speckitadv plan --stage=1
-speckitadv plan --stage=2  # Auto-detects latest feature folder
+# Example: plan workflow with auto-detection (stage 3+)
+speckitadv plan --stage=1     # Early stages need explicit --stage
+speckitadv plan --stage=2     # Still no state (created at stage 3)
+speckitadv plan               # Stage 3+: auto-detects everything!
+speckitadv plan               # Continues at correct stage
 
-# Or specify explicitly
+# Or specify explicitly to override
 speckitadv plan --stage=2 --feature-dir=specs/001-user-auth
 ```
 
