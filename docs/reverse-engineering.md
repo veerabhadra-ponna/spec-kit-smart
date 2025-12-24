@@ -46,8 +46,6 @@
 - ⚠️ Some edge cases and error scenarios may not be fully handled
 - ⚠️ Performance characteristics unknown for very large projects (>500K LOC)
 
-**For full automation roadmap**, see [Implementation Roadmap](archived/implementation-roadmap.md) (historical).
-
 ---
 
 **Table of Contents:**
@@ -64,7 +62,6 @@
 - [Workflow Examples](#workflow-examples)
 - [Best Practices](#best-practices)
 - [Known Limitations](#known-limitations)
-- [Implementation Roadmap](archived/implementation-roadmap.md) (historical)
 - [Frequently Asked Questions](#frequently-asked-questions)
 
 ---
@@ -1189,22 +1186,8 @@ Questions or issues? Open a GitHub issue:
 
 ---
 
-## Developer Resources
+## Contributing
 
-For developers interested in implementing or contributing to this feature:
-
-- **Implementation Roadmap**: See [archived/implementation-roadmap.md](./archived/implementation-roadmap.md) (historical)
-  - Original 5-phase plan (superseded by Python CLI)
-
-- **Engineering Review**: See [archived/engineering-review.md](./archived/engineering-review.md) (historical)
-  - Pre-Python CLI technical assessment
-
-- **Contributing**: See [CONTRIBUTING.md](../CONTRIBUTING.md) and [AGENTS.md](../AGENTS.md)
-  - Contribution guidelines
-  - AI agent instructions
-  - Development standards
-
-**Quick Links**:
-
-- [GitHub Issues](https://github.com/veerabhadra-ponna/spec-kit-smart/issues) (label: `reverse-engineering`)
-- [GitHub Discussions](https://github.com/veerabhadra-ponna/spec-kit-smart/discussions)
+- [CONTRIBUTING.md](../CONTRIBUTING.md) - Contribution guidelines
+- [AGENTS.md](../AGENTS.md) - AI agent instructions
+- [GitHub Issues](https://github.com/veerabhadra-ponna/spec-kit-smart/issues) - Report bugs or request features
