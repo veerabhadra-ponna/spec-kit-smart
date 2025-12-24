@@ -226,15 +226,18 @@ def run_check(
     else:
         result["error"] = "No feature directory found. Nothing to resume."
 
+    # Check if there's an error - return failure flag for automation/CI
+    has_error = "error" in result
+
     if output_json:
         print(json.dumps(result, indent=2))
-        return result, True
+        return result, not has_error
 
     if paths_only:
         for key, value in result.items():
             if key not in ("AVAILABLE_DOCS", "TASKS_CONTENT", "HAS_GIT"):
                 print(f"{key}={value}")
-        return result, True
+        return result, not has_error
 
     # Rich formatted output
     tree = Tree("[cyan]Tool Check[/cyan]")

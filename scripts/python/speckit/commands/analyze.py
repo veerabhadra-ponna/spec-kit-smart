@@ -185,6 +185,16 @@ def run_analyze_project(
     # Load values from state.inputs, override with CLI args if provided
     # CLI args take precedence when explicitly provided
     effective_scope = scope or state.inputs.scope or "A"
+
+    # Validate scope - must be A or B
+    if effective_scope not in ("A", "B"):
+        emit_error(
+            "Invalid scope",
+            f"Scope must be 'A' (full application) or 'B' (cross-cutting concern), got: {effective_scope}",
+            recovery_cmd="speckitadv analyze-project --scope=A",
+        )
+        return
+
     effective_concern_type = concern_type or state.inputs.concern_type or ""
     effective_context = context or state.inputs.context or ""
     resolved_current = current_impl or state.inputs.current_impl or ""
@@ -287,11 +297,22 @@ Run the following command to begin:""",
         )
         return
 
-    # Save state for this stage with stage number for tracking
-    # Inputs are already stored in state.inputs, no need to duplicate in stages
+    # Complete any previous in_progress stage before starting new one
+    # This ensures stages are only marked complete AFTER work is done
+    current_state = state_manager.load()
+    for stage_id, stage_info in current_state.stages.items():
+        if stage_info.get("status") == "in_progress":
+            state_manager.update_stage(
+                stage=stage_id,
+                status="completed",
+            )
+            break
+
+    # Mark current stage as in_progress (not completed yet)
+    # Stage will be marked complete when NEXT stage starts
     state_manager.update_stage(
         stage=STAGE_MAP.get(stage, f"stage_{stage}"),
-        status="completed",
+        status="in_progress",
         artifacts=[],
         stage_num=stage,
     )
@@ -375,13 +396,30 @@ def _emit_chunk_stage(
     chunk_content = _extract_chunk(fragment, chunk, total_chunks)
     rendered = render_prompt(chunk_content, context)
 
+    # On chunk 1, complete previous in_progress stage and mark current as in_progress
+    if chunk == 1:
+        current_state = state_manager.load()
+        for stage_id, stage_info in current_state.stages.items():
+            if stage_info.get("status") == "in_progress":
+                state_manager.update_stage(
+                    stage=stage_id,
+                    status="completed",
+                )
+                break
+        # Mark this chunked stage as in_progress
+        state_manager.update_stage(
+            stage=STAGE_MAP.get(stage, f"stage_{stage}"),
+            status="in_progress",
+            artifacts=[],
+            stage_num=stage,
+        )
+
     # Determine next command
     # CLI auto-detects stage and analysis_dir from state
     if chunk < total_chunks:
         next_cmd = f"speckitadv analyze-project --chunk={chunk + 1}"
     else:
         # Final chunk - mark stage as completed in state
-        # Inputs are already stored in state.inputs, no need to duplicate in stages
         state_manager.update_stage(
             stage=STAGE_MAP.get(stage, f"stage_{stage}"),
             status="completed",

@@ -473,8 +473,20 @@ class AnalysisStateManager:
         return state
 
     def mark_complete(self) -> AnalysisState:
-        """Mark the entire workflow as complete."""
+        """Mark the entire workflow as complete.
+
+        Also completes any in_progress stage to ensure all work is recorded.
+        """
         state = self.load()
+
+        # Complete any in_progress stage (the final stage)
+        for stage_id, stage_info in state.stages.items():
+            if stage_info.get("status") == "in_progress":
+                state.stages[stage_id]["status"] = "completed"
+                if stage_id not in state.stages_complete:
+                    state.stages_complete.append(stage_id)
+                break
+
         state.workflow_complete = True
         state.completed = datetime.now().isoformat()
         self.save(state)
