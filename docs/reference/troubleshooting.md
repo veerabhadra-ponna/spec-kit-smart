@@ -33,8 +33,10 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 **Solution**:
 
 1. Check that feature directory exists in `specs/`
-2. Verify artifact files (spec.md, plan.md, tasks.md) are present
-3. If artifacts are corrupted, re-run the specific phase command (e.g., `/speckitadv.plan`)
+2. Check `specs/{feature}/.state/state.json` exists and is valid JSON
+3. Run `speckitadv check --json` to see current workflow state
+4. If state.json is corrupted, delete it and the CLI will reinitialize from artifacts
+5. If artifacts are corrupted, re-run the specific phase command (e.g., `/speckitadv.plan`)
 
 ### Issue: Guidelines not loading in prompts
 
@@ -68,10 +70,10 @@ pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 
 **Solution**:
 
-1. Check if artifacts already exist from previous runs (`specs/{feature}/`)
-2. Orchestrator skips phases with existing artifacts unless `--force` is used
-3. Review feature directory to see which artifact files exist (completed phases)
-4. To restart: Delete the feature directory in `specs/`
+1. Check state.json for workflow progress: `speckitadv check --json`
+2. Orchestrator reads `specs/{feature}/.state/state.json` to determine current phase
+3. Phases marked as completed in state.json are skipped
+4. To restart: Delete `specs/{feature}/.state/state.json` or the entire feature directory
 
 ### Issue: speckitadv command not found
 

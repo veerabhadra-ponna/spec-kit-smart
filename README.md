@@ -49,8 +49,8 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 **The Solution:** Single-command orchestration with automatic state persistence and zero-context-loss resumption.
 
 - **One-Command Workflow** - `/speckitadv.orchestrate <feature-description>` runs the entire spec-driven process from constitution to implementation
-- **Artifact-Based Progress Detection** - Progress tracked via artifacts in `specs/{feature}/` directory (spec.md, plan.md, tasks.md)
-- **Seamless Resumption** - `/speckitadv.resume` restores full context after interruptions, chat limits, or end-of-day shutdowns
+- **State-Based Progress Detection** - Progress tracked via `specs/{feature}/.state/state.json` for exact stage-level resumption
+- **Seamless Resumption** - `/speckitadv.resume` restores full context after interruptions, chat limits, or end-of-day shutdowns (works with both orchestrator and individual commands)
 - **Flexible Execution Modes** - Interactive (ask before each phase), auto-spec (automated planning with manual implementation), or full-auto
 
 **Real-World Use Case:** Developer starts implementing a complex authentication system. After 2 hours, hits Claude's chat limit at task 28 of 47. Next day, runs `/speckitadv.resume`, and work continues from task 29 with full context—no rework, no confusion.

@@ -16,13 +16,14 @@ The **Orchestrator** workflow simplifies the entire spec-driven development proc
 
 Run the entire workflow from feature description to implementation with one command.
 
-### 2. Artifact-Based Progress Detection
+### 2. State-Based Progress Detection
 
-The orchestrator tracks progress via artifacts in the feature directory (`specs/{feature}/`), enabling:
+The orchestrator tracks progress via `state.json` in the feature directory (`specs/{feature}/.state/state.json`), enabling:
 
-- Resumption after chat token limits
-- Cross-session continuity
-- Progress tracking from existing files (spec.md, plan.md, tasks.md)
+- Exact stage-level resumption after chat token limits
+- Seamless switching between orchestrator and individual commands
+- Cross-session continuity with deterministic behavior
+- Resume at exact point (no duplicate work, no missed work)
 
 ### 3. Flexible Execution Modes
 
@@ -116,19 +117,21 @@ flowchart LR
 
 Detects progress from artifacts, shows status (e.g., 28/47 tasks), identifies next task, and continues from exact stopping point.
 
-## Artifact-Based Progress Detection
+## State-Based Progress Detection
 
-The orchestrator detects progress from artifacts in the feature directory:
+The orchestrator detects progress from `state.json` in the feature directory:
 
 ```text
 specs/001-user-auth/
-├── spec.md          # Indicates specify phase complete
-├── plan.md          # Indicates plan phase complete
-├── tasks.md         # Indicates tasks phase complete (with checkboxes for progress)
-└── analysis.md      # Indicates analyze phase complete (optional)
+├── .state/
+│   └── state.json     # Workflow state (maintained by CLI)
+├── spec.md            # Created by specify phase
+├── plan.md            # Created by plan phase
+├── tasks.md           # Created by tasks phase
+└── analysis.md        # Created by analyze phase (optional)
 ```
 
-Phase is determined by which artifacts exist. Task progress within `implement` phase is tracked via checkboxes in `tasks.md`.
+The CLI reads `state.json` to determine exact workflow and stage. This provides deterministic behavior across all AI models and seamless interoperability between orchestrator and individual commands.
 
 ## When to Use Orchestrator vs Individual Commands
 

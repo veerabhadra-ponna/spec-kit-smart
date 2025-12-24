@@ -1,6 +1,6 @@
 # AI Agent Guidelines
 
-**Version:** 3.2
+**Version:** 3.3
 
 ---
 
@@ -140,8 +140,14 @@ speckitadv plan     # Auto-detects feature folder and starts at correct stage
 | `analyze-project` | `.analysis/{project}-{timestamp}/state.json` | Folder-based state |
 | `constitution` | `memory/constitution.md` | File existence check only |
 | `specify`, `plan`, `tasks`, `implement`, `clarify`, `checklist` | `specs/{feature}/.state/state.json` | Single state file per feature |
+| `orchestrate`, `resume` | `specs/{feature}/.state/state.json` | Uses same state as individual commands |
 
 **Auto-Detection:** For feature-scoped commands (stages 3+), both stage and feature directory are auto-detected from state. For analyze-project, stage and analysis directory are auto-detected. Just run `speckitadv <command>` without args!
+
+**Orchestration Interoperability:** The `/speckitadv.orchestrate` and `/speckitadv.resume` commands use the **same state.json** as individual commands. This provides:
+- Seamless switching between orchestrated and manual workflows
+- Resume at exact stage whether user used orchestrator or individual commands
+- Deterministic behavior - CLI reads state.json, not AI parsing files
 
 **Early Stages (1-2):** Since stages 1-2 don't persist state, inputs collected in stage 2 (like `--feature` and `--jira` for specify) must be explicitly passed to stage 3. The NEXT command in stage 2 prompts will instruct you to include these values.
 

@@ -25,7 +25,7 @@ command: speckitadv check --json
 You are an **experienced engineering manager** who orchestrates the complete spec-driven development workflow. You excel at:
 
 - **Managing complex workflows** with multiple phases and dependencies
-- **Tracking progress** through artifact-based detection
+- **Tracking progress** through state.json-based detection
 - **Making smart decisions** about when to proceed vs when to pause for user input
 - **Recovering from errors** gracefully and providing clear guidance
 - **Balancing automation with control** - knowing when to ask vs when to proceed
@@ -33,7 +33,7 @@ You are an **experienced engineering manager** who orchestrates the complete spe
 **Your quality standards:**
 
 - Every phase transition produces explicit artifacts
-- Progress is tracked through artifact existence
+- Progress is tracked through state.json (maintained by each workflow)
 - Progress is clearly communicated to the user
 - Errors are handled with actionable recovery steps
 - User maintains control over the workflow pace
@@ -114,47 +114,62 @@ If user input contains multiple components, you will pass the appropriate extrac
 
 ## Workflow Progress Detection
 
-### Artifact-Based Phase Detection
+### State-Based Phase Detection
 
-Progress is tracked by detecting artifacts in the feature directory (`specs/{feature}/`):
+Progress is tracked via `{feature_dir}/.state/state.json`, which is maintained by each feature-scoped prompt (specify, plan, tasks, implement). This provides:
 
-| Phase | Artifact | Detected By |
-|-------|----------|-------------|
-| Constitution | `memory/constitution.md` | File exists |
-| Specify | `{feature_dir}/spec.md` | File exists |
-| Clarify | `{feature_dir}/clarifications.md` | File exists (optional) |
-| Plan | `{feature_dir}/plan.md` | File exists |
-| Tasks | `{feature_dir}/tasks.md` | File exists |
-| Analyze | `{feature_dir}/analysis.md` | File exists (optional) |
-| Implement | Source files modified | Git diff or task completion |
+- **Exact stage tracking** - Know precisely which stage within each phase is complete
+- **Seamless interoperability** - Works the same whether user used orchestrator or individual commands
+- **Resume at exact point** - No duplicate work, no missed work
 
-### Progress Detection
+| Phase | State File | Key Fields |
+|-------|------------|------------|
+| Constitution | `memory/constitution.md` | File exists (no state file) |
+| Specify | `{feature_dir}/.state/state.json` | `workflow: "specify"`, `stage`, `stages_complete` |
+| Clarify | `{feature_dir}/.state/state.json` | `workflow: "clarify"`, `stage`, `stages_complete` |
+| Plan | `{feature_dir}/.state/state.json` | `workflow: "plan"`, `stage`, `stages_complete` |
+| Tasks | `{feature_dir}/.state/state.json` | `workflow: "tasks"`, `stage`, `stages_complete` |
+| Analyze | `{feature_dir}/.state/state.json` | `workflow: "analyze"`, `stage`, `stages_complete` |
+| Implement | `{feature_dir}/.state/state.json` | `workflow: "implement"`, `stage`, `tasks_completed` |
+
+### Progress Detection via CLI
+
+Use the CLI to get current state (deterministic, consistent across models):
 
 ```bash
-# Detect completed phases by checking artifact existence
-constitution_done=$([ -f memory/constitution.md ] && echo "true" || echo "false")
-specify_done=$([ -f "$feature_dir/spec.md" ] && echo "true" || echo "false")
-clarify_done=$([ -f "$feature_dir/clarifications.md" ] && echo "true" || echo "false")
-plan_done=$([ -f "$feature_dir/plan.md" ] && echo "true" || echo "false")
-tasks_done=$([ -f "$feature_dir/tasks.md" ] && echo "true" || echo "false")
-analyze_done=$([ -f "$feature_dir/analysis.md" ] && echo "true" || echo "false")
+# Get current workflow state from CLI
+speckitadv check --json
+
+# Example output:
+# {
+#   "feature_dir": "specs/001-user-auth",
+#   "current_workflow": "plan",
+#   "current_stage": 3,
+#   "workflow_complete": false,
+#   "stages_complete": ["1", "2"],
+#   "constitution_established": true
+# }
 ```
 
-### Determine Current Phase
+### Determine Current Phase via CLI
+
+The CLI auto-detects current phase and stage:
 
 ```bash
-# Find first incomplete phase
-if [ "$constitution_done" = "false" ]; then
-  current_phase="constitution"
-elif [ "$specify_done" = "false" ]; then
-  current_phase="specify"
-elif [ "$plan_done" = "false" ]; then
-  current_phase="plan"
-elif [ "$tasks_done" = "false" ]; then
-  current_phase="tasks"
-else
-  current_phase="implement"
-fi
+# Check workflow status
+speckitadv check --json
+
+# The CLI reads state.json and returns:
+# - current_workflow: which workflow is active (specify, plan, tasks, implement)
+# - current_stage: which stage within that workflow
+# - workflow_complete: whether to proceed to next workflow
+# - constitution_established: whether constitution has been set up
+
+# To resume a specific workflow at its current stage:
+speckitadv specify   # CLI auto-detects stage from state.json
+speckitadv plan      # CLI auto-detects stage from state.json
+speckitadv tasks     # CLI auto-detects stage from state.json
+speckitadv implement # CLI auto-detects stage from state.json
 ```
 
 ## Execution Flow
@@ -706,26 +721,24 @@ echo "✓ Workflow completed successfully"
 
 When invoked with `--resume` or when resuming existing work:
 
-1. **Detect feature directory and progress:**
+1. **Detect feature directory and progress via CLI:**
 
    ```bash
-   # Find most recent feature directory
-   feature_dir=$(ls -td specs/*/ 2>/dev/null | head -1)
-   if [ -z "$feature_dir" ]; then
-     echo "ERROR: No feature directory found. Nothing to resume."
-     exit 1
-   fi
+   # Use CLI to get current state (deterministic behavior)
+   speckitadv check --json
 
-   # Detect current phase from artifacts
-   if [ ! -f "$feature_dir/spec.md" ]; then
-     current_phase="specify"
-   elif [ ! -f "$feature_dir/plan.md" ]; then
-     current_phase="plan"
-   elif [ ! -f "$feature_dir/tasks.md" ]; then
-     current_phase="tasks"
-   else
-     current_phase="implement"
-   fi
+   # CLI returns:
+   # {
+   #   "feature_dir": "specs/001-user-auth",
+   #   "current_workflow": "implement",
+   #   "current_stage": 15,
+   #   "workflow_complete": false,
+   #   "stages_complete": ["1", "2", "3", ...],
+   #   "constitution_established": true
+   # }
+
+   # If no feature directory found, CLI returns error:
+   # { "error": "No feature directory found. Nothing to resume." }
    ```
 
 1. **Display resume summary:**
@@ -983,8 +996,8 @@ The orchestrator simply chains them together with state management.
       DONE
 
   ┌─────────────────────────────────────────┐
-  │  Progress detected via artifacts in:    │
-  │  specs/{feature}/                       │
+  │  Progress tracked in state.json:        │
+  │  specs/{feature}/.state/state.json      │
   │                                         │
   │  Resume with: /speckitadv.resume        │
   └─────────────────────────────────────────┘
@@ -997,7 +1010,8 @@ The orchestrator simply chains them together with state management.
 The orchestrator provides:
 
 - ✅ **Single-command workflow**: One entry point for entire pipeline
-- ✅ **Artifact-based progress**: Resume from any phase via artifact detection
+- ✅ **State-based progress**: Resume from exact stage via `{feature_dir}/.state/state.json`
+- ✅ **Seamless interoperability**: Works identically whether user used orchestrator or individual commands
 - ✅ **Flexible control**: Interactive, auto-spec, or full-auto modes
 - ✅ **Error recovery**: Graceful handling with clear recovery paths
 - ✅ **Progress visibility**: Real-time phase and task tracking
