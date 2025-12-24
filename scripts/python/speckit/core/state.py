@@ -195,10 +195,11 @@ class FeatureStateManager:
         prompt_state.current_stage = stage
         prompt_state.status = status
 
+        # Only set timestamps when absent to preserve original timing for audit fidelity
         if status == "in_progress" and prompt_state.started is None:
             prompt_state.started = datetime.now().isoformat()
 
-        if status == "completed":
+        if status == "completed" and prompt_state.completed is None:
             prompt_state.completed = datetime.now().isoformat()
 
         if artifacts is not None:

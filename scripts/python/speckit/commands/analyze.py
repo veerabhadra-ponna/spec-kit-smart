@@ -116,8 +116,6 @@ def run_analyze_project(
     state_manager = None
     state = None
 
-    import json
-
     if analysis_dir:
         analysis_dir_path = Path(analysis_dir)
         state_manager = AnalysisStateManager(analysis_dir_path)
@@ -333,7 +331,15 @@ Run the following command to begin:""",
     # IMPORTANT: Only complete if it's a DIFFERENT stage (not re-running same stage)
     # Complete ALL lingering in_progress stages for self-healing consistency
     current_stage_id = STAGE_MAP.get(stage, f"stage_{stage}")
-    current_state = state_manager.load()
+    try:
+        current_state = state_manager.load()
+    except json.JSONDecodeError as e:
+        emit_error(
+            "Corrupted state file",
+            f"Analysis state file is corrupted: {e}",
+            recovery_cmd=f"rm {analysis_dir_path}/state.json && speckitadv analyze-project --stage=1",
+        )
+        return
     for stage_id, stage_info in current_state.stages.items():
         if stage_info.get("status") == "in_progress" and stage_id != current_stage_id:
             state_manager.update_stage(
