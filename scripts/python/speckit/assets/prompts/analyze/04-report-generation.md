@@ -109,7 +109,7 @@ fi
 ```bash
 # Check for checkpoint markers
 
-ls .analysis/.checkpoints/
+ls {analysis_dir}/
 
 ```
 
@@ -117,7 +117,7 @@ ls .analysis/.checkpoints/
 
 **IF** analysis-report.md exists AND is incomplete:
 
-1. Read `.analysis/.checkpoints/` directory
+1. Read `{analysis_dir}/` directory
 2. Identify last completed checkpoint (e.g., `phase-4-complete.json`)
 3. Display resume message:
 
@@ -186,7 +186,7 @@ Complete sections:
    - Content: Complete Phase 1 sections (1.1-1.5)
 
 2. **Create checkpoint marker**:
-   - Create directory: `.analysis/.checkpoints/` (if not exists)
+   - Create directory: `{analysis_dir}/` (if not exists)
    - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
@@ -635,7 +635,7 @@ List which phases or quality checks failed verification.
 
 - **Action**: Regenerate ONLY the missing phases
 - **Method**:
-  1. Check `.analysis/.checkpoints/` to identify last completed phase
+  1. Check `{analysis_dir}/` to identify last completed phase
   2. Resume generation from first missing phase
   3. Use Edit tool (str_replace) to append missing phases to existing file
   4. Create checkpoint markers for newly generated phases

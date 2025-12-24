@@ -120,7 +120,7 @@ For Full Application Modernization, you MUST generate TWO separate functional sp
    - Content: Complete sections 1-3
 
 2. **Create checkpoint marker**:
-   - Create directory: `.analysis/.checkpoints/` (if not exists)
+   - Create directory: `{analysis_dir}/` (if not exists)
    - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
@@ -416,7 +416,7 @@ BOTH FUNCTIONAL SPECS COMPLETE
    - Content: Complete sections 1-3
 
 2. **Create checkpoint marker**:
-   - Create directory: `.analysis/.checkpoints/` (if not exists)
+   - Create directory: `{analysis_dir}/` (if not exists)
    - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
@@ -706,7 +706,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
    - Content: Complete sections 1-3
 
 2. **Create checkpoint marker**:
-   - Create directory: `.analysis/.checkpoints/` (if not exists)
+   - Create directory: `{analysis_dir}/` (if not exists)
    - Write JSON file: `{analysis_dir}/state.json`
    - Content:
 
@@ -867,7 +867,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
   - [ ] tasks-prompt.md
   - [ ] implement-prompt.md
 - [ ] All artifacts validated (no placeholders, no TODOs)
-- [ ] All checkpoint files created in `.analysis/.checkpoints/`
+- [ ] All checkpoint files created in `{analysis_dir}/`
 
 ### For Scope = B (Cross-Cutting Concern)
 
@@ -875,7 +875,7 @@ Generate 4 stage prompt files for Spec Kit workflow:
 - [ ] concern-migration-plan.md complete (all 3 chunks)
 - [ ] rollback-procedure.md generated
 - [ ] All artifacts validated (no placeholders, no TODOs)
-- [ ] All checkpoint files created in `.analysis/.checkpoints/`
+- [ ] All checkpoint files created in `{analysis_dir}/`
 
 **IF any checkbox is unchecked, STOP and fix the issue before proceeding.**
 

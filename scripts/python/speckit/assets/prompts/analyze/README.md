@@ -2,7 +2,7 @@
 
 ## Overview
 
-This directory contains the **chained prompt workflow** for the `analyze-project` command. The analysis is broken into **25 focused sub-prompts** organized across 6 stages, with state management and checkpoint verification between them.
+This directory contains the **chained prompt workflow** for the `analyze-project` command. The analysis is broken into **25 focused sub-prompts** organized across 6 stages, with state management and state verification between them.
 
 ## Benefits
 
@@ -33,16 +33,16 @@ prompts   prompts       prompts     prompts    prompts     prompts
 Original staged prompts (400-890 lines each) suffered from:
 1. **Instruction Density Overload** - Too many instructions competed for AI attention
 2. **Missing STOP Enforcement** - AI would skip past wait points
-3. **No Checkpoint Verification** - No write → read → verify pattern
+3. **No state Verification** - No write → read → verify pattern
 4. **CRITICAL Keyword Overuse** - 47 uses diluted importance
 5. **Inconsistent Instruction Hierarchy** - No RFC 2119 keyword usage
 
 Sub-prompts (~100-200 lines each) solve these issues with:
 - **Focused Context** - Each sub-prompt has one clear purpose
 - **Visual STOP Markers** - `⏸️ [STOP: ACTION_NAME]` forces waits
-- **Checkpoint Verification** - Write, read, validate pattern
+- **state Verification** - Write, read, validate pattern
 - **RFC 2119 Keywords** - MUST/SHOULD/MAY hierarchy
-- **Consistent Structure** - Pre-check, execute, checkpoint, next
+- **Consistent Structure** - Pre-check, execute, state, next
 
 ## Stage Files
 
@@ -129,13 +129,13 @@ These are kept for reference but execution uses sub-prompts:
 ## State Management
 
 Each sub-prompt:
-1. **Pre-checks** previous checkpoint from `.analysis/.checkpoints/{prev}-complete.json`
+1. **Pre-checks** previous state from `{analysis_dir}/{prev}-complete.json`
 2. **Executes** its specific task with focused attention
-3. **Outputs** completion marker and creates checkpoint
-4. **Saves** to `.analysis/.checkpoints/{current}-complete.json`
+3. **Outputs** completion marker and creates state
+4. **Saves** to `{analysis_dir}/{current}-complete.json`
 5. **Proceeds** to next sub-prompt
 
-### Checkpoint Files
+### state Files
 
 ```text
 .analysis/
@@ -148,7 +148,7 @@ Each sub-prompt:
 │   ├── analyze-project-04-report.json                    # Stage 4 output
 │   ├── analyze-project-05-artifacts.json                 # Stage 5 output
 │   └── analyze-project-06-scope-artifacts.json           # Stage 6 output
-├── .checkpoints/                         # Sub-prompt checkpoints (NEW in v3.1)
+├── state.json (tracked by CLI)                         # Sub-prompt states (NEW in v3.1)
 │   ├── 01a-init-complete.json
 │   ├── 01b-inputs-complete.json
 │   ├── 01c-script-complete.json
@@ -178,11 +178,11 @@ Each sub-prompt:
 FOR each sub-prompt in stage order:
     1. AI uses Read tool → Load `.specify/prompts/analyze/{sub-prompt}.md`
     2. AI reads ENTIRE sub-prompt
-    3. AI runs PRE-CHECK (verify previous checkpoint)
+    3. AI runs PRE-CHECK (verify previous state)
     4. AI executes ALL instructions in sequence
     5. AI STOPS at each ⏸️ marker and waits
-    6. AI creates checkpoint file
-    7. AI verifies checkpoint (read back)
+    6. AI creates state file
+    7. AI verifies state (read back)
     8. AI proceeds to next sub-prompt
 ENDFOR
 
@@ -208,11 +208,11 @@ AI MUST:
 3. Verify output before proceeding
 4. DO NOT skip or rush past STOP markers
 
-### Checkpoint Verification Pattern
+### state Verification Pattern
 
 ```text
-1. WRITE checkpoint JSON to .analysis/.checkpoints/{name}.json
-2. READ checkpoint file back
+1. WRITE state JSON to {analysis_dir}/{name}.json
+2. READ state file back
 3. VERIFY JSON is parseable and status = "complete"
 4. IF failed: retry once, then STOP and report error
 
@@ -222,23 +222,23 @@ AI MUST:
 
 **IF** analysis is interrupted:
 
-1. **List checkpoints**:
+1. **List states**:
 
    ```bash
-   ls -la .analysis/.checkpoints/
+   ls -la {analysis_dir}/
 
    ```
 
-2. **Find last complete checkpoint**:
+2. **Find last complete state**:
 
    ```bash
    # Look for most recent *-complete.json
-   ls -lt .analysis/.checkpoints/*-complete.json | head -1
+   ls -lt {analysis_dir}/*-complete.json | head -1
 
    ```
 
 3. **Resume from next sub-prompt**:
-   - If last checkpoint is `02c-config-complete.json`, resume from `02d-test-audit.md`
+   - If last state is `02c-config-complete.json`, resume from `02d-test-audit.md`
 
 **Example**:
 
@@ -284,18 +284,18 @@ Present prompt above. Do NOT proceed until user provides response.
 
 ```
 
-### 3. Checkpoint Verification
+### 3. state Verification
 
 Every sub-prompt ends with:
 
 ```markdown
-### Verify Checkpoint
+### Verify state
 
-1. Read `.analysis/.checkpoints/{stage}-complete.json`
+1. Read `{analysis_dir}/{stage}-complete.json`
 2. Validate JSON is parseable
 3. Confirm `status` = "complete"
 
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
+⏸️ **[STOP: state_VERIFY]**
 
 ```
 
@@ -313,8 +313,8 @@ Every sub-prompt follows:
 ```markdown
 ---
 stage: {stage_name}
-requires: {previous_checkpoint}
-outputs: {this_checkpoint}
+requires: {previous_state}
+outputs: {this_state}
 version: 3.1.0
 next: {next_sub_prompt}
 ---
@@ -323,7 +323,7 @@ next: {next_sub_prompt}
 
 ## Pre-Check
 
-{Verify previous checkpoint}
+{Verify previous state}
 
 ## Task
 
@@ -331,7 +331,7 @@ next: {next_sub_prompt}
 
 ⏸️ **[STOP: ACTION]**
 
-## Checkpoint
+## state
 
 {Write, read, verify}
 
@@ -354,7 +354,7 @@ Each sub-prompt has ~100-200 lines vs 400-890 lines, giving AI:
 
 Visual markers `⏸️` are highly salient to AI models, improving wait compliance from 50% to 98%.
 
-### 3. Checkpoint Recovery
+### 3. state Recovery
 
 Write → Read → Verify pattern ensures:
 - State is actually persisted
@@ -363,14 +363,14 @@ Write → Read → Verify pattern ensures:
 
 ### 4. Progressive Context
 
-Each sub-prompt loads only what it needs from previous checkpoints, avoiding context overload.
+Each sub-prompt loads only what it needs from previous states, avoiding context overload.
 
 ## Testing
 
 ### Unit Tests
 
 ```bash
-# Test checkpoint functions
+# Test state functions
 
 ./tests/integration-test-chain.sh
 
@@ -380,7 +380,7 @@ Each sub-prompt loads only what it needs from previous checkpoints, avoiding con
 
 Before deployment, verify:
 - [ ] All 25 sub-prompts have STOP markers
-- [ ] All sub-prompts have checkpoint verification
+- [ ] All sub-prompts have state verification
 - [ ] All sub-prompts have pre-check for previous stage
 - [ ] Orchestrator references correct paths
 - [ ] Templates reference correct sections
