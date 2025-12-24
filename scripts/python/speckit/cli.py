@@ -341,15 +341,48 @@ def checklist(
 @app.command("orchestrate")
 def orchestrate(
     description: Optional[str] = typer.Argument(None, help="Feature description to orchestrate"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Resume from specific feature folder"),
 ) -> None:
     """
     Orchestrate complete spec-driven workflow.
 
     Runs the entire workflow from constitution to implementation.
-    Use 'resume' to continue after interruptions.
+    Uses folder-based state to track progress across prompts.
     """
+    from pathlib import Path
+    from speckit.core.state_v2 import FeatureStateManager, resolve_feature_folder
     from speckit.core.prompts import get_prompt_fragment
 
+    # If resuming from existing feature
+    if feature_dir or not description:
+        try:
+            folder_path = resolve_feature_folder(feature_dir, Path("specs"))
+            state_manager = FeatureStateManager(folder_path)
+
+            if state_manager.exists():
+                state = state_manager.load()
+                prompt, stage = state_manager.get_next_action()
+
+                if prompt:
+                    console.print(f"[bold]Resuming orchestration for:[/bold] {folder_path.name}")
+                    console.print(f"[bold]Next action:[/bold] {prompt} stage {stage}")
+                    console.print("")
+                    console.print(f"Run: speckitadv {prompt} --stage={stage} --feature-dir={folder_path}")
+                    return
+                else:
+                    console.print(f"[green]✓[/green] Feature {folder_path.name} is complete!")
+                    return
+        except FileNotFoundError:
+            if feature_dir:
+                console.print(f"[red]Error:[/red] Feature folder not found: {feature_dir}")
+                raise typer.Exit(1)
+            # No existing feature - need description
+            if not description:
+                console.print("[yellow]No feature in progress. Please provide a description:[/yellow]")
+                console.print("  speckitadv orchestrate 'your feature description'")
+                raise typer.Exit(1)
+
+    # New orchestration - emit prompt fragment
     fragment = get_prompt_fragment("orchestrate", "")
     if description:
         fragment = fragment.replace("$ARGUMENTS", description)
@@ -362,16 +395,70 @@ def orchestrate(
 
 
 @app.command("resume")
-def resume() -> None:
+def resume(
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Resume specific feature folder"),
+) -> None:
     """
     Resume workflow from saved state.
 
-    Restores context after interruptions, chat limits, or shutdowns.
+    Uses folder-based state to find the current position and resume.
     """
-    from speckit.core.prompts import get_prompt_fragment
+    from pathlib import Path
+    from speckit.core.state_v2 import FeatureStateManager, resolve_feature_folder
 
-    fragment = get_prompt_fragment("resume", "")
-    console.print(fragment)
+    try:
+        folder_path = resolve_feature_folder(feature_dir, Path("specs"))
+    except FileNotFoundError:
+        console.print("[red]Error:[/red] No feature folder found to resume.")
+        console.print("")
+        console.print("To start a new feature:")
+        console.print("  speckitadv create-feature 'your feature description'")
+        raise typer.Exit(1)
+
+    state_manager = FeatureStateManager(folder_path)
+
+    if not state_manager.exists():
+        console.print(f"[red]Error:[/red] No state found in {folder_path}")
+        console.print("")
+        console.print("This folder exists but has no state file.")
+        console.print("You may need to run create-feature first.")
+        raise typer.Exit(1)
+
+    state = state_manager.load()
+    prompt, stage = state_manager.get_next_action()
+
+    # Show resume summary
+    console.print("")
+    console.print("╔═══════════════════════════════════════════════════╗")
+    console.print("║  RESUME SUMMARY                                   ║")
+    console.print("╚═══════════════════════════════════════════════════╝")
+    console.print("")
+    console.print(f"[bold]Feature:[/bold] {state.feature.short_name}")
+    console.print(f"[bold]Description:[/bold] {state.feature.description}")
+    console.print(f"[bold]Folder:[/bold] {folder_path}")
+    console.print("")
+
+    # Show prompt status
+    console.print("[bold]Prompt Status:[/bold]")
+    for p in ["specify", "plan", "tasks", "implement"]:
+        p_state = getattr(state, p)
+        status_icon = {"pending": "⏳", "in_progress": "🔄", "completed": "✓"}
+        icon = status_icon.get(p_state.status, "?")
+        stage_info = f" (stage {p_state.current_stage})" if p_state.current_stage else ""
+        console.print(f"  {icon} {p}: {p_state.status}{stage_info}")
+    console.print("")
+
+    if prompt:
+        console.print(f"[bold]Next Action:[/bold] {prompt} stage {stage}")
+        console.print("")
+        console.print(f"Run: speckitadv {prompt} --stage={stage} --feature-dir={folder_path}")
+    else:
+        console.print("[green]✓ All prompts completed![/green]")
+        console.print("")
+        console.print("Next steps:")
+        console.print("  1. Review implementation")
+        console.print("  2. Run tests")
+        console.print("  3. Create pull request")
 
 
 # ============================================================================
