@@ -14,8 +14,7 @@ This folder contains the documentation source files for Spec Kit Smart.
 | `reference/cli-reference.md` | CLI command documentation |
 | `reference/troubleshooting.md` | Common issues and solutions |
 | `workflows/orchestrator.md` | Automated workflow execution |
-| `development/` | Historical development docs |
-| `archived/` | Completed planning documents |
+| `archived/` | Historical planning documents |
 
 ## Building Locally
 

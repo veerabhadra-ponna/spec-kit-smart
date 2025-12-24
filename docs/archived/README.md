@@ -46,6 +46,31 @@ Implementation plan for folder-based state management including:
 
 **Why Archived:** State simplification fully implemented in `core/state.py`. Folder-based state management is now the production approach.
 
+### engineering-review.md
+
+**Archived:** 2025-12-24
+**Status:** HISTORICAL
+
+Senior engineering review of reverse engineering feature (pre-Python CLI):
+
+- Critical issues identified (4 critical, 8 high, 12 medium, 6 low)
+- Architectural concerns and recommendations
+- Implementation priorities
+
+**Why Archived:** Review predates Python CLI. Issues addressed in current implementation.
+
+### implementation-roadmap.md
+
+**Archived:** 2025-12-24
+**Status:** HISTORICAL
+
+Original implementation roadmap for bash/PowerShell scripts:
+
+- 5 phases of development (16-20 weeks)
+- Phase breakdowns and deliverables
+
+**Why Archived:** Superseded by Python CLI implementation.
+
 ## Related Current Documentation
 
 - [README.md](../../README.md) - Current user documentation
