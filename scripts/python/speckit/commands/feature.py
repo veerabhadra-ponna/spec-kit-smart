@@ -16,7 +16,7 @@ from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
 
-from speckit.core.state_v2 import FeatureMetadata, FeatureStateManager
+from speckit.core.state import FeatureMetadata, FeatureStateManager
 from speckit.core.utils import find_repo_root
 
 console = Console()

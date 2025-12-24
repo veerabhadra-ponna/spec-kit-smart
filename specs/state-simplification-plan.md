@@ -18,7 +18,7 @@ Replace the current chain ID system with a simpler, folder-based state managemen
 
 ### 1.1 New State Schema
 
-**File:** `scripts/python/speckit/core/state_v2.py`
+**File:** `scripts/python/speckit/core/state.py`
 
 ```python
 @dataclass
@@ -418,7 +418,7 @@ def run_orchestrate_command(folder: str = None):
 
 All 7 phases have been completed:
 
-1. **Phase 1-2:** Foundation (`state_v2.py`, `feature.py`) ✅
+1. **Phase 1-2:** Foundation (`state.py`, `feature.py`) ✅
 2. **Phase 3:** Constitution simplification ✅
 3. **Phase 4:** Feature-scoped commands ✅
 4. **Phase 5:** Analyze-project simplification ✅

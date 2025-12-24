@@ -15,7 +15,7 @@ from typing import Optional
 
 from speckit.core.emit import emit_stage, emit_chunk, emit_error
 from speckit.core.prompts import get_prompt_fragment, render_prompt
-from speckit.core.state_v2 import AnalysisStateManager, find_latest_analysis_folder
+from speckit.core.state import AnalysisStateManager, find_latest_analysis_folder
 
 
 # Stage mapping: numeric stage -> fragment identifier

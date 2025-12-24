@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Optional
 
 from speckit.core.utils import safe_json_loads, safe_json_dumps
+from speckit.core.prompts import get_stage_order
 
 
 # Schema version for future migrations
@@ -89,8 +90,10 @@ class FeatureState:
     schema_version: int = SCHEMA_VERSION
     feature: FeatureMetadata = field(default_factory=lambda: FeatureMetadata("", ""))
     specify: PromptState = field(default_factory=PromptState)
+    clarify: PromptState = field(default_factory=PromptState)
     plan: PromptState = field(default_factory=PromptState)
     tasks: PromptState = field(default_factory=PromptState)
+    checklist: PromptState = field(default_factory=PromptState)
     implement: PromptState = field(default_factory=PromptState)
 
     def to_dict(self) -> dict:
@@ -99,8 +102,10 @@ class FeatureState:
             "schema_version": self.schema_version,
             "feature": self.feature.to_dict(),
             "specify": self.specify.to_dict(),
+            "clarify": self.clarify.to_dict(),
             "plan": self.plan.to_dict(),
             "tasks": self.tasks.to_dict(),
+            "checklist": self.checklist.to_dict(),
             "implement": self.implement.to_dict(),
         }
 
@@ -111,8 +116,10 @@ class FeatureState:
             schema_version=data.get("schema_version", SCHEMA_VERSION),
             feature=FeatureMetadata.from_dict(data.get("feature", {})),
             specify=PromptState.from_dict(data.get("specify", {})),
+            clarify=PromptState.from_dict(data.get("clarify", {})),
             plan=PromptState.from_dict(data.get("plan", {})),
             tasks=PromptState.from_dict(data.get("tasks", {})),
+            checklist=PromptState.from_dict(data.get("checklist", {})),
             implement=PromptState.from_dict(data.get("implement", {})),
         )
 
@@ -242,7 +249,10 @@ class FeatureStateManager:
                 return (prompt, prompt_state.current_stage)
 
             if prompt_state.status == "pending":
-                return (prompt, "01")
+                # Get actual first stage ID from fragment order
+                stages = get_stage_order(prompt)
+                first_stage = stages[0] if stages else "01-initialization"
+                return (prompt, first_stage)
 
         return (None, None)
 

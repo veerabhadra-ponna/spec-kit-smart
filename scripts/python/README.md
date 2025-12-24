@@ -140,7 +140,7 @@ speckit/
 │   └── feature.py      # create-feature helper
 ├── core/
 │   ├── emit.py         # Stage emission system
-│   ├── state_v2.py     # Folder-based state management
+│   ├── state.py        # Folder-based state management
 │   ├── prompts.py      # Prompt fragment loading + template injection
 │   ├── stages.py       # Generic stage handler
 │   └── ...

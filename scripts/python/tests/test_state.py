@@ -1,10 +1,10 @@
-"""Tests for speckit.core.state_v2 module (simplified state management)."""
+"""Tests for speckit.core.state module (simplified state management)."""
 
 import json
 import pytest
 from pathlib import Path
 
-from speckit.core.state_v2 import (
+from speckit.core.state import (
     FeatureMetadata,
     FeatureState,
     FeatureStateManager,
@@ -197,7 +197,8 @@ class TestFeatureStateManager:
 
         prompt, stage = manager.get_next_action()
         assert prompt == "plan"
-        assert stage == "01"
+        # Now returns actual first stage ID from get_stage_order
+        assert stage == "01-initialization"
 
     def test_get_prompt_context(self, tmp_path):
         """Should return context for prompt."""

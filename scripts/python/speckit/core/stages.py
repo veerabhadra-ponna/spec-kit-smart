@@ -5,7 +5,7 @@ Provides a generic handler for commands that use the fragment system.
 Each command can use this to load and emit its staged prompts.
 
 Feature-scoped commands (specify, plan, tasks, implement) use FeatureStateManager
-from state_v2 for simplified folder-based state management.
+from state module for simplified folder-based state management.
 
 The folder path serves as the implicit chain ID - no abstract chain IDs needed.
 """
@@ -21,7 +21,7 @@ from speckit.core.prompts import (
     render_prompt,
     get_stage_order,
 )
-from speckit.core.state_v2 import FeatureStateManager, resolve_feature_folder
+from speckit.core.state import FeatureStateManager, resolve_feature_folder
 
 console = Console()
 
@@ -219,6 +219,15 @@ def run_staged_command(
     else:
         next_cmd = None
 
+    # Emit the stage prompt
+    emit_stage(
+        stage_num=stage,
+        total_stages=total_stages,
+        title=title,
+        content=rendered,
+        next_cmd=next_cmd,
+    )
+
     # Check if this is the final stage
     if stage == total_stages:
         # Mark prompt as completed
@@ -232,14 +241,6 @@ def run_staged_command(
             message=f"{command.title()} workflow complete.",
             next_steps=_get_next_steps(command),
             artifacts=[str(feature_path)],
-        )
-    else:
-        emit_stage(
-            stage_num=stage,
-            total_stages=total_stages,
-            title=title,
-            content=rendered,
-            next_cmd=next_cmd,
         )
 
 

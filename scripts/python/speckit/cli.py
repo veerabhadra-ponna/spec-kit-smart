@@ -86,7 +86,7 @@ def analyze_project(
     from state when not provided. Only specify args for new workflows.
     """
     from speckit.commands.analyze import run_analyze_project
-    from speckit.core.state_v2 import find_latest_analysis_folder, AnalysisStateManager
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
 
     # Check if we're starting a new workflow (no existing state)
     has_existing_state = False
@@ -365,7 +365,7 @@ def orchestrate(
     Uses folder-based state to track progress across prompts.
     """
     from pathlib import Path
-    from speckit.core.state_v2 import FeatureStateManager, resolve_feature_folder
+    from speckit.core.state import FeatureStateManager, resolve_feature_folder
     from speckit.core.prompts import get_prompt_fragment
 
     # If resuming from existing feature
@@ -420,7 +420,7 @@ def resume(
     Uses folder-based state to find the current position and resume.
     """
     from pathlib import Path
-    from speckit.core.state_v2 import FeatureStateManager, resolve_feature_folder
+    from speckit.core.state import FeatureStateManager, resolve_feature_folder
 
     try:
         folder_path = resolve_feature_folder(feature_dir, Path("specs"))

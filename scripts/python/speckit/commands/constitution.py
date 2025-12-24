@@ -21,7 +21,7 @@ from rich.text import Text
 
 from speckit.core.emit import emit_stage, emit_error
 from speckit.core.prompts import get_prompt_fragment, render_prompt, get_stage_order
-from speckit.core.state_v2 import check_constitution_complete
+from speckit.core.state import check_constitution_complete
 
 console = Console()
 
