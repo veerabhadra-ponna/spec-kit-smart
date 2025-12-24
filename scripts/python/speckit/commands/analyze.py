@@ -327,9 +327,10 @@ Run the following command to begin:""",
         )
         return
 
-    # Complete any previous in_progress stage before starting new one
+    # Complete ALL previous in_progress stages before starting new one
     # This ensures stages are only marked complete AFTER work is done
     # IMPORTANT: Only complete if it's a DIFFERENT stage (not re-running same stage)
+    # Complete ALL lingering in_progress stages for self-healing consistency
     current_stage_id = STAGE_MAP.get(stage, f"stage_{stage}")
     current_state = state_manager.load()
     for stage_id, stage_info in current_state.stages.items():
@@ -338,7 +339,6 @@ Run the following command to begin:""",
                 stage=stage_id,
                 status="completed",
             )
-            break
 
     # Mark current stage as in_progress (not completed yet)
     # Stage will be marked complete when NEXT stage starts
@@ -428,8 +428,9 @@ def _emit_chunk_stage(
     chunk_content = _extract_chunk(fragment, chunk, total_chunks)
     rendered = render_prompt(chunk_content, context)
 
-    # On chunk 1, complete previous in_progress stage and mark current as in_progress
+    # On chunk 1, complete ALL previous in_progress stages and mark current as in_progress
     # IMPORTANT: Only complete if it's a DIFFERENT stage (not re-running same stage)
+    # Complete ALL lingering in_progress stages for self-healing consistency
     current_stage_id = STAGE_MAP.get(stage, f"stage_{stage}")
     if chunk == 1:
         current_state = state_manager.load()
@@ -439,7 +440,6 @@ def _emit_chunk_stage(
                     stage=stage_id,
                     status="completed",
                 )
-                break
         # Mark this chunked stage as in_progress
         state_manager.update_stage(
             stage=current_stage_id,
@@ -571,7 +571,7 @@ def _auto_detect_stage_from_state(state) -> Optional[int]:
     """
     Auto-detect the next stage from analysis state.
 
-    Uses state.current_stage_num and state.inputs.scope for deterministic behavior.
+    Uses state.stages_complete list and state.inputs.scope for deterministic behavior.
     Handles scope-aware branching:
     - Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
     - Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)

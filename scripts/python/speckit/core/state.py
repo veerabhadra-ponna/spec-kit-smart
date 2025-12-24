@@ -201,7 +201,7 @@ class FeatureStateManager:
         if status == "completed":
             prompt_state.completed = datetime.now().isoformat()
 
-        if artifacts:
+        if artifacts is not None:
             prompt_state.artifacts = artifacts
 
         self.save(state)
@@ -479,10 +479,13 @@ class AnalysisStateManager:
             state.stages[stage]["artifacts"] = artifacts
 
         # Capture timestamps for auditing and resume scenarios
+        # Only set timestamps when absent to preserve original timing
         if status == "in_progress":
-            state.stages[stage]["started"] = datetime.now().isoformat()
+            if "started" not in state.stages[stage] or state.stages[stage]["started"] is None:
+                state.stages[stage]["started"] = datetime.now().isoformat()
         elif status == "completed":
-            state.stages[stage]["completed"] = datetime.now().isoformat()
+            if "completed" not in state.stages[stage] or state.stages[stage]["completed"] is None:
+                state.stages[stage]["completed"] = datetime.now().isoformat()
 
         # Always update current stage tracking (not just in_progress)
         # This ensures get_context_for_prompt() returns correct values

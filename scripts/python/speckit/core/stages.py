@@ -10,6 +10,7 @@ from state module for simplified folder-based state management.
 The folder path serves as the implicit chain ID - no abstract chain IDs needed.
 """
 
+import json
 from pathlib import Path
 from typing import Optional
 
@@ -72,7 +73,16 @@ def run_staged_command(
 
     # Try to auto-detect stage from state if not provided
     if stage is None:
-        stage = _auto_detect_stage(command, feature_dir, stages)
+        try:
+            stage = _auto_detect_stage(command, feature_dir, stages)
+        except json.JSONDecodeError as e:
+            # State file is corrupted - show friendly error with recovery guidance
+            emit_error(
+                "Corrupted state file",
+                f"Feature state file is corrupted: {e}",
+                recovery_cmd=f"rm specs/<feature-dir>/.state/state.json && speckitadv {command} --stage=1",
+            )
+            return
 
     # Validate stage number
     if stage < 1 or stage > total_stages:
@@ -274,8 +284,8 @@ def _auto_detect_stage(
     except (AttributeError, KeyError):
         # Malformed state structure - start fresh
         return 1
-    # Note: JSONDecodeError is NOT caught here - let it bubble up
-    # to surface corruption errors (fail-fast behavior)
+    # Note: JSONDecodeError is NOT caught here - it bubbles up to
+    # run_staged_command which shows a friendly error with recovery guidance
 
     # Get current stage for this command from state
     prompt_state = getattr(state, command, None)
