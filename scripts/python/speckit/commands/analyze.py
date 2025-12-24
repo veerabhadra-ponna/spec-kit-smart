@@ -299,11 +299,11 @@ Run the following command to begin:""",
         status="completed",
         artifacts=[],
     )
-    # Store additional context in stage info
+    # Store additional context in stage info (use resolved values, not raw CLI args)
     state = state_manager.load()
     state.stages[f"stage_{stage}"]["scope"] = effective_scope
-    state.stages[f"stage_{stage}"]["context"] = context or ""
-    state.stages[f"stage_{stage}"]["concern_type"] = concern_type or ""
+    state.stages[f"stage_{stage}"]["context"] = effective_context
+    state.stages[f"stage_{stage}"]["concern_type"] = effective_concern_type
     state.stages[f"stage_{stage}"]["current_impl"] = resolved_current
     state.stages[f"stage_{stage}"]["target_impl"] = resolved_target
     state_manager.save(state)

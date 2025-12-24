@@ -240,14 +240,21 @@ class FeatureStateManager:
         """
         state = self.load()
 
-        prompt_order = ["specify", "plan", "tasks", "implement"]
+        # All prompts that can be in_progress (including optional ones)
+        all_prompts = ["specify", "clarify", "plan", "tasks", "checklist", "implement"]
 
-        for prompt in prompt_order:
+        # Main workflow prompts (checked for pending status)
+        main_workflow = ["specify", "plan", "tasks", "implement"]
+
+        # First, check ALL prompts for in_progress (resume interrupted work)
+        for prompt in all_prompts:
             prompt_state = getattr(state, prompt)
-
             if prompt_state.status == "in_progress":
                 return (prompt, prompt_state.current_stage)
 
+        # Then, check main workflow for pending (start next step)
+        for prompt in main_workflow:
+            prompt_state = getattr(state, prompt)
             if prompt_state.status == "pending":
                 # Get actual first stage ID from fragment order
                 stages = get_stage_order(prompt)

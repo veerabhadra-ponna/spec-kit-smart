@@ -660,7 +660,7 @@ def create_feature(
     """
     from speckit.commands.feature import run_create_feature
 
-    run_create_feature(
+    result = run_create_feature(
         description=description,
         jira=jira,
         short_name=short_name,
@@ -668,6 +668,10 @@ def create_feature(
         no_branch=no_branch,
         output_json=json_output,
     )
+
+    # Exit with non-zero code on failure
+    if not result.get("success", True):
+        raise typer.Exit(1)
 
 
 # ============================================================================
