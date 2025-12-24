@@ -2,7 +2,7 @@
 stage: file_analysis_phase2
 requires: 02a-category-scan complete
 outputs: deep_patterns
-version: 3.1.0
+version: 3.4.0
 next: 02c-config-analysis.md
 time_allocation: 40%
 ---
@@ -17,13 +17,22 @@ Focus on HIGH-PRIORITY areas with 60-80% file coverage. This is where detailed p
 
 ---
 
+## State Management
+
+The CLI provides all context via template variables. **Do not read state.json directly.**
+
+**Available template variables:**
+- `{project_path}`, `{analysis_dir}`, `{scope}`, `{context}`
+- `{concern_type}`, `{current_impl}`, `{target_impl}` (Scope B)
+
+---
+
 ## Pre-Check: Verify Previous Substage
 
-1. Read `{analysis_dir}/state.json`
-2. Confirm `status` = "complete"
-3. Load category patterns from Phase 1
+1. Verify `{analysis_dir}/category-patterns.json` exists (from Phase 1)
+2. Load category patterns for priority determination
 
-**IF not complete:** STOP - Return to 02a-category-scan.md
+**IF not complete:** STOP - Return to 02a-category-scan
 
 ---
 

@@ -2,7 +2,7 @@
 stage: script_execution
 requires: 01b-input-collection
 outputs: file_manifest_generated
-version: 3.3.0
+version: 3.4.0
 next: 02a-category-scan.md
 ---
 
@@ -11,6 +11,19 @@ next: 02a-category-scan.md
 ## Purpose
 
 Generate file manifest and detect technology stack for the project.
+
+---
+
+## State Management
+
+The CLI provides all context via template variables. **Do not read state.json directly.**
+
+**Available template variables:**
+- `{project_path}` - Project path to analyze
+- `{analysis_dir}` - Analysis folder path
+- `{scope}` - Analysis scope (A or B)
+- `{context}` - Additional context
+- `{concern_type}`, `{current_impl}`, `{target_impl}` - Scope B specific
 
 ---
 

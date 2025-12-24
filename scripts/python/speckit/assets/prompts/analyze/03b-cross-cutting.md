@@ -1,26 +1,9 @@
 ---
 stage: cross_cutting_analysis
-requires: analyze-project-02-file-analysis.json
-condition: state.analysis_scope == "B"
+requires: 02e-quality-gates
+condition: scope == "B"
 outputs: concern_state
-version: 1.0.0
----
-
-## ⚠️ MANDATORY: Read Agent Instructions First
-
-**BEFORE PROCEEDING:**
-
-1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
-2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
-3. Follow all AGENTS.md guidelines for the duration of this command execution
-4. These instructions override any conflicting default behaviors
-5. **DO NOT** forget or ignore these instructions as you work through tasks
-
-**Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
-
-**If AGENTS.md does not exist:** Proceed with default behavior.
-
+version: 3.4.0
 ---
 
 # Stage 3B: Cross-Cutting Concern Migration Analysis
@@ -31,20 +14,33 @@ For Cross-Cutting Concern Migration (scope = B), perform deep-dive analysis of t
 
 ---
 
-## Previous State
+## How Context Is Provided
 
-Load state from: `.analysis/.state/analyze-project-02-file-analysis.json`
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-Required fields:
-- `analysis_scope` must be "B"
-- `concern_details` - Concern type, current, and target implementations
-- `patterns_found` - Analysis patterns
-- `files_analyzed` - File analysis results
+Values available in this prompt (already substituted by CLI):
+- Project path, analysis directory, scope (must be "B"), context
+- Concern type, current implementation, target implementation
 
-Extract concern details:
-- `concern_type` - e.g., "Authentication/Authorization"
-- `current_implementation` - e.g., "Custom JWT with bcrypt"
-- `target_implementation` - e.g., "Okta"
+**Previous artifacts required:**
+- `{analysis_dir}/tech-stack.json` - Detected technologies
+- `{analysis_dir}/category-patterns.json` - Category patterns
+- `{analysis_dir}/deep-dive-patterns.json` - Deep analysis results
+
+---
+
+## ⚠️ MANDATORY: Read Agent Instructions First
+
+**BEFORE PROCEEDING:**
+
+1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
+2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE
+3. Follow all AGENTS.md guidelines for the duration of this command execution
+
+**Verification:** After reading AGENTS.md (if it exists), acknowledge with:
+   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+
+**If AGENTS.md does not exist:** Proceed with default behavior.
 
 ---
 

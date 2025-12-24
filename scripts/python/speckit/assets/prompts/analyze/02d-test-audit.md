@@ -2,7 +2,7 @@
 stage: file_analysis_phase4
 requires: 02c-config-analysis complete
 outputs: test_and_dependency_audit
-version: 3.1.0
+version: 3.4.0
 next: 02e-quality-gates.md
 time_allocation: 20%
 ---
@@ -17,13 +17,22 @@ Analyze test coverage, test patterns, and perform comprehensive dependency audit
 
 ---
 
+## How Context Is Provided
+
+The CLI manages state and provides all context. **Do not read state.json directly.**
+
+Values available in this prompt (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- Concern type, current/target implementation (Scope B only)
+
+---
+
 ## Pre-Check: Verify Previous Substage
 
-1. Read `{analysis_dir}/state.json`
-2. Confirm `status` = "complete"
-3. Load configuration analysis results
+1. Verify `{analysis_dir}/config-analysis.json` exists
+2. Load configuration analysis results
 
-**IF not complete:** STOP - Return to 02c-config-analysis.md
+**IF not complete:** STOP - Return to 02c-config-analysis
 
 ---
 

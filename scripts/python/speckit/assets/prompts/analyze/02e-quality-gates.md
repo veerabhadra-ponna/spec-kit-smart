@@ -2,8 +2,8 @@
 stage: file_analysis_verification
 requires: 02d-test-audit complete
 outputs: file_analysis_complete
-version: 3.1.0
-next: 03a-questions-part1.md OR 03b1-abstraction-assessment.md
+version: 3.4.0
+next: 03a-full-app.md (scope A) OR 03b-cross-cutting.md (scope B)
 ---
 
 # Stage 2E: Quality Gates & Completion
@@ -14,13 +14,26 @@ Verify file analysis meets quality standards before proceeding. This is a mandat
 
 ---
 
+## How Context Is Provided
+
+The CLI manages state and provides all context. **Do not read state.json directly.**
+
+Values available in this prompt (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- Concern type, current/target implementation (Scope B only)
+
+**Branching:** After this stage, CLI auto-routes based on scope:
+- Scope A → Stage 3A (Full App Analysis)
+- Scope B → Stage 3B (Cross-Cutting Analysis)
+
+---
+
 ## Pre-Check: Verify Previous Substage
 
-1. Read `{analysis_dir}/state.json`
-2. Confirm `status` = "complete"
-3. Load all Phase 1-4 results
+1. Verify `{analysis_dir}/test-audit.json` exists
+2. Load all Phase 1-4 results
 
-**IF not complete:** STOP - Return to 02d-test-audit.md
+**IF not complete:** STOP - Return to 02d-test-audit
 
 ---
 

@@ -2,7 +2,7 @@
 stage: file_analysis_phase1
 requires: 01c-script-execution
 outputs: category_patterns
-version: 3.2.0
+version: 3.4.0
 next: 02b-deep-dive.md
 time_allocation: 25%
 ---
@@ -17,13 +17,20 @@ Scan 15-20% of files in EACH category to identify patterns. This phase provides 
 
 ---
 
-## Pre-Check: Verify Previous Stage
+## State Management
 
-Context variables from CLI (already available):
+The CLI provides all context via template variables. **Do not read state.json directly.**
 
+**Available template variables:**
 - `{project_path}` - Project being analyzed
 - `{analysis_dir}` - Analysis folder path
 - `{scope}` - Analysis scope (A or B)
+- `{context}` - Additional context
+- `{concern_type}`, `{current_impl}`, `{target_impl}` - Scope B specific
+
+---
+
+## Pre-Check: Verify Previous Stage
 
 Required files from Stage 1C:
 

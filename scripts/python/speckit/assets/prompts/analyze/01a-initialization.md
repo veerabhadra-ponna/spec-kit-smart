@@ -2,7 +2,7 @@
 stage: initialization
 requires: nothing
 outputs: agents_verified
-version: 3.2.0
+version: 3.4.0
 next: 01b-input-collection.md
 ---
 
@@ -12,7 +12,19 @@ next: 01b-input-collection.md
 
 Initialize the analysis chain by verifying AGENTS.md guidelines and toolkit availability.
 
-Note: The CLI has already created the analysis folder at `{analysis_dir}` with state.json.
+---
+
+## How Context Is Provided
+
+The CLI manages all state automatically. **You don't need to read or write state.json.**
+
+**How it works:**
+1. CLI loads state from `{analysis_dir}/state.json`
+2. CLI renders this prompt with actual values already substituted
+3. You receive the prompt with real paths and values - no template syntax
+4. CLI auto-detects the current stage and persists progress
+
+**To continue:** Run `speckitadv analyze-project` - no arguments needed.
 
 ---
 

@@ -2,7 +2,7 @@
 stage: input_collection
 requires: 01a-initialization
 outputs: user_inputs
-version: 3.3.0
+version: 3.4.0
 next: 01c-script-execution.md
 ---
 
@@ -11,6 +11,17 @@ next: 01c-script-execution.md
 ## Purpose
 
 Collect all required inputs from the user through explicit prompts. Each input requires user response before proceeding.
+
+---
+
+## State Management
+
+The CLI provides all context via template variables. **Do not read state.json directly.**
+
+**Available template variables:**
+- `{project_path}`, `{scope}`, `{context}`, `{concern_type}`, `{current_impl}`, `{target_impl}`
+
+**After collecting inputs interactively:** Pass them to the next CLI command (see "Next Substage" below).
 
 ---
 
@@ -282,6 +293,20 @@ Please provide details about the concern:
 ```
 
 ## Next Substage
+
+**IF inputs were collected interactively (not from CLI):**
+
+Pass collected inputs to the CLI to persist to state.json:
+
+```bash
+# For Scope A:
+speckitadv analyze-project --scope=A --context="$ADDITIONAL_CONTEXT"
+
+# For Scope B:
+speckitadv analyze-project --scope=B --context="$ADDITIONAL_CONTEXT" --concern-type="$CONCERN_TYPE" --current-impl="$CURRENT_IMPL" --target-impl="$TARGET_IMPL"
+```
+
+**IF inputs were pre-provided via CLI (template variables were set):**
 
 Run: `speckitadv analyze-project`
 
