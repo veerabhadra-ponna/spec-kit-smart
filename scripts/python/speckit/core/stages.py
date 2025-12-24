@@ -21,7 +21,6 @@ from speckit.core.prompts import (
     render_prompt,
     get_stage_order,
 )
-from speckit.core.state import ChainState
 from speckit.core.state_v2 import FeatureStateManager, resolve_feature_folder
 
 console = Console()
@@ -35,27 +34,51 @@ FEATURE_SCOPED_COMMANDS = {"specify", "plan", "tasks", "implement", "clarify", "
 FEATURE_STATE_MIN_STAGE = 3
 
 
-def _run_feature_scoped_command(
+def run_staged_command(
     command: str,
-    stage: int,
-    stages: list[str],
+    stage: int = 1,
+    path: Optional[str] = None,
     feature_dir: Optional[str] = None,
     context: Optional[dict] = None,
 ) -> None:
     """
-    Execute a feature-scoped command using FeatureStateManager.
+    Execute a staged command workflow.
 
-    Feature-scoped commands use folder path as implicit chain ID.
-    State is managed via specs/{folder}/.state/state.json.
+    This generic handler loads the appropriate fragment for the current stage,
+    renders it with context, and emits it for the AI agent.
+
+    All staged commands use folder-based state management (FeatureStateManager).
+    The feature_dir parameter specifies which folder to use.
 
     Args:
-        command: Command name (specify, plan, tasks, implement)
+        command: Command name (e.g., "specify", "plan", "tasks", "implement")
         stage: Current stage number (1-indexed)
-        stages: List of stage identifiers for this command
-        feature_dir: Optional feature directory path
+        path: Optional project path (for early stages)
+        feature_dir: Feature directory path (for stage 3+)
         context: Optional additional context variables
     """
+    # Get ordered list of stages for this command
+    stages = get_stage_order(command)
+
+    if not stages:
+        emit_error(
+            "No fragments found",
+            f"No prompt fragments found for command: {command}",
+            recovery_cmd=f"speckitadv list-fragments {command}",
+        )
+        return
+
     total_stages = len(stages)
+
+    # Validate stage number
+    if stage < 1 or stage > total_stages:
+        emit_error(
+            "Invalid stage",
+            f"Stage {stage} is not valid. Command '{command}' has {total_stages} stages.",
+            recovery_cmd=f"speckitadv {command} --stage=1",
+        )
+        return
+
     stage_id = stages[stage - 1]
 
     # For early stages (1-2), feature folder may not exist yet
@@ -199,178 +222,6 @@ def _run_feature_scoped_command(
             title=title,
             content=rendered,
             next_cmd=next_cmd,
-        )
-
-
-def _run_analysis_command(
-    command: str,
-    stage: int,
-    stages: list[str],
-    chain_id: Optional[str] = None,
-    path: Optional[str] = None,
-    context: Optional[dict] = None,
-) -> None:
-    """
-    Execute analyze-project command using ChainState.
-
-    This is kept separate until Phase 5 refactors analyze-project.
-
-    Args:
-        command: Command name (analyze-project)
-        stage: Current stage number (1-indexed)
-        stages: List of stage identifiers
-        chain_id: Optional chain ID for state persistence
-        path: Optional project path
-        context: Optional additional context variables
-    """
-    total_stages = len(stages)
-    stage_id = stages[stage - 1]
-
-    # Initialize or load chain state
-    if chain_id:
-        try:
-            state = ChainState.load(chain_id, command=command)
-        except FileNotFoundError:
-            emit_error(
-                "Chain state not found",
-                f"No state found for chain ID: {chain_id}",
-                recovery_cmd=f"speckitadv {command} --stage=1 --path={path or '.'}",
-            )
-            return
-    else:
-        project_path = Path(path) if path else Path.cwd()
-        state = ChainState.initialize(project_path, command=command)
-        chain_id = state.chain_id
-
-    # Build render context
-    render_context = {
-        "chain_id": chain_id,
-        "stage": stage,
-        "total_stages": total_stages,
-        "project_path": str(state.project_path or Path.cwd()),
-        "command": command,
-        **(context or {}),
-    }
-
-    # Load and render the fragment
-    try:
-        fragment = get_prompt_fragment(command, stage_id)
-    except FileNotFoundError:
-        emit_error(
-            "Fragment not found",
-            f"Prompt fragment not found: {command}/{stage_id}",
-            recovery_cmd=f"speckitadv list-fragments {command}",
-        )
-        return
-
-    rendered = render_prompt(fragment, render_context)
-    title = _extract_title(rendered, stage_id)
-
-    # Determine next command
-    if stage < total_stages:
-        next_cmd = f"speckitadv {command} --stage={stage + 1} --chain={chain_id}"
-    else:
-        next_cmd = None
-
-    # Save state for this stage
-    state.save(
-        stage_name=stage_id,
-        data={
-            "stage": stage,
-            "stage_id": stage_id,
-            "command": command,
-        },
-    )
-
-    # Check if this is the final stage
-    if stage == total_stages:
-        emit_complete(
-            message=f"{command.title()} workflow complete.",
-            next_steps=_get_next_steps(command),
-            artifacts=[str(state.project_path / ".analysis" if state.project_path else ".")],
-        )
-    else:
-        emit_stage(
-            stage_num=stage,
-            total_stages=total_stages,
-            title=title,
-            content=rendered,
-            next_cmd=next_cmd,
-            context=render_context if stage == 1 else None,
-        )
-
-
-def run_staged_command(
-    command: str,
-    stage: int = 1,
-    chain_id: Optional[str] = None,
-    path: Optional[str] = None,
-    feature_dir: Optional[str] = None,
-    context: Optional[dict] = None,
-) -> None:
-    """
-    Execute a staged command workflow.
-
-    This generic handler loads the appropriate fragment for the current stage,
-    renders it with context, and emits it for the AI agent.
-
-    For feature-scoped commands (specify, plan, tasks, implement):
-    - Uses folder-based state management (FeatureStateManager)
-    - chain_id parameter is ignored
-    - feature_dir specifies which folder to use
-
-    For analyze-project:
-    - Uses ChainState for state management
-    - chain_id is used for persistence
-
-    Args:
-        command: Command name (e.g., "specify", "plan", "analyze-project")
-        stage: Current stage number (1-indexed)
-        chain_id: Chain ID for analyze-project (ignored for feature-scoped)
-        path: Optional project path
-        feature_dir: Feature directory path (for feature-scoped commands)
-        context: Optional additional context variables
-    """
-    # Get ordered list of stages for this command
-    stages = get_stage_order(command)
-
-    if not stages:
-        emit_error(
-            "No fragments found",
-            f"No prompt fragments found for command: {command}",
-            recovery_cmd=f"speckitadv list-fragments {command}",
-        )
-        return
-
-    total_stages = len(stages)
-
-    # Validate stage number
-    if stage < 1 or stage > total_stages:
-        emit_error(
-            "Invalid stage",
-            f"Stage {stage} is not valid. Command '{command}' has {total_stages} stages.",
-            recovery_cmd=f"speckitadv {command} --stage=1",
-        )
-        return
-
-    # Route to appropriate handler
-    if command in FEATURE_SCOPED_COMMANDS:
-        _run_feature_scoped_command(
-            command=command,
-            stage=stage,
-            stages=stages,
-            feature_dir=feature_dir,
-            context=context,
-        )
-    else:
-        # analyze-project and other commands use ChainState
-        _run_analysis_command(
-            command=command,
-            stage=stage,
-            stages=stages,
-            chain_id=chain_id,
-            path=path,
-            context=context,
         )
 
 
