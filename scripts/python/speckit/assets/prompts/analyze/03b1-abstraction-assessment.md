@@ -276,31 +276,6 @@ High-Impact Files (top 10):
 
 ---
 
-## Create Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "substage": "03b1-abstraction-assessment",
-  "timestamp": "{ISO-8601}",
-  "concern_type": "{type}",
-  "abstraction_score": {score},
-  "abstraction_level": "{level}",
-  "blast_radius": "{percentage}%",
-  "blast_classification": "{classification}",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `{analysis_dir}/state.json`
-2. Confirm all fields populated
-
----
-
 ## Output Summary
 
 ```text

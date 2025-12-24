@@ -28,13 +28,13 @@ This guide covers common issues you may encounter when using Spec Kit Smart and 
 
 ### Issue: State file corrupted after token limit
 
-**Symptoms**: `/speckitadv.resume` fails to load state
+**Symptoms**: `/speckitadv.resume` fails to detect progress
 
 **Solution**:
 
-1. Delete the corrupted state file: `rm .speckitadv-state.json`
-2. Re-run `/speckitadv.orchestrate` to start fresh
-3. Future prevention: Commit `.speckitadv-state.json` regularly to enable git recovery
+1. Check that feature directory exists in `specs/`
+2. Verify artifact files (spec.md, plan.md, tasks.md) are present
+3. If artifacts are corrupted, re-run the specific phase command (e.g., `/speckitadv.plan`)
 
 ### Issue: Guidelines not loading in prompts
 
@@ -68,10 +68,10 @@ pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 
 **Solution**:
 
-1. Check if artifacts already exist from previous runs (`.specify/specs/`)
+1. Check if artifacts already exist from previous runs (`specs/{feature}/`)
 2. Orchestrator skips phases with existing artifacts unless `--force` is used
-3. Review `.speckitadv-state.json` to see completed phases
-4. To restart: Delete state file and artifact directories
+3. Review feature directory to see which artifact files exist (completed phases)
+4. To restart: Delete the feature directory in `specs/`
 
 ### Issue: speckitadv command not found
 

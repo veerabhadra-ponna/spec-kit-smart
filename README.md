@@ -49,7 +49,7 @@ This fork extends the [original Spec Kit](https://github.com/github/spec-kit) wi
 **The Solution:** Single-command orchestration with automatic state persistence and zero-context-loss resumption.
 
 - **One-Command Workflow** - `/speckitadv.orchestrate <feature-description>` runs the entire spec-driven process from constitution to implementation
-- **Automatic State Persistence** - Saves progress to `.speckitadv-state.json` with phase tracking, task completion counts, and checkpoint data
+- **Artifact-Based Progress Detection** - Progress tracked via artifacts in `specs/{feature}/` directory (spec.md, plan.md, tasks.md)
 - **Seamless Resumption** - `/speckitadv.resume` restores full context after interruptions, chat limits, or end-of-day shutdowns
 - **Flexible Execution Modes** - Interactive (ask before each phase), auto-spec (automated planning with manual implementation), or full-auto
 
@@ -702,7 +702,7 @@ The **Orchestrator** simplifies spec-driven development by running all phases in
 ### Key Features
 
 - **Single Entry Point** - One command runs constitution → specify → clarify → plan → tasks → analyze → implement
-- **State Persistence** - Saves progress to `.speckitadv-state.json` for resumption
+- **Artifact-Based State** - Progress detected from artifacts in feature directory for seamless resumption
 - **Flexible Modes** - Interactive (recommended), Auto-Spec (pause before implement), Full Auto
 - **Context Restoration** - Zero duplicate work after chat token limits
 
@@ -1342,7 +1342,7 @@ Key terms and concepts used throughout Spec Kit Smart:
 
 **Abstraction Level**: Measure of how well a cross-cutting concern is separated from business logic. HIGH = easily swappable (interfaces, DI), MEDIUM = partial separation, LOW = tightly coupled (scattered logic).
 
-**State Persistence**: Automatic saving of workflow progress to `.speckitadv-state.json`. Enables context restoration after chat token limits, interruptions, or end-of-day shutdowns. Includes phase tracking, task completion counts, and checkpoints.
+**Artifact-Based State**: Workflow progress is detected from artifacts in the feature directory (`specs/{feature}/`). Presence of `spec.md`, `plan.md`, `tasks.md` files indicates completed phases. Enables context restoration after chat token limits, interruptions, or end-of-day shutdowns.
 
 **Spec-Driven Development (SDD)**: Methodology where specifications become executable, directly generating working implementations rather than just guiding them. Emphasizes intent-driven development with rich specifications before code.
 

@@ -223,7 +223,7 @@ For complex features or multi-session work, use the Orchestrator to run the enti
 The Orchestrator:
 
 - Runs all phases automatically (constitution → specify → plan → tasks → implement)
-- Saves progress to `.speckitadv-state.json`
+- Progress tracked via artifacts in feature directory
 - Enables seamless resumption with `/speckitadv.resume`
 - Handles token limits gracefully
 

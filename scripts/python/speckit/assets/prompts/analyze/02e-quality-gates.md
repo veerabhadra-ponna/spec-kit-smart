@@ -422,44 +422,6 @@ Action Required:
 
 ---
 
-## Create Final Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "stage": "02-file-analysis",
-  "timestamp": "{ISO-8601}",
-  "phases_completed": ["02a", "02b", "02c", "02d", "02e"],
-  "quality_gates": {
-    "file_coverage": "PASS",
-    "config_complete": "PASS",
-    "feature_count": "PASS",
-    "tech_debt_count": "PASS",
-    "security_findings": "PASS",
-    "dependency_audit": "PASS"
-  },
-  "metrics": {
-    "files_analyzed": {count},
-    "features_extracted": {count},
-    "tech_debt_items": {count},
-    "security_findings": {count},
-    "vulnerabilities": {count}
-  },
-  "state_saved": ".analysis/.state/analyze-project-02-file-analysis.json",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `{analysis_dir}/state.json`
-2. Confirm all quality gates show "PASS"
-3. Confirm status = "complete"
-
----
-
 ## Completion Summary
 
 ```text

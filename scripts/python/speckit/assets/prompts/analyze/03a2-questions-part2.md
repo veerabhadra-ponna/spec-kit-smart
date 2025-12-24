@@ -353,36 +353,6 @@ Merge all Q1-Q10 responses into modernization preferences:
 
 ---
 
-## Create Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "substage": "03a2-questions-part2",
-  "timestamp": "{ISO-8601}",
-  "questions_completed": [6, 7, 8, 9, 10],
-  "responses": {
-    "q6_iac": "{value}",
-    "q7_containerization": "{value}",
-    "q8_observability": "{value}",
-    "q9_security": "{value}",
-    "q10_testing": "{value}"
-  },
-  "all_questions_complete": true,
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `{analysis_dir}/state.json`
-2. Confirm all 5 questions have responses
-3. Confirm `all_questions_complete` = true
-
----
-
 ## Progress Summary
 
 ```text

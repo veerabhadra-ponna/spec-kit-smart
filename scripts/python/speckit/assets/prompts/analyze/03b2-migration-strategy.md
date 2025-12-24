@@ -372,29 +372,6 @@ Risk Assessment:
 
 ---
 
-## Create Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "substage": "03b2-migration-strategy",
-  "timestamp": "{ISO-8601}",
-  "selected_strategy": "{strategy}",
-  "total_phases": 4,
-  "total_duration_weeks": {n},
-  "high_risks": {count},
-  "medium_risks": {count},
-  "low_risks": {count},
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
----
-
 ## Output Summary
 
 ```text

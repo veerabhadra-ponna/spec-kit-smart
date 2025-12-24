@@ -325,34 +325,6 @@ Store user's choice in:
 
 ---
 
-## Create Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "substage": "03a1-questions-part1",
-  "timestamp": "{ISO-8601}",
-  "questions_completed": [1, 2, 3, 4, 5],
-  "responses": {
-    "q1_language": "{value}",
-    "q2_database": "{value}",
-    "q3_message_bus": "{value}",
-    "q4_package_manager": "{value}",
-    "q5_deployment": "{value}"
-  },
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `{analysis_dir}/state.json`
-2. Confirm all 5 questions have responses
-
----
-
 ## Progress Summary
 
 ```text

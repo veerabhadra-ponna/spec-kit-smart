@@ -321,35 +321,6 @@ Create comprehensive audit summary:
 
 ---
 
-## Create Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "substage": "02d-test-audit",
-  "phase": 4,
-  "timestamp": "{ISO-8601}",
-  "test_framework": "{framework}",
-  "test_file_count": {count},
-  "estimated_coverage": "{percentage}%",
-  "critical_gaps": {count},
-  "dependencies_total": {count},
-  "vulnerabilities_total": {count},
-  "critical_vulns": {count},
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `{analysis_dir}/state.json`
-2. Validate all metrics captured
-3. Confirm status = complete
-
----
-
 ## Output Summary
 
 ```text

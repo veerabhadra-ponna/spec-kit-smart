@@ -399,40 +399,6 @@ Merge all deep dive findings:
 
 ---
 
-## Create Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "substage": "02b-deep-dive",
-  "phase": 2,
-  "timestamp": "{ISO-8601}",
-  "priority_areas_completed": ["auth", "database", "api", "business"],
-  "coverage": {
-    "auth": "{percentage}%",
-    "database": "{percentage}%",
-    "api": "{percentage}%",
-    "business": "{percentage}%"
-  },
-  "issues_found": {
-    "high": {count},
-    "medium": {count},
-    "low": {count}
-  },
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `{analysis_dir}/state.json`
-2. Validate all priority areas completed
-3. Confirm minimum coverage met
-
----
-
 ## Output Summary
 
 ```text

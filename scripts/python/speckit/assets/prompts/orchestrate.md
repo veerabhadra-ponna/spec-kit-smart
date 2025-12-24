@@ -112,69 +112,49 @@ If user input contains multiple components, you will pass the appropriate extrac
 
 **Action:** ERROR - "No feature description found. Please provide what you want to build."
 
-## Workflow State Management
+## Workflow Progress Detection
 
-### State File: `.speckitadv-state.json`
+### Artifact-Based Phase Detection
 
-This file tracks orchestration progress in the repository root. Structure:
+Progress is tracked by detecting artifacts in the feature directory (`specs/{feature}/`):
 
-```json
-{
-  "version": "1.0",
-  "feature_number": "001",
-  "feature_name": "user-auth",
-  "feature_dir": "specs/001-user-auth",
-  "current_phase": "specify",
-  "completed_phases": [],
-  "workflow_mode": "interactive",
-  "started_at": "2025-11-02T10:30:00Z",
-  "last_updated": "2025-11-02T10:45:00Z",
-  "checkpoints": {
-    "constitution": {"status": "completed", "timestamp": "..."},
-    "specify": {"status": "in_progress", "timestamp": "..."},
-    "clarify": {"status": "pending"},
-    "plan": {"status": "pending"},
-    "tasks": {"status": "pending"},
-    "analyze": {"status": "pending"},
-    "implement": {"status": "pending"}
-  },
-  "context": {
-    "constitution_exists": true,
-    "user_preferences": {
-      "skip_clarify": false,
-      "skip_analyze": false,
-      "auto_implement": false
-    }
-  }
-}
-```
+| Phase | Artifact | Detected By |
+|-------|----------|-------------|
+| Constitution | `memory/constitution.md` | File exists |
+| Specify | `{feature_dir}/spec.md` | File exists |
+| Clarify | `{feature_dir}/clarifications.md` | File exists (optional) |
+| Plan | `{feature_dir}/plan.md` | File exists |
+| Tasks | `{feature_dir}/tasks.md` | File exists |
+| Analyze | `{feature_dir}/analysis.md` | File exists (optional) |
+| Implement | Source files modified | Git diff or task completion |
 
-### State Operations
-
-**Load State:**
+### Progress Detection
 
 ```bash
-# Check if state file exists
-if [ -f .speckitadv-state.json ]; then
-  # Parse and display current state
-  cat .speckitadv-state.json
+# Detect completed phases by checking artifact existence
+constitution_done=$([ -f memory/constitution.md ] && echo "true" || echo "false")
+specify_done=$([ -f "$feature_dir/spec.md" ] && echo "true" || echo "false")
+clarify_done=$([ -f "$feature_dir/clarifications.md" ] && echo "true" || echo "false")
+plan_done=$([ -f "$feature_dir/plan.md" ] && echo "true" || echo "false")
+tasks_done=$([ -f "$feature_dir/tasks.md" ] && echo "true" || echo "false")
+analyze_done=$([ -f "$feature_dir/analysis.md" ] && echo "true" || echo "false")
+```
+
+### Determine Current Phase
+
+```bash
+# Find first incomplete phase
+if [ "$constitution_done" = "false" ]; then
+  current_phase="constitution"
+elif [ "$specify_done" = "false" ]; then
+  current_phase="specify"
+elif [ "$plan_done" = "false" ]; then
+  current_phase="plan"
+elif [ "$tasks_done" = "false" ]; then
+  current_phase="tasks"
+else
+  current_phase="implement"
 fi
-```
-
-**Update State:**
-
-```bash
-# After each phase completion, update the state file with:
-# - current_phase: next phase name
-# - completed_phases: append completed phase
-# - checkpoints: update phase status and timestamp
-```
-
-**Clear State:**
-
-```bash
-# On successful completion or user abort
-rm -f .speckitadv-state.json
 ```
 
 ## Execution Flow
@@ -197,14 +177,16 @@ Optional phases in brackets are skippable based on user preference or context.
    - If arguments are empty or "--resume": Jump to RESUME mode (see below)
    - Otherwise: New feature mode
 
-1. **Check for existing state:**
+1. **Check for existing feature directory:**
 
    ```bash
-   if [ -f .speckitadv-state.json ]; then
-     echo "Found existing workflow state."
+   # Check if feature directory with artifacts exists
+   existing_dirs=$(ls -d specs/*/ 2>/dev/null | head -1)
+   if [ -n "$existing_dirs" ]; then
+     echo "Found existing feature directories."
      echo "Options:"
      echo "  1. Resume existing workflow"
-     echo "  2. Abort existing and start fresh"
+     echo "  2. Start a new feature"
      echo "  3. Cancel"
      # Ask user choice
    fi
@@ -307,7 +289,7 @@ fi
 ```bash
 # After constitution phase completes (if constitution was created/updated)
 if [ "$constitution_action" = "created" ]; then
-  git add memory/constitution.md .speckitadv-state.json
+  git add memory/constitution.md
   git commit -m "chore: establish project constitution
 
 - Initialize constitution with principles
@@ -390,7 +372,7 @@ Next phase: Clarification (optional)
 
 ```bash
 # After specify phase completes, commit the specification
-git add specs/$feature_dir/ .speckitadv-state.json
+git add specs/$feature_dir/
 git commit -m "feat: add specification for $feature_name
 
 - Create feature specification
@@ -455,7 +437,7 @@ fi
 ```bash
 # After clarify phase completes (if not skipped), commit the updates
 if [ "$clarify_status" = "completed" ]; then
-  git add specs/$feature_dir/spec.md .speckitadv-state.json
+  git add specs/$feature_dir/spec.md specs/$feature_dir/clarifications.md
   git commit -m "docs: clarify specification for $feature_name
 
 - Resolve ambiguities and clarification points
@@ -539,7 +521,7 @@ Next phase: Task generation
 
 ```bash
 # After plan phase completes, commit all planning artifacts
-git add specs/$feature_dir/ .speckitadv-state.json
+git add specs/$feature_dir/
 git commit -m "docs: add implementation plan for $feature_name
 
 - Create technical implementation plan
@@ -615,7 +597,7 @@ Next phase: Analysis (optional quality check)
 
 ```bash
 # After tasks phase completes, commit the task breakdown
-git add specs/$feature_dir/tasks.md .speckitadv-state.json
+git add specs/$feature_dir/tasks.md
 git commit -m "docs: generate task breakdown for $feature_name
 
 - Create executable task list across implementation phases
@@ -675,7 +657,7 @@ git commit -m "docs: generate task breakdown for $feature_name
 ```bash
 # After analyze phase completes (if not skipped), commit the analysis results
 if [ "$analyze_status" = "completed" ]; then
-  git add specs/$feature_dir/analysis.md .speckitadv-state.json
+  git add specs/$feature_dir/analysis.md
   git commit -m "docs: add consistency analysis for $feature_name
 
 - Validate specification and plan consistency
@@ -832,30 +814,38 @@ echo ""
 echo "Cleaning up workflow state..."
 ```
 
-**Remove state file:**
+**Workflow completion:**
 
 ```bash
-rm -f .speckitadv-state.json
-echo "✓ Workflow state cleared"
+echo "✓ Workflow completed successfully"
 ```
 
 ---
 
 ### RESUME Mode
 
-When invoked with `--resume` or when resuming from state:
+When invoked with `--resume` or when resuming existing work:
 
-1. **Load state file:**
+1. **Detect feature directory and progress:**
 
    ```bash
-   if [ ! -f .speckitadv-state.json ]; then
-     echo "ERROR: No workflow state found. Nothing to resume."
+   # Find most recent feature directory
+   feature_dir=$(ls -td specs/*/ 2>/dev/null | head -1)
+   if [ -z "$feature_dir" ]; then
+     echo "ERROR: No feature directory found. Nothing to resume."
      exit 1
    fi
 
-   state=$(cat .speckitadv-state.json)
-   current_phase=$(echo "$state" | jq -r '.current_phase')
-   feature_dir=$(echo "$state" | jq -r '.feature_dir')
+   # Detect current phase from artifacts
+   if [ ! -f "$feature_dir/spec.md" ]; then
+     current_phase="specify"
+   elif [ ! -f "$feature_dir/plan.md" ]; then
+     current_phase="plan"
+   elif [ ! -f "$feature_dir/tasks.md" ]; then
+     current_phase="tasks"
+   else
+     current_phase="implement"
+   fi
    ```
 
 1. **Display resume summary:**
@@ -945,8 +935,7 @@ echo ""
 echo "To resume after fixing the issue:"
 echo "  /speckitadv.resume"
 echo ""
-echo "To start over:"
-echo "  rm .speckitadv-state.json"
+echo "To start fresh with a new feature:"
 echo "  /speckitadv.orchestrate <feature-description>"
 ```
 
@@ -1053,29 +1042,11 @@ The orchestrator simply chains them together with state management.
 
 **Workflow:**
 
-1. Loads .speckitadv-state.json
-1. Shows progress summary (28/42 tasks completed)
+1. Detects feature directory with existing artifacts
+1. Reads tasks.md to find progress (28/42 tasks completed)
 1. Asks to continue from task T029
 1. Resumes implementation
 1. Completes remaining 14 tasks
-
----
-
-## State File Persistence
-
-The `.speckitadv-state.json` file should be:
-
-- ✓ **Committed to git** (allows team collaboration)
-- ✓ **Updated after every phase** (crash recovery)
-- ✓ **Human-readable** (debugging and inspection)
-- ✓ **Version-controlled** (backward compatibility)
-
-Add to `.gitignore` if you prefer local-only state:
-
-```text
-# Optional: Keep workflow state local
-.speckitadv-state.json
-```
 
 ---
 
@@ -1132,10 +1103,10 @@ Add to `.gitignore` if you prefer local-only state:
       DONE
 
   ┌─────────────────────────────────────────┐
-  │  At any point, state is saved to:       │
-  │  .speckitadv-state.json                    │
+  │  Progress detected via artifacts in:    │
+  │  specs/{feature}/                       │
   │                                         │
-  │  Resume with: /speckitadv.resume           │
+  │  Resume with: /speckitadv.resume        │
   └─────────────────────────────────────────┘
 ```
 

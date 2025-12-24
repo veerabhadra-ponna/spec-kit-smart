@@ -309,30 +309,6 @@ Write to: `.analysis/.state/analyze-project-03b-cross-cutting.json`
 
 ---
 
-## Create Final Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "stage": "03b-cross-cutting",
-  "timestamp": "{ISO-8601}",
-  "substages_completed": ["03b1", "03b2", "03b3"],
-  "concern_type": "{type}",
-  "abstraction_level": "{level}",
-  "blast_radius": "{classification}",
-  "strategy": "{strategy}",
-  "total_effort_weeks": {n},
-  "state_saved": ".analysis/.state/analyze-project-03b-cross-cutting.json",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
----
-
 ## Completion Marker
 
 ```text

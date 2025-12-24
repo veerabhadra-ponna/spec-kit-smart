@@ -294,46 +294,6 @@ RECOMMENDATION PREVIEW
 
 ---
 
-## Create Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "substage": "03a3-validation-scoring",
-  "timestamp": "{ISO-8601}",
-  "scope_validated": true,
-  "in_scope_components": ["{list}"],
-  "out_of_scope_components": ["{list}"],
-  "complexity": {
-    "codebase_size": {score},
-    "tech_stack_change": {score},
-    "database_migration": {score},
-    "integration_count": {score},
-    "test_coverage_gap": {score},
-    "security_changes": {score},
-    "overall": {score},
-    "rating": "{LOW|MEDIUM|HIGH|VERY HIGH}"
-  },
-  "feasibility": {
-    "inline_upgrade": {score},
-    "greenfield_rewrite": {score},
-    "hybrid_strangler": {score}
-  },
-  "preliminary_recommendation": "{approach}",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `{analysis_dir}/state.json`
-2. Validate all scoring fields present
-3. Confirm status = complete
-
----
-
 ## Output Summary
 
 ```text

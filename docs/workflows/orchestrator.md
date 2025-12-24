@@ -16,13 +16,13 @@ The **Orchestrator** workflow simplifies the entire spec-driven development proc
 
 Run the entire workflow from feature description to implementation with one command.
 
-### 2. State Persistence
+### 2. Artifact-Based Progress Detection
 
-The orchestrator saves progress to `.speckitadv-state.json`, enabling:
+The orchestrator tracks progress via artifacts in the feature directory (`specs/{feature}/`), enabling:
 
 - Resumption after chat token limits
 - Cross-session continuity
-- Progress tracking
+- Progress tracking from existing files (spec.md, plan.md, tasks.md)
 
 ### 3. Flexible Execution Modes
 
@@ -114,38 +114,21 @@ flowchart LR
     style Done fill:#a5d6a7,stroke:#333,stroke-width:2px
 ```
 
-Loads state, shows progress (e.g., 28/47 tasks), identifies next task, and continues from exact stopping point.
+Detects progress from artifacts, shows status (e.g., 28/47 tasks), identifies next task, and continues from exact stopping point.
 
-## State Management
+## Artifact-Based Progress Detection
 
-The orchestrator creates `.speckitadv-state.json` in your repository root:
+The orchestrator detects progress from artifacts in the feature directory:
 
-```json
-{
-  "version": "1.0",
-  "feature_number": "001",
-  "feature_name": "user-auth",
-  "feature_dir": "specs/001-user-auth",
-  "current_phase": "implement",
-  "completed_phases": ["constitution", "specify", "plan", "tasks"],
-  "workflow_mode": "interactive",
-  "started_at": "2025-11-02T10:30:00Z",
-  "last_updated": "2025-11-02T11:15:00Z",
-  "checkpoints": {
-    "implement": {
-      "status": "in_progress",
-      "tasks_completed": 28,
-      "tasks_total": 47,
-      "current_task": "[T029] Implement webhook verification"
-    }
-  }
-}
+```text
+specs/001-user-auth/
+├── spec.md          # Indicates specify phase complete
+├── plan.md          # Indicates plan phase complete
+├── tasks.md         # Indicates tasks phase complete (with checkboxes for progress)
+└── analysis.md      # Indicates analyze phase complete (optional)
 ```
 
-**Should you commit `.speckitadv-state.json`?**
-
-- ✅ **Yes** if you want cross-machine resumption or team collaboration
-- ❌ **Add to .gitignore** if you prefer local-only state
+Phase is determined by which artifacts exist. Task progress within `implement` phase is tracked via checkboxes in `tasks.md`.
 
 ## When to Use Orchestrator vs Individual Commands
 
@@ -159,7 +142,7 @@ The orchestrator creates `.speckitadv-state.json` in your repository root:
 
 - **Commit frequently** during long workflows
 - **Review before implementation** using interactive or auto-spec mode
-- **Commit `.speckitadv-state.json`** for cross-machine work
+- **Commit artifacts** for cross-machine work
 - **Use `/speckitadv.resume`** after token limits or errors
 
 ## Progress Visualization
@@ -206,8 +189,7 @@ Your progress has been saved.
 To resume after fixing the issue:
   /speckitadv.resume
 
-To start over:
-  rm .speckitadv-state.json
+To start fresh:
   /speckitadv.orchestrate <feature-description>
 ```
 
@@ -226,17 +208,14 @@ flowchart LR
     Analyze --> Implement[Implement]
     Implement --> Done([Done])
 
-    State[.speckitadv-state.json]
-    Constitution -.-> State
-    Specify -.-> State
-    Clarify -.-> State
-    Plan -.-> State
-    Tasks -.-> State
-    Analyze -.-> State
-    Implement -.-> State
+    Artifacts[specs/feature/]
+    Specify -.-> Artifacts
+    Plan -.-> Artifacts
+    Tasks -.-> Artifacts
+    Analyze -.-> Artifacts
 
-    State -.-> Resume[/resume]
-    Resume -.-> |Restore| Constitution
+    Artifacts -.-> Resume[/resume]
+    Resume -.-> |Detect & Restore| Constitution
 
     style Start fill:#e1f5e1,stroke:#333,stroke-width:2px
     style Done fill:#e1f5e1,stroke:#333,stroke-width:2px

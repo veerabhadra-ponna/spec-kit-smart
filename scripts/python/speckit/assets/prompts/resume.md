@@ -71,31 +71,38 @@ This command restores full context when starting a new chat session after:
 
 ### **STEP 1: Identify What to Resume**
 
-#### **Option A: State File Exists (.speckitadv-state.json)**
+#### **Option A: Detect Feature Directory Automatically**
 
-This is the primary resume path when using `/speckitadv.orchestrate`.
+This is the primary resume path. The system detects progress by examining artifacts in the feature directory.
 
 ```bash
-# Check for orchestration state
-if [ -f .speckitadv-state.json ]; then
-  echo "✓ Found orchestration state file"
-  state=$(cat .speckitadv-state.json)
+# Find most recent feature directory
+feature_dir=$(ls -td specs/*/ 2>/dev/null | head -1)
+if [ -n "$feature_dir" ]; then
+  echo "✓ Found feature directory: $feature_dir"
 
-  # Extract key information
-  feature_dir=$(echo "$state" | jq -r '.feature_dir')
-  feature_name=$(echo "$state" | jq -r '.feature_name')
-  feature_number=$(echo "$state" | jq -r '.feature_number')
-  current_phase=$(echo "$state" | jq -r '.current_phase')
-  workflow_mode=$(echo "$state" | jq -r '.workflow_mode')
+  # Extract feature info from directory name
+  feature_name=$(basename "$feature_dir" | sed 's/^[0-9]*-//')
+  feature_number=$(basename "$feature_dir" | grep -oE '^[0-9]+')
+
+  # Detect current phase from artifacts
+  if [ ! -f "$feature_dir/spec.md" ]; then
+    current_phase="specify"
+  elif [ ! -f "$feature_dir/plan.md" ]; then
+    current_phase="plan"
+  elif [ ! -f "$feature_dir/tasks.md" ]; then
+    current_phase="tasks"
+  else
+    current_phase="implement"
+  fi
 
   echo "Feature: $feature_name ($feature_number)"
   echo "Directory: $feature_dir"
   echo "Current phase: $current_phase"
-  echo "Mode: $workflow_mode"
 fi
 ```
 
-**If state file exists:** Jump to STEP 2 (Load Context).
+**If feature directory exists:** Jump to STEP 2 (Load Context).
 
 ---
 
@@ -262,15 +269,6 @@ elif [ -f "$tasks_file" ]; then
 else
   phase="unknown"
   phase_description="Unable to determine phase"
-fi
-
-# Override with state file if available
-if [ -f .speckitadv-state.json ]; then
-  state_phase=$(jq -r '.current_phase' .speckitadv-state.json)
-  if [ "$state_phase" != "null" ] && [ -n "$state_phase" ]; then
-    phase="$state_phase"
-    phase_description="From state file: $state_phase"
-  fi
 fi
 
 echo ""
@@ -828,32 +826,10 @@ case "$phase" in
 
   *)
     echo "❌ Unknown phase: $phase"
-    echo "Check .speckitadv-state.json and feature directory for details."
+    echo "Check feature directory for details: $feature_dir"
     exit 1
     ;;
 esac
-```
-
----
-
-### **STEP 7: Update State (if using orchestrator)**
-
-If state file exists, update it to reflect resumption:
-
-```bash
-if [ -f .speckitadv-state.json ]; then
-  # Update last_updated timestamp
-  current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-  # Update state file
-  jq --arg time "$current_time" \
-     '.last_updated = $time | .resumed = true | .resume_count = (.resume_count // 0) + 1' \
-     .speckitadv-state.json > .speckitadv-state.json.tmp
-
-  mv .speckitadv-state.json.tmp .speckitadv-state.json
-
-  echo "✓ State file updated with resume timestamp"
-fi
 ```
 
 ---
@@ -933,7 +909,6 @@ fi
 
 - Feature branch pushed to remote
 - All artifacts (spec, plan, tasks) committed
-- .speckitadv-state.json committed (optional but recommended)
 
 **Resume flow:**
 
@@ -969,31 +944,30 @@ fi
 
 The `/speckitadv.resume` command works seamlessly with `/speckitadv.orchestrate`:
 
-**Orchestrator creates state:**
+**Orchestrator creates artifacts:**
 
-```json
-{
-  "current_phase": "implement",
-  "feature_dir": "specs/001-user-auth",
-  ...
-}
+```text
+specs/001-user-auth/
+├── spec.md          # Created by specify phase
+├── plan.md          # Created by plan phase
+├── tasks.md         # Created by tasks phase
+└── analysis.md      # Created by analyze phase (optional)
 ```
 
-**Resume loads state:**
+**Resume detects progress:**
 
 ```bash
 /speckitadv.resume
-# → Reads .speckitadv-state.json
-# → Loads all artifacts from specs/001-user-auth
-# → Continues orchestration from current_phase
+# → Finds feature directory specs/001-user-auth
+# → Detects current phase from existing artifacts
+# → Loads all context and continues
 ```
 
-**Standalone workflows:**
-If NOT using orchestrator, resume still works by:
+**How it works:**
 
-- Auto-detecting phase from artifacts
-- Inferring next action from task checkboxes
-- No state file required (though helpful)
+- Auto-detecting phase from artifacts (which files exist)
+- Inferring progress from task checkboxes in tasks.md
+- No separate state file required
 
 ---
 
@@ -1004,7 +978,7 @@ If NOT using orchestrator, resume still works by:
 1. **Commit frequently:**
 
    - Commit after each major phase completion
-   - Commit .speckitadv-state.json for cross-machine resumption
+   - Commit all artifacts for cross-machine resumption
    - Tag important milestones
 
 2. **Use descriptive branch names:**
@@ -1027,7 +1001,7 @@ If NOT using orchestrator, resume still works by:
 1. **All critical info is in artifacts:**
 
    - Spec, plan, tasks, research contain everything needed
-   - State file is optimization, not requirement
+   - Artifact files provide all state information
    - Chat history is NOT needed
 
 2. **Validation prevents errors:**
@@ -1195,7 +1169,7 @@ The `/speckitadv.resume` command provides:
 - ✅ **Phase-aware resumption** (works for any workflow phase)
 - ✅ **Cross-machine support** (works anywhere with branch checkout)
 - ✅ **Error recovery** (handles failures gracefully)
-- ✅ **Orchestrator integration** (seamless with .speckitadv-state.json)
+- ✅ **Orchestrator integration** (seamless artifact-based detection)
 
 **Key principle:** The filesystem IS the source of truth. Chat history is ephemeral; artifacts are permanent.
 

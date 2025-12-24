@@ -313,34 +313,6 @@ Write to: `.analysis/.state/analyze-project-03a-full-app.json`
 
 ---
 
-## Create Final Checkpoint
-
-Write checkpoint file: `{analysis_dir}/state.json`
-
-```json
-{
-  "stage": "03a-full-app",
-  "timestamp": "{ISO-8601}",
-  "substages_completed": ["03a1", "03a2", "03a3", "03a4"],
-  "questions_answered": 10,
-  "scope_validated": true,
-  "complexity_rating": "{rating}",
-  "primary_recommendation": "{approach}",
-  "confidence": {percentage},
-  "state_saved": ".analysis/.state/analyze-project-03a-full-app.json",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `{analysis_dir}/state.json`
-2. Confirm all substages completed
-3. Confirm status = complete
-
----
-
 ## Completion Marker
 
 ```text
