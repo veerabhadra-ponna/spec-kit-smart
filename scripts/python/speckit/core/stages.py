@@ -77,8 +77,14 @@ def run_staged_command(
             stage = _auto_detect_stage(command, feature_dir, stages)
         except json.JSONDecodeError as e:
             # State file is corrupted - show friendly error with recovery guidance
-            # Use actual feature_dir in path when available, otherwise use placeholder
-            state_path = f"specs/{feature_dir}/.state/state.json" if feature_dir else "specs/<feature-dir>/.state/state.json"
+            # Build path carefully: feature_dir might be absolute, include specs/, or just folder name
+            if feature_dir:
+                if feature_dir.startswith("/") or feature_dir.startswith("specs/"):
+                    state_path = f"{feature_dir}/.state/state.json"
+                else:
+                    state_path = f"specs/{feature_dir}/.state/state.json"
+            else:
+                state_path = "specs/<feature-dir>/.state/state.json"
             emit_error(
                 "Corrupted state file",
                 f"Feature state file is corrupted: {e}",
@@ -195,11 +201,11 @@ def run_staged_command(
         return
     except json.JSONDecodeError as e:
         # State file is corrupted - show friendly error with recovery guidance
-        state_path = f"specs/{feature_dir}/.state/state.json" if feature_dir else f"{feature_path}/.state/state.json"
+        # Use resolved feature_path for accurate path in recovery command
         emit_error(
             "Corrupted state file",
             f"Feature state file is corrupted: {e}",
-            recovery_cmd=f"rm {state_path} && speckitadv {command} --stage=1",
+            recovery_cmd=f"rm {feature_path}/.state/state.json && speckitadv {command} --stage=1",
         )
         return
 
