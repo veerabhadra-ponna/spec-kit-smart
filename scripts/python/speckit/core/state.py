@@ -458,11 +458,11 @@ class AnalysisStateManager:
         if artifacts:
             state.stages[stage]["artifacts"] = artifacts
 
-        # Update current stage tracking
-        if status == "in_progress":
-            state.current_stage = stage
-            if stage_num:
-                state.current_stage_num = stage_num
+        # Always update current stage tracking (not just in_progress)
+        # This ensures get_context_for_prompt() returns correct values
+        state.current_stage = stage
+        if stage_num:
+            state.current_stage_num = stage_num
 
         # Track completed stages
         if status == "completed":
