@@ -523,7 +523,9 @@ class AnalysisStateManager:
                     state.stages_complete.append(stage_id)
 
         state.workflow_complete = True
-        state.completed = datetime.now().isoformat()
+        # Preserve existing workflow completion timestamp for audit fidelity
+        if state.completed is None:
+            state.completed = datetime.now().isoformat()
         self.save(state)
         return state
 

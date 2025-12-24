@@ -576,6 +576,25 @@ class TestMarkCompleteTimestamp:
         assert state.stages["08-finalize"]["status"] == "completed"
         assert state.stages["08-finalize"]["completed"] == original_timestamp
 
+    def test_mark_complete_preserves_workflow_timestamp(self, tmp_path):
+        """mark_complete() should preserve existing workflow-level completed timestamp."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Set a workflow-level completed timestamp (simulating prior completion)
+        state = manager.load()
+        original_workflow_timestamp = "2025-01-10T09:00:00"
+        state.completed = original_workflow_timestamp
+        manager.save(state)
+
+        # Call mark_complete - should preserve the original workflow timestamp
+        state = manager.mark_complete()
+
+        # Verify the workflow timestamp was preserved
+        assert state.workflow_complete is True
+        assert state.completed == original_workflow_timestamp
+
 
 class TestGetCurrentStageCompletedBehavior:
     """Tests for get_current_stage() returning completed stages."""

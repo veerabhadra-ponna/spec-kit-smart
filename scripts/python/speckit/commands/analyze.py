@@ -586,7 +586,10 @@ def _auto_detect_stage_from_state(state) -> Optional[int]:
     """
     Auto-detect the next stage from analysis state.
 
-    Uses state.stages_complete list and state.inputs.scope for deterministic behavior.
+    Uses state.stages_complete list, state.stages dict, and state.inputs.scope
+    for deterministic behavior. Both completed and in_progress stages are
+    considered for advancement (in_progress means user has run that stage).
+
     Handles scope-aware branching:
     - Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
     - Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)
@@ -609,20 +612,30 @@ def _auto_detect_stage_from_state(state) -> Optional[int]:
         if stage_num:
             highest_completed = max(highest_completed, stage_num)
 
-    # Fallback: check legacy stages dict for backwards compatibility
-    if highest_completed == 0:
-        for stage_name, stage_info in state.stages.items():
-            if stage_info.get("status") == "completed":
-                # Handle both "stage_N" and stage ID formats
-                try:
-                    if stage_name.startswith("stage_"):
-                        stage_num = int(stage_name.split("_")[1])
-                    else:
-                        stage_num = _get_stage_num_from_id(stage_name)
-                    if stage_num:
+    # Also check stages dict for in_progress stages (treated as effectively completed
+    # for auto-detection - the user has run the stage and expects to advance)
+    # This handles the case where stage N is in_progress but not yet in stages_complete
+    highest_in_progress = 0
+    for stage_name, stage_info in state.stages.items():
+        status = stage_info.get("status")
+        if status in ("completed", "in_progress"):
+            # Handle both "stage_N" and stage ID formats
+            try:
+                if stage_name.startswith("stage_"):
+                    stage_num = int(stage_name.split("_")[1])
+                else:
+                    stage_num = _get_stage_num_from_id(stage_name)
+                if stage_num:
+                    if status == "completed":
                         highest_completed = max(highest_completed, stage_num)
-                except (IndexError, ValueError):
-                    pass
+                    else:  # in_progress
+                        highest_in_progress = max(highest_in_progress, stage_num)
+            except (IndexError, ValueError):
+                pass
+
+    # Use the higher of completed or in_progress for advancement
+    # in_progress stages are treated as done for auto-detection purposes
+    highest_completed = max(highest_completed, highest_in_progress)
 
     # Apply scope-aware branching logic
     if highest_completed == 8:

@@ -193,6 +193,15 @@ def run_staged_command(
             recovery_cmd=f"speckitadv create-feature 'your feature description'",
         )
         return
+    except json.JSONDecodeError as e:
+        # State file is corrupted - show friendly error with recovery guidance
+        state_path = f"specs/{feature_dir}/.state/state.json" if feature_dir else f"{feature_path}/.state/state.json"
+        emit_error(
+            "Corrupted state file",
+            f"Feature state file is corrupted: {e}",
+            recovery_cmd=f"rm {state_path} && speckitadv {command} --stage=1",
+        )
+        return
 
     # Build render context
     render_context = {
