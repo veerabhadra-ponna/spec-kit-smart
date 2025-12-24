@@ -486,6 +486,12 @@ The reverse engineering system uses **AI-guided analysis** with orchestration sc
    - **Deep code analysis** - Extract features, assess quality, identify technical debt
    - **Artifact generation** - Create specs, reports, and migration plans
 
+**State Management & Resumption:**
+- Progress tracked via `.analysis/{project}-{timestamp}/state.json`
+- Resume latest analysis: `speckitadv analyze-project`
+- Resume specific analysis: `speckitadv analyze-project --analysis-dir=.analysis/project-20251224-164004`
+- State stores: user inputs, current stage, completed stages, and workflow status
+
 **Analysis Capabilities:**
 
 **For Full Application ([A]):**

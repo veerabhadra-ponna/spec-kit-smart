@@ -1,6 +1,6 @@
 # AI Agent Guidelines
 
-**Version:** 3.3
+**Version:** 3.4
 
 ---
 
@@ -143,6 +143,16 @@ speckitadv plan     # Auto-detects feature folder and starts at correct stage
 | `orchestrate`, `resume` | `specs/{feature}/.state/state.json` | Uses same state as individual commands |
 
 **Auto-Detection:** For feature-scoped commands (stages 3+), both stage and feature directory are auto-detected from state. For analyze-project, stage and analysis directory are auto-detected. Just run `speckitadv <command>` without args!
+
+**Analyze-Project Resume:** Resume an in-progress analysis using either:
+- `speckitadv analyze-project` - auto-detects latest analysis folder
+- `speckitadv analyze-project --analysis-dir=.analysis/project-20251224-164004` - resume specific analysis
+
+The state file at `{analysis_dir}/state.json` stores:
+- User inputs (scope, context, concern type, current/target implementation)
+- Current stage and stage number
+- Completed stages list
+- Workflow completion status
 
 **Orchestration Interoperability:** The `/speckitadv.orchestrate` and `/speckitadv.resume` commands use the **same state.json** as individual commands. This provides:
 - Seamless switching between orchestrated and manual workflows

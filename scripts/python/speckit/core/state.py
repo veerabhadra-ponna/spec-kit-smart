@@ -265,23 +265,81 @@ class FeatureStateManager:
 
 
 @dataclass
+class AnalysisInputs:
+    """User inputs collected during analysis workflow (stage 1b)."""
+
+    scope: str = ""  # "A" (full app) or "B" (cross-cutting)
+    context: str = ""  # Additional context provided by user
+    # Scope B specific fields
+    concern_type: str = ""  # e.g., "Authentication", "Database"
+    current_impl: str = ""  # e.g., "Custom JWT"
+    target_impl: str = ""  # e.g., "Okta"
+
+    def to_dict(self) -> dict:
+        """Convert to dictionary."""
+        return {
+            "scope": self.scope,
+            "context": self.context,
+            "concern_type": self.concern_type,
+            "current_impl": self.current_impl,
+            "target_impl": self.target_impl,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "AnalysisInputs":
+        """Create from dictionary."""
+        return cls(
+            scope=data.get("scope", ""),
+            context=data.get("context", ""),
+            concern_type=data.get("concern_type", ""),
+            current_impl=data.get("current_impl", ""),
+            target_impl=data.get("target_impl", ""),
+        )
+
+
+@dataclass
 class AnalysisState:
-    """State for an analysis workflow."""
+    """State for an analysis workflow.
+
+    Provides comprehensive state tracking for the analyze-project workflow,
+    mirroring the approach used in feature-scoped prompts. The state file
+    serves as the primary communication method between sub-stages.
+
+    Location: {analysis_dir}/state.json (e.g., .analysis/project-20251224-164004/state.json)
+    """
 
     schema_version: int = SCHEMA_VERSION
-    project_path: str = ""
+    # Workflow metadata
+    workflow: str = "analyze-project"
+    current_stage: str = ""  # e.g., "01a-initialization"
+    current_stage_num: int = 1
+    workflow_complete: bool = False
+    # Timestamps
     started: Optional[str] = None
     completed: Optional[str] = None
+    # Project being analyzed
+    project_path: str = ""
+    # User inputs (collected in stage 1b)
+    inputs: AnalysisInputs = field(default_factory=AnalysisInputs)
+    # Per-stage state for detailed tracking (legacy format, still used)
     stages: dict = field(default_factory=dict)
+    # Stages completed (list of stage IDs like "01a-initialization")
+    stages_complete: list = field(default_factory=list)
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
         return {
             "schema_version": self.schema_version,
-            "project_path": self.project_path,
+            "workflow": self.workflow,
+            "current_stage": self.current_stage,
+            "current_stage_num": self.current_stage_num,
+            "workflow_complete": self.workflow_complete,
             "started": self.started,
             "completed": self.completed,
+            "project_path": self.project_path,
+            "inputs": self.inputs.to_dict(),
             "stages": self.stages,
+            "stages_complete": self.stages_complete,
         }
 
     @classmethod
@@ -289,10 +347,16 @@ class AnalysisState:
         """Create from dictionary."""
         return cls(
             schema_version=data.get("schema_version", SCHEMA_VERSION),
-            project_path=data.get("project_path", ""),
+            workflow=data.get("workflow", "analyze-project"),
+            current_stage=data.get("current_stage", ""),
+            current_stage_num=data.get("current_stage_num", 1),
+            workflow_complete=data.get("workflow_complete", False),
             started=data.get("started"),
             completed=data.get("completed"),
+            project_path=data.get("project_path", ""),
+            inputs=AnalysisInputs.from_dict(data.get("inputs", {})),
             stages=data.get("stages", {}),
+            stages_complete=data.get("stages_complete", []),
         )
 
     def to_json(self, indent: int = 2) -> str:
@@ -307,7 +371,11 @@ class AnalysisState:
 
 
 class AnalysisStateManager:
-    """Manages state for an analysis workflow."""
+    """Manages state for an analysis workflow.
+
+    Provides comprehensive state management for analyze-project workflow,
+    storing all inputs and tracking progress through sub-stages.
+    """
 
     def __init__(self, folder_path: Path):
         """Initialize with analysis folder path."""
@@ -321,6 +389,8 @@ class AnalysisStateManager:
         state = AnalysisState(
             project_path=str(project_path),
             started=datetime.now().isoformat(),
+            current_stage="01a-initialization",
+            current_stage_num=1,
         )
         self.save(state)
         return state
@@ -342,11 +412,40 @@ class AnalysisStateManager:
         self.folder.mkdir(parents=True, exist_ok=True)
         self.state_file.write_text(state.to_json(), encoding="utf-8")
 
+    def update_inputs(
+        self,
+        scope: str = None,
+        context: str = None,
+        concern_type: str = None,
+        current_impl: str = None,
+        target_impl: str = None,
+    ) -> AnalysisState:
+        """Update user inputs in state.
+
+        Called after stage 1b (input collection) to persist user choices.
+        """
+        state = self.load()
+
+        if scope is not None:
+            state.inputs.scope = scope
+        if context is not None:
+            state.inputs.context = context
+        if concern_type is not None:
+            state.inputs.concern_type = concern_type
+        if current_impl is not None:
+            state.inputs.current_impl = current_impl
+        if target_impl is not None:
+            state.inputs.target_impl = target_impl
+
+        self.save(state)
+        return state
+
     def update_stage(
         self,
         stage: str,
         status: str,
         artifacts: list = None,
+        stage_num: int = None,
     ) -> AnalysisState:
         """Update state for a specific stage."""
         state = self.load()
@@ -359,6 +458,25 @@ class AnalysisStateManager:
         if artifacts:
             state.stages[stage]["artifacts"] = artifacts
 
+        # Update current stage tracking
+        if status == "in_progress":
+            state.current_stage = stage
+            if stage_num:
+                state.current_stage_num = stage_num
+
+        # Track completed stages
+        if status == "completed":
+            if stage not in state.stages_complete:
+                state.stages_complete.append(stage)
+
+        self.save(state)
+        return state
+
+    def mark_complete(self) -> AnalysisState:
+        """Mark the entire workflow as complete."""
+        state = self.load()
+        state.workflow_complete = True
+        state.completed = datetime.now().isoformat()
         self.save(state)
         return state
 
@@ -370,12 +488,40 @@ class AnalysisStateManager:
         """
         state = self.load()
 
+        # First check for in_progress stages
         for stage, info in state.stages.items():
             if info.get("status") == "in_progress":
                 return (stage, "in_progress")
 
-        # Find first pending or not-started stage
+        # Return current_stage if set
+        if state.current_stage:
+            return (state.current_stage, "pending")
+
         return (None, None)
+
+    def get_context_for_prompt(self) -> dict:
+        """Get context variables for prompt rendering.
+
+        Returns a dict with all values needed by prompts,
+        reading from state.json for consistency.
+        """
+        state = self.load()
+
+        return {
+            "analysis_dir": str(self.folder),
+            "project_path": state.project_path,
+            "scope": state.inputs.scope or "A",
+            "context": state.inputs.context or "",
+            "concern_type": state.inputs.concern_type or "",
+            "current_impl": state.inputs.current_impl or "",
+            "target_impl": state.inputs.target_impl or "",
+            "current_implementation": state.inputs.current_impl or "",
+            "target_implementation": state.inputs.target_impl or "",
+            "current_stage": state.current_stage,
+            "current_stage_num": state.current_stage_num,
+            "stages_complete": state.stages_complete,
+            "workflow_complete": state.workflow_complete,
+        }
 
 
 # Placeholder detection for constitution

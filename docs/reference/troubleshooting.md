@@ -75,6 +75,29 @@ pipx install git+https://github.com/veerabhadra-ponna/spec-kit-smart.git
 3. Phases marked as completed in state.json are skipped
 4. To restart: Delete `specs/{feature}/.state/state.json` or the entire feature directory
 
+### Issue: Analyze-project cannot resume workflow
+
+**Symptoms**: `speckitadv analyze-project` starts a new analysis instead of resuming
+
+**Solution**:
+
+1. Check that `.analysis/` directory exists with your analysis folder
+2. Verify `{analysis_dir}/state.json` exists and is valid JSON
+3. Resume specific analysis: `speckitadv analyze-project --analysis-dir=.analysis/project-20251224-164004`
+4. If state.json is corrupted, delete it and re-run from the beginning
+5. Auto-detect latest analysis: `speckitadv analyze-project` (no args)
+
+### Issue: Analyze-project skips stages unexpectedly
+
+**Symptoms**: Analysis workflow skips over completed stages
+
+**Solution**:
+
+1. Check state.json in your analysis folder: `cat .analysis/{folder}/state.json`
+2. The `stages_complete` list shows which stages are done
+3. The `current_stage` field shows where to resume
+4. To restart: Delete the analysis folder in `.analysis/`
+
 ### Issue: speckitadv command not found
 
 **Symptoms**: The `speckitadv` CLI binary is not in PATH

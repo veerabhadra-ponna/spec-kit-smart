@@ -5,6 +5,7 @@ import pytest
 from pathlib import Path
 
 from speckit.core.state import (
+    AnalysisInputs,
     FeatureMetadata,
     FeatureState,
     FeatureStateManager,
@@ -348,3 +349,150 @@ class TestAnalysisStateManager:
 
         assert state.stages["02a-category-scan"]["status"] == "completed"
         assert state.stages["02a-category-scan"]["artifacts"] == ["categories.json"]
+
+    def test_update_inputs(self, tmp_path):
+        """Should update user inputs in state."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        state = manager.update_inputs(
+            scope="B",
+            context="Testing context",
+            concern_type="Authentication",
+            current_impl="Custom JWT",
+            target_impl="Okta",
+        )
+
+        assert state.inputs.scope == "B"
+        assert state.inputs.context == "Testing context"
+        assert state.inputs.concern_type == "Authentication"
+        assert state.inputs.current_impl == "Custom JWT"
+        assert state.inputs.target_impl == "Okta"
+
+    def test_update_inputs_partial(self, tmp_path):
+        """Should update only provided inputs."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # First update
+        manager.update_inputs(scope="A", context="Initial context")
+
+        # Partial update - should preserve scope and context
+        state = manager.update_inputs(concern_type="Database")
+
+        assert state.inputs.scope == "A"
+        assert state.inputs.context == "Initial context"
+        assert state.inputs.concern_type == "Database"
+
+    def test_mark_complete(self, tmp_path):
+        """Should mark workflow as complete."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        state = manager.mark_complete()
+
+        assert state.workflow_complete is True
+        assert state.completed is not None
+
+    def test_get_context_for_prompt(self, tmp_path):
+        """Should return context dict with all prompt variables."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+        manager.update_inputs(
+            scope="B",
+            context="Test context",
+            concern_type="Auth",
+            current_impl="JWT",
+            target_impl="Okta",
+        )
+
+        context = manager.get_context_for_prompt()
+
+        assert context["analysis_dir"] == str(folder)
+        assert context["project_path"] == str(tmp_path)
+        assert context["scope"] == "B"
+        assert context["context"] == "Test context"
+        assert context["concern_type"] == "Auth"
+        assert context["current_impl"] == "JWT"
+        assert context["target_impl"] == "Okta"
+        # Both short and long form names
+        assert context["current_implementation"] == "JWT"
+        assert context["target_implementation"] == "Okta"
+
+    def test_update_stage_with_stage_num(self, tmp_path):
+        """Should update stage with stage number for tracking."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        state = manager.update_stage(
+            stage="02a-category-scan",
+            status="completed",
+            stage_num=4,
+        )
+
+        assert state.stages["02a-category-scan"]["status"] == "completed"
+        assert "02a-category-scan" in state.stages_complete
+
+    def test_stages_complete_list(self, tmp_path):
+        """Should track completed stages in list."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Complete multiple stages
+        manager.update_stage("01a-initialization", "completed", stage_num=1)
+        manager.update_stage("01b-input-collection", "completed", stage_num=2)
+        state = manager.update_stage("02a-category-scan", "completed", stage_num=4)
+
+        assert len(state.stages_complete) == 3
+        assert "01a-initialization" in state.stages_complete
+        assert "01b-input-collection" in state.stages_complete
+        assert "02a-category-scan" in state.stages_complete
+
+
+class TestAnalysisInputs:
+    """Tests for AnalysisInputs dataclass."""
+
+    def test_default_values(self):
+        """Should have empty string defaults."""
+        inputs = AnalysisInputs()
+        assert inputs.scope == ""
+        assert inputs.context == ""
+        assert inputs.concern_type == ""
+        assert inputs.current_impl == ""
+        assert inputs.target_impl == ""
+
+    def test_to_dict(self):
+        """Should convert to dictionary."""
+        inputs = AnalysisInputs(
+            scope="B",
+            context="Test",
+            concern_type="Auth",
+            current_impl="JWT",
+            target_impl="Okta",
+        )
+        d = inputs.to_dict()
+        assert d["scope"] == "B"
+        assert d["context"] == "Test"
+        assert d["concern_type"] == "Auth"
+        assert d["current_impl"] == "JWT"
+        assert d["target_impl"] == "Okta"
+
+    def test_from_dict(self):
+        """Should create from dictionary."""
+        data = {
+            "scope": "A",
+            "context": "Context text",
+            "concern_type": "",
+            "current_impl": "",
+            "target_impl": "",
+        }
+        inputs = AnalysisInputs.from_dict(data)
+        assert inputs.scope == "A"
+        assert inputs.context == "Context text"
+        assert inputs.concern_type == ""

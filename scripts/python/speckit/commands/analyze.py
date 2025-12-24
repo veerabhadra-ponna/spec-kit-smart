@@ -172,51 +172,34 @@ def run_analyze_project(
         )
         return
 
-    # Load values from state, override with CLI args if provided
-    # Scope
-    state_scope = None
-    state_concern_type = None
-    state_context = None
-    for stage_name, stage_info in state.stages.items():
-        if stage_info.get("scope"):
-            state_scope = stage_info.get("scope")
-        if stage_info.get("concern_type"):
-            state_concern_type = stage_info.get("concern_type")
-        if stage_info.get("context"):
-            state_context = stage_info.get("context")
-
-    effective_scope = scope or state_scope or "A"
-    effective_concern_type = concern_type or state_concern_type or ""
-    effective_context = context or state_context or ""
+    # Load values from state.inputs, override with CLI args if provided
+    # CLI args take precedence when explicitly provided
+    effective_scope = scope or state.inputs.scope or "A"
+    effective_concern_type = concern_type or state.inputs.concern_type or ""
+    effective_context = context or state.inputs.context or ""
+    resolved_current = current_impl or state.inputs.current_impl or ""
+    resolved_target = target_impl or state.inputs.target_impl or ""
     total_stages = TOTAL_STAGES.get(effective_scope, 16)
 
-    # Resolve implementation values from state
-    state_current = ""
-    state_target = ""
-    for stage_name, stage_info in state.stages.items():
-        if stage_info.get("current_impl"):
-            state_current = stage_info.get("current_impl")
-        if stage_info.get("target_impl"):
-            state_target = stage_info.get("target_impl")
+    # Update state.inputs if CLI args provided new values
+    if any([scope, context, concern_type, current_impl, target_impl]):
+        state_manager.update_inputs(
+            scope=effective_scope,
+            context=effective_context,
+            concern_type=effective_concern_type,
+            current_impl=resolved_current,
+            target_impl=resolved_target,
+        )
 
-    resolved_current = current_impl or state_current or ""
-    resolved_target = target_impl or state_target or ""
+    # Build context for prompt rendering using state manager
+    # This ensures prompts get consistent values from state.json
+    base_context = state_manager.get_context_for_prompt()
 
-    # Build context for prompt rendering
+    # Merge with stage-specific values
     render_context = {
-        "analysis_dir": str(analysis_dir_path),
+        **base_context,
         "stage": stage,
         "total_stages": total_stages,
-        "project_path": str(project_path),
-        "scope": effective_scope,
-        "context": effective_context,
-        "concern_type": effective_concern_type,
-        # Short names (used in some prompts)
-        "current_impl": resolved_current,
-        "target_impl": resolved_target,
-        # Long names (used in other prompts)
-        "current_implementation": resolved_current,
-        "target_implementation": resolved_target,
     }
 
     # Handle chunked stages
@@ -294,20 +277,14 @@ Run the following command to begin:""",
         )
         return
 
-    # Save state for this stage
+    # Save state for this stage with stage number for tracking
+    # Inputs are already stored in state.inputs, no need to duplicate in stages
     state_manager.update_stage(
-        stage=f"stage_{stage}",
+        stage=STAGE_MAP.get(stage, f"stage_{stage}"),
         status="completed",
         artifacts=[],
+        stage_num=stage,
     )
-    # Store additional context in stage info (use resolved values, not raw CLI args)
-    state = state_manager.load()
-    state.stages[f"stage_{stage}"]["scope"] = effective_scope
-    state.stages[f"stage_{stage}"]["context"] = effective_context
-    state.stages[f"stage_{stage}"]["concern_type"] = effective_concern_type
-    state.stages[f"stage_{stage}"]["current_impl"] = resolved_current
-    state.stages[f"stage_{stage}"]["target_impl"] = resolved_target
-    state_manager.save(state)
 
     # Emit the stage prompt
     emit_stage(
@@ -390,19 +367,13 @@ def _emit_chunk_stage(
         next_cmd = f"speckitadv analyze-project --chunk={chunk + 1}"
     else:
         # Final chunk - mark stage as completed in state
+        # Inputs are already stored in state.inputs, no need to duplicate in stages
         state_manager.update_stage(
-            stage=f"stage_{stage}",
+            stage=STAGE_MAP.get(stage, f"stage_{stage}"),
             status="completed",
             artifacts=[],
+            stage_num=stage,
         )
-        # Store metadata in stage info (matching non-chunked stage behavior)
-        state = state_manager.load()
-        state.stages[f"stage_{stage}"]["scope"] = context.get("scope", "A")
-        state.stages[f"stage_{stage}"]["context"] = context.get("context", "")
-        state.stages[f"stage_{stage}"]["concern_type"] = context.get("concern_type", "")
-        state.stages[f"stage_{stage}"]["current_impl"] = context.get("current_impl", "")
-        state.stages[f"stage_{stage}"]["target_impl"] = context.get("target_impl", "")
-        state_manager.save(state)
 
         # Move to next stage with scope-aware branching
         # Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
@@ -512,6 +483,7 @@ def _auto_detect_stage_from_state(state) -> int:
     """
     Auto-detect the next stage from analysis state.
 
+    Uses state.current_stage_num and state.inputs.scope for deterministic behavior.
     Handles scope-aware branching:
     - Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
     - Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)
@@ -519,20 +491,35 @@ def _auto_detect_stage_from_state(state) -> int:
     Returns:
         Stage number to run (1-indexed)
     """
-    # Find highest completed stage and scope from state
+    # Check if workflow is complete
+    if state.workflow_complete:
+        return 16  # Return final stage
+
+    # Get scope from state.inputs (primary) or default to A
+    effective_scope = state.inputs.scope or "A"
+
+    # Find highest completed stage from stages_complete list
     highest_completed = 0
-    effective_scope = "A"  # Default to scope A
-    for stage_name, stage_info in state.stages.items():
-        if stage_info.get("status") == "completed":
-            # Extract stage number from "stage_N" format
-            try:
-                stage_num = int(stage_name.split("_")[1])
-                highest_completed = max(highest_completed, stage_num)
-            except (IndexError, ValueError):
-                pass
-        # Get scope from any stage that has it stored
-        if stage_info.get("scope"):
-            effective_scope = stage_info.get("scope")
+    for stage_id in state.stages_complete:
+        # Extract stage number from stage ID like "01a-initialization" or STAGE_MAP values
+        stage_num = _get_stage_num_from_id(stage_id)
+        if stage_num:
+            highest_completed = max(highest_completed, stage_num)
+
+    # Fallback: check legacy stages dict for backwards compatibility
+    if highest_completed == 0:
+        for stage_name, stage_info in state.stages.items():
+            if stage_info.get("status") == "completed":
+                # Handle both "stage_N" and stage ID formats
+                try:
+                    if stage_name.startswith("stage_"):
+                        stage_num = int(stage_name.split("_")[1])
+                    else:
+                        stage_num = _get_stage_num_from_id(stage_name)
+                    if stage_num:
+                        highest_completed = max(highest_completed, stage_num)
+                except (IndexError, ValueError):
+                    pass
 
     # Apply scope-aware branching logic
     if highest_completed == 8:
@@ -551,6 +538,36 @@ def _auto_detect_stage_from_state(state) -> int:
         return 16  # Cap at final stage
 
     return next_stage
+
+
+def _get_stage_num_from_id(stage_id: str) -> int:
+    """Extract stage number from stage ID like '01a-initialization' or 'stage_1'.
+
+    Returns:
+        Stage number (1-indexed) or 0 if not parseable
+    """
+    if not stage_id:
+        return 0
+
+    # Handle "stage_N" format
+    if stage_id.startswith("stage_"):
+        try:
+            return int(stage_id.split("_")[1])
+        except (IndexError, ValueError):
+            return 0
+
+    # Reverse lookup from STAGE_MAP
+    for num, frag_id in STAGE_MAP.items():
+        if frag_id == stage_id:
+            return num
+
+    # Try extracting from "01a-...", "02b-...", etc.
+    try:
+        # Extract first two digits
+        prefix = stage_id[:2]
+        return int(prefix)
+    except (ValueError, IndexError):
+        return 0
 
 
 # Export function for CLI
