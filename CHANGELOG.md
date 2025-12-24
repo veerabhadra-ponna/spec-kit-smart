@@ -9,13 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- State-based auto-detection for CLI arguments: stage, feature-dir, and analysis-dir
+  are now auto-detected from state files. No args needed after initial setup.
+- Deterministic folder selection with mtime tie-breaking using folder names
+
+### Changed
+
+- Simplified NEXT commands in prompts - stages 3+ no longer show --stage or --feature-dir
+- Resume and orchestrate commands now output simplified `speckitadv <command>` suggestions
+- AGENTS.md updated to v3.2 with auto-detection documentation
+
 ### Fixed
 
-- Constitution workflow now correctly uses `--chain` for state continuity across stages
+- Auto-detect stage returns 1 for pending status (was incorrectly returning 3)
+- Chunked analysis stages now persist completion status to state
+- Chunked analysis stages now persist metadata (scope, context, concern_type, etc.) to state
+- Folder selection is now deterministic when state file mtimes are equal
+- PyInstaller hidden import references correct `speckit.core.state` module
+- Better error message when explicit `--feature-dir` does not exist (check folder before state)
+- Final stage prompt content now emitted before completion banner (was skipped)
+- FeatureState now includes clarify and checklist fields (fixes AttributeError)
+- get_next_action returns actual stage ID instead of hardcoded "01"
+- get_next_action now checks clarify/checklist for in_progress status (resume works)
+- create-feature now exits with code 1 on JIRA validation failure
+- Non-chunked analyze-project stages now persist resolved metadata values
+- analyze-project auto-detection now handles scope-aware branching (A→9→11, B→10→11)
+- create-feature now marks specify as in_progress at stage 3 for auto-resume
 - Specify prompts referenced non-existent `--jira` and `--feature` CLI options
 - Next steps in stages.py used `/specify` format instead of `/speckitadv.specify`
 - Clarify and checklist prompts updated to use `/speckitadv.*` slash command format
 - Plan prompt path reference corrected from `/memory/constitution.md` to `memory/constitution.md`
+
+### Removed
+
+- `--chain` CLI option replaced by folder-based state (feature-dir, analysis-dir)
 
 ## [2.1.1] - 2025-12-22
 

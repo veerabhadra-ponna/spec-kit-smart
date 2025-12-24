@@ -12,7 +12,6 @@ from speckit.core.emit import (
     emit_error,
     emit_template,
 )
-from speckit.core.state import ChainState
 from speckit.core.config import Config
 from speckit.core.utils import (
     get_repo_root,
@@ -52,8 +51,6 @@ __all__ = [
     "emit_complete",
     "emit_error",
     "emit_template",
-    # State management
-    "ChainState",
     # Configuration
     "Config",
     # Utilities

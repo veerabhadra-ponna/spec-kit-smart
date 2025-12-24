@@ -6,7 +6,7 @@ Zero-prompt architecture CLI for AI-powered development workflows.
 
 - **Progressive Prompt Injection**: Small, focused prompts (50-80 lines) at each stage
 - **Embedded Assets**: All prompts and templates bundled in single executable
-- **Chain State Management**: Persist workflow state between sessions
+- **Folder-Based State Management**: Simple state persistence using feature folders
 - **Cross-Platform**: Works on Linux, macOS, and Windows
 
 ## Installation
@@ -56,17 +56,17 @@ speckitadv --help
 speckitadv constitution --stage=1
 
 # AI agent follows instructions, then runs:
-speckitadv constitution --stage=2 --chain=<chain_id>
+speckitadv constitution --stage=2
 
 # Continue through stages...
-speckitadv constitution --stage=3 --chain=<chain_id>
+speckitadv constitution --stage=3
 ```
 
 ### Example: Specify Workflow
 
 ```bash
 # Stage 1: Initialize and understand role
-speckitadv specify --stage=1 --path=/path/to/project
+speckitadv specify --stage=1
 
 # Stage 2: Collect inputs (interactive if no args)
 speckitadv specify --stage=2
@@ -74,20 +74,41 @@ speckitadv specify --stage=2
 # Or provide arguments directly:
 speckitadv specify --stage=2 --jira=C12345-7890 --feature="Add user auth"
 
-# Stage 3: Create feature branch (requires --feature from stage 2)
-speckitadv specify --stage=3 --feature="Add user auth" --jira=C12345-7890
+# Stage 3: Create feature branch and folder
+# AI calls create-feature helper to create specs/001-user-auth/
+speckitadv specify --stage=3 --feature="Add user auth" --jira="C12345-7890"
 
-# Stage 4+: Chain auto-resumes from state (--chain optional)
-speckitadv specify --stage=4 --feature-dir=specs/001-user-auth
-# ... until complete
+# Stage 4+: CLI auto-detects stage and feature folder from state!
+speckitadv specify  # Just run without args
+speckitadv specify  # CLI reads state, continues at correct stage
 ```
 
 **Notes:**
 
 - Stages 1-2 are stateless. Pass `--feature` and `--jira` from stage 2 to stage 3.
-- Stage 3 creates the feature folder and persists state.
-- Stage 4+ auto-detects chain from state. Use `--chain` or `--feature-dir` to
-  disambiguate when multiple features exist.
+- Stage 3 creates the feature folder via `create-feature` command and persists state.
+- **Stage 3+ auto-detects** - CLI reads state file to determine stage and feature folder.
+
+### Auto-Resume for Feature Commands
+
+All feature-scoped commands (`specify`, `plan`, `tasks`, `implement`, `clarify`, `checklist`) support
+automatic state detection:
+
+- **Stage auto-detection**: CLI reads state file to determine which stage to run next.
+- **Feature directory detection**: CLI auto-detects the latest feature folder in `specs/`.
+- **Explicit overrides**: Use `--stage` or `--feature-dir` to override auto-detection.
+- **Resume command**: Use `speckitadv resume` to see what's next.
+
+```bash
+# Example: plan workflow with auto-detection (stage 3+)
+speckitadv plan --stage=1     # Early stages need explicit --stage
+speckitadv plan --stage=2     # Still no state (created at stage 3)
+speckitadv plan               # Stage 3+: auto-detects everything!
+speckitadv plan               # Continues at correct stage
+
+# Or specify explicitly to override
+speckitadv plan --stage=2 --feature-dir=specs/001-user-auth
+```
 
 ### Debug Commands
 
@@ -104,7 +125,7 @@ speckitadv show-fragment constitution 01-initialization
 1. **CLI emits stage prompt** (50-80 lines)
 2. **AI agent follows instructions** in the prompt
 3. **CLI provides next command** at end of each stage
-4. **Chain ID persists state** between invocations
+4. **Feature folder persists state** between invocations
 5. **Repeat until workflow complete**
 
 ## Architecture
@@ -115,10 +136,11 @@ speckit/
 ├── cli.py              # Typer CLI entry point
 ├── commands/           # Command implementations
 │   ├── analyze.py      # analyze-project command
-│   └── constitution.py # constitution command
+│   ├── constitution.py # constitution command
+│   └── feature.py      # create-feature helper
 ├── core/
 │   ├── emit.py         # Stage emission system
-│   ├── state.py        # Chain state management
+│   ├── state.py        # Folder-based state management
 │   ├── prompts.py      # Prompt fragment loading + template injection
 │   ├── stages.py       # Generic stage handler
 │   └── ...
@@ -138,7 +160,15 @@ Prompts can include templates using `{{include:template.md}}` syntax:
 ```
 
 The CLI injects template content at runtime via `render_prompt()` in `core/prompts.py`.
-Templates are loaded from `assets/templates/` and support:
+
+**Template Search Order** (project overrides first):
+
+1. `memory/templates/` - Project-level customizations
+2. `.specify/templates/` - Project-level customizations
+3. `templates/` - Repository-level templates
+4. CLI embedded templates - Default fallback
+
+Templates support:
 
 - Nested includes (templates can include other templates)
 - Variable substitution (`{variable}` or `{variable:default}`)
@@ -153,9 +183,10 @@ template files to the feature directory:
 {{copy-template:spec-template.md:spec.md}}
 ```
 
-This copies `assets/templates/spec-template.md` to `{feature_dir}/spec.md`.
-The destination filename is optional - if omitted, `-template` is stripped from
-the source name (e.g., `plan-template.md` becomes `plan.md`).
+This copies the template to `{feature_dir}/spec.md`, searching the same override
+locations as template includes. The destination filename is optional - if omitted,
+`-template` is stripped from the source name (e.g., `plan-template.md` becomes
+`plan.md`).
 
 This approach ensures:
 

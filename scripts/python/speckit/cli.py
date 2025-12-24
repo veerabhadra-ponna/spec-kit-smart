@@ -65,10 +65,10 @@ def main(
 
 @app.command("analyze-project")
 def analyze_project(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-16)"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     chunk: Optional[int] = typer.Option(None, "--chunk", "-c", help="Report chunk number for chunked stages"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
-    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path to analyze"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", "-a", help="Analysis folder path (auto-detected if not provided)"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path to analyze (loaded from state if not provided)"),
     scope: Optional[str] = typer.Option(None, "--scope", help="Analysis scope: A (full) or B (cross-cutting)"),
     context: Optional[str] = typer.Option(None, "--context", help="Additional context"),
     concern_type: Optional[str] = typer.Option(None, "--concern-type", help="Cross-cutting concern type"),
@@ -81,12 +81,29 @@ def analyze_project(
 
     This command implements a progressive workflow with enforced chunking.
     AI agents receive focused prompts (50-80 lines) at each stage.
-    Runs interactively if no --path/--scope provided at stage 1.
+
+    Uses folder-based state management. All parameters are auto-detected
+    from state when not provided. Only specify args for new workflows.
     """
     from speckit.commands.analyze import run_analyze_project
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
 
-    # Interactive mode for stage 1 if required inputs missing
-    if stage == 1 and not chain_id:
+    # Check if we're starting a new workflow (no existing state)
+    has_existing_state = False
+    if analysis_dir:
+        state_manager = AnalysisStateManager(Path(analysis_dir))
+        has_existing_state = state_manager.exists()
+    else:
+        try:
+            latest = find_latest_analysis_folder()
+            state_manager = AnalysisStateManager(latest)
+            has_existing_state = state_manager.exists()
+        except FileNotFoundError:
+            pass
+
+    # Interactive mode only for NEW workflows (stage 1, no existing state)
+    effective_stage = stage if stage is not None else (1 if not has_existing_state else None)
+    if effective_stage == 1 and not has_existing_state:
         from speckit.core.interactive import collect_analyze_project_input
 
         if not path:
@@ -108,7 +125,7 @@ def analyze_project(
     run_analyze_project(
         stage=stage,
         chunk=chunk,
-        chain_id=chain_id,
+        analysis_dir=analysis_dir,
         path=path,
         scope=scope,
         context=context,
@@ -129,17 +146,20 @@ def constitution(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
     principles: Optional[str] = typer.Option(None, "--principles", help="User-provided principles"),
     defaults: bool = typer.Option(False, "--defaults", help="Use default principles"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
 ) -> None:
     """
     Create or update the project constitution.
 
     Defines non-negotiable project principles and governance.
     Runs interactively if no --principles or --defaults provided.
+
+    Note: If constitution.md exists and has no placeholders, it's considered complete.
+    To regenerate, delete memory/constitution.md first.
     """
     from speckit.commands.constitution import run_constitution
 
-    run_constitution(stage=stage, principles=principles, defaults=defaults, chain_id=chain_id)
+    run_constitution(stage=stage, principles=principles, defaults=defaults, path=path)
 
 
 # ============================================================================
@@ -149,10 +169,9 @@ def constitution(
 
 @app.command("specify")
 def specify(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-6)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
     jira: Optional[str] = typer.Option(None, "--jira", "-j", help="JIRA number (format: C12345-7890)"),
     feature: Optional[str] = typer.Option(None, "--feature", "-f", help="Feature description"),
 ) -> None:
@@ -161,6 +180,9 @@ def specify(
 
     Defines what needs to be built before planning how.
     Runs interactively if no --jira/--feature provided at stage 2.
+
+    Uses folder-based state management. Feature folder is created via
+    'speckitadv create-feature' command during the workflow.
     """
     from speckit.core.stages import run_staged_command
 
@@ -194,7 +216,7 @@ def specify(
         context["jira"] = jira or ""
         context["feature"] = feature
 
-    run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
+    run_staged_command(command="specify", stage=stage, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -204,17 +226,16 @@ def specify(
 
 @app.command("plan")
 def plan(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
     constraints: Optional[str] = typer.Option(None, "--constraints", "-c", help="Planning constraints"),
 ) -> None:
     """
     Create implementation plan.
 
     Designs how to build what was specified.
-    Constraints are collected by the AI agent via the stage 2 prompt.
+    Uses folder-based state management from the feature directory.
     """
     from speckit.core.stages import run_staged_command
 
@@ -224,7 +245,7 @@ def plan(
     if constraints:
         context["constraints"] = constraints
 
-    run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
+    run_staged_command(command="plan", stage=stage, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -234,17 +255,16 @@ def plan(
 
 @app.command("tasks")
 def tasks(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
     preferences: Optional[str] = typer.Option(None, "--preferences", help="Task generation preferences"),
 ) -> None:
     """
     Generate actionable tasks.
 
     Breaks down the plan into implementable units.
-    Preferences are collected by the AI agent via the stage 2 prompt.
+    Uses folder-based state management from the feature directory.
     """
     from speckit.core.stages import run_staged_command
 
@@ -254,7 +274,7 @@ def tasks(
     if preferences:
         context["preferences"] = preferences
 
-    run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
+    run_staged_command(command="tasks", stage=stage, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -264,17 +284,16 @@ def tasks(
 
 @app.command("implement")
 def implement(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-5)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
     notes: Optional[str] = typer.Option(None, "--notes", "-n", help="Implementation notes"),
 ) -> None:
     """
     Execute implementation.
 
     Implements tasks with quality checks.
-    Notes are collected by the AI agent via the stage 2 prompt.
+    Uses folder-based state management from the feature directory.
     """
     from speckit.core.stages import run_staged_command
 
@@ -284,7 +303,7 @@ def implement(
     if notes:
         context["notes"] = notes
 
-    run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
+    run_staged_command(command="implement", stage=stage, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -294,9 +313,9 @@ def implement(
 
 @app.command("clarify")
 def clarify(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
 ) -> None:
     """
     Ask structured questions.
@@ -305,7 +324,7 @@ def clarify(
     """
     from speckit.core.stages import run_staged_command
 
-    run_staged_command(command="clarify", stage=stage, chain_id=chain_id, path=path)
+    run_staged_command(command="clarify", stage=stage, path=path, feature_dir=feature_dir)
 
 
 # ============================================================================
@@ -315,9 +334,9 @@ def clarify(
 
 @app.command("checklist")
 def checklist(
-    stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
+    stage: Optional[int] = typer.Option(None, "--stage", "-s", help="Workflow stage (auto-detected from state if not provided)"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (auto-detected if not provided)"),
 ) -> None:
     """
     Generate quality checklist.
@@ -326,7 +345,7 @@ def checklist(
     """
     from speckit.core.stages import run_staged_command
 
-    run_staged_command(command="checklist", stage=stage, chain_id=chain_id, path=path)
+    run_staged_command(command="checklist", stage=stage, path=path, feature_dir=feature_dir)
 
 
 # ============================================================================
@@ -337,15 +356,49 @@ def checklist(
 @app.command("orchestrate")
 def orchestrate(
     description: Optional[str] = typer.Argument(None, help="Feature description to orchestrate"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Resume from specific feature folder"),
 ) -> None:
     """
     Orchestrate complete spec-driven workflow.
 
     Runs the entire workflow from constitution to implementation.
-    Use 'resume' to continue after interruptions.
+    Uses folder-based state to track progress across prompts.
     """
+    from pathlib import Path
+    from speckit.core.state import FeatureStateManager, resolve_feature_folder
     from speckit.core.prompts import get_prompt_fragment
 
+    # If resuming from existing feature
+    if feature_dir or not description:
+        try:
+            folder_path = resolve_feature_folder(feature_dir, Path("specs"))
+            state_manager = FeatureStateManager(folder_path)
+
+            if state_manager.exists():
+                state = state_manager.load()
+                prompt, stage = state_manager.get_next_action()
+
+                if prompt:
+                    console.print(f"[bold]Resuming orchestration for:[/bold] {folder_path.name}")
+                    console.print(f"[bold]Next action:[/bold] {prompt} stage {stage}")
+                    console.print("")
+                    # CLI auto-detects stage and feature-dir from state
+                    console.print(f"Run: speckitadv {prompt}")
+                    return
+                else:
+                    console.print(f"[green]✓[/green] Feature {folder_path.name} is complete!")
+                    return
+        except FileNotFoundError:
+            if feature_dir:
+                console.print(f"[red]Error:[/red] Feature folder not found: {feature_dir}")
+                raise typer.Exit(1)
+            # No existing feature - need description
+            if not description:
+                console.print("[yellow]No feature in progress. Please provide a description:[/yellow]")
+                console.print("  speckitadv orchestrate 'your feature description'")
+                raise typer.Exit(1)
+
+    # New orchestration - emit prompt fragment
     fragment = get_prompt_fragment("orchestrate", "")
     if description:
         fragment = fragment.replace("$ARGUMENTS", description)
@@ -358,16 +411,71 @@ def orchestrate(
 
 
 @app.command("resume")
-def resume() -> None:
+def resume(
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Resume specific feature folder"),
+) -> None:
     """
     Resume workflow from saved state.
 
-    Restores context after interruptions, chat limits, or shutdowns.
+    Uses folder-based state to find the current position and resume.
     """
-    from speckit.core.prompts import get_prompt_fragment
+    from pathlib import Path
+    from speckit.core.state import FeatureStateManager, resolve_feature_folder
 
-    fragment = get_prompt_fragment("resume", "")
-    console.print(fragment)
+    try:
+        folder_path = resolve_feature_folder(feature_dir, Path("specs"))
+    except FileNotFoundError:
+        console.print("[red]Error:[/red] No feature folder found to resume.")
+        console.print("")
+        console.print("To start a new feature:")
+        console.print("  speckitadv create-feature 'your feature description'")
+        raise typer.Exit(1)
+
+    state_manager = FeatureStateManager(folder_path)
+
+    if not state_manager.exists():
+        console.print(f"[red]Error:[/red] No state found in {folder_path}")
+        console.print("")
+        console.print("This folder exists but has no state file.")
+        console.print("You may need to run create-feature first.")
+        raise typer.Exit(1)
+
+    state = state_manager.load()
+    prompt, stage = state_manager.get_next_action()
+
+    # Show resume summary
+    console.print("")
+    console.print("╔═══════════════════════════════════════════════════╗")
+    console.print("║  RESUME SUMMARY                                   ║")
+    console.print("╚═══════════════════════════════════════════════════╝")
+    console.print("")
+    console.print(f"[bold]Feature:[/bold] {state.feature.short_name}")
+    console.print(f"[bold]Description:[/bold] {state.feature.description}")
+    console.print(f"[bold]Folder:[/bold] {folder_path}")
+    console.print("")
+
+    # Show prompt status
+    console.print("[bold]Prompt Status:[/bold]")
+    for p in ["specify", "plan", "tasks", "implement"]:
+        p_state = getattr(state, p)
+        status_icon = {"pending": "⏳", "in_progress": "🔄", "completed": "✓"}
+        icon = status_icon.get(p_state.status, "?")
+        stage_info = f" (stage {p_state.current_stage})" if p_state.current_stage else ""
+        console.print(f"  {icon} {p}: {p_state.status}{stage_info}")
+    console.print("")
+
+    if prompt:
+        console.print(f"[bold]Next Action:[/bold] {prompt} stage {stage}")
+        console.print("")
+        # CLI auto-detects stage and feature-dir from state
+        console.print(f"Run: speckitadv {prompt}")
+    else:
+        console.print("[green]✓ All prompts completed![/green]")
+        console.print("")
+        console.print("Next steps:")
+        console.print("  1. Review implementation")
+        console.print("  2. Run tests")
+        console.print("  3. Create pull request")
 
 
 # ============================================================================
@@ -552,7 +660,7 @@ def create_feature(
     """
     from speckit.commands.feature import run_create_feature
 
-    run_create_feature(
+    result = run_create_feature(
         description=description,
         jira=jira,
         short_name=short_name,
@@ -560,6 +668,10 @@ def create_feature(
         no_branch=no_branch,
         output_json=json_output,
     )
+
+    # Exit with non-zero code on failure
+    if not result.get("success", True):
+        raise typer.Exit(1)
 
 
 # ============================================================================

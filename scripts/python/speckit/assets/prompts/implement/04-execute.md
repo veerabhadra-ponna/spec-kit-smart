@@ -101,5 +101,5 @@ After each phase:
 
 ```text
 
-speckitadv implement --stage=5 --chain={{chain_id}}
+speckitadv implement
 ```

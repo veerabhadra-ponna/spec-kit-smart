@@ -81,5 +81,5 @@ Spec is clarified. Proceed to planning.
 
 ```text
 
-speckitadv plan --chain={{chain_id}}
+speckitadv plan
 ```

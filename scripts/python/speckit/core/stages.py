@@ -3,9 +3,13 @@ Generic Stage Command Handler
 
 Provides a generic handler for commands that use the fragment system.
 Each command can use this to load and emit its staged prompts.
+
+Feature-scoped commands (specify, plan, tasks, implement) use FeatureStateManager
+from state module for simplified folder-based state management.
+
+The folder path serves as the implicit chain ID - no abstract chain IDs needed.
 """
 
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
@@ -16,159 +20,23 @@ from speckit.core.prompts import (
     get_prompt_fragment,
     render_prompt,
     get_stage_order,
-    fragment_exists,
 )
-from speckit.core.state import ChainState, FEATURE_SCOPED_COMMANDS, FEATURE_STATE_MIN_STAGE
-
-import json
+from speckit.core.state import FeatureStateManager, resolve_feature_folder
 
 console = Console()
 
 
-@dataclass
-class ChainMatch:
-    """Result of chain auto-detection."""
+# Commands that use folder-based state management
+FEATURE_SCOPED_COMMANDS = {"specify", "plan", "tasks", "implement", "clarify", "checklist"}
 
-    chain_id: str
-    source: str  # Description of where it was found
-    total_matches: int  # How many matching chains were found
-
-
-def _find_existing_chain_for_command(
-    command: str,
-    feature_dir: Optional[Path] = None,
-    workspace_root: Optional[Path] = None,
-) -> Optional[ChainMatch]:
-    """
-    Find an existing chain_id for a command without requiring --chain flag.
-
-    This enables deterministic chain resumption for stage 4+ when the AI
-    doesn't pass --chain explicitly.
-
-    Search order:
-    1. Feature directory state (if --feature-dir provided)
-    2. Pending state directory
-    3. Any feature directory with matching command state
-
-    Args:
-        command: Command name (specify, plan, etc.)
-        feature_dir: Optional feature directory to check first
-        workspace_root: Optional workspace root
-
-    Returns:
-        ChainMatch with chain_id, source, and total matches count; None if not found
-    """
-    root = workspace_root or Path.cwd()
-    specs_dir = root / "specs"
-    all_matches: list[tuple[str, str]] = []  # (chain_id, source)
-
-    # 1. Check provided feature directory first
-    if feature_dir:
-        state_file = feature_dir / ".state" / "latest.json"
-        if state_file.exists():
-            try:
-                data = json.loads(state_file.read_text())
-                if data.get("command") == command:
-                    chain_id = data.get("chain_id")
-                    if chain_id:
-                        # When feature_dir is explicitly provided, return immediately
-                        # (no ambiguity - user specified the feature)
-                        return ChainMatch(
-                            chain_id=chain_id,
-                            source=feature_dir.name,
-                            total_matches=1,
-                        )
-            except (json.JSONDecodeError, OSError):
-                pass
-
-    if not specs_dir.exists():
-        return None
-
-    # 2. Check pending state
-    pending_state = specs_dir / ".pending" / ".state" / "latest.json"
-    if pending_state.exists():
-        try:
-            data = json.loads(pending_state.read_text())
-            if data.get("command") == command:
-                chain_id = data.get("chain_id")
-                if chain_id:
-                    all_matches.append((chain_id, ".pending"))
-        except (json.JSONDecodeError, OSError):
-            pass
-
-    # 3. Scan feature directories for matching command state
-    for subdir in sorted(specs_dir.iterdir(), reverse=True):  # Most recent first
-        if subdir.is_dir() and not subdir.name.startswith("."):
-            state_file = subdir / ".state" / "latest.json"
-            if state_file.exists():
-                try:
-                    data = json.loads(state_file.read_text())
-                    if data.get("command") == command:
-                        chain_id = data.get("chain_id")
-                        if chain_id:
-                            all_matches.append((chain_id, subdir.name))
-                except (json.JSONDecodeError, OSError):
-                    continue
-
-    if not all_matches:
-        return None
-
-    # Return the first match (most recent by sorted order) with total count
-    first_chain_id, first_source = all_matches[0]
-    return ChainMatch(
-        chain_id=first_chain_id,
-        source=first_source,
-        total_matches=len(all_matches),
-    )
-
-
-def _detect_feature_dir_for_chain(chain_id: str, workspace_root: Optional[Path] = None) -> Optional[Path]:
-    """
-    Auto-detect feature directory by scanning specs/ for state files with matching chain_id,
-    or by matching the current git branch to a feature directory.
-
-    This handles the case where stage 3 created the folder but --feature-dir wasn't passed.
-    """
-    from speckit.setup.check_cmd import find_feature_dir
-
-    root = workspace_root or Path.cwd()
-    specs_dir = root / "specs"
-    if not specs_dir.exists():
-        return None
-
-    # Check pending state for stored feature_dir
-    pending_state = specs_dir / ".pending" / ".state" / "latest.json"
-    if pending_state.exists():
-        try:
-            data = json.loads(pending_state.read_text())
-            if data.get("chain_id") == chain_id and data.get("feature_dir"):
-                feature_path = Path(data["feature_dir"])
-                if feature_path.exists():
-                    return feature_path
-        except (json.JSONDecodeError, OSError):
-            pass
-
-    # Scan feature directories for matching chain_id in state
-    for subdir in sorted(specs_dir.iterdir(), reverse=True):  # Most recent first by name
-        if subdir.is_dir() and not subdir.name.startswith("."):
-            state_file = subdir / ".state" / "latest.json"
-            if state_file.exists():
-                try:
-                    data = json.loads(state_file.read_text())
-                    if data.get("chain_id") == chain_id:
-                        return subdir
-                except (json.JSONDecodeError, OSError):
-                    continue
-
-    # Fallback: use git branch name to find matching feature directory
-    # This is safer than mtime as it uses explicit naming convention
-    return find_feature_dir(root)
+# Stage at which feature folder is expected to exist
+# (stage 3 = branch-setup, when folder is created by create-feature command)
+FEATURE_STATE_MIN_STAGE = 3
 
 
 def run_staged_command(
     command: str,
-    stage: int = 1,
-    chain_id: Optional[str] = None,
+    stage: Optional[int] = None,
     path: Optional[str] = None,
     feature_dir: Optional[str] = None,
     context: Optional[dict] = None,
@@ -179,12 +47,14 @@ def run_staged_command(
     This generic handler loads the appropriate fragment for the current stage,
     renders it with context, and emits it for the AI agent.
 
+    All staged commands use folder-based state management (FeatureStateManager).
+    Stage and feature_dir are auto-detected from state when not provided.
+
     Args:
-        command: Command name (e.g., "constitution", "specify", "plan")
-        stage: Current stage number (1-indexed)
-        chain_id: Optional chain ID for state persistence
-        path: Optional project path
-        feature_dir: Optional feature directory path (for feature-scoped commands stage 3+)
+        command: Command name (e.g., "specify", "plan", "tasks", "implement")
+        stage: Current stage number (1-indexed). If None, auto-detected from state.
+        path: Optional project path (for early stages)
+        feature_dir: Feature directory path. If None, auto-detected.
         context: Optional additional context variables
     """
     # Get ordered list of stages for this command
@@ -200,6 +70,10 @@ def run_staged_command(
 
     total_stages = len(stages)
 
+    # Try to auto-detect stage from state if not provided
+    if stage is None:
+        stage = _auto_detect_stage(command, feature_dir, stages)
+
     # Validate stage number
     if stage < 1 or stage > total_stages:
         emit_error(
@@ -209,75 +83,112 @@ def run_staged_command(
         )
         return
 
-    # Get the stage identifier (e.g., "01-initialization")
     stage_id = stages[stage - 1]
 
-    # Convert feature_dir to Path if provided
-    feature_dir_path = Path(feature_dir) if feature_dir else None
+    # For early stages (1-2), feature folder may not exist yet
+    # Just emit the prompt without state tracking
+    if stage < FEATURE_STATE_MIN_STAGE:
+        render_context = {
+            "stage": stage,
+            "total_stages": total_stages,
+            "command": command,
+            "feature_dir": feature_dir or "",
+            **(context or {}),
+        }
 
-    # For feature-scoped commands at stage 4+, auto-resume chain if not explicitly provided
-    # This ensures deterministic behavior even if AI doesn't pass --chain
-    if not chain_id and command in FEATURE_SCOPED_COMMANDS and stage >= FEATURE_STATE_MIN_STAGE + 1:
-        chain_match = _find_existing_chain_for_command(command, feature_dir_path)
-        if chain_match:
-            chain_id = chain_match.chain_id
-            # Warn if multiple matching chains found (ambiguous selection)
-            if chain_match.total_matches > 1:
-                console.print(
-                    f"[yellow]⚠ Multiple {command} chains found ({chain_match.total_matches}). "
-                    f"Auto-resuming: {chain_match.chain_id} from {chain_match.source}[/yellow]"
-                )
-                console.print(
-                    f"[dim]  Use --chain=<id> or --feature-dir to specify explicitly.[/dim]"
-                )
-
-    # Initialize or load chain state
-    if chain_id:
         try:
-            state = ChainState.load(chain_id, command=command, feature_dir=feature_dir_path)
+            fragment = get_prompt_fragment(command, stage_id)
         except FileNotFoundError:
             emit_error(
-                "Chain state not found",
-                f"No state found for chain ID: {chain_id}",
-                recovery_cmd=f"speckitadv {command} --stage=1 --path={path or '.'}",
+                "Fragment not found",
+                f"Prompt fragment not found: {command}/{stage_id}",
+                recovery_cmd=f"speckitadv list-fragments {command}",
             )
             return
-        except ValueError as e:
-            emit_error(
-                "Chain ID mismatch",
-                str(e),
-                recovery_cmd=f"speckitadv {command} --stage=1 --path={path or '.'}",
-            )
-            return
-    else:
-        # New workflow - initialize state
-        project_path = Path(path) if path else Path.cwd()
-        state = ChainState.initialize(project_path, command=command, feature_dir=feature_dir_path)
-        chain_id = state.chain_id
 
-    # Update feature directory if provided (for stage 3+ of feature-scoped commands)
-    if feature_dir_path and command in FEATURE_SCOPED_COMMANDS:
-        state.set_feature_dir(feature_dir_path)
-    elif command in FEATURE_SCOPED_COMMANDS and stage >= FEATURE_STATE_MIN_STAGE:
-        # Auto-detect feature directory by scanning specs/ for matching chain_id
-        # This handles the case where stage 3 created the folder but --feature-dir wasn't passed
-        # NOTE: Skip auto-detect for specify stage 3 - the folder is created BY that stage
-        # For specify, auto-detect only at stage 4+ (after create-feature has run)
-        should_auto_detect = not (command == "specify" and stage == FEATURE_STATE_MIN_STAGE)
-        if should_auto_detect:
-            detected_dir = _detect_feature_dir_for_chain(state.chain_id)
-            if detected_dir:
-                state.set_feature_dir(detected_dir)
-                feature_dir_path = detected_dir
+        rendered = render_prompt(fragment, render_context)
+        title = _extract_title(rendered, stage_id)
+
+        # Next command for early stages (still need --stage since no state yet)
+        if stage + 1 < FEATURE_STATE_MIN_STAGE:
+            next_cmd = f"speckitadv {command} --stage={stage + 1}"
+        else:
+            # Stage 3+ will have state, so CLI can auto-detect - no args needed
+            next_cmd = f"speckitadv {command}"
+
+        emit_stage(
+            stage_num=stage,
+            total_stages=total_stages,
+            title=title,
+            content=rendered,
+            next_cmd=next_cmd,
+            context=render_context if stage == 1 else None,
+        )
+        return
+
+    # For stage 3+, feature folder should exist
+    # Try to resolve the feature folder
+    try:
+        specs_dir = Path("specs")
+        feature_path = resolve_feature_folder(feature_dir, specs_dir)
+    except FileNotFoundError:
+        if feature_dir:
+            # Explicit folder provided but doesn't exist
+            emit_error(
+                "Feature folder not found",
+                f"Feature folder does not exist: {feature_dir}",
+                recovery_cmd=f"speckitadv create-feature 'your feature description'",
+            )
+        else:
+            # No folder specified and none found
+            emit_error(
+                "No feature folder found",
+                "No feature folder found. Create one first or specify with --feature-dir",
+                recovery_cmd=f"speckitadv create-feature 'your feature description'",
+            )
+        return
+
+    # Check if explicitly provided folder exists before checking state
+    # (resolve_feature_folder only throws for auto-detection, not explicit paths)
+    if feature_dir and not feature_path.exists():
+        emit_error(
+            "Feature folder not found",
+            f"Feature folder does not exist: {feature_path}",
+            recovery_cmd=f"speckitadv create-feature 'your feature description'",
+        )
+        return
+
+    # Load or create state manager
+    state_manager = FeatureStateManager(feature_path)
+
+    # Check if state exists
+    if not state_manager.exists():
+        emit_error(
+            "State not initialized",
+            f"Feature state not found in {feature_path}. Was create-feature run?",
+            recovery_cmd=f"speckitadv create-feature 'your feature description'",
+        )
+        return
+
+    # Load state and get context
+    try:
+        feature_state = state_manager.load()
+        state_context = state_manager.get_prompt_context(command, stage_id)
+    except FileNotFoundError as e:
+        emit_error(
+            "State file error",
+            str(e),
+            recovery_cmd=f"speckitadv create-feature 'your feature description'",
+        )
+        return
 
     # Build render context
     render_context = {
-        "chain_id": chain_id,
         "stage": stage,
         "total_stages": total_stages,
-        "project_path": str(state.project_path or Path.cwd()),
         "command": command,
-        "feature_dir": str(feature_dir_path) if feature_dir_path else (str(state.feature_dir) if state.feature_dir else ""),
+        "feature_dir": str(feature_path),
+        **state_context,
         **(context or {}),
     }
 
@@ -293,53 +204,99 @@ def run_staged_command(
         return
 
     rendered = render_prompt(fragment, render_context)
-
-    # Extract title from fragment (first # heading)
     title = _extract_title(rendered, stage_id)
 
-    # Determine next command
+    # Update state to mark prompt as in_progress
+    state_manager.update_prompt(
+        prompt=command,
+        stage=stage_id,
+        status="in_progress",
+    )
+
+    # Determine next command - no args needed, CLI reads from state
     if stage < total_stages:
-        next_stage = stage + 1
-        # For feature-scoped commands, don't include --chain until state is persisted
-        # State is only persisted from stage 3+ (after feature folder exists)
-        # So stages 1 and 2 don't output --chain (state not saved yet)
-        if command in FEATURE_SCOPED_COMMANDS and stage < FEATURE_STATE_MIN_STAGE:
-            next_cmd = f"speckitadv {command} --stage={next_stage}"
-        else:
-            next_cmd = f"speckitadv {command} --stage={next_stage} --chain={chain_id}"
-            # Include --feature-dir for feature-scoped commands when we have a feature directory
-            if command in FEATURE_SCOPED_COMMANDS and feature_dir_path:
-                next_cmd += f" --feature-dir={feature_dir_path}"
+        next_cmd = f"speckitadv {command}"
     else:
         next_cmd = None
 
-    # Save state for this stage (may be skipped for early stages of feature commands)
-    state.save(
-        stage_name=stage_id,
-        data={
-            "stage": stage,
-            "stage_id": stage_id,
-            "command": command,
-        },
+    # Emit the stage prompt
+    emit_stage(
         stage_num=stage,
+        total_stages=total_stages,
+        title=title,
+        content=rendered,
+        next_cmd=next_cmd,
     )
 
     # Check if this is the final stage
     if stage == total_stages:
+        # Mark prompt as completed
+        state_manager.update_prompt(
+            prompt=command,
+            stage=stage_id,
+            status="completed",
+        )
+
         emit_complete(
             message=f"{command.title()} workflow complete.",
             next_steps=_get_next_steps(command),
-            artifacts=[str(state.project_path / ".analysis" if state.project_path else ".")],
+            artifacts=[str(feature_path)],
         )
-    else:
-        emit_stage(
-            stage_num=stage,
-            total_stages=total_stages,
-            title=title,
-            content=rendered,
-            next_cmd=next_cmd,
-            context=render_context if stage == 1 else None,
-        )
+
+
+def _auto_detect_stage(
+    command: str,
+    feature_dir: Optional[str],
+    stages: list[str],
+) -> int:
+    """
+    Auto-detect the next stage from state file.
+
+    Returns:
+        Stage number to run (1-indexed)
+    """
+    # Try to find feature folder
+    try:
+        specs_dir = Path("specs")
+        feature_path = resolve_feature_folder(feature_dir, specs_dir)
+    except FileNotFoundError:
+        # No feature folder found - start at stage 1
+        return 1
+
+    # Try to load state
+    state_manager = FeatureStateManager(feature_path)
+    if not state_manager.exists():
+        # No state file - start at stage 1
+        return 1
+
+    try:
+        state = state_manager.load()
+    except Exception:
+        return 1
+
+    # Get current stage for this command from state
+    prompt_state = getattr(state, command, None)
+    if prompt_state is None:
+        return 1
+
+    # If completed, we're done
+    if prompt_state.status == "completed":
+        return len(stages)  # Return last stage (will show completion)
+
+    # If in_progress, find current stage index and continue
+    if prompt_state.current_stage:
+        try:
+            current_idx = stages.index(prompt_state.current_stage)
+            # Return next stage (current + 1, converted to 1-indexed)
+            return min(current_idx + 2, len(stages))
+        except ValueError:
+            pass
+
+    # If pending, start at stage 1 (workflow has not started yet)
+    if prompt_state.status == "pending":
+        return 1
+
+    return 1
 
 
 def _extract_title(content: str, fallback: str) -> str:
@@ -388,6 +345,10 @@ def _get_next_steps(command: str) -> list[str]:
         "checklist": [
             "Review checklist items",
             "Complete checklist before implementation",
+        ],
+        "analyze-project": [
+            "Review analysis report",
+            "Use insights for modernization planning",
         ],
     }
     return next_steps_map.get(command, ["Review output", "Continue to next command"])

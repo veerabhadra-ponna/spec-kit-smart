@@ -16,6 +16,7 @@ from typing import Optional
 
 from rich.console import Console
 
+from speckit.core.prompts import get_templates_base, load_template
 from speckit.core.utils import find_repo_root
 
 console = Console()
@@ -131,37 +132,31 @@ def run_setup_plan(
     # Ensure feature directory exists
     feature_dir.mkdir(parents=True, exist_ok=True)
 
-    # Check for template in priority order
-    template = None
-    search_paths = [
-        repo_root / "memory" / "templates" / "plan-template.md",
-        repo_root / ".specify" / "templates" / "plan-template.md",
-        repo_root / "templates" / "plan-template.md",
-        Path(__file__).parent.parent / "assets" / "templates" / "plan-template.md",
-    ]
-    for path in search_paths:
-        if path.exists():
-            template = path
-            break
-
-    if template and template.exists():
-        content = template.read_text(encoding="utf-8")
-
-        # Replace Input line if arguments provided
-        if arguments:
-            # Escape special characters
-            escaped = arguments.replace("\\", "\\\\").replace("&", "\\&")
-            content = re.sub(
-                r"\*\*Input\*\*:.*",
-                f'**Input**: User description: "{escaped}"',
-                content,
-            )
-
-        impl_plan.write_text(content, encoding="utf-8")
-        console.print(f"[green]✓[/green] Copied plan template to {impl_plan}")
+    # Skip if plan already exists (avoid overwriting user edits on re-run)
+    if impl_plan.exists():
+        console.print(
+            f"[yellow]⚠[/yellow] Plan already exists at {impl_plan} (not overwritten)"
+        )
     else:
-        console.print(f"[yellow]Warning:[/yellow] Plan template not found at {template}")
-        impl_plan.touch()
+        # Load template using centralized function (handles frozen builds + project overrides)
+        try:
+            content = load_template("plan-template.md", workspace_root=repo_root)
+
+            # Replace Input line if arguments provided
+            if arguments:
+                # Escape special characters
+                escaped = arguments.replace("\\", "\\\\").replace("&", "\\&")
+                content = re.sub(
+                    r"\*\*Input\*\*:.*",
+                    f'**Input**: User description: "{escaped}"',
+                    content,
+                )
+
+            impl_plan.write_text(content, encoding="utf-8")
+            console.print(f"[green]✓[/green] Copied plan template to {impl_plan}")
+        except FileNotFoundError:
+            console.print("[yellow]Warning:[/yellow] Plan template not found")
+            impl_plan.touch()
 
     result = {
         "FEATURE_SPEC": str(feature_spec),
@@ -440,13 +435,13 @@ def run_update_agent_context(agent_type: Optional[str] = None) -> bool:
     if plan_data.get("framework"):
         console.print(f"[dim]Found framework: {plan_data['framework']}[/dim]")
 
-    # Check for template in priority order
+    # Check for template in priority order (use get_templates_base for frozen build support)
     template_path = None
     search_paths = [
         repo_root / "memory" / "templates" / "agent-file-template.md",
         repo_root / ".specify" / "templates" / "agent-file-template.md",
         repo_root / "templates" / "agent-file-template.md",
-        Path(__file__).parent.parent / "assets" / "templates" / "agent-file-template.md",
+        get_templates_base() / "agent-file-template.md",
     ]
     for path in search_paths:
         if path.exists():

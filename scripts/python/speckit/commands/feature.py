@@ -16,6 +16,7 @@ from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
 
+from speckit.core.state import FeatureMetadata, FeatureStateManager
 from speckit.core.utils import find_repo_root
 
 console = Console()
@@ -54,13 +55,27 @@ STOP_WORDS = {
 
 def load_branch_config(project_root: Path) -> dict:
     """
-    Load branching configuration from memory/config.json.
+    Load branching configuration from config file.
 
-    Falls back to defaults if file doesn't exist or jq-style parsing fails.
+    Search order:
+    1. memory/config.json (preferred)
+    2. .specify/config.json (fallback)
+
+    Falls back to defaults if file doesn't exist or parsing fails.
     """
-    config_file = project_root / "memory" / "config.json"
+    # Search paths in priority order
+    config_paths = [
+        project_root / "memory" / "config.json",
+        project_root / ".specify" / "config.json",
+    ]
 
-    if config_file.exists():
+    config_file = None
+    for path in config_paths:
+        if path.exists():
+            config_file = path
+            break
+
+    if config_file and config_file.exists():
         try:
             with open(config_file, encoding="utf-8") as f:
                 user_config = json.load(f)
@@ -353,14 +368,14 @@ def create_spec_directory(
     config: dict,
 ) -> tuple[Path, str]:
     """
-    Create spec directory structure (without template files).
+    Create spec directory structure and initialize state.
 
     Template files (spec.md, plan.md, tasks.md) are created by AI during
-    the specify workflow stages, not here. This ensures AI writes complete
+    the workflow stages, not here. This ensures AI writes complete
     content rather than editing placeholders.
 
     Returns:
-        Tuple of (spec_dir_path, spec_file_path)
+        Tuple of (feature_dir_path, state_file_path)
     """
     dir_config = config["branching"]["directory"]
     base_path = dir_config["base_path"]
@@ -380,19 +395,25 @@ def create_spec_directory(
     feature_dir = specs_dir / dir_name
     feature_dir.mkdir(parents=True, exist_ok=True)
 
-    # Spec file path (AI will create this in stage 4)
-    spec_file = feature_dir / "spec.md"
-
-    # NOTE: We intentionally do NOT create spec.md, plan.md, tasks.md,
-    # or requirements.md here. These are created by AI during the workflow
-    # stages to ensure complete content is written rather than placeholder
-    # templates being edited.
-
-    # Create checklists directory (requirements.md created by AI in stage 5)
+    # Create checklists directory
     checklists_dir = feature_dir / "checklists"
     checklists_dir.mkdir(exist_ok=True)
 
-    return feature_dir, str(spec_file)
+    # Initialize feature state
+    state_manager = FeatureStateManager(feature_dir)
+    metadata = FeatureMetadata(
+        short_name=short_name,
+        description=description,
+        jira=jira,
+    )
+    state_manager.initialize(metadata)
+
+    # Mark specify as in_progress at stage 3 so auto-detect advances past stages 1-2
+    # (create-feature is called during stage 2, so next stage is 3)
+    state_manager.update_prompt("specify", "03-branch-setup", "in_progress")
+
+    state_file = feature_dir / ".state" / "state.json"
+    return feature_dir, str(state_file)
 
 
 def run_create_feature(
@@ -402,11 +423,15 @@ def run_create_feature(
     number: Optional[int] = None,
     no_branch: bool = False,
     output_json: bool = False,
-) -> None:
+) -> dict:
     """
-    Create a new feature with branch and spec directory.
+    Create a new feature with branch, spec directory, and initialized state.
 
-    Replaces create-new-feature.sh with full functionality.
+    This is the CLI helper command for AI to call during specify stage 1.
+    Returns structured JSON for deterministic folder creation.
+
+    Returns:
+        Dictionary with success status, folder path, branch name, and state file.
     """
     # Find project root
     project_root = find_repo_root(Path.cwd())
@@ -417,15 +442,23 @@ def run_create_feature(
 
     # Validate JIRA if required
     if jira_config.get("required", False) and not jira:
-        console.print(
-            "[red]Error:[/red] JIRA number is required by configuration",
-            file=console.stderr,
-        )
-        console.print(
-            f"Use --jira to specify (format: {jira_config['format']})",
-            file=console.stderr,
-        )
-        raise SystemExit(1)
+        error_result = {
+            "success": False,
+            "error": "JIRA number is required by configuration",
+            "jira_format": jira_config.get("format", ""),
+        }
+        if output_json:
+            print(json.dumps(error_result))
+        else:
+            console.print(
+                "[red]Error:[/red] JIRA number is required by configuration",
+                file=console.stderr,
+            )
+            console.print(
+                f"Use --jira to specify (format: {jira_config['format']})",
+                file=console.stderr,
+            )
+        return error_result
 
     # Validate JIRA format if provided
     if jira:
@@ -433,11 +466,16 @@ def run_create_feature(
         if not is_valid:
             # Check if strict format validation is enabled
             if jira_config.get("strict_format", False):
-                console.print(f"[red]Error:[/red] {error_msg}", file=console.stderr)
-                raise SystemExit(1)
+                error_result = {"success": False, "error": error_msg}
+                if output_json:
+                    print(json.dumps(error_result))
+                else:
+                    console.print(f"[red]Error:[/red] {error_msg}", file=console.stderr)
+                return error_result
             else:
                 # Just warn, don't block
-                console.print(f"[yellow]Warning:[/yellow] {error_msg}")
+                if not output_json:
+                    console.print(f"[yellow]Warning:[/yellow] {error_msg}")
 
     # Generate short name if not provided
     if not short_name:
@@ -462,8 +500,8 @@ def run_create_feature(
     if not no_branch:
         branch_created, branch_message = create_git_branch(branch_name)
 
-    # Create spec directory and files
-    feature_dir, spec_file = create_spec_directory(
+    # Create spec directory and initialize state
+    feature_dir, state_file = create_spec_directory(
         project_root=project_root,
         branch_name=branch_name,
         feature_num=feature_num,
@@ -476,22 +514,27 @@ def run_create_feature(
     # Set environment variable (for current process, parent shell won't see it)
     os.environ["SPECIFY_FEATURE"] = branch_name
 
+    # Build result
+    result = {
+        "success": True,
+        "folder": str(feature_dir),
+        "branch": branch_name,
+        "state_file": state_file,
+        "feature_num": feature_num,
+        "short_name": short_name,
+    }
+
     # Output result
     if output_json:
-        result = {
-            "BRANCH_NAME": branch_name,
-            "SPEC_FILE": spec_file,
-            "FEATURE_NUM": feature_num,
-        }
         print(json.dumps(result))
     else:
-        console.print(f"BRANCH_NAME: {branch_name}")
-        console.print(f"SPEC_FILE: {spec_file}")
-        console.print(f"FEATURE_NUM: {feature_num}")
+        console.print(f"[green]✓[/green] Created feature folder: {feature_dir}")
+        console.print(f"  Branch: {branch_name}")
+        console.print(f"  State: {state_file}")
 
         if branch_created:
-            console.print(f"[green]✓[/green] {branch_message}")
+            console.print(f"  [green]✓[/green] {branch_message}")
         elif not no_branch and branch_message:
-            console.print(f"[yellow]![/yellow] {branch_message}")
+            console.print(f"  [yellow]![/yellow] {branch_message}")
 
-        console.print(f"SPECIFY_FEATURE environment variable set to: {branch_name}")
+    return result

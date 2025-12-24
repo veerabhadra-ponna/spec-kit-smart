@@ -77,7 +77,7 @@ Before running Stage 2, determine which principles to use:
 Skip to running Stage 2 with those principles:
 
 ```bash
-speckitadv constitution --stage=2 --chain={chain_id} --principles="<user's principles>"
+speckitadv constitution --stage=2 --principles="<user's principles>"
 ```
 
 ### ELSE: Ask User About Principles
@@ -110,7 +110,7 @@ Your choice [Y/N]: ___
 **IF user chooses Y (defaults):**
 
 ```bash
-speckitadv constitution --stage=2 --chain={chain_id} --defaults
+speckitadv constitution --stage=2 --defaults
 ```
 
 **IF user chooses N (custom):**
@@ -143,7 +143,7 @@ Your principles: ___
 Then run Stage 2 with the collected principles:
 
 ```bash
-speckitadv constitution --stage=2 --chain={chain_id} --principles="<user's principles>"
+speckitadv constitution --stage=2 --principles="<user's principles>"
 ```
 
 **IMPORTANT:**

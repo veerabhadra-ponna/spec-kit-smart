@@ -73,5 +73,5 @@ From tasks.md extract:
 
 ```text
 
-speckitadv implement --stage=4 --chain={{chain_id}}
+speckitadv implement
 ```

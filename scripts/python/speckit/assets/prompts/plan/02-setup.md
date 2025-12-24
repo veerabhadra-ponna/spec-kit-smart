@@ -68,11 +68,9 @@ Parse JSON output for:
 
 ---
 
-## Step 4: Create Plan Template
+## Step 4: Edit Plan Template
 
-The CLI automatically copies the plan template to the feature directory:
-
-{{copy-template:plan-template.md:plan.md}}
+The `setup-plan` command above copied the plan template to `{{feature_dir}}/plan.md`.
 
 Now edit `{{feature_dir}}/plan.md` with these initial replacements:
 

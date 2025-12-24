@@ -18,7 +18,7 @@ from typing import Optional
 from rich.console import Console
 
 from speckit.core.utils import find_repo_root, generate_chain_id
-from speckit.core.state import FEATURE_SCOPED_COMMANDS
+from speckit.core.stages import FEATURE_SCOPED_COMMANDS
 
 console = Console()
 

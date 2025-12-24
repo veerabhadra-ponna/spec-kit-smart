@@ -228,10 +228,9 @@ class TestCommandConsistency:
             result = runner.invoke(app, [cmd, "--help"])
             assert result.exit_code == 0, f"Command {cmd} failed to show help"
 
-    def test_stage_commands_have_chain_option(self):
-        """Stage-based commands should have --chain option."""
-        stage_commands = [
-            "analyze-project",
+    def test_feature_commands_have_feature_dir_option(self):
+        """Feature-scoped commands should have --feature-dir option."""
+        feature_commands = [
             "specify",
             "plan",
             "tasks",
@@ -239,7 +238,13 @@ class TestCommandConsistency:
             "clarify",
             "checklist",
         ]
-        for cmd in stage_commands:
+        for cmd in feature_commands:
             result = runner.invoke(app, [cmd, "--help"])
             output = strip_ansi(result.stdout)
-            assert "--chain" in output, f"Command {cmd} missing --chain option"
+            assert "--feature-dir" in output, f"Command {cmd} missing --feature-dir option"
+
+    def test_analyze_project_has_analysis_dir_option(self):
+        """Analyze-project should have --analysis-dir option."""
+        result = runner.invoke(app, ["analyze-project", "--help"])
+        output = strip_ansi(result.stdout)
+        assert "--analysis-dir" in output, "analyze-project missing --analysis-dir option"

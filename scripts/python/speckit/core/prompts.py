@@ -58,24 +58,46 @@ def get_templates_base() -> Path:
     return package_assets
 
 
-def load_template(template_path: str) -> str:
+def load_template(template_path: str, workspace_root: Path = None) -> str:
     """
-    Load a template file from assets/templates/.
+    Load a template file, checking project overrides before CLI embedded templates.
+
+    Search order (matching workflow.py behavior):
+    1. memory/templates/ (project-level)
+    2. .specify/templates/ (project-level)
+    3. templates/ (project-level)
+    4. CLI embedded templates (fallback - from speckit package)
 
     Args:
-        template_path: Relative path to template (e.g., "spec-template.md" or "stage-prompt-templates/clarify-prompt-template.md")
+        template_path: Relative path to template (e.g., "spec-template.md")
+        workspace_root: Optional workspace root for finding project overrides
 
     Returns:
         Template content
 
     Raises:
-        FileNotFoundError: If template not found
+        FileNotFoundError: If template not found in any location
     """
-    templates_base = get_templates_base()
-    full_path = templates_base / template_path
+    from speckit.core.utils import find_repo_root
 
-    if full_path.exists():
-        return full_path.read_text(encoding="utf-8")
+    # Determine workspace root for project overrides
+    if workspace_root is None:
+        try:
+            workspace_root = find_repo_root()
+        except (FileNotFoundError, RuntimeError):
+            workspace_root = Path.cwd()
+
+    # Search paths in priority order (project overrides first)
+    search_paths = [
+        workspace_root / "memory" / "templates" / template_path,
+        workspace_root / ".specify" / "templates" / template_path,
+        workspace_root / "templates" / template_path,
+        get_templates_base() / template_path,  # Fallback to CLI embedded templates
+    ]
+
+    for full_path in search_paths:
+        if full_path.exists():
+            return full_path.read_text(encoding="utf-8")
 
     raise FileNotFoundError(f"Template not found: {template_path}")
 
@@ -147,6 +169,17 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
     result = fragment
     missing_templates: list[str] = []
 
+    # Determine workspace root from context for template override resolution
+    # This ensures templates are found even when CLI runs from outside the project
+    workspace_root = None
+    if context.get("project_path"):
+        workspace_root = Path(context["project_path"])
+    elif context.get("feature_dir"):
+        # Derive from feature_dir (specs/XXX -> project root)
+        feature_path = Path(context["feature_dir"])
+        if feature_path.parent.name == "specs":
+            workspace_root = feature_path.parent.parent
+
     # Handle template copy: {{copy-template:source.md:dest.md}}
     # This copies the template to feature_dir/dest.md and returns a confirmation
     def copy_template(match: re.Match) -> str:
@@ -158,8 +191,13 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
             return f"[Cannot copy template: feature_dir not set]"
 
         try:
-            template_content = load_template(template_path)
             dest_path = Path(feature_dir) / dest_filename
+
+            # Skip if file already exists (avoid overwriting user edits on re-run)
+            if dest_path.exists():
+                return f"⚠ Template already exists: `{dest_path}` (not overwritten)"
+
+            template_content = load_template(template_path, workspace_root=workspace_root)
 
             # Ensure directory exists
             dest_path.parent.mkdir(parents=True, exist_ok=True)
@@ -182,7 +220,7 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
     def include_template(match: re.Match) -> str:
         template_path = match.group(1).strip()
         try:
-            template_content = load_template(template_path)
+            template_content = load_template(template_path, workspace_root=workspace_root)
             # Recursively render the included template (for nested includes and variables)
             return render_prompt(template_content, context, strict=strict)
         except FileNotFoundError:

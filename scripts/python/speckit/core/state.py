@@ -1,441 +1,497 @@
 """
-Chain State Management
+Simplified state management for spec-kit workflows.
 
-Manages persistent state across workflow stages.
-Enables session recovery and progress tracking.
-
-State Location Strategy:
-- analyze-project: .analysis/.state/
-- constitution: memory/.state/
-- specify, plan, tasks, implement: specs/{feature}/.state/
-  (only persists from stage 3+ after feature folder exists)
+Uses folder paths as implicit chain IDs:
+- Feature workflows: specs/{folder}/.state/state.json
+- Analysis workflows: .analysis/{folder}/state.json
+- Constitution: No state file (file existence check only)
 """
 
 import json
+import re
+from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Optional
-from pydantic import BaseModel, ConfigDict, Field
+from typing import Optional
 
-from speckit.core.utils import generate_chain_id
-
-
-# Commands that use feature-scoped state (specs/{feature}/.state/)
-FEATURE_SCOPED_COMMANDS = {"specify", "plan", "tasks", "implement"}
-
-# Minimum stage for feature-scoped commands to persist state
-# (stage 3 = branch-setup, when feature folder is created)
-FEATURE_STATE_MIN_STAGE = 3
+from speckit.core.utils import safe_json_loads, safe_json_dumps
+from speckit.core.prompts import get_stage_order
 
 
-class StateSchema(BaseModel):
-    """Schema for chain state validation."""
-
-    model_config = ConfigDict(extra="allow")
-
-    schema_version: str = "3.0.0"
-    chain_id: str
-    command: str = ""  # Command that owns this state
-    stage: str
-    timestamp: str
-    stages_complete: list[str] = Field(default_factory=list)
-    project_path: Optional[str] = None
-    project_name: Optional[str] = None
-    analysis_dir: Optional[str] = None
-    feature_dir: Optional[str] = None  # For feature-scoped commands
-    user_inputs: dict = Field(default_factory=dict)
-    tech_stack: dict = Field(default_factory=dict)
-    file_structure: dict = Field(default_factory=dict)
-    workspace_files: dict = Field(default_factory=dict)
-    patterns_found: dict = Field(default_factory=dict)
-    dependencies: dict = Field(default_factory=dict)
-    files_analyzed: int = 0
-    analysis_quality: dict = Field(default_factory=dict)
+# Schema version for future migrations
+SCHEMA_VERSION = 1
 
 
-class ChainState:
-    """
-    Manages chain state for workflow persistence.
+@dataclass
+class PromptState:
+    """State for a single prompt (specify, plan, tasks, implement)."""
 
-    State locations by command:
-    - analyze-project: .analysis/.state/
-    - constitution: memory/.state/
-    - specify, plan, tasks, implement: specs/{feature}/.state/
-    """
+    status: str = "pending"  # pending | in_progress | completed
+    current_stage: Optional[str] = None
+    started: Optional[str] = None
+    completed: Optional[str] = None
+    artifacts: list = field(default_factory=list)
 
-    def __init__(
-        self,
-        state_dir: Path,
-        chain_id: Optional[str] = None,
-        command: str = "",
-    ):
-        self.state_dir = state_dir
-        self.chain_id = chain_id or generate_chain_id()
-        self.command = command
-        self._data: dict[str, Any] = {}
-
-    @staticmethod
-    def get_state_dir(
-        command: str,
-        workspace_root: Optional[Path] = None,
-        feature_dir: Optional[Path] = None,
-    ) -> Path:
-        """
-        Determine state directory based on command.
-
-        Args:
-            command: Command name (analyze-project, constitution, specify, etc.)
-            workspace_root: Root directory (defaults to cwd)
-            feature_dir: Feature directory for feature-scoped commands
-
-        Returns:
-            Path to state directory
-        """
-        workspace_root = workspace_root or Path.cwd()
-
-        if command == "analyze-project":
-            return workspace_root / ".analysis" / ".state"
-        elif command == "constitution":
-            return workspace_root / "memory" / ".state"
-        elif command in FEATURE_SCOPED_COMMANDS:
-            if feature_dir:
-                return feature_dir / ".state"
-            # No feature dir yet - use pending location (state not persisted for early stages)
-            return workspace_root / "specs" / ".pending" / ".state"
-        else:
-            # Default fallback
-            return workspace_root / ".analysis" / ".state"
-
-    @classmethod
-    def initialize(
-        cls,
-        project_path: Path,
-        command: str = "analyze-project",
-        workspace_root: Optional[Path] = None,
-        feature_dir: Optional[Path] = None,
-    ) -> "ChainState":
-        """
-        Initialize a new chain for a project.
-
-        Args:
-            project_path: Path to the project being analyzed
-            command: Command name for state location routing
-            workspace_root: Optional root directory (defaults to cwd)
-            feature_dir: Optional feature directory for feature-scoped commands
-
-        Returns:
-            Initialized ChainState instance
-        """
-        workspace_root = workspace_root or Path.cwd()
-        state_dir = cls.get_state_dir(command, workspace_root, feature_dir)
-        state_dir.mkdir(parents=True, exist_ok=True)
-
-        chain = cls(state_dir, command=command)
-
-        # Create timestamp for workspace directory (only for analyze-project)
-        if command == "analyze-project":
-            timestamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
-            project_name = project_path.name
-            analysis_dir = workspace_root / ".analysis" / f"{project_name}-{timestamp}"
-            analysis_dir.mkdir(parents=True, exist_ok=True)
-        else:
-            project_name = project_path.name
-            analysis_dir = None
-
-        # Initialize bootstrap state
-        bootstrap_data = {
-            "schema_version": "3.0.0",
-            "chain_id": chain.chain_id,
-            "command": command,
-            "stage": "bootstrap",
-            "timestamp": datetime.now().isoformat(),
-            "stages_complete": [],
-            "project_path": str(project_path.absolute()),
-            "project_name": project_name,
-            "analysis_dir": str(analysis_dir.absolute()) if analysis_dir else None,
-            "feature_dir": str(feature_dir.absolute()) if feature_dir else None,
+    def to_dict(self) -> dict:
+        """Convert to dictionary."""
+        return {
+            "status": self.status,
+            "current_stage": self.current_stage,
+            "started": self.started,
+            "completed": self.completed,
+            "artifacts": self.artifacts,
         }
 
-        chain._data = bootstrap_data
+    @classmethod
+    def from_dict(cls, data: dict) -> "PromptState":
+        """Create from dictionary."""
+        return cls(
+            status=data.get("status", "pending"),
+            current_stage=data.get("current_stage"),
+            started=data.get("started"),
+            completed=data.get("completed"),
+            artifacts=data.get("artifacts", []),
+        )
 
-        # Only save bootstrap for commands that persist early stages
-        # Note: save() adds command prefix, so just pass "00-bootstrap"
-        if command not in FEATURE_SCOPED_COMMANDS:
-            chain.save("00-bootstrap", bootstrap_data)
 
-        return chain
+@dataclass
+class FeatureMetadata:
+    """Metadata about a feature."""
+
+    short_name: str
+    description: str
+    jira: Optional[str] = None
+    created: Optional[str] = None
+
+    def to_dict(self) -> dict:
+        """Convert to dictionary."""
+        return {
+            "short_name": self.short_name,
+            "description": self.description,
+            "jira": self.jira,
+            "created": self.created,
+        }
 
     @classmethod
-    def load(
-        cls,
-        chain_id: str,
-        command: str = "",
-        workspace_root: Optional[Path] = None,
-        feature_dir: Optional[Path] = None,
-    ) -> "ChainState":
-        """
-        Load existing chain state.
+    def from_dict(cls, data: dict) -> "FeatureMetadata":
+        """Create from dictionary."""
+        return cls(
+            short_name=data.get("short_name", ""),
+            description=data.get("description", ""),
+            jira=data.get("jira"),
+            created=data.get("created"),
+        )
 
-        Note: Only the latest chain is retained in state files. When a new chain
-        starts, it overwrites previous chain state. This method validates that
-        the requested chain_id matches the current state.
 
-        Args:
-            chain_id: Chain ID to load
-            command: Command name for state location routing
-            workspace_root: Optional root directory
-            feature_dir: Optional feature directory for feature-scoped commands
+@dataclass
+class FeatureState:
+    """Complete state for a feature workflow."""
 
-        Returns:
-            Loaded ChainState instance
+    schema_version: int = SCHEMA_VERSION
+    feature: FeatureMetadata = field(default_factory=lambda: FeatureMetadata("", ""))
+    specify: PromptState = field(default_factory=PromptState)
+    clarify: PromptState = field(default_factory=PromptState)
+    plan: PromptState = field(default_factory=PromptState)
+    tasks: PromptState = field(default_factory=PromptState)
+    checklist: PromptState = field(default_factory=PromptState)
+    implement: PromptState = field(default_factory=PromptState)
 
-        Raises:
-            FileNotFoundError: If state directory or files not found
-            ValueError: If chain_id doesn't match current state
-        """
-        workspace_root = workspace_root or Path.cwd()
+    def to_dict(self) -> dict:
+        """Convert to dictionary."""
+        return {
+            "schema_version": self.schema_version,
+            "feature": self.feature.to_dict(),
+            "specify": self.specify.to_dict(),
+            "clarify": self.clarify.to_dict(),
+            "plan": self.plan.to_dict(),
+            "tasks": self.tasks.to_dict(),
+            "checklist": self.checklist.to_dict(),
+            "implement": self.implement.to_dict(),
+        }
 
-        # Try command-specific locations in order
-        state_dirs_to_try = []
+    @classmethod
+    def from_dict(cls, data: dict) -> "FeatureState":
+        """Create from dictionary."""
+        return cls(
+            schema_version=data.get("schema_version", SCHEMA_VERSION),
+            feature=FeatureMetadata.from_dict(data.get("feature", {})),
+            specify=PromptState.from_dict(data.get("specify", {})),
+            clarify=PromptState.from_dict(data.get("clarify", {})),
+            plan=PromptState.from_dict(data.get("plan", {})),
+            tasks=PromptState.from_dict(data.get("tasks", {})),
+            checklist=PromptState.from_dict(data.get("checklist", {})),
+            implement=PromptState.from_dict(data.get("implement", {})),
+        )
 
-        if command:
-            state_dirs_to_try.append(cls.get_state_dir(command, workspace_root, feature_dir))
+    def to_json(self, indent: int = 2) -> str:
+        """Convert to JSON string."""
+        return safe_json_dumps(self.to_dict(), indent=indent)
 
-        # Also try feature dir if provided
-        if feature_dir and feature_dir.exists():
-            state_dirs_to_try.append(feature_dir / ".state")
+    @classmethod
+    def from_json(cls, json_str: str) -> "FeatureState":
+        """Create from JSON string."""
+        data = safe_json_loads(json_str, default={})
+        return cls.from_dict(data)
 
-        # For feature-scoped commands, always include pending state directory
-        # (stage 3 saves here before feature folder exists, stage 4+ needs to find it)
-        if command in FEATURE_SCOPED_COMMANDS:
-            pending_state = workspace_root / "specs" / ".pending" / ".state"
-            if pending_state.exists():
-                state_dirs_to_try.append(pending_state)
 
-            # Also scan specs/ for feature directories with state
-            specs_dir = workspace_root / "specs"
-            if specs_dir.exists():
-                for subdir in sorted(specs_dir.iterdir(), reverse=True):  # Most recent first
-                    if subdir.is_dir() and not subdir.name.startswith("."):
-                        feature_state_dir = subdir / ".state"
-                        if feature_state_dir.exists():
-                            state_dirs_to_try.append(feature_state_dir)
+class FeatureStateManager:
+    """Manages state for a feature workflow."""
 
-        # Fallback locations
-        state_dirs_to_try.extend([
-            workspace_root / "memory" / ".state",
-            workspace_root / ".analysis" / ".state",
-        ])
+    def __init__(self, folder_path: Path):
+        """Initialize with feature folder path."""
+        self.folder = Path(folder_path)
+        self.state_dir = self.folder / ".state"
+        self.state_file = self.state_dir / "state.json"
 
-        # Find first existing state directory with matching chain
-        state_dir = None
-        loaded_data = None
-
-        for try_dir in state_dirs_to_try:
-            if not try_dir.exists():
-                continue
-
-            latest_path = try_dir / "latest.json"
-            if latest_path.exists():
-                try:
-                    data = json.loads(latest_path.read_text())
-                    if data.get("chain_id") == chain_id:
-                        state_dir = try_dir
-                        loaded_data = data
-                        break
-                except (json.JSONDecodeError, OSError):
-                    # Skip malformed or unreadable files, try next directory
-                    continue
-
-        if not state_dir or not loaded_data:
-            raise FileNotFoundError(
-                f"No state found for chain ID: {chain_id}. "
-                f"Searched in: {[str(d) for d in state_dirs_to_try]}"
-            )
-
-        # Use the passed command (the NEW command using this chain) if provided,
-        # only fall back to stored command if none specified.
-        # This allows chain reuse across commands (specify -> plan -> tasks -> implement)
-        # while keeping each command's stages correctly prefixed.
-        actual_command = command if command else loaded_data.get("command", "")
-        chain = cls(state_dir, chain_id, command=actual_command)
-        chain._data = loaded_data
-
-        return chain
-
-    def save(
-        self,
-        stage_name: str,
-        data: dict[str, Any],
-        stage_num: Optional[int] = None,
-    ) -> Optional[Path]:
-        """
-        Save state for a stage.
-
-        For feature-scoped commands (specify, plan, tasks, implement),
-        state is only persisted from stage 3+ (after feature folder exists).
-
-        Args:
-            stage_name: Name of the stage (e.g., "01-setup-and-scope")
-            data: State data to save
-            stage_num: Optional stage number for feature-scoped commands
-
-        Returns:
-            Path to saved state file, or None if not persisted
-        """
-        # Check if we should skip persistence for early stages of feature commands
-        if self.command in FEATURE_SCOPED_COMMANDS:
-            if stage_num is not None and stage_num < FEATURE_STATE_MIN_STAGE:
-                # Don't persist state for stages 1-2 of feature-scoped commands
-                # Just update in-memory state
-                self._data = {**self._data, **data}
-                self._data["stage"] = stage_name
-                self._data["command"] = self.command
-                return None
-
-        # Merge with existing data
-        merged = {**self._data, **data}
-        merged["stage"] = stage_name
-        merged["timestamp"] = datetime.now().isoformat()
-        merged["chain_id"] = self.chain_id
-        merged["command"] = self.command
-
-        # Create command-prefixed stage name for file
-        file_stage_name = f"{self.command}-{stage_name}" if self.command else stage_name
-
-        # Add to stages_complete if not already there
-        if file_stage_name not in merged.get("stages_complete", []):
-            merged.setdefault("stages_complete", []).append(file_stage_name)
-
-        # Validate against schema
-        validated = StateSchema(**merged)
-        self._data = validated.model_dump()
-
-        # Ensure state directory exists
+    def initialize(self, metadata: FeatureMetadata) -> FeatureState:
+        """Initialize new feature state."""
         self.state_dir.mkdir(parents=True, exist_ok=True)
 
-        # Save stage file with command prefix
-        stage_file = self.state_dir / f"{file_stage_name}.json"
-        stage_file.write_text(json.dumps(self._data, indent=2))
+        if metadata.created is None:
+            metadata.created = datetime.now().isoformat()
 
-        # Update latest symlink/file
-        latest_file = self.state_dir / "latest.json"
-        latest_file.write_text(json.dumps(self._data, indent=2))
+        state = FeatureState(feature=metadata)
+        self.save(state)
+        return state
 
-        return stage_file
+    def exists(self) -> bool:
+        """Check if state file exists."""
+        return self.state_file.exists()
 
-    def get(self, key: str, default: Any = None) -> Any:
-        """Get value from state."""
-        return self._data.get(key, default)
+    def load(self) -> FeatureState:
+        """Load state from file."""
+        if not self.state_file.exists():
+            raise FileNotFoundError(f"State file not found: {self.state_file}")
 
-    def set(self, key: str, value: Any) -> None:
-        """Set value in state (not persisted until save())."""
-        self._data[key] = value
+        content = self.state_file.read_text(encoding="utf-8")
+        return FeatureState.from_json(content)
 
-    def to_dict(self) -> dict[str, Any]:
-        """Return state as dictionary."""
-        return dict(self._data)
+    def save(self, state: FeatureState) -> None:
+        """Save state to file."""
+        self.state_dir.mkdir(parents=True, exist_ok=True)
+        self.state_file.write_text(state.to_json(), encoding="utf-8")
 
-    def to_json(self) -> str:
-        """Return state as JSON string."""
-        return json.dumps(self._data, indent=2)
+    def update_prompt(
+        self,
+        prompt: str,
+        stage: str,
+        status: str,
+        artifacts: list = None,
+    ) -> FeatureState:
+        """Update state for a specific prompt."""
+        state = self.load()
+        prompt_state = getattr(state, prompt)
 
-    def get_last_stage(self) -> Optional[str]:
-        """Get the last completed stage name."""
-        stages = self._data.get("stages_complete", [])
-        return stages[-1] if stages else None
+        prompt_state.current_stage = stage
+        prompt_state.status = status
 
-    def is_complete(self, stage_name: str) -> bool:
-        """Check if a stage is complete."""
-        return stage_name in self._data.get("stages_complete", [])
+        if status == "in_progress" and prompt_state.started is None:
+            prompt_state.started = datetime.now().isoformat()
 
-    @property
-    def project_path(self) -> Optional[Path]:
-        """Get project path."""
-        path = self._data.get("project_path")
-        return Path(path) if path else None
+        if status == "completed":
+            prompt_state.completed = datetime.now().isoformat()
 
-    @property
-    def project_name(self) -> Optional[str]:
-        """Get project name."""
-        return self._data.get("project_name")
+        if artifacts:
+            prompt_state.artifacts = artifacts
 
-    @property
-    def analysis_dir(self) -> Optional[Path]:
-        """Get analysis directory path."""
-        path = self._data.get("analysis_dir")
-        return Path(path) if path else None
+        self.save(state)
+        return state
 
-    @property
-    def workspace_files(self) -> dict:
-        """Get workspace file paths."""
-        return self._data.get("workspace_files", {})
+    def get_prompt_context(self, prompt: str, stage: str) -> dict:
+        """Get context variables needed for a prompt stage.
 
-    @property
-    def feature_dir(self) -> Optional[Path]:
-        """Get feature directory path."""
-        path = self._data.get("feature_dir")
-        return Path(path) if path else None
-
-    def set_feature_dir(self, feature_dir: Path, workspace_root: Optional[Path] = None) -> None:
+        Returns only what the prompt needs, not full state.
         """
-        Set feature directory and update state location.
+        state = self.load()
 
-        Called when feature folder is created (stage 3 of specify).
-        Updates the state directory to use the feature folder.
-        Migrates any existing state from pending and cleans up pending.
+        # Base context
+        context = {
+            "feature_dir": str(self.folder),
+            "feature_name": state.feature.short_name,
+            "feature_description": state.feature.description,
+        }
 
-        Args:
-            feature_dir: Path to the feature directory (e.g., specs/001-user-auth/)
-            workspace_root: Optional workspace root for finding pending state
+        if state.feature.jira:
+            context["jira"] = state.feature.jira
+
+        # Add artifacts from completed prompts
+        if state.specify.status == "completed":
+            spec_path = self.folder / "spec.md"
+            if spec_path.exists():
+                context["spec_path"] = str(spec_path)
+
+        if state.plan.status == "completed":
+            plan_path = self.folder / "plan.md"
+            if plan_path.exists():
+                context["plan_path"] = str(plan_path)
+
+        if state.tasks.status == "completed":
+            tasks_path = self.folder / "tasks.md"
+            if tasks_path.exists():
+                context["tasks_path"] = str(tasks_path)
+
+        return context
+
+    def get_next_action(self) -> tuple:
+        """Determine next prompt and stage to run.
+
+        Returns:
+            (prompt_name, stage) or (None, None) if complete
         """
-        old_state_dir = self.state_dir
-        self._data["feature_dir"] = str(feature_dir.absolute())
+        state = self.load()
 
-        # Update state directory to feature-scoped location
-        if self.command in FEATURE_SCOPED_COMMANDS:
-            new_state_dir = feature_dir / ".state"
-            new_state_dir.mkdir(parents=True, exist_ok=True)
+        # All prompts that can be in_progress (including optional ones)
+        all_prompts = ["specify", "clarify", "plan", "tasks", "checklist", "implement"]
 
-            # Migrate state files from old location (pending) if different
-            if old_state_dir != new_state_dir and old_state_dir.exists():
-                for state_file in old_state_dir.glob("*.json"):
-                    # Check if this state file belongs to our chain
-                    try:
-                        data = json.loads(state_file.read_text())
-                        if data.get("chain_id") == self.chain_id:
-                            # Copy to new location
-                            new_file = new_state_dir / state_file.name
-                            new_file.write_text(state_file.read_text())
-                            # Remove from old location
-                            state_file.unlink()
-                    except (json.JSONDecodeError, OSError):
-                        continue
+        # Main workflow prompts (checked for pending status)
+        main_workflow = ["specify", "plan", "tasks", "implement"]
 
-            # Clean up pending directory - remove orphaned state files for same command
-            # This handles abandoned/restarted workflows that left stale state
-            workspace = workspace_root or Path.cwd()
-            pending_state_dir = workspace / "specs" / ".pending" / ".state"
-            pending_dir = workspace / "specs" / ".pending"
+        # First, check ALL prompts for in_progress (resume interrupted work)
+        for prompt in all_prompts:
+            prompt_state = getattr(state, prompt)
+            if prompt_state.status == "in_progress":
+                return (prompt, prompt_state.current_stage)
 
-            if pending_state_dir.exists():
-                for state_file in list(pending_state_dir.glob("*.json")):
-                    try:
-                        data = json.loads(state_file.read_text())
-                        # Only remove files for current chain (not other chains of same command)
-                        if data.get("chain_id") == self.chain_id:
-                            state_file.unlink()
-                    except (json.JSONDecodeError, OSError):
-                        continue
+        # Then, check main workflow for pending (start next step)
+        for prompt in main_workflow:
+            prompt_state = getattr(state, prompt)
+            if prompt_state.status == "pending":
+                # Get actual first stage ID from fragment order
+                stages = get_stage_order(prompt)
+                first_stage = stages[0] if stages else "01-initialization"
+                return (prompt, first_stage)
 
-            try:
-                # Remove .state if empty
-                if pending_state_dir.exists() and not any(pending_state_dir.iterdir()):
-                    pending_state_dir.rmdir()
-                # Remove .pending if empty
-                if pending_dir.exists() and not any(pending_dir.iterdir()):
-                    pending_dir.rmdir()
-            except OSError:
-                pass  # Directory not empty or permission issue
+        return (None, None)
 
-            self.state_dir = new_state_dir
+
+@dataclass
+class AnalysisState:
+    """State for an analysis workflow."""
+
+    schema_version: int = SCHEMA_VERSION
+    project_path: str = ""
+    started: Optional[str] = None
+    completed: Optional[str] = None
+    stages: dict = field(default_factory=dict)
+
+    def to_dict(self) -> dict:
+        """Convert to dictionary."""
+        return {
+            "schema_version": self.schema_version,
+            "project_path": self.project_path,
+            "started": self.started,
+            "completed": self.completed,
+            "stages": self.stages,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "AnalysisState":
+        """Create from dictionary."""
+        return cls(
+            schema_version=data.get("schema_version", SCHEMA_VERSION),
+            project_path=data.get("project_path", ""),
+            started=data.get("started"),
+            completed=data.get("completed"),
+            stages=data.get("stages", {}),
+        )
+
+    def to_json(self, indent: int = 2) -> str:
+        """Convert to JSON string."""
+        return safe_json_dumps(self.to_dict(), indent=indent)
+
+    @classmethod
+    def from_json(cls, json_str: str) -> "AnalysisState":
+        """Create from JSON string."""
+        data = safe_json_loads(json_str, default={})
+        return cls.from_dict(data)
+
+
+class AnalysisStateManager:
+    """Manages state for an analysis workflow."""
+
+    def __init__(self, folder_path: Path):
+        """Initialize with analysis folder path."""
+        self.folder = Path(folder_path)
+        self.state_file = self.folder / "state.json"
+
+    def initialize(self, project_path: Path) -> AnalysisState:
+        """Initialize new analysis state."""
+        self.folder.mkdir(parents=True, exist_ok=True)
+
+        state = AnalysisState(
+            project_path=str(project_path),
+            started=datetime.now().isoformat(),
+        )
+        self.save(state)
+        return state
+
+    def exists(self) -> bool:
+        """Check if state file exists."""
+        return self.state_file.exists()
+
+    def load(self) -> AnalysisState:
+        """Load state from file."""
+        if not self.state_file.exists():
+            raise FileNotFoundError(f"State file not found: {self.state_file}")
+
+        content = self.state_file.read_text(encoding="utf-8")
+        return AnalysisState.from_json(content)
+
+    def save(self, state: AnalysisState) -> None:
+        """Save state to file."""
+        self.folder.mkdir(parents=True, exist_ok=True)
+        self.state_file.write_text(state.to_json(), encoding="utf-8")
+
+    def update_stage(
+        self,
+        stage: str,
+        status: str,
+        artifacts: list = None,
+    ) -> AnalysisState:
+        """Update state for a specific stage."""
+        state = self.load()
+
+        if stage not in state.stages:
+            state.stages[stage] = {"status": "pending", "artifacts": []}
+
+        state.stages[stage]["status"] = status
+
+        if artifacts:
+            state.stages[stage]["artifacts"] = artifacts
+
+        self.save(state)
+        return state
+
+    def get_current_stage(self) -> tuple:
+        """Get current stage to resume from.
+
+        Returns:
+            (stage_name, status) or (None, None) if not started
+        """
+        state = self.load()
+
+        for stage, info in state.stages.items():
+            if info.get("status") == "in_progress":
+                return (stage, "in_progress")
+
+        # Find first pending or not-started stage
+        return (None, None)
+
+
+# Placeholder detection for constitution
+def has_placeholders(content: str) -> bool:
+    """Check if content has unfilled placeholders.
+
+    Placeholders follow pattern: [UPPERCASE_WORD] or [UPPERCASE_WORDS]
+    """
+    pattern = r"\[([A-Z][A-Z0-9_]*)\]"
+    return bool(re.search(pattern, content))
+
+
+def get_placeholders(content: str) -> list:
+    """Return list of placeholder names found in content."""
+    pattern = r"\[([A-Z][A-Z0-9_]*)\]"
+    return re.findall(pattern, content)
+
+
+def check_constitution_complete(project_path: Path = None) -> tuple:
+    """Check if constitution exists and is complete.
+
+    Returns:
+        (is_complete, message)
+    """
+    if project_path is None:
+        project_path = Path.cwd()
+
+    constitution_path = project_path / "memory" / "constitution.md"
+
+    if not constitution_path.exists():
+        return (False, "Constitution does not exist")
+
+    content = constitution_path.read_text(encoding="utf-8")
+    placeholders = get_placeholders(content)
+
+    if placeholders:
+        return (False, f"Constitution has unfilled placeholders: {placeholders}")
+
+    return (True, "Constitution complete. To regenerate, delete memory/constitution.md")
+
+
+# Utility functions for finding folders
+def find_latest_feature_folder(specs_dir: Path = None) -> Path:
+    """Find the most recently modified feature folder in specs/.
+
+    Uses state.json mtime as primary sort key, folder name as secondary
+    for deterministic selection when mtimes are equal (e.g., in tests).
+    Folder names with higher numeric prefixes (e.g., 002-) win ties.
+    """
+    if specs_dir is None:
+        specs_dir = Path("specs")
+
+    if not specs_dir.exists():
+        raise FileNotFoundError(f"Specs directory not found: {specs_dir}")
+
+    folders = []
+    for item in specs_dir.iterdir():
+        if item.is_dir() and not item.name.startswith("."):
+            state_file = item / ".state" / "state.json"
+            if state_file.exists():
+                folders.append((item, state_file.stat().st_mtime))
+
+    if not folders:
+        raise FileNotFoundError("No feature folders with state found")
+
+    # Sort by (mtime DESC, folder_name DESC) for deterministic selection
+    # Folder names like "002-feature" sort higher than "001-feature"
+    folders.sort(key=lambda x: (x[1], x[0].name), reverse=True)
+    return folders[0][0]
+
+
+def find_latest_analysis_folder(analysis_dir: Path = None) -> Path:
+    """Find the most recent analysis folder in .analysis/.
+
+    Uses state.json mtime as primary sort key, folder name as secondary
+    for deterministic selection when mtimes are equal.
+    Folder names with timestamps (e.g., project-20251224-120000) sort naturally.
+    """
+    if analysis_dir is None:
+        analysis_dir = Path(".analysis")
+
+    if not analysis_dir.exists():
+        raise FileNotFoundError(f"Analysis directory not found: {analysis_dir}")
+
+    folders = []
+    for item in analysis_dir.iterdir():
+        if item.is_dir():
+            state_file = item / "state.json"
+            if state_file.exists():
+                folders.append((item, state_file.stat().st_mtime))
+
+    if not folders:
+        raise FileNotFoundError("No analysis folders with state found")
+
+    # Sort by (mtime DESC, folder_name DESC) for deterministic selection
+    folders.sort(key=lambda x: (x[1], x[0].name), reverse=True)
+    return folders[0][0]
+
+
+def resolve_feature_folder(folder: str = None, specs_dir: Path = None) -> Path:
+    """Resolve feature folder from explicit path or find latest.
+
+    Args:
+        folder: Explicit folder path or name
+        specs_dir: Base specs directory
+
+    Returns:
+        Path to feature folder
+    """
+    if folder:
+        folder_path = Path(folder)
+        if folder_path.is_absolute():
+            return folder_path
+        # Relative to specs/
+        if specs_dir is None:
+            specs_dir = Path("specs")
+        return specs_dir / folder
+
+    return find_latest_feature_folder(specs_dir)

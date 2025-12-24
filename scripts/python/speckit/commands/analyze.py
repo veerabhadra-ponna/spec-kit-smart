@@ -3,14 +3,19 @@ Analyze-Project Command
 
 Implements the progressive analysis workflow with enforced chunking.
 This is the most complex command with 16 stages and dynamic branching.
+
+Uses folder-based state management via AnalysisStateManager.
+Analysis folder pattern: .analysis/{project-name}-{timestamp}
 """
 
+import getpass
+from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
 from speckit.core.emit import emit_stage, emit_chunk, emit_error
 from speckit.core.prompts import get_prompt_fragment, render_prompt
-from speckit.core.state import ChainState
+from speckit.core.state import AnalysisStateManager, find_latest_analysis_folder
 
 
 # Stage mapping: numeric stage -> fragment identifier
@@ -70,9 +75,9 @@ TOTAL_STAGES = {
 
 
 def run_analyze_project(
-    stage: int = 1,
+    stage: Optional[int] = None,
     chunk: Optional[int] = None,
-    chain_id: Optional[str] = None,
+    analysis_dir: Optional[str] = None,
     path: Optional[str] = None,
     scope: Optional[str] = None,
     context: Optional[str] = None,
@@ -87,71 +92,124 @@ def run_analyze_project(
     This function implements progressive prompt injection:
     - Each invocation outputs ONLY the prompt for current stage
     - Prompt is 50-80 lines max (focused, digestible)
-    - State is persisted between invocations
+    - State is persisted in folder-based state management
     - AI agent runs next command from output
 
+    All arguments are auto-detected from state when not provided.
+    Only provide arguments when starting a new workflow or overriding state.
+
     Args:
-        stage: Current workflow stage (1-16)
+        stage: Current workflow stage (1-16). Auto-detected from state if None.
         chunk: Report chunk number for chunked stages
-        chain_id: Chain ID for state persistence
-        path: Project path to analyze
-        scope: Analysis scope (A=full, B=cross-cutting)
+        analysis_dir: Analysis folder path. Auto-detected (latest) if None.
+        path: Project path to analyze. Loaded from state if None.
+        scope: Analysis scope (A=full, B=cross-cutting). Loaded from state if None.
         context: Additional context
-        concern_type: Type of cross-cutting concern (for scope B)
-        current_impl: Current implementation details
-        target_impl: Target implementation details
+        concern_type: Type of cross-cutting concern. Loaded from state if None.
+        current_impl: Current implementation details. Loaded from state if None.
+        target_impl: Target implementation details. Loaded from state if None.
         verify: Run verification after final stage completes
     """
-    # Initialize or load chain state
-    if chain_id:
-        try:
-            state = ChainState.load(chain_id, command="analyze-project")
-        except FileNotFoundError:
-            emit_error(
-                "Chain state not found",
-                f"No state found for chain ID: {chain_id}",
-                recovery_cmd=f"speckitadv analyze-project --stage=1 --path={path or '.'}",
-            )
-            return
-        except ValueError as e:
-            emit_error(
-                "Chain ID mismatch",
-                str(e),
-                recovery_cmd=f"speckitadv analyze-project --stage=1 --path={path or '.'}",
-            )
-            return
+    # Try to find existing analysis folder first
+    analysis_dir_path = None
+    state_manager = None
+    state = None
+
+    if analysis_dir:
+        analysis_dir_path = Path(analysis_dir)
+        state_manager = AnalysisStateManager(analysis_dir_path)
+        if state_manager.exists():
+            state = state_manager.load()
     else:
-        # New workflow - initialize state
-        project_path = Path(path) if path else Path.cwd()
+        # Try to find latest analysis folder
+        try:
+            analysis_dir_path = find_latest_analysis_folder()
+            state_manager = AnalysisStateManager(analysis_dir_path)
+            if state_manager.exists():
+                state = state_manager.load()
+        except FileNotFoundError:
+            pass  # No existing analysis - will create new one
+
+    # Auto-detect stage from state if not provided
+    if stage is None:
+        if state:
+            stage = _auto_detect_stage_from_state(state)
+        else:
+            stage = 1  # New workflow starts at stage 1
+
+    # Determine project path
+    if path:
+        project_path = Path(path)
+    elif state and state.project_path:
+        project_path = Path(state.project_path)
+    else:
+        project_path = Path.cwd()
+
+    # Initialize new workflow if needed
+    if stage == 1 and state is None:
+        # Stage 1 without existing state = new workflow
         if not project_path.exists():
             emit_error(
                 "Project path not found",
                 f"Path does not exist: {project_path}",
-                recovery_cmd="speckitadv analyze-project --stage=1 --path=<valid-path>",
+                recovery_cmd="speckitadv analyze-project --path=<valid-path>",
             )
             return
 
-        state = ChainState.initialize(project_path, command="analyze-project")
-        chain_id = state.chain_id
+        # Create new analysis folder with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        project_name = project_path.name
+        analysis_dir_path = Path(".analysis") / f"{project_name}-{timestamp}"
+        state_manager = AnalysisStateManager(analysis_dir_path)
+        state = state_manager.initialize(project_path)
+    elif state is None:
+        # Trying to resume but no state found
+        emit_error(
+            "No analysis found",
+            "No analysis in progress. Start a new analysis first.",
+            recovery_cmd="speckitadv analyze-project --path=<project-path>",
+        )
+        return
 
-    # Determine total stages based on scope
-    effective_scope = scope or state.get("scope") or "A"
-    total_stages = TOTAL_STAGES.get(effective_scope, 9)
+    # Load values from state, override with CLI args if provided
+    # Scope
+    state_scope = None
+    state_concern_type = None
+    state_context = None
+    for stage_name, stage_info in state.stages.items():
+        if stage_info.get("scope"):
+            state_scope = stage_info.get("scope")
+        if stage_info.get("concern_type"):
+            state_concern_type = stage_info.get("concern_type")
+        if stage_info.get("context"):
+            state_context = stage_info.get("context")
+
+    effective_scope = scope or state_scope or "A"
+    effective_concern_type = concern_type or state_concern_type or ""
+    effective_context = context or state_context or ""
+    total_stages = TOTAL_STAGES.get(effective_scope, 16)
+
+    # Resolve implementation values from state
+    state_current = ""
+    state_target = ""
+    for stage_name, stage_info in state.stages.items():
+        if stage_info.get("current_impl"):
+            state_current = stage_info.get("current_impl")
+        if stage_info.get("target_impl"):
+            state_target = stage_info.get("target_impl")
+
+    resolved_current = current_impl or state_current or ""
+    resolved_target = target_impl or state_target or ""
 
     # Build context for prompt rendering
-    analysis_dir = state.analysis_dir
-    # Resolve implementation values (provide both short and long variable names for prompts)
-    resolved_current = current_impl or state.get("current_impl") or ""
-    resolved_target = target_impl or state.get("target_impl") or ""
     render_context = {
-        "chain_id": chain_id,
+        "analysis_dir": str(analysis_dir_path),
         "stage": stage,
         "total_stages": total_stages,
-        "project_path": str(state.project_path),
-        "analysis_dir": str(analysis_dir) if analysis_dir else ".analysis",
+        "project_path": str(project_path),
         "scope": effective_scope,
-        "context": context or state.get("context") or "",
-        "concern_type": concern_type or state.get("concern_type") or "",
+        "context": effective_context,
+        "concern_type": effective_concern_type,
         # Short names (used in some prompts)
         "current_impl": resolved_current,
         "target_impl": resolved_target,
@@ -162,7 +220,7 @@ def run_analyze_project(
 
     # Handle chunked stages
     if chunk is not None:
-        _emit_chunk_stage(stage, chunk, chain_id, render_context, state)
+        _emit_chunk_stage(stage, chunk, analysis_dir_path, render_context, state_manager)
         return
 
     # Get fragment for current stage
@@ -171,7 +229,7 @@ def run_analyze_project(
         emit_error(
             "Invalid stage",
             f"Stage {stage} is not valid for analyze-project",
-            recovery_cmd=f"speckitadv analyze-project --stage=1 --chain={chain_id}",
+            recovery_cmd=f"speckitadv analyze-project --stage=1 --path={project_path}",
         )
         return
 
@@ -186,7 +244,7 @@ def run_analyze_project(
             emit_error(
                 "Fragment not found",
                 f"Prompt fragment not found: {fragment_id}",
-                recovery_cmd=f"speckitadv analyze-project --stage={stage} --chain={chain_id}",
+                recovery_cmd=f"speckitadv analyze-project --stage={stage} --analysis-dir={analysis_dir_path}",
             )
             return
 
@@ -209,8 +267,9 @@ def run_analyze_project(
             next_stage = stage + 1
     else:
         next_stage = None
+    # CLI auto-detects stage and analysis_dir from state - no args needed
     if next_stage:
-        next_cmd = f"speckitadv analyze-project --stage={next_stage} --chain={chain_id}"
+        next_cmd = "speckitadv analyze-project"
     else:
         next_cmd = None
 
@@ -219,7 +278,8 @@ def run_analyze_project(
     has_chunks = stage in CHUNK_MAP or stage == 16
     if has_chunks:
         # This stage requires chunking - redirect to chunk 1
-        next_cmd = f"speckitadv analyze-project --stage={stage} --chunk=1 --chain={chain_id}"
+        # Need --chunk since auto-detection doesn't handle chunks
+        next_cmd = f"speckitadv analyze-project --chunk=1"
         emit_stage(
             stage_num=stage,
             total_stages=total_stages,
@@ -234,18 +294,19 @@ Run the following command to begin:""",
         return
 
     # Save state for this stage
-    state.save(
-        stage_name=f"stage_{stage}",
-        data={
-            "stage": stage,
-            "scope": effective_scope,
-            "context": context,
-            "concern_type": concern_type or state.get("concern_type") or "",
-            "current_impl": resolved_current,
-            "target_impl": resolved_target,
-            "rendered_prompt_lines": len(rendered.splitlines()),
-        },
+    state_manager.update_stage(
+        stage=f"stage_{stage}",
+        status="completed",
+        artifacts=[],
     )
+    # Store additional context in stage info (use resolved values, not raw CLI args)
+    state = state_manager.load()
+    state.stages[f"stage_{stage}"]["scope"] = effective_scope
+    state.stages[f"stage_{stage}"]["context"] = effective_context
+    state.stages[f"stage_{stage}"]["concern_type"] = effective_concern_type
+    state.stages[f"stage_{stage}"]["current_impl"] = resolved_current
+    state.stages[f"stage_{stage}"]["target_impl"] = resolved_target
+    state_manager.save(state)
 
     # Emit the stage prompt
     emit_stage(
@@ -260,10 +321,7 @@ Run the following command to begin:""",
     # Run verification if this is the final stage and verify flag is set
     if next_cmd is None and verify:
         from speckit.commands.project import verify_analysis_report
-        if analysis_dir:
-            report_path = Path(analysis_dir) / "analysis-report.md"
-        else:
-            report_path = state.project_path / ".analysis" / "analysis-report.md"
+        report_path = analysis_dir_path / "analysis-report.md"
         if report_path.exists():
             print("\n")  # Add spacing
             verify_analysis_report(str(report_path))
@@ -274,9 +332,9 @@ Run the following command to begin:""",
 def _emit_chunk_stage(
     stage: int,
     chunk: int,
-    chain_id: str,
+    analysis_dir_path: Path,
     context: dict,
-    state: ChainState,
+    state_manager: AnalysisStateManager,
 ) -> None:
     """
     Emit a specific chunk of a chunked stage.
@@ -295,7 +353,7 @@ def _emit_chunk_stage(
         emit_error(
             "Stage not chunked",
             f"Stage {stage} does not support chunking",
-            recovery_cmd=f"speckitadv analyze-project --stage={stage} --chain={chain_id}",
+            recovery_cmd=f"speckitadv analyze-project --stage={stage} --analysis-dir={analysis_dir_path}",
         )
         return
 
@@ -304,7 +362,7 @@ def _emit_chunk_stage(
         emit_error(
             "Invalid chunk",
             f"Chunk {chunk} is not valid (1-{total_chunks})",
-            recovery_cmd=f"speckitadv analyze-project --stage={stage} --chunk=1 --chain={chain_id}",
+            recovery_cmd=f"speckitadv analyze-project --stage={stage} --chunk=1 --analysis-dir={analysis_dir_path}",
         )
         return
 
@@ -317,7 +375,7 @@ def _emit_chunk_stage(
         emit_error(
             "Fragment not found",
             f"Chunk fragment not found: {fragment_id}",
-            recovery_cmd=f"speckitadv analyze-project --stage={stage} --chain={chain_id}",
+            recovery_cmd=f"speckitadv analyze-project --stage={stage} --analysis-dir={analysis_dir_path}",
         )
         return
 
@@ -326,9 +384,25 @@ def _emit_chunk_stage(
     rendered = render_prompt(chunk_content, context)
 
     # Determine next command
+    # CLI auto-detects stage and analysis_dir from state
     if chunk < total_chunks:
-        next_cmd = f"speckitadv analyze-project --stage={stage} --chunk={chunk + 1} --chain={chain_id}"
+        next_cmd = f"speckitadv analyze-project --chunk={chunk + 1}"
     else:
+        # Final chunk - mark stage as completed in state
+        state_manager.update_stage(
+            stage=f"stage_{stage}",
+            status="completed",
+            artifacts=[],
+        )
+        # Store metadata in stage info (matching non-chunked stage behavior)
+        state = state_manager.load()
+        state.stages[f"stage_{stage}"]["scope"] = context.get("scope", "A")
+        state.stages[f"stage_{stage}"]["context"] = context.get("context", "")
+        state.stages[f"stage_{stage}"]["concern_type"] = context.get("concern_type", "")
+        state.stages[f"stage_{stage}"]["current_impl"] = context.get("current_impl", "")
+        state.stages[f"stage_{stage}"]["target_impl"] = context.get("target_impl", "")
+        state_manager.save(state)
+
         # Move to next stage with scope-aware branching
         # Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
         # Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)
@@ -345,13 +419,14 @@ def _emit_chunk_stage(
                 next_stage = stage + 1
         else:
             next_stage = None
+        # CLI auto-detects from state - no args needed
         if next_stage:
-            next_cmd = f"speckitadv analyze-project --stage={next_stage} --chain={chain_id}"
+            next_cmd = "speckitadv analyze-project"
         else:
             next_cmd = None
 
-    # Emit chunk - use analysis_dir if available
-    analysis_dir = context.get("analysis_dir", ".analysis")
+    # Emit chunk - use analysis_dir from context
+    analysis_dir = context.get("analysis_dir", str(analysis_dir_path))
     emit_chunk(
         chunk_num=chunk,
         total_chunks=total_chunks,
@@ -430,6 +505,51 @@ def _get_stage_title(stage: int) -> str:
         16: "Scope Artifacts",
     }
     return titles.get(stage, f"Stage {stage}")
+
+
+def _auto_detect_stage_from_state(state) -> int:
+    """
+    Auto-detect the next stage from analysis state.
+
+    Handles scope-aware branching:
+    - Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
+    - Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)
+
+    Returns:
+        Stage number to run (1-indexed)
+    """
+    # Find highest completed stage and scope from state
+    highest_completed = 0
+    effective_scope = "A"  # Default to scope A
+    for stage_name, stage_info in state.stages.items():
+        if stage_info.get("status") == "completed":
+            # Extract stage number from "stage_N" format
+            try:
+                stage_num = int(stage_name.split("_")[1])
+                highest_completed = max(highest_completed, stage_num)
+            except (IndexError, ValueError):
+                pass
+        # Get scope from any stage that has it stored
+        if stage_info.get("scope"):
+            effective_scope = stage_info.get("scope")
+
+    # Apply scope-aware branching logic
+    if highest_completed == 8:
+        # After quality gates, branch based on scope
+        return 9 if effective_scope == "A" else 10
+    elif highest_completed == 9:
+        # After Full App (scope A), skip Cross-cutting to reports
+        return 11
+    elif highest_completed == 10:
+        # After Cross-cutting (scope B), continue to reports
+        return 11
+
+    # Default: next stage after highest completed
+    next_stage = highest_completed + 1
+    if next_stage > 16:
+        return 16  # Cap at final stage
+
+    return next_stage
 
 
 # Export function for CLI
