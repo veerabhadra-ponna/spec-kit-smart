@@ -405,11 +405,32 @@ def run_orchestrate_command(folder: str = None):
 
 ## Success Criteria
 
-- [ ] No chain ID concept in codebase
-- [ ] Single state.json per workflow
-- [ ] CLI helper commands work for AI invocation
-- [ ] Config-driven folder naming works
-- [ ] Constitution skips if complete
-- [ ] Resume works from any entry point
-- [ ] All tests pass
+- [x] No chain ID concept in codebase
+- [x] Single state.json per workflow
+- [x] CLI helper commands work for AI invocation
+- [x] Config-driven folder naming works
+- [x] Constitution skips if complete
+- [x] Resume works from any entry point
+- [x] All tests pass (168 tests)
 - [ ] Documentation updated
+
+## Implementation Status
+
+All 7 phases have been completed:
+
+1. **Phase 1-2:** Foundation (`state_v2.py`, `feature.py`) ✅
+2. **Phase 3:** Constitution simplification ✅
+3. **Phase 4:** Feature-scoped commands ✅
+4. **Phase 5:** Analyze-project simplification ✅
+5. **Phase 6:** Resume and orchestrate ✅
+6. **Phase 7:** Cleanup old chain code ✅
+
+### Key Changes
+
+- Removed `ChainState` class and `state.py` entirely
+- All commands use folder-based state management:
+  - `FeatureStateManager` for feature workflows (`specs/{folder}/.state/`)
+  - `AnalysisStateManager` for analysis workflows (`.analysis/{folder}/`)
+  - File-existence check for constitution (`memory/constitution.md`)
+- Replaced `--chain` with `--feature-dir` and `--analysis-dir` parameters
+- 35 tests removed (old ChainState tests), all remaining 168 tests pass
