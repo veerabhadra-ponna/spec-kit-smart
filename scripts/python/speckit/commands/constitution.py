@@ -139,7 +139,6 @@ def run_constitution(
     stage: int = 1,
     principles: Optional[str] = None,
     defaults: bool = False,
-    chain_id: Optional[str] = None,  # Deprecated - kept for CLI compatibility
     path: Optional[str] = None,
 ) -> None:
     """
@@ -151,13 +150,11 @@ def run_constitution(
 
     Note: Constitution uses file-existence check instead of chain state.
     If constitution.md exists and has no placeholders, it's considered complete.
-    The chain_id parameter is deprecated and ignored.
 
     Args:
         stage: Current workflow stage (1-3)
         principles: User-provided principles text
         defaults: Use default principles (skip interactive)
-        chain_id: Deprecated - ignored (kept for CLI compatibility)
         path: Project path (defaults to current directory)
     """
     project_path = Path(path) if path else Path.cwd()

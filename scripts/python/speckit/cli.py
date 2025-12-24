@@ -130,7 +130,6 @@ def constitution(
     principles: Optional[str] = typer.Option(None, "--principles", help="User-provided principles"),
     defaults: bool = typer.Option(False, "--defaults", help="Use default principles"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", hidden=True, help="Deprecated - ignored"),
 ) -> None:
     """
     Create or update the project constitution.
@@ -154,7 +153,6 @@ def constitution(
 @app.command("specify")
 def specify(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-6)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
     feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
     jira: Optional[str] = typer.Option(None, "--jira", "-j", help="JIRA number (format: C12345-7890)"),
@@ -165,6 +163,9 @@ def specify(
 
     Defines what needs to be built before planning how.
     Runs interactively if no --jira/--feature provided at stage 2.
+
+    Uses folder-based state management. Feature folder is created via
+    'speckitadv create-feature' command during the workflow.
     """
     from speckit.core.stages import run_staged_command
 
@@ -198,7 +199,7 @@ def specify(
         context["jira"] = jira or ""
         context["feature"] = feature
 
-    run_staged_command(command="specify", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
+    run_staged_command(command="specify", stage=stage, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -209,16 +210,15 @@ def specify(
 @app.command("plan")
 def plan(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
     constraints: Optional[str] = typer.Option(None, "--constraints", "-c", help="Planning constraints"),
 ) -> None:
     """
     Create implementation plan.
 
     Designs how to build what was specified.
-    Constraints are collected by the AI agent via the stage 2 prompt.
+    Uses folder-based state management from the feature directory.
     """
     from speckit.core.stages import run_staged_command
 
@@ -228,7 +228,7 @@ def plan(
     if constraints:
         context["constraints"] = constraints
 
-    run_staged_command(command="plan", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
+    run_staged_command(command="plan", stage=stage, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -239,16 +239,15 @@ def plan(
 @app.command("tasks")
 def tasks(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-4)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
     preferences: Optional[str] = typer.Option(None, "--preferences", help="Task generation preferences"),
 ) -> None:
     """
     Generate actionable tasks.
 
     Breaks down the plan into implementable units.
-    Preferences are collected by the AI agent via the stage 2 prompt.
+    Uses folder-based state management from the feature directory.
     """
     from speckit.core.stages import run_staged_command
 
@@ -258,7 +257,7 @@ def tasks(
     if preferences:
         context["preferences"] = preferences
 
-    run_staged_command(command="tasks", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
+    run_staged_command(command="tasks", stage=stage, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -269,16 +268,15 @@ def tasks(
 @app.command("implement")
 def implement(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-5)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
-    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path (for stage 3+)"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
     notes: Optional[str] = typer.Option(None, "--notes", "-n", help="Implementation notes"),
 ) -> None:
     """
     Execute implementation.
 
     Implements tasks with quality checks.
-    Notes are collected by the AI agent via the stage 2 prompt.
+    Uses folder-based state management from the feature directory.
     """
     from speckit.core.stages import run_staged_command
 
@@ -288,7 +286,7 @@ def implement(
     if notes:
         context["notes"] = notes
 
-    run_staged_command(command="implement", stage=stage, chain_id=chain_id, path=path, feature_dir=feature_dir, context=context if context else None)
+    run_staged_command(command="implement", stage=stage, path=path, feature_dir=feature_dir, context=context if context else None)
 
 
 # ============================================================================
@@ -299,8 +297,8 @@ def implement(
 @app.command("clarify")
 def clarify(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
 ) -> None:
     """
     Ask structured questions.
@@ -309,7 +307,7 @@ def clarify(
     """
     from speckit.core.stages import run_staged_command
 
-    run_staged_command(command="clarify", stage=stage, chain_id=chain_id, path=path)
+    run_staged_command(command="clarify", stage=stage, path=path, feature_dir=feature_dir)
 
 
 # ============================================================================
@@ -320,8 +318,8 @@ def clarify(
 @app.command("checklist")
 def checklist(
     stage: int = typer.Option(1, "--stage", "-s", help="Current workflow stage (1-3)"),
-    chain_id: Optional[str] = typer.Option(None, "--chain", help="Chain ID for state persistence"),
     path: Optional[str] = typer.Option(None, "--path", "-p", help="Project path"),
+    feature_dir: Optional[str] = typer.Option(None, "--feature-dir", help="Feature directory path"),
 ) -> None:
     """
     Generate quality checklist.
@@ -330,7 +328,7 @@ def checklist(
     """
     from speckit.core.stages import run_staged_command
 
-    run_staged_command(command="checklist", stage=stage, chain_id=chain_id, path=path)
+    run_staged_command(command="checklist", stage=stage, path=path, feature_dir=feature_dir)
 
 
 # ============================================================================
