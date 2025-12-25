@@ -93,23 +93,6 @@ functional-spec-legacy.md Chunk 1/5 complete: Introduction + Summary + Scope
 
 ---
 
-## Checkpoint: Chunk 1
-
-Write: `.analysis/.checkpoints/func-legacy-chunk-1.json`
-
-```json
-{
-  "artifact": "functional-spec-legacy.md",
-  "chunk": 1,
-  "sections": ["Introduction", "Summary", "Scope"],
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-
 ## Chunk 2: User Stories - CRITICAL Features
 
 Generate Section 4.1 (CRITICAL priority features).
@@ -151,24 +134,6 @@ Append to: `{analysis_dir}/functional-spec-legacy.md`
 functional-spec-legacy.md Chunk 2/5 complete: User Stories (CRITICAL)
   - Features: [COUNT]
   - Lines: [COUNT]
-
-```
-
----
-
-## Checkpoint: Chunk 2
-
-Write: `.analysis/.checkpoints/func-legacy-chunk-2.json`
-
-```json
-{
-  "artifact": "functional-spec-legacy.md",
-  "chunk": 2,
-  "sections": ["User Stories - CRITICAL"],
-  "feature_count": {count},
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
 
 ```
 
@@ -221,12 +186,6 @@ functional-spec-legacy.md Chunk 3/5 complete: STANDARD Features + Rules
 
 ---
 
-## Checkpoint: Chunk 3
-
-Write: `.analysis/.checkpoints/func-legacy-chunk-3.json`
-
----
-
 ## Chunk 4: NFRs + Data Requirements
 
 Generate Sections 6 and 7.
@@ -270,12 +229,6 @@ functional-spec-legacy.md Chunk 4/5 complete: NFRs + Data
   - Lines: [COUNT]
 
 ```
-
----
-
-## Checkpoint: Chunk 4
-
-Write: `.analysis/.checkpoints/func-legacy-chunk-4.json`
 
 ---
 
@@ -325,34 +278,6 @@ functional-spec-legacy.md COMPLETE (5/5 chunks)
 
 ---
 
-## Final Checkpoint
-
-Write: `.analysis/.checkpoints/func-legacy-complete.json`
-
-```json
-{
-  "artifact": "functional-spec-legacy.md",
-  "chunks_complete": 5,
-  "total_features": {count},
-  "total_lines": {count},
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-1. Read `.analysis/.checkpoints/func-legacy-complete.json`
-2. Validate JSON parseable
-3. Confirm `status` = "complete"
-
-**IF verified:** Output: `✓ Checkpoint verified: functional-spec-legacy`
-**IF failed:** Retry once, then STOP
-
----
-
 ## Completion Marker
 
 ```text
@@ -376,7 +301,9 @@ ARTIFACT_COMPLETE:FUNCTIONAL_SPEC_LEGACY
 
 ## Next Stage
 
-Proceed immediately to: **06b-functional-spec-target.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.
 
 **DO NOT:**
 - Skip to technical-spec.md

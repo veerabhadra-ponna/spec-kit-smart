@@ -5,6 +5,7 @@ import pytest
 from pathlib import Path
 
 from speckit.core.state import (
+    AnalysisInputs,
     FeatureMetadata,
     FeatureState,
     FeatureStateManager,
@@ -348,3 +349,334 @@ class TestAnalysisStateManager:
 
         assert state.stages["02a-category-scan"]["status"] == "completed"
         assert state.stages["02a-category-scan"]["artifacts"] == ["categories.json"]
+
+    def test_update_inputs(self, tmp_path):
+        """Should update user inputs in state."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        state = manager.update_inputs(
+            scope="B",
+            context="Testing context",
+            concern_type="Authentication",
+            current_impl="Custom JWT",
+            target_impl="Okta",
+        )
+
+        assert state.inputs.scope == "B"
+        assert state.inputs.context == "Testing context"
+        assert state.inputs.concern_type == "Authentication"
+        assert state.inputs.current_impl == "Custom JWT"
+        assert state.inputs.target_impl == "Okta"
+
+    def test_update_inputs_partial(self, tmp_path):
+        """Should update only provided inputs."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # First update
+        manager.update_inputs(scope="A", context="Initial context")
+
+        # Partial update - should preserve scope and context
+        state = manager.update_inputs(concern_type="Database")
+
+        assert state.inputs.scope == "A"
+        assert state.inputs.context == "Initial context"
+        assert state.inputs.concern_type == "Database"
+
+    def test_mark_complete(self, tmp_path):
+        """Should mark workflow as complete."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        state = manager.mark_complete()
+
+        assert state.workflow_complete is True
+        assert state.completed is not None
+
+    def test_get_context_for_prompt(self, tmp_path):
+        """Should return context dict with all prompt variables."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+        manager.update_inputs(
+            scope="B",
+            context="Test context",
+            concern_type="Auth",
+            current_impl="JWT",
+            target_impl="Okta",
+        )
+
+        context = manager.get_context_for_prompt()
+
+        assert context["analysis_dir"] == str(folder)
+        assert context["project_path"] == str(tmp_path)
+        assert context["scope"] == "B"
+        assert context["context"] == "Test context"
+        assert context["concern_type"] == "Auth"
+        assert context["current_impl"] == "JWT"
+        assert context["target_impl"] == "Okta"
+        # Both short and long form names
+        assert context["current_implementation"] == "JWT"
+        assert context["target_implementation"] == "Okta"
+
+    def test_update_stage_with_stage_num(self, tmp_path):
+        """Should update stage with stage number for tracking."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        state = manager.update_stage(
+            stage="02a-category-scan",
+            status="completed",
+            stage_num=4,
+        )
+
+        assert state.stages["02a-category-scan"]["status"] == "completed"
+        assert "02a-category-scan" in state.stages_complete
+
+    def test_stages_complete_list(self, tmp_path):
+        """Should track completed stages in list."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Complete multiple stages
+        manager.update_stage("01a-initialization", "completed", stage_num=1)
+        manager.update_stage("01b-input-collection", "completed", stage_num=2)
+        state = manager.update_stage("02a-category-scan", "completed", stage_num=4)
+
+        assert len(state.stages_complete) == 3
+        assert "01a-initialization" in state.stages_complete
+        assert "01b-input-collection" in state.stages_complete
+        assert "02a-category-scan" in state.stages_complete
+
+
+class TestCorruptedStateHandling:
+    """Tests for corrupted state.json handling (fail-fast behavior)."""
+
+    def test_feature_state_manager_corrupted_json(self, tmp_path):
+        """FeatureStateManager.load() should raise JSONDecodeError on corrupted JSON."""
+        folder = tmp_path / "specs" / "001-test"
+        state_dir = folder / ".state"
+        state_dir.mkdir(parents=True)
+
+        # Write corrupted JSON
+        (state_dir / "state.json").write_text("{invalid json content")
+
+        manager = FeatureStateManager(folder)
+        with pytest.raises(json.JSONDecodeError):
+            manager.load()
+
+    def test_analysis_state_manager_corrupted_json(self, tmp_path):
+        """AnalysisStateManager.load() should raise JSONDecodeError on corrupted JSON."""
+        folder = tmp_path / ".analysis" / "test-run"
+        folder.mkdir(parents=True)
+
+        # Write corrupted JSON
+        (folder / "state.json").write_text("not valid json {{{")
+
+        manager = AnalysisStateManager(folder)
+        with pytest.raises(json.JSONDecodeError):
+            manager.load()
+
+    def test_feature_state_manager_valid_json(self, tmp_path):
+        """FeatureStateManager.load() should succeed with valid JSON."""
+        folder = tmp_path / "specs" / "001-test"
+        state_dir = folder / ".state"
+        state_dir.mkdir(parents=True)
+
+        valid_state = {
+            "schema_version": 1,
+            "feature": {"short_name": "test", "description": "Test feature"},
+            "specify": {"status": "pending"},
+        }
+        (state_dir / "state.json").write_text(json.dumps(valid_state))
+
+        manager = FeatureStateManager(folder)
+        state = manager.load()
+        assert state.feature.short_name == "test"
+
+
+class TestMarkCompleteTimestamp:
+    """Tests for mark_complete() timestamp handling."""
+
+    def test_mark_complete_sets_stage_timestamp(self, tmp_path):
+        """mark_complete() should set completed timestamp for final in_progress stage."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Set a stage as in_progress (simulating the final stage)
+        manager.update_stage("16-completion", "in_progress", stage_num=16)
+
+        # Now mark complete
+        state = manager.mark_complete()
+
+        # Verify the stage has a completed timestamp
+        assert state.stages["16-completion"]["status"] == "completed"
+        assert state.stages["16-completion"]["completed"] is not None
+        assert state.workflow_complete is True
+
+    def test_mark_complete_finalizes_all_in_progress_stages(self, tmp_path):
+        """mark_complete() should finalize ALL in_progress stages (self-healing)."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Simulate inconsistent state with multiple in_progress stages
+        # (could happen from manual edits or interrupted operations)
+        state = manager.load()
+        state.stages["05-review"] = {"status": "in_progress", "started": "2025-01-01T10:00:00"}
+        state.stages["10-analysis"] = {"status": "in_progress", "started": "2025-01-01T11:00:00"}
+        state.stages["15-final"] = {"status": "in_progress", "started": "2025-01-01T12:00:00"}
+        manager.save(state)
+
+        # Now mark complete - should fix all in_progress stages
+        state = manager.mark_complete()
+
+        # Verify ALL stages were completed
+        assert state.stages["05-review"]["status"] == "completed"
+        assert state.stages["05-review"]["completed"] is not None
+        assert state.stages["10-analysis"]["status"] == "completed"
+        assert state.stages["10-analysis"]["completed"] is not None
+        assert state.stages["15-final"]["status"] == "completed"
+        assert state.stages["15-final"]["completed"] is not None
+        assert state.workflow_complete is True
+
+        # Verify all are in stages_complete
+        assert "05-review" in state.stages_complete
+        assert "10-analysis" in state.stages_complete
+        assert "15-final" in state.stages_complete
+
+    def test_mark_complete_preserves_existing_timestamps(self, tmp_path):
+        """mark_complete() should preserve existing completed timestamps for audit fidelity."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Set a stage as in_progress with an existing completed timestamp
+        # (edge case: stage was completed before but status reverted to in_progress)
+        state = manager.load()
+        original_timestamp = "2025-01-15T14:30:00"
+        state.stages["08-finalize"] = {
+            "status": "in_progress",
+            "started": "2025-01-15T14:00:00",
+            "completed": original_timestamp,  # Pre-existing timestamp
+        }
+        manager.save(state)
+
+        # Now mark complete - should preserve the original timestamp
+        state = manager.mark_complete()
+
+        # Verify the original timestamp was preserved
+        assert state.stages["08-finalize"]["status"] == "completed"
+        assert state.stages["08-finalize"]["completed"] == original_timestamp
+
+    def test_mark_complete_preserves_workflow_timestamp(self, tmp_path):
+        """mark_complete() should preserve existing workflow-level completed timestamp."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Set a workflow-level completed timestamp (simulating prior completion)
+        state = manager.load()
+        original_workflow_timestamp = "2025-01-10T09:00:00"
+        state.completed = original_workflow_timestamp
+        manager.save(state)
+
+        # Call mark_complete - should preserve the original workflow timestamp
+        state = manager.mark_complete()
+
+        # Verify the workflow timestamp was preserved
+        assert state.workflow_complete is True
+        assert state.completed == original_workflow_timestamp
+
+
+class TestGetCurrentStageCompletedBehavior:
+    """Tests for get_current_stage() returning completed stages."""
+
+    def test_returns_completed_stage_when_workflow_not_complete(self, tmp_path):
+        """get_current_stage() should return (stage, 'completed') when stage is done but workflow isn't."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Complete a stage but don't mark workflow complete
+        manager.update_stage("03-analysis", "completed", stage_num=3)
+
+        stage, status = manager.get_current_stage()
+
+        # Should return the completed stage with its status, not (None, None)
+        assert stage == "03-analysis"
+        assert status == "completed"
+
+    def test_returns_none_when_workflow_complete(self, tmp_path):
+        """get_current_stage() should return (None, None) when workflow is complete."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+        manager.mark_complete()
+
+        stage, status = manager.get_current_stage()
+
+        assert stage is None
+        assert status is None
+
+    def test_returns_in_progress_stage(self, tmp_path):
+        """get_current_stage() should return in_progress stage when one exists."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+        manager.update_stage("05-review", "in_progress", stage_num=5)
+
+        stage, status = manager.get_current_stage()
+
+        assert stage == "05-review"
+        assert status == "in_progress"
+
+
+class TestAnalysisInputs:
+    """Tests for AnalysisInputs dataclass."""
+
+    def test_default_values(self):
+        """Should have empty string defaults."""
+        inputs = AnalysisInputs()
+        assert inputs.scope == ""
+        assert inputs.context == ""
+        assert inputs.concern_type == ""
+        assert inputs.current_impl == ""
+        assert inputs.target_impl == ""
+
+    def test_to_dict(self):
+        """Should convert to dictionary."""
+        inputs = AnalysisInputs(
+            scope="B",
+            context="Test",
+            concern_type="Auth",
+            current_impl="JWT",
+            target_impl="Okta",
+        )
+        d = inputs.to_dict()
+        assert d["scope"] == "B"
+        assert d["context"] == "Test"
+        assert d["concern_type"] == "Auth"
+        assert d["current_impl"] == "JWT"
+        assert d["target_impl"] == "Okta"
+
+    def test_from_dict(self):
+        """Should create from dictionary."""
+        data = {
+            "scope": "A",
+            "context": "Context text",
+            "concern_type": "",
+            "current_impl": "",
+            "target_impl": "",
+        }
+        inputs = AnalysisInputs.from_dict(data)
+        assert inputs.scope == "A"
+        assert inputs.context == "Context text"
+        assert inputs.concern_type == ""

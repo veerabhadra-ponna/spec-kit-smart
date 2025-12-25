@@ -1,8 +1,8 @@
 ---
 stage: file_analysis_phase1
-requires: analyze-project-01-setup-and-scope.json
+requires: 01c-script-execution
 outputs: category_patterns
-version: 3.1.0
+version: 3.4.0
 next: 02b-deep-dive.md
 time_allocation: 25%
 ---
@@ -17,19 +17,27 @@ Scan 15-20% of files in EACH category to identify patterns. This phase provides 
 
 ---
 
+## State Management
+
+The CLI provides all context via template variables. **Do not read state.json directly.**
+
+**Available template variables:**
+- `{project_path}` - Project being analyzed
+- `{analysis_dir}` - Analysis folder path
+- `{scope}` - Analysis scope (A or B)
+- `{context}` - Additional context
+- `{concern_type}`, `{current_impl}`, `{target_impl}` - Scope B specific
+
+---
+
 ## Pre-Check: Verify Previous Stage
 
-1. Read `.analysis/.state/analyze-project-01-setup-and-scope.json`
-2. Confirm `stages_complete` includes "setup_and_scope"
-3. Load all values into memory:
-   - `chain_id`
-   - `project_path`
-   - `analysis_dir`
-   - `file_structure`
-   - `tech_stack`
-   - `additional_context` (if provided)
+Required files from Stage 1C:
 
-**IF state missing or incomplete:** STOP - Return to Stage 1
+- `{analysis_dir}/file-manifest.json` - File listing
+- `{analysis_dir}/tech-stack.json` - Detected technologies
+
+**IF files missing:** STOP - Return to Stage 1C
 
 ---
 
@@ -294,39 +302,11 @@ Create a summary of patterns found in each category:
 
 ---
 
-## Checkpoint: Category Scan Complete
+## Step 5: Save Category Patterns
 
-### Create Checkpoint
+Write the category patterns JSON to `{analysis_dir}/category-patterns.json`.
 
-Write checkpoint file: `.analysis/.checkpoints/02a-category-scan-complete.json`
-
-```json
-{
-  "substage": "02a-category-scan",
-  "phase": 1,
-  "timestamp": "{ISO-8601}",
-  "files_scanned": {total_count},
-  "categories_completed": [
-    "controllers", "services", "models", "repositories",
-    "security", "middleware", "utilities"
-  ],
-  "patterns_extracted": true,
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/02a-category-scan-complete.json`
-2. Validate JSON is parseable
-3. Confirm all categories completed
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 02a-category-scan`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
+This file will be used by subsequent stages for deep-dive analysis.
 
 ---
 
@@ -354,4 +334,6 @@ Write checkpoint file: `.analysis/.checkpoints/02a-category-scan-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **02b-deep-dive.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt (02b-deep-dive).

@@ -150,21 +150,6 @@ Write to: `{analysis_dir}/analysis-report.md`
 2. Confirm Phase 1 sections present
 3. Confirm no placeholders
 
-**Checkpoint:**
-
-```json
-{
-  "chunk": 1,
-  "phase": "1",
-  "phase_name": "Project Discovery",
-  "lines": {count},
-  "status": "complete"
-}
-
-```
-
-Write to: `.analysis/.checkpoints/report-chunk-1.json`
-
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_1]**
 
@@ -221,23 +206,6 @@ Generate Phase 2.1 content. Document every controller and API endpoint.
 1. Append to analysis-report.md
 2. Confirm content appended
 3. Count endpoints documented
-
-**Checkpoint:**
-
-```json
-{
-  "chunk": 2,
-  "phase": "2.1",
-  "phase_name": "Controllers & API Endpoints",
-  "controllers": {count},
-  "endpoints": {count},
-  "lines": {count},
-  "status": "complete"
-}
-
-```
-
-Write to: `.analysis/.checkpoints/report-chunk-2.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_2]**
@@ -307,55 +275,11 @@ Generate Phase 2.2 content. Document services and business logic.
 2. Confirm content appended
 3. Count services documented
 
-**Checkpoint:**
-
-```json
-{
-  "chunk": 3,
-  "phase": "2.2",
-  "phase_name": "Services & Business Logic",
-  "services": {count},
-  "workflows": {count},
-  "integrations": {count},
-  "lines": {count},
-  "status": "complete"
-}
-
-```
-
-Write to: `.analysis/.checkpoints/report-chunk-3.json`
-
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_3]**
 
 **IF verified:** Output: `✓ Chunk 3/9: Services ({count} services, {lines} lines)`
 **IF failed:** Retry generation
-
----
-
-## Substage Checkpoint
-
-### Create Substage Checkpoint
-
-Write: `.analysis/.checkpoints/04a-complete.json`
-
-```json
-{
-  "substage": "04a-report-chunks-1-3",
-  "timestamp": "{ISO-8601}",
-  "chunks_completed": [1, 2, 3],
-  "total_lines": {count},
-  "status": "complete"
-}
-
-```
-
-### Verify Substage
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF verified:** Output: `✓ Checkpoint verified: 04a (Chunks 1-3)`
 
 ---
 
@@ -382,4 +306,6 @@ Write: `.analysis/.checkpoints/04a-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **04b-report-chunks-4-6.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

@@ -16,13 +16,14 @@ The **Orchestrator** workflow simplifies the entire spec-driven development proc
 
 Run the entire workflow from feature description to implementation with one command.
 
-### 2. State Persistence
+### 2. State-Based Progress Detection
 
-The orchestrator saves progress to `.speckitadv-state.json`, enabling:
+The orchestrator tracks progress via `state.json` in the feature directory (`specs/{feature}/.state/state.json`), enabling:
 
-- Resumption after chat token limits
-- Cross-session continuity
-- Progress tracking
+- Exact stage-level resumption after chat token limits
+- Seamless switching between orchestrator and individual commands
+- Cross-session continuity with deterministic behavior
+- Resume at exact point (no duplicate work, no missed work)
 
 ### 3. Flexible Execution Modes
 
@@ -114,38 +115,23 @@ flowchart LR
     style Done fill:#a5d6a7,stroke:#333,stroke-width:2px
 ```
 
-Loads state, shows progress (e.g., 28/47 tasks), identifies next task, and continues from exact stopping point.
+Detects progress from artifacts, shows status (e.g., 28/47 tasks), identifies next task, and continues from exact stopping point.
 
-## State Management
+## State-Based Progress Detection
 
-The orchestrator creates `.speckitadv-state.json` in your repository root:
+The orchestrator detects progress from `state.json` in the feature directory:
 
-```json
-{
-  "version": "1.0",
-  "feature_number": "001",
-  "feature_name": "user-auth",
-  "feature_dir": "specs/001-user-auth",
-  "current_phase": "implement",
-  "completed_phases": ["constitution", "specify", "plan", "tasks"],
-  "workflow_mode": "interactive",
-  "started_at": "2025-11-02T10:30:00Z",
-  "last_updated": "2025-11-02T11:15:00Z",
-  "checkpoints": {
-    "implement": {
-      "status": "in_progress",
-      "tasks_completed": 28,
-      "tasks_total": 47,
-      "current_task": "[T029] Implement webhook verification"
-    }
-  }
-}
+```text
+specs/001-user-auth/
+├── .state/
+│   └── state.json     # Workflow state (maintained by CLI)
+├── spec.md            # Created by specify phase
+├── plan.md            # Created by plan phase
+├── tasks.md           # Created by tasks phase
+└── analysis.md        # Created by analyze phase (optional)
 ```
 
-**Should you commit `.speckitadv-state.json`?**
-
-- ✅ **Yes** if you want cross-machine resumption or team collaboration
-- ❌ **Add to .gitignore** if you prefer local-only state
+The CLI reads `state.json` to determine exact workflow and stage. This provides deterministic behavior across all AI models and seamless interoperability between orchestrator and individual commands.
 
 ## When to Use Orchestrator vs Individual Commands
 
@@ -159,7 +145,7 @@ The orchestrator creates `.speckitadv-state.json` in your repository root:
 
 - **Commit frequently** during long workflows
 - **Review before implementation** using interactive or auto-spec mode
-- **Commit `.speckitadv-state.json`** for cross-machine work
+- **Commit artifacts** for cross-machine work
 - **Use `/speckitadv.resume`** after token limits or errors
 
 ## Progress Visualization
@@ -206,8 +192,7 @@ Your progress has been saved.
 To resume after fixing the issue:
   /speckitadv.resume
 
-To start over:
-  rm .speckitadv-state.json
+To start fresh:
   /speckitadv.orchestrate <feature-description>
 ```
 
@@ -226,17 +211,14 @@ flowchart LR
     Analyze --> Implement[Implement]
     Implement --> Done([Done])
 
-    State[.speckitadv-state.json]
-    Constitution -.-> State
-    Specify -.-> State
-    Clarify -.-> State
-    Plan -.-> State
-    Tasks -.-> State
-    Analyze -.-> State
-    Implement -.-> State
+    Artifacts[specs/feature/]
+    Specify -.-> Artifacts
+    Plan -.-> Artifacts
+    Tasks -.-> Artifacts
+    Analyze -.-> Artifacts
 
-    State -.-> Resume[/resume]
-    Resume -.-> |Restore| Constitution
+    Artifacts -.-> Resume[/resume]
+    Resume -.-> |Detect & Restore| Constitution
 
     style Start fill:#e1f5e1,stroke:#333,stroke-width:2px
     style Done fill:#e1f5e1,stroke:#333,stroke-width:2px
@@ -259,8 +241,26 @@ One-command execution, automatic state management, zero context loss, flexible m
 /speckitadv.orchestrate <your-feature-description>
 ```
 
+## For Existing Projects
+
+The orchestrator workflow is for **building new features**. For analyzing **existing codebases**, use the analyze-project workflow:
+
+```bash
+# Analyze existing project
+speckitadv analyze-project /path/to/project
+
+# Resume analysis (auto-detects latest)
+speckitadv analyze-project
+
+# Resume specific analysis
+speckitadv analyze-project --analysis-dir=.analysis/project-20251224-164004
+```
+
+The analyze-project workflow also uses `state.json` for resumption. See [Reverse Engineering Guide](../reverse-engineering.md) for details.
+
 ## Related Documentation
 
 - [Getting Started Guide](../getting-started.md)
-- [Standard Workflow](../README.md#workflow-diagram-spec-driven-development)
+- [Reverse Engineering](../reverse-engineering.md) - Analyze existing projects
+- [Standard Workflow](../getting-started.md#36-workflow-diagram)
 - [Troubleshooting](../reference/troubleshooting.md)

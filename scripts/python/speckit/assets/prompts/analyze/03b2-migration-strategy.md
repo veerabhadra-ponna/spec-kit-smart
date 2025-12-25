@@ -1,9 +1,9 @@
 ---
 stage: cross_cutting_strategy
-requires: 03b1-assessment-complete checkpoint
-condition: state.analysis_scope == "B"
+requires: 03b1-abstraction-assessment
+condition: scope == "B"
 outputs: migration_strategy
-version: 3.1.0
+version: 3.4.0
 next: 03b3-effort-success.md
 ---
 
@@ -15,13 +15,14 @@ Based on abstraction level and blast radius, recommend the optimal migration str
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `.analysis/.checkpoints/03b1-assessment-complete.json`
-2. Confirm `status` = "complete"
-3. Load abstraction score, level, blast radius, and classification
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03b1-abstraction-assessment.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope (must be "B"), context
+- Concern type, current implementation, target implementation
+- Abstraction analysis from previous stage is in artifacts
 
 ---
 
@@ -372,37 +373,6 @@ Risk Assessment:
 
 ---
 
-## Checkpoint: Strategy Complete
-
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03b2-strategy-complete.json`
-
-```json
-{
-  "substage": "03b2-migration-strategy",
-  "timestamp": "{ISO-8601}",
-  "selected_strategy": "{strategy}",
-  "total_phases": 4,
-  "total_duration_weeks": {n},
-  "high_risks": {count},
-  "medium_risks": {count},
-  "low_risks": {count},
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 03b2-migration-strategy`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
-
----
-
 ## Output Summary
 
 ```text
@@ -429,4 +399,6 @@ Write checkpoint file: `.analysis/.checkpoints/03b2-strategy-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **03b3-effort-success.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

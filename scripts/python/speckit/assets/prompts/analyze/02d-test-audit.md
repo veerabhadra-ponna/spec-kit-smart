@@ -1,8 +1,8 @@
 ---
 stage: file_analysis_phase4
-requires: 02c-config-analysis checkpoint
+requires: 02c-config-analysis complete
 outputs: test_and_dependency_audit
-version: 3.1.0
+version: 3.4.0
 next: 02e-quality-gates.md
 time_allocation: 20%
 ---
@@ -17,13 +17,22 @@ Analyze test coverage, test patterns, and perform comprehensive dependency audit
 
 ---
 
+## How Context Is Provided
+
+The CLI manages state and provides all context. **Do not read state.json directly.**
+
+Values available in this prompt (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- Concern type, current/target implementation (Scope B only)
+
+---
+
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/02c-config-complete.json`
-2. Confirm `status` = "complete"
-3. Load configuration analysis results
+1. Verify `{analysis_dir}/config-analysis.json` exists
+2. Load configuration analysis results
 
-**IF not complete:** STOP - Return to 02c-config-analysis.md
+**IF not complete:** STOP - Return to 02c-config-analysis
 
 ---
 
@@ -321,43 +330,6 @@ Create comprehensive audit summary:
 
 ---
 
-## Checkpoint: Test & Dependency Audit Complete
-
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/02d-test-audit-complete.json`
-
-```json
-{
-  "substage": "02d-test-audit",
-  "phase": 4,
-  "timestamp": "{ISO-8601}",
-  "test_framework": "{framework}",
-  "test_file_count": {count},
-  "estimated_coverage": "{percentage}%",
-  "critical_gaps": {count},
-  "dependencies_total": {count},
-  "vulnerabilities_total": {count},
-  "critical_vulns": {count},
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/02d-test-audit-complete.json`
-2. Validate all metrics captured
-3. Confirm status = complete
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 02d-test-audit`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
-
----
-
 ## Output Summary
 
 ```text
@@ -386,4 +358,6 @@ Write checkpoint file: `.analysis/.checkpoints/02d-test-audit-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **02e-quality-gates.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

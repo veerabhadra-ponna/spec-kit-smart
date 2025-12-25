@@ -1,8 +1,8 @@
 ---
 stage: input_collection
-requires: 01a-initialization checkpoint
+requires: 01a-initialization
 outputs: user_inputs
-version: 3.2.0
+version: 3.4.0
 next: 01c-script-execution.md
 ---
 
@@ -11,6 +11,17 @@ next: 01c-script-execution.md
 ## Purpose
 
 Collect all required inputs from the user through explicit prompts. Each input requires user response before proceeding.
+
+---
+
+## State Management
+
+The CLI provides all context via template variables. **Do not read state.json directly.**
+
+**Available template variables:**
+- `{project_path}`, `{scope}`, `{context}`, `{concern_type}`, `{current_impl}`, `{target_impl}`
+
+**After collecting inputs interactively:** Pass them to the next CLI command (see "Next Substage" below).
 
 ---
 
@@ -34,7 +45,7 @@ Check if inputs were already collected via CLI interactive mode:
   - `$PROJECT_PATH` = `{project_path}`
   - `$ANALYSIS_SCOPE` = `{scope}`
   - `$ADDITIONAL_CONTEXT` = `{context}` (use empty string if "$SKIP" or "$NONE")
-- Proceed directly to "Checkpoint: Input Collection Complete" section
+- Proceed directly to "Output Summary" section
 
 **IF** `{project_path}` is valid **AND** `{scope}` is "B" **AND** all scope-B fields are set:
 
@@ -50,24 +61,16 @@ Then skip interactive prompts and use:
 - `$CONCERN_TYPE` = `{concern_type}`
 - `$CURRENT_IMPL` = `{current_impl}`
 - `$TARGET_IMPL` = `{target_impl}`
-- Proceed directly to "Checkpoint: Input Collection Complete" section
+- Proceed directly to "Output Summary" section
 
 **ELSE:** Continue with interactive prompts below.
-
----
-
-## Pre-Check: Verify Previous Substage
-
-1. Read `.analysis/.checkpoints/01a-init-complete.json`
-2. Confirm `status` = "complete"
-
-**IF not complete:** STOP - Return to 01a-initialization.md
 
 ---
 
 ## Input 1: Project Path
 
 ---
+
 ⏸️ **[STOP: USER_INPUT_REQUIRED - PROJECT_PATH]**
 
 Present this prompt to user EXACTLY as written:
@@ -85,7 +88,6 @@ Examples:
 
 Your path: ___
 ════════════════════════════════════════════════════════════
-
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -107,7 +109,6 @@ When user provides path:
    Reason: {path does not exist | not readable | not a directory}
 
 Please provide a valid path: ___
-
 ```
 
 Re-prompt until valid path provided.
@@ -119,6 +120,7 @@ Re-prompt until valid path provided.
 ## Input 2: Additional Context
 
 ---
+
 ⏸️ **[STOP: USER_INPUT_REQUIRED - ADDITIONAL_CONTEXT]**
 
 Present this prompt to user EXACTLY as written:
@@ -141,7 +143,6 @@ This could include:
 Type your context below, or type "none" to skip:
 ___
 ════════════════════════════════════════════════════════════
-
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -158,6 +159,7 @@ ___
 ## Input 3: Analysis Scope
 
 ---
+
 ⏸️ **[STOP: USER_INPUT_REQUIRED - ANALYSIS_SCOPE]**
 
 Present this prompt to user EXACTLY as written:
@@ -186,7 +188,6 @@ What type of analysis do you need?
 
 Your choice [A/B]: ___
 ════════════════════════════════════════════════════════════
-
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -201,7 +202,6 @@ Your choice [A/B]: ___
 ❌ Invalid selection. Please choose [A] or [B].
 
 Your choice [A/B]: ___
-
 ```
 
 Re-prompt until valid choice received.
@@ -215,6 +215,7 @@ Re-prompt until valid choice received.
 **ONLY IF** `$ANALYSIS_SCOPE = "B"`:
 
 ---
+
 ⏸️ **[STOP: USER_INPUT_REQUIRED - CONCERN_DETAILS]**
 
 Present these prompts to user EXACTLY as written:
@@ -257,7 +258,6 @@ Please provide details about the concern:
 
    Target implementation: ___
 ════════════════════════════════════════════════════════════
-
 ```
 
 **WAIT for ALL THREE responses. DO NOT proceed until all answered.**
@@ -274,46 +274,6 @@ Please provide details about the concern:
 
 ---
 
-## Checkpoint: Input Collection Complete
-
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/01b-inputs-complete.json`
-
-```json
-{
-  "substage": "01b-input-collection",
-  "timestamp": "{ISO-8601}",
-  "inputs": {
-    "project_path": "{$PROJECT_PATH}",
-    "additional_context": "{$ADDITIONAL_CONTEXT or empty}",
-    "analysis_scope": "{$ANALYSIS_SCOPE}",
-    "concern_details": {
-      "type": "{$CONCERN_TYPE or null}",
-      "current": "{$CURRENT_IMPL or null}",
-      "target": "{$TARGET_IMPL or null}"
-    }
-  },
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/01b-inputs-complete.json`
-2. Validate JSON is parseable
-3. Confirm all required fields present
-4. Confirm `status` = "complete"
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 01b-input-collection`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
-
----
-
 ## Output Summary
 
 ```text
@@ -326,11 +286,28 @@ Write checkpoint file: `.analysis/.checkpoints/01b-inputs-complete.json`
     Additional Context: {provided | none}
     {IF scope=B: Concern: {$CONCERN_TYPE} ({$CURRENT_IMPL} → {$TARGET_IMPL})}
 
-  Next: 01c-script-execution.md
-═══════════════════════════════════════════════════════════
+  Analysis Folder: {analysis_dir}
 
+  Next: Run speckitadv analyze-project
+═══════════════════════════════════════════════════════════
 ```
 
 ## Next Substage
 
-Proceed immediately to: **01c-script-execution.md**
+**IF inputs were collected interactively (not from CLI):**
+
+Pass collected inputs to the CLI to persist to state.json:
+
+```bash
+# For Scope A:
+speckitadv analyze-project --scope=A --context="$ADDITIONAL_CONTEXT"
+
+# For Scope B:
+speckitadv analyze-project --scope=B --context="$ADDITIONAL_CONTEXT" --concern-type="$CONCERN_TYPE" --current-impl="$CURRENT_IMPL" --target-impl="$TARGET_IMPL"
+```
+
+**IF inputs were pre-provided via CLI (template variables were set):**
+
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

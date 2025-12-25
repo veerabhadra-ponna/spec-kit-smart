@@ -71,31 +71,33 @@ This command restores full context when starting a new chat session after:
 
 ### **STEP 1: Identify What to Resume**
 
-#### **Option A: State File Exists (.speckitadv-state.json)**
+#### **Option A: Detect Feature Directory Automatically**
 
-This is the primary resume path when using `/speckitadv.orchestrate`.
+This is the primary resume path. The CLI detects progress by reading `state.json` from the feature directory.
 
 ```bash
-# Check for orchestration state
-if [ -f .speckitadv-state.json ]; then
-  echo "✓ Found orchestration state file"
-  state=$(cat .speckitadv-state.json)
+# Use CLI to get current state (deterministic behavior)
+speckitadv check --json
 
-  # Extract key information
-  feature_dir=$(echo "$state" | jq -r '.feature_dir')
-  feature_name=$(echo "$state" | jq -r '.feature_name')
-  feature_number=$(echo "$state" | jq -r '.feature_number')
-  current_phase=$(echo "$state" | jq -r '.current_phase')
-  workflow_mode=$(echo "$state" | jq -r '.workflow_mode')
+# CLI returns:
+# {
+#   "feature_dir": "specs/001-user-auth",
+#   "feature_name": "user-auth",
+#   "feature_number": "001",
+#   "current_workflow": "implement",
+#   "current_stage": 15,
+#   "workflow_complete": false,
+#   "stages_complete": ["1", "2", "3", ...],
+#   "constitution_established": true,
+#   "tasks_completed": 28,
+#   "tasks_total": 47
+# }
 
-  echo "Feature: $feature_name ($feature_number)"
-  echo "Directory: $feature_dir"
-  echo "Current phase: $current_phase"
-  echo "Mode: $workflow_mode"
-fi
+# If no feature directory found, CLI returns:
+# { "error": "No feature directory found. Nothing to resume." }
 ```
 
-**If state file exists:** Jump to STEP 2 (Load Context).
+**If feature directory exists:** Jump to STEP 2 (Load Context).
 
 ---
 
@@ -231,51 +233,31 @@ fi
 
 #### **2.2: Determine Workflow Phase**
 
-Based on which artifacts exist, infer the current phase:
+The CLI provides current phase and stage information:
 
 ```bash
-# Phase detection logic
-if [ ! -f "$spec_file" ]; then
-  phase="specify"
-  phase_description="Specification creation"
-elif [ ! -f "$plan_file" ]; then
-  phase="plan"
-  phase_description="Planning and design"
-elif [ ! -f "$tasks_file" ]; then
-  phase="tasks"
-  phase_description="Task generation"
-elif [ -f "$tasks_file" ]; then
-  # Check if tasks are being implemented
-  completed_tasks=$(grep -c '^\- \[X\]' "$tasks_file" 2>/dev/null || echo 0)
-  total_tasks=$(grep -c '^\- \[[ X]\]' "$tasks_file" 2>/dev/null || echo 0)
+# Use CLI to get workflow state (deterministic, consistent across models)
+speckitadv check --json
 
-  if [ "$total_tasks" -eq 0 ]; then
-    phase="tasks"
-    phase_description="Task generation (file exists but empty)"
-  elif [ "$completed_tasks" -eq "$total_tasks" ]; then
-    phase="complete"
-    phase_description="Implementation complete"
-  else
-    phase="implement"
-    phase_description="Implementation in progress ($completed_tasks/$total_tasks tasks)"
-  fi
-else
-  phase="unknown"
-  phase_description="Unable to determine phase"
-fi
+# CLI returns complete state information:
+# {
+#   "feature_dir": "specs/001-user-auth",
+#   "current_workflow": "implement",
+#   "current_stage": 15,
+#   "workflow_complete": false,
+#   "stages_complete": ["1", "2", ..., "14"],
+#   "phase": "implement",
+#   "phase_description": "Implementation in progress (28/47 tasks)",
+#   "tasks_completed": 28,
+#   "tasks_total": 47,
+#   "next_task_id": "T029"
+# }
 
-# Override with state file if available
-if [ -f .speckitadv-state.json ]; then
-  state_phase=$(jq -r '.current_phase' .speckitadv-state.json)
-  if [ "$state_phase" != "null" ] && [ -n "$state_phase" ]; then
-    phase="$state_phase"
-    phase_description="From state file: $state_phase"
-  fi
-fi
-
-echo ""
-echo "Detected phase: $phase"
-echo "Description: $phase_description"
+# The CLI handles all state detection logic:
+# - Reads state.json and parses workflow/stage
+# - Determines if workflow is complete
+# - Calculates task progress for implement phase
+# - Returns structured JSON for deterministic processing
 ```
 
 ---
@@ -828,32 +810,10 @@ case "$phase" in
 
   *)
     echo "❌ Unknown phase: $phase"
-    echo "Check .speckitadv-state.json and feature directory for details."
+    echo "Check feature directory for details: $feature_dir"
     exit 1
     ;;
 esac
-```
-
----
-
-### **STEP 7: Update State (if using orchestrator)**
-
-If state file exists, update it to reflect resumption:
-
-```bash
-if [ -f .speckitadv-state.json ]; then
-  # Update last_updated timestamp
-  current_time=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-  # Update state file
-  jq --arg time "$current_time" \
-     '.last_updated = $time | .resumed = true | .resume_count = (.resume_count // 0) + 1' \
-     .speckitadv-state.json > .speckitadv-state.json.tmp
-
-  mv .speckitadv-state.json.tmp .speckitadv-state.json
-
-  echo "✓ State file updated with resume timestamp"
-fi
 ```
 
 ---
@@ -933,7 +893,6 @@ fi
 
 - Feature branch pushed to remote
 - All artifacts (spec, plan, tasks) committed
-- .speckitadv-state.json committed (optional but recommended)
 
 **Resume flow:**
 
@@ -969,31 +928,34 @@ fi
 
 The `/speckitadv.resume` command works seamlessly with `/speckitadv.orchestrate`:
 
-**Orchestrator creates state:**
+**Orchestrator and individual commands share the same state:**
 
-```json
-{
-  "current_phase": "implement",
-  "feature_dir": "specs/001-user-auth",
-  ...
-}
+```text
+specs/001-user-auth/
+├── .state/
+│   └── state.json     # Workflow state (maintained by CLI)
+├── spec.md            # Created by specify phase
+├── plan.md            # Created by plan phase
+├── tasks.md           # Created by tasks phase
+└── analysis.md        # Created by analyze phase (optional)
 ```
 
-**Resume loads state:**
+**Resume detects progress via CLI:**
 
 ```bash
 /speckitadv.resume
-# → Reads .speckitadv-state.json
-# → Loads all artifacts from specs/001-user-auth
-# → Continues orchestration from current_phase
+# → CLI runs: speckitadv check --json
+# → Reads specs/001-user-auth/.state/state.json
+# → Returns exact workflow, stage, and task progress
+# → Resumes at exact point (no duplicate work)
 ```
 
-**Standalone workflows:**
-If NOT using orchestrator, resume still works by:
+**How it works:**
 
-- Auto-detecting phase from artifacts
-- Inferring next action from task checkboxes
-- No state file required (though helpful)
+- CLI reads state.json for exact workflow/stage information
+- Same state file used by orchestrator and individual commands
+- Seamless interoperability between normal and orchestrated flows
+- Deterministic behavior across all AI models
 
 ---
 
@@ -1004,7 +966,7 @@ If NOT using orchestrator, resume still works by:
 1. **Commit frequently:**
 
    - Commit after each major phase completion
-   - Commit .speckitadv-state.json for cross-machine resumption
+   - Commit all artifacts for cross-machine resumption
    - Tag important milestones
 
 2. **Use descriptive branch names:**
@@ -1027,7 +989,7 @@ If NOT using orchestrator, resume still works by:
 1. **All critical info is in artifacts:**
 
    - Spec, plan, tasks, research contain everything needed
-   - State file is optimization, not requirement
+   - Artifact files provide all state information
    - Chat history is NOT needed
 
 2. **Validation prevents errors:**
@@ -1189,15 +1151,16 @@ Resume implementation? [Y/n/review]
 The `/speckitadv.resume` command provides:
 
 - ✅ **Complete context restoration** from artifacts (no chat history needed)
-- ✅ **Exact resume point identification** from task checkboxes
+- ✅ **Exact resume point identification** via CLI reading state.json
 - ✅ **State validation** before proceeding
 - ✅ **Progress visualization** with clear next steps
 - ✅ **Phase-aware resumption** (works for any workflow phase)
 - ✅ **Cross-machine support** (works anywhere with branch checkout)
 - ✅ **Error recovery** (handles failures gracefully)
-- ✅ **Orchestrator integration** (seamless with .speckitadv-state.json)
+- ✅ **Seamless interoperability** (same state.json for orchestrator and individual commands)
+- ✅ **Deterministic behavior** (CLI-based state detection, consistent across AI models)
 
-**Key principle:** The filesystem IS the source of truth. Chat history is ephemeral; artifacts are permanent.
+**Key principle:** The state.json file IS the source of truth. Chat history is ephemeral; state.json and artifacts are permanent.
 
 **Recommended workflow:**
 

@@ -1,6 +1,6 @@
 ---
 stage: technical_spec
-requires: func-target-complete checkpoint
+requires: functional-spec-target complete
 condition: state.analysis_scope == "A"
 outputs: technical_spec_complete
 version: 3.1.0
@@ -17,7 +17,7 @@ Generate technical specification documenting HOW to build the modernized system.
 
 ## Pre-Check
 
-1. Read `.analysis/.checkpoints/func-target-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load user's modernization preferences from `.analysis/.state/analyze-project-03a-full-app.json`
 
@@ -87,24 +87,6 @@ Write to: `{analysis_dir}/technical-spec.md`
 technical-spec.md Chunk 1/5 complete: Architecture + Comparison
   - Diagrams: [COUNT]
   - Lines: [COUNT]
-
-```
-
----
-
-## Checkpoint: Chunk 1
-
-Write: `.analysis/.checkpoints/tech-spec-chunk-1.json`
-
-```json
-{
-  "artifact": "technical-spec.md",
-  "chunk": 1,
-  "sections": ["Introduction", "Architecture", "Comparison"],
-  "diagram_count": {count},
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
 
 ```
 
@@ -183,12 +165,6 @@ technical-spec.md Chunk 2/5 complete: Tech Stack + Data
 
 ---
 
-## Checkpoint: Chunk 2
-
-Write: `.analysis/.checkpoints/tech-spec-chunk-2.json`
-
----
-
 ## Chunk 3: API Design + Integration Architecture
 
 Generate Sections 6 and 7.
@@ -251,12 +227,6 @@ technical-spec.md Chunk 3/5 complete: API + Integrations
   - Lines: [COUNT]
 
 ```
-
----
-
-## Checkpoint: Chunk 3
-
-Write: `.analysis/.checkpoints/tech-spec-chunk-3.json`
 
 ---
 
@@ -342,12 +312,6 @@ technical-spec.md Chunk 4/5 complete: Security + Deployment
   - Lines: [COUNT]
 
 ```
-
----
-
-## Checkpoint: Chunk 4
-
-Write: `.analysis/.checkpoints/tech-spec-chunk-4.json`
 
 ---
 
@@ -460,35 +424,6 @@ technical-spec.md COMPLETE (5/5 chunks)
 
 ---
 
-## Final Checkpoint
-
-Write: `.analysis/.checkpoints/tech-spec-complete.json`
-
-```json
-{
-  "artifact": "technical-spec.md",
-  "chunks_complete": 5,
-  "total_sections": 12,
-  "diagram_count": {count},
-  "user_preferences_applied": ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6", "Q7", "Q8", "Q9", "Q10"],
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-1. Read `.analysis/.checkpoints/tech-spec-complete.json`
-2. Validate JSON parseable
-3. Confirm `status` = "complete"
-
-**IF verified:** Output: `✓ Checkpoint verified: technical-spec`
-**IF failed:** Retry once, then STOP
-
----
-
 ## Completion Marker
 
 ```text
@@ -521,4 +456,6 @@ ARTIFACT_COMPLETE:TECHNICAL_SPEC
 
 ## Next Stage
 
-Proceed immediately to: **06d-stage-prompts.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

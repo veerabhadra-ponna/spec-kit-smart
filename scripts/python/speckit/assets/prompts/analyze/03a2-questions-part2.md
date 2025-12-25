@@ -1,9 +1,9 @@
 ---
 stage: full_app_questions_2
-requires: 03a1-questions-complete checkpoint
-condition: state.analysis_scope == "A"
+requires: 03a1-questions-part1
+condition: scope == "A"
 outputs: modernization_prefs_6_10
-version: 3.1.0
+version: 3.4.0
 next: 03a3-validation-scoring.md
 ---
 
@@ -15,13 +15,13 @@ Ask questions 6-10 to complete the modernization preferences. These cover infras
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `.analysis/.checkpoints/03a1-questions-complete.json`
-2. Confirm `status` = "complete"
-3. Load Q1-Q5 responses
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03a1-questions-part1.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- Q1-Q5 responses are in artifacts from previous stage
 
 ---
 
@@ -353,44 +353,6 @@ Merge all Q1-Q10 responses into modernization preferences:
 
 ---
 
-## Checkpoint: Questions 6-10 Complete
-
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03a2-questions-complete.json`
-
-```json
-{
-  "substage": "03a2-questions-part2",
-  "timestamp": "{ISO-8601}",
-  "questions_completed": [6, 7, 8, 9, 10],
-  "responses": {
-    "q6_iac": "{value}",
-    "q7_containerization": "{value}",
-    "q8_observability": "{value}",
-    "q9_security": "{value}",
-    "q10_testing": "{value}"
-  },
-  "all_questions_complete": true,
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/03a2-questions-complete.json`
-2. Confirm all 5 questions have responses
-3. Confirm `all_questions_complete` = true
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 03a2-questions-part2`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
-
----
-
 ## Progress Summary
 
 ```text
@@ -422,4 +384,6 @@ Write checkpoint file: `.analysis/.checkpoints/03a2-questions-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **03a3-validation-scoring.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

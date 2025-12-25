@@ -7,7 +7,7 @@ This guide will walk you through installing Spec Kit Smart and building your fir
 - **Linux, macOS, or Windows**
 - **Python 3.11+** ([Download](https://www.python.org/downloads/))
 - **Git** ([Download](https://git-scm.com/downloads))
-- **AI Coding Agent** (see [Supported AI Agents](../README.md#-supported-ai-agents))
+- **AI Coding Agent** (see [Supported AI Agents](../README.md#supported-ai-agents))
 
 ## Step 1: Install Specify CLI
 
@@ -223,11 +223,35 @@ For complex features or multi-session work, use the Orchestrator to run the enti
 The Orchestrator:
 
 - Runs all phases automatically (constitution → specify → plan → tasks → implement)
-- Saves progress to `.speckitadv-state.json`
-- Enables seamless resumption with `/speckitadv.resume`
+- Progress tracked via `state.json` in feature directory for exact stage-level resumption
+- Enables seamless resumption with `/speckitadv.resume` (works with both orchestrator and individual commands)
 - Handles token limits gracefully
 
 See [Orchestrator Workflow Guide](workflows/orchestrator.md) for details.
+
+## Working with Existing Projects
+
+For existing codebases that need analysis, modernization, or reverse engineering, use the **analyze-project** workflow:
+
+```bash
+# Start new analysis
+speckitadv analyze-project /path/to/project
+
+# Resume in-progress analysis (auto-detects latest)
+speckitadv analyze-project
+
+# Resume specific analysis
+speckitadv analyze-project --analysis-dir=.analysis/project-20251224-164004
+```
+
+The analyze-project workflow:
+
+- Creates analysis folder: `.analysis/{project}-{timestamp}/`
+- Tracks progress in `state.json` for seamless resumption
+- Generates file manifest, tech stack detection, and category analysis
+- Supports Scope A (full application) and Scope B (cross-cutting concerns)
+
+See [Reverse Engineering Guide](reverse-engineering.md) for details.
 
 ## Next Steps
 
@@ -240,9 +264,9 @@ See [Orchestrator Workflow Guide](workflows/orchestrator.md) for details.
 ### Learn More
 
 - [CLI Reference](reference/cli-reference.md) - Complete command documentation
-- [Supported AI Agents](../README.md#-supported-ai-agents) - Compatible AI tools
+- [Supported AI Agents](../README.md#supported-ai-agents) - Compatible AI tools
 - [Troubleshooting](reference/troubleshooting.md) - Common issues and solutions
-- [Glossary](../README.md#-glossary) - Key terminology
+- [Glossary](../README.md#glossary) - Key terminology
 
 ### Get Help
 

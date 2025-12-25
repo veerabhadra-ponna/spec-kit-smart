@@ -155,23 +155,6 @@ Write to: `{analysis_dir}/abstraction-assessment.md`
 
 ---
 
-## Checkpoint: Abstraction Assessment
-
-Write: `.analysis/.checkpoints/abstraction-assessment-complete.json`
-
-```json
-{
-  "artifact": "abstraction-assessment.md",
-  "concern_type": "{type}",
-  "abstraction_score": {score},
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-
 ## Artifact 2: Concern Migration Plan (3 Chunks)
 
 ### Chunk 1: Strategy + Phasing
@@ -449,24 +432,6 @@ concern-migration-plan.md COMPLETE (3/3 chunks)
 
 ---
 
-## Checkpoint: Migration Plan
-
-Write: `.analysis/.checkpoints/migration-plan-complete.json`
-
-```json
-{
-  "artifact": "concern-migration-plan.md",
-  "chunks_complete": 3,
-  "strategy": "{strategy}",
-  "phases": 4,
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-
 ## Artifact 3: Rollback Procedure
 
 ---
@@ -599,38 +564,6 @@ Write to: `{analysis_dir}/rollback-procedure.md`
 **Verify:** Read file, confirm no placeholders.
 
 **Output:** `✓ Generated: rollback-procedure.md`
-
----
-
-## Final Checkpoint
-
-Write: `.analysis/.checkpoints/cross-cutting-artifacts-complete.json`
-
-```json
-{
-  "artifacts_generated": [
-    "abstraction-assessment.md",
-    "concern-migration-plan.md",
-    "rollback-procedure.md"
-  ],
-  "concern_type": "{type}",
-  "migration": "{current} → {target}",
-  "strategy": "{strategy}",
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-1. Read `.analysis/.checkpoints/cross-cutting-artifacts-complete.json`
-2. Verify all 3 artifacts exist
-3. Confirm no placeholders in any file
-
-**IF verified:** Output: `✓ Checkpoint verified: cross-cutting-artifacts`
-**IF failed:** Retry once, then STOP
 
 ---
 

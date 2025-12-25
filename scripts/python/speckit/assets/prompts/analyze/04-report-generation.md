@@ -77,13 +77,11 @@ Use **completion-based chunking**, NOT size-based chunking:
 - Generate complete logical sections in each chunk
 - Each chunk ends with a distinct completion point
 - Display progress after each chunk (MANDATORY)
-- Create checkpoint markers for resume capability
 - NO placeholders allowed (no TODO, TBD, "will be analyzed")
 
 **Why chunking is critical**:
 
 - Large reports may hit token limits without chunking
-- Checkpoints enable resume if interrupted
 - Progress tracking improves user experience
 - Verification gates ensure quality at each step
 
@@ -97,28 +95,18 @@ Use **completion-based chunking**, NOT size-based chunking:
 
 ```bash
 # Check if analysis-report.md already exists
-
-if [ -f ".analysis/{project}-{timestamp}/analysis-report.md" ]; then
-  # Report exists - check if complete
+if [ -f "{analysis_dir}/analysis-report.md" ]; then
+  # Report exists - check content to determine resume point
+  # Look for phase headers to determine last completed section
 fi
-
 ```
 
-**Step 2: Check checkpoints directory**:
-
-```bash
-# Check for checkpoint markers
-
-ls .analysis/.checkpoints/
-
-```
-
-**Step 3: Determine resume point**:
+**Step 2: Determine resume point from report content**:
 
 **IF** analysis-report.md exists AND is incomplete:
 
-1. Read `.analysis/.checkpoints/` directory
-2. Identify last completed checkpoint (e.g., `phase-4-complete.json`)
+1. Read `{analysis_dir}/analysis-report.md`
+2. Identify last completed phase by checking which phase headers exist
 3. Display resume message:
 
    ```text
@@ -128,13 +116,12 @@ ls .analysis/.checkpoints/
    Resuming from: Chunk 5 (Phase 3 - Positive Findings)
 
    Continuing analysis...
-
    ```
 
-4. Skip completed chunks 1-4
-5. Start generation from Chunk 5
+4. Skip completed chunks
+5. Start generation from next incomplete chunk
 
-**IF** analysis-report.md does NOT exist OR checkpoints missing:
+**IF** analysis-report.md does NOT exist:
 
 - Start fresh from Chunk 1
 
@@ -155,7 +142,6 @@ Generate report in `.analysis/{project}-{timestamp}/analysis-report.md`
 
 - ❌ Generate multiple chunks in one response
 - ❌ Generate all phases at once
-- ❌ Skip checkpoint creation
 - ❌ Skip progress display
 
 **IF** you find yourself generating more than one chunk at a time → **STOP IMMEDIATELY**
@@ -185,23 +171,7 @@ Complete sections:
    - File path: `.analysis/{project}-{timestamp}/analysis-report.md`
    - Content: Complete Phase 1 sections (1.1-1.5)
 
-2. **Create checkpoint marker**:
-   - Create directory: `.analysis/.checkpoints/` (if not exists)
-   - Write JSON file: `.analysis/.checkpoints/phase-1-complete.json`
-   - Content:
-
-     ```json
-     {
-       "chunk": 1,
-       "phase": "1",
-       "phase_name": "Project Discovery",
-       "timestamp": "2025-11-15T10:30:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    ✓ Chunk 1/9 complete: Phase 1 (Project Discovery)
@@ -228,22 +198,7 @@ Complete **Section 2.1: Controllers Analysis**:
    - Append Section 2.1 content to the end
    - Use str_replace to append (not overwrite)
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-2-1-complete.json`
-   - Content:
-
-     ```json
-     {
-       "chunk": 2,
-       "phase": "2.1",
-       "phase_name": "Controllers & API Endpoints",
-       "timestamp": "2025-11-15T10:45:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    ✓ Chunk 2/9 complete: Phase 2.1 (Controllers)
@@ -269,22 +224,7 @@ Complete **Section 2.2: Services Analysis**:
 1. **Append to file** using Edit tool (str_replace):
    - Append Section 2.2 content to analysis-report.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-2-2-complete.json`
-   - Content:
-
-     ```json
-     {
-       "chunk": 3,
-       "phase": "2.2",
-       "phase_name": "Services & Business Logic",
-       "timestamp": "2025-11-15T11:00:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    ✓ Chunk 3/9 complete: Phase 2.2 (Services)
@@ -310,22 +250,7 @@ Complete **Section 2.3: Data Models & Repositories**:
 1. **Append to file** using Edit tool (str_replace):
    - Append Section 2.3 content to analysis-report.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-2-3-complete.json`
-   - Content:
-
-     ```json
-     {
-       "chunk": 4,
-       "phase": "2.3",
-       "phase_name": "Data Layer",
-       "timestamp": "2025-11-15T11:15:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    ✓ Chunk 4/9 complete: Phase 2.3 (Data Layer)
@@ -349,22 +274,7 @@ Complete **Section 3: What's Working Well**:
 1. **Append to file** using Edit tool (str_replace):
    - Append Section 3 content to analysis-report.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-3-complete.json`
-   - Content:
-
-     ```json
-     {
-       "chunk": 5,
-       "phase": "3",
-       "phase_name": "Positive Findings",
-       "timestamp": "2025-11-15T11:30:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    ✓ Chunk 5/9 complete: Phase 3 (Positive Findings)
@@ -391,22 +301,7 @@ Complete **Section 4: Technical Debt**:
 1. **Append to file** using Edit tool (str_replace):
    - Append Section 4 (all subsections 4.1-4.4) to analysis-report.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-4-complete.json`
-   - Content:
-
-     ```json
-     {
-       "chunk": 6,
-       "phase": "4",
-       "phase_name": "Technical Debt & Issues",
-       "timestamp": "2025-11-15T11:45:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    ✓ Chunk 6/9 complete: Phase 4 (Technical Debt)
@@ -435,22 +330,7 @@ Complete **Section 5: Upgrade Paths**:
 1. **Append to file** using Edit tool (str_replace):
    - Append Section 5 (all subsections 5.1-5.3) to analysis-report.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-5-complete.json`
-   - Content:
-
-     ```json
-     {
-       "chunk": 7,
-       "phase": "5",
-       "phase_name": "Upgrade Path Analysis",
-       "timestamp": "2025-11-15T12:00:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    ✓ Chunk 7/9 complete: Phase 5 (Upgrade Paths)
@@ -481,22 +361,7 @@ Complete **Sections 6 & 7**:
 1. **Append to file** using Edit tool (str_replace):
    - Append Sections 6 & 7 to analysis-report.md
 
-2. **Create checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/phase-6-7-complete.json`
-   - Content:
-
-     ```json
-     {
-       "chunk": 8,
-       "phase": "6-7",
-       "phase_name": "Modernization & Feasibility",
-       "timestamp": "2025-11-15T12:15:00Z",
-       "status": "complete"
-     }
-
-     ```
-
-3. **MANDATORY - Display progress**:
+2. **MANDATORY - Display progress**:
 
    ```text
    ✓ Chunk 8/9 complete: Phases 6-7 (Modernization & Feasibility)
@@ -528,23 +393,7 @@ Complete **Sections 8 & 9**:
 1. **Append to file** using Edit tool (str_replace):
    - Append Sections 8 & 9 to analysis-report.md
 
-2. **Create final checkpoint marker**:
-   - Write JSON file: `.analysis/.checkpoints/all-phases-complete.json`
-   - Content:
-
-     ```json
-     {
-       "chunk": 9,
-       "phase": "8-9",
-       "phase_name": "Decision Matrix & Final Recommendations",
-       "timestamp": "2025-11-15T12:30:00Z",
-       "status": "complete",
-       "all_phases_complete": true
-     }
-
-     ```
-
-3. **MANDATORY - Display progress and final summary**:
+2. **MANDATORY - Display progress and final summary**:
 
    ```text
    ✓ Chunk 9/9 complete: Phases 8-9 (Decision Matrix & Recommendations)
@@ -635,11 +484,10 @@ List which phases or quality checks failed verification.
 
 - **Action**: Regenerate ONLY the missing phases
 - **Method**:
-  1. Check `.analysis/.checkpoints/` to identify last completed phase
+  1. Check analysis-report.md content to identify last completed phase
   2. Resume generation from first missing phase
   3. Use Edit tool (str_replace) to append missing phases to existing file
-  4. Create checkpoint markers for newly generated phases
-  5. Re-run verification after regeneration
+  4. Re-run verification after regeneration
 
 **IF** quality issues in existing phases (e.g., no file:line references in Phase 3):
 
@@ -649,8 +497,7 @@ List which phases or quality checks failed verification.
   2. Identify specific missing elements (file:line refs, severity ratings, etc.)
   3. Regenerate that phase section with proper detail
   4. Use Edit tool (str_replace) to replace the incomplete section
-  5. Update checkpoint marker for that phase
-  6. Re-run verification after enhancement
+  5. Re-run verification after enhancement
 
 **IF** multiple critical failures (>3 phases missing OR >5 quality issues):
 
@@ -684,7 +531,6 @@ List which phases or quality checks failed verification.
 
 - Based on failure type, perform specific recovery actions
 - Use appropriate tools (Edit/str_replace for fixes, Write for full regen)
-- Create/update checkpoint markers after fixes
 - Re-run verification after recovery
 - **DO NOT proceed to Stage 5 until verification passes**
 

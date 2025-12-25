@@ -1,6 +1,6 @@
 ---
 stage: stage_prompts
-requires: tech-spec-complete checkpoint
+requires: technical-spec complete
 condition: state.analysis_scope == "A"
 outputs: stage_prompts_complete
 version: 3.1.0
@@ -17,7 +17,7 @@ Generate staged implementation prompts for Spec Kit workflow integration. These 
 
 ## Pre-Check
 
-1. Read `.analysis/.checkpoints/tech-spec-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load analysis data from state files
 
@@ -270,38 +270,6 @@ These behaviors must be implemented EXACTLY as in legacy:
 Write to: `{analysis_dir}/stage-prompts/implement-prompt.md`
 
 **Output:** `✓ Generated: implement-prompt.md`
-
----
-
-## Final Checkpoint
-
-Write: `.analysis/.checkpoints/stage-prompts-complete.json`
-
-```json
-{
-  "artifact": "stage-prompts",
-  "files_generated": [
-    "constitution-prompt.md",
-    "clarify-prompt.md",
-    "tasks-prompt.md",
-    "implement-prompt.md"
-  ],
-  "total_files": 4,
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-1. Read `.analysis/.checkpoints/stage-prompts-complete.json`
-2. Verify all 4 files exist in `{analysis_dir}/stage-prompts/`
-3. Confirm no placeholders in any file
-
-**IF verified:** Output: `✓ Checkpoint verified: stage-prompts`
-**IF failed:** Retry once, then STOP
 
 ---
 

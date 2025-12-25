@@ -1,9 +1,9 @@
 ---
 stage: cross_cutting_effort
-requires: 03b2-strategy-complete checkpoint
-condition: state.analysis_scope == "B"
+requires: 03b2-migration-strategy
+condition: scope == "B"
 outputs: cross_cutting_complete
-version: 3.1.0
+version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
@@ -15,13 +15,14 @@ Estimate development effort for the migration and define measurable success crit
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `.analysis/.checkpoints/03b2-strategy-complete.json`
-2. Confirm `status` = "complete"
-3. Load strategy, phases, and risks
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03b2-migration-strategy.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope (must be "B"), context
+- Concern type, current implementation, target implementation
+- Strategy and risk analysis from previous stages are in artifacts
 
 ---
 
@@ -309,41 +310,6 @@ Write to: `.analysis/.state/analyze-project-03b-cross-cutting.json`
 
 ---
 
-## Checkpoint: Stage 3B Complete
-
-### Create Final Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03b-cross-cutting-complete.json`
-
-```json
-{
-  "stage": "03b-cross-cutting",
-  "timestamp": "{ISO-8601}",
-  "substages_completed": ["03b1", "03b2", "03b3"],
-  "concern_type": "{type}",
-  "abstraction_level": "{level}",
-  "blast_radius": "{classification}",
-  "strategy": "{strategy}",
-  "total_effort_weeks": {n},
-  "state_saved": ".analysis/.state/analyze-project-03b-cross-cutting.json",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:**
-  Output: `✓ Checkpoint verified: 03b-cross-cutting`
-  Output: `✓ State saved: analyze-project-03b-cross-cutting.json`
-
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
-
----
-
 ## Completion Marker
 
 ```text
@@ -375,4 +341,6 @@ STAGE_COMPLETE:CROSS_CUTTING_ANALYSIS
 
 ## Next Stage
 
-Proceed immediately to: **04a-report-chunks-1-3.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

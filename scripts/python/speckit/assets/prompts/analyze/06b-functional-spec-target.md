@@ -1,6 +1,6 @@
 ---
 stage: functional_spec_target
-requires: func-legacy-complete checkpoint
+requires: functional-spec-legacy complete
 condition: state.analysis_scope == "A"
 outputs: functional_spec_target_complete
 version: 3.1.0
@@ -17,7 +17,7 @@ Generate functional specification documenting WHAT the MODERNIZED system WILL do
 
 ## Pre-Check
 
-1. Read `.analysis/.checkpoints/func-legacy-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
 3. Load user's modernization preferences from `.analysis/.state/analyze-project-03a-full-app.json`
 
@@ -105,25 +105,6 @@ functional-spec-target.md Chunk 1/5 complete: Introduction + Summary + Scope
 
 ---
 
-## Checkpoint: Chunk 1
-
-Write: `.analysis/.checkpoints/func-target-chunk-1.json`
-
-```json
-{
-  "artifact": "functional-spec-target.md",
-  "chunk": 1,
-  "sections": ["Introduction", "Summary", "Scope"],
-  "in_scope_count": {count},
-  "out_of_scope_count": {count},
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-
 ## Chunk 2: User Stories - CRITICAL Features (Modernized)
 
 Generate Section 4.1 with modernization enhancements.
@@ -168,12 +149,6 @@ functional-spec-target.md Chunk 2/5 complete: User Stories (CRITICAL)
   - Lines: [COUNT]
 
 ```
-
----
-
-## Checkpoint: Chunk 2
-
-Write: `.analysis/.checkpoints/func-target-chunk-2.json`
 
 ---
 
@@ -225,12 +200,6 @@ functional-spec-target.md Chunk 3/5 complete: STANDARD Features + Rules
   - Lines: [COUNT]
 
 ```
-
----
-
-## Checkpoint: Chunk 3
-
-Write: `.analysis/.checkpoints/func-target-chunk-3.json`
 
 ---
 
@@ -287,12 +256,6 @@ functional-spec-target.md Chunk 4/5 complete: NFRs + Data
 
 ---
 
-## Checkpoint: Chunk 4
-
-Write: `.analysis/.checkpoints/func-target-chunk-4.json`
-
----
-
 ## Chunk 5: Acceptance Criteria + Assumptions + Constraints (Target)
 
 Generate Sections 8, 9, and 10.
@@ -340,35 +303,6 @@ functional-spec-target.md COMPLETE (5/5 chunks)
 
 ---
 
-## Final Checkpoint
-
-Write: `.analysis/.checkpoints/func-target-complete.json`
-
-```json
-{
-  "artifact": "functional-spec-target.md",
-  "chunks_complete": 5,
-  "total_features": {count},
-  "in_scope_components": {count},
-  "out_of_scope_components": {count},
-  "timestamp": "{ISO-8601}",
-  "status": "complete"
-}
-
-```
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-1. Read `.analysis/.checkpoints/func-target-complete.json`
-2. Validate JSON parseable
-3. Confirm `status` = "complete"
-
-**IF verified:** Output: `✓ Checkpoint verified: functional-spec-target`
-**IF failed:** Retry once, then STOP
-
----
-
 ## Both Functional Specs Complete
 
 ```text
@@ -391,4 +325,6 @@ ARTIFACT_COMPLETE:FUNCTIONAL_SPEC_TARGET
 
 ## Next Stage
 
-Proceed immediately to: **06c-technical-spec.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

@@ -9,6 +9,7 @@ Analysis folder pattern: .analysis/{project-name}-{timestamp}
 """
 
 import getpass
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Optional
@@ -119,14 +120,32 @@ def run_analyze_project(
         analysis_dir_path = Path(analysis_dir)
         state_manager = AnalysisStateManager(analysis_dir_path)
         if state_manager.exists():
-            state = state_manager.load()
+            try:
+                state = state_manager.load()
+            except json.JSONDecodeError as e:
+                state_file_path = analysis_dir_path / "state.json"
+                emit_error(
+                    "Corrupted state file",
+                    f"{state_file_path} is corrupted: {e}",
+                    recovery_cmd=f"rm {state_file_path} && speckitadv analyze-project --path=<project-path>",
+                )
+                return
     else:
         # Try to find latest analysis folder
         try:
             analysis_dir_path = find_latest_analysis_folder()
             state_manager = AnalysisStateManager(analysis_dir_path)
             if state_manager.exists():
-                state = state_manager.load()
+                try:
+                    state = state_manager.load()
+                except json.JSONDecodeError as e:
+                    state_file_path = analysis_dir_path / "state.json"
+                    emit_error(
+                        "Corrupted state file",
+                        f"{state_file_path} is corrupted: {e}",
+                        recovery_cmd=f"rm {state_file_path} && speckitadv analyze-project --path=<project-path>",
+                    )
+                    return
         except FileNotFoundError:
             pass  # No existing analysis - will create new one
 
@@ -134,6 +153,26 @@ def run_analyze_project(
     if stage is None:
         if state:
             stage = _auto_detect_stage_from_state(state)
+            # Check if workflow is already complete
+            if stage is None:
+                from speckit.core.emit import emit_complete
+                # Verify expected artifacts exist before declaring complete
+                report_path = analysis_dir_path / "analysis-report.md"
+                if report_path.exists():
+                    emit_complete(
+                        title="Analysis Complete",
+                        summary="This analysis workflow has already been completed.",
+                        artifacts=[str(report_path)],
+                        next_steps=["Review the analysis report", "Start a new analysis with --path=<project>"],
+                    )
+                else:
+                    # State says complete but artifacts missing - warn user
+                    emit_error(
+                        "Incomplete analysis",
+                        f"Workflow marked complete but analysis-report.md not found at {report_path}",
+                        recovery_cmd=f"speckitadv analyze-project --stage=16 --analysis-dir={analysis_dir_path}",
+                    )
+                return
         else:
             stage = 1  # New workflow starts at stage 1
 
@@ -158,7 +197,8 @@ def run_analyze_project(
 
         # Create new analysis folder with timestamp
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        project_name = project_path.name
+        # Use resolve() to get actual directory name (Path(".").name returns empty string)
+        project_name = project_path.resolve().name
         analysis_dir_path = Path(".analysis") / f"{project_name}-{timestamp}"
         state_manager = AnalysisStateManager(analysis_dir_path)
         state = state_manager.initialize(project_path)
@@ -171,51 +211,44 @@ def run_analyze_project(
         )
         return
 
-    # Load values from state, override with CLI args if provided
-    # Scope
-    state_scope = None
-    state_concern_type = None
-    state_context = None
-    for stage_name, stage_info in state.stages.items():
-        if stage_info.get("scope"):
-            state_scope = stage_info.get("scope")
-        if stage_info.get("concern_type"):
-            state_concern_type = stage_info.get("concern_type")
-        if stage_info.get("context"):
-            state_context = stage_info.get("context")
+    # Load values from state.inputs, override with CLI args if provided
+    # CLI args take precedence when explicitly provided
+    effective_scope = scope or state.inputs.scope or "A"
 
-    effective_scope = scope or state_scope or "A"
-    effective_concern_type = concern_type or state_concern_type or ""
-    effective_context = context or state_context or ""
+    # Validate scope - must be A or B
+    if effective_scope not in ("A", "B"):
+        emit_error(
+            "Invalid scope",
+            f"Scope must be 'A' (full application) or 'B' (cross-cutting concern), got: {effective_scope}",
+            recovery_cmd="speckitadv analyze-project --scope=A",
+        )
+        return
+
+    effective_concern_type = concern_type or state.inputs.concern_type or ""
+    effective_context = context or state.inputs.context or ""
+    resolved_current = current_impl or state.inputs.current_impl or ""
+    resolved_target = target_impl or state.inputs.target_impl or ""
     total_stages = TOTAL_STAGES.get(effective_scope, 16)
 
-    # Resolve implementation values from state
-    state_current = ""
-    state_target = ""
-    for stage_name, stage_info in state.stages.items():
-        if stage_info.get("current_impl"):
-            state_current = stage_info.get("current_impl")
-        if stage_info.get("target_impl"):
-            state_target = stage_info.get("target_impl")
+    # Update state.inputs if CLI args provided new values
+    if any([scope, context, concern_type, current_impl, target_impl]):
+        state_manager.update_inputs(
+            scope=effective_scope,
+            context=effective_context,
+            concern_type=effective_concern_type,
+            current_impl=resolved_current,
+            target_impl=resolved_target,
+        )
 
-    resolved_current = current_impl or state_current or ""
-    resolved_target = target_impl or state_target or ""
+    # Build context for prompt rendering using state manager
+    # This ensures prompts get consistent values from state.json
+    base_context = state_manager.get_context_for_prompt()
 
-    # Build context for prompt rendering
+    # Merge with stage-specific values
     render_context = {
-        "analysis_dir": str(analysis_dir_path),
+        **base_context,
         "stage": stage,
         "total_stages": total_stages,
-        "project_path": str(project_path),
-        "scope": effective_scope,
-        "context": effective_context,
-        "concern_type": effective_concern_type,
-        # Short names (used in some prompts)
-        "current_impl": resolved_current,
-        "target_impl": resolved_target,
-        # Long names (used in other prompts)
-        "current_implementation": resolved_current,
-        "target_implementation": resolved_target,
     }
 
     # Handle chunked stages
@@ -293,20 +326,35 @@ Run the following command to begin:""",
         )
         return
 
-    # Save state for this stage
+    # Complete ALL previous in_progress stages before starting new one
+    # This ensures stages are only marked complete AFTER work is done
+    # IMPORTANT: Only complete if it's a DIFFERENT stage (not re-running same stage)
+    # Complete ALL lingering in_progress stages for self-healing consistency
+    current_stage_id = STAGE_MAP.get(stage, f"stage_{stage}")
+    try:
+        current_state = state_manager.load()
+    except json.JSONDecodeError as e:
+        emit_error(
+            "Corrupted state file",
+            f"Analysis state file is corrupted: {e}",
+            recovery_cmd=f"rm {analysis_dir_path}/state.json && speckitadv analyze-project --stage=1",
+        )
+        return
+    for stage_id, stage_info in current_state.stages.items():
+        if stage_info.get("status") == "in_progress" and stage_id != current_stage_id:
+            state_manager.update_stage(
+                stage=stage_id,
+                status="completed",
+            )
+
+    # Mark current stage as in_progress (not completed yet)
+    # Stage will be marked complete when NEXT stage starts
     state_manager.update_stage(
-        stage=f"stage_{stage}",
-        status="completed",
+        stage=STAGE_MAP.get(stage, f"stage_{stage}"),
+        status="in_progress",
         artifacts=[],
+        stage_num=stage,
     )
-    # Store additional context in stage info (use resolved values, not raw CLI args)
-    state = state_manager.load()
-    state.stages[f"stage_{stage}"]["scope"] = effective_scope
-    state.stages[f"stage_{stage}"]["context"] = effective_context
-    state.stages[f"stage_{stage}"]["concern_type"] = effective_concern_type
-    state.stages[f"stage_{stage}"]["current_impl"] = resolved_current
-    state.stages[f"stage_{stage}"]["target_impl"] = resolved_target
-    state_manager.save(state)
 
     # Emit the stage prompt
     emit_stage(
@@ -317,6 +365,10 @@ Run the following command to begin:""",
         next_cmd=next_cmd,
         context=render_context if stage == 1 else None,  # Show context on first stage
     )
+
+    # Mark workflow complete when final stage finishes
+    if next_cmd is None:
+        state_manager.mark_complete()
 
     # Run verification if this is the final stage and verify flag is set
     if next_cmd is None and verify:
@@ -383,6 +435,34 @@ def _emit_chunk_stage(
     chunk_content = _extract_chunk(fragment, chunk, total_chunks)
     rendered = render_prompt(chunk_content, context)
 
+    # On chunk 1, complete ALL previous in_progress stages and mark current as in_progress
+    # IMPORTANT: Only complete if it's a DIFFERENT stage (not re-running same stage)
+    # Complete ALL lingering in_progress stages for self-healing consistency
+    current_stage_id = STAGE_MAP.get(stage, f"stage_{stage}")
+    if chunk == 1:
+        try:
+            current_state = state_manager.load()
+        except json.JSONDecodeError as e:
+            emit_error(
+                "Corrupted state file",
+                f"Analysis state file is corrupted: {e}",
+                recovery_cmd=f"rm {analysis_dir_path}/state.json && speckitadv analyze-project --stage=1",
+            )
+            return
+        for stage_id, stage_info in current_state.stages.items():
+            if stage_info.get("status") == "in_progress" and stage_id != current_stage_id:
+                state_manager.update_stage(
+                    stage=stage_id,
+                    status="completed",
+                )
+        # Mark this chunked stage as in_progress
+        state_manager.update_stage(
+            stage=current_stage_id,
+            status="in_progress",
+            artifacts=[],
+            stage_num=stage,
+        )
+
     # Determine next command
     # CLI auto-detects stage and analysis_dir from state
     if chunk < total_chunks:
@@ -390,18 +470,11 @@ def _emit_chunk_stage(
     else:
         # Final chunk - mark stage as completed in state
         state_manager.update_stage(
-            stage=f"stage_{stage}",
+            stage=STAGE_MAP.get(stage, f"stage_{stage}"),
             status="completed",
             artifacts=[],
+            stage_num=stage,
         )
-        # Store metadata in stage info (matching non-chunked stage behavior)
-        state = state_manager.load()
-        state.stages[f"stage_{stage}"]["scope"] = context.get("scope", "A")
-        state.stages[f"stage_{stage}"]["context"] = context.get("context", "")
-        state.stages[f"stage_{stage}"]["concern_type"] = context.get("concern_type", "")
-        state.stages[f"stage_{stage}"]["current_impl"] = context.get("current_impl", "")
-        state.stages[f"stage_{stage}"]["target_impl"] = context.get("target_impl", "")
-        state_manager.save(state)
 
         # Move to next stage with scope-aware branching
         # Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
@@ -424,6 +497,8 @@ def _emit_chunk_stage(
             next_cmd = "speckitadv analyze-project"
         else:
             next_cmd = None
+            # Mark workflow complete when final chunk of final stage finishes
+            state_manager.mark_complete()
 
     # Emit chunk - use analysis_dir from context
     analysis_dir = context.get("analysis_dir", str(analysis_dir_path))
@@ -507,31 +582,60 @@ def _get_stage_title(stage: int) -> str:
     return titles.get(stage, f"Stage {stage}")
 
 
-def _auto_detect_stage_from_state(state) -> int:
+def _auto_detect_stage_from_state(state) -> Optional[int]:
     """
     Auto-detect the next stage from analysis state.
+
+    Uses state.stages_complete list, state.stages dict, and state.inputs.scope
+    for deterministic behavior. Both completed and in_progress stages are
+    considered for advancement (in_progress means user has run that stage).
 
     Handles scope-aware branching:
     - Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
     - Scope B: stages 1-8 → 10 (Cross-cutting) → 11-16 (skip 9)
 
     Returns:
-        Stage number to run (1-indexed)
+        Stage number to run (1-indexed), or None if workflow is complete
     """
-    # Find highest completed stage and scope from state
+    # Check if workflow is complete - nothing to run
+    if state.workflow_complete:
+        return None
+
+    # Get scope from state.inputs (primary) or default to A
+    effective_scope = state.inputs.scope or "A"
+
+    # Find highest completed stage from stages_complete list
     highest_completed = 0
-    effective_scope = "A"  # Default to scope A
+    for stage_id in state.stages_complete:
+        # Extract stage number from stage ID like "01a-initialization" or STAGE_MAP values
+        stage_num = _get_stage_num_from_id(stage_id)
+        if stage_num:
+            highest_completed = max(highest_completed, stage_num)
+
+    # Also check stages dict for in_progress stages (treated as effectively completed
+    # for auto-detection - the user has run the stage and expects to advance)
+    # This handles the case where stage N is in_progress but not yet in stages_complete
+    highest_in_progress = 0
     for stage_name, stage_info in state.stages.items():
-        if stage_info.get("status") == "completed":
-            # Extract stage number from "stage_N" format
+        status = stage_info.get("status")
+        if status in ("completed", "in_progress"):
+            # Handle both "stage_N" and stage ID formats
             try:
-                stage_num = int(stage_name.split("_")[1])
-                highest_completed = max(highest_completed, stage_num)
+                if stage_name.startswith("stage_"):
+                    stage_num = int(stage_name.split("_")[1])
+                else:
+                    stage_num = _get_stage_num_from_id(stage_name)
+                if stage_num:
+                    if status == "completed":
+                        highest_completed = max(highest_completed, stage_num)
+                    else:  # in_progress
+                        highest_in_progress = max(highest_in_progress, stage_num)
             except (IndexError, ValueError):
                 pass
-        # Get scope from any stage that has it stored
-        if stage_info.get("scope"):
-            effective_scope = stage_info.get("scope")
+
+    # Use the higher of completed or in_progress for advancement
+    # in_progress stages are treated as done for auto-detection purposes
+    highest_completed = max(highest_completed, highest_in_progress)
 
     # Apply scope-aware branching logic
     if highest_completed == 8:
@@ -547,9 +651,39 @@ def _auto_detect_stage_from_state(state) -> int:
     # Default: next stage after highest completed
     next_stage = highest_completed + 1
     if next_stage > 16:
-        return 16  # Cap at final stage
+        return None  # All stages complete
 
     return next_stage
+
+
+def _get_stage_num_from_id(stage_id: str) -> int:
+    """Extract stage number from stage ID like '01a-initialization' or 'stage_1'.
+
+    Returns:
+        Stage number (1-indexed) or 0 if not parseable
+    """
+    if not stage_id:
+        return 0
+
+    # Handle "stage_N" format
+    if stage_id.startswith("stage_"):
+        try:
+            return int(stage_id.split("_")[1])
+        except (IndexError, ValueError):
+            return 0
+
+    # Reverse lookup from STAGE_MAP
+    for num, frag_id in STAGE_MAP.items():
+        if frag_id == stage_id:
+            return num
+
+    # Try extracting from "01a-...", "02b-...", etc.
+    try:
+        # Extract first two digits
+        prefix = stage_id[:2]
+        return int(prefix)
+    except (ValueError, IndexError):
+        return 0
 
 
 # Export function for CLI

@@ -146,6 +146,17 @@ Run: `speckitadv {command} $ARGUMENTS`
 Follow all instructions in the output.
 """
 
+# Special launcher for analyze-project (no arguments - uses interactive mode)
+LAUNCHER_TEMPLATE_ANALYZE_PROJECT = """---
+description: {description}
+---
+Run: `speckitadv analyze-project`
+
+IMPORTANT: Do NOT pass --path or --scope arguments.
+The CLI will prompt you interactively for all required inputs.
+Follow all instructions in the output.
+"""
+
 LAUNCHER_TEMPLATE_TOML = """# {description}
 [command]
 description = "{description}"
@@ -161,6 +172,9 @@ def get_launcher_content(command: str, description: str, format: str = "markdown
     """Generate launcher file content for a command."""
     if format == "toml":
         return LAUNCHER_TEMPLATE_TOML.format(command=command, description=description)
+    # Special template for analyze-project (uses interactive mode, no args)
+    if command == "analyze-project":
+        return LAUNCHER_TEMPLATE_ANALYZE_PROJECT.format(description=description)
     return LAUNCHER_TEMPLATE_MARKDOWN.format(command=command, description=description)
 
 

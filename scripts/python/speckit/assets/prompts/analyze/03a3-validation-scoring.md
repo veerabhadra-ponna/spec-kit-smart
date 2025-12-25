@@ -1,9 +1,9 @@
 ---
 stage: full_app_validation
-requires: 03a2-questions-complete checkpoint
-condition: state.analysis_scope == "A"
+requires: 03a2-questions-part2
+condition: scope == "A"
 outputs: scoring_complete
-version: 3.1.0
+version: 3.4.0
 next: 03a4-recommendations.md
 ---
 
@@ -15,13 +15,13 @@ Validate the modernization scope with the user and calculate complexity/feasibil
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `.analysis/.checkpoints/03a2-questions-complete.json`
-2. Confirm `status` = "complete"
-3. Load all Q1-Q10 responses and modernization preferences
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03a2-questions-part2.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- Q1-Q10 responses from previous stages are in artifacts
 
 ---
 
@@ -294,54 +294,6 @@ RECOMMENDATION PREVIEW
 
 ---
 
-## Checkpoint: Validation & Scoring Complete
-
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03a3-scoring-complete.json`
-
-```json
-{
-  "substage": "03a3-validation-scoring",
-  "timestamp": "{ISO-8601}",
-  "scope_validated": true,
-  "in_scope_components": ["{list}"],
-  "out_of_scope_components": ["{list}"],
-  "complexity": {
-    "codebase_size": {score},
-    "tech_stack_change": {score},
-    "database_migration": {score},
-    "integration_count": {score},
-    "test_coverage_gap": {score},
-    "security_changes": {score},
-    "overall": {score},
-    "rating": "{LOW|MEDIUM|HIGH|VERY HIGH}"
-  },
-  "feasibility": {
-    "inline_upgrade": {score},
-    "greenfield_rewrite": {score},
-    "hybrid_strangler": {score}
-  },
-  "preliminary_recommendation": "{approach}",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/03a3-scoring-complete.json`
-2. Validate all scoring fields present
-3. Confirm status = complete
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 03a3-validation-scoring`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
-
----
-
 ## Output Summary
 
 ```text
@@ -361,4 +313,6 @@ Write checkpoint file: `.analysis/.checkpoints/03a3-scoring-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **03a4-recommendations.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

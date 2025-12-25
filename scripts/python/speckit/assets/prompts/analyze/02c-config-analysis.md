@@ -1,8 +1,8 @@
 ---
 stage: file_analysis_phase3
-requires: 02b-deep-dive checkpoint
+requires: 02b-deep-dive complete
 outputs: config_analysis
-version: 3.1.0
+version: 3.4.0
 next: 02d-test-audit.md
 time_allocation: 15%
 ---
@@ -18,13 +18,22 @@ Analyze ALL configuration files completely. Configuration contains crucial infor
 
 ---
 
+## How Context Is Provided
+
+The CLI manages state and provides all context. **Do not read state.json directly.**
+
+Values available in this prompt (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- Concern type, current/target implementation (Scope B only)
+
+---
+
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/02b-deep-dive-complete.json`
-2. Confirm `status` = "complete"
-3. Load deep dive patterns
+1. Verify `{analysis_dir}/deep-dive-patterns.json` exists
+2. Load deep dive patterns
 
-**IF not complete:** STOP - Return to 02b-deep-dive.md
+**IF not complete:** STOP - Return to 02b-deep-dive
 
 ---
 
@@ -307,40 +316,6 @@ Create comprehensive settings inventory:
 
 ---
 
-## Checkpoint: Configuration Analysis Complete
-
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/02c-config-complete.json`
-
-```json
-{
-  "substage": "02c-config-analysis",
-  "phase": 3,
-  "timestamp": "{ISO-8601}",
-  "config_files_analyzed": {count},
-  "categories_completed": ["application", "build", "infrastructure"],
-  "security_issues": {count},
-  "coverage": "100%",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/02c-config-complete.json`
-2. Validate all categories completed
-3. Confirm 100% coverage achieved
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 02c-config-analysis`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
-
----
-
 ## Output Summary
 
 ```text
@@ -369,4 +344,6 @@ Write checkpoint file: `.analysis/.checkpoints/02c-config-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **02d-test-audit.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

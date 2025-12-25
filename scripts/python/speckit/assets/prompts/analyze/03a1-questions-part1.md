@@ -1,9 +1,9 @@
 ---
 stage: full_app_questions_1
-requires: analyze-project-02-file-analysis.json
-condition: state.analysis_scope == "A"
+requires: 02e-quality-gates
+condition: scope == "A"
 outputs: modernization_prefs_1_5
-version: 3.1.0
+version: 3.4.0
 next: 03a2-questions-part2.md
 ---
 
@@ -15,13 +15,12 @@ Ask the first 5 modernization questions to understand the user's target technolo
 
 ---
 
-## Pre-Check: Verify Previous Stage
+## How Context Is Provided
 
-1. Read `.analysis/.state/analyze-project-02-file-analysis.json`
-2. Confirm `stages_complete` includes "file_analysis"
-3. Confirm `analysis_scope` = "A"
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF scope is NOT "A":** STOP - Wrong branch. Go to 03b1-abstraction-assessment.md
+Values available in this prompt (already substituted by CLI):
+- Project path, analysis directory, scope (must be "A"), context
 
 ---
 
@@ -325,42 +324,6 @@ Store user's choice in:
 
 ---
 
-## Checkpoint: Questions 1-5 Complete
-
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03a1-questions-complete.json`
-
-```json
-{
-  "substage": "03a1-questions-part1",
-  "timestamp": "{ISO-8601}",
-  "questions_completed": [1, 2, 3, 4, 5],
-  "responses": {
-    "q1_language": "{value}",
-    "q2_database": "{value}",
-    "q3_message_bus": "{value}",
-    "q4_package_manager": "{value}",
-    "q5_deployment": "{value}"
-  },
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/03a1-questions-complete.json`
-2. Confirm all 5 questions have responses
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 03a1-questions-part1`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
-
----
-
 ## Progress Summary
 
 ```text
@@ -385,4 +348,6 @@ Write checkpoint file: `.analysis/.checkpoints/03a1-questions-complete.json`
 
 ## Next Substage
 
-Proceed immediately to: **03a2-questions-part2.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

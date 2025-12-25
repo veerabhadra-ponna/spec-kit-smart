@@ -2,7 +2,7 @@
 stage: initialization
 requires: nothing
 outputs: agents_verified
-version: 3.1.0
+version: 3.4.0
 next: 01b-input-collection.md
 ---
 
@@ -10,7 +10,21 @@ next: 01b-input-collection.md
 
 ## Purpose
 
-Initialize the analysis chain by verifying AGENTS.md guidelines and preparing the workspace.
+Initialize the analysis chain by verifying AGENTS.md guidelines and toolkit availability.
+
+---
+
+## How Context Is Provided
+
+The CLI manages all state automatically. **You don't need to read or write state.json.**
+
+**How it works:**
+1. CLI loads state from `{analysis_dir}/state.json`
+2. CLI renders this prompt with actual values already substituted
+3. You receive the prompt with real paths and values - no template syntax
+4. CLI auto-detects the current stage and persists progress
+
+**To continue:** Run `speckitadv analyze-project` - no arguments needed.
 
 ---
 
@@ -22,11 +36,13 @@ Check if `AGENTS.md` exists in any of these locations (in order):
 2. Memory directory: `memory/AGENTS.md`
 
 ---
+
 ⏸️ **[STOP: AGENTS_CHECK]**
 
 Search for AGENTS.md in the locations listed above.
 
 **IF AGENTS.md EXISTS:**
+
 1. Read the ENTIRE file
 2. Note the version number (line 3-4)
 3. Internalize all guidelines
@@ -34,13 +50,11 @@ Search for AGENTS.md in the locations listed above.
 
    ```text
    ✓ Read AGENTS.md v[X.X] - Following all guidelines
-
    ```
 
 **IF AGENTS.md DOES NOT EXIST:**
-1. Output: `✓ No AGENTS.md found - Proceeding with default behavior`
 
-**Capture result in:** `$AGENTS_STATUS`
+1. Output: `✓ No AGENTS.md found - Proceeding with default behavior`
 
 ---
 
@@ -52,61 +66,12 @@ Check that the speckitadv CLI is available:
 speckitadv --version
 ```
 
-This provides the cross-platform commands for project analysis and enumeration.
-
 ---
+
 ⏸️ **[STOP: TOOLKIT_CHECK]**
 
-Execute the appropriate check for the detected OS.
-
-**IF scripts exist:** Output: `✓ Toolkit scripts verified`
-**IF scripts missing:** Output: `❌ Error: Required scripts not found` → STOP workflow
-
-**Capture result in:** `$TOOLKIT_STATUS`
-
----
-
-## Step 3: Prepare Analysis Directory
-
-Verify or create the analysis directory structure:
-
-```bash
-mkdir -p .analysis/.state
-mkdir -p .analysis/.checkpoints
-
-```
-
----
-
-## Checkpoint: Initialization Complete
-
-### Create Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/01a-init-complete.json`
-
-```json
-{
-  "substage": "01a-initialization",
-  "timestamp": "{ISO-8601}",
-  "agents_verified": true,
-  "agents_version": "{version or null}",
-  "toolkit_verified": true,
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/01a-init-complete.json`
-2. Validate JSON is parseable
-3. Confirm `status` = "complete"
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:** Output: `✓ Checkpoint verified: 01a-initialization`
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
+**IF CLI works:** Output: `✓ Toolkit verified (vX.X.X)`
+**IF CLI missing:** Output: `❌ Error: speckitadv CLI not found` → STOP workflow
 
 ---
 
@@ -117,11 +82,13 @@ Write checkpoint file: `.analysis/.checkpoints/01a-init-complete.json`
   SUBSTAGE COMPLETE: 01a-initialization
   AGENTS.md: {verified v[X.X] | not found}
   Toolkit: verified
-  Next: 01b-input-collection.md
+  Analysis folder: {analysis_dir}
+  Next: Run speckitadv analyze-project
 ═══════════════════════════════════════════════════════════
-
 ```
 
 ## Next Substage
 
-Proceed immediately to: **01b-input-collection.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

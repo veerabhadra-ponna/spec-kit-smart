@@ -85,6 +85,35 @@ speckitadv check
 speckitadv list-fragments analyze-project
 ```
 
+### Advanced local development
+
+**Run without installing** (fastest feedback loop):
+
+```bash
+PYTHONPATH=scripts/python python -m speckit.cli --help
+```
+
+**Test from Git branch with pipx**:
+
+```bash
+pipx run --spec git+https://github.com/veerabhadra-ponna/spec-kit-smart.git@your-branch speckitadv --help
+```
+
+**Build wheel locally**:
+
+```bash
+pip install build
+python -m build
+ls dist/
+```
+
+**Common issues**:
+
+| Symptom | Fix |
+| ------- | --- |
+| `ModuleNotFoundError: typer` | Run `pip install -e .` after activating venv |
+| TLS errors on corporate network | Set `HTTPS_PROXY` or `pip install --upgrade certifi` |
+
 ## AI contributions in Spec Kit
 
 > [!IMPORTANT]

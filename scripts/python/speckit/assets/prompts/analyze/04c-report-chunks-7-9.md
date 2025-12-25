@@ -1,6 +1,6 @@
 ---
 stage: report_generation_3
-requires: 04b-complete checkpoint
+requires: 04b-report-chunks-4-6 complete
 outputs: report_complete
 version: 3.1.0
 next: 04d-report-verification.md
@@ -16,7 +16,7 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 
 ## Pre-Check
 
-1. Read `.analysis/.checkpoints/04b-complete.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm chunks 1-6 complete
 3. Load Stage 3 state for recommendations data
 
@@ -70,8 +70,6 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 ---
 
 ```
-
-**Checkpoint:** `.analysis/.checkpoints/report-chunk-7.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_7]**
@@ -173,8 +171,6 @@ Score = (Inline + Greenfield) / 2 + 10 (flexibility bonus)
 
 <!-- markdownlint-disable-next-line MD040 -->
 ```
-
-**Checkpoint:** `.analysis/.checkpoints/report-chunk-8.json`
 
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_8]**
@@ -281,37 +277,10 @@ Output: `✓ Chunk 8/9: Modernization & Feasibility ({lines} lines)`
 
 ```
 
-**Checkpoint:** `.analysis/.checkpoints/report-chunk-9.json`
-
 ---
 ⏸️ **[STOP: VERIFY_CHUNK_9]**
 
 Output: `✓ Chunk 9/9: Recommendations ({lines} lines)`
-
----
-
-## Substage Checkpoint
-
-Write: `.analysis/.checkpoints/04c-complete.json`
-
-```json
-{
-  "substage": "04c-report-chunks-7-9",
-  "timestamp": "{ISO-8601}",
-  "chunks_completed": [7, 8, 9],
-  "all_chunks_complete": true,
-  "total_lines": {count},
-  "primary_recommendation": "{approach}",
-  "confidence": {percentage},
-  "status": "complete"
-}
-
-```
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-Output: `✓ Checkpoint verified: 04c (Chunks 7-9, Report Generation Complete)`
 
 ---
 
@@ -342,4 +311,6 @@ Output: `✓ Checkpoint verified: 04c (Chunks 7-9, Report Generation Complete)`
 
 ## Next Substage
 
-Proceed immediately to: **04d-report-verification.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

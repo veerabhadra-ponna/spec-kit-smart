@@ -10,6 +10,7 @@ from state module for simplified folder-based state management.
 The folder path serves as the implicit chain ID - no abstract chain IDs needed.
 """
 
+import json
 from pathlib import Path
 from typing import Optional
 
@@ -72,7 +73,24 @@ def run_staged_command(
 
     # Try to auto-detect stage from state if not provided
     if stage is None:
-        stage = _auto_detect_stage(command, feature_dir, stages)
+        try:
+            stage = _auto_detect_stage(command, feature_dir, stages)
+        except json.JSONDecodeError as e:
+            # State file is corrupted - show friendly error with recovery guidance
+            # Build path carefully: feature_dir might be absolute, include specs/, or just folder name
+            if feature_dir:
+                if feature_dir.startswith("/") or feature_dir.startswith("specs/"):
+                    state_path = f"{feature_dir}/.state/state.json"
+                else:
+                    state_path = f"specs/{feature_dir}/.state/state.json"
+            else:
+                state_path = "specs/<feature-dir>/.state/state.json"
+            emit_error(
+                "Corrupted state file",
+                f"Feature state file is corrupted: {e}",
+                recovery_cmd=f"rm {state_path} && speckitadv {command} --stage=1",
+            )
+            return
 
     # Validate stage number
     if stage < 1 or stage > total_stages:
@@ -181,6 +199,15 @@ def run_staged_command(
             recovery_cmd=f"speckitadv create-feature 'your feature description'",
         )
         return
+    except json.JSONDecodeError as e:
+        # State file is corrupted - show friendly error with recovery guidance
+        # Use resolved feature_path for accurate path in recovery command
+        emit_error(
+            "Corrupted state file",
+            f"Feature state file is corrupted: {e}",
+            recovery_cmd=f"rm {feature_path}/.state/state.json && speckitadv {command} --stage=1",
+        )
+        return
 
     # Build render context
     render_context = {
@@ -271,8 +298,11 @@ def _auto_detect_stage(
 
     try:
         state = state_manager.load()
-    except Exception:
+    except (AttributeError, KeyError):
+        # Malformed state structure - start fresh
         return 1
+    # Note: JSONDecodeError is NOT caught here - it bubbles up to
+    # run_staged_command which shows a friendly error with recovery guidance
 
     # Get current stage for this command from state
     prompt_state = getattr(state, command, None)

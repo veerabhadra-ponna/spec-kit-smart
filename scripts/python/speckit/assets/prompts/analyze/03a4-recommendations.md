@@ -1,9 +1,9 @@
 ---
 stage: full_app_recommendations
-requires: 03a3-scoring-complete checkpoint
-condition: state.analysis_scope == "A"
+requires: 03a3-validation-scoring
+condition: scope == "A"
 outputs: full_app_complete
-version: 3.1.0
+version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
@@ -15,13 +15,13 @@ Generate prioritized modernization recommendations and compile the complete Stag
 
 ---
 
-## Pre-Check: Verify Previous Substage
+## How Context Is Provided
 
-1. Read `.analysis/.checkpoints/03a3-scoring-complete.json`
-2. Confirm `status` = "complete"
-3. Load complexity scores, feasibility scores, and scope validation
+The CLI manages state and provides all context. **Do not read state.json directly.**
 
-**IF not complete:** STOP - Return to 03a3-validation-scoring.md
+Values available (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- All previous stage artifacts available in analysis directory
 
 ---
 
@@ -313,45 +313,6 @@ Write to: `.analysis/.state/analyze-project-03a-full-app.json`
 
 ---
 
-## Checkpoint: Stage 3A Complete
-
-### Create Final Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/03a-full-app-complete.json`
-
-```json
-{
-  "stage": "03a-full-app",
-  "timestamp": "{ISO-8601}",
-  "substages_completed": ["03a1", "03a2", "03a3", "03a4"],
-  "questions_answered": 10,
-  "scope_validated": true,
-  "complexity_rating": "{rating}",
-  "primary_recommendation": "{approach}",
-  "confidence": {percentage},
-  "state_saved": ".analysis/.state/analyze-project-03a-full-app.json",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/03a-full-app-complete.json`
-2. Confirm all substages completed
-3. Confirm status = complete
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:**
-  Output: `✓ Checkpoint verified: 03a-full-app`
-  Output: `✓ State saved: analyze-project-03a-full-app.json`
-
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
-
----
-
 ## Completion Marker
 
 ```text
@@ -379,4 +340,6 @@ STAGE_COMPLETE:FULL_APP_ANALYSIS
 
 ## Next Stage
 
-Proceed immediately to: **04a-report-chunks-1-3.md**
+Run: `speckitadv analyze-project`
+
+The CLI will auto-detect the current stage and emit the next prompt.

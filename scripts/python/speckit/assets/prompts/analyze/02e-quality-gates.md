@@ -1,9 +1,9 @@
 ---
 stage: file_analysis_verification
-requires: 02d-test-audit checkpoint
+requires: 02d-test-audit complete
 outputs: file_analysis_complete
-version: 3.1.0
-next: 03a-questions-part1.md OR 03b1-abstraction-assessment.md
+version: 3.4.0
+next: 03a-full-app.md (scope A) OR 03b-cross-cutting.md (scope B)
 ---
 
 # Stage 2E: Quality Gates & Completion
@@ -14,13 +14,26 @@ Verify file analysis meets quality standards before proceeding. This is a mandat
 
 ---
 
+## How Context Is Provided
+
+The CLI manages state and provides all context. **Do not read state.json directly.**
+
+Values available in this prompt (already substituted by CLI):
+- Project path, analysis directory, scope, context
+- Concern type, current/target implementation (Scope B only)
+
+**Branching:** After this stage, CLI auto-routes based on scope:
+- Scope A → Stage 3A (Full App Analysis)
+- Scope B → Stage 3B (Cross-Cutting Analysis)
+
+---
+
 ## Pre-Check: Verify Previous Substage
 
-1. Read `.analysis/.checkpoints/02d-test-audit-complete.json`
-2. Confirm `status` = "complete"
-3. Load all Phase 1-4 results
+1. Verify `{analysis_dir}/test-audit.json` exists
+2. Load all Phase 1-4 results
 
-**IF not complete:** STOP - Return to 02d-test-audit.md
+**IF not complete:** STOP - Return to 02d-test-audit
 
 ---
 
@@ -29,13 +42,8 @@ Verify file analysis meets quality standards before proceeding. This is a mandat
 Aggregate results from all previous phases:
 
 ```bash
-# Load all checkpoint files
-
-cat .analysis/.checkpoints/02a-category-scan-complete.json
-cat .analysis/.checkpoints/02b-deep-dive-complete.json
-cat .analysis/.checkpoints/02c-config-complete.json
-cat .analysis/.checkpoints/02d-test-audit-complete.json
-
+# Load state from CLI-managed state.json
+cat {analysis_dir}/state.json
 ```
 
 ---
@@ -419,56 +427,6 @@ Action Required:
   Regenerate state file with complete data.
 
 ```
-
----
-
-## Checkpoint: Stage 2 Complete
-
-### Create Final Checkpoint
-
-Write checkpoint file: `.analysis/.checkpoints/02-file-analysis-complete.json`
-
-```json
-{
-  "stage": "02-file-analysis",
-  "timestamp": "{ISO-8601}",
-  "phases_completed": ["02a", "02b", "02c", "02d", "02e"],
-  "quality_gates": {
-    "file_coverage": "PASS",
-    "config_complete": "PASS",
-    "feature_count": "PASS",
-    "tech_debt_count": "PASS",
-    "security_findings": "PASS",
-    "dependency_audit": "PASS"
-  },
-  "metrics": {
-    "files_analyzed": {count},
-    "features_extracted": {count},
-    "tech_debt_items": {count},
-    "security_findings": {count},
-    "vulnerabilities": {count}
-  },
-  "state_saved": ".analysis/.state/analyze-project-02-file-analysis.json",
-  "status": "complete"
-}
-
-```
-
-### Verify Checkpoint
-
-1. Read `.analysis/.checkpoints/02-file-analysis-complete.json`
-2. Confirm all quality gates show "PASS"
-3. Confirm status = "complete"
-
----
-⏸️ **[STOP: CHECKPOINT_VERIFY]**
-
-**IF checkpoint verified:**
-  Output: `✓ Checkpoint verified: 02-file-analysis`
-  Output: `✓ All quality gates passed`
-  Output: `✓ State saved: analyze-project-02-file-analysis.json`
-
-**IF checkpoint failed:** Retry checkpoint creation once, then STOP if still failing
 
 ---
 
