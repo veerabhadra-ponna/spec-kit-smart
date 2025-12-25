@@ -519,12 +519,17 @@ def _emit_chunk_stage(
         effective_scope = context.get("scope", "A")
         if effective_scope == "A":
             # Scope A: 5 chunks for functional specs, technical specs, stage-prompts
+            # Chunk 5 covers all 4 stage-prompt files (AI writes all in one chunk):
+            #   - stage-prompts/constitution-prompt.md
+            #   - stage-prompts/clarify-prompt.md
+            #   - stage-prompts/tasks-prompt.md
+            #   - stage-prompts/implement-prompt.md
             stage_16_file_map = {
                 1: "reports/functional-spec-legacy.md",
                 2: "reports/functional-spec-target.md",
                 3: "reports/technical-spec-legacy.md",
                 4: "reports/technical-spec-target.md",
-                5: "stage-prompts/constitution-prompt.md",  # First of 4 prompts
+                5: "stage-prompts/",  # All 4 prompts written in this chunk
             }
         else:
             # Scope B: 1 chunk for cross-cutting artifacts
@@ -711,7 +716,10 @@ def _get_stage_num_from_id(stage_id: str) -> int:
         if frag_id == stage_id:
             return num
 
-    # Try extracting from "01a-...", "02b-...", etc.
+    # Fallback: extract stage number from prefix like "01a-...", "06a-..."
+    # NOTE: No backward compatibility for legacy stage IDs (e.g., "06-scope-artifacts").
+    # This system is pre-release; old state.json files with legacy IDs must be
+    # re-initialized. See AGENTS.md "No Backward Compatibility" policy.
     try:
         # Extract first two digits
         prefix = stage_id[:2]

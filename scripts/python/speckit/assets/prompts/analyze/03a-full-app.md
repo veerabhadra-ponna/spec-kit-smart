@@ -675,15 +675,16 @@ Based on scores, generate prioritized recommendations:
   "timestamp": "2025-11-14T11:00:00Z",
   "stages_complete": [..., "full_application_analysis"],
   "modernization_preferences": {
-    "target_language": "Java 17 LTS",
-    "target_database": "PostgreSQL 15",
-    "message_bus": "Apache Kafka",
-    "deployment_target": "Kubernetes",
-    "iac_tool": "Terraform",
-    "containerization": "Docker with official images",
-    "observability": "Prometheus + Grafana",
-    "auth_strategy": "OAuth 2.0 / OpenID Connect",
-    "target_test_coverage": "80%"
+    "q1_language": "Java 17 LTS",
+    "q2_database": "PostgreSQL 15",
+    "q3_message_bus": "Apache Kafka",
+    "q4_package_manager": "Gradle 8.x",
+    "q5_deployment": "Kubernetes",
+    "q6_iac": "Terraform",
+    "q7_containerization": "Docker with official images",
+    "q8_observability": {"metrics": "Prometheus", "logging": "Loki", "tracing": "Jaeger"},
+    "q9_security": "OAuth 2.0 / OpenID Connect",
+    "q10_testing": {"strategy": "Full pyramid", "coverage_target": "80%"}
   },
   "scoring": {
     "complexity_score": 58,

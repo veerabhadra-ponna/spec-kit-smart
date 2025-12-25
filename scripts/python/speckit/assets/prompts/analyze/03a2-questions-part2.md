@@ -358,7 +358,7 @@ Merge all Q1-Q10 responses into modernization preferences:
 After collecting all 10 responses, persist them to state.json using the CLI:
 
 ```bash
-speckitadv update-preferences '{"q1_language": {"value": "{q1 value}"}, "q2_database": {"value": "{q2 value}"}, "q3_message_bus": {"value": "{q3 value}"}, "q4_package_manager": {"value": "{q4 value}"}, "q5_deployment": {"value": "{q5 value}"}, "q6_iac": {"value": "{q6 value}"}, "q7_containerization": {"value": "{q7 value}"}, "q8_observability": {"value": "{q8 value}"}, "q9_security": {"value": "{q9 value}"}, "q10_testing": {"value": "{q10 value}"}}'
+speckitadv update-preferences '{"q1_language": {"value": "{q1 value}"}, "q2_database": {"value": "{q2 value}"}, "q3_message_bus": {"value": "{q3 value}"}, "q4_package_manager": {"value": "{q4 value}"}, "q5_deployment": {"value": "{q5 value}"}, "q6_iac": {"value": "{q6 value}"}, "q7_containerization": {"value": "{q7 value}"}, "q8_observability": {"value": {"metrics": "{q8 metrics}", "logging": "{q8 logging}", "tracing": "{q8 tracing}"}}, "q9_security": {"value": "{q9 value}"}, "q10_testing": {"value": "{q10 strategy}", "coverage_target": "{q10 coverage}"}}'
 ```
 
 This stores all preferences in `{analysis_dir}/state.json` under the `modernization_preferences` field.

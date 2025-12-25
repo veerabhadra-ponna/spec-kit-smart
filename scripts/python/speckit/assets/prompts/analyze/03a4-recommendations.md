@@ -224,20 +224,20 @@ Merge all Stage 3A data into comprehensive state:
   "stages_complete": ["setup_and_scope", "file_analysis", "full_app_analysis"],
 
   "modernization_preferences": {
-    "target_language": "{q1 value}",
-    "target_database": "{q2 value}",
-    "message_bus": "{q3 value}",
-    "package_manager": "{q4 value}",
-    "deployment_target": "{q5 value}",
-    "iac_tool": "{q6 value}",
-    "containerization": "{q7 value}",
-    "observability": {
+    "q1_language": "{q1 value}",
+    "q2_database": "{q2 value}",
+    "q3_message_bus": "{q3 value}",
+    "q4_package_manager": "{q4 value}",
+    "q5_deployment": "{q5 value}",
+    "q6_iac": "{q6 value}",
+    "q7_containerization": "{q7 value}",
+    "q8_observability": {
       "metrics": "{value}",
       "logging": "{value}",
       "tracing": "{value}"
     },
-    "security": "{q9 value}",
-    "testing": {
+    "q9_security": "{q9 value}",
+    "q10_testing": {
       "strategy": "{q10 value}",
       "coverage_target": "{percentage}"
     }
