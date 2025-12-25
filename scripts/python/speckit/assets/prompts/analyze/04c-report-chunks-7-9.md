@@ -24,7 +24,19 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report analysis-report.md --stage=04c-report-chunks-7-9 --content '<md>' --append` - Append to report
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Append to file (put --append EARLY before --content)
+speckitadv write-report analysis-report.md --stage=04c-report-chunks-7-9 --append --content '<small-md>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report analysis-report.md --stage=04c-report-chunks-7-9 --append --stdin
+```
 
 ---
 

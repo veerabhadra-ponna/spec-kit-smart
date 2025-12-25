@@ -24,7 +24,19 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --content '<md>' --append` - Append to report
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Append to file (put --append EARLY before --content)
+speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --append --content '<small-md>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --append --stdin
+```
 
 ---
 

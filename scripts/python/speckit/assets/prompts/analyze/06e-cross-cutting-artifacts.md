@@ -36,8 +36,22 @@ Generate artifacts specific to Cross-Cutting Concern Migration (Scope B). This i
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report <filename> --content '<md>' --stage=cross_cutting_artifacts` - Create report
-- `speckitadv write-report <filename> --content '<md>' --append --stage=cross_cutting_artifacts` - Append to report
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Create new file (put --content LAST)
+speckitadv write-report <filename> --stage=cross_cutting_artifacts --content '<small-md>'
+
+# Append to file (put --append EARLY before --content)
+speckitadv write-report <filename> --stage=cross_cutting_artifacts --append --content '<small-md>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report <filename> --stage=cross_cutting_artifacts --append --stdin
+```
 
 ---
 

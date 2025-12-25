@@ -955,6 +955,23 @@ def write_report_cmd(
     import sys
     from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
 
+    # Validate filename - must be simple filename, no path separators
+    if "/" in filename or "\\" in filename:
+        console.print(f"[red]Error:[/red] Filename cannot contain path separators: {filename}")
+        console.print("[yellow]Hint:[/yellow] Use just the filename (e.g., 'analysis-report.md'), not a path.")
+        raise typer.Exit(1)
+
+    if not filename.endswith(".md"):
+        console.print(f"[red]Error:[/red] Filename must end with .md: {filename}")
+        raise typer.Exit(1)
+
+    # Detect potential argument parsing issues (filename looks like content)
+    if filename.startswith("#") or filename.startswith("*") or len(filename) > 100:
+        console.print(f"[red]Error:[/red] Invalid filename detected: {filename[:50]}...")
+        console.print("[yellow]Hint:[/yellow] Check shell quoting. The filename should be 'analysis-report.md', not content.")
+        console.print("[yellow]Hint:[/yellow] On PowerShell, use single quotes for --content to avoid escape issues.")
+        raise typer.Exit(1)
+
     # Get analysis folder
     if analysis_dir:
         folder = Path(analysis_dir)

@@ -40,8 +40,22 @@ Generate the comprehensive `analysis-report.md` file using completion-based chun
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report analysis-report.md --content '<md>' --stage=report_generation` - Create report
-- `speckitadv write-report analysis-report.md --content '<md>' --append --stage=report_generation` - Append to report
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Create new file (put --content LAST)
+speckitadv write-report analysis-report.md --stage=report_generation --content '<small-md>'
+
+# Append to file (put --append EARLY before --content)
+speckitadv write-report analysis-report.md --stage=report_generation --append --content '<small-md>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report analysis-report.md --stage=report_generation --append --stdin
+```
 
 ---
 

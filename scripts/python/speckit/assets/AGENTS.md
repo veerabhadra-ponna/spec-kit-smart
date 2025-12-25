@@ -108,6 +108,43 @@ controllers, services, models, repositories, handlers, middleware,
 config, tests, views, utilities, migrations
 ```
 
+### ⚠️ CRITICAL: File Write Policy
+
+**ALWAYS use CLI commands for file writes. NEVER use:**
+
+- Shell/PowerShell commands (`Out-File`, `Add-Content`, `echo >`, `cat <<`)
+- AI Write tools directly to the analysis folder
+- Any method that bypasses the CLI artifact tracking
+
+**Why:** CLI commands track artifacts in state.json for workflow continuity.
+
+### CLI Command Best Practices
+
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Create new file (put --content LAST)
+speckitadv write-report <filename> --stage=<stage-id> --content '<small-md>'
+
+# Append to file (put --append EARLY before --content)
+speckitadv write-report <filename> --stage=<stage-id> --append --content '<small-md>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report <filename> --stage=<stage-id> --append --stdin
+```
+
+**Key Rules:**
+
+1. Place `--append` EARLY in the command (before `--content`) to prevent truncation
+2. Keep `--content` value under 2000 characters
+3. Use stdin mode for large content blocks
+4. Never use shell file write commands for analysis artifacts
+
 ---
 
 ## Document Structure

@@ -31,9 +31,18 @@ Generate staged implementation prompts for Spec Kit workflow integration. These 
 
 - `{analysis_dir}` - Analysis folder path (root)
 
-**Note:** Stage prompts are written to `{analysis_dir}/stage-prompts/` using the Write tool directly.
-These are auxiliary prompts for Spec Kit workflow integration, not analysis reports.
-The CLI tracks them via the completion marker at the end of this stage.
+---
+
+## ⚠️ File Write Exception: Stage Prompts
+
+**EXCEPTION:** Stage prompts are written using the AI Write tool directly to `{analysis_dir}/stage-prompts/`.
+
+This is the ONLY exception to the CLI file write policy because:
+1. Stage prompts are auxiliary files for Spec Kit workflow integration
+2. They are not tracked as individual artifacts in state.json
+3. The CLI tracks completion via the stage completion marker
+
+**For ALL other artifacts (reports, specs, data files), use CLI commands only.**
 
 ---
 

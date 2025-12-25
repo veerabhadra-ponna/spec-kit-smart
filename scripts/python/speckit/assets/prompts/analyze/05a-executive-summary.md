@@ -24,8 +24,23 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 
 **CLI Utility Commands:**
 
-- `speckitadv write-data <filename> --stage=<stage-id> --content '<json>'` - Write JSON to data/ folder (tracks artifacts)
-- `speckitadv write-report <filename> --stage=<stage-id> --content '<md>'` - Write MD to reports/ folder (tracks artifacts)
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Write data (put --content LAST)
+speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
+
+# Write/append report (put --append EARLY before --content)
+speckitadv write-report <filename> --stage=<stage-id> --content '<small-md>'
+speckitadv write-report <filename> --stage=<stage-id> --append --content '<small-md>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+```powershell
+@"
+<content here>
+"@ | speckitadv write-report <filename> --stage=<stage-id> --stdin
+```
 
 ---
 

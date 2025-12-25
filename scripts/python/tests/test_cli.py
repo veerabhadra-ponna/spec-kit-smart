@@ -407,3 +407,77 @@ class TestUpdatePreferencesCommand:
         state = json.loads(state_file.read_text())
         assert state["modernization_preferences"]["q1_language"] == "Python 3.11"
         assert state["modernization_preferences"]["q2_database"] == "PostgreSQL"
+
+
+class TestWriteReportCommand:
+    """Tests for write-report command validation."""
+
+    def test_help(self):
+        """Should display help for write-report."""
+        result = runner.invoke(app, ["write-report", "--help"])
+        assert result.exit_code == 0
+        assert "--content" in result.stdout
+        assert "--append" in result.stdout
+
+    def test_rejects_path_in_filename(self, tmp_path):
+        """Should reject filenames with path separators."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        (analysis_dir / "state.json").write_text('{"schema_version": 1}')
+
+        result = runner.invoke(app, [
+            "write-report",
+            "subdir/report.md",  # Path separator not allowed
+            "--content", "# Test",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert "path separator" in result.stdout.lower()
+
+    def test_rejects_non_md_extension(self, tmp_path):
+        """Should reject filenames without .md extension."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        (analysis_dir / "state.json").write_text('{"schema_version": 1}')
+
+        result = runner.invoke(app, [
+            "write-report",
+            "report.txt",  # Must end with .md
+            "--content", "# Test",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert ".md" in result.stdout
+
+    def test_detects_content_as_filename(self, tmp_path):
+        """Should detect when content is mistakenly used as filename."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        (analysis_dir / "state.json").write_text('{"schema_version": 1}')
+
+        result = runner.invoke(app, [
+            "write-report",
+            "# This looks like content.md",  # Starts with # (looks like markdown header)
+            "--content", "real content",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert "shell quoting" in result.stdout.lower()
+
+    def test_accepts_valid_filename(self, tmp_path):
+        """Should accept valid markdown filename."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        (analysis_dir / "state.json").write_text('{"schema_version": 1}')
+        reports_dir = analysis_dir / "reports"
+        reports_dir.mkdir()
+
+        result = runner.invoke(app, [
+            "write-report",
+            "analysis-report.md",
+            "--content", "# Test Report",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 0
+        assert "Written" in result.stdout
+        assert (reports_dir / "analysis-report.md").exists()

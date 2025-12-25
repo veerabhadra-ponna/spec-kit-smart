@@ -24,8 +24,22 @@ Generate the first three chunks of the analysis report: Project Discovery, Contr
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report <filename> --stage=<stage-id> --content '<md>'` - Write MD to reports/ folder (tracks artifacts)
-- `speckitadv write-report <filename> --stage=<stage-id> --content '<md>' --append` - Append to existing report (tracks artifacts)
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Create new file (put --content LAST to avoid truncation issues)
+speckitadv write-report <filename> --stage=<stage-id> --content '<small-md>'
+
+# Append to file (put --append EARLY before --content)
+speckitadv write-report <filename> --stage=<stage-id> --append --content '<small-md>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report <filename> --stage=<stage-id> --append --stdin
+```
 
 ---
 

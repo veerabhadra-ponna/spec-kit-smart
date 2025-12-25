@@ -25,8 +25,22 @@ Generate functional specification documenting WHAT the MODERNIZED system WILL do
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report <filename> --stage=06b-functional-spec-target --content '<md>'` - Create new report
-- `speckitadv write-report <filename> --stage=06b-functional-spec-target --content '<md>' --append` - Append to report
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Create new file (put --content LAST)
+speckitadv write-report <filename> --stage=06b-functional-spec-target --content '<small-md>'
+
+# Append to file (put --append EARLY before --content)
+speckitadv write-report <filename> --stage=06b-functional-spec-target --append --content '<small-md>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report <filename> --stage=06b-functional-spec-target --append --stdin
+```
 
 ---
 

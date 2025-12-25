@@ -25,8 +25,22 @@ Generate functional specification documenting WHAT the LEGACY/EXISTING system CU
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report <filename> --stage=06a-functional-spec-legacy --content '<md>'` - Create new report
-- `speckitadv write-report <filename> --stage=06a-functional-spec-legacy --content '<md>' --append` - Append to report
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Create new file (put --content LAST)
+speckitadv write-report <filename> --stage=06a-functional-spec-legacy --content '<small-md>'
+
+# Append to file (put --append EARLY before --content)
+speckitadv write-report <filename> --stage=06a-functional-spec-legacy --append --content '<small-md>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report <filename> --stage=06a-functional-spec-legacy --append --stdin
+```
 
 ---
 
