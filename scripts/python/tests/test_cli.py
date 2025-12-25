@@ -259,9 +259,10 @@ class TestListFilesCommand:
         """Should display help for list-files."""
         result = runner.invoke(app, ["list-files", "--help"])
         assert result.exit_code == 0
-        assert "--pattern" in result.stdout
-        assert "--category" in result.stdout
-        assert "--count" in result.stdout
+        output = strip_ansi(result.stdout)
+        assert "--pattern" in output
+        assert "--category" in output
+        assert "--count" in output
 
     def test_list_files_with_pattern(self, tmp_path):
         """Should list files matching pattern."""
