@@ -606,13 +606,16 @@ class AnalysisStateManager:
         """Update modernization preferences in state.
 
         Uses shallow merge (dict.update) to combine new preferences with existing.
-        This is intentional: Q1-Q10 preferences are flat string values per the
-        03a1/03a2 prompt schema. If nested values are needed in the future,
-        callers should provide complete nested objects rather than partial updates.
 
-        Design rationale: Deep merge adds complexity without clear benefit given
-        the current schema. The current approach is simple, predictable, and
-        matches how Python's dict.update() works.
+        Schema notes:
+        - Q1-Q7, Q9: Flat string values (e.g., "q1_language": "Java 21")
+        - Q8 (observability): Nested object with metrics/logging/tracing keys
+        - Q10 (testing): Nested object with strategy/coverage_target keys
+
+        Important: Since this uses shallow merge, submitting a partial Q8 or Q10
+        update will REPLACE the entire nested object. Always submit complete
+        Q8/Q10 objects to avoid losing sub-fields. The prompts (03a1/03a2)
+        collect all 10 preferences together for this reason.
 
         Args:
             preferences: Dict with Q1-Q10 answers from 03a1 and 03a2 stages
@@ -621,7 +624,7 @@ class AnalysisStateManager:
             Updated AnalysisState
         """
         state = self.load()
-        # Shallow merge - see docstring for design rationale
+        # Shallow merge - submitting partial Q8/Q10 replaces entire nested object
         state.modernization_preferences.update(preferences)
         self.save(state)
         return state
