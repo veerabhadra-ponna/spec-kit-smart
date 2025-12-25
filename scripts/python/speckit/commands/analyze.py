@@ -545,13 +545,20 @@ def _emit_chunk_stage(
     else:
         file_path = f"{analysis_dir}/stage{stage}-chunk{chunk}.md"
 
+    # Stage 16 chunks each write to different files, so always use "create" mode.
+    # Other stages append chunks to a single file.
+    if stage == 16:
+        chunk_mode = "create"
+    else:
+        chunk_mode = "append" if chunk > 1 else "create"
+
     emit_chunk(
         chunk_num=chunk,
         total_chunks=total_chunks,
         title=f"{_get_stage_title(stage)} - Chunk {chunk}",
         content=rendered,
         file_path=file_path,
-        mode="append" if chunk > 1 else "create",
+        mode=chunk_mode,
         line_range=((chunk-1)*50+1, chunk*50),
         next_cmd=next_cmd,
     )
