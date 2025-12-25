@@ -94,7 +94,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 ---
 
-## ⚠️ MANDATORY CHUNKING REQUIREMENT
+## ⚠️ MANDATORY MULTI-PART WRITING
 
 🛑 **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
 
@@ -102,7 +102,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 **DO NOT create all sections at once.**
 
-**DO NOT skip the chunking strategy below.**
+**DO NOT skip the writing strategy below.**
 
 **YOU MUST generate the spec in 5 separate parts as specified below.**
 
@@ -115,11 +115,11 @@ Attempting to generate the full spec in one operation WILL result in:
 - Verification failures
 - Wasted time and compute resources
 
-**If you are about to say "I'll create it in one operation" → STOP and read the chunking strategy below.**
+**If you are about to say "I'll create it in one operation" → STOP and read the writing strategy below.**
 
 ---
 
-## Chunking Strategy
+## Multi-Part Writing Strategy
 
 **CRITICAL**: The technical-spec-target.md size will vary based on project complexity:
 
@@ -127,19 +127,19 @@ Attempting to generate the full spec in one operation WILL result in:
 - **Medium projects** (5,000-50,000 LOC): **2,000-5,000 lines**
 - **Large projects** (> 50,000 LOC): **4,000-10,000+ lines**
 
-**⚠️ COMPLETION-BASED CHUNKING (NOT size-based)**:
+**⚠️ COMPLETION-BASED WRITING (NOT size-based)**:
 
-Use **completion-based chunking**, NOT size-based chunking:
+Use **completion-based writing**, NOT size-based writing:
 
 - Generate complete logical sections in each part
 - Each part ends with a distinct completion point
 - Display progress after each part (MANDATORY)
 - NO placeholders allowed (no TODO, TBD, "will be analyzed")
 
-**Why chunking is critical**:
+**Why multi-part writing is critical**:
 
 - Technical specs require detailed diagrams that take space
-- Large specs may hit token limits without chunking
+- Large specs may hit token limits without multi-part writing
 - Progress tracking improves user experience
 - Verification gates ensure quality at each step
 
@@ -147,7 +147,7 @@ Use **completion-based chunking**, NOT size-based chunking:
 
 ## Resume Detection (BEFORE Starting)
 
-**BEFORE generating any chunks**, check for interrupted generation:
+**BEFORE generating any parts**, check for interrupted generation:
 
 **Step 1: Check for existing spec**:
 

@@ -326,7 +326,7 @@ Save the complexity and feasibility scores to the data folder using stdin mode:
   "feasibility": {
     "inline_upgrade": {n},
     "greenfield_rewrite": {n},
-    "hybrid_strangler": {n},
+    "hybrid_approach": {n},
     "recommended_approach": "{approach}",
     "confidence_percentage": {n}
   }

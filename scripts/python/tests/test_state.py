@@ -533,7 +533,7 @@ class TestAnalysisStateManager:
         manager = AnalysisStateManager(folder)
         manager.initialize(tmp_path)
 
-        # Create scoring data file in data folder
+        # Create scoring data file in data folder (using new hybrid_approach key)
         scoring_data = {
             "schema_version": "3.1.0",
             "stage": "validation_scoring",
@@ -544,7 +544,7 @@ class TestAnalysisStateManager:
             "feasibility": {
                 "inline_upgrade": 72,
                 "greenfield_rewrite": 45,
-                "hybrid_strangler": 68,
+                "hybrid_approach": 68,
                 "recommended_approach": "Inline Upgrade",
                 "confidence_percentage": 85
             }
@@ -564,6 +564,26 @@ class TestAnalysisStateManager:
         assert context["feasibility_hybrid"] == 68
         assert context["recommended_approach"] == "Inline Upgrade"
         assert context["confidence_percentage"] == 85
+
+    def test_get_context_scoring_data_legacy_key(self, tmp_path):
+        """get_context_for_prompt should support legacy hybrid_strangler key for backward compat."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Create scoring data file with legacy hybrid_strangler key
+        scoring_data = {
+            "feasibility": {
+                "hybrid_strangler": 75  # legacy key
+            }
+        }
+        scoring_file = folder / "data" / "validation-scoring.json"
+        scoring_file.write_text(json.dumps(scoring_data))
+
+        context = manager.get_context_for_prompt()
+
+        # Should read legacy key when new key is missing
+        assert context["feasibility_hybrid"] == 75
 
     def test_get_context_without_scoring_data(self, tmp_path):
         """get_context_for_prompt should work when scoring data file doesn't exist."""

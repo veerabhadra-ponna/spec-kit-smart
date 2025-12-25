@@ -761,31 +761,35 @@ class AnalysisStateManager:
         scoring_file = self.data_folder / "validation-scoring.json"
         if scoring_file.exists():
             try:
-                scoring_data = safe_json_loads(
-                    scoring_file.read_text(encoding="utf-8"), default={}
-                )
-                complexity = scoring_data.get("complexity", {})
-                feasibility = scoring_data.get("feasibility", {})
+                content = scoring_file.read_text(encoding="utf-8")
+            except (IOError, OSError):
+                # File unreadable (permissions, etc.) - continue without scoring
+                content = "{}"
 
-                # Add complexity fields
-                context["complexity_score"] = complexity.get("overall_score", "")
-                context["complexity_rating"] = complexity.get("rating", "")
+            scoring_data = safe_json_loads(content, default={})
+            complexity = scoring_data.get("complexity", {})
+            feasibility = scoring_data.get("feasibility", {})
 
-                # Add feasibility fields
-                context["feasibility_inline"] = feasibility.get("inline_upgrade", "")
-                context["feasibility_greenfield"] = feasibility.get(
-                    "greenfield_rewrite", ""
-                )
-                context["feasibility_hybrid"] = feasibility.get("hybrid_strangler", "")
-                context["recommended_approach"] = feasibility.get(
-                    "recommended_approach", ""
-                )
-                context["confidence_percentage"] = feasibility.get(
-                    "confidence_percentage", ""
-                )
-            except Exception:
-                # Scoring data not available yet, leave fields empty
-                pass
+            # Add complexity fields
+            context["complexity_score"] = complexity.get("overall_score", "")
+            context["complexity_rating"] = complexity.get("rating", "")
+
+            # Add feasibility fields
+            context["feasibility_inline"] = feasibility.get("inline_upgrade", "")
+            context["feasibility_greenfield"] = feasibility.get(
+                "greenfield_rewrite", ""
+            )
+            # Support both new (hybrid_approach) and legacy (hybrid_strangler) keys
+            context["feasibility_hybrid"] = (
+                feasibility.get("hybrid_approach")
+                or feasibility.get("hybrid_strangler", "")
+            )
+            context["recommended_approach"] = feasibility.get(
+                "recommended_approach", ""
+            )
+            context["confidence_percentage"] = feasibility.get(
+                "confidence_percentage", ""
+            )
 
         return context
 

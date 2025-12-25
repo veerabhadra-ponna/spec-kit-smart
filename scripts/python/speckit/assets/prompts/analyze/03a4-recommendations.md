@@ -263,7 +263,7 @@ Merge all Stage 3A data into comprehensive state:
     "feasibility": {
       "inline_upgrade": {score},
       "greenfield_rewrite": {score},
-      "hybrid_strangler": {score}
+      "hybrid_approach": {score}
     }
   },
 
