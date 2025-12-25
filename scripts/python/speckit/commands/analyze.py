@@ -253,22 +253,28 @@ def run_analyze_project(
     }
 
     # For stages 1-2 (input collection), use $NONE markers for inputs that weren't
-    # explicitly provided via CLI args. This triggers interactive prompts in the
-    # prompt templates. Without this, the CLI would auto-default to cwd/"A" and
-    # the prompts would skip interactive mode.
+    # explicitly provided via CLI args AND weren't previously collected.
+    # This triggers interactive prompts in the prompt templates.
+    # If inputs were already collected (stage 01b completed), preserve them to
+    # allow resuming without re-entering values.
     if stage <= 2:
-        if path is None:
+        inputs_collected = "01b-input-collection" in state.stages_complete
+
+        # Only show $NONE (trigger interactive prompt) if:
+        # 1. CLI arg not provided, AND
+        # 2. Inputs weren't previously collected
+        if path is None and not inputs_collected:
             render_context["project_path"] = "$NONE"
-        if scope is None:
+        if scope is None and not inputs_collected:
             render_context["scope"] = "$NONE"
-        if context is None:
+        if context is None and not inputs_collected:
             render_context["context"] = "$NONE"
-        if concern_type is None:
+        if concern_type is None and not inputs_collected:
             render_context["concern_type"] = "$NONE"
-        if current_impl is None:
+        if current_impl is None and not inputs_collected:
             render_context["current_impl"] = "$NONE"
             render_context["current_implementation"] = "$NONE"
-        if target_impl is None:
+        if target_impl is None and not inputs_collected:
             render_context["target_impl"] = "$NONE"
             render_context["target_implementation"] = "$NONE"
 

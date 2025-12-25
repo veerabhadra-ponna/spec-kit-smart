@@ -316,6 +316,104 @@ class TestAnalyzeProjectCorruptedState:
                             assert "Corrupted" not in str(call)
 
 
+class TestPreserveStoredInputsOnResume:
+    """Tests for preserving stored inputs when resuming early stages.
+
+    REGRESSION TEST: When user resumes stage 1-2 with existing inputs in state.json,
+    the CLI should preserve those inputs instead of setting $NONE markers.
+    This allows users to resume without re-entering values.
+    """
+
+    def test_fresh_run_shows_none_markers(self, tmp_path):
+        """Fresh run (no inputs collected) should show $NONE markers."""
+        analysis_dir = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(analysis_dir)
+        state = manager.initialize(tmp_path)
+
+        # Stage 1a completed, but 1b (input collection) NOT completed
+        manager.update_stage("01a-initialization", "completed", stage_num=1)
+        # stages_complete should NOT include "01b-input-collection"
+
+        state = manager.load()
+        assert "01b-input-collection" not in state.stages_complete
+
+    def test_resume_after_input_collection_preserves_values(self, tmp_path):
+        """Resume with inputs collected should preserve stored values."""
+        analysis_dir = tmp_path / ".analysis" / "test-run"
+        (analysis_dir / "data").mkdir(parents=True)
+        (analysis_dir / "reports").mkdir(parents=True)
+
+        manager = AnalysisStateManager(analysis_dir)
+        state = manager.initialize(tmp_path)
+
+        # Complete input collection stage with stored values
+        manager.update_stage("01a-initialization", "completed", stage_num=1)
+        manager.update_stage("01b-input-collection", "completed", stage_num=2)
+        manager.update_inputs(
+            scope="B",
+            context="Testing context",
+            concern_type="Authentication",
+            current_impl="Custom JWT",
+            target_impl="Okta",
+        )
+
+        state = manager.load()
+
+        # Verify inputs collected stage is marked complete
+        assert "01b-input-collection" in state.stages_complete
+
+        # Verify inputs are stored
+        assert state.inputs.scope == "B"
+        assert state.inputs.context == "Testing context"
+        assert state.inputs.concern_type == "Authentication"
+
+    def test_context_shows_stored_values_when_inputs_collected(self, tmp_path):
+        """get_context_for_prompt should return stored values after input collection."""
+        analysis_dir = tmp_path / ".analysis" / "test-run"
+        (analysis_dir / "data").mkdir(parents=True)
+        (analysis_dir / "reports").mkdir(parents=True)
+
+        manager = AnalysisStateManager(analysis_dir)
+        manager.initialize(tmp_path)
+
+        # Complete input collection with stored values
+        manager.update_stage("01a-initialization", "completed", stage_num=1)
+        manager.update_stage("01b-input-collection", "completed", stage_num=2)
+        manager.update_inputs(
+            scope="B",
+            context="Test context",
+            concern_type="Database",
+            current_impl="SQL Server",
+            target_impl="PostgreSQL",
+        )
+
+        context = manager.get_context_for_prompt()
+
+        # Context should have stored values
+        assert context["scope"] == "B"
+        assert context["context"] == "Test context"
+        assert context["concern_type"] == "Database"
+        assert context["current_impl"] == "SQL Server"
+        assert context["target_impl"] == "PostgreSQL"
+
+    def test_inputs_collected_flag_check(self, tmp_path):
+        """Verify 01b-input-collection in stages_complete is reliable indicator."""
+        analysis_dir = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(analysis_dir)
+        manager.initialize(tmp_path)
+
+        state = manager.load()
+
+        # Before input collection
+        assert "01b-input-collection" not in state.stages_complete
+
+        # After marking stage complete
+        manager.update_stage("01b-input-collection", "completed", stage_num=2)
+        state = manager.load()
+
+        assert "01b-input-collection" in state.stages_complete
+
+
 class TestStageProgressionWithInProgress:
     """Integration tests for stage progression with in_progress states."""
 
