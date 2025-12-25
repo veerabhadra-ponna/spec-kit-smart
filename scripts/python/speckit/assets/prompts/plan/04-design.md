@@ -15,6 +15,17 @@ next: null
 
 ---
 
+## ⚠️ File Write Best Practices
+
+**For large artifacts:**
+
+- Use chunked writing when content exceeds 2000 characters
+- Steps 1-2 are already chunked for plan.md
+- For supporting artifacts (Step 3), write each section separately if large
+- If using shell commands with content, be aware of OS limits (~8000 chars on Windows)
+
+---
+
 ## Prerequisites
 
 Verify before proceeding:

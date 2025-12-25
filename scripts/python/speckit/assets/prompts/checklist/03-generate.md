@@ -14,6 +14,16 @@ Generate "unit tests for requirements" checklist.
 
 ---
 
+## ⚠️ File Write Best Practices
+
+**For large checklists:**
+
+- Write checklist in sections if total content exceeds 2000 characters
+- Group by quality dimension: Completeness, then Clarity, etc.
+- If using shell commands with content, be aware of OS limits (~8000 chars on Windows)
+
+---
+
 ## Item Format
 
 **✅ CORRECT (Testing requirements):**

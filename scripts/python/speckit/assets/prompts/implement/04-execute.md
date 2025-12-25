@@ -14,6 +14,16 @@ Execute implementation following the task plan.
 
 ---
 
+## ⚠️ File Write Best Practices
+
+**For large file generation:**
+
+- Create files in chunks if content exceeds 2000 characters
+- Write skeleton first, then fill sections incrementally
+- If using shell commands with content, be aware of OS limits (~8000 chars on Windows)
+
+---
+
 ## Execution Rules
 
 1. **Phase-by-phase**: Complete each phase before next

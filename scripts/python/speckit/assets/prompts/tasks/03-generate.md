@@ -14,6 +14,16 @@ Generate tasks organized by user story.
 
 ---
 
+## ⚠️ File Write Best Practices
+
+**For large task lists:**
+
+- Write tasks.md in chunks if total content exceeds 2000 characters
+- Group by phase: write Phase 1, then Phase 2, etc.
+- If using shell commands with content, be aware of OS limits (~8000 chars on Windows)
+
+---
+
 ## Task Format (REQUIRED)
 
 Every task MUST follow:
