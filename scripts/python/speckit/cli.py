@@ -1270,10 +1270,11 @@ def list_files_cmd(
     matches = []
     for file_path in proj_path.rglob("*"):
         if file_path.is_file():
-            name = file_path.name
+            # Match against relative path for directory-aware patterns (e.g., src/*.py, **/*Service*.cs)
+            rel_path = str(file_path.relative_to(proj_path))
             for pat in patterns:
-                if fnmatch.fnmatch(name, pat):
-                    matches.append(str(file_path.relative_to(proj_path)))
+                if fnmatch.fnmatch(rel_path, pat):
+                    matches.append(rel_path)
                     break
 
     matches = sorted(matches)[:limit]

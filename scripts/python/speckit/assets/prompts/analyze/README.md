@@ -151,18 +151,18 @@ Each sub-prompt:
 │   ├── test-audit.json                   # AI-generated
 │   ├── dependency-audit.json             # AI-generated
 │   └── metrics-summary.json              # AI-generated
-└── reports/                              # MD report files (= {reports_dir})
-    ├── analysis-report.md                # AI-generated (Stage 4)
-    ├── EXECUTIVE-SUMMARY.md              # AI-generated (Stage 5)
-    ├── functional-spec-legacy.md         # AI-generated (Stage 6, Scope A)
-    ├── functional-spec-target.md         # AI-generated (Stage 6, Scope A)
-    ├── technical-spec-legacy.md          # AI-generated (Stage 6, Scope A)
-    ├── technical-spec-target.md          # AI-generated (Stage 6, Scope A)
-    └── stage-prompts/                    # Generated stage prompts
-        ├── constitution-prompt.md
-        ├── clarify-prompt.md
-        ├── tasks-prompt.md
-        └── implement-prompt.md
+├── reports/                              # MD report files (= {reports_dir})
+│   ├── analysis-report.md                # AI-generated (Stage 4)
+│   ├── EXECUTIVE-SUMMARY.md              # AI-generated (Stage 5)
+│   ├── functional-spec-legacy.md         # AI-generated (Stage 6, Scope A)
+│   ├── functional-spec-target.md         # AI-generated (Stage 6, Scope A)
+│   ├── technical-spec-legacy.md          # AI-generated (Stage 6, Scope A)
+│   └── technical-spec-target.md          # AI-generated (Stage 6, Scope A)
+└── stage-prompts/                        # Spec Kit stage prompts (= {analysis_dir}/stage-prompts)
+    ├── constitution-prompt.md            # AI-generated (Stage 6, Scope A)
+    ├── clarify-prompt.md                 # AI-generated (Stage 6, Scope A)
+    ├── tasks-prompt.md                   # AI-generated (Stage 6, Scope A)
+    └── implement-prompt.md               # AI-generated (Stage 6, Scope A)
 ```
 
 ### Template Variables

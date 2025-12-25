@@ -26,7 +26,7 @@ Analyze existing codebases to assess current state, identify strengths/weaknesse
 
 | Scope | Use Case | Time | Output |
 |-------|----------|------|--------|
-| **[A] Full Application** | Complete modernization | 2-4 hours | analysis-report.md, functional-spec.md, technical-spec.md, stage-prompts/ |
+| **[A] Full Application** | Complete modernization | 2-4 hours | analysis-report.md, functional-spec-legacy.md, functional-spec-target.md, technical-spec-legacy.md, technical-spec-target.md, stage-prompts/ |
 | **[B] Cross-Cutting Concern** | Targeted migration | 30-60 min | concern-analysis.md, concern-migration-plan.md |
 
 ---
@@ -39,8 +39,10 @@ Analyze existing codebases to assess current state, identify strengths/weaknesse
 |------|---------|
 | `analysis-report.md` | Technical assessment with strengths/weaknesses, upgrade paths, recommendations |
 | `EXECUTIVE-SUMMARY.md` | High-level overview for stakeholders |
-| `functional-spec.md` | WHAT the system does (features from existing code) |
-| `technical-spec.md` | HOW to build modernized system |
+| `functional-spec-legacy.md` | WHAT the legacy system does (features from existing code) |
+| `functional-spec-target.md` | WHAT the modernized system will do (enhanced features) |
+| `technical-spec-legacy.md` | HOW the legacy system is built (architecture documentation) |
+| `technical-spec-target.md` | HOW to build the modernized system (target architecture) |
 | `stage-prompts/` | Ready-to-use prompts for constitution, clarify, tasks, implement |
 | `decision-matrix.md` | Comparison table for inline vs greenfield vs hybrid |
 
@@ -169,13 +171,13 @@ speckitadv analyze-project --analysis-dir=.analysis/project-20251224-164004
 ### For Inline Upgrade
 
 1. Review `analysis-report.md` for findings
-2. Review `technical-spec.md` for target architecture
+2. Review `technical-spec-target.md` for target architecture
 3. Use `stage-prompts/` for Toolkit workflow
 4. Implement incrementally with testing
 
 ### For Greenfield Rewrite
 
-1. Review `functional-spec.md` for features to preserve
+1. Review `functional-spec-legacy.md` for features to preserve
 2. Use `stage-prompts/constitution-prompt.md` for principles
 3. Run `/speckitadv.constitution` → `/speckitadv.specify` → `/speckitadv.plan`
 
