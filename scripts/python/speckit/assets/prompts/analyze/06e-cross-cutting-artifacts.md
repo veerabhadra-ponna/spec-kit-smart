@@ -15,6 +15,18 @@ Generate artifacts specific to Cross-Cutting Concern Migration (Scope B). This i
 
 ---
 
+## ⚠️ IMPORTANT: "Part" vs CLI "--chunk"
+
+This prompt uses **"Part 1-3"** to describe content sections to write incrementally.
+
+**These are NOT CLI `--chunk` parameters!**
+
+- ❌ DO NOT run `speckitadv analyze-project --chunk=2` to continue
+- ✅ DO continue writing content using `write-report --append`
+- ✅ DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
+
+---
+
 ## Pre-Check
 
 1. Read `{analysis_dir}/state.json`
@@ -201,12 +213,12 @@ speckitadv write-report abstraction-assessment.md --content '<generated-content>
 
 ---
 
-## Artifact 2: Concern Migration Plan (3 Chunks)
+## Artifact 2: Concern Migration Plan (3 Parts)
 
-### Chunk 1: Strategy + Phasing
+### Part 1: Strategy + Phasing
 
 ---
-⏸️ **[STOP: GENERATE_MIGRATION_PLAN_CHUNK_1]**
+⏸️ **[STOP: GENERATE_MIGRATION_PLAN_PART_1]**
 
 **Template:**
 
@@ -288,7 +300,7 @@ speckitadv write-report concern-migration-plan.md --content '<generated-content>
 **Output:**
 
 ```text
-concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
+concern-migration-plan.md Part 1/3 complete: Strategy + Phasing
   - Strategy: {strategy}
   - Phases: 4
   - Lines: [COUNT]
@@ -297,10 +309,10 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 
 ---
 
-### Chunk 2: Implementation + Testing
+### Part 2: Implementation + Testing
 
 ---
-⏸️ **[STOP: GENERATE_MIGRATION_PLAN_CHUNK_2]**
+⏸️ **[STOP: GENERATE_MIGRATION_PLAN_PART_2]**
 
 ```markdown
 ## 4. Environment Setup
@@ -375,7 +387,7 @@ speckitadv write-report concern-migration-plan.md --content '<generated-content>
 **Output:**
 
 ```text
-concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
+concern-migration-plan.md Part 2/3 complete: Implementation + Testing
   - Files to modify: [COUNT]
   - Test types: [COUNT]
   - Lines: [COUNT]
@@ -384,10 +396,10 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 
 ---
 
-### Chunk 3: Deployment + Operations + Success
+### Part 3: Deployment + Operations + Success
 
 ---
-⏸️ **[STOP: GENERATE_MIGRATION_PLAN_CHUNK_3]**
+⏸️ **[STOP: GENERATE_MIGRATION_PLAN_PART_3]**
 
 ```markdown
 ## 7. Deployment Strategy
@@ -480,10 +492,10 @@ speckitadv write-report concern-migration-plan.md --content '<generated-content>
 **Output:**
 
 ```text
-concern-migration-plan.md Chunk 3/3 complete: Deployment + Operations + Success
+concern-migration-plan.md Part 3/3 complete: Deployment + Operations + Success
   - Lines: [COUNT]
 
-concern-migration-plan.md COMPLETE (3/3 chunks)
+concern-migration-plan.md COMPLETE (3/3 parts)
    Total lines: [COUNT]
 
 ```

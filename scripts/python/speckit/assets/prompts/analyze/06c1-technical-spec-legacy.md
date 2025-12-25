@@ -15,6 +15,18 @@ Generate technical specification documenting HOW the LEGACY/EXISTING system is b
 
 ---
 
+## ⚠️ IMPORTANT: "Part" vs CLI "--chunk"
+
+This prompt uses **"Part 1-5"** to describe content sections to write incrementally.
+
+**These are NOT CLI `--chunk` parameters!**
+
+- ❌ DO NOT run `speckitadv analyze-project --chunk=4` to continue
+- ✅ DO continue writing content using `write-report --append`
+- ✅ DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
+
+---
+
 ## State Management
 
 **Available template variables:**
@@ -107,7 +119,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 **DO NOT skip the chunking strategy below.**
 
-**YOU MUST generate the spec in 5 separate chunks as specified below.**
+**YOU MUST generate the spec in 5 separate parts as specified below.**
 
 Attempting to generate the full spec in one operation WILL result in:
 
@@ -134,9 +146,9 @@ Attempting to generate the full spec in one operation WILL result in:
 
 Use **completion-based chunking**, NOT size-based chunking:
 
-- Generate complete logical sections in each chunk
-- Each chunk ends with a distinct completion point
-- Display progress after each chunk (MANDATORY)
+- Generate complete logical sections in each part
+- Each part ends with a distinct completion point
+- Display progress after each part (MANDATORY)
 - NO placeholders allowed (no TODO, TBD, "will be analyzed")
 
 **Why chunking is critical**:
@@ -158,7 +170,7 @@ Use **completion-based chunking**, NOT size-based chunking:
 # Check if technical-spec-legacy.md already exists
 if [ -f "{reports_dir}/technical-spec-legacy.md" ]; then
   # Spec exists - check content to determine resume point
-  # Look for section headers to determine last completed chunk
+  # Look for section headers to determine last completed part
 fi
 ```
 
@@ -167,55 +179,55 @@ fi
 **IF** technical-spec-legacy.md exists AND is incomplete:
 
 1. Read `{reports_dir}/technical-spec-legacy.md`
-2. Identify last completed chunk by checking which section headers exist
+2. Identify last completed part by checking which section headers exist
 3. Display resume message:
 
    ```text
    ⚠️ RESUMING INTERRUPTED GENERATION
 
-   Last completed: Chunk 2 (Technology Stack + Data Architecture)
-   Resuming from: Chunk 3 (API Design + Integration Architecture)
+   Last completed: Part 2 (Technology Stack + Data Architecture)
+   Resuming from: Part 3 (API Design + Integration Architecture)
 
    Continuing generation...
    ```
 
-4. Skip completed chunks
-5. Start generation from next incomplete chunk
+4. Skip completed parts
+5. Start generation from next incomplete part
 
 **IF** technical-spec-legacy.md does NOT exist:
 
-- Start fresh from Chunk 1
+- Start fresh from Part 1
 
 ---
 
-## Spec Structure (5 Chunks)
+## Spec Structure (5 Parts)
 
 Generate spec in `{reports_dir}/technical-spec-legacy.md`
 
 **⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
 
-1. Generate ONLY Chunk 1 first
-2. Wait for Chunk 1 completion
-3. THEN generate Chunk 2
-4. Continue sequentially through all 5 chunks
+1. Generate ONLY Part 1 first
+2. Wait for Part 1 completion
+3. THEN generate Part 2
+4. Continue sequentially through all 5 parts
 
 **DO NOT**:
 
-- ❌ Generate multiple chunks in one response
+- ❌ Generate multiple parts in one response
 - ❌ Generate all sections at once
 - ❌ Skip progress display
 
-**IF** you find yourself generating more than one chunk at a time → **STOP IMMEDIATELY**
+**IF** you find yourself generating more than one part at a time → **STOP IMMEDIATELY**
 
 ---
 
-### Chunk 1: Introduction + Architecture Overview
+### Part 1: Introduction + Architecture Overview
 
 Generate Sections 1 and 2.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_1]**
+⏸️ **[STOP: GENERATE_PART_1]**
 
 #### Section 1: Introduction
 
@@ -261,7 +273,7 @@ Generate Sections 1 and 2.
 - ✓ Characteristics documented
 - ✓ NO placeholders
 
-**After Chunk 1 Generation**:
+**After Part 1 Generation**:
 
 1. **Write to file** using Write tool:
    - File path: `{reports_dir}/technical-spec-legacy.md`
@@ -272,7 +284,7 @@ Generate Sections 1 and 2.
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 1/5 complete: Introduction + Architecture
+   ✓ Part 1/5 complete: Introduction + Architecture
      - C4 Diagrams: 3
      - Architecture style: [STYLE]
      - Lines generated: [COUNT]
@@ -281,13 +293,13 @@ Generate Sections 1 and 2.
 
 ---
 
-### Chunk 2: Technology Stack + Data Architecture
+### Part 2: Technology Stack + Data Architecture
 
 Generate Sections 3 and 4.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_2]**
+⏸️ **[STOP: GENERATE_PART_2]**
 
 #### Section 3: Technology Stack
 
@@ -362,7 +374,7 @@ Generate Sections 3 and 4.
 - ✓ Every component has file:line reference
 - ✓ NO placeholders
 
-**After Chunk 2 Generation**:
+**After Part 2 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 3 and 4 to technical-spec-legacy.md
@@ -370,7 +382,7 @@ Generate Sections 3 and 4.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 2/5 complete: Technology Stack + Data Architecture
+   ✓ Part 2/5 complete: Technology Stack + Data Architecture
      - Technologies documented: [COUNT]
      - Entities documented: [COUNT]
      - ERD diagram: ✓
@@ -380,13 +392,13 @@ Generate Sections 3 and 4.
 
 ---
 
-### Chunk 3: API Design + Integration Architecture
+### Part 3: API Design + Integration Architecture
 
 Generate Sections 5 and 6.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_3]**
+⏸️ **[STOP: GENERATE_PART_3]**
 
 #### Section 5: API Design
 
@@ -462,7 +474,7 @@ Generate Sections 5 and 6.
 - ✓ Every endpoint has file:line reference
 - ✓ NO placeholders
 
-**After Chunk 3 Generation**:
+**After Part 3 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 5 and 6 to technical-spec-legacy.md
@@ -470,7 +482,7 @@ Generate Sections 5 and 6.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 3/5 complete: API Design + Integration Architecture
+   ✓ Part 3/5 complete: API Design + Integration Architecture
      - Endpoints documented: [COUNT]
      - Integrations documented: [COUNT]
      - Sequence diagrams: [COUNT]
@@ -480,13 +492,13 @@ Generate Sections 5 and 6.
 
 ---
 
-### Chunk 4: Security + Deployment
+### Part 4: Security + Deployment
 
 Generate Sections 7 and 8.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_4]**
+⏸️ **[STOP: GENERATE_PART_4]**
 
 #### Section 7: Security Architecture
 
@@ -569,7 +581,7 @@ Generate Sections 7 and 8.
 - ✓ Every component has file:line reference
 - ✓ NO placeholders
 
-**After Chunk 4 Generation**:
+**After Part 4 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 7 and 8 to technical-spec-legacy.md
@@ -577,7 +589,7 @@ Generate Sections 7 and 8.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 4/5 complete: Security + Deployment
+   ✓ Part 4/5 complete: Security + Deployment
      - Security issues documented: [COUNT]
      - Environments documented: [COUNT]
      - Deployment diagram: ✓
@@ -587,13 +599,13 @@ Generate Sections 7 and 8.
 
 ---
 
-### Chunk 5: Testing + Observability + Technical Debt
+### Part 5: Testing + Observability + Technical Debt
 
 Generate Sections 9, 10, and 11.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_5]**
+⏸️ **[STOP: GENERATE_PART_5]**
 
 #### Section 9: Testing Infrastructure
 
@@ -695,7 +707,7 @@ Generate Sections 9, 10, and 11.
 - ✓ All components have file:line references
 - ✓ NO placeholders
 
-**After Chunk 5 Generation**:
+**After Part 5 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 9, 10, and 11 to technical-spec-legacy.md
@@ -709,7 +721,7 @@ Generate Sections 9, 10, and 11.
 3. **MANDATORY - Display progress and final summary**:
 
    ```text
-   ✓ Chunk 5/5 complete: Testing + Observability + Technical Debt
+   ✓ Part 5/5 complete: Testing + Observability + Technical Debt
      - Test categories documented: [COUNT]
      - Technical debt items: [COUNT]
      - Lines generated: [COUNT]

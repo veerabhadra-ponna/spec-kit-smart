@@ -15,6 +15,18 @@ Generate functional specification documenting WHAT the MODERNIZED system WILL do
 
 ---
 
+## ⚠️ IMPORTANT: "Part" vs CLI "--chunk"
+
+This prompt uses **"Part 1-5"** to describe content sections to write incrementally.
+
+**These are NOT CLI `--chunk` parameters!**
+
+- ❌ DO NOT run `speckitadv analyze-project --chunk=3` to continue
+- ✅ DO continue writing content using `write-report --append`
+- ✅ DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
+
+---
+
 ## State Management
 
 **Available template variables:**
@@ -117,7 +129,7 @@ Review user's answers from Stage 3A:
 
 **DO NOT skip the chunking strategy below.**
 
-**YOU MUST generate the spec in 5 separate chunks as specified below.**
+**YOU MUST generate the spec in 5 separate parts as specified below.**
 
 Attempting to generate the full spec in one operation WILL result in:
 
@@ -143,9 +155,9 @@ Attempting to generate the full spec in one operation WILL result in:
 
 Use **completion-based chunking**, NOT size-based chunking:
 
-- Generate complete logical sections in each chunk
-- Each chunk ends with a distinct completion point
-- Display progress after each chunk (MANDATORY)
+- Generate complete logical sections in each part
+- Each part ends with a distinct completion point
+- Display progress after each part (MANDATORY)
 - NO placeholders allowed (no TODO, TBD, "will be analyzed")
 
 **Why chunking is critical**:
@@ -166,7 +178,7 @@ Use **completion-based chunking**, NOT size-based chunking:
 # Check if functional-spec-target.md already exists
 if [ -f "{reports_dir}/functional-spec-target.md" ]; then
   # Spec exists - check content to determine resume point
-  # Look for section headers to determine last completed chunk
+  # Look for section headers to determine last completed part
 fi
 ```
 
@@ -175,55 +187,55 @@ fi
 **IF** functional-spec-target.md exists AND is incomplete:
 
 1. Read `{reports_dir}/functional-spec-target.md`
-2. Identify last completed chunk by checking which section headers exist
+2. Identify last completed part by checking which section headers exist
 3. Display resume message:
 
    ```text
    ⚠️ RESUMING INTERRUPTED GENERATION
 
-   Last completed: Chunk 2 (User Stories - CRITICAL Modernized)
-   Resuming from: Chunk 3 (User Stories - STANDARD + Business Rules)
+   Last completed: Part 2 (User Stories - CRITICAL Modernized)
+   Resuming from: Part 3 (User Stories - STANDARD + Business Rules)
 
    Continuing generation...
    ```
 
-4. Skip completed chunks
-5. Start generation from next incomplete chunk
+4. Skip completed parts
+5. Start generation from next incomplete part
 
 **IF** functional-spec-target.md does NOT exist:
 
-- Start fresh from Chunk 1
+- Start fresh from Part 1
 
 ---
 
-## Spec Structure (5 Chunks)
+## Spec Structure (5 Parts)
 
 Generate spec in `{reports_dir}/functional-spec-target.md`
 
 **⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
 
-1. Generate ONLY Chunk 1 first
-2. Wait for Chunk 1 completion
-3. THEN generate Chunk 2
-4. Continue sequentially through all 5 chunks
+1. Generate ONLY Part 1 first
+2. Wait for Part 1 completion
+3. THEN generate Part 2
+4. Continue sequentially through all 5 parts
 
 **DO NOT**:
 
-- ❌ Generate multiple chunks in one response
+- ❌ Generate multiple parts in one response
 - ❌ Generate all sections at once
 - ❌ Skip progress display
 
-**IF** you find yourself generating more than one chunk at a time → **STOP IMMEDIATELY**
+**IF** you find yourself generating more than one part at a time → **STOP IMMEDIATELY**
 
 ---
 
-### Chunk 1: Introduction + Summary + Scope
+### Part 1: Introduction + Summary + Scope
 
 Generate Sections 1, 2, and 3 for TARGET system.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_1]**
+⏸️ **[STOP: GENERATE_PART_1]**
 
 #### Section 1: Introduction
 
@@ -250,7 +262,7 @@ Generate Sections 1, 2, and 3 for TARGET system.
 - ✓ IN/OUT scope clearly defined
 - ✓ NO placeholders
 
-**After Chunk 1 Generation**:
+**After Part 1 Generation**:
 
 1. **Write to file** using Write tool:
    - File path: `{reports_dir}/functional-spec-target.md`
@@ -261,7 +273,7 @@ Generate Sections 1, 2, and 3 for TARGET system.
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 1/5 complete: Introduction + Summary + Scope
+   ✓ Part 1/5 complete: Introduction + Summary + Scope
      - In Scope Components: [COUNT]
      - Out of Scope Components: [COUNT]
      - Lines generated: [COUNT]
@@ -270,13 +282,13 @@ Generate Sections 1, 2, and 3 for TARGET system.
 
 ---
 
-### Chunk 2: User Stories - CRITICAL Features (Modernized)
+### Part 2: User Stories - CRITICAL Features (Modernized)
 
 Generate Section 4.1 with modernization enhancements.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_2]**
+⏸️ **[STOP: GENERATE_PART_2]**
 
 For each CRITICAL feature from legacy spec:
 
@@ -310,7 +322,7 @@ For each CRITICAL feature from legacy spec:
 - ✓ User preferences correctly applied
 - ✓ NO placeholders
 
-**After Chunk 2 Generation**:
+**After Part 2 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Section 4.1 content to functional-spec-target.md
@@ -320,7 +332,7 @@ For each CRITICAL feature from legacy spec:
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 2/5 complete: User Stories (CRITICAL Modernized)
+   ✓ Part 2/5 complete: User Stories (CRITICAL Modernized)
      - CRITICAL features modernized: [COUNT]
      - New capabilities added: [COUNT]
      - Lines generated: [COUNT]
@@ -329,13 +341,13 @@ For each CRITICAL feature from legacy spec:
 
 ---
 
-### Chunk 3: User Stories - STANDARD + Business Rules (Modernized)
+### Part 3: User Stories - STANDARD + Business Rules (Modernized)
 
 Generate Sections 4.2 and 5 with target stack considerations.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_3]**
+⏸️ **[STOP: GENERATE_PART_3]**
 
 #### Section 4.2: STANDARD Features (Modernized)
 
@@ -372,7 +384,7 @@ Generate Sections 4.2 and 5 with target stack considerations.
 - ✓ Rationale provided for each rule decision
 - ✓ NO placeholders
 
-**After Chunk 3 Generation**:
+**After Part 3 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 4.2 and 5 to functional-spec-target.md
@@ -380,7 +392,7 @@ Generate Sections 4.2 and 5 with target stack considerations.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 3/5 complete: STANDARD Features + Business Rules (Modernized)
+   ✓ Part 3/5 complete: STANDARD Features + Business Rules (Modernized)
      - STANDARD features modernized: [COUNT]
      - Rules Preserved (EXACT): [COUNT]
      - Rules Enhanced: [COUNT]
@@ -390,13 +402,13 @@ Generate Sections 4.2 and 5 with target stack considerations.
 
 ---
 
-### Chunk 4: NFRs + Data Requirements (Target)
+### Part 4: NFRs + Data Requirements (Target)
 
 Generate Sections 6 and 7 using user's target preferences.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_4]**
+⏸️ **[STOP: GENERATE_PART_4]**
 
 #### Section 6: Non-Functional Requirements (Target)
 
@@ -437,7 +449,7 @@ Use user's answer from Q2 (Database):
 - ✓ Target database from Q2 applied
 - ✓ NO placeholders
 
-**After Chunk 4 Generation**:
+**After Part 4 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 6 and 7 to functional-spec-target.md
@@ -445,7 +457,7 @@ Use user's answer from Q2 (Database):
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 4/5 complete: NFRs + Data Requirements (Target)
+   ✓ Part 4/5 complete: NFRs + Data Requirements (Target)
      - Target Database: {Q2 answer}
      - Target Deployment: {Q5 answer}
      - Entities with migration plan: [COUNT]
@@ -455,13 +467,13 @@ Use user's answer from Q2 (Database):
 
 ---
 
-### Chunk 5: Acceptance Criteria + Assumptions + Constraints (Target)
+### Part 5: Acceptance Criteria + Assumptions + Constraints (Target)
 
 Generate Sections 8, 9, and 10.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_5]**
+⏸️ **[STOP: GENERATE_PART_5]**
 
 #### Section 8: Acceptance Criteria (Target)
 
@@ -488,7 +500,7 @@ Generate Sections 8, 9, and 10.
 - ✓ Constraints from user preferences captured
 - ✓ NO placeholders
 
-**After Chunk 5 Generation**:
+**After Part 5 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 8, 9, and 10 to functional-spec-target.md
@@ -502,7 +514,7 @@ Generate Sections 8, 9, and 10.
 3. **MANDATORY - Display progress and final summary**:
 
    ```text
-   ✓ Chunk 5/5 complete: Acceptance + Assumptions + Constraints (Target)
+   ✓ Part 5/5 complete: Acceptance + Assumptions + Constraints (Target)
      - Migration criteria: [COUNT]
      - Assumptions: [COUNT]
      - Constraints: [COUNT]

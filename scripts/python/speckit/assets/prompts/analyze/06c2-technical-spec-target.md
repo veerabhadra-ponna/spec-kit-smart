@@ -15,6 +15,18 @@ Generate technical specification documenting HOW to build the MODERNIZED system.
 
 ---
 
+## ⚠️ IMPORTANT: "Part" vs CLI "--chunk"
+
+This prompt uses **"Part 1-5"** to describe content sections to write incrementally.
+
+**These are NOT CLI `--chunk` parameters!**
+
+- ❌ DO NOT run `speckitadv analyze-project --chunk=5` to continue
+- ✅ DO continue writing content using `write-report --append`
+- ✅ DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
+
+---
+
 ## State Management
 
 **Available template variables:**
@@ -92,7 +104,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 **DO NOT skip the chunking strategy below.**
 
-**YOU MUST generate the spec in 5 separate chunks as specified below.**
+**YOU MUST generate the spec in 5 separate parts as specified below.**
 
 Attempting to generate the full spec in one operation WILL result in:
 
@@ -119,9 +131,9 @@ Attempting to generate the full spec in one operation WILL result in:
 
 Use **completion-based chunking**, NOT size-based chunking:
 
-- Generate complete logical sections in each chunk
-- Each chunk ends with a distinct completion point
-- Display progress after each chunk (MANDATORY)
+- Generate complete logical sections in each part
+- Each part ends with a distinct completion point
+- Display progress after each part (MANDATORY)
 - NO placeholders allowed (no TODO, TBD, "will be analyzed")
 
 **Why chunking is critical**:
@@ -143,7 +155,7 @@ Use **completion-based chunking**, NOT size-based chunking:
 # Check if technical-spec-target.md already exists
 if [ -f "{reports_dir}/technical-spec-target.md" ]; then
   # Spec exists - check content to determine resume point
-  # Look for section headers to determine last completed chunk
+  # Look for section headers to determine last completed part
 fi
 ```
 
@@ -152,55 +164,55 @@ fi
 **IF** technical-spec-target.md exists AND is incomplete:
 
 1. Read `{reports_dir}/technical-spec-target.md`
-2. Identify last completed chunk by checking which section headers exist
+2. Identify last completed part by checking which section headers exist
 3. Display resume message:
 
    ```text
    ⚠️ RESUMING INTERRUPTED GENERATION
 
-   Last completed: Chunk 2 (Target Tech Stack + Data Architecture)
-   Resuming from: Chunk 3 (API Design + Integration Architecture)
+   Last completed: Part 2 (Target Tech Stack + Data Architecture)
+   Resuming from: Part 3 (API Design + Integration Architecture)
 
    Continuing generation...
    ```
 
-4. Skip completed chunks
-5. Start generation from next incomplete chunk
+4. Skip completed parts
+5. Start generation from next incomplete part
 
 **IF** technical-spec-target.md does NOT exist:
 
-- Start fresh from Chunk 1
+- Start fresh from Part 1
 
 ---
 
-## Spec Structure (5 Chunks)
+## Spec Structure (5 Parts)
 
 Generate spec in `{reports_dir}/technical-spec-target.md`
 
 **⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
 
-1. Generate ONLY Chunk 1 first
-2. Wait for Chunk 1 completion
-3. THEN generate Chunk 2
-4. Continue sequentially through all 5 chunks
+1. Generate ONLY Part 1 first
+2. Wait for Part 1 completion
+3. THEN generate Part 2
+4. Continue sequentially through all 5 parts
 
 **DO NOT**:
 
-- ❌ Generate multiple chunks in one response
+- ❌ Generate multiple parts in one response
 - ❌ Generate all sections at once
 - ❌ Skip progress display
 
-**IF** you find yourself generating more than one chunk at a time → **STOP IMMEDIATELY**
+**IF** you find yourself generating more than one part at a time → **STOP IMMEDIATELY**
 
 ---
 
-### Chunk 1: Architecture Overview + Legacy vs Target
+### Part 1: Architecture Overview + Legacy vs Target
 
 Generate Sections 1, 2, and 3.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_1]**
+⏸️ **[STOP: GENERATE_PART_1]**
 
 #### Section 1: Introduction
 
@@ -242,7 +254,7 @@ Generate Sections 1, 2, and 3.
 - ✓ User preferences (Q1, Q2, Q5) applied
 - ✓ NO placeholders
 
-**After Chunk 1 Generation**:
+**After Part 1 Generation**:
 
 1. **Write to file** using Write tool:
    - File path: `{reports_dir}/technical-spec-target.md`
@@ -253,7 +265,7 @@ Generate Sections 1, 2, and 3.
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 1/5 complete: Architecture + Legacy vs Target Comparison
+   ✓ Part 1/5 complete: Architecture + Legacy vs Target Comparison
      - C4 Diagrams: 2
      - Target Language: {Q1 answer}
      - Target Database: {Q2 answer}
@@ -263,13 +275,13 @@ Generate Sections 1, 2, and 3.
 
 ---
 
-### Chunk 2: Target Tech Stack + Data Architecture
+### Part 2: Target Tech Stack + Data Architecture
 
 Generate Sections 4 and 5 using user's Q1-Q4 answers.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_2]**
+⏸️ **[STOP: GENERATE_PART_2]**
 
 #### Section 4: Target Technology Stack
 
@@ -328,7 +340,7 @@ Based on user's 10 questions:
 - ✓ Migration plan for each entity
 - ✓ NO placeholders
 
-**After Chunk 2 Generation**:
+**After Part 2 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 4 and 5 to technical-spec-target.md
@@ -336,7 +348,7 @@ Based on user's 10 questions:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 2/5 complete: Target Tech Stack + Data Architecture
+   ✓ Part 2/5 complete: Target Tech Stack + Data Architecture
      - Target Language: {Q1}
      - Target Database: {Q2}
      - Target Message Bus: {Q3}
@@ -347,13 +359,13 @@ Based on user's 10 questions:
 
 ---
 
-### Chunk 3: API Design + Integration Architecture
+### Part 3: API Design + Integration Architecture
 
 Generate Sections 6 and 7.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_3]**
+⏸️ **[STOP: GENERATE_PART_3]**
 
 #### Section 6: API Design
 
@@ -404,7 +416,7 @@ Generate Sections 6 and 7.
 - ✓ Message queue patterns from Q3 applied
 - ✓ NO placeholders
 
-**After Chunk 3 Generation**:
+**After Part 3 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 6 and 7 to technical-spec-target.md
@@ -412,7 +424,7 @@ Generate Sections 6 and 7.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 3/5 complete: API Design + Integration Architecture
+   ✓ Part 3/5 complete: API Design + Integration Architecture
      - Endpoints mapped: [COUNT]
      - Integrations documented: [COUNT]
      - Message Queue: {Q3 answer}
@@ -422,13 +434,13 @@ Generate Sections 6 and 7.
 
 ---
 
-### Chunk 4: Security + Deployment
+### Part 4: Security + Deployment
 
 Generate Sections 8 and 9 using Q5, Q6, Q7, Q9 answers.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_4]**
+⏸️ **[STOP: GENERATE_PART_4]**
 
 #### Section 8: Security Architecture
 
@@ -498,7 +510,7 @@ Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 - ✓ CI/CD pipeline defined
 - ✓ NO placeholders
 
-**After Chunk 4 Generation**:
+**After Part 4 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 8 and 9 to technical-spec-target.md
@@ -506,7 +518,7 @@ Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 4/5 complete: Security + Deployment
+   ✓ Part 4/5 complete: Security + Deployment
      - Security Approach: {Q9}
      - Deployment Target: {Q5}
      - Container: {Q7}
@@ -517,13 +529,13 @@ Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 
 ---
 
-### Chunk 5: Testing + Observability + Migration Risks
+### Part 5: Testing + Observability + Migration Risks
 
 Generate Sections 10, 11, and 12 using Q8, Q10 answers.
 
 ---
 
-⏸️ **[STOP: GENERATE_CHUNK_5]**
+⏸️ **[STOP: GENERATE_PART_5]**
 
 #### Section 10: Testing Strategy
 
@@ -609,7 +621,7 @@ Based on Q8 (Observability stack):
 - ✓ Rollback strategy defined
 - ✓ NO placeholders
 
-**After Chunk 5 Generation**:
+**After Part 5 Generation**:
 
 1. **Append to file** using Edit tool:
    - Append Sections 10, 11, and 12 to technical-spec-target.md
@@ -623,7 +635,7 @@ Based on Q8 (Observability stack):
 3. **MANDATORY - Display progress and final summary**:
 
    ```text
-   ✓ Chunk 5/5 complete: Testing + Observability + Migration Risks
+   ✓ Part 5/5 complete: Testing + Observability + Migration Risks
      - Testing Strategy: {Q10}
      - Observability Stack: {Q8}
      - Migration risks documented: [COUNT]
