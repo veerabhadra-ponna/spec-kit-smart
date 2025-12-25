@@ -154,6 +154,47 @@ speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
 
 ---
 
+## File Write Best Practices (All Workflows)
+
+### For CLI Commands (analyze-project workflow)
+
+See "CLI Command Best Practices" above for `write-report` and `write-data` commands.
+
+### For AI Write/Edit Tools (feature-scoped workflows)
+
+Feature-scoped workflows (specify, plan, tasks, implement, checklist) use AI Write/Edit tools for files in `specs/{feature}/`.
+
+**Chunking Rules:**
+
+| Content Size | Approach |
+|-------------|----------|
+| < 2000 chars | Single write operation |
+| 2000-5000 chars | Write in 2-3 chunks by section |
+| > 5000 chars | Write skeleton first, then fill sections incrementally |
+
+**Best Practices:**
+
+1. **Write skeleton first**: Create file structure with headers, then fill content
+2. **Section-by-section**: Complete one section before moving to next
+3. **Verify after each chunk**: Read file to confirm content was written correctly
+4. **Group logically**: Write related content together (e.g., all user stories, then all requirements)
+
+**Examples by Workflow:**
+
+| Workflow | Chunking Strategy |
+|----------|-------------------|
+| `specify` | Steps 3-6 are pre-chunked (Overview → Stories → Requirements → Technical) |
+| `plan` | Chunks 1-3 (Summary → Architecture → Data) |
+| `tasks` | By phase (Setup → Foundational → User Stories → Polish) |
+| `checklist` | By quality dimension (Completeness → Clarity → Coverage) |
+| `implement` | Write file skeleton, then fill methods incrementally |
+
+**Shell Command Warning:**
+
+⚠️ If using shell commands with content arguments, OS limits apply (~8000 chars on Windows). Prefer AI tools or stdin piping for large content.
+
+---
+
 ## Document Structure
 
 **Priority (Highest→Lowest):**
