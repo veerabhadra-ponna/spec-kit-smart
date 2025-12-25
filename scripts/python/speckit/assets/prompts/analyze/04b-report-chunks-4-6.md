@@ -24,7 +24,7 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report analysis-report.md --content '<md>' --append` - Append to report
+- `speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --content '<md>' --append` - Append to report
 
 ---
 

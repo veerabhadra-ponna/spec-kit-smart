@@ -24,8 +24,8 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 
 **CLI Utility Commands:**
 
-- `speckitadv write-data <filename> --content '<json>'` - Write JSON to data/ folder
-- `speckitadv write-report <filename> --content '<md>'` - Write MD to reports/ folder
+- `speckitadv write-data <filename> --stage=<stage-id> --content '<json>'` - Write JSON to data/ folder (tracks artifacts)
+- `speckitadv write-report <filename> --stage=<stage-id> --content '<md>'` - Write MD to reports/ folder (tracks artifacts)
 
 ---
 
@@ -42,7 +42,7 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 ---
 ⏸️ **[STOP: GENERATE_EXECUTIVE_SUMMARY]**
 
-Generate C-level summary using CLI: `speckitadv write-report EXECUTIVE-SUMMARY.md --content '<md>' --analysis-dir "{analysis_dir}"`
+Generate C-level summary using CLI: `speckitadv write-report EXECUTIVE-SUMMARY.md --stage=05a-executive-summary --content '<md>' --analysis-dir "{analysis_dir}"`
 
 This saves to: `{reports_dir}/EXECUTIVE-SUMMARY.md`
 
@@ -106,7 +106,7 @@ This saves to: `{reports_dir}/EXECUTIVE-SUMMARY.md`
 ---
 ⏸️ **[STOP: GENERATE_DEPENDENCY_AUDIT]**
 
-Generate machine-readable dependency audit using CLI: `speckitadv write-data dependency-audit.json --content '<json>' --analysis-dir "{analysis_dir}"`
+Generate machine-readable dependency audit using CLI: `speckitadv write-data dependency-audit.json --stage=05a-executive-summary --content '<json>' --analysis-dir "{analysis_dir}"`
 
 This saves to: `{data_dir}/dependency-audit.json`
 
@@ -147,7 +147,7 @@ This saves to: `{data_dir}/dependency-audit.json`
 ---
 ⏸️ **[STOP: GENERATE_METRICS_SUMMARY]**
 
-Generate metrics for tracking using CLI: `speckitadv write-data metrics-summary.json --content '<json>' --analysis-dir "{analysis_dir}"`
+Generate metrics for tracking using CLI: `speckitadv write-data metrics-summary.json --stage=05a-executive-summary --content '<json>' --analysis-dir "{analysis_dir}"`
 
 This saves to: `{data_dir}/metrics-summary.json`
 

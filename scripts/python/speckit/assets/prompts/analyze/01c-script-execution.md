@@ -30,8 +30,8 @@ The CLI provides all context via template variables. **Do not read state.json di
 
 **CLI Utility Commands (use instead of raw file writes):**
 
-- `speckitadv write-data <filename> --content '<json>'` - Write JSON to data/ folder
-- `speckitadv write-report <filename> --content '<md>'` - Write MD to reports/ folder
+- `speckitadv write-data <filename> --stage=<stage-id> --content '<json>'` - Write JSON to data/ folder (tracks artifacts)
+- `speckitadv write-report <filename> --stage=<stage-id> --content '<md>'` - Write MD to reports/ folder (tracks artifacts)
 - `speckitadv file-stats <filepath>` - Get file statistics (lines, size)
 
 ---
@@ -109,7 +109,7 @@ Look for:
 Write detected stack using CLI command:
 
 ```bash
-speckitadv write-data tech-stack.json --content '<json>' --analysis-dir "{analysis_dir}"
+speckitadv write-data tech-stack.json --stage=01c-script-execution --content '<json>' --analysis-dir "{analysis_dir}"
 ```
 
 This saves to `{data_dir}/tech-stack.json`:

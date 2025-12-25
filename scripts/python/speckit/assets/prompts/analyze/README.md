@@ -180,9 +180,9 @@ Each sub-prompt:
 
 | Command | Purpose |
 |---------|---------|
-| `speckitadv write-data <file> --content '<json>'` | Write JSON to data/ folder |
-| `speckitadv write-report <file> --content '<md>'` | Write MD to reports/ folder |
-| `speckitadv write-report <file> --content '<md>' --append` | Append to existing report |
+| `speckitadv write-data <file> --stage=<id> --content '<json>'` | Write JSON to data/ folder (tracks artifacts) |
+| `speckitadv write-report <file> --stage=<id> --content '<md>'` | Write MD to reports/ folder (tracks artifacts) |
+| `speckitadv write-report <file> --stage=<id> --content '<md>' --append` | Append to existing report (tracks artifacts) |
 | `speckitadv file-stats <file>` | Get file statistics (lines, size) |
 | `speckitadv get-context` | Get all template variables |
 

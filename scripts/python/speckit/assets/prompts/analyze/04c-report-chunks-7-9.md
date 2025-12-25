@@ -24,7 +24,7 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report analysis-report.md --content '<md>' --append` - Append to report
+- `speckitadv write-report analysis-report.md --stage=04c-report-chunks-7-9 --content '<md>' --append` - Append to report
 
 ---
 

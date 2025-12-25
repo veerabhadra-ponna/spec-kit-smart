@@ -24,8 +24,8 @@ Generate the first three chunks of the analysis report: Project Discovery, Contr
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report <filename> --content '<md>'` - Write MD to reports/ folder
-- `speckitadv write-report <filename> --content '<md>' --append` - Append to existing report
+- `speckitadv write-report <filename> --stage=<stage-id> --content '<md>'` - Write MD to reports/ folder (tracks artifacts)
+- `speckitadv write-report <filename> --stage=<stage-id> --content '<md>' --append` - Append to existing report (tracks artifacts)
 
 ---
 
@@ -88,7 +88,7 @@ Generate Phase 1 content. This section documents the project's technology stack 
 
 **Generate and Write:**
 
-Use CLI to write: `speckitadv write-report analysis-report.md --content '<md>' --analysis-dir "{analysis_dir}"`
+Use CLI to write: `speckitadv write-report analysis-report.md --stage=04a-report-chunks-1-3 --content '<md>' --analysis-dir "{analysis_dir}"`
 
 This saves to: `{reports_dir}/analysis-report.md`
 

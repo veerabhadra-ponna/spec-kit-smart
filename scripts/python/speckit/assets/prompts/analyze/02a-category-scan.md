@@ -33,7 +33,7 @@ The CLI provides all context via template variables. **Do not read state.json di
 
 **CLI Utility Commands:**
 
-- `speckitadv write-data <filename> --content '<json>'` - Write JSON to data/ folder
+- `speckitadv write-data <filename> --stage=<stage-id> --content '<json>'` - Write JSON to data/ folder (tracks artifacts)
 - `speckitadv file-stats <filepath>` - Get file statistics (lines, size)
 
 ---
@@ -314,7 +314,7 @@ Create a summary of patterns found in each category:
 Write the category patterns JSON using CLI command:
 
 ```bash
-speckitadv write-data category-patterns.json --content '<json>' --analysis-dir "{analysis_dir}"
+speckitadv write-data category-patterns.json --stage=02a-category-scan --content '<json>' --analysis-dir "{analysis_dir}"
 ```
 
 This saves to `{data_dir}/category-patterns.json` and will be used by subsequent stages for deep-dive analysis.
