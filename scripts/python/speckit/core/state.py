@@ -737,6 +737,7 @@ class AnalysisStateManager:
             "current_stage_num": state.current_stage_num,
             "stages_complete": state.stages_complete,
             "workflow_complete": state.workflow_complete,
+            "modernization_preferences": state.modernization_preferences,
         }
 
 
