@@ -661,8 +661,14 @@ def _auto_detect_stage_from_state(state) -> Optional[int]:
     Auto-detect the next stage from analysis state.
 
     Uses state.stages_complete list, state.stages dict, and state.inputs.scope
-    for deterministic behavior. Both completed and in_progress stages are
-    considered for advancement (in_progress means user has run that stage).
+    for deterministic behavior.
+
+    IMPORTANT: Chunked stages (9, 10, 16) have sub-prompts that must all complete.
+    When a chunked stage is "in_progress", we return that stage so the CLI can
+    redirect to the next chunk. Only when "completed" do we advance past it.
+
+    For non-chunked stages, "in_progress" is treated as ready-to-advance since
+    the user has already seen the prompt.
 
     Handles scope-aware branching:
     - Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
@@ -675,6 +681,10 @@ def _auto_detect_stage_from_state(state) -> Optional[int]:
     if state.workflow_complete:
         return None
 
+    # Chunked stages have multiple sub-prompts (chunks) that must all complete
+    # before advancing. When in_progress, return the same stage for chunk handling.
+    CHUNKED_STAGES = {9, 10, 16}
+
     # Get scope from state.inputs (primary) or default to A
     effective_scope = state.inputs.scope or "A"
 
@@ -686,30 +696,30 @@ def _auto_detect_stage_from_state(state) -> Optional[int]:
         if stage_num:
             highest_completed = max(highest_completed, stage_num)
 
-    # Also check stages dict for in_progress stages (treated as effectively completed
-    # for auto-detection - the user has run the stage and expects to advance)
-    # This handles the case where stage N is in_progress but not yet in stages_complete
-    highest_in_progress = 0
+    # Check stages dict for status - handle chunked vs non-chunked differently
     for stage_name, stage_info in state.stages.items():
         status = stage_info.get("status")
-        if status in ("completed", "in_progress"):
-            # Handle both "stage_N" and stage ID formats
-            try:
-                if stage_name.startswith("stage_"):
-                    stage_num = int(stage_name.split("_")[1])
-                else:
-                    stage_num = _get_stage_num_from_id(stage_name)
-                if stage_num:
-                    if status == "completed":
-                        highest_completed = max(highest_completed, stage_num)
-                    else:  # in_progress
-                        highest_in_progress = max(highest_in_progress, stage_num)
-            except (IndexError, ValueError):
-                pass
+        # Handle both "stage_N" and stage ID formats
+        try:
+            if stage_name.startswith("stage_"):
+                stage_num = int(stage_name.split("_")[1])
+            else:
+                stage_num = _get_stage_num_from_id(stage_name)
+        except (IndexError, ValueError):
+            continue
 
-    # Use the higher of completed or in_progress for advancement
-    # in_progress stages are treated as done for auto-detection purposes
-    highest_completed = max(highest_completed, highest_in_progress)
+        if not stage_num:
+            continue
+
+        if status == "completed":
+            highest_completed = max(highest_completed, stage_num)
+        elif status == "in_progress":
+            # For chunked stages, in_progress means chunking is not complete
+            # Return this stage so CLI redirects to chunk handling
+            if stage_num in CHUNKED_STAGES:
+                return stage_num
+            # For non-chunked stages, treat as effectively complete for advancement
+            highest_completed = max(highest_completed, stage_num)
 
     # Apply scope-aware branching logic
     if highest_completed == 8:

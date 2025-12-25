@@ -155,6 +155,49 @@ class TestAutoDetectStageFromState:
         result = _auto_detect_stage_from_state(state)
         assert result == 6
 
+    def test_chunked_stage_in_progress_returns_same_stage(self):
+        """Chunked stages (9, 10, 16) in_progress should return same stage for chunk handling.
+
+        This is critical for Stage 3A (9), Stage 3B (10), and Stage 6 (16) which have
+        multiple chunks. When in_progress, the CLI needs to redirect to chunk handling,
+        not advance to the next stage.
+        """
+        # Stage 9 (Full App) in_progress should return 9, not 11
+        state = AnalysisState(
+            stages={
+                "03a-full-app": {"status": "in_progress"},
+            },
+            stages_complete=["02e-quality-gates"],  # Stage 8 completed
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 9, "Stage 9 in_progress should return 9 for chunk handling"
+
+    def test_chunked_stage_completed_advances_correctly(self):
+        """Chunked stages that are completed should advance to next stage."""
+        # Stage 9 completed should advance to 11 (skipping 10 for scope A)
+        state = AnalysisState(
+            stages={
+                "03a-full-app": {"status": "completed"},
+            },
+            stages_complete=["02e-quality-gates", "03a-full-app"],
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 11, "Stage 9 completed should advance to 11"
+
+    def test_scope_b_chunked_stage_in_progress(self):
+        """Stage 10 (Cross-cutting) in_progress should return 10 for chunk handling."""
+        state = AnalysisState(
+            stages={
+                "03b-cross-cutting": {"status": "in_progress"},
+            },
+            stages_complete=["02e-quality-gates"],  # Stage 8 completed
+            inputs=AnalysisInputs(scope="B"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 10, "Stage 10 in_progress should return 10 for chunk handling"
+
 
 class TestAnalyzeProjectCorruptedState:
     """Tests for JSON decode error handling in analyze_project command."""
