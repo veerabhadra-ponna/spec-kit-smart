@@ -33,21 +33,23 @@ The CLI provides all context via template variables. **Do not read state.json di
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
 # Write JSON to data/ folder
-speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
+speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
 
 # Get file statistics
 speckitadv file-stats <filepath>
 ```
 
-**For content > 2000 chars, use stdin mode:**
+**For large JSON, use stdin mode:**
 
 ```powershell
 @"
-<json content here>
+<full comprehensive json here>
 "@ | speckitadv write-data <filename> --stage=<stage-id> --stdin
 ```
 
@@ -324,12 +326,30 @@ Create a summary of patterns found in each category:
 
 ---
 
-## Step 5: Save Category Patterns
+## Step 5: Save Category Patterns (SINGLE FILE)
 
-Write the category patterns JSON using CLI command:
+**⚠️ CRITICAL: Write to ONE file only. Do NOT create multiple files.**
+
+Save category patterns to `{data_dir}/category-patterns.json`:
+
+**Use stdin for the full JSON (RECOMMENDED):**
+
+```powershell
+@"
+{
+  "category_scan": {
+    "controllers": { ... },
+    "services": { ... },
+    ...
+  }
+}
+"@ | speckitadv write-data category-patterns.json --stage=02a-category-scan --stdin
+```
+
+**Or use --content for smaller JSON:**
 
 ```bash
-speckitadv write-data category-patterns.json --stage=02a-category-scan --content '<json>' --analysis-dir "{analysis_dir}"
+speckitadv write-data category-patterns.json --stage=02a-category-scan --content '<full-json>'
 ```
 
 This saves to `{data_dir}/category-patterns.json` and will be used by subsequent stages for deep-dive analysis.

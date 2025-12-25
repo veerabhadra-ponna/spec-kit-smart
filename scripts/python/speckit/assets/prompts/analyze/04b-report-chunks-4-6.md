@@ -24,7 +24,9 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
 # Append to file (put --append EARLY before --content)

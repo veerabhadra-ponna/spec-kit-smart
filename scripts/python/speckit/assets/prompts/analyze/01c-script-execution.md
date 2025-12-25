@@ -30,7 +30,9 @@ The CLI provides all context via template variables. **Do not read state.json di
 
 **CLI Utility Commands (use instead of raw file writes):**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
 # Write JSON to data/ folder

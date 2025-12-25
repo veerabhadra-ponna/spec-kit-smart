@@ -24,7 +24,9 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
 # Append to file (put --append EARLY before --content)

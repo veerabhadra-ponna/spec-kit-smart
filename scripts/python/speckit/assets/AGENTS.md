@@ -156,9 +156,39 @@ speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
 
 ## File Write Best Practices (All Workflows)
 
+### ⚠️ CRITICAL: Never Reduce Content Quality
+
+**Chunking means MULTIPLE WRITE OPERATIONS, NOT reduced output.**
+
+- ❌ WRONG: "I'll generate a smaller JSON to fit the limit"
+- ❌ WRONG: "Given the limit, I'll create a reduced version"
+- ✅ CORRECT: "I'll write the full content using multiple --append operations"
+- ✅ CORRECT: "I'll use stdin mode for this large content block"
+
+**The content quality and completeness must be IDENTICAL** regardless of how it's written.
+
 ### For CLI Commands (analyze-project workflow)
 
 See "CLI Command Best Practices" above for `write-report` and `write-data` commands.
+
+**How to chunk large content:**
+
+```bash
+# First chunk - create file
+speckitadv write-report file.md --stage=X --content '<first section>'
+
+# Subsequent chunks - append
+speckitadv write-report file.md --stage=X --append --content '<second section>'
+speckitadv write-report file.md --stage=X --append --content '<third section>'
+```
+
+**OR use stdin for single large block:**
+
+```powershell
+@"
+<full content here - no size limit via stdin>
+"@ | speckitadv write-report file.md --stage=X --stdin
+```
 
 ### For AI Write/Edit Tools (feature-scoped workflows)
 

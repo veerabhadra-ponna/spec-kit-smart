@@ -24,7 +24,9 @@ Generate the first three chunks of the analysis report: Project Discovery, Contr
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
 # Create new file (put --content LAST to avoid truncation issues)

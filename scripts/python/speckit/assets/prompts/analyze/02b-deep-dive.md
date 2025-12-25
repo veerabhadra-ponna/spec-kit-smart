@@ -30,18 +30,20 @@ The CLI provides all context via template variables. **Do not read state.json di
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
 # Write JSON to data/ folder
-speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
+speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
 ```
 
-**For content > 2000 chars, use stdin mode:**
+**For large JSON (recommended for deep-dive), use stdin mode:**
 
 ```powershell
 @"
-<json content here>
+<full comprehensive json here>
 "@ | speckitadv write-data <filename> --stage=<stage-id> --stdin
 ```
 
@@ -424,6 +426,41 @@ Merge all deep dive findings:
   }
 }
 
+```
+
+---
+
+## Step 6: Save Deep Dive Patterns (SINGLE FILE)
+
+**⚠️ CRITICAL: Write to ONE file only. Do NOT create multiple files like p1.json, p2.json.**
+
+Save all deep-dive findings to `{data_dir}/deep-dive-patterns.json`:
+
+**Option A - Use stdin for full JSON (RECOMMENDED):**
+
+```powershell
+@"
+{
+  "deep_dive": {
+    "authentication": { ... },
+    "database": { ... },
+    "api": { ... },
+    "business_logic": { ... }
+  }
+}
+"@ | speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --stdin
+```
+
+**Option B - If stdin not available, write in sections using --append:**
+
+```bash
+# First section (creates file)
+speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --content '{"deep_dive":{"authentication":{...},'
+
+# Append remaining sections
+speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --append --content '"database":{...},'
+speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --append --content '"api":{...},'
+speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --append --content '"business_logic":{...}}}'
 ```
 
 ---
