@@ -89,7 +89,7 @@ Generate Sections 1, 2, and 3 for TARGET system.
 - OUT OF SCOPE: Components to keep as-is
 - Migration boundaries
 
-Write to: `{analysis_dir}/functional-spec-target.md`
+Write to: `{reports_dir}/functional-spec-target.md`
 
 **Verify:** Read file, confirm scope boundaries match user's answers.
 
@@ -138,7 +138,7 @@ For each CRITICAL feature from legacy spec:
 
 ```
 
-Append to: `{analysis_dir}/functional-spec-target.md`
+Append to: `{reports_dir}/functional-spec-target.md`
 
 **Output:**
 
@@ -188,7 +188,7 @@ Generate Sections 4.2 and 5 with target stack considerations.
 
 ```
 
-Append to: `{analysis_dir}/functional-spec-target.md`
+Append to: `{reports_dir}/functional-spec-target.md`
 
 **Output:**
 
@@ -242,7 +242,7 @@ Use user's answer from Q2 (Database):
 
 ```
 
-Append to: `{analysis_dir}/functional-spec-target.md`
+Append to: `{reports_dir}/functional-spec-target.md`
 
 **Output:**
 
@@ -281,7 +281,7 @@ Generate Sections 8, 9, and 10.
 - Budget constraints
 - Technology constraints from user preferences
 
-Append to: `{analysis_dir}/functional-spec-target.md`
+Append to: `{reports_dir}/functional-spec-target.md`
 
 **Verify:** Read complete file, confirm:
 - All 10 sections present

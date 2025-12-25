@@ -147,7 +147,7 @@ The CLI automatically updates `{analysis_dir}/state.json` with stage completion.
   STAGE COMPLETE: REPORT_GENERATION
 
   Chain ID: {chain_id}
-  Report: {analysis_dir}/analysis-report.md
+  Report: {reports_dir}/analysis-report.md
   Lines: {count}
   Verification: PASSED ✓
 

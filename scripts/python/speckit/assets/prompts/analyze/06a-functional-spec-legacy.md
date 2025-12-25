@@ -28,8 +28,8 @@ Generate functional specification documenting WHAT the LEGACY/EXISTING system CU
 ## Source of Truth
 
 **Use ONLY these sources:**
-- `{analysis_dir}/analysis-report.md` Phase 2 (Feature Catalog)
-- `{analysis_dir}/analysis-report.md` Phase 3 (Positive Findings)
+- `{reports_dir}/analysis-report.md` Phase 2 (Feature Catalog)
+- `{reports_dir}/analysis-report.md` Phase 3 (Positive Findings)
 
 **Template:**
 
@@ -78,7 +78,7 @@ Generate the following sections:
 - Out-of-scope items
 - Assumptions
 
-Write to: `{analysis_dir}/functional-spec-legacy.md`
+Write to: `{reports_dir}/functional-spec-legacy.md`
 
 **Verify:** Read file, confirm no placeholders, all sections complete.
 
@@ -123,7 +123,7 @@ Extract all CRITICAL features from analysis-report.md Phase 2.
 
 ```
 
-Append to: `{analysis_dir}/functional-spec-legacy.md`
+Append to: `{reports_dir}/functional-spec-legacy.md`
 
 **Verify:** Read file, confirm all CRITICAL features documented with file:line references.
 
@@ -171,7 +171,7 @@ ELSE
 END IF
 ```
 
-Append to: `{analysis_dir}/functional-spec-legacy.md`
+Append to: `{reports_dir}/functional-spec-legacy.md`
 
 **Output:**
 
@@ -217,7 +217,7 @@ Generate Sections 6 and 7.
 
 ```
 
-Append to: `{analysis_dir}/functional-spec-legacy.md`
+Append to: `{reports_dir}/functional-spec-legacy.md`
 
 **Output:**
 
@@ -256,7 +256,7 @@ Generate Sections 8, 9, and 10.
 - Business constraints
 - Regulatory constraints
 
-Append to: `{analysis_dir}/functional-spec-legacy.md`
+Append to: `{reports_dir}/functional-spec-legacy.md`
 
 **Verify:** Read complete file, confirm:
 - All 10 sections present

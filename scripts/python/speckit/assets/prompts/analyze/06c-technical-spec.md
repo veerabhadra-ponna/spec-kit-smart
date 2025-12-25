@@ -79,7 +79,7 @@ Generate Sections 1, 2, and 3.
 | Database | {current} | Q2: {answer} | {impact} |
 | Deployment | {current} | Q5: {answer} | {impact} |
 
-Write to: `{analysis_dir}/technical-spec.md`
+Write to: `{reports_dir}/technical-spec.md`
 
 **Output:**
 
@@ -151,7 +151,7 @@ Based on user's 10 questions:
 
 ```
 
-Append to: `{analysis_dir}/technical-spec.md`
+Append to: `{reports_dir}/technical-spec.md`
 
 **Output:**
 
@@ -216,7 +216,7 @@ Generate Sections 6 and 7.
 
 ```
 
-Append to: `{analysis_dir}/technical-spec.md`
+Append to: `{reports_dir}/technical-spec.md`
 
 **Output:**
 
@@ -300,7 +300,7 @@ Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 
 ```
 
-Append to: `{analysis_dir}/technical-spec.md`
+Append to: `{reports_dir}/technical-spec.md`
 
 **Output:**
 
@@ -402,7 +402,7 @@ Based on Q8 (Observability stack):
 
 ```
 
-Append to: `{analysis_dir}/technical-spec.md`
+Append to: `{reports_dir}/technical-spec.md`
 
 **Verify:** Read complete file, confirm:
 - All 12 sections present
