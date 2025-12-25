@@ -38,7 +38,7 @@ The CLI provides all context via template variables. **Do not read state.json di
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
-# Write JSON to data/ folder
+# Write JSON data
 speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
 
 # Get file statistics

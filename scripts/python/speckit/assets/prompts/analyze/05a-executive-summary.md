@@ -29,12 +29,11 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
-# Write data (put --content LAST)
+# Write JSON data
 speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
 
-# Write/append report (put --append EARLY before --content)
-speckitadv write-report <filename> --stage=<stage-id> --content '<small-md>'
-speckitadv write-report <filename> --stage=<stage-id> --append --content '<small-md>'
+# Write report - ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report <filename> --stage=<stage-id> --append --content '<content>'
 ```
 
 **For content > 2000 chars, use stdin mode:**

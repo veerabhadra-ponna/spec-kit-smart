@@ -29,8 +29,8 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
-# Append to file (put --append EARLY before --content)
-speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --append --content '<small-md>'
+# ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --append --content '<content>'
 ```
 
 **For content > 2000 chars, use stdin mode:**

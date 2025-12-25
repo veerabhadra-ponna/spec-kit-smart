@@ -171,15 +171,13 @@ speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
 
 See "CLI Command Best Practices" above for `write-report` and `write-data` commands.
 
-**How to chunk large content:**
+**How to chunk large content - ALWAYS use --append:**
 
 ```bash
-# First chunk - create file
-speckitadv write-report file.md --stage=X --content '<first section>'
-
-# Subsequent chunks - append
-speckitadv write-report file.md --stage=X --append --content '<second section>'
-speckitadv write-report file.md --stage=X --append --content '<third section>'
+# --append works for ALL chunks (creates file if not exists, appends if exists)
+speckitadv write-report file.md --stage=X --append --content '<section 1>'
+speckitadv write-report file.md --stage=X --append --content '<section 2>'
+speckitadv write-report file.md --stage=X --append --content '<section 3>'
 ```
 
 **OR use stdin for single large block:**
@@ -187,7 +185,7 @@ speckitadv write-report file.md --stage=X --append --content '<third section>'
 ```powershell
 @"
 <full content here - no size limit via stdin>
-"@ | speckitadv write-report file.md --stage=X --stdin
+"@ | speckitadv write-report file.md --stage=X --append --stdin
 ```
 
 ### For AI Write/Edit Tools (feature-scoped workflows)

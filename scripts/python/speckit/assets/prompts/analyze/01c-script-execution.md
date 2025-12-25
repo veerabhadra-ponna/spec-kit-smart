@@ -35,11 +35,11 @@ The CLI provides all context via template variables. **Do not read state.json di
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
-# Write JSON to data/ folder
+# Write JSON data
 speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
 
-# Write MD to reports/ folder (put --append EARLY before --content)
-speckitadv write-report <filename> --stage=<stage-id> --append --content '<small-md>'
+# Write report - ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report <filename> --stage=<stage-id> --append --content '<content>'
 
 # Get file statistics
 speckitadv file-stats <filepath>

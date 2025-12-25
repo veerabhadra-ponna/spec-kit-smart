@@ -29,11 +29,8 @@ Generate the first three chunks of the analysis report: Project Discovery, Contr
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
-# Create new file (put --content LAST to avoid truncation issues)
-speckitadv write-report <filename> --stage=<stage-id> --content '<small-md>'
-
-# Append to file (put --append EARLY before --content)
-speckitadv write-report <filename> --stage=<stage-id> --append --content '<small-md>'
+# ALWAYS use --append (creates file if not exists, appends if exists)
+speckitadv write-report <filename> --stage=<stage-id> --append --content '<content>'
 ```
 
 **For content > 2000 chars, use stdin mode:**

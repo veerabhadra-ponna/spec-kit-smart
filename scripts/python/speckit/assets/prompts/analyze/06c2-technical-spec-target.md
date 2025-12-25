@@ -30,11 +30,8 @@ Generate technical specification documenting HOW to build the MODERNIZED system.
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
-# Create new file (put --content LAST)
-speckitadv write-report <filename> --stage=06c2-technical-spec-target --content '<small-md>'
-
-# Append to file (put --append EARLY before --content)
-speckitadv write-report <filename> --stage=06c2-technical-spec-target --append --content '<small-md>'
+# ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report <filename> --stage=06c2-technical-spec-target --append --content '<content>'
 ```
 
 **For content > 2000 chars, use stdin mode:**

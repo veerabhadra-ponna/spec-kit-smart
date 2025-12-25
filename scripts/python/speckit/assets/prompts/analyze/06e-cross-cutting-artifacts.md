@@ -41,11 +41,8 @@ Generate artifacts specific to Cross-Cutting Concern Migration (Scope B). This i
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
-# Create new file (put --content LAST)
-speckitadv write-report <filename> --stage=cross_cutting_artifacts --content '<small-md>'
-
-# Append to file (put --append EARLY before --content)
-speckitadv write-report <filename> --stage=cross_cutting_artifacts --append --content '<small-md>'
+# ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report <filename> --stage=cross_cutting_artifacts --append --content '<content>'
 ```
 
 **For content > 2000 chars, use stdin mode:**

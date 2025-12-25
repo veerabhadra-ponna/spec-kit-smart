@@ -45,11 +45,8 @@ Generate the comprehensive `analysis-report.md` file using completion-based chun
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output for each section.
 
 ```bash
-# Create new file
-speckitadv write-report analysis-report.md --stage=report_generation --content '<section-content>'
-
-# Append next section (put --append EARLY before --content)
-speckitadv write-report analysis-report.md --stage=report_generation --append --content '<next-section>'
+# ALWAYS use --append (creates file if not exists, appends if exists)
+speckitadv write-report analysis-report.md --stage=report_generation --append --content '<section-content>'
 ```
 
 **For large sections, use stdin mode:**

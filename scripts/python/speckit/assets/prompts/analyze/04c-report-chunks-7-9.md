@@ -29,8 +29,8 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
-# Append to file (put --append EARLY before --content)
-speckitadv write-report analysis-report.md --stage=04c-report-chunks-7-9 --append --content '<small-md>'
+# ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report analysis-report.md --stage=04c-report-chunks-7-9 --append --content '<content>'
 ```
 
 **For content > 2000 chars, use stdin mode:**

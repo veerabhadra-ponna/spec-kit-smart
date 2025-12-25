@@ -30,11 +30,8 @@ Generate functional specification documenting WHAT the LEGACY/EXISTING system CU
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
 ```bash
-# Create new file (put --content LAST)
-speckitadv write-report <filename> --stage=06a-functional-spec-legacy --content '<small-md>'
-
-# Append to file (put --append EARLY before --content)
-speckitadv write-report <filename> --stage=06a-functional-spec-legacy --append --content '<small-md>'
+# ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report <filename> --stage=06a-functional-spec-legacy --append --content '<content>'
 ```
 
 **For content > 2000 chars, use stdin mode:**
