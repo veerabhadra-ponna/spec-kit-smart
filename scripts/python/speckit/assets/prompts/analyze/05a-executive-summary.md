@@ -14,10 +14,25 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**CLI Utility Commands:**
+
+- `speckitadv write-data <filename> --content '<json>'` - Write JSON to data/ folder
+- `speckitadv write-report <filename> --content '<md>'` - Write MD to reports/ folder
+
+---
+
 ## Pre-Check
 
-1. Read `.analysis/.state/analyze-project-04-report.json`
-2. Confirm `verification_passed` = true
+1. Read `{analysis_dir}/state.json`
+2. Confirm stage 4 (report generation) is complete
 3. Load `analysis_scope` to determine next stage
 
 ---
@@ -27,7 +42,9 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 ---
 ⏸️ **[STOP: GENERATE_EXECUTIVE_SUMMARY]**
 
-Generate C-level summary. Write to: `{analysis_dir}/EXECUTIVE-SUMMARY.md`
+Generate C-level summary using CLI: `speckitadv write-report EXECUTIVE-SUMMARY.md --content '<md>' --analysis-dir "{analysis_dir}"`
+
+This saves to: `{reports_dir}/EXECUTIVE-SUMMARY.md`
 
 ```markdown
 # Executive Summary: {Project Name}
@@ -89,7 +106,9 @@ Generate C-level summary. Write to: `{analysis_dir}/EXECUTIVE-SUMMARY.md`
 ---
 ⏸️ **[STOP: GENERATE_DEPENDENCY_AUDIT]**
 
-Generate machine-readable dependency audit. Write to: `{analysis_dir}/dependency-audit.json`
+Generate machine-readable dependency audit using CLI: `speckitadv write-data dependency-audit.json --content '<json>' --analysis-dir "{analysis_dir}"`
+
+This saves to: `{data_dir}/dependency-audit.json`
 
 ```json
 {
@@ -128,7 +147,9 @@ Generate machine-readable dependency audit. Write to: `{analysis_dir}/dependency
 ---
 ⏸️ **[STOP: GENERATE_METRICS_SUMMARY]**
 
-Generate metrics for tracking. Write to: `{analysis_dir}/metrics-summary.json`
+Generate metrics for tracking using CLI: `speckitadv write-data metrics-summary.json --content '<json>' --analysis-dir "{analysis_dir}"`
+
+This saves to: `{data_dir}/metrics-summary.json`
 
 ```json
 {

@@ -30,11 +30,24 @@ Generate the comprehensive `analysis-report.md` file using completion-based chun
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**CLI Utility Commands:**
+
+- `speckitadv write-report analysis-report.md --content '<md>'` - Create report
+- `speckitadv write-report analysis-report.md --content '<md>' --append` - Append to report
+
+---
+
 ## Previous State
 
-Load state from either:
-- `.analysis/.state/analyze-project-03a-full-app.json` (if scope = A)
-- `.analysis/.state/analyze-project-03b-cross-cutting.json` (if scope = B)
+Load state from `{analysis_dir}/state.json` - the CLI tracks stage completion automatically.
 
 ---
 
@@ -95,7 +108,7 @@ Use **completion-based chunking**, NOT size-based chunking:
 
 ```bash
 # Check if analysis-report.md already exists
-if [ -f "{analysis_dir}/analysis-report.md" ]; then
+if [ -f "{reports_dir}/analysis-report.md" ]; then
   # Report exists - check content to determine resume point
   # Look for phase headers to determine last completed section
 fi
@@ -105,7 +118,7 @@ fi
 
 **IF** analysis-report.md exists AND is incomplete:
 
-1. Read `{analysis_dir}/analysis-report.md`
+1. Read `{reports_dir}/analysis-report.md`
 2. Identify last completed phase by checking which phase headers exist
 3. Display resume message:
 

@@ -131,7 +131,9 @@ def emit_chunk(
 
 
 def emit_complete(
-    message: str,
+    title: str = "Workflow Complete",
+    summary: str = "",
+    message: str = "",
     next_steps: Optional[list[str]] = None,
     artifacts: Optional[list[str]] = None,
 ) -> None:
@@ -139,15 +141,20 @@ def emit_complete(
     Emit workflow completion message.
 
     Args:
-        message: Completion message
+        title: Completion title (displayed in header)
+        summary: Brief summary of what was completed
+        message: Detailed completion message (legacy, use summary instead)
         next_steps: Optional list of suggested next steps
         artifacts: Optional list of generated artifacts
     """
+    # Support both old 'message' and new 'summary' parameter
+    display_message = summary or message
+
     print(BOX_TOP)
-    print(_format_box_line("WORKFLOW_COMPLETE"))
+    print(_format_box_line(f"COMPLETE: {title}"))
     print(_format_box_line(""))
 
-    for line in _wrap_content(message):
+    for line in _wrap_content(display_message):
         print(_format_box_line(line))
 
     if artifacts:

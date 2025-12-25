@@ -392,10 +392,31 @@ class AnalysisStateManager:
         """Initialize with analysis folder path."""
         self.folder = Path(folder_path)
         self.state_file = self.folder / "state.json"
+        self.data_folder = self.folder / "data"
+        self.reports_folder = self.folder / "reports"
+
+    @property
+    def data_path(self) -> Path:
+        """Get path to data folder for AI artifacts (JSON)."""
+        return self.data_folder
+
+    @property
+    def reports_path(self) -> Path:
+        """Get path to reports folder for user deliverables (MD)."""
+        return self.reports_folder
 
     def initialize(self, project_path: Path) -> AnalysisState:
-        """Initialize new analysis state."""
+        """Initialize new analysis state with folder structure.
+
+        Creates:
+            {analysis_dir}/
+            ├── state.json          # Workflow state
+            ├── data/               # AI artifacts (JSON)
+            └── reports/            # User deliverables (MD)
+        """
         self.folder.mkdir(parents=True, exist_ok=True)
+        self.data_folder.mkdir(parents=True, exist_ok=True)
+        self.reports_folder.mkdir(parents=True, exist_ok=True)
 
         state = AnalysisState(
             project_path=str(project_path),
@@ -529,6 +550,113 @@ class AnalysisStateManager:
         self.save(state)
         return state
 
+    def write_data(self, filename: str, content: str, stage: str = None) -> Path:
+        """Write JSON data artifact to data/ folder.
+
+        Args:
+            filename: Name of the JSON file (e.g., 'category-patterns.json')
+            content: JSON content to write
+            stage: Optional stage to track artifact against
+
+        Returns:
+            Path to the written file
+        """
+        self.data_folder.mkdir(parents=True, exist_ok=True)
+        file_path = self.data_folder / filename
+        file_path.write_text(content, encoding="utf-8")
+
+        # Track artifact in state if stage provided
+        if stage:
+            self._add_artifact_to_stage(stage, f"data/{filename}")
+
+        return file_path
+
+    def write_report(self, filename: str, content: str, append: bool = False, stage: str = None) -> Path:
+        """Write Markdown report to reports/ folder.
+
+        Args:
+            filename: Name of the MD file (e.g., 'analysis-report.md')
+            content: Markdown content to write
+            append: If True, append to existing file
+            stage: Optional stage to track artifact against
+
+        Returns:
+            Path to the written file
+        """
+        self.reports_folder.mkdir(parents=True, exist_ok=True)
+        file_path = self.reports_folder / filename
+
+        if append and file_path.exists():
+            existing = file_path.read_text(encoding="utf-8")
+            content = existing + "\n" + content
+
+        file_path.write_text(content, encoding="utf-8")
+
+        # Track artifact in state if stage provided
+        if stage:
+            self._add_artifact_to_stage(stage, f"reports/{filename}")
+
+        return file_path
+
+    def _add_artifact_to_stage(self, stage: str, artifact_path: str) -> None:
+        """Add artifact path to stage's artifact list."""
+        state = self.load()
+        if stage in state.stages:
+            artifacts = state.stages[stage].get("artifacts", [])
+            if artifact_path not in artifacts:
+                artifacts.append(artifact_path)
+                state.stages[stage]["artifacts"] = artifacts
+                self.save(state)
+
+    def get_file_stats(self, filepath: str) -> dict:
+        """Get statistics about a file.
+
+        Args:
+            filepath: Path to file (relative to analysis folder or absolute)
+
+        Returns:
+            Dict with lines, size_bytes, size_kb, exists
+        """
+        # Resolve path
+        path = Path(filepath)
+        if not path.is_absolute():
+            path = self.folder / filepath
+
+        if not path.exists():
+            return {"exists": False, "lines": 0, "size_bytes": 0, "size_kb": 0}
+
+        content = path.read_text(encoding="utf-8")
+        size_bytes = path.stat().st_size
+
+        return {
+            "exists": True,
+            "lines": len(content.splitlines()),
+            "size_bytes": size_bytes,
+            "size_kb": round(size_bytes / 1024, 2),
+        }
+
+    def count_pattern_matches(self, filepath: str, pattern: str) -> int:
+        """Count regex pattern matches in a file.
+
+        Args:
+            filepath: Path to file
+            pattern: Regex pattern to match
+
+        Returns:
+            Count of matches
+        """
+        import re
+
+        path = Path(filepath)
+        if not path.is_absolute():
+            path = self.folder / filepath
+
+        if not path.exists():
+            return 0
+
+        content = path.read_text(encoding="utf-8")
+        return len(re.findall(pattern, content))
+
     def get_current_stage(self) -> tuple:
         """Get current stage to resume from.
 
@@ -563,11 +691,21 @@ class AnalysisStateManager:
 
         Returns a dict with all values needed by prompts,
         reading from state.json for consistency.
+
+        Template variables available:
+            {analysis_dir} - Root analysis folder
+            {data_dir} - Folder for AI artifacts (JSON)
+            {reports_dir} - Folder for user deliverables (MD)
+            {project_path} - Project being analyzed
+            {scope} - Analysis scope (A or B)
+            etc.
         """
         state = self.load()
 
         return {
             "analysis_dir": str(self.folder),
+            "data_dir": str(self.data_folder),
+            "reports_dir": str(self.reports_folder),
             "project_path": state.project_path,
             "scope": state.inputs.scope or "A",
             "context": state.inputs.context or "",

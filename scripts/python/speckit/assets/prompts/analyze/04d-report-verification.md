@@ -14,10 +14,21 @@ Verify the analysis report meets all quality standards before proceeding to arti
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+---
+
 ## Pre-Check
 
 1. Read `{analysis_dir}/state.json`
 2. Confirm all 9 chunks complete
+3. Verify report exists at `{reports_dir}/analysis-report.md`
 
 ---
 
@@ -26,7 +37,7 @@ Verify the analysis report meets all quality standards before proceeding to arti
 ---
 ⏸️ **[STOP: VERIFY_REPORT]**
 
-Read the complete analysis-report.md and verify each item:
+Read the complete report at `{reports_dir}/analysis-report.md` and verify each item:
 
 ### Structure Verification
 
@@ -112,7 +123,7 @@ Read the complete analysis-report.md and verify each item:
   "timestamp": "{ISO-8601}",
   "stages_complete": ["setup_and_scope", "file_analysis", "{stage_3}", "report_generation"],
   "report_generated": true,
-  "report_path": "{analysis_dir}/analysis-report.md",
+  "report_path": "{reports_dir}/analysis-report.md",
   "report_stats": {
     "total_lines": {count},
     "chunks": 9,
@@ -125,7 +136,7 @@ Read the complete analysis-report.md and verify each item:
 
 ```
 
-Write to: `.analysis/.state/analyze-project-04-report.json`
+The CLI automatically updates `{analysis_dir}/state.json` with stage completion.
 
 ---
 

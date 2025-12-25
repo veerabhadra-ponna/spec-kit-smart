@@ -14,11 +14,25 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**CLI Utility Commands:**
+
+- `speckitadv write-report analysis-report.md --content '<md>' --append` - Append to report
+
+---
+
 ## Pre-Check
 
 1. Read `{analysis_dir}/state.json`
 2. Confirm chunks 1-6 complete
-3. Load Stage 3 state for recommendations data
+3. Load Stage 3 state data from `{data_dir}/`
 
 ---
 
@@ -300,7 +314,7 @@ Output: `✓ Chunk 9/9: Recommendations ({lines} lines)`
     Phase 8: Decision Matrix ✓
     Phase 9: Final Recommendations ✓
 
-  Report: {analysis_dir}/analysis-report.md
+  Report: {reports_dir}/analysis-report.md
 
   Proceeding to Report Verification...
 ═══════════════════════════════════════════════════════════

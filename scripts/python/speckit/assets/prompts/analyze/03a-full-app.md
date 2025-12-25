@@ -20,13 +20,17 @@ For Full Application Modernization (scope = A), ask 10 progressive questions abo
 
 The CLI manages state and provides all context. **Do not read state.json directly.**
 
-Values available in this prompt (already substituted by CLI):
-- Project path, analysis directory, scope (must be "A"), context
+**Available template variables:**
 
-**Previous artifacts required:**
-- `{analysis_dir}/tech-stack.json` - Detected technologies
-- `{analysis_dir}/category-patterns.json` - Category patterns
-- `{analysis_dir}/deep-dive-patterns.json` - Deep analysis results
+- `{project_path}`, `{analysis_dir}`, `{scope}`, `{context}`
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**Previous artifacts required (in data/ folder):**
+
+- `{data_dir}/tech-stack.json` - Detected technologies
+- `{data_dir}/category-patterns.json` - Category patterns
+- `{data_dir}/deep-dive-patterns.json` - Deep analysis results
 
 ---
 
@@ -724,8 +728,7 @@ Based on scores, generate prioritized recommendations:
 
 ```text
 STAGE_COMPLETE:FULL_APP
-STATE_PATH: .analysis/.state/analyze-project-03a-full-app.json
-
+STATE_PATH: {analysis_dir}/state.json
 ```
 
 ---

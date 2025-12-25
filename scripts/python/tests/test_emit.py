@@ -178,8 +178,18 @@ class TestEmitComplete:
             emit_complete(message="Workflow finished successfully")
 
         result = output.getvalue()
-        assert "WORKFLOW_COMPLETE" in result
+        assert "COMPLETE:" in result
         assert "Workflow finished successfully" in result
+
+    def test_with_title_and_summary(self):
+        """Should output title and summary."""
+        output = io.StringIO()
+        with redirect_stdout(output):
+            emit_complete(title="Analysis Done", summary="All stages completed")
+
+        result = output.getvalue()
+        assert "COMPLETE: Analysis Done" in result
+        assert "All stages completed" in result
 
     def test_with_artifacts(self):
         """Should list generated artifacts."""
