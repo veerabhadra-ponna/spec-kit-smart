@@ -47,6 +47,7 @@ speckitadv write-report <filename> --stage=cross_cutting_artifacts --append --co
 ```
 
 **For content > 2000 chars, use stdin mode:**
+
 ```powershell
 @"
 <markdown content here>

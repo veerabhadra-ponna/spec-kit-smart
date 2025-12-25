@@ -51,6 +51,7 @@ speckitadv write-report analysis-report.md --stage=report_generation --append --
 ```
 
 **For content > 2000 chars, use stdin mode:**
+
 ```powershell
 @"
 <markdown content here>

@@ -36,6 +36,7 @@ speckitadv write-report <filename> --stage=06c2-technical-spec-target --append -
 ```
 
 **For content > 2000 chars, use stdin mode:**
+
 ```powershell
 @"
 <markdown content here>

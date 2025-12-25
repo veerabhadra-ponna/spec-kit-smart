@@ -36,6 +36,7 @@ speckitadv write-report <filename> --stage=06a-functional-spec-legacy --append -
 ```
 
 **For content > 2000 chars, use stdin mode:**
+
 ```powershell
 @"
 <markdown content here>

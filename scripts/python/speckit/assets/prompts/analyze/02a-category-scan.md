@@ -44,6 +44,7 @@ speckitadv file-stats <filepath>
 ```
 
 **For content > 2000 chars, use stdin mode:**
+
 ```powershell
 @"
 <json content here>

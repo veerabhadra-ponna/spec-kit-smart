@@ -35,6 +35,7 @@ speckitadv write-report <filename> --stage=<stage-id> --append --content '<small
 ```
 
 **For content > 2000 chars, use stdin mode:**
+
 ```powershell
 @"
 <markdown content here>

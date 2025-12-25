@@ -38,6 +38,7 @@ speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
 ```
 
 **For content > 2000 chars, use stdin mode:**
+
 ```powershell
 @"
 <json content here>

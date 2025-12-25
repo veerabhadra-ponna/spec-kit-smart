@@ -32,6 +32,7 @@ speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --appen
 ```
 
 **For content > 2000 chars, use stdin mode:**
+
 ```powershell
 @"
 <markdown content here>
