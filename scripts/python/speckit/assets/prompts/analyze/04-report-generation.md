@@ -40,8 +40,8 @@ Generate the comprehensive `analysis-report.md` file using completion-based chun
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report analysis-report.md --content '<md>'` - Create report
-- `speckitadv write-report analysis-report.md --content '<md>' --append` - Append to report
+- `speckitadv write-report analysis-report.md --content '<md>' --stage=report_generation` - Create report
+- `speckitadv write-report analysis-report.md --content '<md>' --append --stage=report_generation` - Append to report
 
 ---
 
