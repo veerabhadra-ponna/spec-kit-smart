@@ -1040,11 +1040,30 @@ def update_preferences_cmd(
     Called by AI agent after collecting Q1-Q10 responses in stage 3A.
     Preferences are merged with existing data (allows incremental updates).
 
+    Valid preference keys (Q1-Q10):
+        target_language, target_database, message_bus, package_manager,
+        deployment_target, iac_tool, container_strategy, observability_stack,
+        security_approach, testing_approach
+
     Examples:
         speckitadv update-preferences '{"target_language": "Java 21", "target_database": "PostgreSQL 16"}'
     """
     import json
     from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
+
+    # Valid preference keys from Q1-Q10
+    VALID_PREFERENCE_KEYS = {
+        "target_language",      # Q1: Target language/runtime
+        "target_database",      # Q2: Target database
+        "message_bus",          # Q3: Message bus/queue
+        "package_manager",      # Q4: Package management
+        "deployment_target",    # Q5: Deployment target
+        "iac_tool",             # Q6: IaC tool
+        "container_strategy",   # Q7: Container strategy
+        "observability_stack",  # Q8: Observability stack
+        "security_approach",    # Q9: Security approach
+        "testing_approach",     # Q10: Testing approach
+    }
 
     # Get analysis folder
     if analysis_dir:
@@ -1062,6 +1081,21 @@ def update_preferences_cmd(
     except json.JSONDecodeError as e:
         console.print(f"[red]Error:[/red] Invalid JSON: {e}")
         raise typer.Exit(1)
+
+    # Validate preferences
+    if not isinstance(prefs, dict):
+        console.print("[red]Error:[/red] Preferences must be a JSON object, not a list or primitive.")
+        raise typer.Exit(1)
+
+    if not prefs:
+        console.print("[red]Error:[/red] Preferences cannot be empty.")
+        raise typer.Exit(1)
+
+    # Warn about unknown keys but still allow update (for flexibility)
+    unknown_keys = set(prefs.keys()) - VALID_PREFERENCE_KEYS
+    if unknown_keys:
+        console.print(f"[yellow]Warning:[/yellow] Unknown preference keys: {', '.join(sorted(unknown_keys))}")
+        console.print(f"  Valid keys: {', '.join(sorted(VALID_PREFERENCE_KEYS))}")
 
     state_manager = AnalysisStateManager(folder)
     state_manager.update_modernization_preferences(prefs)

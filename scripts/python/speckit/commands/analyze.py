@@ -57,11 +57,12 @@ CHUNK_MAP = {
 
 # Stage 16 chunks are scope-specific
 STAGE_16_CHUNKS = {
-    "A": {  # Full app: 4 sub-prompts for functional/technical specs
+    "A": {  # Full app: 5 sub-prompts for functional/technical specs
         1: "06a-functional-spec-legacy",
         2: "06b-functional-spec-target",
-        3: "06c-technical-spec",
-        4: "06d-stage-prompts",
+        3: "06c1-technical-spec-legacy",
+        4: "06c2-technical-spec-target",
+        5: "06d-stage-prompts",
     },
     "B": {  # Cross-cutting: 1 sub-prompt for cross-cutting artifacts
         1: "06e-cross-cutting-artifacts",
@@ -157,7 +158,7 @@ def run_analyze_project(
             if stage is None:
                 from speckit.core.emit import emit_complete
                 # Verify expected artifacts exist before declaring complete
-                report_path = analysis_dir_path / "analysis-report.md"
+                report_path = analysis_dir_path / "reports" / "analysis-report.md"
                 if report_path.exists():
                     emit_complete(
                         title="Analysis Complete",
@@ -373,7 +374,7 @@ Run the following command to begin:""",
     # Run verification if this is the final stage and verify flag is set
     if next_cmd is None and verify:
         from speckit.commands.project import verify_analysis_report
-        report_path = analysis_dir_path / "analysis-report.md"
+        report_path = analysis_dir_path / "reports" / "analysis-report.md"
         if report_path.exists():
             print("\n")  # Add spacing
             verify_analysis_report(str(report_path))
