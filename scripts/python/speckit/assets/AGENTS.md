@@ -152,6 +152,33 @@ speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
 3. Use stdin mode for large content blocks (JSON or markdown)
 4. Never use shell file write commands for analysis artifacts
 
+### Temporary File Fallback
+
+If stdin mode fails due to parsing issues (special characters, encoding, etc.) and you **absolutely must** create a temp file:
+
+```powershell
+# Windows - use system temp folder
+$tempFile = "$env:TEMP\speckit-chunk-$(Get-Random).md"
+@"
+<content>
+"@ | Out-File -FilePath $tempFile -Encoding utf8
+Get-Content $tempFile | speckitadv write-report analysis-report.md --stage=X --append --stdin
+# No cleanup needed - OS handles temp folder
+
+# Linux/Mac
+tempFile="/tmp/speckit-chunk-$RANDOM.md"
+cat > "$tempFile" << 'EOF'
+<content>
+EOF
+cat "$tempFile" | speckitadv write-report analysis-report.md --stage=X --append --stdin
+```
+
+**Rules:**
+- ❌ NEVER create temp files in the analysis directory
+- ✅ ALWAYS use system temp folder (`$env:TEMP` or `/tmp`)
+- ✅ Use unique random names to avoid conflicts
+- ✅ No explicit cleanup needed - OS handles it
+
 ---
 
 ## File Write Best Practices (All Workflows)
