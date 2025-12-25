@@ -16,16 +16,18 @@ syntax and are injected by the CLI at runtime. For example, in `06d-stage-prompt
 ```
 
 **Note**: We do NOT generate prompts for the `specify` and `plan` stages. Instead, use
-the `functional-spec.md` and `technical-spec.md` documents directly, as they contain
-all the necessary information without the redundant wrapper prompts.
+the paired spec documents directly, as they contain all the necessary information
+without the redundant wrapper prompts.
 
 ## How to Use These Prompts
 
 After running the analyze-project command, you'll have:
 
-1. `functional-spec.md` - WHAT the legacy system does
-2. `technical-spec.md` - HOW to build the new system
-3. `stage-prompts/` (this directory) - Guidance for each Toolkit stage
+1. `functional-spec-legacy.md` - WHAT the legacy system does
+2. `functional-spec-target.md` - WHAT the target system should do
+3. `technical-spec-legacy.md` - HOW the legacy system is built
+4. `technical-spec-target.md` - HOW to build the new system
+5. `stage-prompts/` (this directory) - Guidance for each Toolkit stage
 
 ### Workflow Integration
 
@@ -35,14 +37,14 @@ to your input. The prompt provides legacy code context and guidance.
 **Example** (specify stage):
 
 ```text
-Use the requirements from analysis/functional-spec.md section §5 (Functional Requirements).
+Use the requirements from analysis/functional-spec-legacy.md section §5 (Functional Requirements).
 
 Focus on CRITICAL features (FR-CRIT-*) for Phase 1:
 - FR-CRIT-001: User Authentication (src/auth/login.js:34-89)
 - FR-CRIT-002: Payment Processing (src/orders/payment.js:156-234)
 - FR-CRIT-003: Audit Logging (src/audit/logger.js:12-34)
 
-For detailed requirements, see functional-spec.md.
+For detailed requirements, see functional-spec-legacy.md.
 ```
 
 ## Template Files
@@ -50,8 +52,8 @@ For detailed requirements, see functional-spec.md.
 | File | Toolkit Stage | Purpose |
 | ------ | --------------- | --------- |
 | `constitution-prompt-template.md` | /speckitadv.constitution | Extract principles from legacy |
-| ~~`specify-prompt-template.md`~~ | /speckitadv.specify | **Use `functional-spec.md` directly** |
-| ~~`plan-prompt-template.md`~~ | /speckitadv.plan | **Use `technical-spec.md` directly** |
+| ~~`specify-prompt-template.md`~~ | /speckitadv.specify | **Use `functional-spec-target.md` directly** |
+| ~~`plan-prompt-template.md`~~ | /speckitadv.plan | **Use `technical-spec-target.md` directly** |
 | `clarify-prompt-template.md` | /speckitadv.clarify | Use legacy code as source of truth |
 | `tasks-prompt-template.md` | /speckitadv.tasks | Break down with legacy complexity |
 | `implement-prompt-template.md` | /speckitadv.implement | Reference legacy code during implementation |

@@ -1,6 +1,6 @@
 # Specify Stage Prompt (from Legacy Analysis)
 
-**Input Source**: `analysis/functional-spec.md`
+**Input Source**: `analysis/functional-spec-target.md`
 **Project**: <<PROJECT_NAME>>
 
 ---
@@ -8,7 +8,7 @@
 ## Instructions
 
 This stage maps legacy functionality to modern requirements.
-Use `functional-spec.md` as the source of truth for WHAT the system does.
+Use `functional-spec-target.md` as the source of truth for WHAT the target system should do.
 
 ---
 
@@ -17,7 +17,7 @@ Use `functional-spec.md` as the source of truth for WHAT the system does.
 ```text
 SPECIFY requirements for modernization of <<PROJECT_NAME>>.
 
-BASE REQUIREMENTS: Use analysis/functional-spec.md
+BASE REQUIREMENTS: Use analysis/functional-spec-target.md
 
 PHASING (50/30/15/5):
 - Phase 1 (50%): <<List FR-CRIT-* features>>
@@ -26,28 +26,28 @@ PHASING (50/30/15/5):
 - Phase 4 (5%): <<List optional features>>
 
 CRITICAL FEATURES (must preserve exactly):
-<<FOR_EACH FR-CRIT-* from functional-spec.md>>
+<<FOR_EACH FR-CRIT-* from functional-spec-legacy.md>>
 - <<FEATURE_NAME>>
   Evidence: <<file:line>>
-  Acceptance Criteria: <<from functional-spec.md>>
+  Acceptance Criteria: <<from functional-spec-legacy.md>>
 <<END_FOR>>
 
 STANDARD FEATURES (can modernize):
-<<FOR_EACH FR-STD-* from functional-spec.md>>
+<<FOR_EACH FR-STD-* from functional-spec-legacy.md>>
 - <<FEATURE_NAME>>
   Current: <<implementation>>
   Opportunity: <<modernization approach>>
 <<END_FOR>>
 
 LEGACY QUIRKS (decide preserve vs. fix):
-<<FOR_EACH FR-QUIRK-* from functional-spec.md>>
+<<FOR_EACH FR-QUIRK-* from functional-spec-legacy.md>>
 - <<QUIRK_NAME>>
   Issue: <<description>>
   Decision: <<preserve | fix>>
 <<END_FOR>>
 
-DATA MODELS: See functional-spec.md §8
-API CONTRACTS: See functional-spec.md §10
+DATA MODELS: See functional-spec-legacy.md §8
+API CONTRACTS: See functional-spec-legacy.md §10
 
-For detailed functional requirements, see analysis/functional-spec.md.
+For detailed functional requirements, see analysis/functional-spec-target.md.
 ```

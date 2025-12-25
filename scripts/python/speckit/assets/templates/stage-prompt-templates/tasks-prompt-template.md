@@ -86,6 +86,6 @@ TESTING REQUIREMENTS (<<USER_CHOICE_TESTING>>):
 - Integration tests: <<key scenarios>>
 - E2E tests: <<critical workflows>>
 
-Refer to technical-spec.md §12 for detailed migration plan.
+Refer to technical-spec-target.md §12 for detailed migration plan.
 Break down each phase into 2-week sprints.
 ```text

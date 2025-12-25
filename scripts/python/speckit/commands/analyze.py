@@ -533,8 +533,12 @@ def _emit_chunk_stage(
             }
         else:
             # Scope B: 1 chunk for cross-cutting artifacts
+            # All 3 artifacts are written in this single chunk:
+            #   - reports/abstraction-assessment.md
+            #   - reports/concern-migration-plan.md
+            #   - reports/rollback-procedure.md
             stage_16_file_map = {
-                1: "reports/abstraction-assessment.md",  # First of 3 artifacts
+                1: "reports/",  # All 3 cross-cutting artifacts written in this chunk
             }
         chunk_file = stage_16_file_map.get(chunk, f"stage{stage}-chunk{chunk}.md")
         file_path = f"{analysis_dir}/{chunk_file}"

@@ -142,7 +142,7 @@ fi
 
 ## Report Structure (9 Phases)
 
-Generate report in `.analysis/{project}-{timestamp}/analysis-report.md`
+Generate report in `{reports_dir}/analysis-report.md`
 
 **⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
 
@@ -181,7 +181,7 @@ Complete sections:
 **After Chunk 1 Generation**:
 
 1. **Write to file** using Write tool:
-   - File path: `.analysis/{project}-{timestamp}/analysis-report.md`
+   - File path: `{reports_dir}/analysis-report.md`
    - Content: Complete Phase 1 sections (1.1-1.5)
 
 2. **MANDATORY - Display progress**:
@@ -417,7 +417,7 @@ Complete **Sections 8 & 9**:
    ✅ analysis-report.md GENERATION COMPLETE
       Total lines: [COUNT]
       Total chunks: 9
-      File path: .analysis/{project}-{timestamp}/analysis-report.md
+      File path: {reports_dir}/analysis-report.md
       Analysis duration: [DURATION]
 
    ```
@@ -434,7 +434,7 @@ Complete **Sections 8 & 9**:
 
 Read analysis-report.md and verify:
 
-- [ ] File exists at expected path: `.analysis/{project}-{timestamp}/analysis-report.md`
+- [ ] File exists at expected path: `{reports_dir}/analysis-report.md`
 - [ ] All 9 phase headers present:
       - [ ] Phase 1: Project Discovery
       - [ ] Phase 2: Codebase Analysis
@@ -584,7 +584,7 @@ Proceeding to Stage 5 (Artifact Generation)...
   "timestamp": "2025-11-14T11:30:00Z",
   "stages_complete": [..., "report_generation"],
   "report_generated": true,
-  "report_path": ".analysis/{project}-{timestamp}/analysis-report.md",
+  "report_path": "{reports_dir}/analysis-report.md",
   "report_stats": {
     "total_lines": 3450,
     "chunks_generated": 9,

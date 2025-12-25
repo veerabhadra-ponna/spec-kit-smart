@@ -84,7 +84,7 @@ LEGACY CODE REFERENCES:
 - Config: <<file:line>> (<<important settings>>)
 
 CRITICAL BEHAVIORS (preserve exactly):
-<<FROM functional-spec.md §6>>
+<<FROM functional-spec-legacy.md §6>>
 - <<Behavior 1>>: Evidence <<file:line>>
 - <<Behavior 2>>: Evidence <<file:line>>
 
@@ -93,5 +93,5 @@ If specification is underspecified or ambiguous:
 2. If still unclear, ASK ME
 3. NEVER guess or assume behavior
 
-Full legacy analysis: analysis/functional-spec.md
+Full legacy analysis: analysis/functional-spec-legacy.md
 ```
