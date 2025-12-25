@@ -120,7 +120,8 @@ These are kept for reference but execution uses sub-prompts:
 |------|-------|-----------|---------|
 | **06a-functional-spec-legacy.md** | ~355 | Scope = A | Legacy system functional spec (5 chunks) |
 | **06b-functional-spec-target.md** | ~365 | Scope = A | Target system functional spec (5 chunks) |
-| **06c-technical-spec.md** | ~450 | Scope = A | Technical specification (5 chunks) |
+| **06c1-technical-spec-legacy.md** | ~400 | Scope = A | Legacy system technical spec (5 chunks) |
+| **06c2-technical-spec-target.md** | ~460 | Scope = A | Target system technical spec (5 chunks) |
 | **06d-stage-prompts.md** | ~360 | Scope = A | Spec Kit stage prompts (4 files) |
 | **06e-cross-cutting-artifacts.md** | ~645 | Scope = B | Abstraction assessment + migration plan + rollback |
 
@@ -264,7 +265,8 @@ Stage 6 prompts use `{{include:template.md}}` syntax to inject reusable template
 | `06-scope-artifacts.md` | functional-spec-template.md, technical-spec-template.md, stage-prompt-templates/* |
 | `06a-functional-spec-legacy.md` | functional-spec-template.md |
 | `06b-functional-spec-target.md` | functional-spec-template.md |
-| `06c-technical-spec.md` | technical-spec-template.md |
+| `06c1-technical-spec-legacy.md` | technical-spec-template.md |
+| `06c2-technical-spec-target.md` | technical-spec-template.md |
 | `06d-stage-prompts.md` | stage-prompt-templates/*.md (4 templates) |
 | `06e-cross-cutting-artifacts.md` | concern-analysis-template.md, concern-migration-plan-template.md |
 

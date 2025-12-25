@@ -1,27 +1,27 @@
 ---
-stage: technical_spec
-requires: functional-spec-target complete
+stage: technical_spec_target
+requires: technical-spec-legacy complete
 condition: state.analysis_scope == "A"
-outputs: technical_spec_complete
+outputs: technical_spec_target_complete
 version: 3.1.0
 next: 06d-stage-prompts.md
 ---
 
-# Stage 6C: Technical Specification
+# Stage 6C2: Technical Specification - Target System
 
 ## Purpose
 
-Generate technical specification documenting HOW to build the modernized system. This includes architecture, implementation design, deployment, and operational concerns.
+Generate technical specification documenting HOW to build the MODERNIZED system. This is the second of two required technical specs for Full Application Modernization.
 
 ---
 
 ## Pre-Check
 
 1. Read `{analysis_dir}/state.json`
-2. Confirm `status` = "complete"
+2. Confirm `technical_spec_legacy_complete` = true
 3. Load user's modernization preferences from state.json (in `modernization_preferences` field)
 
-**IF not complete:** STOP - Return to 06b-functional-spec-target.md
+**IF not complete:** STOP - Return to 06c1-technical-spec-legacy.md
 
 ---
 
@@ -29,6 +29,7 @@ Generate technical specification documenting HOW to build the modernized system.
 
 **Sources:**
 - `{reports_dir}/analysis-report.md`
+- `{reports_dir}/technical-spec-legacy.md` (current architecture reference)
 - `{analysis_dir}/state.json` (`modernization_preferences` field - 10 questions)
 - Both functional specs for feature reference
 
@@ -79,12 +80,12 @@ Generate Sections 1, 2, and 3.
 | Database | {current} | Q2: {answer} | {impact} |
 | Deployment | {current} | Q5: {answer} | {impact} |
 
-Write to: `{reports_dir}/technical-spec.md`
+Write to: `{reports_dir}/technical-spec-target.md`
 
 **Output:**
 
 ```text
-technical-spec.md Chunk 1/5 complete: Architecture + Comparison
+technical-spec-target.md Chunk 1/5 complete: Architecture + Comparison
   - Diagrams: [COUNT]
   - Lines: [COUNT]
 
@@ -151,12 +152,12 @@ Based on user's 10 questions:
 
 ```
 
-Append to: `{reports_dir}/technical-spec.md`
+Append to: `{reports_dir}/technical-spec-target.md`
 
 **Output:**
 
 ```text
-technical-spec.md Chunk 2/5 complete: Tech Stack + Data
+technical-spec-target.md Chunk 2/5 complete: Tech Stack + Data
   - Target Language: {Q1}
   - Target Database: {Q2}
   - Lines: [COUNT]
@@ -216,12 +217,12 @@ Generate Sections 6 and 7.
 
 ```
 
-Append to: `{reports_dir}/technical-spec.md`
+Append to: `{reports_dir}/technical-spec-target.md`
 
 **Output:**
 
 ```text
-technical-spec.md Chunk 3/5 complete: API + Integrations
+technical-spec-target.md Chunk 3/5 complete: API + Integrations
   - Endpoints: [COUNT]
   - Integrations: [COUNT]
   - Lines: [COUNT]
@@ -300,12 +301,12 @@ Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 
 ```
 
-Append to: `{reports_dir}/technical-spec.md`
+Append to: `{reports_dir}/technical-spec-target.md`
 
 **Output:**
 
 ```text
-technical-spec.md Chunk 4/5 complete: Security + Deployment
+technical-spec-target.md Chunk 4/5 complete: Security + Deployment
   - Security Approach: {Q9}
   - Deployment Target: {Q5}
   - Container: {Q7}
@@ -402,7 +403,7 @@ Based on Q8 (Observability stack):
 
 ```
 
-Append to: `{reports_dir}/technical-spec.md`
+Append to: `{reports_dir}/technical-spec-target.md`
 
 **Verify:** Read complete file, confirm:
 - All 12 sections present
@@ -413,10 +414,10 @@ Append to: `{reports_dir}/technical-spec.md`
 **Output:**
 
 ```text
-technical-spec.md Chunk 5/5 complete: Testing + Observability + Risks
+technical-spec-target.md Chunk 5/5 complete: Testing + Observability + Risks
   - Lines: [COUNT]
 
-technical-spec.md COMPLETE (5/5 chunks)
+technical-spec-target.md COMPLETE (5/5 chunks)
    Total diagrams: [COUNT]
    Total lines: [COUNT]
 
@@ -424,16 +425,16 @@ technical-spec.md COMPLETE (5/5 chunks)
 
 ---
 
-## Completion Marker
+## Both Technical Specs Complete
 
 ```text
 ═══════════════════════════════════════════════════════════
-  ARTIFACT COMPLETE: TECHNICAL-SPEC.md
+  BOTH TECHNICAL SPECS COMPLETE
+
+  1. technical-spec-legacy.md - LEGACY system (how it's built today)
+  2. technical-spec-target.md - TARGET system (how it will be built)
 
   Chain ID: {chain_id}
-  Sections: 12
-  Diagrams: {count}
-  Lines: {count}
 
   User Preferences Applied:
     Q1 Language: {answer}
@@ -446,9 +447,11 @@ technical-spec.md COMPLETE (5/5 chunks)
     Q8 Observability: {answer}
     Q9 Security: {answer}
     Q10 Testing: {answer}
+
+  Now proceeding to stage-prompts...
 ═══════════════════════════════════════════════════════════
 
-ARTIFACT_COMPLETE:TECHNICAL_SPEC
+ARTIFACT_COMPLETE:TECHNICAL_SPEC_TARGET
 
 ```
 

@@ -1,6 +1,6 @@
 ---
 stage: stage_prompts
-requires: technical-spec complete
+requires: technical-spec-target complete
 condition: state.analysis_scope == "A"
 outputs: stage_prompts_complete
 version: 3.1.0
@@ -21,7 +21,7 @@ Generate staged implementation prompts for Spec Kit workflow integration. These 
 2. Confirm `status` = "complete"
 3. Load analysis data from state files
 
-**IF not complete:** STOP - Return to 06c-technical-spec.md
+**IF not complete:** STOP - Return to 06c2-technical-spec-target.md
 
 ---
 

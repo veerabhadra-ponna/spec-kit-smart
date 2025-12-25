@@ -4,7 +4,7 @@ requires: functional-spec-legacy complete
 condition: state.analysis_scope == "A"
 outputs: functional_spec_target_complete
 version: 3.1.0
-next: 06c-technical-spec.md
+next: 06c1-technical-spec-legacy.md
 ---
 
 # Stage 6B: Functional Specification - Target System
