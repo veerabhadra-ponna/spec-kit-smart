@@ -86,41 +86,15 @@ def analyze_project(
     from state when not provided. Only specify args for new workflows.
     """
     from speckit.commands.analyze import run_analyze_project
-    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
 
-    # Check if we're starting a new workflow (no existing state)
-    has_existing_state = False
-    if analysis_dir:
-        state_manager = AnalysisStateManager(Path(analysis_dir))
-        has_existing_state = state_manager.exists()
-    else:
-        try:
-            latest = find_latest_analysis_folder()
-            state_manager = AnalysisStateManager(latest)
-            has_existing_state = state_manager.exists()
-        except FileNotFoundError:
-            pass
-
-    # Interactive mode only for NEW workflows (stage 1, no existing state)
-    effective_stage = stage if stage is not None else (1 if not has_existing_state else None)
-    if effective_stage == 1 and not has_existing_state:
-        from speckit.core.interactive import collect_analyze_project_input
-
-        if not path:
-            # No path provided - collect all inputs interactively
-            inputs = collect_analyze_project_input()
-            path = inputs.get("path")
-            scope = inputs.get("scope")
-            context = inputs.get("context")
-            concern_type = inputs.get("concern_type")
-            current_impl = inputs.get("current_impl")
-            target_impl = inputs.get("target_impl")
-        elif not scope:
-            # Path provided but scope missing - require scope
-            console.print("[red]Error:[/red] --scope is required when --path is provided")
-            console.print("  Use --scope A for full application analysis")
-            console.print("  Use --scope B for cross-cutting concern migration")
-            raise typer.Exit(1)
+    # Note: Input collection is now handled by the AI agent via prompts
+    # (01b-input-collection.md). The CLI emits the first stage prompt when
+    # starting a new workflow without inputs. The AI collects inputs from
+    # the user and then calls the CLI with those inputs:
+    #   speckitadv analyze-project --scope=A --context="..." [--path=... etc.]
+    #
+    # This enables the AI agent to guide the user through input collection
+    # rather than the CLI collecting inputs from the terminal.
 
     run_analyze_project(
         stage=stage,

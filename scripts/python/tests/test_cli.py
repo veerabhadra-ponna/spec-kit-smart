@@ -70,12 +70,14 @@ class TestAnalyzeProjectCommand:
         # May fail due to missing project, but should parse args
         assert "--stage" not in result.stdout or result.exit_code in (0, 1)
 
-    def test_path_without_scope_errors(self, tmp_path):
-        """Should error when --path provided without --scope."""
+    def test_path_without_scope_uses_default(self, tmp_path):
+        """Should proceed with default scope A when --path provided without --scope."""
+        # With AI agent-based input collection, CLI no longer requires --scope
+        # when --path is provided. The workflow defaults to scope A and the AI
+        # agent can collect scope from user via prompts if needed.
         result = runner.invoke(app, ["analyze-project", "--path", str(tmp_path)])
-        assert result.exit_code == 1
-        output = strip_ansi(result.stdout)
-        assert "--scope is required" in output
+        # Should not error - defaults to scope A
+        assert result.exit_code == 0
 
 
 class TestConstitutionCommand:
