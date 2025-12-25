@@ -3,7 +3,7 @@ stage: technical_spec_target
 requires: technical-spec-legacy complete
 condition: state.analysis_scope == "A"
 outputs: technical_spec_target_complete
-version: 3.1.0
+version: 3.2.0
 next: 06d-stage-prompts.md
 ---
 
@@ -28,6 +28,7 @@ Generate technical specification documenting HOW to build the MODERNIZED system.
 ## Source of Truth
 
 **Sources:**
+
 - `{reports_dir}/analysis-report.md`
 - `{reports_dir}/technical-spec-legacy.md` (current architecture reference)
 - `{analysis_dir}/state.json` (`modernization_preferences` field - 10 questions)
@@ -39,20 +40,133 @@ Generate technical specification documenting HOW to build the MODERNIZED system.
 
 ---
 
-## Chunk 1: Architecture Overview + Legacy vs Target
+## ⚠️ MANDATORY CHUNKING REQUIREMENT
+
+🛑 **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
+
+**DO NOT generate the entire technical spec in one operation.**
+
+**DO NOT create all sections at once.**
+
+**DO NOT skip the chunking strategy below.**
+
+**YOU MUST generate the spec in 5 separate chunks as specified below.**
+
+Attempting to generate the full spec in one operation WILL result in:
+
+- Incomplete sections due to token limits
+- Missing user preference mappings
+- Missing or broken Mermaid diagrams
+- Placeholder content (TODO, TBD)
+- Verification failures
+- Wasted time and compute resources
+
+**If you are about to say "I'll create it in one operation" → STOP and read the chunking strategy below.**
+
+---
+
+## Chunking Strategy
+
+**CRITICAL**: The technical-spec-target.md size will vary based on project complexity:
+
+- **Small projects** (< 5,000 LOC): **800-2,000 lines**
+- **Medium projects** (5,000-50,000 LOC): **2,000-5,000 lines**
+- **Large projects** (> 50,000 LOC): **4,000-10,000+ lines**
+
+**⚠️ COMPLETION-BASED CHUNKING (NOT size-based)**:
+
+Use **completion-based chunking**, NOT size-based chunking:
+
+- Generate complete logical sections in each chunk
+- Each chunk ends with a distinct completion point
+- Display progress after each chunk (MANDATORY)
+- NO placeholders allowed (no TODO, TBD, "will be analyzed")
+
+**Why chunking is critical**:
+
+- Technical specs require detailed diagrams that take space
+- Large specs may hit token limits without chunking
+- Progress tracking improves user experience
+- Verification gates ensure quality at each step
+
+---
+
+## Resume Detection (BEFORE Starting)
+
+**BEFORE generating any chunks**, check for interrupted generation:
+
+**Step 1: Check for existing spec**:
+
+```bash
+# Check if technical-spec-target.md already exists
+if [ -f "{reports_dir}/technical-spec-target.md" ]; then
+  # Spec exists - check content to determine resume point
+  # Look for section headers to determine last completed chunk
+fi
+```
+
+**Step 2: Determine resume point from spec content**:
+
+**IF** technical-spec-target.md exists AND is incomplete:
+
+1. Read `{reports_dir}/technical-spec-target.md`
+2. Identify last completed chunk by checking which section headers exist
+3. Display resume message:
+
+   ```text
+   ⚠️ RESUMING INTERRUPTED GENERATION
+
+   Last completed: Chunk 2 (Target Tech Stack + Data Architecture)
+   Resuming from: Chunk 3 (API Design + Integration Architecture)
+
+   Continuing generation...
+   ```
+
+4. Skip completed chunks
+5. Start generation from next incomplete chunk
+
+**IF** technical-spec-target.md does NOT exist:
+
+- Start fresh from Chunk 1
+
+---
+
+## Spec Structure (5 Chunks)
+
+Generate spec in `{reports_dir}/technical-spec-target.md`
+
+**⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
+
+1. Generate ONLY Chunk 1 first
+2. Wait for Chunk 1 completion
+3. THEN generate Chunk 2
+4. Continue sequentially through all 5 chunks
+
+**DO NOT**:
+
+- ❌ Generate multiple chunks in one response
+- ❌ Generate all sections at once
+- ❌ Skip progress display
+
+**IF** you find yourself generating more than one chunk at a time → **STOP IMMEDIATELY**
+
+---
+
+### Chunk 1: Architecture Overview + Legacy vs Target
 
 Generate Sections 1, 2, and 3.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_1]**
 
-### Section 1: Introduction
+#### Section 1: Introduction
 
 - Document purpose
 - Technical audience
 - Scope of implementation
 
-### Section 2: Architecture Overview
+#### Section 2: Architecture Overview
 
 ```markdown
 ## 2. Architecture Overview
@@ -69,10 +183,9 @@ Generate Sections 1, 2, and 3.
 
 - Pattern: {Monolith | Microservices | Modular Monolith}
 - Justification: {based on user preferences}
-
 ```
 
-### Section 3: Legacy vs Target Comparison
+#### Section 3: Legacy vs Target Comparison
 
 | Aspect | Legacy | Target | Migration Impact |
 |--------|--------|--------|------------------|
@@ -80,27 +193,43 @@ Generate Sections 1, 2, and 3.
 | Database | {current} | Q2: {answer} | {impact} |
 | Deployment | {current} | Q5: {answer} | {impact} |
 
-Write to: `{reports_dir}/technical-spec-target.md`
+**Completion Criteria**:
 
-**Output:**
+- ✓ C4 diagrams for target architecture
+- ✓ Legacy vs Target comparison table
+- ✓ User preferences (Q1, Q2, Q5) applied
+- ✓ NO placeholders
 
-```text
-technical-spec-target.md Chunk 1/5 complete: Architecture + Comparison
-  - Diagrams: [COUNT]
-  - Lines: [COUNT]
+**After Chunk 1 Generation**:
 
-```
+1. **Write to file** using Write tool:
+   - File path: `{reports_dir}/technical-spec-target.md`
+   - Content: Complete Sections 1-3
+
+2. **Verify:** Read file, confirm diagrams render correctly.
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ Chunk 1/5 complete: Architecture + Legacy vs Target Comparison
+     - C4 Diagrams: 2
+     - Target Language: {Q1 answer}
+     - Target Database: {Q2 answer}
+     - Lines generated: [COUNT]
+
+   ```
 
 ---
 
-## Chunk 2: Target Tech Stack + Data Architecture
+### Chunk 2: Target Tech Stack + Data Architecture
 
 Generate Sections 4 and 5 using user's Q1-Q4 answers.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_2]**
 
-### Section 4: Target Technology Stack
+#### Section 4: Target Technology Stack
 
 Based on user's 10 questions:
 
@@ -128,10 +257,9 @@ Based on user's 10 questions:
 
 - **Target:** {Q4 answer}
 - **Dependency Strategy:** {approach}
-
 ```
 
-### Section 5: Data Architecture
+#### Section 5: Data Architecture
 
 ```markdown
 ## 5. Data Architecture
@@ -149,31 +277,43 @@ Based on user's 10 questions:
 | Table | Legacy Schema | Target Schema | Migration |
 |-------|--------------|---------------|-----------|
 | {table} | {columns} | {columns} | {approach} |
-
 ```
 
-Append to: `{reports_dir}/technical-spec-target.md`
+**Completion Criteria**:
 
-**Output:**
+- ✓ User preferences Q1-Q4 applied correctly
+- ✓ ERD diagram for target data model
+- ✓ Migration plan for each entity
+- ✓ NO placeholders
 
-```text
-technical-spec-target.md Chunk 2/5 complete: Tech Stack + Data
-  - Target Language: {Q1}
-  - Target Database: {Q2}
-  - Lines: [COUNT]
+**After Chunk 2 Generation**:
 
-```
+1. **Append to file** using Edit tool:
+   - Append Sections 4 and 5 to technical-spec-target.md
+
+2. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ Chunk 2/5 complete: Target Tech Stack + Data Architecture
+     - Target Language: {Q1}
+     - Target Database: {Q2}
+     - Target Message Bus: {Q3}
+     - Entities with migration plan: [COUNT]
+     - Lines generated: [COUNT]
+
+   ```
 
 ---
 
-## Chunk 3: API Design + Integration Architecture
+### Chunk 3: API Design + Integration Architecture
 
 Generate Sections 6 and 7.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_3]**
 
-### Section 6: API Design
+#### Section 6: API Design
 
 ```markdown
 ## 6. API Design
@@ -192,10 +332,9 @@ Generate Sections 6 and 7.
 ### 6.3 API Contract Examples
 
 {OpenAPI/GraphQL schema snippets}
-
 ```
 
-### Section 7: Integration Architecture
+#### Section 7: Integration Architecture
 
 ```markdown
 ## 7. Integration Architecture
@@ -214,31 +353,42 @@ Generate Sections 6 and 7.
 
 - Pattern: {Pub/Sub | Request/Reply | Event Sourcing}
 - Queue: {Q3 answer}
-
 ```
 
-Append to: `{reports_dir}/technical-spec-target.md`
+**Completion Criteria**:
 
-**Output:**
+- ✓ All API endpoints mapped from legacy
+- ✓ Integration sequence diagrams included
+- ✓ Message queue patterns from Q3 applied
+- ✓ NO placeholders
 
-```text
-technical-spec-target.md Chunk 3/5 complete: API + Integrations
-  - Endpoints: [COUNT]
-  - Integrations: [COUNT]
-  - Lines: [COUNT]
+**After Chunk 3 Generation**:
 
-```
+1. **Append to file** using Edit tool:
+   - Append Sections 6 and 7 to technical-spec-target.md
+
+2. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ Chunk 3/5 complete: API Design + Integration Architecture
+     - Endpoints mapped: [COUNT]
+     - Integrations documented: [COUNT]
+     - Message Queue: {Q3 answer}
+     - Lines generated: [COUNT]
+
+   ```
 
 ---
 
-## Chunk 4: Security + Deployment
+### Chunk 4: Security + Deployment
 
 Generate Sections 8 and 9 using Q5, Q6, Q7, Q9 answers.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_4]**
 
-### Section 8: Security Architecture
+#### Section 8: Security Architecture
 
 Based on Q9 (Security approach):
 
@@ -267,10 +417,9 @@ Based on Q9 (Security approach):
 - [ ] Input validation
 - [ ] Output encoding
 - [ ] Rate limiting
-
 ```
 
-### Section 9: Deployment Architecture
+#### Section 9: Deployment Architecture
 
 Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 
@@ -298,32 +447,43 @@ Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 | dev | Development | {config} |
 | staging | Pre-prod | {config} |
 | prod | Production | {config} |
-
 ```
 
-Append to: `{reports_dir}/technical-spec-target.md`
+**Completion Criteria**:
 
-**Output:**
+- ✓ User preferences Q5, Q6, Q7, Q9 applied
+- ✓ Deployment diagram included
+- ✓ CI/CD pipeline defined
+- ✓ NO placeholders
 
-```text
-technical-spec-target.md Chunk 4/5 complete: Security + Deployment
-  - Security Approach: {Q9}
-  - Deployment Target: {Q5}
-  - Container: {Q7}
-  - Lines: [COUNT]
+**After Chunk 4 Generation**:
 
-```
+1. **Append to file** using Edit tool:
+   - Append Sections 8 and 9 to technical-spec-target.md
+
+2. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ Chunk 4/5 complete: Security + Deployment
+     - Security Approach: {Q9}
+     - Deployment Target: {Q5}
+     - Container: {Q7}
+     - IaC Tool: {Q6}
+     - Lines generated: [COUNT]
+
+   ```
 
 ---
 
-## Chunk 5: Testing + Observability + Migration Risks
+### Chunk 5: Testing + Observability + Migration Risks
 
 Generate Sections 10, 11, and 12 using Q8, Q10 answers.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_5]**
 
-### Section 10: Testing Strategy
+#### Section 10: Testing Strategy
 
 Based on Q10 (Testing approach):
 
@@ -348,10 +508,9 @@ Based on Q10 (Testing approach):
 - Feature parity tests
 - Performance regression tests
 - Data integrity verification
-
 ```
 
-### Section 11: Observability
+#### Section 11: Observability
 
 Based on Q8 (Observability stack):
 
@@ -374,10 +533,9 @@ Based on Q8 (Observability stack):
 
 - {dashboard 1 purpose}
 - {dashboard 2 purpose}
-
 ```
 
-### Section 12: Migration Risks & Mitigations
+#### Section 12: Migration Risks & Mitigations
 
 ```markdown
 ## 12. Migration Risks
@@ -400,28 +558,190 @@ Based on Q8 (Observability stack):
 - [ ] Performance meets targets
 - [ ] Zero data loss
 - [ ] All tests passing
-
 ```
 
-Append to: `{reports_dir}/technical-spec-target.md`
+**Completion Criteria**:
 
-**Verify:** Read complete file, confirm:
-- All 12 sections present
-- User preferences (Q1-Q10) correctly applied
-- Diagrams rendered correctly
-- No placeholders or TODOs
+- ✓ User preferences Q8, Q10 applied
+- ✓ Migration risks documented
+- ✓ Rollback strategy defined
+- ✓ NO placeholders
 
-**Output:**
+**After Chunk 5 Generation**:
+
+1. **Append to file** using Edit tool:
+   - Append Sections 10, 11, and 12 to technical-spec-target.md
+
+2. **Verify:** Read complete file, confirm:
+   - All 12 sections present
+   - User preferences (Q1-Q10) correctly applied
+   - Diagrams rendered correctly
+   - No placeholders or TODOs
+
+3. **MANDATORY - Display progress and final summary**:
+
+   ```text
+   ✓ Chunk 5/5 complete: Testing + Observability + Migration Risks
+     - Testing Strategy: {Q10}
+     - Observability Stack: {Q8}
+     - Migration risks documented: [COUNT]
+     - Lines generated: [COUNT]
+
+   ✅ technical-spec-target.md GENERATION COMPLETE
+      Total sections: 12
+      Total diagrams: [COUNT]
+      Total lines: [COUNT]
+      File path: {reports_dir}/technical-spec-target.md
+
+   ```
+
+---
+
+## Verification Gate (HARD STOP)
+
+⚠️ **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
+
+**BEFORE** proceeding to 06d-stage-prompts.md, verify spec quality:
+
+### Verification Checklist
+
+Read technical-spec-target.md and verify:
+
+- [ ] File exists at expected path: `{reports_dir}/technical-spec-target.md`
+- [ ] All 12 section headers present:
+      - [ ] Section 1: Introduction
+      - [ ] Section 2: Architecture Overview (with C4 diagrams)
+      - [ ] Section 3: Legacy vs Target Comparison
+      - [ ] Section 4: Target Technology Stack
+      - [ ] Section 5: Data Architecture (with ERD)
+      - [ ] Section 6: API Design
+      - [ ] Section 7: Integration Architecture
+      - [ ] Section 8: Security Architecture
+      - [ ] Section 9: Deployment Architecture
+      - [ ] Section 10: Testing Strategy
+      - [ ] Section 11: Observability
+      - [ ] Section 12: Migration Risks
+- [ ] Quality checks:
+      - [ ] User preferences (Q1-Q10) correctly applied
+      - [ ] C4 diagrams for target architecture
+      - [ ] ERD diagram for target data model
+      - [ ] Deployment diagram present
+      - [ ] Migration risks have severity ratings
+      - [ ] Rollback strategy defined
+      - [ ] No placeholders (TODO, TBD, "will be analyzed", "coming soon")
+      - [ ] All Mermaid diagrams render correctly
+- [ ] Completeness (verify based on project size/complexity):
+      - [ ] **Small projects (< 5,000 LOC)**:
+            - Total lines: 800+ (minimum)
+            - Diagrams: 4+ (C4x2, ERD, deployment)
+            - Migration risks: 5-10
+      - [ ] **Medium projects (5,000-50,000 LOC)**:
+            - Total lines: 2,000+ (minimum)
+            - Diagrams: 6+ (C4x2, ERD, deployment, sequence, data flow)
+            - Migration risks: 10-20
+      - [ ] **Large projects (> 50,000 LOC)**:
+            - Total lines: 4,000+ (minimum)
+            - Diagrams: 8+ (multiple of each type)
+            - Migration risks: 20-40
+
+---
+
+### Recovery Actions (IF ANY CHECKBOX FAILS)
+
+**IF ANY checkbox is unchecked**:
 
 ```text
-technical-spec-target.md Chunk 5/5 complete: Testing + Observability + Risks
-  - Lines: [COUNT]
+❌ VERIFICATION FAILED
 
-technical-spec-target.md COMPLETE (5/5 chunks)
-   Total diagrams: [COUNT]
-   Total lines: [COUNT]
-
+technical-spec-target.md is incomplete. Issues found:
+- [List specific missing items from checklist above]
 ```
+
+**RECOVERY DECISION TREE**:
+
+**1. Identify incomplete sections**:
+
+List which sections or quality checks failed verification.
+
+**2. Determine recovery approach**:
+
+**IF** entire sections missing (e.g., Section 8 not found in file):
+
+- **Action**: Regenerate ONLY the missing sections
+- **Method**:
+  1. Check technical-spec-target.md content to identify last completed section
+  2. Resume generation from first missing section
+  3. Use Edit tool to append missing sections to existing file
+  4. Re-run verification after regeneration
+
+**IF** quality issues in existing sections (e.g., user preferences not applied):
+
+- **Action**: Fix the problematic section with correct preferences
+- **Method**:
+  1. Read the problematic section from technical-spec-target.md
+  2. Identify specific issues (wrong Q values, broken diagrams, etc.)
+  3. Regenerate that section with proper detail
+  4. Use Edit tool to replace the incomplete section
+  5. Re-run verification after enhancement
+
+**IF** multiple critical failures (>3 sections missing OR >5 quality issues):
+
+- **Action**: Recommend full regeneration from scratch
+- **Display**:
+
+  ```text
+  ⚠️ MULTIPLE CRITICAL ISSUES DETECTED
+
+  Issues found:
+  - Missing sections: [COUNT]
+  - Quality failures: [COUNT]
+
+  Recommendation: Full regeneration recommended due to extent of issues.
+  ```
+
+- **Ask user**:
+
+  ```text
+  Recovery options:
+  [A] Regenerate entire technical-spec-target.md from scratch
+  [B] Fix individual sections (may take longer)
+  [C] Proceed anyway (NOT RECOMMENDED - will cause issues in next stage)
+
+  Your choice: ___
+  ```
+
+**3. Execute recovery**:
+
+- Based on failure type, perform specific recovery actions
+- Use appropriate tools (Edit for fixes, Write for full regen)
+- Re-run verification after recovery
+- **DO NOT proceed to 06d until verification passes**
+
+⚠️ **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
+
+---
+
+### Verification Success
+
+**IF ALL checkboxes are checked**:
+
+```text
+✅ VERIFICATION PASSED
+
+technical-spec-target.md is complete and meets quality standards:
+- All 12 sections present and complete
+- User preferences (Q1-Q10) correctly applied
+- C4 diagrams for target architecture
+- ERD and deployment diagrams present
+- Migration risks documented with mitigations
+- Rollback strategy defined
+- No placeholders or incomplete sections
+- Total lines: [COUNT] (comprehensive spec)
+
+Proceeding to 06d-stage-prompts.md...
+```
+
+**Only after passing verification**: Proceed to next stage
 
 ---
 
@@ -452,7 +772,6 @@ technical-spec-target.md COMPLETE (5/5 chunks)
 ═══════════════════════════════════════════════════════════
 
 ARTIFACT_COMPLETE:TECHNICAL_SPEC_TARGET
-
 ```
 
 ---

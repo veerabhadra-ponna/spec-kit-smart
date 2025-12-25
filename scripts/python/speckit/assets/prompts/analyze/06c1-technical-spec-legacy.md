@@ -3,7 +3,7 @@ stage: technical_spec_legacy
 requires: functional-spec-target complete
 condition: state.analysis_scope == "A"
 outputs: technical_spec_legacy_complete
-version: 3.1.0
+version: 3.2.0
 next: 06c2-technical-spec-target.md
 ---
 
@@ -28,6 +28,7 @@ Generate technical specification documenting HOW the LEGACY/EXISTING system is b
 ## Source of Truth
 
 **Use ONLY these sources:**
+
 - `{reports_dir}/analysis-report.md` Phase 2 (Codebase Analysis)
 - `{data_dir}/tech-stack.json` (detected technologies)
 - `{data_dir}/category-patterns.json` (code patterns)
@@ -54,20 +55,133 @@ Generate technical specification documenting HOW the LEGACY/EXISTING system is b
 
 ---
 
-## Chunk 1: Introduction + Architecture Overview
+## ⚠️ MANDATORY CHUNKING REQUIREMENT
+
+🛑 **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
+
+**DO NOT generate the entire technical spec in one operation.**
+
+**DO NOT create all sections at once.**
+
+**DO NOT skip the chunking strategy below.**
+
+**YOU MUST generate the spec in 5 separate chunks as specified below.**
+
+Attempting to generate the full spec in one operation WILL result in:
+
+- Incomplete sections due to token limits
+- Missing file:line references
+- Missing or broken Mermaid diagrams
+- Placeholder content (TODO, TBD)
+- Verification failures
+- Wasted time and compute resources
+
+**If you are about to say "I'll create it in one operation" → STOP and read the chunking strategy below.**
+
+---
+
+## Chunking Strategy
+
+**CRITICAL**: The technical-spec-legacy.md size will vary based on project complexity:
+
+- **Small projects** (< 5,000 LOC): **800-2,000 lines**
+- **Medium projects** (5,000-50,000 LOC): **2,000-5,000 lines**
+- **Large projects** (> 50,000 LOC): **4,000-10,000+ lines**
+
+**⚠️ COMPLETION-BASED CHUNKING (NOT size-based)**:
+
+Use **completion-based chunking**, NOT size-based chunking:
+
+- Generate complete logical sections in each chunk
+- Each chunk ends with a distinct completion point
+- Display progress after each chunk (MANDATORY)
+- NO placeholders allowed (no TODO, TBD, "will be analyzed")
+
+**Why chunking is critical**:
+
+- Technical specs require detailed diagrams that take space
+- Large specs may hit token limits without chunking
+- Progress tracking improves user experience
+- Verification gates ensure quality at each step
+
+---
+
+## Resume Detection (BEFORE Starting)
+
+**BEFORE generating any chunks**, check for interrupted generation:
+
+**Step 1: Check for existing spec**:
+
+```bash
+# Check if technical-spec-legacy.md already exists
+if [ -f "{reports_dir}/technical-spec-legacy.md" ]; then
+  # Spec exists - check content to determine resume point
+  # Look for section headers to determine last completed chunk
+fi
+```
+
+**Step 2: Determine resume point from spec content**:
+
+**IF** technical-spec-legacy.md exists AND is incomplete:
+
+1. Read `{reports_dir}/technical-spec-legacy.md`
+2. Identify last completed chunk by checking which section headers exist
+3. Display resume message:
+
+   ```text
+   ⚠️ RESUMING INTERRUPTED GENERATION
+
+   Last completed: Chunk 2 (Technology Stack + Data Architecture)
+   Resuming from: Chunk 3 (API Design + Integration Architecture)
+
+   Continuing generation...
+   ```
+
+4. Skip completed chunks
+5. Start generation from next incomplete chunk
+
+**IF** technical-spec-legacy.md does NOT exist:
+
+- Start fresh from Chunk 1
+
+---
+
+## Spec Structure (5 Chunks)
+
+Generate spec in `{reports_dir}/technical-spec-legacy.md`
+
+**⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
+
+1. Generate ONLY Chunk 1 first
+2. Wait for Chunk 1 completion
+3. THEN generate Chunk 2
+4. Continue sequentially through all 5 chunks
+
+**DO NOT**:
+
+- ❌ Generate multiple chunks in one response
+- ❌ Generate all sections at once
+- ❌ Skip progress display
+
+**IF** you find yourself generating more than one chunk at a time → **STOP IMMEDIATELY**
+
+---
+
+### Chunk 1: Introduction + Architecture Overview
 
 Generate Sections 1 and 2.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_1]**
 
-### Section 1: Introduction
+#### Section 1: Introduction
 
 - Document purpose and scope
 - Technical audience
 - System overview
 
-### Section 2: Architecture Overview
+#### Section 2: Architecture Overview
 
 ```markdown
 ## 2. Architecture Overview
@@ -96,32 +210,44 @@ Generate Sections 1 and 2.
 | Scalability | {horizontal/vertical/none} | {file:line} |
 | Availability | {HA/single point of failure} | {file:line} |
 | Maintainability | {high/medium/low} | {reasoning} |
-
 ```
 
-Write to: `{reports_dir}/technical-spec-legacy.md`
+**Completion Criteria**:
 
-**Verify:** Read file, confirm diagrams render correctly.
+- ✓ C4 diagrams at all 3 levels
+- ✓ Architecture style identified with evidence
+- ✓ Characteristics documented
+- ✓ NO placeholders
 
-**Output:**
+**After Chunk 1 Generation**:
 
-```text
-technical-spec-legacy.md Chunk 1/5 complete: Introduction + Architecture
-  - Diagrams: [COUNT]
-  - Lines: [COUNT]
+1. **Write to file** using Write tool:
+   - File path: `{reports_dir}/technical-spec-legacy.md`
+   - Content: Complete Sections 1-2
 
-```
+2. **Verify:** Read file, confirm diagrams render correctly.
+
+3. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ Chunk 1/5 complete: Introduction + Architecture
+     - C4 Diagrams: 3
+     - Architecture style: [STYLE]
+     - Lines generated: [COUNT]
+
+   ```
 
 ---
 
-## Chunk 2: Technology Stack + Data Architecture
+### Chunk 2: Technology Stack + Data Architecture
 
 Generate Sections 3 and 4.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_2]**
 
-### Section 3: Technology Stack
+#### Section 3: Technology Stack
 
 ```markdown
 ## 3. Technology Stack
@@ -154,10 +280,9 @@ Generate Sections 3 and 4.
 | Service | Purpose | Integration |
 |---------|---------|-------------|
 | {service} | {purpose} | {REST/SOAP/gRPC} |
-
 ```
 
-### Section 4: Data Architecture
+#### Section 4: Data Architecture
 
 ```markdown
 ## 4. Data Architecture
@@ -186,31 +311,42 @@ Generate Sections 3 and 4.
 - **Cache Keys:** {pattern}
 - **TTL:** {duration}
 - **Invalidation:** {strategy}
-
 ```
 
-Append to: `{reports_dir}/technical-spec-legacy.md`
+**Completion Criteria**:
 
-**Output:**
+- ✓ All technologies documented with versions
+- ✓ ERD diagram included
+- ✓ Every component has file:line reference
+- ✓ NO placeholders
 
-```text
-technical-spec-legacy.md Chunk 2/5 complete: Tech Stack + Data
-  - Technologies: [COUNT]
-  - Entities: [COUNT]
-  - Lines: [COUNT]
+**After Chunk 2 Generation**:
 
-```
+1. **Append to file** using Edit tool:
+   - Append Sections 3 and 4 to technical-spec-legacy.md
+
+2. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ Chunk 2/5 complete: Technology Stack + Data Architecture
+     - Technologies documented: [COUNT]
+     - Entities documented: [COUNT]
+     - ERD diagram: ✓
+     - Lines generated: [COUNT]
+
+   ```
 
 ---
 
-## Chunk 3: API Design + Integration Architecture
+### Chunk 3: API Design + Integration Architecture
 
 Generate Sections 5 and 6.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_3]**
 
-### Section 5: API Design
+#### Section 5: API Design
 
 ```markdown
 ## 5. API Design
@@ -229,15 +365,16 @@ Generate Sections 5 and 6.
 ### 5.3 Request/Response Patterns
 
 **Example Request:**
-```json
+
+\`\`\`json
 {sample request}
-```
+\`\`\`
 
 **Example Response:**
 
-```json
+\`\`\`json
 {sample response}
-```
+\`\`\`
 
 ### 5.4 Error Handling
 
@@ -246,11 +383,9 @@ Generate Sections 5 and 6.
 | {code} | {meaning} | {format} |
 
 **Error Handler:** {file}:{line}
+\`\`\`
 
-<!-- markdownlint-disable-next-line MD040 -->
-```
-
-### Section 6: Integration Architecture
+#### Section 6: Integration Architecture
 
 ```markdown
 ## 6. Integration Architecture
@@ -276,31 +411,42 @@ Generate Sections 5 and 6.
 | Operation | Type | Rationale |
 |-----------|------|-----------|
 | {operation} | {sync/async} | {reason} |
-
 ```
 
-Append to: `{reports_dir}/technical-spec-legacy.md`
+**Completion Criteria**:
 
-**Output:**
+- ✓ All API endpoints documented
+- ✓ Integration sequence diagrams included
+- ✓ Every endpoint has file:line reference
+- ✓ NO placeholders
 
-```text
-technical-spec-legacy.md Chunk 3/5 complete: API + Integrations
-  - Endpoints: [COUNT]
-  - Integrations: [COUNT]
-  - Lines: [COUNT]
+**After Chunk 3 Generation**:
 
-```
+1. **Append to file** using Edit tool:
+   - Append Sections 5 and 6 to technical-spec-legacy.md
+
+2. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ Chunk 3/5 complete: API Design + Integration Architecture
+     - Endpoints documented: [COUNT]
+     - Integrations documented: [COUNT]
+     - Sequence diagrams: [COUNT]
+     - Lines generated: [COUNT]
+
+   ```
 
 ---
 
-## Chunk 4: Security + Deployment
+### Chunk 4: Security + Deployment
 
 Generate Sections 7 and 8.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_4]**
 
-### Section 7: Security Architecture
+#### Section 7: Security Architecture
 
 ```markdown
 ## 7. Security Architecture
@@ -337,10 +483,9 @@ Generate Sections 7 and 8.
 | Issue | Severity | Location | Description |
 |-------|----------|----------|-------------|
 | {issue} | {HIGH/MEDIUM/LOW} | {file:line} | {description} |
-
 ```
 
-### Section 8: Deployment Architecture
+#### Section 8: Deployment Architecture
 
 ```markdown
 ## 8. Deployment Architecture
@@ -372,31 +517,43 @@ Generate Sections 7 and 8.
 | Environment | Purpose | Config Source |
 |-------------|---------|---------------|
 | {env} | {purpose} | {file/vault} |
-
 ```
 
-Append to: `{reports_dir}/technical-spec-legacy.md`
+**Completion Criteria**:
 
-**Output:**
+- ✓ Security mechanisms documented with evidence
+- ✓ Security issues identified with severity
+- ✓ Deployment diagram included
+- ✓ Every component has file:line reference
+- ✓ NO placeholders
 
-```text
-technical-spec-legacy.md Chunk 4/5 complete: Security + Deployment
-  - Security Issues: [COUNT]
-  - Environments: [COUNT]
-  - Lines: [COUNT]
+**After Chunk 4 Generation**:
 
-```
+1. **Append to file** using Edit tool:
+   - Append Sections 7 and 8 to technical-spec-legacy.md
+
+2. **MANDATORY - Display progress**:
+
+   ```text
+   ✓ Chunk 4/5 complete: Security + Deployment
+     - Security issues documented: [COUNT]
+     - Environments documented: [COUNT]
+     - Deployment diagram: ✓
+     - Lines generated: [COUNT]
+
+   ```
 
 ---
 
-## Chunk 5: Testing + Observability + Technical Debt
+### Chunk 5: Testing + Observability + Technical Debt
 
 Generate Sections 9, 10, and 11.
 
 ---
+
 ⏸️ **[STOP: GENERATE_CHUNK_5]**
 
-### Section 9: Testing Infrastructure
+#### Section 9: Testing Infrastructure
 
 ```markdown
 ## 9. Testing Infrastructure
@@ -426,10 +583,9 @@ Generate Sections 9, 10, and 11.
 | Component | Gap | Priority |
 |-----------|-----|----------|
 | {component} | {no tests/partial} | {HIGH/MEDIUM/LOW} |
-
 ```
 
-### Section 10: Observability
+#### Section 10: Observability
 
 ```markdown
 ## 10. Observability
@@ -457,10 +613,9 @@ Generate Sections 9, 10, and 11.
 | Endpoint | Purpose | Source |
 |----------|---------|--------|
 | {path} | {purpose} | {file:line} |
-
 ```
 
-### Section 11: Technical Debt Summary
+#### Section 11: Technical Debt Summary
 
 ```markdown
 ## 11. Technical Debt Summary
@@ -488,28 +643,190 @@ Generate Sections 9, 10, and 11.
 | Concern | Description | Impact |
 |---------|-------------|--------|
 | {concern} | {description} | {impact} |
-
 ```
 
-Append to: `{reports_dir}/technical-spec-legacy.md`
+**Completion Criteria**:
 
-**Verify:** Read complete file, confirm:
-- All 11 sections present
-- All components have file:line references
-- Diagrams render correctly
-- No placeholders or TODOs
+- ✓ Testing infrastructure documented
+- ✓ Observability stack documented
+- ✓ Technical debt items categorized
+- ✓ All components have file:line references
+- ✓ NO placeholders
 
-**Output:**
+**After Chunk 5 Generation**:
+
+1. **Append to file** using Edit tool:
+   - Append Sections 9, 10, and 11 to technical-spec-legacy.md
+
+2. **Verify:** Read complete file, confirm:
+   - All 11 sections present
+   - All components have file:line references
+   - Diagrams render correctly
+   - No placeholders or TODOs
+
+3. **MANDATORY - Display progress and final summary**:
+
+   ```text
+   ✓ Chunk 5/5 complete: Testing + Observability + Technical Debt
+     - Test categories documented: [COUNT]
+     - Technical debt items: [COUNT]
+     - Lines generated: [COUNT]
+
+   ✅ technical-spec-legacy.md GENERATION COMPLETE
+      Total sections: 11
+      Total diagrams: [COUNT]
+      Total lines: [COUNT]
+      File path: {reports_dir}/technical-spec-legacy.md
+
+   ```
+
+---
+
+## Verification Gate (HARD STOP)
+
+⚠️ **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
+
+**BEFORE** proceeding to 06c2-technical-spec-target.md, verify spec quality:
+
+### Verification Checklist
+
+Read technical-spec-legacy.md and verify:
+
+- [ ] File exists at expected path: `{reports_dir}/technical-spec-legacy.md`
+- [ ] All 11 section headers present:
+      - [ ] Section 1: Introduction
+      - [ ] Section 2: Architecture Overview (with C4 diagrams)
+      - [ ] Section 3: Technology Stack
+      - [ ] Section 4: Data Architecture (with ERD)
+      - [ ] Section 5: API Design
+      - [ ] Section 6: Integration Architecture
+      - [ ] Section 7: Security Architecture
+      - [ ] Section 8: Deployment Architecture
+      - [ ] Section 9: Testing Infrastructure
+      - [ ] Section 10: Observability
+      - [ ] Section 11: Technical Debt Summary
+- [ ] Quality checks:
+      - [ ] 30+ file:line references present throughout
+      - [ ] C4 diagrams at 3 levels (Context, Container, Component)
+      - [ ] ERD diagram for data model
+      - [ ] Deployment diagram present
+      - [ ] All API endpoints have file:line references
+      - [ ] Security issues have severity ratings
+      - [ ] Technical debt items categorized
+      - [ ] No placeholders (TODO, TBD, "will be analyzed", "coming soon")
+      - [ ] All Mermaid diagrams render correctly
+- [ ] Completeness (verify based on project size/complexity):
+      - [ ] **Small projects (< 5,000 LOC)**:
+            - Total lines: 800+ (minimum)
+            - Diagrams: 4+ (C4x3, ERD, deployment)
+            - Technical debt items: 5-15
+      - [ ] **Medium projects (5,000-50,000 LOC)**:
+            - Total lines: 2,000+ (minimum)
+            - Diagrams: 6+ (C4x3, ERD, deployment, sequence)
+            - Technical debt items: 15-40
+      - [ ] **Large projects (> 50,000 LOC)**:
+            - Total lines: 4,000+ (minimum)
+            - Diagrams: 8+ (multiple of each type)
+            - Technical debt items: 40-100
+
+---
+
+### Recovery Actions (IF ANY CHECKBOX FAILS)
+
+**IF ANY checkbox is unchecked**:
 
 ```text
-technical-spec-legacy.md Chunk 5/5 complete: Testing + Observability + Debt
-  - Lines: [COUNT]
+❌ VERIFICATION FAILED
 
-technical-spec-legacy.md COMPLETE (5/5 chunks)
-   Total diagrams: [COUNT]
-   Total lines: [COUNT]
-
+technical-spec-legacy.md is incomplete. Issues found:
+- [List specific missing items from checklist above]
 ```
+
+**RECOVERY DECISION TREE**:
+
+**1. Identify incomplete sections**:
+
+List which sections or quality checks failed verification.
+
+**2. Determine recovery approach**:
+
+**IF** entire sections missing (e.g., Section 7 not found in file):
+
+- **Action**: Regenerate ONLY the missing sections
+- **Method**:
+  1. Check technical-spec-legacy.md content to identify last completed section
+  2. Resume generation from first missing section
+  3. Use Edit tool to append missing sections to existing file
+  4. Re-run verification after regeneration
+
+**IF** quality issues in existing sections (e.g., diagrams not rendering):
+
+- **Action**: Fix the problematic diagrams or add missing details
+- **Method**:
+  1. Read the problematic section from technical-spec-legacy.md
+  2. Identify specific issues (broken Mermaid syntax, missing refs, etc.)
+  3. Regenerate that section with proper detail
+  4. Use Edit tool to replace the incomplete section
+  5. Re-run verification after enhancement
+
+**IF** multiple critical failures (>3 sections missing OR >5 quality issues):
+
+- **Action**: Recommend full regeneration from scratch
+- **Display**:
+
+  ```text
+  ⚠️ MULTIPLE CRITICAL ISSUES DETECTED
+
+  Issues found:
+  - Missing sections: [COUNT]
+  - Quality failures: [COUNT]
+
+  Recommendation: Full regeneration recommended due to extent of issues.
+  ```
+
+- **Ask user**:
+
+  ```text
+  Recovery options:
+  [A] Regenerate entire technical-spec-legacy.md from scratch
+  [B] Fix individual sections (may take longer)
+  [C] Proceed anyway (NOT RECOMMENDED - will cause issues in next stage)
+
+  Your choice: ___
+  ```
+
+**3. Execute recovery**:
+
+- Based on failure type, perform specific recovery actions
+- Use appropriate tools (Edit for fixes, Write for full regen)
+- Re-run verification after recovery
+- **DO NOT proceed to 06c2 until verification passes**
+
+⚠️ **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
+
+---
+
+### Verification Success
+
+**IF ALL checkboxes are checked**:
+
+```text
+✅ VERIFICATION PASSED
+
+technical-spec-legacy.md is complete and meets quality standards:
+- All 11 sections present and complete
+- 30+ file:line references found
+- C4 diagrams at all 3 levels
+- ERD and deployment diagrams present
+- Security issues documented with severity
+- Technical debt categorized
+- No placeholders or incomplete sections
+- Total lines: [COUNT] (comprehensive spec)
+
+Proceeding to 06c2-technical-spec-target.md...
+```
+
+**Only after passing verification**: Proceed to next stage
 
 ---
 
@@ -530,7 +847,6 @@ technical-spec-legacy.md COMPLETE (5/5 chunks)
 ═══════════════════════════════════════════════════════════
 
 ARTIFACT_COMPLETE:TECHNICAL_SPEC_LEGACY
-
 ```
 
 ---
@@ -542,6 +858,7 @@ Run: `speckitadv analyze-project`
 The CLI will auto-detect the current stage and emit the next prompt.
 
 **DO NOT:**
+
 - Skip to stage-prompts/
 - Mark Stage 6 complete
 - Include modernization recommendations
