@@ -510,15 +510,23 @@ def _emit_chunk_stage(
     # Emit chunk - use analysis_dir from context
     analysis_dir = context.get("analysis_dir", str(analysis_dir_path))
 
-    # Stage 16 chunks map to specific output files
+    # Stage 16 chunks map to specific output files (scope-aware)
     if stage == 16:
-        stage_16_file_map = {
-            1: "reports/functional-spec-legacy.md",
-            2: "reports/functional-spec-target.md",
-            3: "reports/technical-spec-legacy.md",
-            4: "reports/technical-spec-target.md",
-            5: "reports/stage-prompts/",
-        }
+        effective_scope = context.get("scope", "A")
+        if effective_scope == "A":
+            # Scope A: 5 chunks for functional specs, technical specs, stage-prompts
+            stage_16_file_map = {
+                1: "reports/functional-spec-legacy.md",
+                2: "reports/functional-spec-target.md",
+                3: "reports/technical-spec-legacy.md",
+                4: "reports/technical-spec-target.md",
+                5: "stage-prompts/constitution-prompt.md",  # First of 4 prompts
+            }
+        else:
+            # Scope B: 1 chunk for cross-cutting artifacts
+            stage_16_file_map = {
+                1: "reports/abstraction-assessment.md",  # First of 3 artifacts
+            }
         chunk_file = stage_16_file_map.get(chunk, f"stage{stage}-chunk{chunk}.md")
         file_path = f"{analysis_dir}/{chunk_file}"
     else:

@@ -249,4 +249,9 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ## Next Stage
 
-Proceed to: **Stage 6: 06-scope-artifacts.md** (Generate scope-specific artifacts)
+Proceed to **Stage 6** (Scope-Specific Artifacts):
+
+- **Scope A (Full App):** 06a-functional-spec-legacy.md → 06b → 06c1 → 06c2 → 06d-stage-prompts.md
+- **Scope B (Cross-Cutting):** 06e-cross-cutting-artifacts.md
+
+The CLI auto-detects scope and emits the appropriate prompt.

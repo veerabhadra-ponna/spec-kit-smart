@@ -1040,13 +1040,13 @@ def update_preferences_cmd(
     Called by AI agent after collecting Q1-Q10 responses in stage 3A.
     Preferences are merged with existing data (allows incremental updates).
 
-    Valid preference keys (Q1-Q10):
-        target_language, target_database, message_bus, package_manager,
-        deployment_target, iac_tool, container_strategy, observability_stack,
-        security_approach, testing_approach
+    Valid preference keys (Q1-Q10, must match prompts 03a1/03a2):
+        q1_language, q2_database, q3_message_bus, q4_package_manager,
+        q5_deployment, q6_iac, q7_containerization, q8_observability,
+        q9_security, q10_testing
 
     Examples:
-        speckitadv update-preferences '{"target_language": "Java 21", "target_database": "PostgreSQL 16"}'
+        speckitadv update-preferences '{"q1_language": {"value": "Java 21"}, "q2_database": {"value": "PostgreSQL 16"}}'
     """
     import json
     from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
