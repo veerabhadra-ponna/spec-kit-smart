@@ -15,6 +15,10 @@
 - **[Branching Strategy](branching-strategy.md)** - Git workflow patterns
 - **[Troubleshooting](reference/troubleshooting.md)** - Common issues and solutions
 
+## Historical notes
+
+All historical planning documents have been consolidated into the active guides above. Older migration assessments and state design notes are now reflected in the main README, CLI reference, and reverse engineering guide.
+
 ## Contributing
 
 - **[Contributing Guide](../CONTRIBUTING.md)** - How to contribute (includes local development setup)
