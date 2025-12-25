@@ -15,6 +15,34 @@ Generate technical specification documenting HOW the LEGACY/EXISTING system is b
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**CLI Utility Commands:**
+
+- `speckitadv write-report <filename> --stage=06c1-technical-spec-legacy --content '<md>'` - Create new report
+- `speckitadv write-report <filename> --stage=06c1-technical-spec-legacy --content '<md>' --append` - Append to report
+
+---
+
+## ⚠️ CRITICAL: File Write Policy
+
+**ALWAYS use CLI commands for file writes. NEVER use:**
+
+- Shell/PowerShell commands (`Out-File`, `Add-Content`, `echo >`, `cat <<`)
+- AI Write tools directly to the analysis folder
+- Any method that bypasses the CLI artifact tracking
+
+**Why:** CLI commands track artifacts in state.json for workflow continuity.
+Any file written outside the CLI will NOT be tracked and may cause issues.
+
+---
+
 ## Pre-Check
 
 1. Read `{analysis_dir}/state.json`
