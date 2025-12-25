@@ -60,7 +60,8 @@ These are kept for reference but execution uses sub-prompts:
 4. **03b-cross-cutting.md** - Original Stage 3B
 5. **04-report-generation.md** - Original Stage 4
 6. **05-artifacts.md** - Original Stage 5
-7. **06-scope-artifacts.md** - Original Stage 6
+
+Note: Original Stage 6 (`06-scope-artifacts.md`) was split into 06a-06e sub-prompts in v3.1.
 
 ### Sub-Prompt Files (v3.1 - Used for Execution)
 
@@ -263,7 +264,6 @@ Stage 6 prompts use `{{include:template.md}}` syntax to inject reusable template
 
 | Prompt | Templates Included |
 |--------|-------------------|
-| `06-scope-artifacts.md` | functional-spec-template.md, technical-spec-template.md, stage-prompt-templates/* |
 | `06a-functional-spec-legacy.md` | functional-spec-template.md |
 | `06b-functional-spec-target.md` | functional-spec-template.md |
 | `06c1-technical-spec-legacy.md` | technical-spec-template.md |

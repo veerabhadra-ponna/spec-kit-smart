@@ -99,7 +99,16 @@ def init_state_dir(
 
 
 def validate_state(state: dict) -> bool:
-    """Validate state schema - check required fields."""
+    """Validate state schema - check required fields.
+
+    Design note: This validation is intentionally minimal, checking only
+    chain_id and timestamp. Per AGENTS.md "No Backward Compatibility" policy,
+    we don't need extensive schema validation for this pre-release system.
+
+    The primary state management now uses AnalysisStateManager and
+    FeatureStateManager in state.py which have structured dataclasses.
+    This function is kept for legacy chain state compatibility.
+    """
     chain_id = state.get("chain_id")
     timestamp = state.get("timestamp")
 
@@ -183,7 +192,15 @@ def load_state(
     try:
         with open(state_file, "r", encoding="utf-8") as f:
             return json.load(f)
-    except (OSError, IOError, json.JSONDecodeError):
+    except json.JSONDecodeError as e:
+        # Corrupted state file - warn user so they can recover
+        console.print(f"[yellow]⚠ Warning:[/yellow] Corrupted state file: {state_file}")
+        console.print(f"[dim]  JSON error: {e}[/dim]")
+        console.print("[dim]  Delete file to re-initialize or fix manually.[/dim]")
+        return None
+    except (OSError, IOError) as e:
+        console.print(f"[yellow]⚠ Warning:[/yellow] Cannot read state file: {state_file}")
+        console.print(f"[dim]  Error: {e}[/dim]")
         return None
 
 
