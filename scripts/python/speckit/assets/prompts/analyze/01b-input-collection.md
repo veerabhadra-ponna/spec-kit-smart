@@ -300,10 +300,10 @@ Pass collected inputs to the CLI to persist to state.json:
 
 ```bash
 # For Scope A:
-speckitadv analyze-project --scope=A --context="$ADDITIONAL_CONTEXT"
+speckitadv analyze-project --path="$PROJECT_PATH" --scope=A --context="$ADDITIONAL_CONTEXT"
 
 # For Scope B:
-speckitadv analyze-project --scope=B --context="$ADDITIONAL_CONTEXT" --concern-type="$CONCERN_TYPE" --current-impl="$CURRENT_IMPL" --target-impl="$TARGET_IMPL"
+speckitadv analyze-project --path="$PROJECT_PATH" --scope=B --context="$ADDITIONAL_CONTEXT" --concern-type="$CONCERN_TYPE" --current-impl="$CURRENT_IMPL" --target-impl="$TARGET_IMPL"
 ```
 
 **IF inputs were pre-provided via CLI (template variables were set):**

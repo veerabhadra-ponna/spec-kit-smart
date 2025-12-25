@@ -252,6 +252,26 @@ def run_analyze_project(
         "total_stages": total_stages,
     }
 
+    # For stages 1-2 (input collection), use $NONE markers for inputs that weren't
+    # explicitly provided via CLI args. This triggers interactive prompts in the
+    # prompt templates. Without this, the CLI would auto-default to cwd/"A" and
+    # the prompts would skip interactive mode.
+    if stage <= 2:
+        if path is None:
+            render_context["project_path"] = "$NONE"
+        if scope is None:
+            render_context["scope"] = "$NONE"
+        if context is None:
+            render_context["context"] = "$NONE"
+        if concern_type is None:
+            render_context["concern_type"] = "$NONE"
+        if current_impl is None:
+            render_context["current_impl"] = "$NONE"
+            render_context["current_implementation"] = "$NONE"
+        if target_impl is None:
+            render_context["target_impl"] = "$NONE"
+            render_context["target_implementation"] = "$NONE"
+
     # Handle chunked stages
     if chunk is not None:
         _emit_chunk_stage(stage, chunk, analysis_dir_path, render_context, state_manager)
