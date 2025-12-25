@@ -603,9 +603,10 @@ Proceeding to Stage 5 (Artifact Generation)...
 
 ```text
 STAGE_COMPLETE:REPORT
-STATE_PATH: .analysis/.state/analyze-project-04-report.json
 
 ```
+
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 

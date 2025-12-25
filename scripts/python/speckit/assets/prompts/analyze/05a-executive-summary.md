@@ -212,7 +212,7 @@ This saves to: `{data_dir}/metrics-summary.json`
 
 ```
 
-Write to: `.analysis/.state/analyze-project-05-artifacts.json`
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 

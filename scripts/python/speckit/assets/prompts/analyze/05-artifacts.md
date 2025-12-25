@@ -32,7 +32,7 @@ Generate common artifacts that are required for both analysis scopes. Scope-spec
 
 ## Previous State
 
-Load state from: `.analysis/.state/analyze-project-04-report.json`
+Load state from: `{analysis_dir}/state.json`
 
 Required:
 - `report_generated` must be `true`
@@ -240,9 +240,10 @@ Before proceeding to Stage 6, verify:
 
 ```text
 STAGE_COMPLETE:COMMON_ARTIFACTS
-STATE_PATH: .analysis/.state/analyze-project-05-artifacts.json
 
 ```
+
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 

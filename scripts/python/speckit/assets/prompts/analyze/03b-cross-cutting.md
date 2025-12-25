@@ -442,9 +442,10 @@ Business:
 
 ```text
 STAGE_COMPLETE:CROSS_CUTTING
-STATE_PATH: .analysis/.state/analyze-project-03b-cross-cutting.json
 
 ```
+
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 

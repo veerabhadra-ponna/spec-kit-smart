@@ -292,7 +292,7 @@ BUSINESS (Validation):
 
 ### Save State
 
-Write to: `.analysis/.state/analyze-project-03b-cross-cutting.json`
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 
@@ -301,7 +301,7 @@ Write to: `.analysis/.state/analyze-project-03b-cross-cutting.json`
 ---
 ⏸️ **[STOP: VERIFY_STATE_SAVED]**
 
-1. Read `.analysis/.state/analyze-project-03b-cross-cutting.json`
+1. Read `{analysis_dir}/state.json`
 2. Validate JSON is parseable
 3. Confirm all required sections present
 4. Confirm `stages_complete` includes "cross_cutting_analysis"
@@ -327,8 +327,6 @@ Write to: `.analysis/.state/analyze-project-03b-cross-cutting.json`
     Strategy: {strategy}
     Duration: {weeks} weeks
     Effort: {person_days} person-days
-
-  State: .analysis/.state/analyze-project-03b-cross-cutting.json
 
   Proceeding to Stage 4: Report Generation
 ═══════════════════════════════════════════════════════════

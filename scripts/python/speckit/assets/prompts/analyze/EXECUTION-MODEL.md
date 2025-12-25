@@ -40,10 +40,9 @@ speckitadv analyze-project --path /path/to/project --scope A
 3. Generates `file-manifest.json`
 4. Creates analysis workspace directory
 5. Initializes chain state
-   - Creates `.analysis/.state/` directory
-   - Creates `{analysis_dir}/` directory
+   - Creates `{analysis_dir}/` directory with `data/` and `reports/` subdirectories
    - Generates unique chain ID
-   - Saves bootstrap state to `.analysis/.state/analyze-project-00-bootstrap.json`
+   - Creates `{analysis_dir}/state.json` (single state file)
 6. Hands off to AI
 
 ### 3. AI Execution (Sub-Prompt Workflow)
@@ -69,37 +68,36 @@ ENDFOR
 ### 4. State Flow Diagram
 
 ```text
-Bootstrap State (from script)
-    ↓  .analysis/.state/analyze-project-00-bootstrap.json
+Single State File: {analysis_dir}/state.json (CLI managed)
 
 Stage 1: Setup and Scope
-    ↓  01a-initialization.md → state.json (tracked by CLI)01a-init-complete.json
-    ↓  01b-input-collection.md → state.json (tracked by CLI)01b-inputs-complete.json
-    ↓  01c-script-execution.md → .state/analyze-project-01-setup-and-scope.json
+    ↓  01a-initialization.md → updates state.json
+    ↓  01b-input-collection.md → updates state.json
+    ↓  01c-script-execution.md → updates state.json
 
 Stage 2: File Analysis
-    ↓  02a-category-scan.md → state.json (tracked by CLI)02a-category-complete.json
-    ↓  02b-deep-dive.md → state.json (tracked by CLI)02b-deepdive-complete.json
-    ↓  02c-config-analysis.md → state.json (tracked by CLI)02c-config-complete.json
-    ↓  02d-test-audit.md → state.json (tracked by CLI)02d-test-complete.json
-    ↓  02e-quality-gates.md → .state/analyze-project-02-file-analysis.json
+    ↓  02a-category-scan.md → updates state.json, writes data/category-patterns.json
+    ↓  02b-deep-dive.md → updates state.json, writes data/deep-dive.json
+    ↓  02c-config-analysis.md → updates state.json, writes data/config-analysis.json
+    ↓  02d-test-audit.md → updates state.json, writes data/test-audit.json
+    ↓  02e-quality-gates.md → updates state.json
 
 Stage 3: Branch (based on analysis_scope)
-    ↓  IF scope=A: 03a1-4 sub-prompts → .state/analyze-project-03a-full-app.json
-    ↓  IF scope=B: 03b1-3 sub-prompts → .state/analyze-project-03b-cross-cutting.json
+    ↓  IF scope=A: 03a1-4 sub-prompts → updates state.json
+    ↓  IF scope=B: 03b1-3 sub-prompts → updates state.json
 
 Stage 4: Report Generation
-    ↓  04a-report-chunks-1-3.md → state.json (tracked by CLI)04a-chunks-complete.json
-    ↓  04b-report-chunks-4-6.md → state.json (tracked by CLI)04b-chunks-complete.json
-    ↓  04c-report-chunks-7-9.md → state.json (tracked by CLI)04c-chunks-complete.json
-    ↓  04d-report-verification.md → .state/analyze-project-04-report.json
+    ↓  04a-report-chunks-1-3.md → updates state.json, writes reports/analysis-report.md
+    ↓  04b-report-chunks-4-6.md → updates state.json, appends reports/analysis-report.md
+    ↓  04c-report-chunks-7-9.md → updates state.json, appends reports/analysis-report.md
+    ↓  04d-report-verification.md → updates state.json
 
 Stage 5: Common Artifacts
-    ↓  05a-executive-summary.md → .state/analyze-project-05-artifacts.json
+    ↓  05a-executive-summary.md → updates state.json, writes reports/EXECUTIVE-SUMMARY.md
 
 Stage 6: Scope-Specific Artifacts
-    ↓  IF scope=A: 06a-d sub-prompts → .state/analyze-project-06-scope-artifacts.json
-    ↓  IF scope=B: 06e sub-prompt → .state/analyze-project-06-scope-artifacts.json
+    ↓  IF scope=A: 06a-d sub-prompts → updates state.json
+    ↓  IF scope=B: 06e sub-prompt → updates state.json
 
 COMPLETE
 
@@ -211,25 +209,18 @@ With verification:
 ### State Files
 
 ```text
-.analysis/
-├── .state/
-│   ├── analyze-project-00-bootstrap.json       # Created by setup script
-│   ├── analyze-project-01-setup-and-scope.json # Created by AI (Stage 1)
-│   ├── analyze-project-02-file-analysis.json   # Created by AI (Stage 2)
-│   ├── analyze-project-03a-full-app.json       # Created by AI (Stage 3A) OR
-│   ├── analyze-project-03b-cross-cutting.json  # Created by AI (Stage 3B)
-│   ├── analyze-project-04-report.json          # Created by AI (Stage 4)
-│   ├── analyze-project-05-artifacts.json       # Created by AI (Stage 5)
-│   └── analyze-project-06-scope-artifacts.json # Created by AI (Stage 6)
-├── state.json (tracked by CLI)
-│   ├── 01a-init-complete.json
-│   ├── 01b-inputs-complete.json
-│   ├── 01c-script-complete.json
-│   ├── 02a-category-complete.json
-│   ├── ... (one per sub-prompt)
-│   └── stage-prompts-complete.json
-└── {project}-{timestamp}/
-    └── ... (analysis artifacts)
+.analysis/{project}-{timestamp}/     # = {analysis_dir}
+├── state.json                       # Single state file (CLI managed)
+├── data/                            # = {data_dir}
+│   ├── file-manifest.json           # Project file listing
+│   ├── tech-stack.json              # Detected technologies
+│   ├── category-patterns.json       # Stage 2A results
+│   ├── deep-dive.json               # Stage 2B results
+│   ├── config-analysis.json         # Stage 2C results
+│   └── test-audit.json              # Stage 2D results
+└── reports/                         # = {reports_dir}
+    ├── analysis-report.md           # Main report (9 chunks)
+    └── EXECUTIVE-SUMMARY.md         # 1-page summary
 
 ```
 
@@ -289,17 +280,13 @@ If state verification fails:
 If analysis is interrupted, AI can resume:
 
 ```bash
-# Check last completed state
+# Load current state
 
-ls -lt {analysis_dir}/*-complete.json | head -1
+cat {analysis_dir}/state.json
 
-# Load last state
+# Check stages_complete array to determine resume point
 
-cat .analysis/.state/analyze-project-02-file-analysis.json
-
-# Resume from next sub-prompt
-
-# If last state is 02c-config-complete.json, resume from 02d-test-audit.md
+# Resume from next sub-prompt based on last completed stage
 
 ```
 

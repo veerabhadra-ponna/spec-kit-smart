@@ -295,7 +295,7 @@ Merge all Stage 3A data into comprehensive state:
 
 ### Save State
 
-Write to: `.analysis/.state/analyze-project-03a-full-app.json`
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 
@@ -304,7 +304,7 @@ Write to: `.analysis/.state/analyze-project-03a-full-app.json`
 ---
 ⏸️ **[STOP: VERIFY_STATE_SAVED]**
 
-1. Read `.analysis/.state/analyze-project-03a-full-app.json`
+1. Read `{analysis_dir}/state.json`
 2. Validate JSON is parseable
 3. Confirm all required sections present
 4. Confirm `stages_complete` includes "full_app_analysis"
@@ -326,8 +326,6 @@ Write to: `.analysis/.state/analyze-project-03a-full-app.json`
     Scope Validated: ✓
     Complexity: {rating}
     Primary Recommendation: {approach} ({confidence}%)
-
-  State: .analysis/.state/analyze-project-03a-full-app.json
 
   Proceeding to Stage 4: Report Generation
 ═══════════════════════════════════════════════════════════

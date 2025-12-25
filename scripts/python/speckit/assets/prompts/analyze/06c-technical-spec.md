@@ -19,7 +19,7 @@ Generate technical specification documenting HOW to build the modernized system.
 
 1. Read `{analysis_dir}/state.json`
 2. Confirm `status` = "complete"
-3. Load user's modernization preferences from `.analysis/.state/analyze-project-03a-full-app.json`
+3. Load user's modernization preferences from state.json (in `modernization_preferences` field)
 
 **IF not complete:** STOP - Return to 06b-functional-spec-target.md
 
@@ -28,8 +28,8 @@ Generate technical specification documenting HOW to build the modernized system.
 ## Source of Truth
 
 **Sources:**
-- `{analysis_dir}/analysis-report.md`
-- `.analysis/.state/analyze-project-03a-full-app.json` (10 modernization preferences)
+- `{reports_dir}/analysis-report.md`
+- `{analysis_dir}/state.json` (`modernization_preferences` field - 10 questions)
 - Both functional specs for feature reference
 
 **Template:**

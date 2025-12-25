@@ -17,10 +17,10 @@ Generate artifacts specific to Cross-Cutting Concern Migration (Scope B). This i
 
 ## Pre-Check
 
-1. Read `.analysis/.state/analyze-project-05-artifacts.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `common_artifacts_complete` = true
 3. Confirm `analysis_scope` = "B"
-4. Load concern details from `.analysis/.state/analyze-project-03b-cross-cutting.json`
+4. Load concern details from `concern_analysis` field in state.json
 
 **IF not complete:** STOP - Return to 05a-executive-summary.md
 
@@ -587,7 +587,7 @@ Write to: `{analysis_dir}/rollback-procedure.md`
 
 ```
 
-Write to: `.analysis/.state/analyze-project-06-scope-artifacts.json`
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 
@@ -607,8 +607,6 @@ Write to: `.analysis/.state/analyze-project-06-scope-artifacts.json`
     ✓ abstraction-assessment.md
     ✓ concern-migration-plan.md
     ✓ rollback-procedure.md
-
-  State: .analysis/.state/analyze-project-06-scope-artifacts.json
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:SCOPE_ARTIFACTS

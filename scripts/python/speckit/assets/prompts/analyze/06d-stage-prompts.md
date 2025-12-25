@@ -297,7 +297,7 @@ Write to: `{analysis_dir}/stage-prompts/implement-prompt.md`
 
 ```
 
-Write to: `.analysis/.state/analyze-project-06-scope-artifacts.json`
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 
@@ -317,8 +317,6 @@ Write to: `.analysis/.state/analyze-project-06-scope-artifacts.json`
     ✓ stage-prompts/clarify-prompt.md
     ✓ stage-prompts/tasks-prompt.md
     ✓ stage-prompts/implement-prompt.md
-
-  State: .analysis/.state/analyze-project-06-scope-artifacts.json
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:SCOPE_ARTIFACTS
