@@ -198,6 +198,57 @@ class TestAutoDetectStageFromState:
         result = _auto_detect_stage_from_state(state)
         assert result == 10, "Stage 10 in_progress should return 10 for chunk handling"
 
+    def test_stage_16_in_progress_returns_16(self):
+        """Stage 16 (Scope Artifacts) in_progress should return 16 for chunk handling."""
+        state = AnalysisState(
+            stages={
+                "06a-functional-spec-legacy": {"status": "in_progress"},
+            },
+            stages_complete=["05a-executive-summary"],  # Stage 15 completed
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 16, "Stage 16 in_progress should return 16 for chunk handling"
+
+    def test_stage_16_completed_returns_none(self):
+        """Stage 16 completed should return None (workflow complete)."""
+        state = AnalysisState(
+            stages={
+                "06a-functional-spec-legacy": {"status": "completed"},
+            },
+            stages_complete=["05a-executive-summary", "06a-functional-spec-legacy"],
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result is None, "Stage 16 completed should return None (workflow complete)"
+
+    def test_multiple_in_progress_chunked_takes_priority(self):
+        """When both chunked and non-chunked stages are in_progress, chunked is returned."""
+        state = AnalysisState(
+            stages={
+                "stage_5": {"status": "in_progress"},  # Non-chunked
+                "03a-full-app": {"status": "in_progress"},  # Chunked (stage 9)
+            },
+            stages_complete=["02e-quality-gates"],  # Stage 8 completed
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        # Should return 9 (chunked stage) even though stage 5 is also in_progress
+        assert result == 9, "Chunked stage in_progress should take priority"
+
+    def test_non_chunked_in_progress_advances(self):
+        """Non-chunked stages in_progress should be treated as complete for advancement."""
+        state = AnalysisState(
+            stages={
+                "stage_5": {"status": "in_progress"},  # Non-chunked, deep dive
+            },
+            stages_complete=["02a-category-scan"],  # Stage 4 completed
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        # Stage 5 in_progress treated as complete, should advance to 6
+        assert result == 6, "Non-chunked in_progress should advance to next stage"
+
 
 class TestAnalyzeProjectCorruptedState:
     """Tests for JSON decode error handling in analyze_project command."""
