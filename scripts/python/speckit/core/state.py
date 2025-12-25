@@ -605,6 +605,15 @@ class AnalysisStateManager:
     def update_modernization_preferences(self, preferences: dict) -> AnalysisState:
         """Update modernization preferences in state.
 
+        Uses shallow merge (dict.update) to combine new preferences with existing.
+        This is intentional: Q1-Q10 preferences are flat string values per the
+        03a1/03a2 prompt schema. If nested values are needed in the future,
+        callers should provide complete nested objects rather than partial updates.
+
+        Design rationale: Deep merge adds complexity without clear benefit given
+        the current schema. The current approach is simple, predictable, and
+        matches how Python's dict.update() works.
+
         Args:
             preferences: Dict with Q1-Q10 answers from 03a1 and 03a2 stages
 
@@ -612,7 +621,7 @@ class AnalysisStateManager:
             Updated AnalysisState
         """
         state = self.load()
-        # Merge with existing preferences (allows incremental updates)
+        # Shallow merge - see docstring for design rationale
         state.modernization_preferences.update(preferences)
         self.save(state)
         return state

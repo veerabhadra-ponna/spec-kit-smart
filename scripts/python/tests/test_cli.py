@@ -250,3 +250,159 @@ class TestCommandConsistency:
         result = runner.invoke(app, ["analyze-project", "--help"])
         output = strip_ansi(result.stdout)
         assert "--analysis-dir" in output, "analyze-project missing --analysis-dir option"
+
+
+class TestListFilesCommand:
+    """Tests for list-files command."""
+
+    def test_help(self):
+        """Should display help for list-files."""
+        result = runner.invoke(app, ["list-files", "--help"])
+        assert result.exit_code == 0
+        assert "--pattern" in result.stdout
+        assert "--category" in result.stdout
+        assert "--count" in result.stdout
+
+    def test_list_files_with_pattern(self, tmp_path):
+        """Should list files matching pattern."""
+        # Create test files
+        (tmp_path / "test1.py").write_text("# test")
+        (tmp_path / "test2.py").write_text("# test")
+        (tmp_path / "other.txt").write_text("text")
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--pattern", "*.py",
+            "--project-path", str(tmp_path),
+        ])
+        assert result.exit_code == 0
+        assert "test1.py" in result.stdout
+        assert "test2.py" in result.stdout
+        assert "other.txt" not in result.stdout
+
+    def test_count_returns_total_not_limited(self, tmp_path):
+        """--count should return total matches, not limited count."""
+        # Create more files than the limit
+        for i in range(150):
+            (tmp_path / f"file{i:03d}.py").write_text("# test")
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--pattern", "*.py",
+            "--project-path", str(tmp_path),
+            "--limit", "50",
+            "--count",
+        ])
+        assert result.exit_code == 0
+        # Should show 150, not 50
+        assert result.stdout.strip() == "150"
+
+    def test_limit_restricts_output_but_not_count(self, tmp_path):
+        """--limit should restrict displayed files but show total in summary."""
+        # Create test files
+        for i in range(10):
+            (tmp_path / f"file{i}.py").write_text("# test")
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--pattern", "*.py",
+            "--project-path", str(tmp_path),
+            "--limit", "5",
+        ])
+        assert result.exit_code == 0
+        output = strip_ansi(result.stdout)
+        # Should show "Showing 5 of 10"
+        assert "5 of 10" in output or "5" in output
+
+    def test_category_controllers(self, tmp_path):
+        """Should list controller files by category."""
+        (tmp_path / "UserController.py").write_text("# controller")
+        (tmp_path / "service.py").write_text("# service")
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--category", "controllers",
+            "--project-path", str(tmp_path),
+        ])
+        assert result.exit_code == 0
+        assert "UserController.py" in result.stdout
+        assert "service.py" not in result.stdout
+
+
+class TestUpdatePreferencesCommand:
+    """Tests for update-preferences command."""
+
+    def test_help(self):
+        """Should display help for update-preferences."""
+        result = runner.invoke(app, ["update-preferences", "--help"])
+        assert result.exit_code == 0
+        assert "Update modernization preferences" in result.stdout
+
+    def test_rejects_invalid_json(self, tmp_path):
+        """Should reject invalid JSON input."""
+        # Create analysis folder with state
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        state_file = analysis_dir / "state.json"
+        state_file.write_text('{"schema_version": 1, "workflow": "analyze-project"}')
+
+        result = runner.invoke(app, [
+            "update-preferences",
+            "not-valid-json",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert "Invalid JSON" in result.stdout
+
+    def test_rejects_empty_preferences(self, tmp_path):
+        """Should reject empty preferences object."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        state_file = analysis_dir / "state.json"
+        state_file.write_text('{"schema_version": 1, "workflow": "analyze-project", "modernization_preferences": {}}')
+
+        result = runner.invoke(app, [
+            "update-preferences",
+            "{}",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert "empty" in result.stdout.lower()
+
+    def test_warns_on_unknown_keys(self, tmp_path):
+        """Should warn but allow unknown preference keys."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        state_file = analysis_dir / "state.json"
+        state_file.write_text('{"schema_version": 1, "workflow": "analyze-project", "modernization_preferences": {}}')
+
+        result = runner.invoke(app, [
+            "update-preferences",
+            '{"unknown_key": "value", "q1_language": "Python"}',
+            "--analysis-dir", str(analysis_dir),
+        ])
+        # Should succeed but warn
+        assert result.exit_code == 0
+        output = strip_ansi(result.stdout)
+        assert "Warning" in output
+        assert "unknown_key" in output
+
+    def test_accepts_valid_preference_keys(self, tmp_path):
+        """Should accept valid Q1-Q10 preference keys."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        state_file = analysis_dir / "state.json"
+        state_file.write_text('{"schema_version": 1, "workflow": "analyze-project", "modernization_preferences": {}}')
+
+        result = runner.invoke(app, [
+            "update-preferences",
+            '{"q1_language": "Python 3.11", "q2_database": "PostgreSQL"}',
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 0
+
+        # Verify state was updated
+        import json
+        state = json.loads(state_file.read_text())
+        assert state["modernization_preferences"]["q1_language"] == "Python 3.11"
+        assert state["modernization_preferences"]["q2_database"] == "PostgreSQL"

@@ -537,6 +537,10 @@ def _emit_chunk_stage(
             #   - reports/abstraction-assessment.md
             #   - reports/concern-migration-plan.md
             #   - reports/rollback-procedure.md
+            # Design note: We display "reports/" as guidance rather than individual
+            # filenames because the prompt (06e-cross-cutting-artifacts.md) provides
+            # explicit file paths for each artifact. This avoids redundancy and keeps
+            # the CLI guidance simple. AI agents follow the prompt's Write instructions.
             stage_16_file_map = {
                 1: "reports/",  # All 3 cross-cutting artifacts written in this chunk
             }

@@ -1277,14 +1277,20 @@ def list_files_cmd(
                     matches.append(rel_path)
                     break
 
+    # Count total matches BEFORE applying limit (for accurate --count output)
+    total_count = len(matches)
     matches = sorted(matches)[:limit]
 
     if count_only:
-        print(len(matches))
+        print(total_count)
     else:
         for match in matches:
             print(match)
-        console.print(f"\n[dim]Total: {len(matches)} files[/dim]")
+        # Show both displayed count and total if limit was applied
+        if total_count > limit:
+            console.print(f"\n[dim]Showing {len(matches)} of {total_count} files (--limit={limit})[/dim]")
+        else:
+            console.print(f"\n[dim]Total: {total_count} files[/dim]")
 
 
 if __name__ == "__main__":

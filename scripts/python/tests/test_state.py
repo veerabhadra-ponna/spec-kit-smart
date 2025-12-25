@@ -454,6 +454,79 @@ class TestAnalysisStateManager:
         assert "01b-input-collection" in state.stages_complete
         assert "02a-category-scan" in state.stages_complete
 
+    def test_update_modernization_preferences(self, tmp_path):
+        """Should store modernization preferences from Q1-Q10."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        state = manager.update_modernization_preferences({
+            "q1_language": "Python 3.11",
+            "q2_database": "PostgreSQL",
+        })
+
+        assert state.modernization_preferences["q1_language"] == "Python 3.11"
+        assert state.modernization_preferences["q2_database"] == "PostgreSQL"
+
+    def test_update_modernization_preferences_merges(self, tmp_path):
+        """Should merge new preferences with existing (shallow merge).
+
+        Note: This is intentionally a shallow merge. For nested preference
+        values, the caller should provide the complete nested object.
+        Deep merge was considered but adds complexity without clear benefit
+        given the current Q1-Q10 schema uses flat string values.
+        """
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # First update
+        manager.update_modernization_preferences({
+            "q1_language": "Python 3.11",
+            "q2_database": "PostgreSQL",
+        })
+
+        # Second update - should merge, not replace
+        state = manager.update_modernization_preferences({
+            "q3_message_bus": "RabbitMQ",
+        })
+
+        # All three preferences should be present
+        assert state.modernization_preferences["q1_language"] == "Python 3.11"
+        assert state.modernization_preferences["q2_database"] == "PostgreSQL"
+        assert state.modernization_preferences["q3_message_bus"] == "RabbitMQ"
+
+    def test_update_modernization_preferences_overwrites_same_key(self, tmp_path):
+        """Should overwrite existing value for same key."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # First update
+        manager.update_modernization_preferences({"q1_language": "Python 3.10"})
+
+        # Update same key
+        state = manager.update_modernization_preferences({"q1_language": "Python 3.12"})
+
+        assert state.modernization_preferences["q1_language"] == "Python 3.12"
+
+    def test_get_context_includes_modernization_preferences(self, tmp_path):
+        """get_context_for_prompt should include modernization_preferences."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        manager.update_modernization_preferences({
+            "q1_language": "Go 1.21",
+            "q5_deployment": "Kubernetes",
+        })
+
+        context = manager.get_context_for_prompt()
+
+        assert "modernization_preferences" in context
+        assert context["modernization_preferences"]["q1_language"] == "Go 1.21"
+        assert context["modernization_preferences"]["q5_deployment"] == "Kubernetes"
+
 
 class TestCorruptedStateHandling:
     """Tests for corrupted state.json handling (fail-fast behavior)."""
