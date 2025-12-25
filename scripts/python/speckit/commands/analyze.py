@@ -511,6 +511,10 @@ def _emit_chunk_stage(
     analysis_dir = context.get("analysis_dir", str(analysis_dir_path))
 
     # Stage 16 chunks map to specific output files (scope-aware)
+    # NOTE: These paths are displayed as guidance for AI agents. The CLI does not
+    # write these files - AI agents write them directly following prompt instructions.
+    # stage-prompts/ is intentionally NOT under reports/ because it contains
+    # executable prompts for Spec Kit workflows, not analysis reports.
     if stage == 16:
         effective_scope = context.get("scope", "A")
         if effective_scope == "A":

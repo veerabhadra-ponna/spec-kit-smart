@@ -329,20 +329,20 @@ Merge all Q1-Q10 responses into modernization preferences:
 ```json
 {
   "modernization_preferences": {
-    "target_language": "{q1_language.value}",
-    "target_database": "{q2_database.value}",
-    "message_bus": "{q3_message_bus.value}",
-    "package_manager": "{q4_package_manager.value}",
-    "deployment_target": "{q5_deployment.value}",
-    "iac_tool": "{q6_iac.value}",
-    "containerization": "{q7_containerization.value}",
-    "observability": {
+    "q1_language": "{q1_language.value}",
+    "q2_database": "{q2_database.value}",
+    "q3_message_bus": "{q3_message_bus.value}",
+    "q4_package_manager": "{q4_package_manager.value}",
+    "q5_deployment": "{q5_deployment.value}",
+    "q6_iac": "{q6_iac.value}",
+    "q7_containerization": "{q7_containerization.value}",
+    "q8_observability": {
       "metrics": "{q8 metrics}",
       "logging": "{q8 logging}",
       "tracing": "{q8 tracing}"
     },
-    "security": "{q9_security.value}",
-    "testing": {
+    "q9_security": "{q9_security.value}",
+    "q10_testing": {
       "strategy": "{q10_testing.value}",
       "coverage_target": "{q10_testing.coverage_target}"
     }

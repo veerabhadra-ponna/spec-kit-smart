@@ -101,13 +101,17 @@ def emit_chunk(
     """
     Emit a chunk prompt for enforced document chunking.
 
+    NOTE: This function is DISPLAY-ONLY. It prints guidance/instructions to stdout
+    for the AI agent to follow. It does NOT write any files. The AI agent is
+    responsible for creating the actual artifacts based on the displayed guidance.
+
     Args:
         chunk_num: Current chunk number (1-indexed)
         total_chunks: Total number of chunks
         title: Chunk title (e.g., "Executive Summary")
         content: Instructions for this chunk
-        file_path: File to write to
-        mode: CREATE or APPEND
+        file_path: Suggested file path (displayed as guidance, not written)
+        mode: CREATE or APPEND (guidance for AI)
         line_range: (min_lines, max_lines) expected
         next_cmd: Command to run after completing this chunk
     """
