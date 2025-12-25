@@ -7,6 +7,7 @@ Spec Kit is a toolkit for Spec-Driven Development. See [README.md](README.md) fo
 ## General Practices
 
 - Changes to `__init__.py` require version rev in `pyproject.toml` and `CHANGELOG.md` entry.
+- **No Backward Compatibility**: System is pre-release; breaking changes are allowed. Do not add legacy mappings or compatibility shims.
 
 ### Chunked File Generation for Large Outputs
 

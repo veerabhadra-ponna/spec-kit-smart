@@ -14,6 +14,7 @@
 | **Chain mkdir** | Use semicolon: `mkdir folderA; mkdir folderB` |
 | **Doc Updates** | Increment version, add CHANGELOG entry if `__init__.py` or `pyproject.toml` changed |
 | **Large Files** | >1500 lines → chunked generation (300-800 lines/chunk) |
+| **No Backward Compatibility** | System is pre-release; breaking changes are allowed. Do not add legacy mappings or compatibility shims. |
 
 ---
 
