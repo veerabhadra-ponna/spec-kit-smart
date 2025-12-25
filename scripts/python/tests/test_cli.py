@@ -416,8 +416,9 @@ class TestWriteReportCommand:
         """Should display help for write-report."""
         result = runner.invoke(app, ["write-report", "--help"])
         assert result.exit_code == 0
-        assert "--content" in result.stdout
-        assert "--append" in result.stdout
+        output = strip_ansi(result.stdout)
+        assert "--content" in output
+        assert "--append" in output
 
     def test_rejects_path_in_filename(self, tmp_path):
         """Should reject filenames with path separators."""
