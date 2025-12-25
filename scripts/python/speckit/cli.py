@@ -1029,6 +1029,47 @@ def update_stage_cmd(
             console.print(f"    + {artifact}")
 
 
+@app.command("update-preferences")
+def update_preferences_cmd(
+    preferences: str = typer.Argument(..., help="JSON string with modernization preferences"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", help="Analysis folder (auto-detected if not provided)"),
+) -> None:
+    """
+    Update modernization preferences in state.json.
+
+    Called by AI agent after collecting Q1-Q10 responses in stage 3A.
+    Preferences are merged with existing data (allows incremental updates).
+
+    Examples:
+        speckitadv update-preferences '{"target_language": "Java 21", "target_database": "PostgreSQL 16"}'
+    """
+    import json
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
+
+    # Get analysis folder
+    if analysis_dir:
+        folder = Path(analysis_dir)
+    else:
+        try:
+            folder = find_latest_analysis_folder()
+        except FileNotFoundError:
+            console.print("[red]Error:[/red] No analysis folder found. Run analyze-project first.")
+            raise typer.Exit(1)
+
+    # Parse JSON
+    try:
+        prefs = json.loads(preferences)
+    except json.JSONDecodeError as e:
+        console.print(f"[red]Error:[/red] Invalid JSON: {e}")
+        raise typer.Exit(1)
+
+    state_manager = AnalysisStateManager(folder)
+    state_manager.update_modernization_preferences(prefs)
+    console.print(f"[green]✓[/green] Modernization preferences updated")
+    for key, value in prefs.items():
+        console.print(f"    {key}: {value}")
+
+
 @app.command("file-stats")
 def file_stats_cmd(
     filepath: str = typer.Argument(..., help="File path (relative to analysis folder or absolute)"),

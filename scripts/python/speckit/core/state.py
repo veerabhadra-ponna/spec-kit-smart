@@ -336,6 +336,8 @@ class AnalysisState:
     stages: dict = field(default_factory=dict)
     # Stages completed (list of stage IDs like "01a-initialization")
     stages_complete: list = field(default_factory=list)
+    # Modernization preferences (collected in stage 3A via 10 questions)
+    modernization_preferences: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         """Convert to dictionary."""
@@ -351,6 +353,7 @@ class AnalysisState:
             "inputs": self.inputs.to_dict(),
             "stages": self.stages,
             "stages_complete": self.stages_complete,
+            "modernization_preferences": self.modernization_preferences,
         }
 
     @classmethod
@@ -368,6 +371,7 @@ class AnalysisState:
             inputs=AnalysisInputs.from_dict(data.get("inputs", {})),
             stages=data.get("stages", {}),
             stages_complete=data.get("stages_complete", []),
+            modernization_preferences=data.get("modernization_preferences", {}),
         )
 
     def to_json(self, indent: int = 2) -> str:
@@ -597,6 +601,21 @@ class AnalysisStateManager:
             self._add_artifact_to_stage(stage, f"reports/{filename}")
 
         return file_path
+
+    def update_modernization_preferences(self, preferences: dict) -> AnalysisState:
+        """Update modernization preferences in state.
+
+        Args:
+            preferences: Dict with Q1-Q10 answers from 03a1 and 03a2 stages
+
+        Returns:
+            Updated AnalysisState
+        """
+        state = self.load()
+        # Merge with existing preferences (allows incremental updates)
+        state.modernization_preferences.update(preferences)
+        self.save(state)
+        return state
 
     def _add_artifact_to_stage(self, stage: str, artifact_path: str) -> None:
         """Add artifact path to stage's artifact list."""

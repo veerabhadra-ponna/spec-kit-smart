@@ -353,6 +353,18 @@ Merge all Q1-Q10 responses into modernization preferences:
 
 ---
 
+## Persist Preferences
+
+After collecting all 10 responses, persist them to state.json using the CLI:
+
+```bash
+speckitadv update-preferences '{"target_language": "{q1 value}", "target_database": "{q2 value}", "message_bus": "{q3 value}", "package_manager": "{q4 value}", "deployment_target": "{q5 value}", "iac_tool": "{q6 value}", "containerization": "{q7 value}", "observability": {"metrics": "{q8 metrics}", "logging": "{q8 logging}", "tracing": "{q8 tracing}"}, "security": "{q9 value}", "testing": {"strategy": "{q10 value}", "coverage_target": "{q10 coverage}"}}'
+```
+
+This stores all preferences in `{analysis_dir}/state.json` under the `modernization_preferences` field.
+
+---
+
 ## Progress Summary
 
 ```text
