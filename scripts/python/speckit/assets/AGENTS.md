@@ -94,7 +94,7 @@ These deterministic commands allow AI agents to write artifacts and query contex
 
 ### Valid Preference Keys (Q1-Q10)
 
-```
+```text
 q1_language, q2_database, q3_message_bus, q4_package_manager,
 q5_deployment, q6_iac, q7_containerization, q8_observability,
 q9_security, q10_testing
@@ -102,7 +102,7 @@ q9_security, q10_testing
 
 ### File Categories for list-files
 
-```
+```text
 controllers, services, models, repositories, handlers, middleware,
 config, tests, views, utilities, migrations
 ```
