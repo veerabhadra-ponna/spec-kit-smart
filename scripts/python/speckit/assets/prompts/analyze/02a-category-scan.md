@@ -33,8 +33,22 @@ The CLI provides all context via template variables. **Do not read state.json di
 
 **CLI Utility Commands:**
 
-- `speckitadv write-data <filename> --stage=<stage-id> --content '<json>'` - Write JSON to data/ folder (tracks artifacts)
-- `speckitadv file-stats <filepath>` - Get file statistics (lines, size)
+⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+
+```bash
+# Write JSON to data/ folder
+speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
+
+# Get file statistics
+speckitadv file-stats <filepath>
+```
+
+**For content > 2000 chars, use stdin mode:**
+```powershell
+@"
+<json content here>
+"@ | speckitadv write-data <filename> --stage=<stage-id> --stdin
+```
 
 ---
 

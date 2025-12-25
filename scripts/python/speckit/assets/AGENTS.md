@@ -123,26 +123,33 @@ config, tests, views, utilities, migrations
 ⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
 
 ```bash
-# Create new file (put --content LAST)
+# Write report (put --append EARLY before --content)
 speckitadv write-report <filename> --stage=<stage-id> --content '<small-md>'
-
-# Append to file (put --append EARLY before --content)
 speckitadv write-report <filename> --stage=<stage-id> --append --content '<small-md>'
+
+# Write JSON data
+speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
 ```
 
 **For content > 2000 chars, use stdin mode:**
 
 ```powershell
+# For reports
 @"
 <markdown content here>
 "@ | speckitadv write-report <filename> --stage=<stage-id> --append --stdin
+
+# For JSON data
+@"
+<json content here>
+"@ | speckitadv write-data <filename> --stage=<stage-id> --stdin
 ```
 
 **Key Rules:**
 
 1. Place `--append` EARLY in the command (before `--content`) to prevent truncation
 2. Keep `--content` value under 2000 characters
-3. Use stdin mode for large content blocks
+3. Use stdin mode for large content blocks (JSON or markdown)
 4. Never use shell file write commands for analysis artifacts
 
 ---
