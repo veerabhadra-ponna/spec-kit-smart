@@ -46,7 +46,12 @@ DEFAULT_PRINCIPLES = {
     ],
     "Testing & Quality": [
         ("Test Behavior", "MUST write tests that verify behavior, not implementation details"),
+        ("Edge Case Coverage", "MUST consider all edge cases when writing tests, implementing features, or fixing bugs - test boundaries, null values, empty collections, and error conditions"),
         ("Explicit Error Handling", "MUST handle errors explicitly - no silent failures or swallowed exceptions"),
+    ],
+    "Build Quality": [
+        ("Zero Warnings", "MUST resolve all build errors and warnings before commit - solutions should be free from compiler/linter warnings"),
+        ("Warning-Free Code Generation", "MUST generate warning-free code from the start - anticipate and avoid patterns that cause warnings to minimize fix iterations"),
     ],
     "Versioning": [
         ("LTS Versions", "SHOULD default to latest LTS (Long-Term Support) versions for languages and frameworks when not specified"),
