@@ -527,6 +527,57 @@ class TestAnalysisStateManager:
         assert context["modernization_preferences"]["q1_language"] == "Go 1.21"
         assert context["modernization_preferences"]["q5_deployment"] == "Kubernetes"
 
+    def test_get_context_includes_scoring_data(self, tmp_path):
+        """get_context_for_prompt should include complexity/feasibility scores from data folder."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Create scoring data file in data folder
+        scoring_data = {
+            "schema_version": "3.1.0",
+            "stage": "validation_scoring",
+            "complexity": {
+                "overall_score": 5.2,
+                "rating": "MEDIUM"
+            },
+            "feasibility": {
+                "inline_upgrade": 72,
+                "greenfield_rewrite": 45,
+                "hybrid_strangler": 68,
+                "recommended_approach": "Inline Upgrade",
+                "confidence_percentage": 85
+            }
+        }
+        scoring_file = folder / "data" / "validation-scoring.json"
+        scoring_file.write_text(json.dumps(scoring_data))
+
+        context = manager.get_context_for_prompt()
+
+        # Verify complexity fields
+        assert context["complexity_score"] == 5.2
+        assert context["complexity_rating"] == "MEDIUM"
+
+        # Verify feasibility fields
+        assert context["feasibility_inline"] == 72
+        assert context["feasibility_greenfield"] == 45
+        assert context["feasibility_hybrid"] == 68
+        assert context["recommended_approach"] == "Inline Upgrade"
+        assert context["confidence_percentage"] == 85
+
+    def test_get_context_without_scoring_data(self, tmp_path):
+        """get_context_for_prompt should work when scoring data file doesn't exist."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Don't create scoring file - verify context still works
+        context = manager.get_context_for_prompt()
+
+        # These fields should NOT be present when scoring file doesn't exist
+        assert "complexity_score" not in context
+        assert "feasibility_inline" not in context
+
 
 class TestCorruptedStateHandling:
     """Tests for corrupted state.json handling (fail-fast behavior)."""

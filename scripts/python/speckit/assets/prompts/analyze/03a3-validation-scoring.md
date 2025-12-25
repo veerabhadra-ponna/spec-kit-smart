@@ -25,6 +25,14 @@ Values available (already substituted by CLI):
 
 ---
 
+## ⚠️ CRITICAL: No Intermediate Files
+
+**DO NOT create intermediate files** like `stage11-chunk1.md` or similar.
+
+**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 5).
+
+---
+
 ## Step 1: Scope Validation with User
 
 Display the scope summary and ask user to confirm what's IN and OUT of scope.
@@ -290,6 +298,40 @@ RECOMMENDATION PREVIEW
 
 ═══════════════════════════════════════════════════════════
 
+```
+
+---
+
+## Step 5: Save Scoring Data
+
+Save the complexity and feasibility scores to the data folder using stdin mode:
+
+```powershell
+@"
+{
+  "schema_version": "3.1.0",
+  "stage": "validation_scoring",
+  "timestamp": "{ISO-8601}",
+  "scope_validated": true,
+  "complexity": {
+    "codebase_size": {"score": {n}, "details": "{LOC} LOC"},
+    "tech_stack_change": {"score": {n}, "details": "{current} → {target}"},
+    "database_migration": {"score": {n}, "details": "{current} → {target}"},
+    "integration_count": {"score": {n}, "details": "{count} integrations"},
+    "test_coverage_gap": {"score": {n}, "details": "{coverage}% current"},
+    "security_changes": {"score": {n}, "details": "{current} → {target}"},
+    "overall_score": {n},
+    "rating": "{LOW|MEDIUM|HIGH|VERY HIGH}"
+  },
+  "feasibility": {
+    "inline_upgrade": {n},
+    "greenfield_rewrite": {n},
+    "hybrid_strangler": {n},
+    "recommended_approach": "{approach}",
+    "confidence_percentage": {n}
+  }
+}
+"@ | speckitadv write-data validation-scoring.json --stage=03a3-validation-scoring --stdin
 ```
 
 ---

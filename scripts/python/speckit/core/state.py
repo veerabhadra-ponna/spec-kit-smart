@@ -14,7 +14,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from speckit.core.utils import safe_json_loads, safe_json_dumps
+from speckit.core.utils import safe_json_loads, safe_json_dumps, atomic_write
 from speckit.core.prompts import get_stage_order
 
 
@@ -557,6 +557,8 @@ class AnalysisStateManager:
     def write_data(self, filename: str, content: str, stage: str = None) -> Path:
         """Write JSON data artifact to data/ folder.
 
+        Uses atomic writes to prevent data loss on failure.
+
         Args:
             filename: Name of the JSON file (e.g., 'category-patterns.json')
             content: JSON content to write
@@ -567,7 +569,7 @@ class AnalysisStateManager:
         """
         self.data_folder.mkdir(parents=True, exist_ok=True)
         file_path = self.data_folder / filename
-        file_path.write_text(content, encoding="utf-8")
+        atomic_write(file_path, content)
 
         # Track artifact in state if stage provided
         if stage:
@@ -577,6 +579,8 @@ class AnalysisStateManager:
 
     def write_report(self, filename: str, content: str, append: bool = False, stage: str = None) -> Path:
         """Write Markdown report to reports/ folder.
+
+        Uses atomic writes to prevent data loss on failure.
 
         Args:
             filename: Name of the MD file (e.g., 'analysis-report.md')
@@ -594,7 +598,8 @@ class AnalysisStateManager:
             existing = file_path.read_text(encoding="utf-8")
             content = existing + "\n" + content
 
-        file_path.write_text(content, encoding="utf-8")
+        # Use atomic write to prevent data loss if write fails
+        atomic_write(file_path, content)
 
         # Track artifact in state if stage provided
         if stage:
@@ -733,7 +738,7 @@ class AnalysisStateManager:
         """
         state = self.load()
 
-        return {
+        context = {
             "analysis_dir": str(self.folder),
             "data_dir": str(self.data_folder),
             "reports_dir": str(self.reports_folder),
@@ -751,6 +756,38 @@ class AnalysisStateManager:
             "workflow_complete": state.workflow_complete,
             "modernization_preferences": state.modernization_preferences,
         }
+
+        # Load scoring data from data folder if available
+        scoring_file = self.data_folder / "validation-scoring.json"
+        if scoring_file.exists():
+            try:
+                scoring_data = safe_json_loads(
+                    scoring_file.read_text(encoding="utf-8"), default={}
+                )
+                complexity = scoring_data.get("complexity", {})
+                feasibility = scoring_data.get("feasibility", {})
+
+                # Add complexity fields
+                context["complexity_score"] = complexity.get("overall_score", "")
+                context["complexity_rating"] = complexity.get("rating", "")
+
+                # Add feasibility fields
+                context["feasibility_inline"] = feasibility.get("inline_upgrade", "")
+                context["feasibility_greenfield"] = feasibility.get(
+                    "greenfield_rewrite", ""
+                )
+                context["feasibility_hybrid"] = feasibility.get("hybrid_strangler", "")
+                context["recommended_approach"] = feasibility.get(
+                    "recommended_approach", ""
+                )
+                context["confidence_percentage"] = feasibility.get(
+                    "confidence_percentage", ""
+                )
+            except Exception:
+                # Scoring data not available yet, leave fields empty
+                pass
+
+        return context
 
 
 # Placeholder detection for constitution
