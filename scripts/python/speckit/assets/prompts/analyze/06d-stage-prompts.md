@@ -25,6 +25,18 @@ Generate staged implementation prompts for Spec Kit workflow integration. These 
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+
+**Note:** Stage prompts are written to `{analysis_dir}/stage-prompts/` using the Write tool directly.
+These are auxiliary prompts for Spec Kit workflow integration, not analysis reports.
+The CLI tracks them via the completion marker at the end of this stage.
+
+---
+
 ## Templates
 
 {{include:stage-prompt-templates/constitution-prompt-template.md}}

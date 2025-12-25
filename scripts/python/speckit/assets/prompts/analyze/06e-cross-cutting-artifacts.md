@@ -26,6 +26,21 @@ Generate artifacts specific to Cross-Cutting Concern Migration (Scope B). This i
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**CLI Utility Commands:**
+
+- `speckitadv write-report <filename> --content '<md>' --stage=cross_cutting_artifacts` - Create report
+- `speckitadv write-report <filename> --content '<md>' --append --stage=cross_cutting_artifacts` - Append to report
+
+---
+
 ## Load Concern Context
 
 From Stage 3B state, extract:
@@ -147,7 +162,11 @@ Generate:
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Write to: `{reports_dir}/abstraction-assessment.md`
+**Write using CLI:**
+
+```bash
+speckitadv write-report abstraction-assessment.md --content '<generated-content>' --stage=cross_cutting_artifacts
+```
 
 **Verify:** Read file, confirm no placeholders.
 
@@ -233,7 +252,11 @@ Write to: `{reports_dir}/abstraction-assessment.md`
 
 ```
 
-Write to: `{reports_dir}/concern-migration-plan.md`
+**Write using CLI:**
+
+```bash
+speckitadv write-report concern-migration-plan.md --content '<generated-content>' --stage=cross_cutting_artifacts
+```
 
 **Output:**
 
@@ -316,7 +339,11 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Append to: `{reports_dir}/concern-migration-plan.md`
+**Append using CLI:**
+
+```bash
+speckitadv write-report concern-migration-plan.md --content '<generated-content>' --append --stage=cross_cutting_artifacts
+```
 
 **Output:**
 
@@ -415,7 +442,11 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 
 ```
 
-Append to: `{reports_dir}/concern-migration-plan.md`
+**Append using CLI:**
+
+```bash
+speckitadv write-report concern-migration-plan.md --content '<generated-content>' --append --stage=cross_cutting_artifacts
+```
 
 **Verify:** Read complete file, confirm all 10 sections present.
 
@@ -559,7 +590,11 @@ Generate detailed rollback procedure:
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Write to: `{reports_dir}/rollback-procedure.md`
+**Write using CLI:**
+
+```bash
+speckitadv write-report rollback-procedure.md --content '<generated-content>' --stage=cross_cutting_artifacts
+```
 
 **Verify:** Read file, confirm no placeholders.
 
