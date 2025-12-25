@@ -26,6 +26,14 @@ Values available (already substituted by CLI):
 
 ---
 
+## ⚠️ CRITICAL: No Intermediate Files
+
+**DO NOT create intermediate files** like `stage10-chunk3.md` or similar.
+
+**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 3).
+
+---
+
 ## Step 1: Effort Estimation
 
 Calculate effort based on abstraction level, blast radius, and strategy.
@@ -213,7 +221,23 @@ BUSINESS (Validation):
 
 ---
 
-## Step 3: Compile Complete Stage 3B State
+## Step 3: Save Complete Stage 3B Data
+
+Save the complete cross-cutting analysis to the data folder using stdin mode:
+
+```powershell
+@"
+{
+  "schema_version": "3.1.0",
+  "chain_id": "{chain_id}",
+  "stage": "cross_cutting_analysis",
+  "timestamp": "{ISO-8601}",
+  "concern_analysis": { ... complete JSON below ... }
+}
+"@ | speckitadv write-data effort-success.json --stage=03b3-effort-success --stdin
+```
+
+**Full JSON structure:**
 
 ```json
 {

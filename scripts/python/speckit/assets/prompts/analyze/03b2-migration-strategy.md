@@ -26,6 +26,14 @@ Values available (already substituted by CLI):
 
 ---
 
+## ⚠️ CRITICAL: No Intermediate Files
+
+**DO NOT create intermediate files** like `stage10-chunk2.md` or similar.
+
+**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command at the end of this substage (see Step 5).
+
+---
+
 ## Step 1: Strategy Selection
 
 Select migration strategy based on abstraction level and blast radius.
@@ -369,6 +377,20 @@ Risk Assessment:
   }
 }
 
+```
+
+---
+
+## Step 5: Save Strategy Data
+
+Save the strategy data to the data folder using stdin mode:
+
+```powershell
+@"
+{
+  "migration_strategy": { ... full JSON from Step 4 ... }
+}
+"@ | speckitadv write-data migration-strategy.json --stage=03b2-migration-strategy --stdin
 ```
 
 ---
