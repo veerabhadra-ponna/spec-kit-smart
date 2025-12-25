@@ -771,10 +771,25 @@ def _get_stage_num_from_id(stage_id: str) -> int:
     # NOTE: No backward compatibility for legacy stage IDs (e.g., "06-scope-artifacts").
     # This system is pre-release; old state.json files with legacy IDs must be
     # re-initialized. See AGENTS.md "No Backward Compatibility" policy.
+    #
+    # The prefix does NOT directly map to stage number:
+    #   "01" → stages 1-3, "02" → stages 4-8, "03" → stages 9-10,
+    #   "04" → stages 11-14, "05" → stage 15, "06" → stage 16
+    # Use reverse lookup on sub-variants (e.g., "05a-executive-summary" → "05a")
     try:
-        # Extract first two digits
-        prefix = stage_id[:2]
-        return int(prefix)
+        # Try matching the start of stage IDs in STAGE_MAP
+        for num, frag_id in STAGE_MAP.items():
+            # Match if stage_id starts with the STAGE_MAP value (handles extensions, etc.)
+            if stage_id.startswith(frag_id) or frag_id.startswith(stage_id.split(".")[0]):
+                return num
+
+        # Last resort: extract first 3 chars (e.g., "05a") and find matching prefix
+        prefix = stage_id[:3].lower()  # "05a", "06a", etc.
+        for num, frag_id in STAGE_MAP.items():
+            if frag_id.startswith(prefix):
+                return num
+
+        return 0
     except (ValueError, IndexError):
         return 0
 

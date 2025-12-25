@@ -25,7 +25,19 @@ class TestGetStageNumFromId:
         assert _get_stage_num_from_id("01a-initialization") == 1
         assert _get_stage_num_from_id("01b-input-collection") == 2  # Stage 2 in CLI
         assert _get_stage_num_from_id("02a-category-scan") == 4  # Stage 4 in CLI
+        assert _get_stage_num_from_id("04d-report-verification") == 14  # Stage 14 in CLI
+        assert _get_stage_num_from_id("05a-executive-summary") == 15  # Stage 15 in CLI
         assert _get_stage_num_from_id("06a-functional-spec-legacy") == 16  # Stage 16 in CLI
+
+    def test_fallback_matching_handles_variants(self):
+        """Should handle stage ID variants via fallback matching."""
+        # Exact match should work
+        assert _get_stage_num_from_id("05a-executive-summary") == 15
+        # Prefix matching for partial IDs
+        assert _get_stage_num_from_id("05a") == 15
+        assert _get_stage_num_from_id("06a") == 16
+        # With extension (edge case)
+        assert _get_stage_num_from_id("05a-executive-summary.md") == 15
 
     def test_handles_stage_n_format(self):
         """Should handle stage_N format."""
@@ -221,6 +233,30 @@ class TestAutoDetectStageFromState:
         )
         result = _auto_detect_stage_from_state(state)
         assert result is None, "Stage 16 completed should return None (workflow complete)"
+
+    def test_stage_14_completed_advances_to_15(self):
+        """Stage 14 completed should advance to stage 15 (executive summary)."""
+        state = AnalysisState(
+            stages={
+                "04d-report-verification": {"status": "completed"},
+            },
+            stages_complete=["04d-report-verification"],
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 15, "Stage 14 completed should advance to 15 (executive summary)"
+
+    def test_stage_15_completed_advances_to_16(self):
+        """Stage 15 completed should advance to stage 16 (functional-spec-legacy)."""
+        state = AnalysisState(
+            stages={
+                "05a-executive-summary": {"status": "completed"},
+            },
+            stages_complete=["05a-executive-summary"],
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 16, "Stage 15 completed should advance to 16 (functional-spec-legacy)"
 
     def test_multiple_in_progress_chunked_takes_priority(self):
         """When both chunked and non-chunked stages are in_progress, chunked is returned."""
