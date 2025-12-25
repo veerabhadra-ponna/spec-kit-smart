@@ -58,7 +58,8 @@ Analyze existing codebases to assess current state, identify strengths/weaknesse
 ### Feasibility Scoring (0-100)
 
 **Inline Upgrade Score:**
-```
+
+```text
 Score = (Code_Quality × 0.20) + (Test_Coverage × 0.15) + (Dependency_Health × 0.20) +
         (Architecture_Quality × 0.15) + (Team_Familiarity × 0.10) +
         (Documentation × 0.10) + (Breaking_Changes × 0.10)
