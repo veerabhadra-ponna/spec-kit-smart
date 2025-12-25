@@ -234,6 +234,7 @@ Generate Sections 5 and 6.
 ```
 
 **Example Response:**
+
 ```json
 {sample response}
 ```
@@ -246,6 +247,7 @@ Generate Sections 5 and 6.
 
 **Error Handler:** {file}:{line}
 
+<!-- markdownlint-disable-next-line MD040 -->
 ```
 
 ### Section 6: Integration Architecture
