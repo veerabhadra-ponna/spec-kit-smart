@@ -8,6 +8,15 @@
 
 **[Get Started](#get-started)** | **[Reverse Engineering](#reverse-engineering)** | **[Orchestrator](#orchestrator)** | **[CLI Reference](docs/reference/cli-reference.md)** | **[Troubleshooting](docs/reference/troubleshooting.md)**
 
+## Documentation map
+
+- **Product overview**: This README, plus the methodology primer in [spec-driven.md](spec-driven.md)
+- **Step-by-step guides**: [Getting Started](docs/getting-started.md), [Orchestrator Workflow](docs/workflows/orchestrator.md)
+- **Reference**: [CLI Reference](docs/reference/cli-reference.md), [Troubleshooting](docs/reference/troubleshooting.md)
+- **Design background**: Reverse engineering and state design details in [Reverse Engineering Guide](docs/reverse-engineering.md)
+
+Historical planning notes previously kept under `docs/archived/` have been folded into the guides above so readers only need the main documentation set.
+
 ---
 
 ## Why This Fork?

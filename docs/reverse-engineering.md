@@ -10,6 +10,8 @@ Analyze existing codebases to assess current state, identify strengths/weaknesse
 
 **Use Cases:** Legacy modernization, technical debt assessment, security audits, migration planning, architecture reviews, cross-cutting concern migrations.
 
+> Historical engineering review notes from the pre-Python implementation have been merged into this guide so all modernization context lives in one place.
+
 ---
 
 ## Quick Start

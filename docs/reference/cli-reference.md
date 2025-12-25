@@ -58,6 +58,8 @@ speckitadv check
 
 After running `speckitadv init`, your AI coding agent will have access to these slash commands for structured development:
 
+State for both features and analyses is stored alongside generated artifacts (`specs/{feature}/.state/state.json` and `.analysis/{project}/state.json`), replacing the legacy chain-based approach.
+
 ### Orchestration Commands
 
 **NEW**: Simplified workflow management and context restoration:

@@ -14,7 +14,7 @@ This folder contains the documentation source files for Spec Kit Smart.
 | `reference/cli-reference.md` | CLI command documentation |
 | `reference/troubleshooting.md` | Common issues and solutions |
 | `workflows/orchestrator.md` | Automated workflow execution |
-| `archived/` | Historical planning documents |
+| `spec-driven.md` | Core methodology overview (in repo root) |
 
 ## Building Locally
 
@@ -31,3 +31,13 @@ Open `http://localhost:8080` to view.
 ## Deployment
 
 Documentation is automatically deployed to GitHub Pages on push to `main`.
+
+## Historical context (formerly `docs/archived/`)
+
+Historical planning notes previously stored in `docs/archived/` have been consolidated into the primary documentation:
+
+- **Python CLI migration**: The Bash/PowerShell scripts were superseded by the cross-platform `speckitadv` CLI. Rationale and rollout details are summarized in [README.md](../README.md) and [docs/reference/cli-reference.md](reference/cli-reference.md).
+- **State simplification**: Folder-based state (`specs/{feature}/.state/state.json` and `.analysis/{project}/state.json`) is now part of the workflow guides, replacing the earlier chain-based approach.
+- **Reverse engineering review**: Findings from the pre-Python engineering review are reflected in the updated [Reverse Engineering Guide](reverse-engineering.md) and orchestrator documentation.
+
+No historical documents remain; current guides contain the supported workflows and design choices.
