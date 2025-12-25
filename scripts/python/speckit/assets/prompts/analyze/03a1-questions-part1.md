@@ -42,6 +42,30 @@ Values available in this prompt (already substituted by CLI):
 
 ---
 
+## ⚠️ CRITICAL: No File Creation
+
+**DO NOT create any files during this stage.** This includes:
+
+- ❌ NO `stage9-chunk1.md` or similar files
+- ❌ NO markdown files to record Q&A
+- ❌ NO intermediate files in the analysis directory
+
+**Questions are asked directly in the conversation.** Preferences are stored using the CLI command at the end of this substage.
+
+---
+
+## Storing Preferences
+
+After collecting responses for Q1-Q5, store ALL preferences using ONE CLI command:
+
+```bash
+speckitadv update-preferences '{"q1_language": {"value": "..."}, "q2_database": {"value": "..."}, ...}'
+```
+
+DO NOT store preferences after each question. Collect all 5, then store once at the end.
+
+---
+
 ## Question 1: Target Language/Runtime
 
 ---

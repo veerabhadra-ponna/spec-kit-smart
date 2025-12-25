@@ -25,6 +25,30 @@ Values available (already substituted by CLI):
 
 ---
 
+## ⚠️ CRITICAL: No File Creation
+
+**DO NOT create any files during this stage.** This includes:
+
+- ❌ NO `stage9-chunk2.md` or similar files
+- ❌ NO markdown files to record Q&A
+- ❌ NO intermediate files in the analysis directory
+
+**Questions are asked directly in the conversation.** Preferences are stored using the CLI command at the end of this substage.
+
+---
+
+## Storing Preferences
+
+After collecting responses for Q6-Q10, store ALL preferences using ONE CLI command:
+
+```bash
+speckitadv update-preferences '{"q6_iac": {"value": "..."}, "q7_containerization": {"value": "..."}, ...}'
+```
+
+DO NOT store preferences after each question. Collect all 5, then store once at the end.
+
+---
+
 ## Question 6: Infrastructure as Code
 
 ---

@@ -25,6 +25,14 @@ Values available (already substituted by CLI):
 
 ---
 
+## ⚠️ CRITICAL: No Intermediate Files
+
+**DO NOT create intermediate files** like `stage10-chunk1.md` or similar.
+
+**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command at the end of this substage (see Step 5).
+
+---
+
 ## Step 1: Identify Concern Files
 
 Locate all files related to the specified concern.
@@ -268,6 +276,20 @@ High-Impact Files (top 10):
   }
 }
 
+```
+
+---
+
+## Step 5: Save Assessment Data
+
+Save the assessment data to the data folder using stdin mode:
+
+```powershell
+@"
+{
+  "abstraction_assessment": { ... full JSON from Step 4 ... }
+}
+"@ | speckitadv write-data abstraction-assessment.json --stage=03b1-abstraction-assessment --stdin
 ```
 
 ---
