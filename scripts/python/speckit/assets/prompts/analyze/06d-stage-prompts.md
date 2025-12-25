@@ -285,13 +285,14 @@ Write to: `{analysis_dir}/stage-prompts/implement-prompt.md`
   "scope_artifacts_generated": [
     "functional-spec-legacy.md",
     "functional-spec-target.md",
-    "technical-spec.md",
+    "technical-spec-legacy.md",
+    "technical-spec-target.md",
     "stage-prompts/constitution-prompt.md",
     "stage-prompts/clarify-prompt.md",
     "stage-prompts/tasks-prompt.md",
     "stage-prompts/implement-prompt.md"
   ],
-  "total_scope_artifacts": 7,
+  "total_scope_artifacts": 8,
   "all_artifacts_complete": true
 }
 
@@ -309,10 +310,11 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
   Chain ID: {chain_id}
 
-  Artifacts Generated (7 total):
+  Artifacts Generated (8 total):
     ✓ functional-spec-legacy.md
     ✓ functional-spec-target.md
-    ✓ technical-spec.md
+    ✓ technical-spec-legacy.md
+    ✓ technical-spec-target.md
     ✓ stage-prompts/constitution-prompt.md
     ✓ stage-prompts/clarify-prompt.md
     ✓ stage-prompts/tasks-prompt.md
@@ -354,7 +356,8 @@ Generated Artifacts:
   Scope-Specific:
     • functional-spec-legacy.md
     • functional-spec-target.md
-    • technical-spec.md
+    • technical-spec-legacy.md
+    • technical-spec-target.md
     • stage-prompts/ (4 files)
 
 Next Steps:

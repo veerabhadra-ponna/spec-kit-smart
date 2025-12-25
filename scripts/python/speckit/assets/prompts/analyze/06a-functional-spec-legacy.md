@@ -305,7 +305,7 @@ Run: `speckitadv analyze-project`
 The CLI will auto-detect the current stage and emit the next prompt.
 
 **DO NOT:**
-- Skip to technical-spec.md
+- Skip to technical specs
 - Skip to stage-prompts/
 - Mark Stage 6 complete
 

@@ -37,7 +37,7 @@ STAGE_MAP = {
     13: "04c-report-chunks-7-9",  # Stage 4.3: Report chunks 7-9
     14: "04d-report-verification",# Stage 4.4: Report verification
     15: "05a-executive-summary",  # Stage 5: Executive summary
-    16: "06-scope-artifacts",     # Stage 6: Scope-specific artifacts
+    16: "06a-functional-spec-legacy",  # Stage 6: First chunk (always uses chunking)
 }
 
 # Chunk map for stages that use sub-prompts (Stage 3A has 4 sub-prompts, Stage 3B has 3)
@@ -432,8 +432,14 @@ def _emit_chunk_stage(
         )
         return
 
-    # Chunk the fragment content
-    chunk_content = _extract_chunk(fragment, chunk, total_chunks)
+    # Stage 16 uses per-chunk fragments that are already complete prompts
+    # Other stages use a single fragment that needs to be subdivided
+    if stage == 16:
+        # Per-chunk fragments are complete - emit as-is without subdividing
+        chunk_content = fragment
+    else:
+        # Subdivide the fragment into chunks
+        chunk_content = _extract_chunk(fragment, chunk, total_chunks)
     rendered = render_prompt(chunk_content, context)
 
     # On chunk 1, complete ALL previous in_progress stages and mark current as in_progress
@@ -503,12 +509,27 @@ def _emit_chunk_stage(
 
     # Emit chunk - use analysis_dir from context
     analysis_dir = context.get("analysis_dir", str(analysis_dir_path))
+
+    # Stage 16 chunks map to specific output files
+    if stage == 16:
+        stage_16_file_map = {
+            1: "reports/functional-spec-legacy.md",
+            2: "reports/functional-spec-target.md",
+            3: "reports/technical-spec-legacy.md",
+            4: "reports/technical-spec-target.md",
+            5: "reports/stage-prompts/",
+        }
+        chunk_file = stage_16_file_map.get(chunk, f"stage{stage}-chunk{chunk}.md")
+        file_path = f"{analysis_dir}/{chunk_file}"
+    else:
+        file_path = f"{analysis_dir}/stage{stage}-chunk{chunk}.md"
+
     emit_chunk(
         chunk_num=chunk,
         total_chunks=total_chunks,
         title=f"{_get_stage_title(stage)} - Chunk {chunk}",
         content=rendered,
-        file_path=f"{analysis_dir}/stage{stage}-chunk{chunk}.md",
+        file_path=file_path,
         mode="append" if chunk > 1 else "create",
         line_range=((chunk-1)*50+1, chunk*50),
         next_cmd=next_cmd,

@@ -1051,18 +1051,18 @@ def update_preferences_cmd(
     import json
     from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
 
-    # Valid preference keys from Q1-Q10
+    # Valid preference keys from Q1-Q10 (must match prompts 03a1/03a2)
     VALID_PREFERENCE_KEYS = {
-        "target_language",      # Q1: Target language/runtime
-        "target_database",      # Q2: Target database
-        "message_bus",          # Q3: Message bus/queue
-        "package_manager",      # Q4: Package management
-        "deployment_target",    # Q5: Deployment target
-        "iac_tool",             # Q6: IaC tool
-        "container_strategy",   # Q7: Container strategy
-        "observability_stack",  # Q8: Observability stack
-        "security_approach",    # Q9: Security approach
-        "testing_approach",     # Q10: Testing approach
+        "q1_language",          # Q1: Target language/runtime
+        "q2_database",          # Q2: Target database
+        "q3_message_bus",       # Q3: Message bus/queue
+        "q4_package_manager",   # Q4: Package management
+        "q5_deployment",        # Q5: Deployment target
+        "q6_iac",               # Q6: IaC tool
+        "q7_containerization",  # Q7: Container strategy
+        "q8_observability",     # Q8: Observability stack
+        "q9_security",          # Q9: Security approach
+        "q10_testing",          # Q10: Testing approach
     }
 
     # Get analysis folder

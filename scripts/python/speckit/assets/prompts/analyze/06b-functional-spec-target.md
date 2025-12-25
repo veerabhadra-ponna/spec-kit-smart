@@ -314,7 +314,7 @@ functional-spec-target.md COMPLETE (5/5 chunks)
 
   Chain ID: {chain_id}
 
-  Now proceeding to technical-spec.md...
+  Now proceeding to technical specs (legacy + target)...
 ═══════════════════════════════════════════════════════════
 
 ARTIFACT_COMPLETE:FUNCTIONAL_SPEC_TARGET

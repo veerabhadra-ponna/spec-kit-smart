@@ -156,7 +156,8 @@ Each sub-prompt:
     ├── EXECUTIVE-SUMMARY.md              # AI-generated (Stage 5)
     ├── functional-spec-legacy.md         # AI-generated (Stage 6, Scope A)
     ├── functional-spec-target.md         # AI-generated (Stage 6, Scope A)
-    ├── technical-spec.md                 # AI-generated (Stage 6, Scope A)
+    ├── technical-spec-legacy.md          # AI-generated (Stage 6, Scope A)
+    ├── technical-spec-target.md          # AI-generated (Stage 6, Scope A)
     └── stage-prompts/                    # Generated stage prompts
         ├── constitution-prompt.md
         ├── clarify-prompt.md
