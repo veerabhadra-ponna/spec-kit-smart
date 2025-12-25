@@ -92,6 +92,9 @@ speckitadv init my-project --ai claude
 
 **Status**: EXPERIMENTAL (v1.0.0-alpha) - ~4,564 LOC Python + orchestration + templates
 
+> ⚠️ **No Backward Compatibility**: This system is pre-release. Breaking changes may occur
+> between versions. Existing analyses with legacy stage IDs must be re-initialized.
+
 Analyze existing projects, assess technical debt, and plan modernization strategies.
 
 ```bash

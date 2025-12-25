@@ -30,7 +30,7 @@ Values available in this prompt (already substituted by CLI):
 
 ## Pre-Check: Verify Previous Substage
 
-1. Verify `{analysis_dir}/deep-dive-patterns.json` exists
+1. Verify `{data_dir}/deep-dive-patterns.json` exists
 2. Load deep dive patterns
 
 **IF not complete:** STOP - Return to 02b-deep-dive

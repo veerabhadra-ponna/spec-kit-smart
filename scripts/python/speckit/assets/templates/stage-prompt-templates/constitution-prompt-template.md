@@ -18,26 +18,26 @@
 
 Use these principles (extracted from actual code) as the foundation for your constitution.
 
-### Business Principles (from functional-spec.md §6)
+### Business Principles (from functional-spec-legacy.md §6)
 
-<<FOR_EACH non-negotiable FROM functional-spec.md>>
+<<FOR_EACH non-negotiable FROM functional-spec-legacy.md>>
 **<<PRINCIPLE_NAME>>**
 Rationale: <<RATIONALE>>
 Evidence: <<file:line>>
 Example: <<CODE_SNIPPET or CONFIG_VALUE>>
 <<END_FOR_EACH>>
 
-### Architectural Principles (from technical-spec.md §1)
+### Architectural Principles (from technical-spec-legacy.md §1)
 
-<<FOR_EACH legacy principle FROM technical-spec.md>>
+<<FOR_EACH legacy principle FROM technical-spec-legacy.md>>
 **<<PRINCIPLE_NAME>>**
 Evidence: <<file:line>>
 Recommendation: <<Preserve | Modernize>>
 <<END_FOR_EACH>>
 
-### Quality Principles (from functional-spec.md §7)
+### Quality Principles (from functional-spec-legacy.md §7)
 
-<<FOR_EACH NFR FROM functional-spec.md>>
+<<FOR_EACH NFR FROM functional-spec-legacy.md>>
 **<<PRINCIPLE_NAME>>** (e.g., "80%+ Test Coverage")
 Evidence: <<file:line>>
 Current: <<CURRENT_VALUE>>
@@ -87,7 +87,7 @@ Use the standard Spec Kit constitution format, but populate with extracted princ
 ## PROJECT METADATA
 
 **Tech Stack**: <<USER_CHOICE_LANGUAGE>>, <<USER_CHOICE_DATABASE>>, etc.
-(See technical-spec.md §8 for full stack)
+(See technical-spec-target.md §8 for full stack)
 
 **Deployment**: <<USER_CHOICE_DEPLOYMENT>>
 
@@ -97,7 +97,7 @@ Use the standard Spec Kit constitution format, but populate with extracted princ
 
 ## NON-NEGOTIABLES
 
-- <<All items from functional-spec.md §6>>
+- <<All items from functional-spec-legacy.md §6>>
 
 ```
 
@@ -123,19 +123,19 @@ QUALITY PRINCIPLES:
 - Performance: p95 < <<target>>ms (current: <<baseline>>ms)
 
 NON-NEGOTIABLES:
-- <<All critical constraints from functional-spec.md §6>>
+- <<All critical constraints from functional-spec-legacy.md §6>>
 
 TARGET TECH STACK:
 - Language: <<USER_CHOICE_LANGUAGE>>
 - Database: <<USER_CHOICE_DATABASE>>
 - Deployment: <<USER_CHOICE_DEPLOYMENT>>
-- Full stack in technical-spec.md §8
+- Full stack in technical-spec-target.md §8
 
 SECURITY:
 - Auth: <<USER_CHOICE_SECURITY>>
 - Encryption: At rest (AES-256) and in transit (TLS 1.3)
 
-For detailed technical specifications, see analysis/technical-spec.md.
+For detailed technical specifications, see analysis/technical-spec-target.md.
 ```
 
 ---

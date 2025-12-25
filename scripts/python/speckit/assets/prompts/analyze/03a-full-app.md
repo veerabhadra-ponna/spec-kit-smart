@@ -20,13 +20,17 @@ For Full Application Modernization (scope = A), ask 10 progressive questions abo
 
 The CLI manages state and provides all context. **Do not read state.json directly.**
 
-Values available in this prompt (already substituted by CLI):
-- Project path, analysis directory, scope (must be "A"), context
+**Available template variables:**
 
-**Previous artifacts required:**
-- `{analysis_dir}/tech-stack.json` - Detected technologies
-- `{analysis_dir}/category-patterns.json` - Category patterns
-- `{analysis_dir}/deep-dive-patterns.json` - Deep analysis results
+- `{project_path}`, `{analysis_dir}`, `{scope}`, `{context}`
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**Previous artifacts required (in data/ folder):**
+
+- `{data_dir}/tech-stack.json` - Detected technologies
+- `{data_dir}/category-patterns.json` - Category patterns
+- `{data_dir}/deep-dive-patterns.json` - Deep analysis results
 
 ---
 
@@ -671,15 +675,16 @@ Based on scores, generate prioritized recommendations:
   "timestamp": "2025-11-14T11:00:00Z",
   "stages_complete": [..., "full_application_analysis"],
   "modernization_preferences": {
-    "target_language": "Java 17 LTS",
-    "target_database": "PostgreSQL 15",
-    "message_bus": "Apache Kafka",
-    "deployment_target": "Kubernetes",
-    "iac_tool": "Terraform",
-    "containerization": "Docker with official images",
-    "observability": "Prometheus + Grafana",
-    "auth_strategy": "OAuth 2.0 / OpenID Connect",
-    "target_test_coverage": "80%"
+    "q1_language": "Java 17 LTS",
+    "q2_database": "PostgreSQL 15",
+    "q3_message_bus": "Apache Kafka",
+    "q4_package_manager": "Gradle 8.x",
+    "q5_deployment": "Kubernetes",
+    "q6_iac": "Terraform",
+    "q7_containerization": "Docker with official images",
+    "q8_observability": {"metrics": "Prometheus", "logging": "Loki", "tracing": "Jaeger"},
+    "q9_security": "OAuth 2.0 / OpenID Connect",
+    "q10_testing": {"strategy": "Full pyramid", "coverage_target": "80%"}
   },
   "scoring": {
     "complexity_score": 58,
@@ -724,8 +729,7 @@ Based on scores, generate prioritized recommendations:
 
 ```text
 STAGE_COMPLETE:FULL_APP
-STATE_PATH: .analysis/.state/analyze-project-03a-full-app.json
-
+STATE_PATH: {analysis_dir}/state.json
 ```
 
 ---

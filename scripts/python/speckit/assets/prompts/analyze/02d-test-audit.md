@@ -29,7 +29,7 @@ Values available in this prompt (already substituted by CLI):
 
 ## Pre-Check: Verify Previous Substage
 
-1. Verify `{analysis_dir}/config-analysis.json` exists
+1. Verify `{data_dir}/config-analysis.json` exists
 2. Load configuration analysis results
 
 **IF not complete:** STOP - Return to 02c-config-analysis

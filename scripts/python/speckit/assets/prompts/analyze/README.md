@@ -120,7 +120,8 @@ These are kept for reference but execution uses sub-prompts:
 |------|-------|-----------|---------|
 | **06a-functional-spec-legacy.md** | ~355 | Scope = A | Legacy system functional spec (5 chunks) |
 | **06b-functional-spec-target.md** | ~365 | Scope = A | Target system functional spec (5 chunks) |
-| **06c-technical-spec.md** | ~450 | Scope = A | Technical specification (5 chunks) |
+| **06c1-technical-spec-legacy.md** | ~400 | Scope = A | Legacy system technical spec (5 chunks) |
+| **06c2-technical-spec-target.md** | ~460 | Scope = A | Target system technical spec (5 chunks) |
 | **06d-stage-prompts.md** | ~360 | Scope = A | Spec Kit stage prompts (4 files) |
 | **06e-cross-cutting-artifacts.md** | ~645 | Scope = B | Abstraction assessment + migration plan + rollback |
 
@@ -129,46 +130,60 @@ These are kept for reference but execution uses sub-prompts:
 ## State Management
 
 Each sub-prompt:
-1. **Pre-checks** previous state from `{analysis_dir}/{prev}-complete.json`
+
+1. **Pre-checks** previous state from `{analysis_dir}/state.json`
 2. **Executes** its specific task with focused attention
-3. **Outputs** completion marker and creates state
-4. **Saves** to `{analysis_dir}/{current}-complete.json`
+3. **Outputs** completion marker
+4. **Updates** state.json via CLI commands
 5. **Proceeds** to next sub-prompt
 
-### state Files
+### Folder Structure (v3.2)
 
 ```text
-.analysis/
-├── .state/                               # Chain state files
-│   ├── analyze-project-00-bootstrap.json                 # Script-generated (chain_id, paths)
-│   ├── analyze-project-01-setup-and-scope.json           # Stage 1 output
-│   ├── analyze-project-02-file-analysis.json             # Stage 2 output
-│   ├── analyze-project-03a-full-app.json                 # Stage 3A output (if scope=A)
-│   ├── analyze-project-03b-cross-cutting.json            # Stage 3B output (if scope=B)
-│   ├── analyze-project-04-report.json                    # Stage 4 output
-│   ├── analyze-project-05-artifacts.json                 # Stage 5 output
-│   └── analyze-project-06-scope-artifacts.json           # Stage 6 output
-├── state.json (tracked by CLI)                         # Sub-prompt states (NEW in v3.1)
-│   ├── 01a-init-complete.json
-│   ├── 01b-inputs-complete.json
-│   ├── 01c-script-complete.json
-│   ├── 02a-category-complete.json
-│   ├── 02b-deepdive-complete.json
-│   ├── 02c-config-complete.json
-│   ├── 02d-test-complete.json
-│   ├── 02e-quality-complete.json
-│   ├── ... (one per sub-prompt)
-│   └── stage-prompts-complete.json
-└── {project}-{timestamp}/                # Analysis workspace
-    ├── file-manifest.json                # Script-generated
-    ├── tech-stack.json                   # Script-generated
-    ├── file-structure.json               # Script-generated
-    ├── project-metadata.json             # Script-generated
-    ├── analysis-report.md                # AI-generated (Stage 4)
-    ├── EXECUTIVE-SUMMARY.md              # AI-generated (Stage 5)
-    └── ... (other artifacts)
-
+.analysis/{project}-{timestamp}/          # Analysis workspace (= {analysis_dir})
+├── state.json                            # Single state file (CLI managed)
+├── data/                                 # JSON data files (= {data_dir})
+│   ├── file-manifest.json                # Script-generated
+│   ├── tech-stack.json                   # AI-generated
+│   ├── category-patterns.json            # AI-generated
+│   ├── deep-dive-patterns.json           # AI-generated
+│   ├── config-analysis.json              # AI-generated
+│   ├── test-audit.json                   # AI-generated
+│   ├── dependency-audit.json             # AI-generated
+│   └── metrics-summary.json              # AI-generated
+├── reports/                              # MD report files (= {reports_dir})
+│   ├── analysis-report.md                # AI-generated (Stage 4)
+│   ├── EXECUTIVE-SUMMARY.md              # AI-generated (Stage 5)
+│   ├── functional-spec-legacy.md         # AI-generated (Stage 6, Scope A)
+│   ├── functional-spec-target.md         # AI-generated (Stage 6, Scope A)
+│   ├── technical-spec-legacy.md          # AI-generated (Stage 6, Scope A)
+│   └── technical-spec-target.md          # AI-generated (Stage 6, Scope A)
+└── stage-prompts/                        # Spec Kit stage prompts (= {analysis_dir}/stage-prompts)
+    ├── constitution-prompt.md            # AI-generated (Stage 6, Scope A)
+    ├── clarify-prompt.md                 # AI-generated (Stage 6, Scope A)
+    ├── tasks-prompt.md                   # AI-generated (Stage 6, Scope A)
+    └── implement-prompt.md               # AI-generated (Stage 6, Scope A)
 ```
+
+### Template Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{analysis_dir}` | Analysis folder root | `.analysis/src-20251225-085344` |
+| `{data_dir}` | Data subfolder for JSON | `.analysis/src-20251225-085344/data` |
+| `{reports_dir}` | Reports subfolder for MD | `.analysis/src-20251225-085344/reports` |
+| `{project_path}` | Project being analyzed | `/home/user/my-app` |
+| `{scope}` | Analysis scope | `A` or `B` |
+
+### CLI Utility Commands
+
+| Command | Purpose |
+|---------|---------|
+| `speckitadv write-data <file> --content '<json>'` | Write JSON to data/ folder |
+| `speckitadv write-report <file> --content '<md>'` | Write MD to reports/ folder |
+| `speckitadv write-report <file> --content '<md>' --append` | Append to existing report |
+| `speckitadv file-stats <file>` | Get file statistics (lines, size) |
+| `speckitadv get-context` | Get all template variables |
 
 ## Execution Flow
 
@@ -208,13 +223,13 @@ AI MUST:
 3. Verify output before proceeding
 4. DO NOT skip or rush past STOP markers
 
-### state Verification Pattern
+### State Verification Pattern
 
 ```text
-1. WRITE state JSON to {analysis_dir}/{name}.json
-2. READ state file back
-3. VERIFY JSON is parseable and status = "complete"
-4. IF failed: retry once, then STOP and report error
+1. CLI updates {analysis_dir}/state.json automatically
+2. AI reads state.json to verify current stage
+3. CLI provides context variables via prompt rendering
+4. IF state is corrupted: CLI emits error with recovery
 
 ```
 
@@ -222,32 +237,25 @@ AI MUST:
 
 **IF** analysis is interrupted:
 
-1. **List states**:
+1. **Check state**:
 
    ```bash
-   ls -la {analysis_dir}/
-
+   cat {analysis_dir}/state.json
    ```
 
-2. **Find last complete state**:
+2. **Resume automatically**:
 
    ```bash
-   # Look for most recent *-complete.json
-   ls -lt {analysis_dir}/*-complete.json | head -1
-
+   speckitadv analyze-project
    ```
 
-3. **Resume from next sub-prompt**:
-   - If last state is `02c-config-complete.json`, resume from `02d-test-audit.md`
+   The CLI auto-detects the current stage from `stages_complete` in state.json.
 
-**Example**:
+3. **Force specific stage** (if needed):
 
-```text
-Last completed: 02c-config-complete.json
-Resume from: 02d-test-audit.md
-Chain ID: a3f7c8d1
-
-```
+   ```bash
+   speckitadv analyze-project --stage 02a-category-scan
+   ```
 
 ## Template Injection
 
@@ -258,7 +266,8 @@ Stage 6 prompts use `{{include:template.md}}` syntax to inject reusable template
 | `06-scope-artifacts.md` | functional-spec-template.md, technical-spec-template.md, stage-prompt-templates/* |
 | `06a-functional-spec-legacy.md` | functional-spec-template.md |
 | `06b-functional-spec-target.md` | functional-spec-template.md |
-| `06c-technical-spec.md` | technical-spec-template.md |
+| `06c1-technical-spec-legacy.md` | technical-spec-template.md |
+| `06c2-technical-spec-target.md` | technical-spec-template.md |
 | `06d-stage-prompts.md` | stage-prompt-templates/*.md (4 templates) |
 | `06e-cross-cutting-artifacts.md` | concern-analysis-template.md, concern-migration-plan-template.md |
 

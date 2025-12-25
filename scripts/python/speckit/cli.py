@@ -86,41 +86,15 @@ def analyze_project(
     from state when not provided. Only specify args for new workflows.
     """
     from speckit.commands.analyze import run_analyze_project
-    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
 
-    # Check if we're starting a new workflow (no existing state)
-    has_existing_state = False
-    if analysis_dir:
-        state_manager = AnalysisStateManager(Path(analysis_dir))
-        has_existing_state = state_manager.exists()
-    else:
-        try:
-            latest = find_latest_analysis_folder()
-            state_manager = AnalysisStateManager(latest)
-            has_existing_state = state_manager.exists()
-        except FileNotFoundError:
-            pass
-
-    # Interactive mode only for NEW workflows (stage 1, no existing state)
-    effective_stage = stage if stage is not None else (1 if not has_existing_state else None)
-    if effective_stage == 1 and not has_existing_state:
-        from speckit.core.interactive import collect_analyze_project_input
-
-        if not path:
-            # No path provided - collect all inputs interactively
-            inputs = collect_analyze_project_input()
-            path = inputs.get("path")
-            scope = inputs.get("scope")
-            context = inputs.get("context")
-            concern_type = inputs.get("concern_type")
-            current_impl = inputs.get("current_impl")
-            target_impl = inputs.get("target_impl")
-        elif not scope:
-            # Path provided but scope missing - require scope
-            console.print("[red]Error:[/red] --scope is required when --path is provided")
-            console.print("  Use --scope A for full application analysis")
-            console.print("  Use --scope B for cross-cutting concern migration")
-            raise typer.Exit(1)
+    # Note: Input collection is now handled by the AI agent via prompts
+    # (01b-input-collection.md). The CLI emits the first stage prompt when
+    # starting a new workflow without inputs. The AI collects inputs from
+    # the user and then calls the CLI with those inputs:
+    #   speckitadv analyze-project --scope=A --context="..." [--path=... etc.]
+    #
+    # This enables the AI agent to guide the user through input collection
+    # rather than the CLI collecting inputs from the terminal.
 
     run_analyze_project(
         stage=stage,
@@ -896,6 +870,421 @@ def chain_state(
     from speckit.commands.chain import run_chain_state_command
 
     run_chain_state_command(command, stage, state_json, cmd=cmd, feature_dir=feature_dir)
+
+
+# ============================================================================
+# UTILITY Commands - For deterministic AI operations
+# ============================================================================
+
+
+@app.command("write-data")
+def write_data_cmd(
+    filename: str = typer.Argument(..., help="JSON filename (e.g., 'category-patterns.json')"),
+    content: Optional[str] = typer.Option(None, "--content", "-c", help="JSON content to write"),
+    stage: Optional[str] = typer.Option(None, "--stage", "-s", help="Stage to track artifact against"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", "-a", help="Analysis folder (auto-detected if not provided)"),
+    stdin: bool = typer.Option(False, "--stdin", help="Read content from stdin"),
+) -> None:
+    """
+    Write JSON data artifact to data/ folder.
+
+    Use this instead of AI-generated file write scripts for deterministic behavior.
+    Automatically tracks artifacts in state.json.
+
+    Examples:
+        speckitadv write-data category-patterns.json --content='{"patterns": []}'
+        speckitadv write-data deep-patterns.json --stage=02b-deep-dive --stdin < data.json
+    """
+    import sys
+    import json
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
+
+    # Get analysis folder
+    if analysis_dir:
+        folder = Path(analysis_dir)
+    else:
+        try:
+            folder = find_latest_analysis_folder()
+        except FileNotFoundError:
+            console.print("[red]Error:[/red] No analysis folder found. Run analyze-project first.")
+            raise typer.Exit(1)
+
+    state_manager = AnalysisStateManager(folder)
+
+    # Get content from stdin or --content
+    if stdin:
+        file_content = sys.stdin.read()
+    elif content:
+        file_content = content
+    else:
+        console.print("[red]Error:[/red] Provide --content or --stdin")
+        raise typer.Exit(1)
+
+    # Validate JSON
+    try:
+        json.loads(file_content)
+    except json.JSONDecodeError as e:
+        console.print(f"[red]Error:[/red] Invalid JSON: {e}")
+        raise typer.Exit(1)
+
+    # Write file
+    file_path = state_manager.write_data(filename, file_content, stage)
+    console.print(f"[green]✓[/green] Written: {file_path}")
+
+
+@app.command("write-report")
+def write_report_cmd(
+    filename: str = typer.Argument(..., help="Markdown filename (e.g., 'analysis-report.md')"),
+    content: Optional[str] = typer.Option(None, "--content", "-c", help="Markdown content to write"),
+    stage: Optional[str] = typer.Option(None, "--stage", "-s", help="Stage to track artifact against"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", "-a", help="Analysis folder (auto-detected if not provided)"),
+    append: bool = typer.Option(False, "--append", help="Append to existing file"),
+    stdin: bool = typer.Option(False, "--stdin", help="Read content from stdin"),
+) -> None:
+    """
+    Write Markdown report to reports/ folder.
+
+    Use this instead of AI-generated file write scripts for deterministic behavior.
+    Automatically tracks artifacts in state.json.
+
+    Examples:
+        speckitadv write-report analysis-report.md --content='# Phase 1...'
+        speckitadv write-report analysis-report.md --append --content='# Phase 2...'
+        cat report.md | speckitadv write-report analysis-report.md --stdin
+    """
+    import sys
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
+
+    # Get analysis folder
+    if analysis_dir:
+        folder = Path(analysis_dir)
+    else:
+        try:
+            folder = find_latest_analysis_folder()
+        except FileNotFoundError:
+            console.print("[red]Error:[/red] No analysis folder found. Run analyze-project first.")
+            raise typer.Exit(1)
+
+    state_manager = AnalysisStateManager(folder)
+
+    # Get content from stdin or --content
+    if stdin:
+        file_content = sys.stdin.read()
+    elif content:
+        file_content = content
+    else:
+        console.print("[red]Error:[/red] Provide --content or --stdin")
+        raise typer.Exit(1)
+
+    # Write file
+    file_path = state_manager.write_report(filename, file_content, append=append, stage=stage)
+    mode = "Appended" if append else "Written"
+    console.print(f"[green]✓[/green] {mode}: {file_path}")
+
+
+@app.command("update-stage")
+def update_stage_cmd(
+    stage_id: str = typer.Argument(..., help="Stage ID (e.g., '02a-category-scan')"),
+    status: str = typer.Option(..., "--status", "-s", help="Status: pending, in_progress, completed"),
+    artifacts: Optional[str] = typer.Option(None, "--artifacts", "-a", help="Comma-separated artifact paths"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", help="Analysis folder (auto-detected if not provided)"),
+) -> None:
+    """
+    Update workflow stage status and artifacts in state.json.
+
+    Use this instead of AI-generated state manipulation scripts.
+
+    Examples:
+        speckitadv update-stage 02a-category-scan --status=completed --artifacts=data/category-patterns.json
+        speckitadv update-stage 02b-deep-dive --status=in_progress
+    """
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
+
+    # Validate status
+    valid_statuses = ["pending", "in_progress", "completed"]
+    if status not in valid_statuses:
+        console.print(f"[red]Error:[/red] Invalid status. Must be one of: {valid_statuses}")
+        raise typer.Exit(1)
+
+    # Get analysis folder
+    if analysis_dir:
+        folder = Path(analysis_dir)
+    else:
+        try:
+            folder = find_latest_analysis_folder()
+        except FileNotFoundError:
+            console.print("[red]Error:[/red] No analysis folder found. Run analyze-project first.")
+            raise typer.Exit(1)
+
+    state_manager = AnalysisStateManager(folder)
+
+    # Parse artifacts
+    artifact_list = [a.strip() for a in artifacts.split(",")] if artifacts else []
+
+    # Update stage
+    state_manager.update_stage(stage_id, status, artifacts=artifact_list if artifact_list else None)
+    console.print(f"[green]✓[/green] Stage {stage_id} → {status}")
+    if artifact_list:
+        for artifact in artifact_list:
+            console.print(f"    + {artifact}")
+
+
+@app.command("update-preferences")
+def update_preferences_cmd(
+    preferences: str = typer.Argument(..., help="JSON string with modernization preferences"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", help="Analysis folder (auto-detected if not provided)"),
+) -> None:
+    """
+    Update modernization preferences in state.json.
+
+    Called by AI agent after collecting Q1-Q10 responses in stage 3A.
+    Preferences are merged with existing data (allows incremental updates).
+
+    Valid preference keys (Q1-Q10, must match prompts 03a1/03a2):
+        q1_language, q2_database, q3_message_bus, q4_package_manager,
+        q5_deployment, q6_iac, q7_containerization, q8_observability,
+        q9_security, q10_testing
+
+    Examples:
+        speckitadv update-preferences '{"q1_language": {"value": "Java 21"}, "q2_database": {"value": "PostgreSQL 16"}}'
+    """
+    import json
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
+
+    # Valid preference keys from Q1-Q10 (must match prompts 03a1/03a2)
+    VALID_PREFERENCE_KEYS = {
+        "q1_language",          # Q1: Target language/runtime
+        "q2_database",          # Q2: Target database
+        "q3_message_bus",       # Q3: Message bus/queue
+        "q4_package_manager",   # Q4: Package management
+        "q5_deployment",        # Q5: Deployment target
+        "q6_iac",               # Q6: IaC tool
+        "q7_containerization",  # Q7: Container strategy
+        "q8_observability",     # Q8: Observability stack
+        "q9_security",          # Q9: Security approach
+        "q10_testing",          # Q10: Testing approach
+    }
+
+    # Get analysis folder
+    if analysis_dir:
+        folder = Path(analysis_dir)
+    else:
+        try:
+            folder = find_latest_analysis_folder()
+        except FileNotFoundError:
+            console.print("[red]Error:[/red] No analysis folder found. Run analyze-project first.")
+            raise typer.Exit(1)
+
+    # Parse JSON
+    try:
+        prefs = json.loads(preferences)
+    except json.JSONDecodeError as e:
+        console.print(f"[red]Error:[/red] Invalid JSON: {e}")
+        raise typer.Exit(1)
+
+    # Validate preferences
+    if not isinstance(prefs, dict):
+        console.print("[red]Error:[/red] Preferences must be a JSON object, not a list or primitive.")
+        raise typer.Exit(1)
+
+    if not prefs:
+        console.print("[red]Error:[/red] Preferences cannot be empty.")
+        raise typer.Exit(1)
+
+    # Warn about unknown keys but still allow update (for flexibility)
+    unknown_keys = set(prefs.keys()) - VALID_PREFERENCE_KEYS
+    if unknown_keys:
+        console.print(f"[yellow]Warning:[/yellow] Unknown preference keys: {', '.join(sorted(unknown_keys))}")
+        console.print(f"  Valid keys: {', '.join(sorted(VALID_PREFERENCE_KEYS))}")
+
+    state_manager = AnalysisStateManager(folder)
+    state_manager.update_modernization_preferences(prefs)
+    console.print(f"[green]✓[/green] Modernization preferences updated")
+    for key, value in prefs.items():
+        console.print(f"    {key}: {value}")
+
+
+@app.command("file-stats")
+def file_stats_cmd(
+    filepath: str = typer.Argument(..., help="File path (relative to analysis folder or absolute)"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", "-a", help="Analysis folder (auto-detected if not provided)"),
+    pattern: Optional[str] = typer.Option(None, "--pattern", "-p", help="Regex pattern to count matches"),
+    json_output: bool = typer.Option(False, "--json", help="Output as JSON"),
+) -> None:
+    """
+    Get statistics about a file (lines, size, pattern matches).
+
+    Use this instead of AI-generated PowerShell/Bash scripts.
+
+    Examples:
+        speckitadv file-stats reports/analysis-report.md
+        speckitadv file-stats reports/analysis-report.md --pattern='.cs:\\d+'
+        speckitadv file-stats data/deep-patterns.json --json
+    """
+    import json
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
+
+    # Get analysis folder
+    if analysis_dir:
+        folder = Path(analysis_dir)
+    else:
+        try:
+            folder = find_latest_analysis_folder()
+        except FileNotFoundError:
+            console.print("[red]Error:[/red] No analysis folder found. Run analyze-project first.")
+            raise typer.Exit(1)
+
+    state_manager = AnalysisStateManager(folder)
+
+    # Get stats
+    stats = state_manager.get_file_stats(filepath)
+
+    # Add pattern match count if requested
+    if pattern and stats["exists"]:
+        stats["pattern_matches"] = state_manager.count_pattern_matches(filepath, pattern)
+        stats["pattern"] = pattern
+
+    if json_output:
+        print(json.dumps(stats, indent=2))
+    else:
+        if not stats["exists"]:
+            console.print(f"[red]File not found:[/red] {filepath}")
+            raise typer.Exit(1)
+
+        console.print(f"[bold]{filepath}[/bold]")
+        console.print(f"  Lines: {stats['lines']}")
+        console.print(f"  Size: {stats['size_kb']} KB ({stats['size_bytes']} bytes)")
+        if pattern:
+            console.print(f"  Pattern matches ('{pattern}'): {stats.get('pattern_matches', 0)}")
+
+
+@app.command("get-context")
+def get_context_cmd(
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", "-a", help="Analysis folder (auto-detected if not provided)"),
+    field: Optional[str] = typer.Option(None, "--field", "-f", help="Get specific field only"),
+) -> None:
+    """
+    Get current context variables for prompt rendering.
+
+    Use this instead of AI-generated state reading scripts.
+
+    Examples:
+        speckitadv get-context
+        speckitadv get-context --field=analysis_dir
+        speckitadv get-context --field=scope
+    """
+    import json
+    from datetime import datetime
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
+
+    # Get analysis folder
+    if analysis_dir:
+        folder = Path(analysis_dir)
+    else:
+        try:
+            folder = find_latest_analysis_folder()
+        except FileNotFoundError:
+            console.print("[red]Error:[/red] No analysis folder found. Run analyze-project first.")
+            raise typer.Exit(1)
+
+    state_manager = AnalysisStateManager(folder)
+    context = state_manager.get_context_for_prompt()
+
+    # Add timestamp field
+    context["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if field:
+        if field in context:
+            print(context[field])
+        else:
+            console.print(f"[red]Error:[/red] Unknown field: {field}")
+            console.print(f"Available: {', '.join(context.keys())}")
+            raise typer.Exit(1)
+    else:
+        print(json.dumps(context, indent=2, default=str))
+
+
+@app.command("list-files")
+def list_files_cmd(
+    pattern: str = typer.Option("*", "--pattern", "-p", help="Glob pattern (e.g., '*.cs', '**/*Service*.cs')"),
+    category: Optional[str] = typer.Option(None, "--category", "-c", help="Filter by category (controllers, services, models, etc.)"),
+    project_path: Optional[str] = typer.Option(None, "--project-path", help="Project path (uses analysis project_path if not provided)"),
+    analysis_dir: Optional[str] = typer.Option(None, "--analysis-dir", "-a", help="Analysis folder (auto-detected if not provided)"),
+    limit: int = typer.Option(100, "--limit", "-l", help="Maximum files to return"),
+    count_only: bool = typer.Option(False, "--count", help="Only show count"),
+) -> None:
+    """
+    List files matching pattern or category.
+
+    Use this instead of AI-generated Get-ChildItem/find scripts.
+
+    Examples:
+        speckitadv list-files --pattern='*.cs' --limit=20
+        speckitadv list-files --category=controllers
+        speckitadv list-files --pattern='**/*Service*.cs' --count
+    """
+    import fnmatch
+    from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
+
+    # Category patterns
+    CATEGORY_PATTERNS = {
+        "controllers": ["*Controller*", "*Route*", "*Handler*", "*Endpoint*"],
+        "services": ["*Service*", "*Manager*", "*Provider*"],
+        "models": ["*Model*", "*Entity*", "*Domain*"],
+        "repositories": ["*Repository*", "*Dao*", "*Store*"],
+        "middleware": ["*Middleware*", "*Filter*", "*Interceptor*"],
+        "config": ["*.config.*", "*.properties", "*.yml", "*.yaml", "appsettings*"],
+        "tests": ["*Test*", "*Spec*", "*.test.*", "*.spec.*"],
+    }
+
+    # Get project path
+    if project_path:
+        proj_path = Path(project_path)
+    else:
+        try:
+            if analysis_dir:
+                folder = Path(analysis_dir)
+            else:
+                folder = find_latest_analysis_folder()
+            state_manager = AnalysisStateManager(folder)
+            context = state_manager.get_context_for_prompt()
+            proj_path = Path(context["project_path"])
+        except (FileNotFoundError, KeyError):
+            proj_path = Path.cwd()
+
+    if not proj_path.exists():
+        console.print(f"[red]Error:[/red] Project path not found: {proj_path}")
+        raise typer.Exit(1)
+
+    # Get patterns to match
+    if category:
+        if category not in CATEGORY_PATTERNS:
+            console.print(f"[red]Error:[/red] Unknown category: {category}")
+            console.print(f"Available: {', '.join(CATEGORY_PATTERNS.keys())}")
+            raise typer.Exit(1)
+        patterns = CATEGORY_PATTERNS[category]
+    else:
+        patterns = [pattern]
+
+    # Find matching files
+    matches = []
+    for file_path in proj_path.rglob("*"):
+        if file_path.is_file():
+            # Match against relative path for directory-aware patterns (e.g., src/*.py, **/*Service*.cs)
+            rel_path = str(file_path.relative_to(proj_path))
+            for pat in patterns:
+                if fnmatch.fnmatch(rel_path, pat):
+                    matches.append(rel_path)
+                    break
+
+    matches = sorted(matches)[:limit]
+
+    if count_only:
+        print(len(matches))
+    else:
+        for match in matches:
+            print(match)
+        console.print(f"\n[dim]Total: {len(matches)} files[/dim]")
 
 
 if __name__ == "__main__":

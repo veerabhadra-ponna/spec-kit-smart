@@ -17,10 +17,10 @@ Generate artifacts specific to Cross-Cutting Concern Migration (Scope B). This i
 
 ## Pre-Check
 
-1. Read `.analysis/.state/analyze-project-05-artifacts.json`
+1. Read `{analysis_dir}/state.json`
 2. Confirm `common_artifacts_complete` = true
 3. Confirm `analysis_scope` = "B"
-4. Load concern details from `.analysis/.state/analyze-project-03b-cross-cutting.json`
+4. Load concern details from `concern_analysis` field in state.json
 
 **IF not complete:** STOP - Return to 05a-executive-summary.md
 
@@ -147,7 +147,7 @@ Generate:
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Write to: `{analysis_dir}/abstraction-assessment.md`
+Write to: `{reports_dir}/abstraction-assessment.md`
 
 **Verify:** Read file, confirm no placeholders.
 
@@ -233,7 +233,7 @@ Write to: `{analysis_dir}/abstraction-assessment.md`
 
 ```
 
-Write to: `{analysis_dir}/concern-migration-plan.md`
+Write to: `{reports_dir}/concern-migration-plan.md`
 
 **Output:**
 
@@ -316,7 +316,7 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Append to: `{analysis_dir}/concern-migration-plan.md`
+Append to: `{reports_dir}/concern-migration-plan.md`
 
 **Output:**
 
@@ -415,7 +415,7 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 
 ```
 
-Append to: `{analysis_dir}/concern-migration-plan.md`
+Append to: `{reports_dir}/concern-migration-plan.md`
 
 **Verify:** Read complete file, confirm all 10 sections present.
 
@@ -559,7 +559,7 @@ Generate detailed rollback procedure:
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Write to: `{analysis_dir}/rollback-procedure.md`
+Write to: `{reports_dir}/rollback-procedure.md`
 
 **Verify:** Read file, confirm no placeholders.
 
@@ -587,7 +587,7 @@ Write to: `{analysis_dir}/rollback-procedure.md`
 
 ```
 
-Write to: `.analysis/.state/analyze-project-06-scope-artifacts.json`
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 
@@ -607,8 +607,6 @@ Write to: `.analysis/.state/analyze-project-06-scope-artifacts.json`
     ✓ abstraction-assessment.md
     ✓ concern-migration-plan.md
     ✓ rollback-procedure.md
-
-  State: .analysis/.state/analyze-project-06-scope-artifacts.json
 ═══════════════════════════════════════════════════════════
 
 STAGE_COMPLETE:SCOPE_ARTIFACTS

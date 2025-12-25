@@ -18,11 +18,15 @@ Verify file analysis meets quality standards before proceeding. This is a mandat
 
 The CLI manages state and provides all context. **Do not read state.json directly.**
 
-Values available in this prompt (already substituted by CLI):
-- Project path, analysis directory, scope, context
+**Available template variables:**
+
+- `{project_path}`, `{analysis_dir}`, `{scope}`, `{context}`
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
 - Concern type, current/target implementation (Scope B only)
 
 **Branching:** After this stage, CLI auto-routes based on scope:
+
 - Scope A → Stage 3A (Full App Analysis)
 - Scope B → Stage 3B (Cross-Cutting Analysis)
 
@@ -30,7 +34,7 @@ Values available in this prompt (already substituted by CLI):
 
 ## Pre-Check: Verify Previous Substage
 
-1. Verify `{analysis_dir}/test-audit.json` exists
+1. Verify `{data_dir}/test-audit.json` exists
 2. Load all Phase 1-4 results
 
 **IF not complete:** STOP - Return to 02d-test-audit
@@ -400,7 +404,7 @@ Merge all phase results into comprehensive state:
 
 ### Save State
 
-Write to: `.analysis/.state/analyze-project-02-file-analysis.json`
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 
@@ -409,7 +413,7 @@ Write to: `.analysis/.state/analyze-project-02-file-analysis.json`
 ---
 ⏸️ **[STOP: VERIFY_STATE_SAVED]**
 
-1. Read `.analysis/.state/analyze-project-02-file-analysis.json`
+1. Read `{analysis_dir}/state.json`
 2. Validate JSON is parseable
 3. Confirm all required fields present
 4. Confirm `quality_gates.all_passed` = true
@@ -461,7 +465,7 @@ Action Required:
   ✓ Security: PASS ({count} ≥ 10)
   ✓ Dependencies: PASS (audit complete)
 
-  State: .analysis/.state/analyze-project-02-file-analysis.json
+  State: {analysis_dir}/state.json
 
 ═══════════════════════════════════════════════════════════
 

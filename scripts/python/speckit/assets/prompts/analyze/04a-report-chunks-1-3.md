@@ -14,13 +14,26 @@ Generate the first three chunks of the analysis report: Project Discovery, Contr
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**CLI Utility Commands:**
+
+- `speckitadv write-report <filename> --content '<md>'` - Write MD to reports/ folder
+- `speckitadv write-report <filename> --content '<md>' --append` - Append to existing report
+
+---
+
 ## Pre-Check: Verify Previous Stage
 
-1. Load state from either:
-   - `.analysis/.state/analyze-project-03a-full-app.json` (if scope = A)
-   - `.analysis/.state/analyze-project-03b-cross-cutting.json` (if scope = B)
+1. Load state from `{analysis_dir}/state.json`
 2. Confirm stage 3 is complete
-3. Load analysis results and preferences
+3. Load analysis results and preferences from `{data_dir}/`
 
 **IF state missing:** STOP - Return to Stage 3
 
@@ -44,10 +57,9 @@ Each chunk MUST be written to file before proceeding to next.
 Check for existing partial report:
 
 ```bash
-if [ -f "{analysis_dir}/analysis-report.md" ]; then
+if [ -f "{reports_dir}/analysis-report.md" ]; then
   # Check which chunks exist
 fi
-
 ```
 
 **IF resuming:** Skip completed chunks, continue from first incomplete.
@@ -69,13 +81,16 @@ Generate Phase 1 content. This section documents the project's technology stack 
 - 1.5 Build & Deployment
 
 **Content Requirements:**
-- Use data from file-structure.json and tech-stack.json
+
+- Use data from `{data_dir}/file-manifest.json` and `{data_dir}/tech-stack.json`
 - Include file:line references where applicable
 - NO placeholders (TODO, TBD, etc.)
 
 **Generate and Write:**
 
-Write to: `{analysis_dir}/analysis-report.md`
+Use CLI to write: `speckitadv write-report analysis-report.md --content '<md>' --analysis-dir "{analysis_dir}"`
+
+This saves to: `{reports_dir}/analysis-report.md`
 
 ```markdown
 # Analysis Report: {project_name}
@@ -146,7 +161,7 @@ Write to: `{analysis_dir}/analysis-report.md`
 
 ### Verify Chunk 1 Written
 
-1. Read `{analysis_dir}/analysis-report.md`
+1. Read `{reports_dir}/analysis-report.md`
 2. Confirm Phase 1 sections present
 3. Confirm no placeholders
 

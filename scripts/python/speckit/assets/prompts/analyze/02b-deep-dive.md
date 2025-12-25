@@ -22,14 +22,21 @@ Focus on HIGH-PRIORITY areas with 60-80% file coverage. This is where detailed p
 The CLI provides all context via template variables. **Do not read state.json directly.**
 
 **Available template variables:**
+
 - `{project_path}`, `{analysis_dir}`, `{scope}`, `{context}`
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
 - `{concern_type}`, `{current_impl}`, `{target_impl}` (Scope B)
+
+**CLI Utility Commands:**
+
+- `speckitadv write-data <filename> --content '<json>'` - Write JSON to data/ folder
 
 ---
 
 ## Pre-Check: Verify Previous Substage
 
-1. Verify `{analysis_dir}/category-patterns.json` exists (from Phase 1)
+1. Verify `{data_dir}/category-patterns.json` exists (from Phase 1)
 2. Load category patterns for priority determination
 
 **IF not complete:** STOP - Return to 02a-category-scan

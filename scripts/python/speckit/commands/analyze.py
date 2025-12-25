@@ -37,7 +37,7 @@ STAGE_MAP = {
     13: "04c-report-chunks-7-9",  # Stage 4.3: Report chunks 7-9
     14: "04d-report-verification",# Stage 4.4: Report verification
     15: "05a-executive-summary",  # Stage 5: Executive summary
-    16: "06-scope-artifacts",     # Stage 6: Scope-specific artifacts
+    16: "06a-functional-spec-legacy",  # Stage 6: First chunk (always uses chunking)
 }
 
 # Chunk map for stages that use sub-prompts (Stage 3A has 4 sub-prompts, Stage 3B has 3)
@@ -57,11 +57,12 @@ CHUNK_MAP = {
 
 # Stage 16 chunks are scope-specific
 STAGE_16_CHUNKS = {
-    "A": {  # Full app: 4 sub-prompts for functional/technical specs
+    "A": {  # Full app: 5 sub-prompts for functional/technical specs
         1: "06a-functional-spec-legacy",
         2: "06b-functional-spec-target",
-        3: "06c-technical-spec",
-        4: "06d-stage-prompts",
+        3: "06c1-technical-spec-legacy",
+        4: "06c2-technical-spec-target",
+        5: "06d-stage-prompts",
     },
     "B": {  # Cross-cutting: 1 sub-prompt for cross-cutting artifacts
         1: "06e-cross-cutting-artifacts",
@@ -157,7 +158,7 @@ def run_analyze_project(
             if stage is None:
                 from speckit.core.emit import emit_complete
                 # Verify expected artifacts exist before declaring complete
-                report_path = analysis_dir_path / "analysis-report.md"
+                report_path = analysis_dir_path / "reports" / "analysis-report.md"
                 if report_path.exists():
                     emit_complete(
                         title="Analysis Complete",
@@ -373,7 +374,7 @@ Run the following command to begin:""",
     # Run verification if this is the final stage and verify flag is set
     if next_cmd is None and verify:
         from speckit.commands.project import verify_analysis_report
-        report_path = analysis_dir_path / "analysis-report.md"
+        report_path = analysis_dir_path / "reports" / "analysis-report.md"
         if report_path.exists():
             print("\n")  # Add spacing
             verify_analysis_report(str(report_path))
@@ -431,8 +432,14 @@ def _emit_chunk_stage(
         )
         return
 
-    # Chunk the fragment content
-    chunk_content = _extract_chunk(fragment, chunk, total_chunks)
+    # Stage 16 uses per-chunk fragments that are already complete prompts
+    # Other stages use a single fragment that needs to be subdivided
+    if stage == 16:
+        # Per-chunk fragments are complete - emit as-is without subdividing
+        chunk_content = fragment
+    else:
+        # Subdivide the fragment into chunks
+        chunk_content = _extract_chunk(fragment, chunk, total_chunks)
     rendered = render_prompt(chunk_content, context)
 
     # On chunk 1, complete ALL previous in_progress stages and mark current as in_progress
@@ -502,13 +509,56 @@ def _emit_chunk_stage(
 
     # Emit chunk - use analysis_dir from context
     analysis_dir = context.get("analysis_dir", str(analysis_dir_path))
+
+    # Stage 16 chunks map to specific output files (scope-aware)
+    # NOTE: These paths are displayed as guidance for AI agents. The CLI does not
+    # write these files - AI agents write them directly following prompt instructions.
+    # stage-prompts/ is intentionally NOT under reports/ because it contains
+    # executable prompts for Spec Kit workflows, not analysis reports.
+    if stage == 16:
+        effective_scope = context.get("scope", "A")
+        if effective_scope == "A":
+            # Scope A: 5 chunks for functional specs, technical specs, stage-prompts
+            # Chunk 5 covers all 4 stage-prompt files (AI writes all in one chunk):
+            #   - stage-prompts/constitution-prompt.md
+            #   - stage-prompts/clarify-prompt.md
+            #   - stage-prompts/tasks-prompt.md
+            #   - stage-prompts/implement-prompt.md
+            stage_16_file_map = {
+                1: "reports/functional-spec-legacy.md",
+                2: "reports/functional-spec-target.md",
+                3: "reports/technical-spec-legacy.md",
+                4: "reports/technical-spec-target.md",
+                5: "stage-prompts/",  # All 4 prompts written in this chunk
+            }
+        else:
+            # Scope B: 1 chunk for cross-cutting artifacts
+            # All 3 artifacts are written in this single chunk:
+            #   - reports/abstraction-assessment.md
+            #   - reports/concern-migration-plan.md
+            #   - reports/rollback-procedure.md
+            stage_16_file_map = {
+                1: "reports/",  # All 3 cross-cutting artifacts written in this chunk
+            }
+        chunk_file = stage_16_file_map.get(chunk, f"stage{stage}-chunk{chunk}.md")
+        file_path = f"{analysis_dir}/{chunk_file}"
+    else:
+        file_path = f"{analysis_dir}/stage{stage}-chunk{chunk}.md"
+
+    # Stage 16 chunks each write to different files, so always use "create" mode.
+    # Other stages append chunks to a single file.
+    if stage == 16:
+        chunk_mode = "create"
+    else:
+        chunk_mode = "append" if chunk > 1 else "create"
+
     emit_chunk(
         chunk_num=chunk,
         total_chunks=total_chunks,
         title=f"{_get_stage_title(stage)} - Chunk {chunk}",
         content=rendered,
-        file_path=f"{analysis_dir}/stage{stage}-chunk{chunk}.md",
-        mode="append" if chunk > 1 else "create",
+        file_path=file_path,
+        mode=chunk_mode,
         line_range=((chunk-1)*50+1, chunk*50),
         next_cmd=next_cmd,
     )
@@ -677,7 +727,10 @@ def _get_stage_num_from_id(stage_id: str) -> int:
         if frag_id == stage_id:
             return num
 
-    # Try extracting from "01a-...", "02b-...", etc.
+    # Fallback: extract stage number from prefix like "01a-...", "06a-..."
+    # NOTE: No backward compatibility for legacy stage IDs (e.g., "06-scope-artifacts").
+    # This system is pre-release; old state.json files with legacy IDs must be
+    # re-initialized. See AGENTS.md "No Backward Compatibility" policy.
     try:
         # Extract first two digits
         prefix = stage_id[:2]

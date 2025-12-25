@@ -25,7 +25,7 @@ class TestGetStageNumFromId:
         assert _get_stage_num_from_id("01a-initialization") == 1
         assert _get_stage_num_from_id("01b-input-collection") == 2  # Stage 2 in CLI
         assert _get_stage_num_from_id("02a-category-scan") == 4  # Stage 4 in CLI
-        assert _get_stage_num_from_id("06-scope-artifacts") == 16  # Stage 16 in CLI
+        assert _get_stage_num_from_id("06a-functional-spec-legacy") == 16  # Stage 16 in CLI
 
     def test_handles_stage_n_format(self):
         """Should handle stage_N format."""

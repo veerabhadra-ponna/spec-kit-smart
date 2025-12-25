@@ -37,7 +37,7 @@ It is adapted for **legacy code modernization** to define HOW to build the new s
 - `<<USER_CHOICE_OBSERVABILITY>>` - From Q8 (e.g., "Prometheus + Grafana")
 - `<<USER_CHOICE_SECURITY>>` - From Q9 (e.g., "OAuth 2.0 / OpenID Connect")
 - `<<USER_CHOICE_TESTING>>` - From Q10 (e.g., "Unit + Integration + E2E tests")
-- `<<LEGACY_PAIN_POINTS>>` - Extract from functional-spec.md
+- `<<LEGACY_PAIN_POINTS>>` - Extract from functional-spec-legacy.md
 - `<<LTS_VERSIONS>>` - Query AI knowledge base for latest LTS
 
 ---
@@ -713,7 +713,7 @@ flowchart TB
 
 **Mapping BA Needs → Pattern**:
 
-- **Need**: <<from functional-spec.md>> → **Pattern**: <<How target pattern addresses it>>
+- **Need**: <<from functional-spec-legacy.md>> → **Pattern**: <<How target pattern addresses it>>
 - **Need**: <<Scalability>> → **Pattern**: <<Microservices with K8s autoscaling>>
 - **Need**: <<Faster releases>> → **Pattern**: <<Independent service deployments>>
 
@@ -727,7 +727,7 @@ flowchart TB
 
 ## 9. Capabilities by Phase (50/30/15/5)
 
-Map legacy features (from functional-spec.md) to modernization phases:
+Map legacy features (from functional-spec-legacy.md) to modernization phases:
 
 | Phase | Scope | Value % | Features (from Legacy) | Risks | Exit Criteria |
 | ------- | ------- | --------: | ---------------------- | ------- | --------------- |
@@ -824,7 +824,7 @@ Map legacy code to modernized components:
 | GET | `/api/v1/users` | Bearer token | - | UserListResponse | 401, 429, 500 |
 | POST | `/api/v1/users` | Bearer token | UserInput | User | 400, 401, 409, 429, 500 |
 
-**Schemas**: See functional-spec.md §15 for legacy contracts
+**Schemas**: See functional-spec-legacy.md §15 for legacy contracts
 **Target Schemas**: <<Update with modern conventions (camelCase, ISO8601, etc.)>>
 
 ### Authentication Flow (Target)
@@ -849,7 +849,7 @@ Map legacy code to modernized components:
 
 #### Entity: <<User>> (Example)
 
-**Legacy Schema** (from functional-spec.md §13):
+**Legacy Schema** (from functional-spec-legacy.md §13):
 
 ```sql
 -- Oracle 11g
@@ -918,7 +918,7 @@ CREATE TYPE user_role AS ENUM ('admin', 'user', 'guest');
 
 ## 14. NFR Targets (Measurable SLO/SLI)
 
-Convert legacy NFRs (from functional-spec.md §12) to measurable targets:
+Convert legacy NFRs (from functional-spec-legacy.md §12) to measurable targets:
 
 ### Performance
 
@@ -999,7 +999,7 @@ Convert legacy NFRs (from functional-spec.md §12) to measurable targets:
 
 ### Compliance Requirements
 
-From legacy analysis (functional-spec.md §11):
+From legacy analysis (functional-spec-legacy.md §11):
 
 - **GDPR**: PII encryption, right to erasure
 - **SOX**: Audit logging, immutability
@@ -1086,7 +1086,7 @@ From legacy analysis (functional-spec.md §11):
 
 ## 19. R→C→T Traceability
 
-Map Requirements (from functional-spec.md) → Components → Tests:
+Map Requirements (from functional-spec-legacy.md) → Components → Tests:
 
 | Requirement ID | Requirement | Component | Test ID | Test Type |
 | ---------------- | ------------- | ----------- | --------- | ----------- |
@@ -1149,5 +1149,9 @@ Map Requirements (from functional-spec.md) → Components → Tests:
 ## END OF TECHNICAL SPECIFICATION
 
 This document defines HOW to build the modernized system.
+<!-- Note: This template is used for BOTH technical-spec-legacy.md and technical-spec-target.md -->
+<!-- Both specs reference both functional specs for complete context: -->
+<!--   - functional-spec-legacy.md documents WHAT the legacy system does -->
+<!--   - functional-spec-target.md documents WHAT the target system will do -->
 For WHAT the system does, see `functional-spec-legacy.md` and `functional-spec-target.md`.
 For stage-specific guidance, see `stage-prompts/`.

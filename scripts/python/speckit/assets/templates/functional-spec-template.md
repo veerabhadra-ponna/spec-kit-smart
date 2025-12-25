@@ -725,7 +725,7 @@ Why modernize (inferred from code analysis):
 3. **Clarifications**: Address assumptions that couldn't be verified from code
 4. **State Machine Validation**: Confirm state transitions match expected behavior
 5. **Configuration Review**: Verify all config-driven behaviors are documented
-6. **Modernization Planning**: Use this spec as input to technical-spec.md
+6. **Modernization Planning**: Use this spec as input to technical-spec-target.md
 
 ---
 
@@ -774,4 +774,8 @@ C4Context
 ## END OF FUNCTIONAL SPECIFICATION
 
 This document serves as the "WHAT" for the modernization effort.
-For "HOW" (architecture, target stack, migration), see `technical-spec.md`.
+<!-- Note: This template is used for BOTH functional-spec-legacy.md and functional-spec-target.md -->
+<!-- The corresponding technical spec depends on context: -->
+<!--   - functional-spec-legacy.md → technical-spec-legacy.md (current architecture) -->
+<!--   - functional-spec-target.md → technical-spec-target.md (target architecture) -->
+For "HOW" (architecture, target stack, migration), see the corresponding technical specification.

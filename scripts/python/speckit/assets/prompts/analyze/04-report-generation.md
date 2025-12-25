@@ -30,11 +30,24 @@ Generate the comprehensive `analysis-report.md` file using completion-based chun
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**CLI Utility Commands:**
+
+- `speckitadv write-report analysis-report.md --content '<md>'` - Create report
+- `speckitadv write-report analysis-report.md --content '<md>' --append` - Append to report
+
+---
+
 ## Previous State
 
-Load state from either:
-- `.analysis/.state/analyze-project-03a-full-app.json` (if scope = A)
-- `.analysis/.state/analyze-project-03b-cross-cutting.json` (if scope = B)
+Load state from `{analysis_dir}/state.json` - the CLI tracks stage completion automatically.
 
 ---
 
@@ -95,7 +108,7 @@ Use **completion-based chunking**, NOT size-based chunking:
 
 ```bash
 # Check if analysis-report.md already exists
-if [ -f "{analysis_dir}/analysis-report.md" ]; then
+if [ -f "{reports_dir}/analysis-report.md" ]; then
   # Report exists - check content to determine resume point
   # Look for phase headers to determine last completed section
 fi
@@ -105,7 +118,7 @@ fi
 
 **IF** analysis-report.md exists AND is incomplete:
 
-1. Read `{analysis_dir}/analysis-report.md`
+1. Read `{reports_dir}/analysis-report.md`
 2. Identify last completed phase by checking which phase headers exist
 3. Display resume message:
 
@@ -129,7 +142,7 @@ fi
 
 ## Report Structure (9 Phases)
 
-Generate report in `.analysis/{project}-{timestamp}/analysis-report.md`
+Generate report in `{reports_dir}/analysis-report.md`
 
 **⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
 
@@ -168,7 +181,7 @@ Complete sections:
 **After Chunk 1 Generation**:
 
 1. **Write to file** using Write tool:
-   - File path: `.analysis/{project}-{timestamp}/analysis-report.md`
+   - File path: `{reports_dir}/analysis-report.md`
    - Content: Complete Phase 1 sections (1.1-1.5)
 
 2. **MANDATORY - Display progress**:
@@ -404,7 +417,7 @@ Complete **Sections 8 & 9**:
    ✅ analysis-report.md GENERATION COMPLETE
       Total lines: [COUNT]
       Total chunks: 9
-      File path: .analysis/{project}-{timestamp}/analysis-report.md
+      File path: {reports_dir}/analysis-report.md
       Analysis duration: [DURATION]
 
    ```
@@ -421,7 +434,7 @@ Complete **Sections 8 & 9**:
 
 Read analysis-report.md and verify:
 
-- [ ] File exists at expected path: `.analysis/{project}-{timestamp}/analysis-report.md`
+- [ ] File exists at expected path: `{reports_dir}/analysis-report.md`
 - [ ] All 9 phase headers present:
       - [ ] Phase 1: Project Discovery
       - [ ] Phase 2: Codebase Analysis
@@ -571,7 +584,7 @@ Proceeding to Stage 5 (Artifact Generation)...
   "timestamp": "2025-11-14T11:30:00Z",
   "stages_complete": [..., "report_generation"],
   "report_generated": true,
-  "report_path": ".analysis/{project}-{timestamp}/analysis-report.md",
+  "report_path": "{reports_dir}/analysis-report.md",
   "report_stats": {
     "total_lines": 3450,
     "chunks_generated": 9,
@@ -590,9 +603,10 @@ Proceeding to Stage 5 (Artifact Generation)...
 
 ```text
 STAGE_COMPLETE:REPORT
-STATE_PATH: .analysis/.state/analyze-project-04-report.json
 
 ```
+
+The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 ---
 

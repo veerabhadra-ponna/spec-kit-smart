@@ -14,6 +14,7 @@
 | **Chain mkdir** | Use semicolon: `mkdir folderA; mkdir folderB` |
 | **Doc Updates** | Increment version, add CHANGELOG entry if `__init__.py` or `pyproject.toml` changed |
 | **Large Files** | >1500 lines → chunked generation (300-800 lines/chunk) |
+| **No Backward Compatibility** | System is pre-release; breaking changes are allowed. Do not add legacy mappings or compatibility shims. |
 
 ---
 
@@ -68,6 +69,44 @@
 | `specify`, `plan`, `tasks`, `implement` | `specs/{feature}/.state/state.json` |
 
 **Usage:** After state created (stage 3+), just run `speckitadv <command>` - auto-detects stage/folder.
+
+---
+
+## CLI Utility Commands (for analyze-project)
+
+These deterministic commands allow AI agents to write artifacts and query context without ad-hoc file operations.
+
+### Artifact Writing
+
+| Command | Purpose | Example |
+|---------|---------|---------|
+| `write-data` | Write JSON to `data/` folder | `speckitadv write-data category-patterns.json --content '{"patterns": [...]}'` |
+| `write-report` | Write/append Markdown to `reports/` | `speckitadv write-report analysis-report.md --content '# Report...'` |
+| `update-stage` | Update stage status in state.json | `speckitadv update-stage 02a-category-scan --status completed --artifacts file.json` |
+| `update-preferences` | Store Q1-Q10 modernization preferences | `speckitadv update-preferences '{"q1_language": {"value": "Java 21"}, ...}'` |
+
+### Context Queries
+
+| Command | Purpose | Example |
+|---------|---------|---------|
+| `get-context` | Get render context for prompts | `speckitadv get-context --field scope` |
+| `file-stats` | Get file info (lines, size, patterns) | `speckitadv file-stats reports/analysis-report.md --pattern "^##"` |
+| `list-files` | Find files by pattern or category | `speckitadv list-files --pattern "**/*Service*.cs" --limit 50` |
+
+### Valid Preference Keys (Q1-Q10)
+
+```text
+q1_language, q2_database, q3_message_bus, q4_package_manager,
+q5_deployment, q6_iac, q7_containerization, q8_observability,
+q9_security, q10_testing
+```
+
+### File Categories for list-files
+
+```text
+controllers, services, models, repositories, handlers, middleware,
+config, tests, views, utilities, migrations
+```
 
 ---
 

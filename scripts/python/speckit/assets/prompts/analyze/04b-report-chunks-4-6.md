@@ -14,11 +14,25 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**CLI Utility Commands:**
+
+- `speckitadv write-report analysis-report.md --content '<md>' --append` - Append to report
+
+---
+
 ## Pre-Check
 
 1. Read `{analysis_dir}/state.json`
 2. Confirm chunks 1-3 complete
-3. Read current analysis-report.md
+3. Read current report at `{reports_dir}/analysis-report.md`
 
 ---
 

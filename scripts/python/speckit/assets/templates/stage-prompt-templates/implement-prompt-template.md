@@ -137,5 +137,5 @@ TESTING:
 - E2E: Replicate critical user workflows
 
 Legacy code reference: <<repo path>>
-Full analysis: analysis/functional-spec.md, technical-spec.md
+Full analysis: analysis/functional-spec-legacy.md, technical-spec-target.md
 ```

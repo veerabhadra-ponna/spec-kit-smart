@@ -7,6 +7,7 @@ Spec Kit is a toolkit for Spec-Driven Development. See [README.md](README.md) fo
 ## General Practices
 
 - Changes to `__init__.py` require version rev in `pyproject.toml` and `CHANGELOG.md` entry.
+- **No Backward Compatibility**: System is pre-release; breaking changes are allowed. Do not add legacy mappings or compatibility shims.
 
 ### Chunked File Generation for Large Outputs
 
@@ -99,5 +100,4 @@ Run `npx markdownlint-cli2 '**/*.md'` before commit (must return 0 errors). Uses
 ## Documentation Structure
 
 - **`docs/`**: User documentation (guides, reference, workflows)
-- **`docs/archived/`**: Historical planning documents (completed)
 - **`AGENTS.md`**: Repo dev instructions; toolkit AGENTS.md embedded in CLI
