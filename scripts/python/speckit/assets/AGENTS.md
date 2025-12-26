@@ -254,6 +254,41 @@ Feature-scoped workflows (specify, plan, tasks, implement, checklist) use AI Wri
 
 ---
 
+## Agentic Workflow (Auto-Continue)
+
+The analyze-project workflow supports fully agentic execution through continuation markers.
+
+### Continuation Markers
+
+| Marker | Meaning | AI Action |
+|--------|---------|-----------|
+| `[AUTO-CONTINUE]` | No user input needed | Immediately proceed to next stage |
+| `[WAIT-FOR-INPUT]` | User response required | Stop and wait for user |
+| `[GATE-CHECK]` | Verification gate | If pass: continue. If fail: wait |
+
+### How It Works
+
+1. **Within stages**: `[STOP: USER_INPUT_REQUIRED]` markers pause for user input
+2. **At stage end**: The continuation marker determines what happens next
+3. **Default**: If no marker, treat as `[AUTO-CONTINUE]`
+
+### Stage Types
+
+| Stage Type | End Behavior | Examples |
+|------------|--------------|----------|
+| Analysis/Generation | AUTO-CONTINUE | 02a-02d, 04a-04c, 05a |
+| Q&A (multi-question) | AUTO-CONTINUE after all answered | 03a1, 03a2 |
+| Verification gates | GATE-CHECK (pass/fail) | 02e, 04d, 06a-06c |
+| User decisions | Wait for explicit input | 01b (if interactive) |
+
+### Best Practice
+
+Do NOT stop and ask "should I continue?" between stages. Follow the continuation markers and proceed automatically unless:
+- A `[GATE-CHECK]` fails
+- A `[STOP: USER_INPUT_REQUIRED]` marker is encountered
+
+---
+
 ## Document Structure
 
 **Priority (Highest→Lowest):**

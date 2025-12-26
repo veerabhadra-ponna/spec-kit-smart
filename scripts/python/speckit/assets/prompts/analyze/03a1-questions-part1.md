@@ -360,6 +360,8 @@ Store user's choice in:
 
 ---
 
+**[AUTO-CONTINUE]** After all Q1-Q5 are answered and stored, immediately proceed to next substage. Do NOT wait for additional user input.
+
 ## Next Substage
 
 Run: `speckitadv analyze-project`

@@ -358,6 +358,8 @@ Save the complexity and feasibility scores to the data folder using stdin mode:
 
 ---
 
+**[AUTO-CONTINUE]** After scope validation and scoring complete, immediately proceed to next substage. Do NOT wait for user input.
+
 ## Next Substage
 
 Run: `speckitadv analyze-project`

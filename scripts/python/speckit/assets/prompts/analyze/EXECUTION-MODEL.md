@@ -173,7 +173,7 @@ At the end of each stage/sub-prompt, use these markers:
 
 **Default behavior:** If no marker specified at stage end, treat as `[AUTO-CONTINUE]`.
 
-**Critical:** Q&A stages (03a1, 03a2, 03a3) and input collection stages MUST use `[WAIT-FOR-INPUT]`.
+**Note on Q&A stages:** Stages with `[STOP: USER_INPUT_REQUIRED]` markers (like 03a1, 03a2, 01b) handle user input WITHIN the stage. After all questions are answered, they should AUTO-CONTINUE to the next stage.
 
 ### Why Visual Markers Work
 

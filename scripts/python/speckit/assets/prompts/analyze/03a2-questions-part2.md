@@ -413,6 +413,8 @@ This stores all preferences in `{analysis_dir}/state.json` under the `modernizat
 
 ---
 
+**[AUTO-CONTINUE]** After all Q6-Q10 are answered and stored, immediately proceed to next substage. Do NOT wait for additional user input.
+
 ## Next Substage
 
 Run: `speckitadv analyze-project`
