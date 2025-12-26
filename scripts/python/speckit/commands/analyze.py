@@ -241,6 +241,11 @@ def run_analyze_project(
             target_impl=resolved_target,
         )
 
+    # Update project_path if explicitly provided via CLI
+    # This ensures the correct path is used even when resuming a previous analysis
+    if path:
+        state_manager.update_project_path(str(project_path))
+
     # Build context for prompt rendering using state manager
     # This ensures prompts get consistent values from state.json
     base_context = state_manager.get_context_for_prompt()

@@ -486,6 +486,18 @@ class AnalysisStateManager:
         self.save(state)
         return state
 
+    def update_project_path(self, project_path: str) -> AnalysisState:
+        """Update the project path in state.
+
+        Called when --path is provided to override the stored project path.
+        This ensures prompts use the correct path when resuming analysis
+        on a different project or subdirectory.
+        """
+        state = self.load()
+        state.project_path = str(project_path)
+        self.save(state)
+        return state
+
     def update_stage(
         self,
         stage: str,
