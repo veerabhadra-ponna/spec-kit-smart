@@ -86,7 +86,7 @@ Now edit `{{feature_dir}}/plan.md` with these initial replacements:
 ## Output
 
 ```text
-✓ Setup complete
+[ok] Setup complete
   - Spec: <path to spec.md>
   - Plan: {{feature_dir}}/plan.md (template created)
   - Constraints: [N] loaded

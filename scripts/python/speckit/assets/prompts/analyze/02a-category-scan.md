@@ -33,8 +33,25 @@ The CLI provides all context via template variables. **Do not read state.json di
 
 **CLI Utility Commands:**
 
-- `speckitadv write-data <filename> --content '<json>'` - Write JSON to data/ folder
-- `speckitadv file-stats <filepath>` - Get file statistics (lines, size)
+[!] **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
+
+```bash
+# Write JSON data
+speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
+
+# Get file statistics
+speckitadv file-stats <filepath>
+```
+
+**For large JSON, use stdin mode:**
+
+```powershell
+@"
+<full comprehensive json here>
+"@ | speckitadv write-data <filename> --stage=<stage-id> --stdin
+```
 
 ---
 
@@ -90,7 +107,7 @@ For EACH category, scan 15-20% of files (minimum 3 files per category if availab
 ### 3.1 Controllers/Routes Scan
 
 ---
-⏸️ **[STOP: SCAN_CONTROLLERS]**
+[STOP: SCAN_CONTROLLERS]**
 
 Scan files in Controllers/Routes category:
 
@@ -107,11 +124,11 @@ Scan files in Controllers/Routes category:
 ```text
 [Phase 1 - Category Scan]
 Scanning Controllers/Routes...
-✓ {file1}: Found {n} endpoints, Auth: {type}
-✓ {file2}: Found {n} endpoints, Auth: {type}
-✓ {file3}: Found {n} endpoints, Auth: {type}
+[ok] {file1}: Found {n} endpoints, Auth: {type}
+[ok] {file2}: Found {n} endpoints, Auth: {type}
+[ok] {file3}: Found {n} endpoints, Auth: {type}
 ...
-✓ Controllers: {scanned}/{total} files scanned
+[ok] Controllers: {scanned}/{total} files scanned
 
 ```
 
@@ -120,7 +137,7 @@ Scanning Controllers/Routes...
 ### 3.2 Services/Business Logic Scan
 
 ---
-⏸️ **[STOP: SCAN_SERVICES]**
+[STOP: SCAN_SERVICES]**
 
 Scan files in Services/Business Logic category:
 
@@ -136,11 +153,11 @@ Scan files in Services/Business Logic category:
 
 ```text
 Scanning Services/Business Logic...
-✓ {file1}: Business logic: {summary}
-✓ {file2}: Integrations: {list}
-✓ {file3}: Transactions: {pattern}
+[ok] {file1}: Business logic: {summary}
+[ok] {file2}: Integrations: {list}
+[ok] {file3}: Transactions: {pattern}
 ...
-✓ Services: {scanned}/{total} files scanned
+[ok] Services: {scanned}/{total} files scanned
 
 ```
 
@@ -149,7 +166,7 @@ Scanning Services/Business Logic...
 ### 3.3 Models/Entities Scan
 
 ---
-⏸️ **[STOP: SCAN_MODELS]**
+[STOP: SCAN_MODELS]**
 
 Scan files in Models/Entities category:
 
@@ -164,11 +181,11 @@ Scan files in Models/Entities category:
 
 ```text
 Scanning Models/Entities...
-✓ {file1}: Entity: {name}, Relationships: {count}
-✓ {file2}: Entity: {name}, Validations: {count}
-✓ {file3}: Entity: {name}, Mappings: {type}
+[ok] {file1}: Entity: {name}, Relationships: {count}
+[ok] {file2}: Entity: {name}, Validations: {count}
+[ok] {file3}: Entity: {name}, Mappings: {type}
 ...
-✓ Models: {scanned}/{total} files scanned
+[ok] Models: {scanned}/{total} files scanned
 
 ```
 
@@ -177,7 +194,7 @@ Scanning Models/Entities...
 ### 3.4 Repositories/DAOs Scan
 
 ---
-⏸️ **[STOP: SCAN_REPOSITORIES]**
+[STOP: SCAN_REPOSITORIES]**
 
 Scan files in Repositories/DAOs category:
 
@@ -193,11 +210,11 @@ Scan files in Repositories/DAOs category:
 
 ```text
 Scanning Repositories/DAOs...
-✓ {file1}: Queries: {count}, Custom SQL: {yes/no}
-✓ {file2}: Pattern: {CRUD/custom}
-✓ {file3}: Caching: {strategy}
+[ok] {file1}: Queries: {count}, Custom SQL: {yes/no}
+[ok] {file2}: Pattern: {CRUD/custom}
+[ok] {file3}: Caching: {strategy}
 ...
-✓ Repositories: {scanned}/{total} files scanned
+[ok] Repositories: {scanned}/{total} files scanned
 
 ```
 
@@ -206,7 +223,7 @@ Scanning Repositories/DAOs...
 ### 3.5 Remaining Categories Quick Scan
 
 ---
-⏸️ **[STOP: SCAN_REMAINING]**
+[STOP: SCAN_REMAINING]**
 
 Quick scan of remaining categories (Security, Middleware, Utilities):
 
@@ -229,13 +246,13 @@ Quick scan of remaining categories (Security, Middleware, Utilities):
 
 ```text
 Scanning Security/Auth...
-✓ Auth type: {type}, RBAC: {yes/no}
+[ok] Auth type: {type}, RBAC: {yes/no}
 
 Scanning Middleware...
-✓ Patterns: {list}
+[ok] Patterns: {list}
 
 Scanning Utilities...
-✓ Helpers found: {count}
+[ok] Helpers found: {count}
 
 ```
 
@@ -309,12 +326,30 @@ Create a summary of patterns found in each category:
 
 ---
 
-## Step 5: Save Category Patterns
+## Step 5: Save Category Patterns (SINGLE FILE)
 
-Write the category patterns JSON using CLI command:
+**[!] CRITICAL: Write to ONE file only. Do NOT create multiple files.**
+
+Save category patterns to `{data_dir}/category-patterns.json`:
+
+**Use stdin for the full JSON (RECOMMENDED):**
+
+```powershell
+@"
+{
+  "category_scan": {
+    "controllers": { ... },
+    "services": { ... },
+    ...
+  }
+}
+"@ | speckitadv write-data category-patterns.json --stage=02a-category-scan --stdin
+```
+
+**Or use --content for smaller JSON:**
 
 ```bash
-speckitadv write-data category-patterns.json --content '<json>' --analysis-dir "{analysis_dir}"
+speckitadv write-data category-patterns.json --stage=02a-category-scan --content '<full-json>'
 ```
 
 This saves to `{data_dir}/category-patterns.json` and will be used by subsequent stages for deep-dive analysis.
@@ -324,7 +359,7 @@ This saves to `{data_dir}/category-patterns.json` and will be used by subsequent
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 02a-category-scan (Phase 1)
 
   Files Scanned: {count}/{total} ({percentage}%)
@@ -337,11 +372,13 @@ This saves to `{data_dir}/category-patterns.json` and will be used by subsequent
     Caching: {Redis/Memcached/None/etc}
 
   Proceeding to Phase 2: Deep Dive
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
 ---
+
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
 
 ## Next Substage
 

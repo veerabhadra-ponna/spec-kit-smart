@@ -68,7 +68,7 @@ Check `/.guidelines/` directory:
 ## Output
 
 ```text
-✓ Initialization complete
+[ok] Initialization complete
   - Role: Software Architect
   - Tech stack: [detected stacks]
   - Guidelines: [loaded / not found]

@@ -25,6 +25,27 @@ Generate staged implementation prompts for Spec Kit workflow integration. These 
 
 ---
 
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+
+---
+
+## [!] File Write Exception: Stage Prompts
+
+**EXCEPTION:** Stage prompts are written using the AI Write tool directly to `{analysis_dir}/stage-prompts/`.
+
+This is the ONLY exception to the CLI file write policy because:
+1. Stage prompts are auxiliary files for Spec Kit workflow integration
+2. They are not tracked as individual artifacts in state.json
+3. The CLI tracks completion via the stage completion marker
+
+**For ALL other artifacts (reports, specs, data files), use CLI commands only.**
+
+---
+
 ## Templates
 
 {{include:stage-prompt-templates/constitution-prompt-template.md}}
@@ -41,12 +62,14 @@ Generate staged implementation prompts for Spec Kit workflow integration. These 
 
 Create: `{analysis_dir}/stage-prompts/`
 
+**[AUTO-CONTINUE]** Generate all 4 prompts sequentially without waiting for user input between prompts.
+
 ---
 
 ## Prompt 1: Constitution Prompt
 
 ---
-⏸️ **[STOP: GENERATE_CONSTITUTION_PROMPT]**
+[STOP: GENERATE_CONSTITUTION_PROMPT]**
 
 **Purpose:** Extract project principles from legacy code for `/speckitadv.constitution` command
 
@@ -89,14 +112,14 @@ Create: `{analysis_dir}/stage-prompts/`
 
 Write to: `{analysis_dir}/stage-prompts/constitution-prompt.md`
 
-**Output:** `✓ Generated: constitution-prompt.md`
+**Output:** `[ok] Generated: constitution-prompt.md`
 
 ---
 
 ## Prompt 2: Clarify Prompt
 
 ---
-⏸️ **[STOP: GENERATE_CLARIFY_PROMPT]**
+[STOP: GENERATE_CLARIFY_PROMPT]**
 
 **Purpose:** Use legacy code as source of truth for clarifications with `/speckitadv.clarify` command
 
@@ -145,14 +168,14 @@ When clarifying ambiguous requirements, reference these legacy implementations:
 
 Write to: `{analysis_dir}/stage-prompts/clarify-prompt.md`
 
-**Output:** `✓ Generated: clarify-prompt.md`
+**Output:** `[ok] Generated: clarify-prompt.md`
 
 ---
 
 ## Prompt 3: Tasks Prompt
 
 ---
-⏸️ **[STOP: GENERATE_TASKS_PROMPT]**
+[STOP: GENERATE_TASKS_PROMPT]**
 
 **Purpose:** Break down implementation with legacy complexity awareness for `/speckitadv.tasks` command
 
@@ -206,14 +229,14 @@ Write to: `{analysis_dir}/stage-prompts/clarify-prompt.md`
 
 Write to: `{analysis_dir}/stage-prompts/tasks-prompt.md`
 
-**Output:** `✓ Generated: tasks-prompt.md`
+**Output:** `[ok] Generated: tasks-prompt.md`
 
 ---
 
 ## Prompt 4: Implement Prompt
 
 ---
-⏸️ **[STOP: GENERATE_IMPLEMENT_PROMPT]**
+[STOP: GENERATE_IMPLEMENT_PROMPT]**
 
 **Purpose:** Reference legacy code during implementation for `/speckitadv.implement` command
 
@@ -269,7 +292,7 @@ These behaviors must be implemented EXACTLY as in legacy:
 
 Write to: `{analysis_dir}/stage-prompts/implement-prompt.md`
 
-**Output:** `✓ Generated: implement-prompt.md`
+**Output:** `[ok] Generated: implement-prompt.md`
 
 ---
 
@@ -305,21 +328,21 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Completion Marker
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   STAGE COMPLETE: SCOPE_ARTIFACTS (Full Application)
 
   Chain ID: {chain_id}
 
   Artifacts Generated (8 total):
-    ✓ functional-spec-legacy.md
-    ✓ functional-spec-target.md
-    ✓ technical-spec-legacy.md
-    ✓ technical-spec-target.md
-    ✓ stage-prompts/constitution-prompt.md
-    ✓ stage-prompts/clarify-prompt.md
-    ✓ stage-prompts/tasks-prompt.md
-    ✓ stage-prompts/implement-prompt.md
-═══════════════════════════════════════════════════════════
+    [ok] functional-spec-legacy.md
+    [ok] functional-spec-target.md
+    [ok] technical-spec-legacy.md
+    [ok] technical-spec-target.md
+    [ok] stage-prompts/constitution-prompt.md
+    [ok] stage-prompts/clarify-prompt.md
+    [ok] stage-prompts/tasks-prompt.md
+    [ok] stage-prompts/implement-prompt.md
+===========================================================
 
 STAGE_COMPLETE:SCOPE_ARTIFACTS
 
@@ -330,41 +353,41 @@ STAGE_COMPLETE:SCOPE_ARTIFACTS
 ## Analysis Chain Complete
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
            ANALYSIS CHAIN COMPLETE
-═══════════════════════════════════════════════════════════
+===========================================================
 
 Chain ID: {chain_id}
 
 All Stages Completed:
-  ✓ Stage 1: Setup and Scope
-  ✓ Stage 2: File Analysis
-  ✓ Stage 3A: Full Application Analysis
-  ✓ Stage 4: Report Generation
-  ✓ Stage 5: Common Artifacts
-  ✓ Stage 6: Scope-Specific Artifacts
+  [ok] Stage 1: Setup and Scope
+  [ok] Stage 2: File Analysis
+  [ok] Stage 3A: Full Application Analysis
+  [ok] Stage 4: Report Generation
+  [ok] Stage 5: Common Artifacts
+  [ok] Stage 6: Scope-Specific Artifacts
 
 Analysis Directory: {analysis_dir}
 
 Generated Artifacts:
   Common:
-    • EXECUTIVE-SUMMARY.md
-    • dependency-audit.json
-    • metrics-summary.json
-    • analysis-report.md
+    * EXECUTIVE-SUMMARY.md
+    * dependency-audit.json
+    * metrics-summary.json
+    * analysis-report.md
 
   Scope-Specific:
-    • functional-spec-legacy.md
-    • functional-spec-target.md
-    • technical-spec-legacy.md
-    • technical-spec-target.md
-    • stage-prompts/ (4 files)
+    * functional-spec-legacy.md
+    * functional-spec-target.md
+    * technical-spec-legacy.md
+    * technical-spec-target.md
+    * stage-prompts/ (4 files)
 
 Next Steps:
   1. Review generated artifacts in {analysis_dir}
   2. Use stage-prompts/ with Spec Kit commands
   3. Begin implementation using /speckitadv.implement
 
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```

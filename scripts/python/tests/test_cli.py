@@ -250,3 +250,288 @@ class TestCommandConsistency:
         result = runner.invoke(app, ["analyze-project", "--help"])
         output = strip_ansi(result.stdout)
         assert "--analysis-dir" in output, "analyze-project missing --analysis-dir option"
+
+
+class TestListFilesCommand:
+    """Tests for list-files command."""
+
+    def test_help(self):
+        """Should display help for list-files."""
+        result = runner.invoke(app, ["list-files", "--help"])
+        assert result.exit_code == 0
+        output = strip_ansi(result.stdout)
+        assert "--pattern" in output
+        assert "--category" in output
+        assert "--count" in output
+
+    def test_list_files_with_pattern(self, tmp_path):
+        """Should list files matching pattern."""
+        # Create test files
+        (tmp_path / "test1.py").write_text("# test")
+        (tmp_path / "test2.py").write_text("# test")
+        (tmp_path / "other.txt").write_text("text")
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--pattern", "*.py",
+            "--project-path", str(tmp_path),
+        ])
+        assert result.exit_code == 0
+        assert "test1.py" in result.stdout
+        assert "test2.py" in result.stdout
+        assert "other.txt" not in result.stdout
+
+    def test_count_returns_total_not_limited(self, tmp_path):
+        """--count should return total matches, not limited count."""
+        # Create more files than the limit
+        for i in range(150):
+            (tmp_path / f"file{i:03d}.py").write_text("# test")
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--pattern", "*.py",
+            "--project-path", str(tmp_path),
+            "--limit", "50",
+            "--count",
+        ])
+        assert result.exit_code == 0
+        # Should show 150, not 50
+        assert result.stdout.strip() == "150"
+
+    def test_limit_restricts_output_but_not_count(self, tmp_path):
+        """--limit should restrict displayed files but show total in summary."""
+        # Create test files
+        for i in range(10):
+            (tmp_path / f"file{i}.py").write_text("# test")
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--pattern", "*.py",
+            "--project-path", str(tmp_path),
+            "--limit", "5",
+        ])
+        assert result.exit_code == 0
+        output = strip_ansi(result.stdout)
+        # Should show "Showing 5 of 10"
+        assert "5 of 10" in output or "5" in output
+
+    def test_category_controllers(self, tmp_path):
+        """Should list controller files by category."""
+        (tmp_path / "UserController.py").write_text("# controller")
+        (tmp_path / "service.py").write_text("# service")
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--category", "controllers",
+            "--project-path", str(tmp_path),
+        ])
+        assert result.exit_code == 0
+        assert "UserController.py" in result.stdout
+        assert "service.py" not in result.stdout
+
+    def test_shell_expanded_paths(self, tmp_path):
+        """Should accept shell-expanded file paths as positional arguments."""
+        # Simulate shell expansion: shell expands glob before CLI receives it
+        # e.g., PowerShell: list-files --pattern "*.py" → list-files --pattern "*.py" file1.py file2.py
+        (tmp_path / "file1.py").write_text("# test")
+        (tmp_path / "file2.py").write_text("# test")
+        (tmp_path / "other.txt").write_text("text")
+
+        # Pass files as positional arguments (simulating shell expansion)
+        result = runner.invoke(app, [
+            "list-files",
+            str(tmp_path / "file1.py"),
+            str(tmp_path / "file2.py"),
+        ])
+        assert result.exit_code == 0
+        assert "file1.py" in result.stdout
+        assert "file2.py" in result.stdout
+        assert "other.txt" not in result.stdout
+
+    def test_shell_expanded_paths_with_limit(self, tmp_path):
+        """Shell-expanded paths should respect --limit."""
+        files = []
+        for i in range(10):
+            f = tmp_path / f"file{i}.py"
+            f.write_text("# test")
+            files.append(str(f))
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--limit", "3",
+            *files,
+        ])
+        assert result.exit_code == 0
+        output = strip_ansi(result.stdout)
+        # Should show limit info
+        assert "3 of 10" in output
+
+    def test_shell_expanded_paths_with_count(self, tmp_path):
+        """Shell-expanded paths should work with --count."""
+        files = []
+        for i in range(5):
+            f = tmp_path / f"file{i}.py"
+            f.write_text("# test")
+            files.append(str(f))
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--count",
+            *files,
+        ])
+        assert result.exit_code == 0
+        assert result.stdout.strip() == "5"
+
+
+class TestUpdatePreferencesCommand:
+    """Tests for update-preferences command."""
+
+    def test_help(self):
+        """Should display help for update-preferences."""
+        result = runner.invoke(app, ["update-preferences", "--help"])
+        assert result.exit_code == 0
+        assert "Update modernization preferences" in result.stdout
+
+    def test_rejects_invalid_json(self, tmp_path):
+        """Should reject invalid JSON input."""
+        # Create analysis folder with state
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        state_file = analysis_dir / "state.json"
+        state_file.write_text('{"schema_version": 1, "workflow": "analyze-project"}')
+
+        result = runner.invoke(app, [
+            "update-preferences",
+            "not-valid-json",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert "Invalid JSON" in result.stdout
+
+    def test_rejects_empty_preferences(self, tmp_path):
+        """Should reject empty preferences object."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        state_file = analysis_dir / "state.json"
+        state_file.write_text('{"schema_version": 1, "workflow": "analyze-project", "modernization_preferences": {}}')
+
+        result = runner.invoke(app, [
+            "update-preferences",
+            "{}",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert "empty" in result.stdout.lower()
+
+    def test_warns_on_unknown_keys(self, tmp_path):
+        """Should warn but allow unknown preference keys."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        state_file = analysis_dir / "state.json"
+        state_file.write_text('{"schema_version": 1, "workflow": "analyze-project", "modernization_preferences": {}}')
+
+        result = runner.invoke(app, [
+            "update-preferences",
+            '{"unknown_key": "value", "q1_language": "Python"}',
+            "--analysis-dir", str(analysis_dir),
+        ])
+        # Should succeed but warn
+        assert result.exit_code == 0
+        output = strip_ansi(result.stdout)
+        assert "Warning" in output
+        assert "unknown_key" in output
+
+    def test_accepts_valid_preference_keys(self, tmp_path):
+        """Should accept valid Q1-Q10 preference keys."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        state_file = analysis_dir / "state.json"
+        state_file.write_text('{"schema_version": 1, "workflow": "analyze-project", "modernization_preferences": {}}')
+
+        result = runner.invoke(app, [
+            "update-preferences",
+            '{"q1_language": "Python 3.11", "q2_database": "PostgreSQL"}',
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 0
+
+        # Verify state was updated
+        import json
+        state = json.loads(state_file.read_text())
+        assert state["modernization_preferences"]["q1_language"] == "Python 3.11"
+        assert state["modernization_preferences"]["q2_database"] == "PostgreSQL"
+
+
+class TestWriteReportCommand:
+    """Tests for write-report command validation."""
+
+    def test_help(self):
+        """Should display help for write-report."""
+        result = runner.invoke(app, ["write-report", "--help"])
+        assert result.exit_code == 0
+        output = strip_ansi(result.stdout)
+        assert "--content" in output
+        assert "--append" in output
+
+    def test_rejects_path_in_filename(self, tmp_path):
+        """Should reject filenames with path separators."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        (analysis_dir / "state.json").write_text('{"schema_version": 1}')
+
+        result = runner.invoke(app, [
+            "write-report",
+            "subdir/report.md",  # Path separator not allowed
+            "--content", "# Test",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert "path separator" in result.stdout.lower()
+
+    def test_rejects_non_md_extension(self, tmp_path):
+        """Should reject filenames without .md extension."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        (analysis_dir / "state.json").write_text('{"schema_version": 1}')
+
+        result = runner.invoke(app, [
+            "write-report",
+            "report.txt",  # Must end with .md
+            "--content", "# Test",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert ".md" in result.stdout
+
+    def test_detects_content_as_filename(self, tmp_path):
+        """Should detect when content is mistakenly used as filename."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        (analysis_dir / "state.json").write_text('{"schema_version": 1}')
+
+        result = runner.invoke(app, [
+            "write-report",
+            "# This looks like content.md",  # Starts with # (looks like markdown header)
+            "--content", "real content",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 1
+        assert "shell quoting" in result.stdout.lower()
+
+    def test_accepts_valid_filename(self, tmp_path):
+        """Should accept valid markdown filename."""
+        analysis_dir = tmp_path / ".analysis" / "test-analysis"
+        analysis_dir.mkdir(parents=True)
+        (analysis_dir / "state.json").write_text('{"schema_version": 1}')
+        reports_dir = analysis_dir / "reports"
+        reports_dir.mkdir()
+
+        result = runner.invoke(app, [
+            "write-report",
+            "analysis-report.md",
+            "--content", "# Test Report",
+            "--analysis-dir", str(analysis_dir),
+        ])
+        assert result.exit_code == 0
+        assert "Written" in result.stdout
+        assert (reports_dir / "analysis-report.md").exists()

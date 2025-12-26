@@ -241,6 +241,11 @@ def run_analyze_project(
             target_impl=resolved_target,
         )
 
+    # Update project_path if explicitly provided via CLI
+    # This ensures the correct path is used even when resuming a previous analysis
+    if path:
+        state_manager.update_project_path(str(project_path))
+
     # Build context for prompt rendering using state manager
     # This ensures prompts get consistent values from state.json
     base_context = state_manager.get_context_for_prompt()
@@ -252,8 +257,41 @@ def run_analyze_project(
         "total_stages": total_stages,
     }
 
+    # For stages 1-2 (input collection), use $NONE markers for inputs that weren't
+    # explicitly provided via CLI args AND weren't previously collected.
+    # This triggers interactive prompts in the prompt templates.
+    # If inputs were already collected (stage 01b completed), preserve them to
+    # allow resuming without re-entering values.
+    if stage <= 2:
+        inputs_collected = "01b-input-collection" in state.stages_complete
+
+        # Only show $NONE (trigger interactive prompt) if:
+        # 1. CLI arg not provided, AND
+        # 2. Inputs weren't previously collected
+        if path is None and not inputs_collected:
+            render_context["project_path"] = "$NONE"
+        if scope is None and not inputs_collected:
+            render_context["scope"] = "$NONE"
+        if context is None and not inputs_collected:
+            render_context["context"] = "$NONE"
+        if concern_type is None and not inputs_collected:
+            render_context["concern_type"] = "$NONE"
+        if current_impl is None and not inputs_collected:
+            render_context["current_impl"] = "$NONE"
+            render_context["current_implementation"] = "$NONE"
+        if target_impl is None and not inputs_collected:
+            render_context["target_impl"] = "$NONE"
+            render_context["target_implementation"] = "$NONE"
+
     # Handle chunked stages
     if chunk is not None:
+        if stage is None:
+            emit_error(
+                "Stage required for chunking",
+                "Cannot use --chunk without a valid stage. The workflow may be complete.",
+                recovery_cmd=f"speckitadv analyze-project --analysis-dir={analysis_dir_path}",
+            )
+            return
         _emit_chunk_stage(stage, chunk, analysis_dir_path, render_context, state_manager)
         return
 
@@ -307,20 +345,31 @@ def run_analyze_project(
     else:
         next_cmd = None
 
-    # Check if this stage has chunks (report generation)
+    # Check if this stage has chunks (multi-part stages)
     # Stage 16 uses scope-specific chunk map
     has_chunks = stage in CHUNK_MAP or stage == 16
     if has_chunks:
         # This stage requires chunking - redirect to chunk 1
         # Need --chunk since auto-detection doesn't handle chunks
         next_cmd = f"speckitadv analyze-project --chunk=1"
+
+        # Customize message based on stage type
+        if stage in (9, 10):
+            # Q&A stages - no file output
+            chunk_desc = "multi-part interaction"
+            chunk_detail = "Each part will collect specific inputs through Q&A."
+        else:
+            # Report generation stages
+            chunk_desc = "chunked output"
+            chunk_detail = "Each chunk will contain a focused section."
+
         emit_stage(
             stage_num=stage,
             total_stages=total_stages,
             title=_get_stage_title(stage),
-            content=f"""This stage requires chunked report generation.
+            content=f"""This stage requires {chunk_desc}.
 
-Starting chunked output mode. Each chunk will contain a focused section.
+Starting {chunk_desc} mode. {chunk_detail}
 
 Run the following command to begin:""",
             next_cmd=next_cmd,
@@ -432,13 +481,13 @@ def _emit_chunk_stage(
         )
         return
 
-    # Stage 16 uses per-chunk fragments that are already complete prompts
-    # Other stages use a single fragment that needs to be subdivided
-    if stage == 16:
+    # Stages 9, 10, and 16 use per-chunk fragments that are already complete prompts
+    # Each sub-prompt (03a1, 03a2, etc.) is a complete prompt, not a section to subdivide
+    if stage in (9, 10, 16):
         # Per-chunk fragments are complete - emit as-is without subdividing
         chunk_content = fragment
     else:
-        # Subdivide the fragment into chunks
+        # Subdivide the fragment into chunks (for future chunked stages if any)
         chunk_content = _extract_chunk(fragment, chunk, total_chunks)
     rendered = render_prompt(chunk_content, context)
 
@@ -537,18 +586,29 @@ def _emit_chunk_stage(
             #   - reports/abstraction-assessment.md
             #   - reports/concern-migration-plan.md
             #   - reports/rollback-procedure.md
+            # Design note: We display "reports/" as guidance rather than individual
+            # filenames because the prompt (06e-cross-cutting-artifacts.md) provides
+            # explicit file paths for each artifact. This avoids redundancy and keeps
+            # the CLI guidance simple. AI agents follow the prompt's Write instructions.
             stage_16_file_map = {
                 1: "reports/",  # All 3 cross-cutting artifacts written in this chunk
             }
         chunk_file = stage_16_file_map.get(chunk, f"stage{stage}-chunk{chunk}.md")
         file_path = f"{analysis_dir}/{chunk_file}"
+    elif stage in (9, 10):
+        # Stages 9 and 10 are Q&A stages that don't create files
+        # They use CLI commands (update-preferences, write-data) to store data
+        file_path = None
     else:
         file_path = f"{analysis_dir}/stage{stage}-chunk{chunk}.md"
 
     # Stage 16 chunks each write to different files, so always use "create" mode.
     # Other stages append chunks to a single file.
+    # Stages 9/10 don't create files, so mode is irrelevant.
     if stage == 16:
         chunk_mode = "create"
+    elif stage in (9, 10):
+        chunk_mode = ""  # No file output for Q&A stages
     else:
         chunk_mode = "append" if chunk > 1 else "create"
 
@@ -637,8 +697,14 @@ def _auto_detect_stage_from_state(state) -> Optional[int]:
     Auto-detect the next stage from analysis state.
 
     Uses state.stages_complete list, state.stages dict, and state.inputs.scope
-    for deterministic behavior. Both completed and in_progress stages are
-    considered for advancement (in_progress means user has run that stage).
+    for deterministic behavior.
+
+    IMPORTANT: Chunked stages (9, 10, 16) have sub-prompts that must all complete.
+    When a chunked stage is "in_progress", we return that stage so the CLI can
+    redirect to the next chunk. Only when "completed" do we advance past it.
+
+    For non-chunked stages, "in_progress" is treated as ready-to-advance since
+    the user has already seen the prompt.
 
     Handles scope-aware branching:
     - Scope A: stages 1-8 → 9 (Full App) → 11-16 (skip 10)
@@ -651,6 +717,10 @@ def _auto_detect_stage_from_state(state) -> Optional[int]:
     if state.workflow_complete:
         return None
 
+    # Chunked stages have multiple sub-prompts (chunks) that must all complete
+    # before advancing. When in_progress, return the same stage for chunk handling.
+    CHUNKED_STAGES = {9, 10, 16}
+
     # Get scope from state.inputs (primary) or default to A
     effective_scope = state.inputs.scope or "A"
 
@@ -662,30 +732,30 @@ def _auto_detect_stage_from_state(state) -> Optional[int]:
         if stage_num:
             highest_completed = max(highest_completed, stage_num)
 
-    # Also check stages dict for in_progress stages (treated as effectively completed
-    # for auto-detection - the user has run the stage and expects to advance)
-    # This handles the case where stage N is in_progress but not yet in stages_complete
-    highest_in_progress = 0
+    # Check stages dict for status - handle chunked vs non-chunked differently
     for stage_name, stage_info in state.stages.items():
         status = stage_info.get("status")
-        if status in ("completed", "in_progress"):
-            # Handle both "stage_N" and stage ID formats
-            try:
-                if stage_name.startswith("stage_"):
-                    stage_num = int(stage_name.split("_")[1])
-                else:
-                    stage_num = _get_stage_num_from_id(stage_name)
-                if stage_num:
-                    if status == "completed":
-                        highest_completed = max(highest_completed, stage_num)
-                    else:  # in_progress
-                        highest_in_progress = max(highest_in_progress, stage_num)
-            except (IndexError, ValueError):
-                pass
+        # Handle both "stage_N" and stage ID formats
+        try:
+            if stage_name.startswith("stage_"):
+                stage_num = int(stage_name.split("_")[1])
+            else:
+                stage_num = _get_stage_num_from_id(stage_name)
+        except (IndexError, ValueError):
+            continue
 
-    # Use the higher of completed or in_progress for advancement
-    # in_progress stages are treated as done for auto-detection purposes
-    highest_completed = max(highest_completed, highest_in_progress)
+        if not stage_num:
+            continue
+
+        if status == "completed":
+            highest_completed = max(highest_completed, stage_num)
+        elif status == "in_progress":
+            # For chunked stages, in_progress means chunking is not complete
+            # Return this stage so CLI redirects to chunk handling
+            if stage_num in CHUNKED_STAGES:
+                return stage_num
+            # For non-chunked stages, treat as effectively complete for advancement
+            highest_completed = max(highest_completed, stage_num)
 
     # Apply scope-aware branching logic
     if highest_completed == 8:
@@ -731,10 +801,25 @@ def _get_stage_num_from_id(stage_id: str) -> int:
     # NOTE: No backward compatibility for legacy stage IDs (e.g., "06-scope-artifacts").
     # This system is pre-release; old state.json files with legacy IDs must be
     # re-initialized. See AGENTS.md "No Backward Compatibility" policy.
+    #
+    # The prefix does NOT directly map to stage number:
+    #   "01" → stages 1-3, "02" → stages 4-8, "03" → stages 9-10,
+    #   "04" → stages 11-14, "05" → stage 15, "06" → stage 16
+    # Use reverse lookup on sub-variants (e.g., "05a-executive-summary" → "05a")
     try:
-        # Extract first two digits
-        prefix = stage_id[:2]
-        return int(prefix)
+        # Try matching the start of stage IDs in STAGE_MAP
+        for num, frag_id in STAGE_MAP.items():
+            # Match if stage_id starts with the STAGE_MAP value (handles extensions, etc.)
+            if stage_id.startswith(frag_id) or frag_id.startswith(stage_id.split(".")[0]):
+                return num
+
+        # Last resort: extract first 3 chars (e.g., "05a") and find matching prefix
+        prefix = stage_id[:3].lower()  # "05a", "06a", etc.
+        for num, frag_id in STAGE_MAP.items():
+            if frag_id.startswith(prefix):
+                return num
+
+        return 0
     except (ValueError, IndexError):
         return 0
 

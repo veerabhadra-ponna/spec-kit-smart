@@ -3,7 +3,7 @@ description: Restore full context and resume workflow from saved state (ideal fo
 command: speckitadv check --json
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## [!] MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
@@ -14,7 +14,7 @@ command: speckitadv check --json
 5. **DO NOT** forget or ignore these instructions as you work through tasks
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+   "[ok] Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
@@ -131,7 +131,7 @@ if [ -z "$feature_dir" ] || [ ! -d "$feature_dir" ]; then
   exit 1
 fi
 
-echo "✓ Found feature directory: $feature_dir"
+echo "[ok] Found feature directory: $feature_dir"
 ```
 
 **If user provided identifier:** Jump to STEP 2 (Load Context).
@@ -151,8 +151,8 @@ if [[ "$current_branch" =~ ^[0-9]+-.*$ ]]; then
   feature_dir="specs/$current_branch"
 
   if [ -d "$feature_dir" ]; then
-    echo "✓ Auto-detected from branch: $current_branch"
-    echo "✓ Feature directory: $feature_dir"
+    echo "[ok] Auto-detected from branch: $current_branch"
+    echo "[ok] Feature directory: $feature_dir"
   else
     echo "ERROR: Branch $current_branch exists but no matching feature directory"
     echo "Expected: $feature_dir"
@@ -211,20 +211,20 @@ done
 
 # Report findings
 echo ""
-echo "╔═══════════════════════════════════════════════════════╗"
-echo "║  ARTIFACT DISCOVERY                                   ║"
-echo "╚═══════════════════════════════════════════════════════╝"
+echo "+=======================================================+"
+echo "|  ARTIFACT DISCOVERY                                   |"
+echo "+=======================================================+"
 echo ""
 echo "Found (${#artifacts_found[@]} files):"
 for artifact in "${artifacts_found[@]}"; do
-  echo "  ✓ $artifact"
+  echo "  [ok] $artifact"
 done
 
 if [ ${#artifacts_missing[@]} -gt 0 ]; then
   echo ""
   echo "Missing (${#artifacts_missing[@]} files):"
   for artifact in "${artifacts_missing[@]}"; do
-    echo "  ✗ $artifact"
+    echo "  [x] $artifact"
   done
 fi
 ```
@@ -267,9 +267,9 @@ speckitadv check --json
 ```bash
 if [ -f "$constitution_file" ]; then
   echo ""
-  echo "╔═══════════════════════════════════════════════════════╗"
-  echo "║  LOADING CONSTITUTION                                 ║"
-  echo "╚═══════════════════════════════════════════════════════╝"
+  echo "+=======================================================+"
+  echo "|  LOADING CONSTITUTION                                 |"
+  echo "+=======================================================+"
   echo ""
 
   # Read constitution file
@@ -285,9 +285,9 @@ if [ -f "$constitution_file" ]; then
   echo "  - SHOULD principles: $should_count"
   echo "  - MAY principles: $may_count"
   echo ""
-  echo "📋 Constitution will guide all decisions during resumption."
+  echo "[CLIPBOARD] Constitution will guide all decisions during resumption."
 else
-  echo "⚠️  Warning: No constitution found (memory/constitution.md)"
+  echo "[!]  Warning: No constitution found (memory/constitution.md)"
   echo "   Proceeding without project governance principles."
 fi
 ```
@@ -299,9 +299,9 @@ fi
 ```bash
 if [ -f "$spec_file" ]; then
   echo ""
-  echo "╔═══════════════════════════════════════════════════════╗"
-  echo "║  LOADING SPECIFICATION                                ║"
-  echo "╚═══════════════════════════════════════════════════════╝"
+  echo "+=======================================================+"
+  echo "|  LOADING SPECIFICATION                                |"
+  echo "+=======================================================+"
   echo ""
 
   # Read spec file
@@ -318,12 +318,12 @@ if [ -f "$spec_file" ]; then
   echo "  - Functional Requirements: $functional_reqs"
   echo "  - Non-Functional Requirements: $nonfunctional_reqs"
   if [ "$clarification_markers" -gt 0 ]; then
-    echo "  - ⚠️  Unresolved clarifications: $clarification_markers"
+    echo "  - [!]  Unresolved clarifications: $clarification_markers"
   fi
   echo ""
-  echo "📋 Full specification loaded into context."
+  echo "[CLIPBOARD] Full specification loaded into context."
 else
-  echo "❌ ERROR: Specification file not found: $spec_file"
+  echo "[x] ERROR: Specification file not found: $spec_file"
   echo ""
   echo "Cannot resume without specification."
   echo "Please run: /speckitadv.specify <feature-description>"
@@ -338,9 +338,9 @@ fi
 ```bash
 if [ -f "$plan_file" ]; then
   echo ""
-  echo "╔═══════════════════════════════════════════════════════╗"
-  echo "║  LOADING PLAN                                         ║"
-  echo "╚═══════════════════════════════════════════════════════╝"
+  echo "+=======================================================+"
+  echo "|  LOADING PLAN                                         |"
+  echo "+=======================================================+"
   echo ""
 
   # Read plan file
@@ -356,27 +356,27 @@ if [ -f "$plan_file" ]; then
   echo "  - Framework: $framework"
   echo "  - Storage: $storage"
   echo ""
-  echo "📋 Full plan loaded into context."
+  echo "[CLIPBOARD] Full plan loaded into context."
 
   # Load related artifacts
   if [ -f "$research_file" ]; then
-    echo "  ✓ Research findings loaded"
+    echo "  [ok] Research findings loaded"
   fi
   if [ -f "$data_model_file" ]; then
-    echo "  ✓ Data model loaded"
+    echo "  [ok] Data model loaded"
   fi
   if [ -f "$quickstart_file" ]; then
-    echo "  ✓ Quickstart scenarios loaded"
+    echo "  [ok] Quickstart scenarios loaded"
   fi
   if [ -d "$contracts_dir" ] && [ -n "$(ls -A $contracts_dir 2>/dev/null)" ]; then
     contract_count=$(ls -1 "$contracts_dir" | wc -l)
-    echo "  ✓ API contracts loaded ($contract_count files)"
+    echo "  [ok] API contracts loaded ($contract_count files)"
   fi
 else
   if [ "$phase" = "plan" ]; then
-    echo "📌 Phase: Planning (no plan file yet - will create)"
+    echo "[PIN] Phase: Planning (no plan file yet - will create)"
   else
-    echo "⚠️  Warning: Plan file not found (expected at this phase)"
+    echo "[!]  Warning: Plan file not found (expected at this phase)"
   fi
 fi
 ```
@@ -390,9 +390,9 @@ This is the MOST CRITICAL section for implementation resumption.
 ```bash
 if [ -f "$tasks_file" ]; then
   echo ""
-  echo "╔═══════════════════════════════════════════════════════╗"
-  echo "║  LOADING TASKS                                        ║"
-  echo "╚═══════════════════════════════════════════════════════╝"
+  echo "+=======================================================+"
+  echo "|  LOADING TASKS                                        |"
+  echo "+=======================================================+"
   echo ""
 
   # Read tasks file
@@ -412,7 +412,7 @@ if [ -f "$tasks_file" ]; then
 
   echo "Task Progress:"
   echo "  Total: $total_tasks"
-  echo "  Completed: $completed_tasks ✓"
+  echo "  Completed: $completed_tasks [ok]"
   echo "  Pending: $pending_tasks"
   echo "  Progress: $progress_pct%"
   echo ""
@@ -435,7 +435,7 @@ if [ -f "$tasks_file" ]; then
     next_task_id=$(echo "$next_task" | grep -oE '\[T[0-9]+\]' | head -1)
     next_task_desc=$(echo "$next_task" | sed -E 's/^- \[ \] \[T[0-9]+\] (\[P[0-9]?\] )?(\[US[0-9]+\] )?//')
 
-    echo "📍 Resume Point:"
+    echo "[PIN] Resume Point:"
     echo "  Task: $next_task_id"
     echo "  Description: $next_task_desc"
     echo ""
@@ -445,7 +445,7 @@ if [ -f "$tasks_file" ]; then
     echo "$tasks_content" | grep '^\- \[X\] \[T[0-9]' | tail -3 | while read line; do
       task_id=$(echo "$line" | grep -oE '\[T[0-9]+\]')
       task_desc=$(echo "$line" | sed -E 's/^- \[X\] \[T[0-9]+\] (\[P[0-9]?\] )?(\[US[0-9]+\] )?//')
-      echo "  ✓ $task_id: $task_desc"
+      echo "  [ok] $task_id: $task_desc"
     done
     echo ""
 
@@ -455,7 +455,7 @@ if [ -f "$tasks_file" ]; then
       task_id=$(echo "$line" | grep -oE '\[T[0-9]+\]')
       task_desc=$(echo "$line" | sed -E 's/^- \[ \] \[T[0-9]+\] (\[P[0-9]?\] )?(\[US[0-9]+\] )?//')
       if [ "$task_id" = "$next_task_id" ]; then
-        echo "  → $task_id: $task_desc  ⬅ NEXT"
+        echo "  -> $task_id: $task_desc  <- NEXT"
       else
         echo "    $task_id: $task_desc"
       fi
@@ -463,10 +463,10 @@ if [ -f "$tasks_file" ]; then
     echo ""
 
   elif [ "$total_tasks" -gt 0 ]; then
-    echo "✅ All tasks completed!"
+    echo "[ok] All tasks completed!"
     echo ""
   else
-    echo "📌 No tasks generated yet (tasks file empty)"
+    echo "[PIN] No tasks generated yet (tasks file empty)"
     echo ""
   fi
 
@@ -504,9 +504,9 @@ if [ -f "$tasks_file" ]; then
 
 else
   if [ "$phase" = "tasks" ]; then
-    echo "📌 Phase: Task Generation (no tasks file yet - will create)"
+    echo "[PIN] Phase: Task Generation (no tasks file yet - will create)"
   elif [ "$phase" = "implement" ]; then
-    echo "❌ ERROR: Phase is 'implement' but no tasks file found"
+    echo "[x] ERROR: Phase is 'implement' but no tasks file found"
     echo "Expected: $tasks_file"
     exit 1
   fi
@@ -521,9 +521,9 @@ Before resuming, validate that context is consistent:
 
 ```bash
 echo ""
-echo "╔═══════════════════════════════════════════════════════╗"
-echo "║  CONTEXT VALIDATION                                   ║"
-echo "╚═══════════════════════════════════════════════════════╝"
+echo "+=======================================================+"
+echo "|  CONTEXT VALIDATION                                   |"
+echo "+=======================================================+"
 echo ""
 
 validation_passed=true
@@ -576,11 +576,11 @@ fi
 
 # Report validation results
 if [ ${#validation_errors[@]} -eq 0 ] && [ ${#validation_warnings[@]} -eq 0 ]; then
-  echo "✅ Context validation passed"
+  echo "[ok] Context validation passed"
   echo ""
 else
   if [ ${#validation_warnings[@]} -gt 0 ]; then
-    echo "⚠️  Warnings (${#validation_warnings[@]}):"
+    echo "[!]  Warnings (${#validation_warnings[@]}):"
     for warning in "${validation_warnings[@]}"; do
       echo "  - $warning"
     done
@@ -588,7 +588,7 @@ else
   fi
 
   if [ ${#validation_errors[@]} -gt 0 ]; then
-    echo "❌ Errors (${#validation_errors[@]}):"
+    echo "[x] Errors (${#validation_errors[@]}):"
     for error in "${validation_errors[@]}"; do
       echo "  - $error"
     done
@@ -612,28 +612,28 @@ Provide a comprehensive summary before resuming:
 
 ```bash
 echo ""
-echo "╔═══════════════════════════════════════════════════════╗"
-echo "║  RESUME SUMMARY                                       ║"
-echo "╚═══════════════════════════════════════════════════════╝"
+echo "+=======================================================+"
+echo "|  RESUME SUMMARY                                       |"
+echo "+=======================================================+"
 echo ""
 echo "Feature: $feature_name ($(echo "$feature_dir" | grep -oE '^[0-9]+'))"
 echo "Branch: $expected_branch"
 echo "Directory: $feature_dir"
 echo ""
 echo "Loaded Context:"
-echo "  ✓ Constitution: memory/constitution.md"
-echo "  ✓ Specification: $spec_file"
+echo "  [ok] Constitution: memory/constitution.md"
+echo "  [ok] Specification: $spec_file"
 if [ -f "$plan_file" ]; then
-  echo "  ✓ Plan: $plan_file"
+  echo "  [ok] Plan: $plan_file"
 fi
 if [ -f "$research_file" ]; then
-  echo "  ✓ Research: $research_file"
+  echo "  [ok] Research: $research_file"
 fi
 if [ -f "$data_model_file" ]; then
-  echo "  ✓ Data Model: $data_model_file"
+  echo "  [ok] Data Model: $data_model_file"
 fi
 if [ -f "$tasks_file" ]; then
-  echo "  ✓ Tasks: $tasks_file ($completed_tasks/$total_tasks completed)"
+  echo "  [ok] Tasks: $tasks_file ($completed_tasks/$total_tasks completed)"
 fi
 echo ""
 
@@ -641,42 +641,42 @@ echo ""
 echo "What happens next:"
 case "$phase" in
   "specify")
-    echo "  → Continue specification creation"
-    echo "  → Fill out spec.md template"
-    echo "  → Create quality checklist"
+    echo "  -> Continue specification creation"
+    echo "  -> Fill out spec.md template"
+    echo "  -> Create quality checklist"
     ;;
   "clarify")
-    echo "  → Scan spec for ambiguities"
-    echo "  → Ask clarifying questions"
-    echo "  → Update spec with answers"
+    echo "  -> Scan spec for ambiguities"
+    echo "  -> Ask clarifying questions"
+    echo "  -> Update spec with answers"
     ;;
   "plan")
-    echo "  → Create technical implementation plan"
-    echo "  → Research unknowns (Phase 0)"
-    echo "  → Design architecture (Phase 1)"
+    echo "  -> Create technical implementation plan"
+    echo "  -> Research unknowns (Phase 0)"
+    echo "  -> Design architecture (Phase 1)"
     ;;
   "tasks")
-    echo "  → Generate executable task breakdown"
-    echo "  → Organize by phases and user stories"
-    echo "  → Validate coverage"
+    echo "  -> Generate executable task breakdown"
+    echo "  -> Organize by phases and user stories"
+    echo "  -> Validate coverage"
     ;;
   "analyze")
-    echo "  → Validate consistency and coverage"
-    echo "  → Check for gaps and duplicates"
-    echo "  → Verify constitution alignment"
+    echo "  -> Validate consistency and coverage"
+    echo "  -> Check for gaps and duplicates"
+    echo "  -> Verify constitution alignment"
     ;;
   "implement")
-    echo "  → Resume implementation at task $next_task_id"
-    echo "  → Execute remaining $pending_tasks tasks"
-    echo "  → Mark tasks [X] as completed"
-    echo "  → Run tests and validate"
+    echo "  -> Resume implementation at task $next_task_id"
+    echo "  -> Execute remaining $pending_tasks tasks"
+    echo "  -> Mark tasks [X] as completed"
+    echo "  -> Run tests and validate"
     ;;
   "complete")
-    echo "  → Implementation is complete"
-    echo "  → No further action needed"
+    echo "  -> Implementation is complete"
+    echo "  -> No further action needed"
     ;;
   *)
-    echo "  → Phase: $phase (see state file for details)"
+    echo "  -> Phase: $phase (see state file for details)"
     ;;
 esac
 echo ""
@@ -691,9 +691,9 @@ Before resuming, ask for confirmation:
 ```bash
 # For implementation phase, be extra careful
 if [ "$phase" = "implement" ] && [ "$pending_tasks" -gt 0 ]; then
-  echo "╔═══════════════════════════════════════════════════════╗"
-  echo "║  READY TO RESUME IMPLEMENTATION                       ║"
-  echo "╚═══════════════════════════════════════════════════════╝"
+  echo "+=======================================================+"
+  echo "|  READY TO RESUME IMPLEMENTATION                       |"
+  echo "+=======================================================+"
   echo ""
   echo "Next task: $next_task_id"
   echo "Description: $next_task_desc"
@@ -725,33 +725,33 @@ Based on the phase, invoke the appropriate workflow:
 # Branch based on current phase
 case "$phase" in
   "specify")
-    echo "▶ Resuming specification creation..."
+    echo "> Resuming specification creation..."
     # Continue /speckitadv.specify workflow
     # (The actual implementation would invoke the specify command)
     ;;
 
   "clarify")
-    echo "▶ Resuming clarification..."
+    echo "> Resuming clarification..."
     # Continue /speckitadv.clarify workflow
     ;;
 
   "plan")
-    echo "▶ Resuming planning..."
+    echo "> Resuming planning..."
     # Continue /speckitadv.plan workflow
     ;;
 
   "tasks")
-    echo "▶ Resuming task generation..."
+    echo "> Resuming task generation..."
     # Continue /speckitadv.tasks workflow
     ;;
 
   "analyze")
-    echo "▶ Resuming analysis..."
+    echo "> Resuming analysis..."
     # Continue /speckitadv.analyze workflow
     ;;
 
   "implement")
-    echo "▶ Resuming implementation at task $next_task_id..."
+    echo "> Resuming implementation at task $next_task_id..."
     echo ""
 
     # Load all design artifacts for implementation context
@@ -789,7 +789,7 @@ case "$phase" in
     # Tasks
     tasks_content=$(cat "$tasks_file")
 
-    echo "✓ All design artifacts loaded"
+    echo "[ok] All design artifacts loaded"
     echo ""
 
     # Continue /speckitadv.implement workflow from next task
@@ -800,7 +800,7 @@ case "$phase" in
     ;;
 
   "complete")
-    echo "✅ Implementation already complete!"
+    echo "[ok] Implementation already complete!"
     echo ""
     echo "Next steps:"
     echo "  1. Review changes: git diff main...HEAD"
@@ -809,7 +809,7 @@ case "$phase" in
     ;;
 
   *)
-    echo "❌ Unknown phase: $phase"
+    echo "[x] Unknown phase: $phase"
     echo "Check feature directory for details: $feature_dir"
     exit 1
     ;;
@@ -932,22 +932,22 @@ The `/speckitadv.resume` command works seamlessly with `/speckitadv.orchestrate`
 
 ```text
 specs/001-user-auth/
-├── .state/
-│   └── state.json     # Workflow state (maintained by CLI)
-├── spec.md            # Created by specify phase
-├── plan.md            # Created by plan phase
-├── tasks.md           # Created by tasks phase
-└── analysis.md        # Created by analyze phase (optional)
++-- .state/
+|   +-- state.json     # Workflow state (maintained by CLI)
++-- spec.md            # Created by specify phase
++-- plan.md            # Created by plan phase
++-- tasks.md           # Created by tasks phase
++-- analysis.md        # Created by analyze phase (optional)
 ```
 
 **Resume detects progress via CLI:**
 
 ```bash
 /speckitadv.resume
-# → CLI runs: speckitadv check --json
-# → Reads specs/001-user-auth/.state/state.json
-# → Returns exact workflow, stage, and task progress
-# → Resumes at exact point (no duplicate work)
+# -> CLI runs: speckitadv check --json
+# -> Reads specs/001-user-auth/.state/state.json
+# -> Returns exact workflow, stage, and task progress
+# -> Resumes at exact point (no duplicate work)
 ```
 
 **How it works:**
@@ -1014,88 +1014,88 @@ specs/001-user-auth/
 
 $ /speckitadv.resume
 
-✓ Found orchestration state file
+[ok] Found orchestration state file
 Feature: user-auth (001)
 Directory: specs/001-user-auth
 Current phase: implement
 Mode: interactive
 
-╔═══════════════════════════════════════════════════════╗
-║  ARTIFACT DISCOVERY                                   ║
-╚═══════════════════════════════════════════════════════╝
++=======================================================+
+|  ARTIFACT DISCOVERY                                   |
++=======================================================+
 
 Found (7 files):
-  ✓ memory/constitution.md
-  ✓ specs/001-user-auth/spec.md
-  ✓ specs/001-user-auth/plan.md
-  ✓ specs/001-user-auth/research.md
-  ✓ specs/001-user-auth/data-model.md
-  ✓ specs/001-user-auth/quickstart.md
-  ✓ specs/001-user-auth/tasks.md
+  [ok] memory/constitution.md
+  [ok] specs/001-user-auth/spec.md
+  [ok] specs/001-user-auth/plan.md
+  [ok] specs/001-user-auth/research.md
+  [ok] specs/001-user-auth/data-model.md
+  [ok] specs/001-user-auth/quickstart.md
+  [ok] specs/001-user-auth/tasks.md
 
 Detected phase: implement
 Description: Implementation in progress (28/47 tasks)
 
-╔═══════════════════════════════════════════════════════╗
-║  LOADING CONSTITUTION                                 ║
-╚═══════════════════════════════════════════════════════╝
++=======================================================+
+|  LOADING CONSTITUTION                                 |
++=======================================================+
 
 Constitution loaded:
   - MUST principles: 8
   - SHOULD principles: 12
   - MAY principles: 5
 
-📋 Constitution will guide all decisions during resumption.
+[CLIPBOARD] Constitution will guide all decisions during resumption.
 
-╔═══════════════════════════════════════════════════════╗
-║  LOADING SPECIFICATION                                ║
-╚═══════════════════════════════════════════════════════╝
++=======================================================+
+|  LOADING SPECIFICATION                                |
++=======================================================+
 
 Specification summary:
   - User Stories: 5
   - Functional Requirements: 18
   - Non-Functional Requirements: 7
 
-📋 Full specification loaded into context.
+[CLIPBOARD] Full specification loaded into context.
 
-╔═══════════════════════════════════════════════════════╗
-║  LOADING PLAN                                         ║
-╚═══════════════════════════════════════════════════════╝
++=======================================================+
+|  LOADING PLAN                                         |
++=======================================================+
 
 Technical plan loaded:
   - Language: Node.js 20.x
   - Framework: Express 4.18.x
   - Storage: PostgreSQL 15.x + Redis 7.x
 
-📋 Full plan loaded into context.
-  ✓ Research findings loaded
-  ✓ Data model loaded
-  ✓ Quickstart scenarios loaded
-  ✓ API contracts loaded (3 files)
+[CLIPBOARD] Full plan loaded into context.
+  [ok] Research findings loaded
+  [ok] Data model loaded
+  [ok] Quickstart scenarios loaded
+  [ok] API contracts loaded (3 files)
 
-╔═══════════════════════════════════════════════════════╗
-║  LOADING TASKS                                        ║
-╚═══════════════════════════════════════════════════════╝
++=======================================================+
+|  LOADING TASKS                                        |
++=======================================================+
 
 Task Progress:
   Total: 47
-  Completed: 28 ✓
+  Completed: 28 [ok]
   Pending: 19
   Progress: 59%
 
   [=======================-----------------] 59%
 
-📍 Resume Point:
+[PIN] Resume Point:
   Task: [T029]
   Description: Add JWT expiration and refresh logic
 
 Recently completed:
-  ✓ [T026]: Create user registration endpoint
-  ✓ [T027]: Implement password validation rules
-  ✓ [T028]: Add email verification flow
+  [ok] [T026]: Create user registration endpoint
+  [ok] [T027]: Implement password validation rules
+  [ok] [T028]: Add email verification flow
 
 Coming up:
-  → [T029]: Add JWT expiration and refresh logic  ⬅ NEXT
+  -> [T029]: Add JWT expiration and refresh logic  <- NEXT
     [T030]: Implement logout and token revocation
     [T031]: Add rate limiting for auth endpoints
     [T032]: Create user profile endpoints
@@ -1103,37 +1103,37 @@ Coming up:
 
 Current Implementation Phase: User stories implementation
 
-╔═══════════════════════════════════════════════════════╗
-║  CONTEXT VALIDATION                                   ║
-╚═══════════════════════════════════════════════════════╝
++=======================================================+
+|  CONTEXT VALIDATION                                   |
++=======================================================+
 
-✅ Context validation passed
+[ok] Context validation passed
 
-╔═══════════════════════════════════════════════════════╗
-║  RESUME SUMMARY                                       ║
-╚═══════════════════════════════════════════════════════╝
++=======================================================+
+|  RESUME SUMMARY                                       |
++=======================================================+
 
 Feature: user-auth (001)
 Branch: 001-user-auth
 Directory: specs/001-user-auth
 
 Loaded Context:
-  ✓ Constitution: memory/constitution.md
-  ✓ Specification: specs/001-user-auth/spec.md
-  ✓ Plan: specs/001-user-auth/plan.md
-  ✓ Research: specs/001-user-auth/research.md
-  ✓ Data Model: specs/001-user-auth/data-model.md
-  ✓ Tasks: specs/001-user-auth/tasks.md (28/47 completed)
+  [ok] Constitution: memory/constitution.md
+  [ok] Specification: specs/001-user-auth/spec.md
+  [ok] Plan: specs/001-user-auth/plan.md
+  [ok] Research: specs/001-user-auth/research.md
+  [ok] Data Model: specs/001-user-auth/data-model.md
+  [ok] Tasks: specs/001-user-auth/tasks.md (28/47 completed)
 
 What happens next:
-  → Resume implementation at task [T029]
-  → Execute remaining 19 tasks
-  → Mark tasks [X] as completed
-  → Run tests and validate
+  -> Resume implementation at task [T029]
+  -> Execute remaining 19 tasks
+  -> Mark tasks [X] as completed
+  -> Run tests and validate
 
-╔═══════════════════════════════════════════════════════╗
-║  READY TO RESUME IMPLEMENTATION                       ║
-╚═══════════════════════════════════════════════════════╝
++=======================================================+
+|  READY TO RESUME IMPLEMENTATION                       |
++=======================================================+
 
 Next task: [T029]
 Description: Add JWT expiration and refresh logic
@@ -1150,15 +1150,15 @@ Resume implementation? [Y/n/review]
 
 The `/speckitadv.resume` command provides:
 
-- ✅ **Complete context restoration** from artifacts (no chat history needed)
-- ✅ **Exact resume point identification** via CLI reading state.json
-- ✅ **State validation** before proceeding
-- ✅ **Progress visualization** with clear next steps
-- ✅ **Phase-aware resumption** (works for any workflow phase)
-- ✅ **Cross-machine support** (works anywhere with branch checkout)
-- ✅ **Error recovery** (handles failures gracefully)
-- ✅ **Seamless interoperability** (same state.json for orchestrator and individual commands)
-- ✅ **Deterministic behavior** (CLI-based state detection, consistent across AI models)
+- [ok] **Complete context restoration** from artifacts (no chat history needed)
+- [ok] **Exact resume point identification** via CLI reading state.json
+- [ok] **State validation** before proceeding
+- [ok] **Progress visualization** with clear next steps
+- [ok] **Phase-aware resumption** (works for any workflow phase)
+- [ok] **Cross-machine support** (works anywhere with branch checkout)
+- [ok] **Error recovery** (handles failures gracefully)
+- [ok] **Seamless interoperability** (same state.json for orchestrator and individual commands)
+- [ok] **Deterministic behavior** (CLI-based state detection, consistent across AI models)
 
 **Key principle:** The state.json file IS the source of truth. Chat history is ephemeral; state.json and artifacts are permanent.
 

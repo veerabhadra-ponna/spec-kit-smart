@@ -7,7 +7,7 @@
 
 ## Source of Truth Guidance
 
-⚠️ **IMPORTANT**: During implementation, when the specification is underspecified,
+[!] **IMPORTANT**: During implementation, when the specification is underspecified,
 ambiguous, or requires further clarification:
 
 ### CONSULT THE LEGACY APPLICATION CODE AS THE SOURCE OF TRUTH
@@ -73,7 +73,7 @@ The legacy code shows the actual behavior that users depend on. Don't guess.
 
 ### When to Check Legacy Code
 
-✅ **DO check legacy code** for:
+[ok] **DO check legacy code** for:
 
 - Edge cases not in requirements (null handling, empty arrays, etc.)
 - Error messages (users may depend on specific wording)
@@ -81,7 +81,7 @@ The legacy code shows the actual behavior that users depend on. Don't guess.
 - Default values (what happens if optional field is missing)
 - Business rules (validation, calculations, workflows)
 
-❌ **DON'T blindly copy** legacy code:
+[x] **DON'T blindly copy** legacy code:
 
 - Use modern patterns (async/await vs callbacks)
 - Fix anti-patterns (global state, tight coupling)
@@ -95,7 +95,7 @@ The legacy code shows the actual behavior that users depend on. Don't guess.
 
 | Legacy File/Module | Target File/Module | Notes |
 | ------------------- | ------------------- | ------- |
-| <<src/auth/>> | <<services/auth-service/>> | Modernize session → JWT, keep 30min lifetime |
+| <<src/auth/>> | <<services/auth-service/>> | Modernize session -> JWT, keep 30min lifetime |
 | <<src/payments/>> | <<services/payment-service/>> | CRITICAL: Preserve exact retry logic |
 | <<src/db/>> | <<data/repositories/>> | Replace ORM but keep query logic |
 
@@ -129,7 +129,7 @@ WHEN UNCLEAR:
 4. NEVER guess behavior
 
 CODE MIGRATION MAP:
-<<table of legacy → target mappings>>
+<<table of legacy -> target mappings>>
 
 TESTING:
 - Unit tests: Mirror legacy test cases

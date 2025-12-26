@@ -15,6 +15,18 @@ Generate artifacts specific to Cross-Cutting Concern Migration (Scope B). This i
 
 ---
 
+## [!] IMPORTANT: "Part" vs CLI "--chunk"
+
+This prompt uses **"Part 1-3"** to describe content sections to write incrementally.
+
+**These are NOT CLI `--chunk` parameters!**
+
+- [x] DO NOT run `speckitadv analyze-project --chunk=2` to continue
+- [ok] DO continue writing content using `write-report --append`
+- [ok] DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
+
+---
+
 ## Pre-Check
 
 1. Read `{analysis_dir}/state.json`
@@ -25,6 +37,50 @@ Generate artifacts specific to Cross-Cutting Concern Migration (Scope B). This i
 **IF not complete:** STOP - Return to 05a-executive-summary.md
 
 ---
+
+## State Management
+
+**Available template variables:**
+
+- `{analysis_dir}` - Analysis folder path (root)
+- `{data_dir}` - Data folder for JSON files (`{analysis_dir}/data/`)
+- `{reports_dir}` - Reports folder for MD files (`{analysis_dir}/reports/`)
+
+**CLI Utility Commands:**
+
+[!] **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
+
+```bash
+# ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report <filename> --stage=cross_cutting_artifacts --append --content '<content>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report <filename> --stage=cross_cutting_artifacts --append --stdin
+```
+
+---
+
+## [!] CRITICAL: File Write Policy
+
+**ALWAYS use CLI commands for file writes. NEVER use:**
+
+- Shell/PowerShell commands (`Out-File`, `Add-Content`, `echo >`, `cat <<`)
+- AI Write tools directly to the analysis folder
+- Any method that bypasses the CLI artifact tracking
+
+**Why:** CLI commands track artifacts in state.json for workflow continuity.
+Any file written outside the CLI will NOT be tracked and may cause issues.
+
+---
+
+**[AUTO-CONTINUE]** Generate all 3 artifacts sequentially without waiting for user input between artifacts.
 
 ## Load Concern Context
 
@@ -42,7 +98,7 @@ From Stage 3B state, extract:
 ## Artifact 1: Abstraction Assessment
 
 ---
-⏸️ **[STOP: GENERATE_ABSTRACTION_ASSESSMENT]**
+[STOP: GENERATE_ABSTRACTION_ASSESSMENT]**
 
 **Purpose:** Detailed abstraction analysis for the concern
 
@@ -131,10 +187,10 @@ Generate:
 
 | Criterion | Status | Notes |
 |-----------|--------|-------|
-| Abstraction level | {✓/✗} | {notes} |
-| Test coverage | {✓/✗} | {notes} |
-| Documentation | {✓/✗} | {notes} |
-| Team familiarity | {✓/✗} | {notes} |
+| Abstraction level | {[ok]/[x]} | {notes} |
+| Test coverage | {[ok]/[x]} | {notes} |
+| Documentation | {[ok]/[x]} | {notes} |
+| Team familiarity | {[ok]/[x]} | {notes} |
 
 ### Blockers
 
@@ -147,20 +203,24 @@ Generate:
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Write to: `{reports_dir}/abstraction-assessment.md`
+**Write using CLI:**
+
+```bash
+speckitadv write-report abstraction-assessment.md --content '<generated-content>' --stage=cross_cutting_artifacts
+```
 
 **Verify:** Read file, confirm no placeholders.
 
-**Output:** `✓ Generated: abstraction-assessment.md`
+**Output:** `[ok] Generated: abstraction-assessment.md`
 
 ---
 
-## Artifact 2: Concern Migration Plan (3 Chunks)
+## Artifact 2: Concern Migration Plan (3 Parts)
 
-### Chunk 1: Strategy + Phasing
+### Part 1: Strategy + Phasing
 
 ---
-⏸️ **[STOP: GENERATE_MIGRATION_PLAN_CHUNK_1]**
+[STOP: GENERATE_MIGRATION_PLAN_PART_1]**
 
 **Template:**
 
@@ -173,7 +233,7 @@ Write to: `{reports_dir}/abstraction-assessment.md`
 
 | Aspect | Value |
 |--------|-------|
-| Migration | {current} → {target} |
+| Migration | {current} -> {target} |
 | Strategy | {selected strategy} |
 | Duration | {total weeks} weeks |
 | Effort | {person-days} person-days |
@@ -233,12 +293,16 @@ Write to: `{reports_dir}/abstraction-assessment.md`
 
 ```
 
-Write to: `{reports_dir}/concern-migration-plan.md`
+**Write using CLI:**
+
+```bash
+speckitadv write-report concern-migration-plan.md --content '<generated-content>' --stage=cross_cutting_artifacts
+```
 
 **Output:**
 
 ```text
-concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
+concern-migration-plan.md Part 1/3 complete: Strategy + Phasing
   - Strategy: {strategy}
   - Phases: 4
   - Lines: [COUNT]
@@ -247,10 +311,10 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 
 ---
 
-### Chunk 2: Implementation + Testing
+### Part 2: Implementation + Testing
 
 ---
-⏸️ **[STOP: GENERATE_MIGRATION_PLAN_CHUNK_2]**
+[STOP: GENERATE_MIGRATION_PLAN_PART_2]**
 
 ```markdown
 ## 4. Environment Setup
@@ -316,12 +380,16 @@ concern-migration-plan.md Chunk 1/3 complete: Strategy + Phasing
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Append to: `{reports_dir}/concern-migration-plan.md`
+**Append using CLI:**
+
+```bash
+speckitadv write-report concern-migration-plan.md --content '<generated-content>' --append --stage=cross_cutting_artifacts
+```
 
 **Output:**
 
 ```text
-concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
+concern-migration-plan.md Part 2/3 complete: Implementation + Testing
   - Files to modify: [COUNT]
   - Test types: [COUNT]
   - Lines: [COUNT]
@@ -330,10 +398,10 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 
 ---
 
-### Chunk 3: Deployment + Operations + Success
+### Part 3: Deployment + Operations + Success
 
 ---
-⏸️ **[STOP: GENERATE_MIGRATION_PLAN_CHUNK_3]**
+[STOP: GENERATE_MIGRATION_PLAN_PART_3]**
 
 ```markdown
 ## 7. Deployment Strategy
@@ -385,8 +453,8 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 
 ### Performance Criteria
 
-- [ ] Response time: ≤ {threshold}ms
-- [ ] Throughput: ≥ {threshold} req/sec
+- [ ] Response time: <= {threshold}ms
+- [ ] Throughput: >= {threshold} req/sec
 - [ ] Error rate: < 0.1%
 
 ### Operational Criteria
@@ -415,17 +483,21 @@ concern-migration-plan.md Chunk 2/3 complete: Implementation + Testing
 
 ```
 
-Append to: `{reports_dir}/concern-migration-plan.md`
+**Append using CLI:**
+
+```bash
+speckitadv write-report concern-migration-plan.md --content '<generated-content>' --append --stage=cross_cutting_artifacts
+```
 
 **Verify:** Read complete file, confirm all 10 sections present.
 
 **Output:**
 
 ```text
-concern-migration-plan.md Chunk 3/3 complete: Deployment + Operations + Success
+concern-migration-plan.md Part 3/3 complete: Deployment + Operations + Success
   - Lines: [COUNT]
 
-concern-migration-plan.md COMPLETE (3/3 chunks)
+concern-migration-plan.md COMPLETE (3/3 parts)
    Total lines: [COUNT]
 
 ```
@@ -435,7 +507,7 @@ concern-migration-plan.md COMPLETE (3/3 chunks)
 ## Artifact 3: Rollback Procedure
 
 ---
-⏸️ **[STOP: GENERATE_ROLLBACK_PROCEDURE]**
+[STOP: GENERATE_ROLLBACK_PROCEDURE]**
 
 Generate detailed rollback procedure:
 
@@ -444,7 +516,7 @@ Generate detailed rollback procedure:
 
 ## Overview
 
-- **Migration:** {current} → {target}
+- **Migration:** {current} -> {target}
 - **Last Updated:** {date}
 - **Owner:** {team/person}
 
@@ -559,11 +631,15 @@ Generate detailed rollback procedure:
 <!-- markdownlint-disable-next-line MD040 -->
 ```
 
-Write to: `{reports_dir}/rollback-procedure.md`
+**Write using CLI:**
+
+```bash
+speckitadv write-report rollback-procedure.md --content '<generated-content>' --stage=cross_cutting_artifacts
+```
 
 **Verify:** Read file, confirm no placeholders.
 
-**Output:** `✓ Generated: rollback-procedure.md`
+**Output:** `[ok] Generated: rollback-procedure.md`
 
 ---
 
@@ -594,20 +670,20 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Completion Marker
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   STAGE COMPLETE: SCOPE_ARTIFACTS (Cross-Cutting Concern)
 
   Chain ID: {chain_id}
 
   Concern: {concern_type}
-  Migration: {current} → {target}
+  Migration: {current} -> {target}
   Strategy: {strategy}
 
   Artifacts Generated (3 total):
-    ✓ abstraction-assessment.md
-    ✓ concern-migration-plan.md
-    ✓ rollback-procedure.md
-═══════════════════════════════════════════════════════════
+    [ok] abstraction-assessment.md
+    [ok] concern-migration-plan.md
+    [ok] rollback-procedure.md
+===========================================================
 
 STAGE_COMPLETE:SCOPE_ARTIFACTS
 
@@ -618,39 +694,39 @@ STAGE_COMPLETE:SCOPE_ARTIFACTS
 ## Analysis Chain Complete
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
            ANALYSIS CHAIN COMPLETE
-═══════════════════════════════════════════════════════════
+===========================================================
 
 Chain ID: {chain_id}
 
 All Stages Completed:
-  ✓ Stage 1: Setup and Scope
-  ✓ Stage 2: File Analysis
-  ✓ Stage 3B: Cross-Cutting Concern Analysis
-  ✓ Stage 4: Report Generation
-  ✓ Stage 5: Common Artifacts
-  ✓ Stage 6: Scope-Specific Artifacts
+  [ok] Stage 1: Setup and Scope
+  [ok] Stage 2: File Analysis
+  [ok] Stage 3B: Cross-Cutting Concern Analysis
+  [ok] Stage 4: Report Generation
+  [ok] Stage 5: Common Artifacts
+  [ok] Stage 6: Scope-Specific Artifacts
 
 Analysis Directory: {analysis_dir}
 
 Generated Artifacts:
   Common:
-    • EXECUTIVE-SUMMARY.md
-    • dependency-audit.json
-    • metrics-summary.json
-    • analysis-report.md
+    * EXECUTIVE-SUMMARY.md
+    * dependency-audit.json
+    * metrics-summary.json
+    * analysis-report.md
 
   Scope-Specific:
-    • abstraction-assessment.md
-    • concern-migration-plan.md
-    • rollback-procedure.md
+    * abstraction-assessment.md
+    * concern-migration-plan.md
+    * rollback-procedure.md
 
 Next Steps:
   1. Review abstraction-assessment.md for pre-migration work
   2. Follow concern-migration-plan.md phases
   3. Keep rollback-procedure.md accessible during migration
 
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```

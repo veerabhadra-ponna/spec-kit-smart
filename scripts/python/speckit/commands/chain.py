@@ -94,17 +94,26 @@ def init_state_dir(
     """Initialize state directory for a command."""
     state_dir = get_state_dir(command, repo_root, feature_dir)
     state_dir.mkdir(parents=True, exist_ok=True)
-    console.print(f"[green]✓[/green] Initialized state directory: {state_dir}")
+    console.print(f"[green][ok][/green] Initialized state directory: {state_dir}")
     return state_dir
 
 
 def validate_state(state: dict) -> bool:
-    """Validate state schema - check required fields."""
+    """Validate state schema - check required fields.
+
+    Design note: This validation is intentionally minimal, checking only
+    chain_id and timestamp. Per AGENTS.md "No Backward Compatibility" policy,
+    we don't need extensive schema validation for this pre-release system.
+
+    The primary state management now uses AnalysisStateManager and
+    FeatureStateManager in state.py which have structured dataclasses.
+    This function is kept for legacy chain state compatibility.
+    """
     chain_id = state.get("chain_id")
     timestamp = state.get("timestamp")
 
     if not chain_id or not timestamp:
-        console.print("[red]✗[/red] Invalid state: missing chain_id or timestamp")
+        console.print("[red][x][/red] Invalid state: missing chain_id or timestamp")
         return False
     return True
 
@@ -130,7 +139,7 @@ def save_state(
         True if successful
     """
     if not validate_state(state):
-        console.print("[red]✗[/red] State validation failed - cannot save")
+        console.print("[red][x][/red] State validation failed - cannot save")
         return False
 
     state_dir = get_state_dir(command, repo_root, feature_dir)
@@ -148,10 +157,10 @@ def save_state(
         with open(latest_file, "w", encoding="utf-8") as f:
             json.dump(state, f, indent=2)
 
-        console.print(f"[green]✓[/green] State saved: {state_file}")
+        console.print(f"[green][ok][/green] State saved: {state_file}")
         return True
     except (OSError, IOError) as e:
-        console.print(f"[red]✗[/red] Failed to save state: {e}")
+        console.print(f"[red][x][/red] Failed to save state: {e}")
         return False
 
 
@@ -183,7 +192,15 @@ def load_state(
     try:
         with open(state_file, "r", encoding="utf-8") as f:
             return json.load(f)
-    except (OSError, IOError, json.JSONDecodeError):
+    except json.JSONDecodeError as e:
+        # Corrupted state file - warn user so they can recover
+        console.print(f"[yellow][!] Warning:[/yellow] Corrupted state file: {state_file}")
+        console.print(f"[dim]  JSON error: {e}[/dim]")
+        console.print("[dim]  Delete file to re-initialize or fix manually.[/dim]")
+        return None
+    except (OSError, IOError) as e:
+        console.print(f"[yellow][!] Warning:[/yellow] Cannot read state file: {state_file}")
+        console.print(f"[dim]  Error: {e}[/dim]")
         return None
 
 
@@ -412,9 +429,9 @@ def run_chain_state_command(
         try:
             state = json.loads(state_json)
             if validate_state(state):
-                console.print("[green]✓[/green] Valid state")
+                console.print("[green][ok][/green] Valid state")
             else:
-                console.print("[red]✗[/red] Invalid state")
+                console.print("[red][x][/red] Invalid state")
                 raise SystemExit(1)
         except json.JSONDecodeError:
             console.print("[red]Error:[/red] Invalid JSON")

@@ -7,6 +7,19 @@ version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
+## DO NOT CREATE FILES
+
+**CRITICAL: This substage does NOT create any files.**
+
+- NO `stage9-chunk4.md`
+- NO `stage12.md` or similar
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
+
+**Recommendations are shown directly in the conversation.** Final data is saved using the CLI command.
+
+---
+
 # Stage 3A-4: Recommendations & State Completion
 
 ## Purpose
@@ -136,7 +149,6 @@ ELSE:
     ]
   }
 }
-
 ```
 
 ---
@@ -144,12 +156,12 @@ ELSE:
 ## Step 2: Display Recommendations to User
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
 MODERNIZATION RECOMMENDATIONS
-═══════════════════════════════════════════════════════════
+===========================================================
 
 PRIMARY RECOMMENDATION
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 
   Approach: {primary.approach}
   Confidence: {primary.confidence}%
@@ -161,14 +173,14 @@ PRIMARY RECOMMENDATION
   Estimated Effort: {primary.estimated_effort}
 
 ALTERNATIVE APPROACH
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 
   Approach: {alternative.approach}
   Confidence: {alternative.confidence}%
   Trade-offs: {alternative.trade_offs}
 
 QUICK WINS (Do First)
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 
   1. {quick_win_1.action}
      Effort: {effort}, Impact: {impact}
@@ -180,7 +192,7 @@ QUICK WINS (Do First)
      Effort: {effort}, Impact: {impact}
 
 PHASED MIGRATION PLAN
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 
   Phase 1: {phase_1.name} ({phase_1.duration})
     Focus: {phase_1.focus}
@@ -199,13 +211,13 @@ PHASED MIGRATION PLAN
     Risk: {phase_4.risk}
 
 TOP RISKS
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 
-  🔴 {risk_1}: {mitigation_1}
-  🟡 {risk_2}: {mitigation_2}
-  🟢 {risk_3}: {mitigation_3}
+  [!] {risk_1}: {mitigation_1}
+  [!] {risk_2}: {mitigation_2}
+  [ok] {risk_3}: {mitigation_3}
 
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
@@ -263,7 +275,7 @@ Merge all Stage 3A data into comprehensive state:
     "feasibility": {
       "inline_upgrade": {score},
       "greenfield_rewrite": {score},
-      "hybrid_strangler": {score}
+      "hybrid_approach": {score}
     }
   },
 
@@ -290,7 +302,6 @@ Merge all Stage 3A data into comprehensive state:
     "success_criteria": ["{list}"]
   }
 }
-
 ```
 
 ### Save State
@@ -302,7 +313,7 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Step 4: Verify State Saved
 
 ---
-⏸️ **[STOP: VERIFY_STATE_SAVED]**
+[STOP: VERIFY_STATE_SAVED]**
 
 1. Read `{analysis_dir}/state.json`
 2. Validate JSON is parseable
@@ -316,25 +327,27 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Completion Marker
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   STAGE COMPLETE: FULL_APP_ANALYSIS
 
   Chain ID: {chain_id}
 
   Summary:
     Questions Answered: 10/10
-    Scope Validated: ✓
+    Scope Validated: [ok]
     Complexity: {rating}
     Primary Recommendation: {approach} ({confidence}%)
 
   Proceeding to Stage 4: Report Generation
-═══════════════════════════════════════════════════════════
+===========================================================
 
 STAGE_COMPLETE:FULL_APP_ANALYSIS
 
 ```
 
 ---
+
+**[AUTO-CONTINUE]** Immediately proceed to next stage. Do NOT wait for user input.
 
 ## Next Stage
 

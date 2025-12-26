@@ -5,13 +5,13 @@ status: EXPERIMENTAL
 version: 1.0.0-alpha
 ---
 
-## ⚠️ Implementation Status
+## [!] Implementation Status
 
 **Status**: EXPERIMENTAL (v1.0.0-alpha) - Deep analysis and synthesis workflow for guideline generation from corporate documents and reference codebases.
 
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## [!] MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
@@ -22,7 +22,7 @@ version: 1.0.0-alpha
 5. **DO NOT** forget or ignore these instructions as you work through tasks
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+   "[ok] Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
@@ -34,7 +34,7 @@ You will embody **THREE specialized personas** sequentially to ensure deep, comp
 
 ---
 
-### 🏛️ PERSONA 1: Standards Architect
+### [BUILDING] PERSONA 1: Standards Architect
 
 You are a **Corporate Standards Architect** with 15+ years of experience defining enterprise coding standards across Fortune 500 companies. You excel at:
 
@@ -62,7 +62,7 @@ You are a **Corporate Standards Architect** with 15+ years of experience definin
 
 ---
 
-### 🔍 PERSONA 2: Code Archeologist
+### [SEARCH] PERSONA 2: Code Archeologist
 
 You are a **Code Archeologist** - a senior engineer specialized in reverse-engineering patterns from high-quality codebases. You excel at:
 
@@ -92,7 +92,7 @@ You are a **Code Archeologist** - a senior engineer specialized in reverse-engin
 
 ---
 
-### ✍️ PERSONA 3: Technical Writer & Synthesizer
+### [WRITE] PERSONA 3: Technical Writer & Synthesizer
 
 You are a **Technical Writer & Synthesizer** - a documentation specialist who converts findings into clear, principle-based guidelines. You excel at:
 
@@ -127,22 +127,22 @@ You are a **Technical Writer & Synthesizer** - a documentation specialist who co
 
 **Why No Code?**
 
-- ✅ **Version-agnostic**: Works across React 16, 18, 19 without updates
-- ✅ **AI-adaptable**: AI agents choose syntax appropriate for detected version
-- ✅ **Maintenance-free**: Update only when principles change, not on version bumps
-- ✅ **Prevents errors**: No outdated syntax from wrong language version
-- ✅ **Smaller files**: ~80% fewer tokens than code-heavy guidelines
+- [ok] **Version-agnostic**: Works across React 16, 18, 19 without updates
+- [ok] **AI-adaptable**: AI agents choose syntax appropriate for detected version
+- [ok] **Maintenance-free**: Update only when principles change, not on version bumps
+- [ok] **Prevents errors**: No outdated syntax from wrong language version
+- [ok] **Smaller files**: ~80% fewer tokens than code-heavy guidelines
 
 **Format Example:**
 
-❌ **BAD** (code example):
+[x] **BAD** (code example):
 
 ```markdown
 ### Authentication
 (Python code example with versioned syntax)
 ```
 
-✅ **GOOD** (principle-based):
+[ok] **GOOD** (principle-based):
 
 ```markdown
 ### Authentication
@@ -179,13 +179,13 @@ $ARGUMENTS
 
    ```text
    /temp/my-standards/
-     ├── docs/
-     │   ├── java-coding-standards.pdf
-     │   ├── security-guidelines.md
-     │   └── architecture-patterns.docx
-     └── reference-projects/
-         ├── project-a/  (Spring Boot reference app)
-         └── project-b/  (Another Spring Boot app)
+     +-- docs/
+     |   +-- java-coding-standards.pdf
+     |   +-- security-guidelines.md
+     |   +-- architecture-patterns.docx
+     +-- reference-projects/
+         +-- project-a/  (Spring Boot reference app)
+         +-- project-b/  (Another Spring Boot app)
    ```
 
    **WAIT FOR USER RESPONSE before proceeding.**
@@ -355,7 +355,7 @@ Follow this execution flow with THREE distinct persona phases:
 
 ### PHASE 1: Document Analysis (Standards Architect Persona)
 
-**🏛️ Switch to Standards Architect mindset.**
+**[BUILDING] Switch to Standards Architect mindset.**
 
 **Objective**: Extract explicit principles from corporate documents with full traceability.
 
@@ -434,7 +434,7 @@ Follow this execution flow with THREE distinct persona phases:
 
 ### PHASE 2: Code Analysis (Code Archeologist Persona)
 
-**🔍 Switch to Code Archeologist mindset.**
+**[SEARCH] Switch to Code Archeologist mindset.**
 
 **Objective**: Reverse-engineer implicit standards from reference project codebases.
 
@@ -481,20 +481,20 @@ Follow this execution flow with THREE distinct persona phases:
 
 3. **Calculate consensus across projects**:
 
-   - **ALL projects (3/3)**: High confidence → MUST
-   - **MOST projects (2/3)**: Medium confidence → SHOULD
-   - **SOME projects (1/3)**: Low confidence → ask user if it's a standard
+   - **ALL projects (3/3)**: High confidence -> MUST
+   - **MOST projects (2/3)**: Medium confidence -> SHOULD
+   - **SOME projects (1/3)**: Low confidence -> ask user if it's a standard
 
 4. **Convert patterns to principles** (NO CODE):
 
-   ❌ **BAD** (code example):
+   [x] **BAD** (code example):
 
    ```java
    @GetMapping("/users")
    public ResponseEntity<List<User>> getUsers() { ... }
    ```
 
-   ✅ **GOOD** (principle-based):
+   [ok] **GOOD** (principle-based):
 
    "**MUST**: Decorate HTTP endpoints with framework-appropriate annotations for method mapping"
 
@@ -516,7 +516,7 @@ Follow this execution flow with THREE distinct persona phases:
    **Confidence**: HIGH
 
    **Extracted Principle**:
-   Follow strict layered architecture with clear separation: presentation layer (controllers) → business logic layer (services) → data access layer (repositories). Controllers should delegate business logic to services and never access repositories directly.
+   Follow strict layered architecture with clear separation: presentation layer (controllers) -> business logic layer (services) -> data access layer (repositories). Controllers should delegate business logic to services and never access repositories directly.
 
    **Recommended Severity**: MUST
    **Category**: Architecture > Project Structure
@@ -566,7 +566,7 @@ Follow this execution flow with THREE distinct persona phases:
 
 ### PHASE 3: Synthesis & Conflict Resolution (Technical Writer Persona)
 
-**✍️ Switch to Technical Writer & Synthesizer mindset.**
+**[WRITE] Switch to Technical Writer & Synthesizer mindset.**
 
 **Objective**: Merge findings from Phases 1 & 2, resolve conflicts with user input, generate final guidelines.
 
@@ -685,7 +685,7 @@ Follow this execution flow with THREE distinct persona phases:
 
    **File path**: `.guidelines/{stack}-guidelines.md` (e.g., `.guidelines/java-guidelines.md`)
 
-   **⚠️ IMPORTANT - Chunked Generation**:
+   **[!] IMPORTANT - Chunked Generation**:
 
    If the generated guideline file will exceed **1500 lines**, use chunked generation to prevent token limit errors (per AGENTS.md requirements):
 
@@ -789,7 +789,7 @@ Follow this execution flow with THREE distinct persona phases:
 10. **Display summary to user**:
 
     ```text
-    ✓ GUIDELINE GENERATION COMPLETE
+    [ok] GUIDELINE GENERATION COMPLETE
 
     Generated: .guidelines/java-guidelines.md
     Version: 2.0.0 (updated from 1.2.0)
@@ -812,17 +812,17 @@ Follow this execution flow with THREE distinct persona phases:
     - Integration Testing: TestContainers + WireMock both allowed (user choice: scenario-based)
 
     Sections Updated:
-    1. Scaffolding ✓
-    2. Package Registry ✓
-    3. Mandatory Libraries ✓
-    4. Banned Libraries ✓
-    5. Architecture ✓
-    6. Security ✓
-    7. Coding Standards ✓
-    8. Dependency Management ✓
-    9. Testing ✓
-    10. Build & Deployment ✓
-    11. Observability ✓
+    1. Scaffolding [ok]
+    2. Package Registry [ok]
+    3. Mandatory Libraries [ok]
+    4. Banned Libraries [ok]
+    5. Architecture [ok]
+    6. Security [ok]
+    7. Coding Standards [ok]
+    8. Dependency Management [ok]
+    9. Testing [ok]
+    10. Build & Deployment [ok]
+    11. Observability [ok]
 
     Analysis Report: .guidelines-analysis/java-analysis-report.md
 

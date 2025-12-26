@@ -14,7 +14,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Optional
 
-from speckit.core.utils import safe_json_loads, safe_json_dumps
+from speckit.core.utils import safe_json_loads, safe_json_dumps, atomic_write
 from speckit.core.prompts import get_stage_order
 
 
@@ -414,9 +414,9 @@ class AnalysisStateManager:
 
         Creates:
             {analysis_dir}/
-            ├── state.json          # Workflow state
-            ├── data/               # AI artifacts (JSON)
-            └── reports/            # User deliverables (MD)
+            +-- state.json          # Workflow state
+            +-- data/               # AI artifacts (JSON)
+            +-- reports/            # User deliverables (MD)
         """
         self.folder.mkdir(parents=True, exist_ok=True)
         self.data_folder.mkdir(parents=True, exist_ok=True)
@@ -483,6 +483,18 @@ class AnalysisStateManager:
         if target_impl is not None:
             state.inputs.target_impl = target_impl
 
+        self.save(state)
+        return state
+
+    def update_project_path(self, project_path: str) -> AnalysisState:
+        """Update the project path in state.
+
+        Called when --path is provided to override the stored project path.
+        This ensures prompts use the correct path when resuming analysis
+        on a different project or subdirectory.
+        """
+        state = self.load()
+        state.project_path = str(project_path)
         self.save(state)
         return state
 
@@ -557,6 +569,8 @@ class AnalysisStateManager:
     def write_data(self, filename: str, content: str, stage: str = None) -> Path:
         """Write JSON data artifact to data/ folder.
 
+        Uses atomic writes to prevent data loss on failure.
+
         Args:
             filename: Name of the JSON file (e.g., 'category-patterns.json')
             content: JSON content to write
@@ -567,7 +581,7 @@ class AnalysisStateManager:
         """
         self.data_folder.mkdir(parents=True, exist_ok=True)
         file_path = self.data_folder / filename
-        file_path.write_text(content, encoding="utf-8")
+        atomic_write(file_path, content)
 
         # Track artifact in state if stage provided
         if stage:
@@ -577,6 +591,8 @@ class AnalysisStateManager:
 
     def write_report(self, filename: str, content: str, append: bool = False, stage: str = None) -> Path:
         """Write Markdown report to reports/ folder.
+
+        Uses atomic writes to prevent data loss on failure.
 
         Args:
             filename: Name of the MD file (e.g., 'analysis-report.md')
@@ -594,7 +610,8 @@ class AnalysisStateManager:
             existing = file_path.read_text(encoding="utf-8")
             content = existing + "\n" + content
 
-        file_path.write_text(content, encoding="utf-8")
+        # Use atomic write to prevent data loss if write fails
+        atomic_write(file_path, content)
 
         # Track artifact in state if stage provided
         if stage:
@@ -605,6 +622,18 @@ class AnalysisStateManager:
     def update_modernization_preferences(self, preferences: dict) -> AnalysisState:
         """Update modernization preferences in state.
 
+        Uses shallow merge (dict.update) to combine new preferences with existing.
+
+        Schema notes:
+        - Q1-Q7, Q9: Flat string values (e.g., "q1_language": "Java 21")
+        - Q8 (observability): Nested object with metrics/logging/tracing keys
+        - Q10 (testing): Nested object with strategy/coverage_target keys
+
+        Important: Since this uses shallow merge, submitting a partial Q8 or Q10
+        update will REPLACE the entire nested object. Always submit complete
+        Q8/Q10 objects to avoid losing sub-fields. The prompts (03a1/03a2)
+        collect all 10 preferences together for this reason.
+
         Args:
             preferences: Dict with Q1-Q10 answers from 03a1 and 03a2 stages
 
@@ -612,7 +641,7 @@ class AnalysisStateManager:
             Updated AnalysisState
         """
         state = self.load()
-        # Merge with existing preferences (allows incremental updates)
+        # Shallow merge - submitting partial Q8/Q10 replaces entire nested object
         state.modernization_preferences.update(preferences)
         self.save(state)
         return state
@@ -721,7 +750,7 @@ class AnalysisStateManager:
         """
         state = self.load()
 
-        return {
+        context = {
             "analysis_dir": str(self.folder),
             "data_dir": str(self.data_folder),
             "reports_dir": str(self.reports_folder),
@@ -739,6 +768,45 @@ class AnalysisStateManager:
             "workflow_complete": state.workflow_complete,
             "modernization_preferences": state.modernization_preferences,
         }
+
+        # Load scoring data from data folder if available
+        # DESIGN NOTE: Silent fallback to empty dict on read errors is intentional.
+        # Prompts should work even when scoring data is unavailable (e.g., permissions,
+        # corrupted file). The scoring fields will simply be empty strings in context.
+        scoring_file = self.data_folder / "validation-scoring.json"
+        if scoring_file.exists():
+            try:
+                content = scoring_file.read_text(encoding="utf-8")
+            except (IOError, OSError):
+                # File unreadable (permissions, etc.) - continue without scoring
+                content = "{}"
+
+            scoring_data = safe_json_loads(content, default={})
+            complexity = scoring_data.get("complexity", {})
+            feasibility = scoring_data.get("feasibility", {})
+
+            # Add complexity fields
+            context["complexity_score"] = complexity.get("overall_score", "")
+            context["complexity_rating"] = complexity.get("rating", "")
+
+            # Add feasibility fields
+            context["feasibility_inline"] = feasibility.get("inline_upgrade", "")
+            context["feasibility_greenfield"] = feasibility.get(
+                "greenfield_rewrite", ""
+            )
+            # Support both new (hybrid_approach) and legacy (hybrid_strangler) keys
+            context["feasibility_hybrid"] = (
+                feasibility.get("hybrid_approach")
+                or feasibility.get("hybrid_strangler", "")
+            )
+            context["recommended_approach"] = feasibility.get(
+                "recommended_approach", ""
+            )
+            context["confidence_percentage"] = feasibility.get(
+                "confidence_percentage", ""
+            )
+
+        return context
 
 
 # Placeholder detection for constitution

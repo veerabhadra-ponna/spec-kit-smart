@@ -1,10 +1,33 @@
 # Technical Specification - Modernization Architecture
 
 **Project**: <<PROJECT_NAME>>
-**Legacy Version**: <<LEGACY_VERSION>> → **Target Version**: <<TARGET_VERSION>>
+**Legacy Version**: <<LEGACY_VERSION>> -> **Target Version**: <<TARGET_VERSION>>
 **Architecture Date**: <<ANALYSIS_DATE>>
 **Architect**: AI Agent
 **Status**: Draft (Modernization Plan)
+
+---
+
+## Template Usage
+
+This template generates BOTH legacy and target technical specifications:
+
+| Output File | Purpose | Focus |
+|-------------|---------|-------|
+| `technical-spec-legacy.md` | Documents HOW the **existing** system is built | Current architecture |
+| `technical-spec-target.md` | Documents HOW the **new** system will be built | Target architecture |
+
+**Section Markers**:
+
+- `[LEGACY ONLY]` - Skip this section when generating target spec
+- `[TARGET ONLY]` - Skip this section when generating legacy spec
+- `[LEGACY: current state]` / `[TARGET: target state]` - Different focus for same section
+
+**Cross-Reference**:
+
+- Technical specs reference both functional specs for complete context
+- `functional-spec-legacy.md` - WHAT the legacy system does
+- `functional-spec-target.md` - WHAT the target system will do
 
 ---
 
@@ -40,9 +63,37 @@ It is adapted for **legacy code modernization** to define HOW to build the new s
 - `<<LEGACY_PAIN_POINTS>>` - Extract from functional-spec-legacy.md
 - `<<LTS_VERSIONS>>` - Query AI knowledge base for latest LTS
 
+### Output Quality Standards
+
+**Technical Accuracy** - Verify each section includes:
+
+- [ ] All architecture decisions justified with rationale
+- [ ] All diagrams consistent with text descriptions
+- [ ] All technology choices match user preferences (Q1-Q10)
+- [ ] All LTS versions verified against current sources
+- [ ] All migration paths have rollback strategies
+
+**Completeness** - Verify coverage:
+
+- [ ] Every component from functional spec has corresponding architecture
+- [ ] Every NFR from functional spec has SLO/SLI target
+- [ ] Every integration point has sequence diagram
+- [ ] Every data entity has migration strategy
+- [ ] Every risk has mitigation plan
+
+**Consistency** - Verify alignment:
+
+- [ ] Component names match across all diagrams
+- [ ] Technology stack consistent throughout
+- [ ] Phase assignments (P1-P4) align with functional spec priorities
+
 ---
 
 ## 1. Architectural Principles
+
+[LEGACY: document current state] / [TARGET: document target state]
+- **Legacy spec**: Document principles observed in existing codebase
+- **Target spec**: Document principles for the modernized system
 
 ### Legacy System Principles (Extracted)
 
@@ -56,15 +107,15 @@ From analysis of the legacy codebase:
 
 **Preserve from Legacy**:
 
-- ✅ <<Good pattern to keep>> (Evidence: <<file:line>>)
+- [ok] <<Good pattern to keep>> (Evidence: <<file:line>>)
 
 **Add for Modernization**:
 
-- ✨ **Simplicity**: Reduce complexity (current: <<N>> layers → target: <<M>> layers)
-- ✨ **Evolvability**: Use latest LTS for long-term support
-- ✨ **Operability**: Cloud-native observability and automation
-- ✨ **Security**: Modern auth (OAuth 2.0), encryption at rest/transit
-- ✨ **Cost Awareness**: Right-size resources, use managed services
+- [new] **Simplicity**: Reduce complexity (current: <<N>> layers -> target: <<M>> layers)
+- [new] **Evolvability**: Use latest LTS for long-term support
+- [new] **Operability**: Cloud-native observability and automation
+- [new] **Security**: Modern auth (OAuth 2.0), encryption at rest/transit
+- [new] **Cost Awareness**: Right-size resources, use managed services
 
 ---
 
@@ -580,13 +631,13 @@ flowchart TB
     end
 
     subgraph Transform
-        MAP[DTO → Domain]
+        MAP[DTO -> Domain]
         ENRICH[Data Enrichment]
         RULES[Business Rules]
     end
 
     subgraph Persist
-        ENTITY[Domain → Entity]
+        ENTITY[Domain -> Entity]
         DB_WRITE[Database Write]
         EVENT[Event Publish]
     end
@@ -689,7 +740,11 @@ flowchart TB
 
 ---
 
-## 8. Why This Pattern (Legacy → Target)
+## 8. Why This Pattern (Legacy -> Target)
+
+[LEGACY: document current architecture] / [TARGET: document target architecture with rationale]
+- **Legacy spec**: Document current architecture patterns and pain points
+- **Target spec**: Document chosen patterns and justify decisions with ADRs (Section 20)
 
 ### Legacy Architecture Pattern
 
@@ -711,11 +766,11 @@ flowchart TB
 
 **Chosen Pattern**: <<Based on user's deployment choice + best practices>>
 
-**Mapping BA Needs → Pattern**:
+**Mapping BA Needs -> Pattern**:
 
-- **Need**: <<from functional-spec-legacy.md>> → **Pattern**: <<How target pattern addresses it>>
-- **Need**: <<Scalability>> → **Pattern**: <<Microservices with K8s autoscaling>>
-- **Need**: <<Faster releases>> → **Pattern**: <<Independent service deployments>>
+- **Need**: <<from functional-spec-legacy.md>> -> **Pattern**: <<How target pattern addresses it>>
+- **Need**: <<Scalability>> -> **Pattern**: <<Microservices with K8s autoscaling>>
+- **Need**: <<Faster releases>> -> **Pattern**: <<Independent service deployments>>
 
 **Rationale**:
 
@@ -738,31 +793,31 @@ Map legacy features (from functional-spec-legacy.md) to modernization phases:
 
 **P1 Minimum Viable Migration (50% value)**:
 
-- ✅ <<Feature 1 from functional-spec>> (CRITICAL)
-- ✅ <<Feature 2 from functional-spec>> (CRITICAL)
-- ✅ <<Feature 3 from functional-spec>> (CRITICAL)
-- ✅ Data migration for <<core entities>>
-- ✅ Auth/security parity with legacy
+- [ok] <<Feature 1 from functional-spec>> (CRITICAL)
+- [ok] <<Feature 2 from functional-spec>> (CRITICAL)
+- [ok] <<Feature 3 from functional-spec>> (CRITICAL)
+- [ok] Data migration for <<core entities>>
+- [ok] Auth/security parity with legacy
 - **Exit Criteria**: Can replace legacy for <<core workflow>>
 
 **P2 Feature Parity (30% value)**:
 
-- ✅ <<Feature 4-6 from functional-spec>> (STANDARD)
-- ✅ Complete data migration
-- ✅ <<Integration X>>
+- [ok] <<Feature 4-6 from functional-spec>> (STANDARD)
+- [ok] Complete data migration
+- [ok] <<Integration X>>
 - **Exit Criteria**: Full functional parity with legacy
 
 **P3 Modernization Benefits (15% value)**:
 
-- ✨ <<New capability enabled by modern stack>>
-- ✨ <<Performance improvements>>
-- ✨ <<Observability enhancements>>
+- [new] <<New capability enabled by modern stack>>
+- [new] <<Performance improvements>>
+- [new] <<Observability enhancements>>
 - **Exit Criteria**: Demonstrates ROI of modernization
 
 **P4 Future Enhancements (5% value)**:
 
-- 🚀 <<Future feature>>
-- 🚀 <<Experimental feature>>
+- [+] <<Future feature>>
+- [+] <<Experimental feature>>
 - **Exit Criteria**: Foundation for future growth
 
 ---
@@ -780,8 +835,8 @@ Map legacy code to modernized components:
 
 **Migrates From** (Legacy):
 
-- <<legacy/src/auth/>> → <<new/services/auth-service/>>
-- <<legacy/src/session/>> → (Replaced by JWT tokens)
+- <<legacy/src/auth/>> -> <<new/services/auth-service/>>
+- <<legacy/src/session/>> -> (Replaced by JWT tokens)
 
 **Technology Stack**:
 
@@ -838,7 +893,12 @@ Map legacy code to modernized components:
 
 ---
 
-## 12. Data & Schema (Legacy → Target)
+## 12. Data & Schema (Legacy -> Target)
+
+[LEGACY: document current schema] / [TARGET: document migration strategy]
+- **Legacy spec**: Document current database schema, data types, constraints
+- **Target spec**: Document target schema with migration scripts and rollback plan
+- **Note**: For WHAT data models exist, see functional-spec Section 14 "Data Models"
 
 ### Database Migration
 
@@ -880,9 +940,9 @@ CREATE TYPE user_role AS ENUM ('admin', 'user', 'guest');
 
 **Migration Notes**:
 
-- ID: NUMBER → UUID (generate mapping table)
+- ID: NUMBER -> UUID (generate mapping table)
 - Timestamps: Add timezone awareness
-- Role: VARCHAR → ENUM for type safety
+- Role: VARCHAR -> ENUM for type safety
 - Add `updated_at` for audit trail
 
 **Migration Tool**: <<pgloader / custom script>>
@@ -974,7 +1034,7 @@ Convert legacy NFRs (from functional-spec-legacy.md §12) to measurable targets:
 **Deployment Strategy**: <<Canary / Blue-Green / Rolling>>
 
 - **P1**: Blue-Green (safe, instant rollback)
-- **P2+**: Canary (5% → 25% → 50% → 100%)
+- **P2+**: Canary (5% -> 25% -> 50% -> 100%)
 
 **Rollback Triggers**:
 
@@ -1027,10 +1087,10 @@ From legacy analysis (functional-spec-legacy.md §11):
 
 **Exit Criteria**:
 
-- ✅ Core workflow functional
-- ✅ Performance meets SLO
-- ✅ Zero data loss in dual-write
-- ✅ Rollback tested
+- [ok] Core workflow functional
+- [ok] Performance meets SLO
+- [ok] Zero data loss in dual-write
+- [ok] Rollback tested
 
 ### P2: Feature Parity
 
@@ -1042,9 +1102,9 @@ From legacy analysis (functional-spec-legacy.md §11):
 
 **Exit Criteria**:
 
-- ✅ All features migrated
-- ✅ Performance better than legacy
-- ✅ User acceptance testing passed
+- [ok] All features migrated
+- [ok] Performance better than legacy
+- [ok] User acceptance testing passed
 
 ### P3: Modernization Benefits
 
@@ -1056,9 +1116,9 @@ From legacy analysis (functional-spec-legacy.md §11):
 
 **Exit Criteria**:
 
-- ✅ Legacy system decommissioned
-- ✅ Observability dashboards live
-- ✅ Cost savings achieved
+- [ok] Legacy system decommissioned
+- [ok] Observability dashboards live
+- [ok] Cost savings achieved
 
 ---
 
@@ -1084,9 +1144,9 @@ From legacy analysis (functional-spec-legacy.md §11):
 
 ---
 
-## 19. R→C→T Traceability
+## 19. R->C->T Traceability
 
-Map Requirements (from functional-spec-legacy.md) → Components → Tests:
+Map Requirements (from functional-spec-legacy.md) -> Components -> Tests:
 
 | Requirement ID | Requirement | Component | Test ID | Test Type |
 | ---------------- | ------------- | ----------- | --------- | ----------- |
@@ -1105,7 +1165,155 @@ Map Requirements (from functional-spec-legacy.md) → Components → Tests:
 
 ---
 
-## 20. Open Questions & Next Steps
+## 20. Architecture Decision Records (ADR)
+
+[TARGET ONLY] Document key architectural decisions for the modernization.
+For legacy systems, document observed patterns without formal ADRs.
+
+### ADR-001: <<Decision Title>>
+
+**Status**: Proposed | Accepted | Deprecated | Superseded
+
+**Context**:
+<<What is the issue that we're seeing that is motivating this decision or change?>>
+
+**Decision**:
+<<What is the change that we're proposing and/or doing?>>
+
+**Consequences**:
+- **Positive**: <<Benefits>>
+- **Negative**: <<Trade-offs>>
+- **Risks**: <<Potential issues>>
+
+**Alternatives Considered**:
+
+| Option | Pros | Cons | Why Not Chosen |
+|--------|------|------|----------------|
+| <<Option A>> | <<pros>> | <<cons>> | <<reason>> |
+| <<Option B>> | <<pros>> | <<cons>> | <<reason>> |
+
+### ADR Template for Additional Decisions
+
+Repeat the above format for each major decision:
+- Database technology choice
+- Authentication strategy
+- Message queue selection
+- Deployment platform
+- Microservices vs modular monolith
+
+---
+
+## 21. Infrastructure as Code (IaC)
+
+[TARGET ONLY] Document IaC patterns and configurations for the target system.
+
+### 21.1 IaC Tool Stack
+
+| Component | Tool | Version | Purpose |
+|-----------|------|---------|---------|
+| Container Orchestration | <<USER_CHOICE_CONTAINERIZATION>> | <<version>> | Container management |
+| Infrastructure | <<USER_CHOICE_IAC>> | <<version>> | Resource provisioning |
+| Configuration | <<ConfigMgmt tool>> | <<version>> | App configuration |
+| Secrets | <<Secrets manager>> | <<version>> | Sensitive data |
+
+### 21.2 Directory Structure
+
+```text
+infrastructure/
+|-- terraform/           # or pulumi/, cloudformation/
+|   |-- modules/
+|   |   |-- networking/
+|   |   |-- compute/
+|   |   |-- database/
+|   |   |-- security/
+|   |-- environments/
+|       |-- dev/
+|       |-- staging/
+|       |-- production/
+|-- kubernetes/          # or helm/
+|   |-- base/
+|   |-- overlays/
+|       |-- dev/
+|       |-- staging/
+|       |-- production/
+|-- scripts/
+    |-- deploy.sh
+    |-- rollback.sh
+```
+
+### 21.3 Environment Parity
+
+| Config | Dev | Staging | Production |
+|--------|-----|---------|------------|
+| Replicas | 1 | 2 | 3+ (HPA) |
+| Resources | Minimal | Reduced | Full |
+| Database | Local/Docker | Managed (small) | Managed (HA) |
+| Secrets | Local file | Secret Manager | Secret Manager |
+
+---
+
+## 22. CI/CD Pipeline Architecture
+
+[TARGET ONLY] Document the continuous integration and deployment pipelines.
+
+### 22.1 Pipeline Overview
+
+```mermaid
+flowchart LR
+    subgraph Build
+        CHECKOUT[Checkout] --> DEPS[Install Deps]
+        DEPS --> LINT[Lint]
+        LINT --> TEST[Unit Tests]
+        TEST --> BUILD[Build]
+        BUILD --> SCAN[Security Scan]
+    end
+
+    subgraph Publish
+        SCAN --> IMAGE[Build Image]
+        IMAGE --> PUSH[Push Registry]
+    end
+
+    subgraph Deploy
+        PUSH --> DEV[Deploy Dev]
+        DEV --> INT_TEST[Integration Tests]
+        INT_TEST --> STAGING[Deploy Staging]
+        STAGING --> E2E[E2E Tests]
+        E2E --> PROD[Deploy Prod]
+    end
+
+    PROD --> MONITOR[Monitor]
+```
+
+### 22.2 Pipeline Stages
+
+| Stage | Trigger | Actions | Failure Action |
+|-------|---------|---------|----------------|
+| Build | Push to any branch | Lint, Test, Build | Block merge |
+| Security | Push to main | SAST, Dependency scan | Block deploy |
+| Deploy Dev | Merge to main | Deploy to dev | Rollback |
+| Deploy Staging | Manual / Schedule | Deploy to staging | Rollback |
+| Deploy Prod | Manual approval | Canary deploy | Auto-rollback |
+
+### 22.3 Quality Gates
+
+| Gate | Threshold | Action if Failed |
+|------|-----------|------------------|
+| Unit Test Coverage | >= 80% | Block merge |
+| Integration Tests | 100% pass | Block deploy |
+| Security Vulnerabilities | 0 Critical, 0 High | Block deploy |
+| Performance Regression | < 10% degradation | Alert + review |
+
+### 22.4 Deployment Strategies
+
+| Environment | Strategy | Rollback Time |
+|-------------|----------|---------------|
+| Dev | Direct deploy | N/A |
+| Staging | Blue-Green | Instant |
+| Production | Canary (5% -> 25% -> 100%) | < 2 min |
+
+---
+
+## 23. Open Questions & Next Steps
 
 ### Open Questions
 

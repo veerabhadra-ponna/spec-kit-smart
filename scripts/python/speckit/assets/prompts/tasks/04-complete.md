@@ -65,7 +65,7 @@ Verify all tasks follow the required format:
 
 ```text
 
-✅ Task generation complete
+[ok] Task generation complete
 
 File: {{feature_dir}}/tasks.md
 Tasks: [N] total across [N] phases

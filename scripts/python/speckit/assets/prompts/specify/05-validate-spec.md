@@ -78,7 +78,7 @@ Review spec against each checklist item:
 ## Output
 
 ```text
-✓ Validation complete
+[ok] Validation complete
   - Passed: [N]/[Total] items
   - Clarifications: [0-3] pending
 ```

@@ -58,7 +58,7 @@ Check `/.guidelines/` directory based on tech stack:
 
 ```text
 
-✓ Initialization complete
+[ok] Initialization complete
   - Role: Tech Lead
   - Guidelines: [loaded / not found]
   - Ready for task generation

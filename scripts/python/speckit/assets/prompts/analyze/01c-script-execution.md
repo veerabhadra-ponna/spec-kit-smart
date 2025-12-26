@@ -30,9 +30,28 @@ The CLI provides all context via template variables. **Do not read state.json di
 
 **CLI Utility Commands (use instead of raw file writes):**
 
-- `speckitadv write-data <filename> --content '<json>'` - Write JSON to data/ folder
-- `speckitadv write-report <filename> --content '<md>'` - Write MD to reports/ folder
-- `speckitadv file-stats <filepath>` - Get file statistics (lines, size)
+[!] **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
+
+```bash
+# Write JSON data
+speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
+
+# Write report - ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report <filename> --stage=<stage-id> --append --content '<content>'
+
+# Get file statistics
+speckitadv file-stats <filepath>
+```
+
+**For content > 2000 chars, use stdin mode:**
+
+```powershell
+@"
+<json or markdown content here>
+"@ | speckitadv write-data <filename> --stage=<stage-id> --stdin
+```
 
 ---
 
@@ -52,7 +71,7 @@ This generates a JSON manifest with:
 
 ---
 
-⏸️ **[STOP: ENUMERATION]**
+[STOP: ENUMERATION]**
 
 Execute the command and verify output.
 
@@ -69,38 +88,38 @@ Read the file manifest and analyze to detect:
 
 Look for file extensions:
 
-- `.cs`, `.csproj` → C# / .NET
-- `.java`, `.kt` → Java / Kotlin
-- `.py` → Python
-- `.js`, `.ts`, `.jsx`, `.tsx` → JavaScript / TypeScript
-- `.go` → Go
-- `.rb` → Ruby
-- `.php` → PHP
-- `.rs` → Rust
+- `.cs`, `.csproj` -> C# / .NET
+- `.java`, `.kt` -> Java / Kotlin
+- `.py` -> Python
+- `.js`, `.ts`, `.jsx`, `.tsx` -> JavaScript / TypeScript
+- `.go` -> Go
+- `.rb` -> Ruby
+- `.php` -> PHP
+- `.rs` -> Rust
 
 ### Frameworks
 
 Look for indicator files:
 
-- `package.json` with dependencies → Node.js frameworks (Express, React, Vue, etc.)
-- `*.csproj` with SDK → .NET (ASP.NET Core, Blazor, etc.)
-- `pom.xml` or `build.gradle` → Java (Spring, etc.)
-- `requirements.txt` or `pyproject.toml` → Python (Django, Flask, FastAPI, etc.)
-- `Gemfile` → Ruby (Rails, Sinatra, etc.)
-- `composer.json` → PHP (Laravel, Symfony, etc.)
+- `package.json` with dependencies -> Node.js frameworks (Express, React, Vue, etc.)
+- `*.csproj` with SDK -> .NET (ASP.NET Core, Blazor, etc.)
+- `pom.xml` or `build.gradle` -> Java (Spring, etc.)
+- `requirements.txt` or `pyproject.toml` -> Python (Django, Flask, FastAPI, etc.)
+- `Gemfile` -> Ruby (Rails, Sinatra, etc.)
+- `composer.json` -> PHP (Laravel, Symfony, etc.)
 
 ### Build Tools
 
 Look for:
 
-- `package.json` → npm/yarn/pnpm
-- `Makefile` → Make
-- `*.csproj` → MSBuild/dotnet
-- `pom.xml` → Maven
-- `build.gradle` → Gradle
-- `Dockerfile` → Docker
-- `.github/workflows/` → GitHub Actions
-- `azure-pipelines.yml` → Azure DevOps
+- `package.json` -> npm/yarn/pnpm
+- `Makefile` -> Make
+- `*.csproj` -> MSBuild/dotnet
+- `pom.xml` -> Maven
+- `build.gradle` -> Gradle
+- `Dockerfile` -> Docker
+- `.github/workflows/` -> GitHub Actions
+- `azure-pipelines.yml` -> Azure DevOps
 
 ---
 
@@ -109,7 +128,7 @@ Look for:
 Write detected stack using CLI command:
 
 ```bash
-speckitadv write-data tech-stack.json --content '<json>' --analysis-dir "{analysis_dir}"
+speckitadv write-data tech-stack.json --stage=01c-script-execution --content '<json>' --analysis-dir "{analysis_dir}"
 ```
 
 This saves to `{data_dir}/tech-stack.json`:
@@ -135,41 +154,41 @@ This saves to `{data_dir}/tech-stack.json`:
 ## Step 4: Display Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   PROJECT ENUMERATION COMPLETE
-═══════════════════════════════════════════════════════════
+===========================================================
 
   Project: {project_path}
   Analysis Folder: {analysis_dir}
 
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
   TECHNOLOGY STACK DETECTED
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
 
   Languages: {comma-separated list}
   Backend: {frameworks or "None detected"}
   Frontend: {frameworks or "None detected"}
   Build Tools: {list}
 
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
   FILES ENUMERATED
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
 
   Total Files: {count from manifest}
 
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
   ANALYSIS CONFIGURATION
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
 
   Scope: {scope} ({A=Full Application | B=Cross-Cutting})
   {IF scope=B: Concern: {concern_type}}
-  {IF scope=B: Migration: {current_impl} → {target_impl}}
+  {IF scope=B: Migration: {current_impl} -> {target_impl}}
 
-═══════════════════════════════════════════════════════════
-  ✓ File manifest generated
-  ✓ Tech stack detected
-  ✓ Ready for Stage 2: Category Scan
-═══════════════════════════════════════════════════════════
+===========================================================
+  [ok] File manifest generated
+  [ok] Tech stack detected
+  [ok] Ready for Stage 2: Category Scan
+===========================================================
 ```
 
 ---
@@ -180,14 +199,16 @@ After this stage, the analysis folder structure should be:
 
 ```text
 {analysis_dir}/
-├── state.json              # Created by CLI (tracks workflow progress)
-├── data/
-│   ├── file-manifest.json  # Generated by enumerate-project command
-│   └── tech-stack.json     # Created by AI based on manifest analysis
-└── reports/                # Empty (reports created in later stages)
++-- state.json              # Created by CLI (tracks workflow progress)
++-- data/
+|   +-- file-manifest.json  # Generated by enumerate-project command
+|   +-- tech-stack.json     # Created by AI based on manifest analysis
++-- reports/                # Empty (reports created in later stages)
 ```
 
 ---
+
+**[AUTO-CONTINUE]** Immediately proceed to next stage. Do NOT wait for user input.
 
 ## Next Stage
 

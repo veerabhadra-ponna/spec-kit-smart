@@ -44,14 +44,14 @@ Format rules:
 - Line 2: FEATURE: <your description> (required)
 
 Good examples:
-✅ "Add user authentication with email/password and OAuth2"
-✅ "Create analytics dashboard showing signups and revenue"
-✅ "Implement CSV export for transaction history"
+[ok] "Add user authentication with email/password and OAuth2"
+[ok] "Create analytics dashboard showing signups and revenue"
+[ok] "Implement CSV export for transaction history"
 
 Bad examples (too vague):
-❌ "Make it better"
-❌ "Add security"
-❌ "Improve UI"
+[x] "Make it better"
+[x] "Add security"
+[x] "Improve UI"
 ```
 
 **WAIT FOR USER RESPONSE.**
@@ -80,7 +80,7 @@ Check the provided input:
 Confirm input collected:
 
 ```text
-✓ Input collected
+[ok] Input collected
   - JIRA: [number or "none"]
   - Feature: [short summary]
 ```

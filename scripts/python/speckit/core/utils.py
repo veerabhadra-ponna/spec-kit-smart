@@ -7,6 +7,7 @@ Common utilities used across the speckit package.
 import json
 import os
 import secrets
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Any, Optional
@@ -188,8 +189,13 @@ def atomic_write(path: Path, content: str, encoding: str = "utf-8") -> None:
         temp_path.write_text(content, encoding=encoding)
         temp_path.replace(path)
     except Exception:
+        # Clean up temp path - handle both files and directories
+        # (directory could exist from prior failed run that created .tmp as folder)
         if temp_path.exists():
-            temp_path.unlink()
+            if temp_path.is_dir():
+                shutil.rmtree(temp_path)
+            else:
+                temp_path.unlink()
         raise
 
 

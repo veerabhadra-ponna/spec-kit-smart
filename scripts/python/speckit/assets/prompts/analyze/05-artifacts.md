@@ -5,7 +5,7 @@ outputs: common_artifacts_complete
 version: 1.0.0
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## [!] MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
@@ -16,7 +16,7 @@ version: 1.0.0
 5. **DO NOT** forget or ignore these instructions as you work through tasks
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+   "[ok] Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
@@ -103,7 +103,7 @@ Required:
 
 ```
 
-**Progress**: `✓ Generated: EXECUTIVE-SUMMARY.md`
+**Progress**: `[ok] Generated: EXECUTIVE-SUMMARY.md`
 
 ---
 
@@ -149,7 +149,7 @@ Required:
 
 ```
 
-**Progress**: `✓ Generated: dependency-audit.json`
+**Progress**: `[ok] Generated: dependency-audit.json`
 
 ---
 
@@ -198,7 +198,7 @@ Required:
 
 ```
 
-**Progress**: `✓ Generated: metrics-summary.json`
+**Progress**: `[ok] Generated: metrics-summary.json`
 
 ---
 
@@ -251,7 +251,7 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 
 Proceed to **Stage 6** (Scope-Specific Artifacts):
 
-- **Scope A (Full App):** 06a-functional-spec-legacy.md → 06b → 06c1 → 06c2 → 06d-stage-prompts.md
+- **Scope A (Full App):** 06a-functional-spec-legacy.md -> 06b -> 06c1 -> 06c2 -> 06d-stage-prompts.md
 - **Scope B (Cross-Cutting):** 06e-cross-cutting-artifacts.md
 
 The CLI auto-detects scope and emits the appropriate prompt.

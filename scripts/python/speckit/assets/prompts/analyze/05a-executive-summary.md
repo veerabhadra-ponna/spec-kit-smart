@@ -24,8 +24,38 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 
 **CLI Utility Commands:**
 
-- `speckitadv write-data <filename> --content '<json>'` - Write JSON to data/ folder
-- `speckitadv write-report <filename> --content '<md>'` - Write MD to reports/ folder
+[!] **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
+
+```bash
+# Write JSON data
+speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
+
+# Write report - ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report <filename> --stage=<stage-id> --append --content '<content>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+
+```powershell
+@"
+<content here>
+"@ | speckitadv write-report <filename> --stage=<stage-id> --stdin
+```
+
+---
+
+## [!] CRITICAL: File Write Policy
+
+**ALWAYS use CLI commands for file writes. NEVER use:**
+
+- Shell/PowerShell commands (`Out-File`, `Add-Content`, `echo >`, `cat <<`)
+- AI Write tools directly to the analysis folder
+- Any method that bypasses the CLI artifact tracking
+
+**Why:** CLI commands track artifacts in state.json for workflow continuity.
+Any file written outside the CLI will NOT be tracked and may cause issues.
 
 ---
 
@@ -40,9 +70,9 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 ## Artifact 1: EXECUTIVE-SUMMARY.md
 
 ---
-⏸️ **[STOP: GENERATE_EXECUTIVE_SUMMARY]**
+[STOP: GENERATE_EXECUTIVE_SUMMARY]**
 
-Generate C-level summary using CLI: `speckitadv write-report EXECUTIVE-SUMMARY.md --content '<md>' --analysis-dir "{analysis_dir}"`
+Generate C-level summary using CLI: `speckitadv write-report EXECUTIVE-SUMMARY.md --stage=05a-executive-summary --content '<md>' --analysis-dir "{analysis_dir}"`
 
 This saves to: `{reports_dir}/EXECUTIVE-SUMMARY.md`
 
@@ -97,16 +127,16 @@ This saves to: `{reports_dir}/EXECUTIVE-SUMMARY.md`
 ```
 
 **Verify:** Read file, confirm no placeholders
-**Output:** `✓ Generated: EXECUTIVE-SUMMARY.md`
+**Output:** `[ok] Generated: EXECUTIVE-SUMMARY.md`
 
 ---
 
 ## Artifact 2: dependency-audit.json
 
 ---
-⏸️ **[STOP: GENERATE_DEPENDENCY_AUDIT]**
+[STOP: GENERATE_DEPENDENCY_AUDIT]**
 
-Generate machine-readable dependency audit using CLI: `speckitadv write-data dependency-audit.json --content '<json>' --analysis-dir "{analysis_dir}"`
+Generate machine-readable dependency audit using CLI: `speckitadv write-data dependency-audit.json --stage=05a-executive-summary --content '<json>' --analysis-dir "{analysis_dir}"`
 
 This saves to: `{data_dir}/dependency-audit.json`
 
@@ -138,16 +168,16 @@ This saves to: `{data_dir}/dependency-audit.json`
 ```
 
 **Verify:** Validate JSON parseable
-**Output:** `✓ Generated: dependency-audit.json`
+**Output:** `[ok] Generated: dependency-audit.json`
 
 ---
 
 ## Artifact 3: metrics-summary.json
 
 ---
-⏸️ **[STOP: GENERATE_METRICS_SUMMARY]**
+[STOP: GENERATE_METRICS_SUMMARY]**
 
-Generate metrics for tracking using CLI: `speckitadv write-data metrics-summary.json --content '<json>' --analysis-dir "{analysis_dir}"`
+Generate metrics for tracking using CLI: `speckitadv write-data metrics-summary.json --stage=05a-executive-summary --content '<json>' --analysis-dir "{analysis_dir}"`
 
 This saves to: `{data_dir}/metrics-summary.json`
 
@@ -189,7 +219,7 @@ This saves to: `{data_dir}/metrics-summary.json`
 ```
 
 **Verify:** Validate JSON parseable
-**Output:** `✓ Generated: metrics-summary.json`
+**Output:** `[ok] Generated: metrics-summary.json`
 
 ---
 
@@ -219,16 +249,16 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Completion Marker
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   STAGE COMPLETE: COMMON_ARTIFACTS
 
   Generated:
-    ✓ EXECUTIVE-SUMMARY.md
-    ✓ dependency-audit.json
-    ✓ metrics-summary.json
+    [ok] EXECUTIVE-SUMMARY.md
+    [ok] dependency-audit.json
+    [ok] metrics-summary.json
 
   Proceeding to Scope-Specific Artifacts...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 STAGE_COMPLETE:COMMON_ARTIFACTS
 
@@ -236,10 +266,24 @@ STAGE_COMPLETE:COMMON_ARTIFACTS
 
 ---
 
-## Next Stage (Conditional)
+**[AUTO-CONTINUE]** Immediately proceed to next stage based on scope. Do NOT wait for user input.
 
-**IF** `analysis_scope = "A"`:
-  Proceed to: **06a-functional-spec-legacy.md**
+## Next Stage (MANDATORY - Do NOT skip)
 
-**IF** `analysis_scope = "B"`:
-  Proceed to: **06e-cross-cutting-artifacts.md**
+**CRITICAL: This is NOT the final stage. You MUST continue to Stage 6.**
+
+1. Read `{analysis_dir}/state.json`
+2. Check the `analysis_scope` field value
+3. Load and execute the next prompt:
+
+**IF** `analysis_scope = "A"` (Full Application Modernization):
+
+- **Load and execute:** `06a-functional-spec-legacy.md`
+- Stage 6A generates: Functional specs (legacy + target) and Technical specs
+
+**IF** `analysis_scope = "B"` (Cross-Cutting Concern):
+
+- **Load and execute:** `06e-cross-cutting-artifacts.md`
+- Stage 6E generates: Abstraction assessment, migration plan, rollback procedure
+
+**DO NOT** display "Analysis Complete" until Stage 6 is finished.

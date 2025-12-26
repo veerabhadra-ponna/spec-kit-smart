@@ -25,7 +25,19 @@ class TestGetStageNumFromId:
         assert _get_stage_num_from_id("01a-initialization") == 1
         assert _get_stage_num_from_id("01b-input-collection") == 2  # Stage 2 in CLI
         assert _get_stage_num_from_id("02a-category-scan") == 4  # Stage 4 in CLI
+        assert _get_stage_num_from_id("04d-report-verification") == 14  # Stage 14 in CLI
+        assert _get_stage_num_from_id("05a-executive-summary") == 15  # Stage 15 in CLI
         assert _get_stage_num_from_id("06a-functional-spec-legacy") == 16  # Stage 16 in CLI
+
+    def test_fallback_matching_handles_variants(self):
+        """Should handle stage ID variants via fallback matching."""
+        # Exact match should work
+        assert _get_stage_num_from_id("05a-executive-summary") == 15
+        # Prefix matching for partial IDs
+        assert _get_stage_num_from_id("05a") == 15
+        assert _get_stage_num_from_id("06a") == 16
+        # With extension (edge case)
+        assert _get_stage_num_from_id("05a-executive-summary.md") == 15
 
     def test_handles_stage_n_format(self):
         """Should handle stage_N format."""
@@ -155,6 +167,124 @@ class TestAutoDetectStageFromState:
         result = _auto_detect_stage_from_state(state)
         assert result == 6
 
+    def test_chunked_stage_in_progress_returns_same_stage(self):
+        """Chunked stages (9, 10, 16) in_progress should return same stage for chunk handling.
+
+        This is critical for Stage 3A (9), Stage 3B (10), and Stage 6 (16) which have
+        multiple chunks. When in_progress, the CLI needs to redirect to chunk handling,
+        not advance to the next stage.
+        """
+        # Stage 9 (Full App) in_progress should return 9, not 11
+        state = AnalysisState(
+            stages={
+                "03a-full-app": {"status": "in_progress"},
+            },
+            stages_complete=["02e-quality-gates"],  # Stage 8 completed
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 9, "Stage 9 in_progress should return 9 for chunk handling"
+
+    def test_chunked_stage_completed_advances_correctly(self):
+        """Chunked stages that are completed should advance to next stage."""
+        # Stage 9 completed should advance to 11 (skipping 10 for scope A)
+        state = AnalysisState(
+            stages={
+                "03a-full-app": {"status": "completed"},
+            },
+            stages_complete=["02e-quality-gates", "03a-full-app"],
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 11, "Stage 9 completed should advance to 11"
+
+    def test_scope_b_chunked_stage_in_progress(self):
+        """Stage 10 (Cross-cutting) in_progress should return 10 for chunk handling."""
+        state = AnalysisState(
+            stages={
+                "03b-cross-cutting": {"status": "in_progress"},
+            },
+            stages_complete=["02e-quality-gates"],  # Stage 8 completed
+            inputs=AnalysisInputs(scope="B"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 10, "Stage 10 in_progress should return 10 for chunk handling"
+
+    def test_stage_16_in_progress_returns_16(self):
+        """Stage 16 (Scope Artifacts) in_progress should return 16 for chunk handling."""
+        state = AnalysisState(
+            stages={
+                "06a-functional-spec-legacy": {"status": "in_progress"},
+            },
+            stages_complete=["05a-executive-summary"],  # Stage 15 completed
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 16, "Stage 16 in_progress should return 16 for chunk handling"
+
+    def test_stage_16_completed_returns_none(self):
+        """Stage 16 completed should return None (workflow complete)."""
+        state = AnalysisState(
+            stages={
+                "06a-functional-spec-legacy": {"status": "completed"},
+            },
+            stages_complete=["05a-executive-summary", "06a-functional-spec-legacy"],
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result is None, "Stage 16 completed should return None (workflow complete)"
+
+    def test_stage_14_completed_advances_to_15(self):
+        """Stage 14 completed should advance to stage 15 (executive summary)."""
+        state = AnalysisState(
+            stages={
+                "04d-report-verification": {"status": "completed"},
+            },
+            stages_complete=["04d-report-verification"],
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 15, "Stage 14 completed should advance to 15 (executive summary)"
+
+    def test_stage_15_completed_advances_to_16(self):
+        """Stage 15 completed should advance to stage 16 (functional-spec-legacy)."""
+        state = AnalysisState(
+            stages={
+                "05a-executive-summary": {"status": "completed"},
+            },
+            stages_complete=["05a-executive-summary"],
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        assert result == 16, "Stage 15 completed should advance to 16 (functional-spec-legacy)"
+
+    def test_multiple_in_progress_chunked_takes_priority(self):
+        """When both chunked and non-chunked stages are in_progress, chunked is returned."""
+        state = AnalysisState(
+            stages={
+                "stage_5": {"status": "in_progress"},  # Non-chunked
+                "03a-full-app": {"status": "in_progress"},  # Chunked (stage 9)
+            },
+            stages_complete=["02e-quality-gates"],  # Stage 8 completed
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        # Should return 9 (chunked stage) even though stage 5 is also in_progress
+        assert result == 9, "Chunked stage in_progress should take priority"
+
+    def test_non_chunked_in_progress_advances(self):
+        """Non-chunked stages in_progress should be treated as complete for advancement."""
+        state = AnalysisState(
+            stages={
+                "stage_5": {"status": "in_progress"},  # Non-chunked, deep dive
+            },
+            stages_complete=["02a-category-scan"],  # Stage 4 completed
+            inputs=AnalysisInputs(scope="A"),
+        )
+        result = _auto_detect_stage_from_state(state)
+        # Stage 5 in_progress treated as complete, should advance to 6
+        assert result == 6, "Non-chunked in_progress should advance to next stage"
+
 
 class TestAnalyzeProjectCorruptedState:
     """Tests for JSON decode error handling in analyze_project command."""
@@ -220,6 +350,104 @@ class TestAnalyzeProjectCorruptedState:
                         # emit_error might be called for other reasons, but not for corruption
                         for call in mock_emit.call_args_list:
                             assert "Corrupted" not in str(call)
+
+
+class TestPreserveStoredInputsOnResume:
+    """Tests for preserving stored inputs when resuming early stages.
+
+    REGRESSION TEST: When user resumes stage 1-2 with existing inputs in state.json,
+    the CLI should preserve those inputs instead of setting $NONE markers.
+    This allows users to resume without re-entering values.
+    """
+
+    def test_fresh_run_shows_none_markers(self, tmp_path):
+        """Fresh run (no inputs collected) should show $NONE markers."""
+        analysis_dir = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(analysis_dir)
+        state = manager.initialize(tmp_path)
+
+        # Stage 1a completed, but 1b (input collection) NOT completed
+        manager.update_stage("01a-initialization", "completed", stage_num=1)
+        # stages_complete should NOT include "01b-input-collection"
+
+        state = manager.load()
+        assert "01b-input-collection" not in state.stages_complete
+
+    def test_resume_after_input_collection_preserves_values(self, tmp_path):
+        """Resume with inputs collected should preserve stored values."""
+        analysis_dir = tmp_path / ".analysis" / "test-run"
+        (analysis_dir / "data").mkdir(parents=True)
+        (analysis_dir / "reports").mkdir(parents=True)
+
+        manager = AnalysisStateManager(analysis_dir)
+        state = manager.initialize(tmp_path)
+
+        # Complete input collection stage with stored values
+        manager.update_stage("01a-initialization", "completed", stage_num=1)
+        manager.update_stage("01b-input-collection", "completed", stage_num=2)
+        manager.update_inputs(
+            scope="B",
+            context="Testing context",
+            concern_type="Authentication",
+            current_impl="Custom JWT",
+            target_impl="Okta",
+        )
+
+        state = manager.load()
+
+        # Verify inputs collected stage is marked complete
+        assert "01b-input-collection" in state.stages_complete
+
+        # Verify inputs are stored
+        assert state.inputs.scope == "B"
+        assert state.inputs.context == "Testing context"
+        assert state.inputs.concern_type == "Authentication"
+
+    def test_context_shows_stored_values_when_inputs_collected(self, tmp_path):
+        """get_context_for_prompt should return stored values after input collection."""
+        analysis_dir = tmp_path / ".analysis" / "test-run"
+        (analysis_dir / "data").mkdir(parents=True)
+        (analysis_dir / "reports").mkdir(parents=True)
+
+        manager = AnalysisStateManager(analysis_dir)
+        manager.initialize(tmp_path)
+
+        # Complete input collection with stored values
+        manager.update_stage("01a-initialization", "completed", stage_num=1)
+        manager.update_stage("01b-input-collection", "completed", stage_num=2)
+        manager.update_inputs(
+            scope="B",
+            context="Test context",
+            concern_type="Database",
+            current_impl="SQL Server",
+            target_impl="PostgreSQL",
+        )
+
+        context = manager.get_context_for_prompt()
+
+        # Context should have stored values
+        assert context["scope"] == "B"
+        assert context["context"] == "Test context"
+        assert context["concern_type"] == "Database"
+        assert context["current_impl"] == "SQL Server"
+        assert context["target_impl"] == "PostgreSQL"
+
+    def test_inputs_collected_flag_check(self, tmp_path):
+        """Verify 01b-input-collection in stages_complete is reliable indicator."""
+        analysis_dir = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(analysis_dir)
+        manager.initialize(tmp_path)
+
+        state = manager.load()
+
+        # Before input collection
+        assert "01b-input-collection" not in state.stages_complete
+
+        # After marking stage complete
+        manager.update_stage("01b-input-collection", "completed", stage_num=2)
+        state = manager.load()
+
+        assert "01b-input-collection" in state.stages_complete
 
 
 class TestStageProgressionWithInProgress:

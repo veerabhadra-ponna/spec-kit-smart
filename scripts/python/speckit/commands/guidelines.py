@@ -134,9 +134,9 @@ def run_generate_guidelines(sources_path: str) -> bool:
         json.dump(docs_manifest, f, indent=2)
 
     if documents:
-        console.print(f"[green]✓[/green] Found {len(documents)} documents")
+        console.print(f"[green][ok][/green] Found {len(documents)} documents")
     else:
-        console.print("[yellow]⚠[/yellow] No documents found")
+        console.print("[yellow][!][/yellow] No documents found")
 
     # Enumerate reference projects
     console.print("\n[bold]Enumerating Reference Projects...[/bold]")
@@ -156,7 +156,7 @@ def run_generate_guidelines(sources_path: str) -> bool:
                     "name": project_name,
                     "file_count": file_count,
                 })
-                console.print(f"[green]✓[/green] {project_name}: {file_count} files")
+                console.print(f"[green][ok][/green] {project_name}: {file_count} files")
 
     projects_manifest = {
         "projects": projects,
@@ -173,7 +173,7 @@ def run_generate_guidelines(sources_path: str) -> bool:
         return False
 
     console.print(Panel(
-        f"[green]✓[/green] Workspace created\n\n"
+        f"[green][ok][/green] Workspace created\n\n"
         f"[bold]Location:[/bold] {output_dir}\n"
         f"[bold]Documents:[/bold] {len(documents)}\n"
         f"[bold]Projects:[/bold] {len(projects)}\n\n"
@@ -304,12 +304,12 @@ def run_check_artifactory_cli(
     exit_code, message = check_artifactory(url, library, api_key, repos, debug)
 
     if exit_code == 0:
-        console.print(f"[green]✅ {message}[/green]")
+        console.print(f"[green][ok] {message}[/green]")
     elif exit_code == 1:
-        console.print(f"[yellow]❌ {message}[/yellow]")
+        console.print(f"[yellow][x] {message}[/yellow]")
     elif exit_code == 2:
-        console.print(f"[red]⚠️ {message}[/red]")
+        console.print(f"[red][!] {message}[/red]")
     elif exit_code == 4:
-        console.print(f"[yellow]⊘ SKIPPED: {message}[/yellow]")
+        console.print(f"[yellow][-] SKIPPED: {message}[/yellow]")
     else:
-        console.print(f"[red]⚠️ ERROR: {message}[/red]")
+        console.print(f"[red][!] ERROR: {message}[/red]")

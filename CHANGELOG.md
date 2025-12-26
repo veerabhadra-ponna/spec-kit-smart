@@ -14,16 +14,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - State-based auto-detection for CLI arguments: stage, feature-dir, and analysis-dir
   are now auto-detected from state files. No args needed after initial setup.
 - Deterministic folder selection with mtime tie-breaking using folder names
+- Shell-expanded paths support for `list-files` command: accepts positional file arguments
+  when shell pre-expands glob patterns (e.g., PowerShell `*.cs` expansion)
 
 ### Changed
 
 - Simplified NEXT commands in prompts - stages 3+ no longer show --stage or --feature-dir
 - Resume and orchestrate commands now output simplified `speckitadv <command>` suggestions
-- AGENTS.md updated to v3.2 with auto-detection documentation
+- AGENTS.md updated to v3.5 with auto-detection and Windows compatibility documentation
 - Historical planning documents consolidated into primary docs; deprecated `docs/archived/` folder removed
 
 ### Fixed
 
+- Windows Unicode encoding errors (cp1252): replaced all Unicode box drawing characters
+  and emojis with ASCII equivalents across prompts and CLI output
+- Stage 9/10 (Q&A stages) no longer display "Write to: stage9-chunk1.md" - these stages
+  use CLI commands instead of file creation
 - Auto-detect stage returns 1 for pending status (was incorrectly returning 3)
 - Chunked analysis stages now persist completion status to state
 - Chunked analysis stages now persist metadata (scope, context, concern_type, etc.) to state

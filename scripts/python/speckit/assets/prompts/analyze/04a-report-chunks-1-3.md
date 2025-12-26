@@ -24,8 +24,35 @@ Generate the first three chunks of the analysis report: Project Discovery, Contr
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report <filename> --content '<md>'` - Write MD to reports/ folder
-- `speckitadv write-report <filename> --content '<md>' --append` - Append to existing report
+[!] **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
+
+```bash
+# ALWAYS use --append (creates file if not exists, appends if exists)
+speckitadv write-report <filename> --stage=<stage-id> --append --content '<content>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report <filename> --stage=<stage-id> --append --stdin
+```
+
+---
+
+## [!] CRITICAL: File Write Policy
+
+**ALWAYS use CLI commands for file writes. NEVER use:**
+
+- Shell/PowerShell commands (`Out-File`, `Add-Content`, `echo >`, `cat <<`)
+- AI Write tools directly to the analysis folder
+- Any method that bypasses the CLI artifact tracking
+
+**Why:** CLI commands track artifacts in state.json for workflow continuity.
+Any file written outside the CLI will NOT be tracked and may cause issues.
 
 ---
 
@@ -69,7 +96,7 @@ fi
 ## Chunk 1: Phase 1 - Project Discovery
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_1]**
+[STOP: GENERATE_CHUNK_1]**
 
 Generate Phase 1 content. This section documents the project's technology stack and architecture.
 
@@ -88,7 +115,7 @@ Generate Phase 1 content. This section documents the project's technology stack 
 
 **Generate and Write:**
 
-Use CLI to write: `speckitadv write-report analysis-report.md --content '<md>' --analysis-dir "{analysis_dir}"`
+Use CLI to write: `speckitadv write-report analysis-report.md --stage=04a-report-chunks-1-3 --content '<md>' --analysis-dir "{analysis_dir}"`
 
 This saves to: `{reports_dir}/analysis-report.md`
 
@@ -166,9 +193,9 @@ This saves to: `{reports_dir}/analysis-report.md`
 3. Confirm no placeholders
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_1]**
+[STOP: VERIFY_CHUNK_1]**
 
-**IF verified:** Output: `✓ Chunk 1/9: Project Discovery ({lines} lines)`
+**IF verified:** Output: `[ok] Chunk 1/9: Project Discovery ({lines} lines)`
 **IF failed:** Retry generation
 
 ---
@@ -176,7 +203,7 @@ This saves to: `{reports_dir}/analysis-report.md`
 ## Chunk 2: Phase 2.1 - Controllers & API Endpoints
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_2]**
+[STOP: GENERATE_CHUNK_2]**
 
 Generate Phase 2.1 content. Document every controller and API endpoint.
 
@@ -223,9 +250,9 @@ Generate Phase 2.1 content. Document every controller and API endpoint.
 3. Count endpoints documented
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_2]**
+[STOP: VERIFY_CHUNK_2]**
 
-**IF verified:** Output: `✓ Chunk 2/9: Controllers ({count} endpoints, {lines} lines)`
+**IF verified:** Output: `[ok] Chunk 2/9: Controllers ({count} endpoints, {lines} lines)`
 **IF failed:** Retry generation
 
 ---
@@ -233,7 +260,7 @@ Generate Phase 2.1 content. Document every controller and API endpoint.
 ## Chunk 3: Phase 2.2 - Services & Business Logic
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_3]**
+[STOP: GENERATE_CHUNK_3]**
 
 Generate Phase 2.2 content. Document services and business logic.
 
@@ -291,9 +318,9 @@ Generate Phase 2.2 content. Document services and business logic.
 3. Count services documented
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_3]**
+[STOP: VERIFY_CHUNK_3]**
 
-**IF verified:** Output: `✓ Chunk 3/9: Services ({count} services, {lines} lines)`
+**IF verified:** Output: `[ok] Chunk 3/9: Services ({count} services, {lines} lines)`
 **IF failed:** Retry generation
 
 ---
@@ -301,23 +328,25 @@ Generate Phase 2.2 content. Document services and business logic.
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 04a-report-chunks-1-3
 
   Chunks Generated: 3/9
   Total Lines: {count}
 
   Content:
-    Phase 1: Project Discovery ✓
-    Phase 2.1: Controllers ({endpoints} endpoints) ✓
-    Phase 2.2: Services ({services} services) ✓
+    Phase 1: Project Discovery [ok]
+    Phase 2.1: Controllers ({endpoints} endpoints) [ok]
+    Phase 2.2: Services ({services} services) [ok]
 
   Proceeding to Chunks 4-6...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
 ---
+
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
 
 ## Next Substage
 

@@ -30,7 +30,22 @@ The CLI provides all context via template variables. **Do not read state.json di
 
 **CLI Utility Commands:**
 
-- `speckitadv write-data <filename> --content '<json>'` - Write JSON to data/ folder
+[!] **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
+
+```bash
+# Write JSON data
+speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
+```
+
+**For large JSON (recommended for deep-dive), use stdin mode:**
+
+```powershell
+@"
+<full comprehensive json here>
+"@ | speckitadv write-data <filename> --stage=<stage-id> --stdin
+```
 
 ---
 
@@ -57,7 +72,7 @@ The CLI provides all context via template variables. **Do not read state.json di
 ## Step 1: Authentication/Security Deep Dive (P1)
 
 ---
-⏸️ **[STOP: DEEP_DIVE_AUTH]**
+[STOP: DEEP_DIVE_AUTH]**
 
 Analyze ALL security-related files (80% coverage minimum):
 
@@ -109,8 +124,8 @@ Analyze ALL security-related files (80% coverage minimum):
 
 ```text
 [Phase 2 - Deep Dive: Authentication]
-✓ 5/{total} security files analyzed
-✓ 10/{total} security files analyzed
+[ok] 5/{total} security files analyzed
+[ok] 10/{total} security files analyzed
 ...
 
 ```
@@ -128,9 +143,9 @@ Refresh: {mechanism} ({TTL})
 Authorization: {RBAC | ABAC} ({role_count} roles)
 
 Security Issues Found:
-  🔴 HIGH: {issue} (file:line)
-  🟡 MEDIUM: {issue} (file:line)
-  🟢 LOW: {issue} (file:line)
+  [!] HIGH: {issue} (file:line)
+  [!] MEDIUM: {issue} (file:line)
+  [ok] LOW: {issue} (file:line)
 
 Coverage: {analyzed}/{total} files ({percentage}%)
 
@@ -141,7 +156,7 @@ Coverage: {analyzed}/{total} files ({percentage}%)
 ## Step 2: Database Layer Deep Dive (P2)
 
 ---
-⏸️ **[STOP: DEEP_DIVE_DATABASE]**
+[STOP: DEEP_DIVE_DATABASE]**
 
 Analyze ALL database-related files (80% coverage minimum):
 
@@ -186,8 +201,8 @@ Analyze ALL database-related files (80% coverage minimum):
 
 ```text
 [Phase 2 - Deep Dive: Database]
-✓ 5/{total} database files analyzed
-✓ 10/{total} database files analyzed
+[ok] 5/{total} database files analyzed
+[ok] 10/{total} database files analyzed
 ...
 
 ```
@@ -209,9 +224,9 @@ Entity Summary:
   ...
 
 Performance Issues Found:
-  🔴 HIGH: N+1 in {file:line}
-  🟡 MEDIUM: Missing index on {table.column}
-  🟢 LOW: Eager loading in {file:line}
+  [!] HIGH: N+1 in {file:line}
+  [!] MEDIUM: Missing index on {table.column}
+  [ok] LOW: Eager loading in {file:line}
 
 Migrations: {tool} ({count} migration files)
 Coverage: {analyzed}/{total} files ({percentage}%)
@@ -223,7 +238,7 @@ Coverage: {analyzed}/{total} files ({percentage}%)
 ## Step 3: API Endpoints Deep Dive (P3)
 
 ---
-⏸️ **[STOP: DEEP_DIVE_API]**
+[STOP: DEEP_DIVE_API]**
 
 Analyze ALL API endpoint files (70% coverage minimum):
 
@@ -265,8 +280,8 @@ Analyze ALL API endpoint files (70% coverage minimum):
 
 ```text
 [Phase 2 - Deep Dive: API Endpoints]
-✓ 10/{total} endpoints documented
-✓ 20/{total} endpoints documented
+[ok] 10/{total} endpoints documented
+[ok] 20/{total} endpoints documented
 ...
 
 ```
@@ -294,8 +309,8 @@ Endpoint Sample:
     Response: {DTO}
 
 API Issues Found:
-  🔴 HIGH: {issue} (file:line)
-  🟡 MEDIUM: {issue} (file:line)
+  [!] HIGH: {issue} (file:line)
+  [!] MEDIUM: {issue} (file:line)
 
 Coverage: {analyzed}/{total} files ({percentage}%)
 
@@ -306,7 +321,7 @@ Coverage: {analyzed}/{total} files ({percentage}%)
 ## Step 4: Core Business Logic Deep Dive (P4)
 
 ---
-⏸️ **[STOP: DEEP_DIVE_BUSINESS]**
+[STOP: DEEP_DIVE_BUSINESS]**
 
 Analyze key business logic files (60% coverage minimum):
 
@@ -415,10 +430,45 @@ Merge all deep dive findings:
 
 ---
 
+## Step 6: Save Deep Dive Patterns (SINGLE FILE)
+
+**[!] CRITICAL: Write to ONE file only. Do NOT create multiple files like p1.json, p2.json.**
+
+Save all deep-dive findings to `{data_dir}/deep-dive-patterns.json`:
+
+**Option A - Use stdin for full JSON (RECOMMENDED):**
+
+```powershell
+@"
+{
+  "deep_dive": {
+    "authentication": { ... },
+    "database": { ... },
+    "api": { ... },
+    "business_logic": { ... }
+  }
+}
+"@ | speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --stdin
+```
+
+**Option B - If stdin not available, write in sections using --append:**
+
+```bash
+# First section (creates file)
+speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --content '{"deep_dive":{"authentication":{...},'
+
+# Append remaining sections
+speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --append --content '"database":{...},'
+speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --append --content '"api":{...},'
+speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --append --content '"business_logic":{...}}}'
+```
+
+---
+
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 02b-deep-dive (Phase 2)
 
   Time Used: 40% allocation
@@ -430,16 +480,18 @@ Merge all deep dive findings:
     Business Logic: {percentage}% (target: 60%)
 
   Issues Found:
-    🔴 HIGH: {count}
-    🟡 MEDIUM: {count}
-    🟢 LOW: {count}
+    [!] HIGH: {count}
+    [!] MEDIUM: {count}
+    [ok] LOW: {count}
 
   Proceeding to Phase 3: Configuration Analysis
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
 ---
+
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
 
 ## Next Substage
 

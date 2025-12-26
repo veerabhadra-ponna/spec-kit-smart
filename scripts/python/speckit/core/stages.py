@@ -234,6 +234,11 @@ def run_staged_command(
     title = _extract_title(rendered, stage_id)
 
     # Update state to mark prompt as in_progress
+    # Note: For already-completed workflows being rerun, this temporarily sets
+    # status to in_progress before the final stage marks it completed again.
+    # If interrupted between these updates, status remains in_progress until
+    # the workflow is rerun to completion. This is acceptable for this pre-release
+    # system; a future enhancement could add a fast-path for completed workflows.
     state_manager.update_prompt(
         prompt=command,
         stage=stage_id,

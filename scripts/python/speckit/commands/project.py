@@ -472,7 +472,7 @@ def run_analyze_project_setup(
     console.print("\n[bold]Step 1: Enumerating files...[/bold]")
     manifest_file = analysis_dir / "file-manifest.json"
     manifest = enumerate_project(project, manifest_file, show_progress=True)
-    console.print(f"[green]✓[/green] Scanned {manifest['statistics']['total_files']} files")
+    console.print(f"[green][ok][/green] Scanned {manifest['statistics']['total_files']} files")
 
     # Step 2: Detect tech stack
     console.print("\n[bold]Step 2: Detecting technology stack...[/bold]")
@@ -481,9 +481,9 @@ def run_analyze_project_setup(
     with open(tech_stack_file, "w", encoding="utf-8") as f:
         json.dump(tech_stack, f, indent=2)
     if tech_stack["languages"]:
-        console.print(f"[green]✓[/green] Detected: {', '.join(tech_stack['languages'])}")
+        console.print(f"[green][ok][/green] Detected: {', '.join(tech_stack['languages'])}")
     else:
-        console.print("[yellow]⚠[/yellow] No languages detected")
+        console.print("[yellow][!][/yellow] No languages detected")
 
     # Step 3: Analyze file structure
     console.print("\n[bold]Step 3: Analyzing file structure...[/bold]")
@@ -491,7 +491,7 @@ def run_analyze_project_setup(
     structure_file = analysis_dir / "file-structure.json"
     with open(structure_file, "w", encoding="utf-8") as f:
         json.dump(file_structure, f, indent=2)
-    console.print(f"[green]✓[/green] Categorized files")
+    console.print(f"[green][ok][/green] Categorized files")
 
     # Step 4: Generate project metadata
     console.print("\n[bold]Step 4: Generating project metadata...[/bold]")
@@ -519,7 +519,7 @@ def run_analyze_project_setup(
     metadata_file = analysis_dir / "project-metadata.json"
     with open(metadata_file, "w", encoding="utf-8") as f:
         json.dump(metadata, f, indent=2)
-    console.print(f"[green]✓[/green] Metadata saved")
+    console.print(f"[green][ok][/green] Metadata saved")
 
     # Create analysis report template
     report_file = analysis_dir / "analysis-report.md"
@@ -549,7 +549,7 @@ This workspace has been prepared for comprehensive project analysis. Please:
 """, encoding="utf-8")
 
     console.print(Panel(
-        f"[green]✓[/green] Analysis workspace created\n\n"
+        f"[green][ok][/green] Analysis workspace created\n\n"
         f"[bold]Location:[/bold] {analysis_dir}\n"
         f"[bold]Files:[/bold] {manifest['statistics']['total_files']}\n"
         f"[bold]Languages:[/bold] {', '.join(tech_stack['languages']) or 'Unknown'}\n\n"
@@ -583,7 +583,7 @@ def verify_analysis_report(report_file: str) -> bool:
     report_path = Path(report_file)
 
     if not report_path.exists():
-        console.print(f"[red]✗[/red] Report file not found: {report_file}")
+        console.print(f"[red][x][/red] Report file not found: {report_file}")
         return False
 
     content = report_path.read_text(encoding="utf-8")
@@ -598,18 +598,18 @@ def verify_analysis_report(report_file: str) -> bool:
     for i in range(1, 10):
         phase = f"Phase {i}"
         if phase in content:
-            console.print(f"[green]✓[/green] {phase} found")
+            console.print(f"[green][ok][/green] {phase} found")
         else:
-            console.print(f"[red]✗[/red] MISSING: {phase}")
+            console.print(f"[red][x][/red] MISSING: {phase}")
             failed = True
 
     # Check 2: Minimum line count
     console.print()
     line_count = len(lines)
     if line_count >= 3000:
-        console.print(f"[green]✓[/green] Line count: {line_count} (minimum: 3000)")
+        console.print(f"[green][ok][/green] Line count: {line_count} (minimum: 3000)")
     else:
-        console.print(f"[red]✗[/red] Report too short: {line_count} lines (minimum: 3000)")
+        console.print(f"[red][x][/red] Report too short: {line_count} lines (minimum: 3000)")
         failed = True
 
     # Check 3: File:line references
@@ -617,35 +617,35 @@ def verify_analysis_report(report_file: str) -> bool:
     import re
     ref_count = len(re.findall(r":\d+", content))
     if ref_count >= 50:
-        console.print(f"[green]✓[/green] File:line references: {ref_count} (minimum: 50)")
+        console.print(f"[green][ok][/green] File:line references: {ref_count} (minimum: 50)")
     else:
-        console.print(f"[yellow]⚠[/yellow] Few file:line references: {ref_count} (recommended: 50+)")
+        console.print(f"[yellow][!][/yellow] Few file:line references: {ref_count} (recommended: 50+)")
 
     # Check 4: No placeholders
     console.print()
     placeholders = re.findall(r"TODO|TBD|will be analyzed|\[TBD\]", content, re.IGNORECASE)
     if placeholders:
-        console.print(f"[red]✗[/red] Report contains placeholders ({len(placeholders)} found)")
+        console.print(f"[red][x][/red] Report contains placeholders ({len(placeholders)} found)")
         failed = True
     else:
-        console.print("[green]✓[/green] No placeholders found")
+        console.print("[green][ok][/green] No placeholders found")
 
     # Check 5: Severity ratings
     console.print()
     severity_count = len(re.findall(r"\b(HIGH|MEDIUM|LOW)\b", content))
     if severity_count >= 20:
-        console.print(f"[green]✓[/green] Severity ratings: {severity_count} (minimum: 20)")
+        console.print(f"[green][ok][/green] Severity ratings: {severity_count} (minimum: 20)")
     else:
-        console.print(f"[yellow]⚠[/yellow] Few severity ratings: {severity_count} (recommended: 20+)")
+        console.print(f"[yellow][!][/yellow] Few severity ratings: {severity_count} (recommended: 20+)")
 
     # Final verdict
     console.print()
     console.print("=" * 40)
     if not failed:
-        console.print("[bold green]✅ VERIFICATION PASSED[/bold green]")
+        console.print("[bold green][ok] VERIFICATION PASSED[/bold green]")
         console.print("Report meets all quality gates.")
         return True
     else:
-        console.print("[bold red]✗ VERIFICATION FAILED[/bold red]")
+        console.print("[bold red][x] VERIFICATION FAILED[/bold red]")
         console.print("\nPlease fix issues and re-run verification.")
         return False

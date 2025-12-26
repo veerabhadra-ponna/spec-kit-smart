@@ -13,9 +13,10 @@ from rich.text import Text
 console = Console()
 
 # Box drawing characters for consistent output
-BOX_TOP = "┌" + "─" * 66 + "┐"
-BOX_BOTTOM = "└" + "─" * 66 + "┘"
-BOX_SIDE = "│"
+# Using ASCII characters for Windows compatibility (cp1252 encoding)
+BOX_TOP = "+" + "-" * 66 + "+"
+BOX_BOTTOM = "+" + "-" * 66 + "+"
+BOX_SIDE = "|"
 
 
 def _wrap_content(content: str, width: int = 64) -> list[str]:
@@ -93,7 +94,7 @@ def emit_chunk(
     total_chunks: int,
     title: str,
     content: str,
-    file_path: str,
+    file_path: Optional[str],
     mode: str,
     line_range: tuple[int, int],
     next_cmd: str,
@@ -110,7 +111,8 @@ def emit_chunk(
         total_chunks: Total number of chunks
         title: Chunk title (e.g., "Executive Summary")
         content: Instructions for this chunk
-        file_path: Suggested file path (displayed as guidance, not written)
+        file_path: Suggested file path (displayed as guidance, not written).
+                   If None, no file output section is displayed (for Q&A stages).
         mode: CREATE or APPEND (guidance for AI)
         line_range: (min_lines, max_lines) expected
         next_cmd: Command to run after completing this chunk
@@ -127,9 +129,10 @@ def emit_chunk(
         print(_format_box_line(line))
 
     print(_format_box_line(""))
-    print(_format_box_line(f"Write to: {file_path}"))
-    print(_format_box_line(f"Mode: {mode}"))
-    print(_format_box_line(""))
+    if file_path:
+        print(_format_box_line(f"Write to: {file_path}"))
+        print(_format_box_line(f"Mode: {mode}"))
+        print(_format_box_line(""))
     print(_format_box_line(f"NEXT: {next_cmd}"))
     print(BOX_BOTTOM)
 
@@ -232,12 +235,12 @@ def emit_template(
     print(_format_box_line(f"Create file: {output_file}"))
     print(_format_box_line(""))
     print(_format_box_line("Use this template:"))
-    print(_format_box_line("═" * 60))
+    print(_format_box_line("=" * 60))
 
     for line in template_content.split("\n"):
         print(_format_box_line(line[:64]))
 
-    print(_format_box_line("═" * 60))
+    print(_format_box_line("=" * 60))
     print(_format_box_line(""))
     print(_format_box_line("Fill with:"))
 

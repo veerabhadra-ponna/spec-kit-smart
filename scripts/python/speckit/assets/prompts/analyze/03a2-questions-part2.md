@@ -7,6 +7,19 @@ version: 3.4.0
 next: 03a3-validation-scoring.md
 ---
 
+## DO NOT CREATE FILES
+
+**CRITICAL: This substage does NOT create any files.**
+
+- NO `stage9-chunk2.md`
+- NO `stage9.md`
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
+
+**Questions are asked directly in the conversation.** Responses are stored via CLI command at the end.
+
+---
+
 # Stage 3A-2: Modernization Questions (Part 2)
 
 ## Purpose
@@ -25,15 +38,27 @@ Values available (already substituted by CLI):
 
 ---
 
+## Storing Preferences
+
+After collecting responses for Q6-Q10, store ALL preferences using ONE CLI command:
+
+```bash
+speckitadv update-preferences '{"q6_iac": {"value": "..."}, "q7_containerization": {"value": "..."}, ...}'
+```
+
+DO NOT store preferences after each question. Collect all 5, then store once at the end.
+
+---
+
 ## Question 6: Infrastructure as Code
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q6]**
+[STOP: USER_INPUT_REQUIRED - Q6]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 6 of 10: Infrastructure as Code (IaC)
 
 What infrastructure as code tool do you want to use?
@@ -72,7 +97,7 @@ General:
 Your choice: ___
 
 TIP: Type "skip" to proceed without IaC.
-════════════════════════════════════════════════════════════
+============================================================
 
 ```
 
@@ -90,7 +115,6 @@ TIP: Type "skip" to proceed without IaC.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -98,12 +122,12 @@ TIP: Type "skip" to proceed without IaC.
 ## Question 7: Containerization Strategy
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q7]**
+[STOP: USER_INPUT_REQUIRED - Q7]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 7 of 10: Containerization Strategy
 
 What containerization approach do you want to use?
@@ -121,7 +145,7 @@ Options:
 Your choice: ___
 
 TIP: Type "skip" to use current approach.
-════════════════════════════════════════════════════════════
+============================================================
 
 ```
 
@@ -139,7 +163,6 @@ TIP: Type "skip" to use current approach.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -147,12 +170,12 @@ TIP: Type "skip" to use current approach.
 ## Question 8: Observability Stack
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q8]**
+[STOP: USER_INPUT_REQUIRED - Q8]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 8 of 10: Observability Stack
 
 What observability tools do you want to use?
@@ -188,7 +211,7 @@ Example: "A/B/C" for Prometheus, Loki, Jaeger
          Or describe your preferred stack
 
 TIP: Type "skip" to determine based on deployment target.
-════════════════════════════════════════════════════════════
+============================================================
 
 ```
 
@@ -210,7 +233,6 @@ TIP: Type "skip" to determine based on deployment target.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -218,12 +240,12 @@ TIP: Type "skip" to determine based on deployment target.
 ## Question 9: Security & Authentication
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q9]**
+[STOP: USER_INPUT_REQUIRED - Q9]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 9 of 10: Security & Authentication
 
 What authentication/authorization approach do you want?
@@ -245,7 +267,7 @@ Options:
 Your choice: ___
 
 TIP: Type "skip" to keep current auth approach.
-════════════════════════════════════════════════════════════
+============================================================
 
 ```
 
@@ -263,7 +285,6 @@ TIP: Type "skip" to keep current auth approach.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -271,12 +292,12 @@ TIP: Type "skip" to keep current auth approach.
 ## Question 10: Testing Strategy
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q10]**
+[STOP: USER_INPUT_REQUIRED - Q10]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 10 of 10: Testing Strategy
 
 What testing approach do you want for the modernized app?
@@ -298,7 +319,7 @@ Coverage target: ___% (enter a number, e.g., 80)
 Your choice: ___
 
 TIP: Type "skip" to use current approach.
-════════════════════════════════════════════════════════════
+============================================================
 
 ```
 
@@ -317,7 +338,6 @@ TIP: Type "skip" to use current approach.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -348,7 +368,6 @@ Merge all Q1-Q10 responses into modernization preferences:
     }
   }
 }
-
 ```
 
 ---
@@ -368,13 +387,13 @@ This stores all preferences in `{analysis_dir}/state.json` under the `modernizat
 ## Progress Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 03a2-questions-part2
 
-  All 10 Questions Completed ✓
+  All 10 Questions Completed [ok]
 
   Modernization Preferences Summary:
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
     Language: {q1 value}
     Database: {q2 value}
     Message Bus: {q3 value}
@@ -385,14 +404,16 @@ This stores all preferences in `{analysis_dir}/state.json` under the `modernizat
     Observability: {q8 value}
     Security: {q9 value}
     Testing: {q10 value}
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
 
   Proceeding to Scope Validation & Scoring...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
 ---
+
+**[AUTO-CONTINUE]** After all Q6-Q10 are answered and stored, immediately proceed to next substage. Do NOT wait for additional user input.
 
 ## Next Substage
 

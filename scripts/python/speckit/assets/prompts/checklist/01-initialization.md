@@ -61,7 +61,7 @@ Load only portions relevant to checklist focus.
 
 ```text
 
-✓ Initialization complete
+[ok] Initialization complete
   - Feature: {{feature_name}}
   - Docs loaded: [list]
 ```

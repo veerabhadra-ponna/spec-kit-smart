@@ -56,7 +56,7 @@ Ask: "Would you like me to suggest concrete remediation edits for the top N issu
 
 **STRICTLY READ-ONLY**: Do not modify any files. Output structured analysis report only.
 
-**Constitution Authority**: The project constitution is **non-negotiable**. Constitution conflicts are automatically CRITICAL and require adjustment of the spec, plan, or tasks—not dilution of the principle.
+**Constitution Authority**: The project constitution is **non-negotiable**. Constitution conflicts are automatically CRITICAL and require adjustment of the spec, plan, or tasks-not dilution of the principle.
 
 ## Operating Principles
 

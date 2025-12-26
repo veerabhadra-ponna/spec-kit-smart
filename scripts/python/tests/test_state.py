@@ -454,6 +454,150 @@ class TestAnalysisStateManager:
         assert "01b-input-collection" in state.stages_complete
         assert "02a-category-scan" in state.stages_complete
 
+    def test_update_modernization_preferences(self, tmp_path):
+        """Should store modernization preferences from Q1-Q10."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        state = manager.update_modernization_preferences({
+            "q1_language": "Python 3.11",
+            "q2_database": "PostgreSQL",
+        })
+
+        assert state.modernization_preferences["q1_language"] == "Python 3.11"
+        assert state.modernization_preferences["q2_database"] == "PostgreSQL"
+
+    def test_update_modernization_preferences_merges(self, tmp_path):
+        """Should merge new preferences with existing (shallow merge).
+
+        Note: This is intentionally a shallow merge. For nested preference
+        values, the caller should provide the complete nested object.
+        Deep merge was considered but adds complexity without clear benefit
+        given the current Q1-Q10 schema uses flat string values.
+        """
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # First update
+        manager.update_modernization_preferences({
+            "q1_language": "Python 3.11",
+            "q2_database": "PostgreSQL",
+        })
+
+        # Second update - should merge, not replace
+        state = manager.update_modernization_preferences({
+            "q3_message_bus": "RabbitMQ",
+        })
+
+        # All three preferences should be present
+        assert state.modernization_preferences["q1_language"] == "Python 3.11"
+        assert state.modernization_preferences["q2_database"] == "PostgreSQL"
+        assert state.modernization_preferences["q3_message_bus"] == "RabbitMQ"
+
+    def test_update_modernization_preferences_overwrites_same_key(self, tmp_path):
+        """Should overwrite existing value for same key."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # First update
+        manager.update_modernization_preferences({"q1_language": "Python 3.10"})
+
+        # Update same key
+        state = manager.update_modernization_preferences({"q1_language": "Python 3.12"})
+
+        assert state.modernization_preferences["q1_language"] == "Python 3.12"
+
+    def test_get_context_includes_modernization_preferences(self, tmp_path):
+        """get_context_for_prompt should include modernization_preferences."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        manager.update_modernization_preferences({
+            "q1_language": "Go 1.21",
+            "q5_deployment": "Kubernetes",
+        })
+
+        context = manager.get_context_for_prompt()
+
+        assert "modernization_preferences" in context
+        assert context["modernization_preferences"]["q1_language"] == "Go 1.21"
+        assert context["modernization_preferences"]["q5_deployment"] == "Kubernetes"
+
+    def test_get_context_includes_scoring_data(self, tmp_path):
+        """get_context_for_prompt should include complexity/feasibility scores from data folder."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Create scoring data file in data folder (using new hybrid_approach key)
+        scoring_data = {
+            "schema_version": "3.1.0",
+            "stage": "validation_scoring",
+            "complexity": {
+                "overall_score": 5.2,
+                "rating": "MEDIUM"
+            },
+            "feasibility": {
+                "inline_upgrade": 72,
+                "greenfield_rewrite": 45,
+                "hybrid_approach": 68,
+                "recommended_approach": "Inline Upgrade",
+                "confidence_percentage": 85
+            }
+        }
+        scoring_file = folder / "data" / "validation-scoring.json"
+        scoring_file.write_text(json.dumps(scoring_data))
+
+        context = manager.get_context_for_prompt()
+
+        # Verify complexity fields
+        assert context["complexity_score"] == 5.2
+        assert context["complexity_rating"] == "MEDIUM"
+
+        # Verify feasibility fields
+        assert context["feasibility_inline"] == 72
+        assert context["feasibility_greenfield"] == 45
+        assert context["feasibility_hybrid"] == 68
+        assert context["recommended_approach"] == "Inline Upgrade"
+        assert context["confidence_percentage"] == 85
+
+    def test_get_context_scoring_data_legacy_key(self, tmp_path):
+        """get_context_for_prompt should support legacy hybrid_strangler key for backward compat."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Create scoring data file with legacy hybrid_strangler key
+        scoring_data = {
+            "feasibility": {
+                "hybrid_strangler": 75  # legacy key
+            }
+        }
+        scoring_file = folder / "data" / "validation-scoring.json"
+        scoring_file.write_text(json.dumps(scoring_data))
+
+        context = manager.get_context_for_prompt()
+
+        # Should read legacy key when new key is missing
+        assert context["feasibility_hybrid"] == 75
+
+    def test_get_context_without_scoring_data(self, tmp_path):
+        """get_context_for_prompt should work when scoring data file doesn't exist."""
+        folder = tmp_path / ".analysis" / "test-run"
+        manager = AnalysisStateManager(folder)
+        manager.initialize(tmp_path)
+
+        # Don't create scoring file - verify context still works
+        context = manager.get_context_for_prompt()
+
+        # These fields should NOT be present when scoring file doesn't exist
+        assert "complexity_score" not in context
+        assert "feasibility_inline" not in context
+
 
 class TestCorruptedStateHandling:
     """Tests for corrupted state.json handling (fail-fast behavior)."""

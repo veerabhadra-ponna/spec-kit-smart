@@ -14,6 +14,16 @@ Create spec.md using a chunked approach to handle large specifications.
 
 ---
 
+## [!] File Write Best Practices
+
+**For large specifications:**
+
+- Use chunked writing (Steps 3-6 below are already chunked)
+- Keep each edit operation under 2000 characters
+- If using shell commands with content, be aware of OS limits (~8000 chars on Windows)
+
+---
+
 ## Step 1: Create Spec Template
 
 The CLI automatically copies the spec template to the feature directory:
@@ -149,7 +159,7 @@ grep -E '\[.*\]' {{feature_dir}}/spec.md | grep -v 'NEEDS CLARIFICATION'
 After completing all chunks:
 
 ```text
-✓ Specification generated
+[ok] Specification generated
   - File: {{feature_dir}}/spec.md
   - User stories: [N]
   - Requirements: [N]

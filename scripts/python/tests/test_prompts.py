@@ -421,7 +421,7 @@ class TestCopyTemplateDirective:
         result = render_prompt(fragment, context)
 
         # Should show warning instead of success message
-        assert "⚠ Template already exists:" in result
+        assert "[!] Template already exists:" in result
         assert "(not overwritten)" in result
 
         # Original content should be preserved

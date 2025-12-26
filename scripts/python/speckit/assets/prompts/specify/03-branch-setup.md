@@ -24,10 +24,10 @@ Analyze the feature description and create a 2-4 word short name:
 - Keep concise but descriptive
 
 **Examples:**
-- "Add user authentication" → `user-auth`
-- "Implement OAuth2 for API" → `oauth2-api-integration`
-- "Create analytics dashboard" → `analytics-dashboard`
-- "Fix payment timeout bug" → `fix-payment-timeout`
+- "Add user authentication" -> `user-auth`
+- "Implement OAuth2 for API" -> `oauth2-api-integration`
+- "Create analytics dashboard" -> `analytics-dashboard`
+- "Fix payment timeout bug" -> `fix-payment-timeout`
 
 ---
 
@@ -81,7 +81,7 @@ JSON output format:
 After running `create-feature`, output:
 
 ```text
-✓ Branch created
+[ok] Branch created
   - Branch: <BRANCH_NAME from JSON output>
   - Spec dir: <SPEC_FILE directory from JSON output>
 ```

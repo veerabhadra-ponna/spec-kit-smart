@@ -7,6 +7,19 @@ version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
+## DO NOT CREATE FILES
+
+**CRITICAL: This substage does NOT create any files.**
+
+- NO `stage10-chunk3.md`
+- NO `stage10.md` or similar
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
+
+**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 3).
+
+---
+
 # Stage 3B-3: Effort Estimation & Success Criteria
 
 ## Purpose
@@ -31,7 +44,7 @@ Values available (already substituted by CLI):
 Calculate effort based on abstraction level, blast radius, and strategy.
 
 ---
-⏸️ **[STOP: ESTIMATE_EFFORT]**
+[STOP: ESTIMATE_EFFORT]**
 
 **Effort Components:**
 
@@ -73,7 +86,7 @@ Per component migration:
   Medium component: 1-2 days
   Complex component: 3-5 days
 
-Total: {component_count} components × average_days
+Total: {component_count} components x average_days
 
 ```
 
@@ -100,7 +113,7 @@ Team training:   1-2 days
 
 ```text
 base_effort = refactoring + setup + migration + testing + docs
-buffer = base_effort × 0.20 (20% buffer for unknowns)
+buffer = base_effort x 0.20 (20% buffer for unknowns)
 total_effort = base_effort + buffer
 
 ```
@@ -117,11 +130,11 @@ Component Breakdown:
   Testing & Validation:    {weeks} weeks
   Documentation:           {weeks} weeks
 
-  ─────────────────────────────────
+  ---------------------------------
   Base Effort:             {weeks} weeks
   Buffer (20%):            {weeks} weeks
   TOTAL EFFORT:            {weeks} weeks
-  ─────────────────────────────────
+  ---------------------------------
 
 Person-Days: {total_days} days
 Recommended Team Size: {n} developers
@@ -136,48 +149,48 @@ Calendar Duration: {months} months
 Define measurable criteria for migration success.
 
 ---
-⏸️ **[STOP: DEFINE_SUCCESS_CRITERIA]**
+[STOP: DEFINE_SUCCESS_CRITERIA]**
 
 **Functional Criteria:**
 
 ```text
-□ All {count} components migrated to new implementation
-□ 100% feature parity with legacy implementation
-□ Zero data loss during migration
-□ All API contracts maintained (no breaking changes)
-□ All existing tests passing
-□ New implementation-specific tests added
+[ ] All {count} components migrated to new implementation
+[ ] 100% feature parity with legacy implementation
+[ ] Zero data loss during migration
+[ ] All API contracts maintained (no breaking changes)
+[ ] All existing tests passing
+[ ] New implementation-specific tests added
 
 ```
 
 **Performance Criteria:**
 
 ```text
-□ Response time: ≤ {current_p95}ms (same or better)
-□ Throughput: ≥ {current_rps} requests/sec
-□ Resource usage: ≤ {current_usage} (CPU/memory)
-□ Error rate: < 0.1%
+[ ] Response time: <= {current_p95}ms (same or better)
+[ ] Throughput: >= {current_rps} requests/sec
+[ ] Resource usage: <= {current_usage} (CPU/memory)
+[ ] Error rate: < 0.1%
 
 ```
 
 **Operational Criteria:**
 
 ```text
-□ Monitoring dashboards operational for new implementation
-□ Alerting rules configured and tested
-□ Rollback procedure documented and tested
-□ Runbooks created for common issues
-□ On-call documentation updated
+[ ] Monitoring dashboards operational for new implementation
+[ ] Alerting rules configured and tested
+[ ] Rollback procedure documented and tested
+[ ] Runbooks created for common issues
+[ ] On-call documentation updated
 
 ```
 
 **Business Criteria:**
 
 ```text
-□ Zero customer-reported issues related to migration
-□ No service interruptions during migration
-□ Team trained on new implementation
-□ Documentation complete and reviewed
+[ ] Zero customer-reported issues related to migration
+[ ] No service interruptions during migration
+[ ] Team trained on new implementation
+[ ] Documentation complete and reviewed
 
 ```
 
@@ -187,33 +200,49 @@ Define measurable criteria for migration success.
 Success Criteria:
 
 FUNCTIONAL (Must Pass):
-  ✓ All components migrated: {count}
-  ✓ Feature parity: 100%
-  ✓ Data integrity: Zero loss
-  ✓ API compatibility: Maintained
-  ✓ Tests: All passing
+  [ok] All components migrated: {count}
+  [ok] Feature parity: 100%
+  [ok] Data integrity: Zero loss
+  [ok] API compatibility: Maintained
+  [ok] Tests: All passing
 
 PERFORMANCE (Thresholds):
-  ✓ Response Time: ≤ {n}ms (p95)
-  ✓ Throughput: ≥ {n} req/sec
-  ✓ Error Rate: < 0.1%
+  [ok] Response Time: <= {n}ms (p95)
+  [ok] Throughput: >= {n} req/sec
+  [ok] Error Rate: < 0.1%
 
 OPERATIONAL (Checklist):
-  ✓ Monitoring: Configured
-  ✓ Alerting: Active
-  ✓ Rollback: Tested
-  ✓ Runbooks: Complete
+  [ok] Monitoring: Configured
+  [ok] Alerting: Active
+  [ok] Rollback: Tested
+  [ok] Runbooks: Complete
 
 BUSINESS (Validation):
-  ✓ Zero customer issues
-  ✓ No interruptions
-  ✓ Team trained
+  [ok] Zero customer issues
+  [ok] No interruptions
+  [ok] Team trained
 
 ```
 
 ---
 
-## Step 3: Compile Complete Stage 3B State
+## Step 3: Save Complete Stage 3B Data
+
+Save the complete cross-cutting analysis to the data folder using stdin mode:
+
+```powershell
+@"
+{
+  "schema_version": "3.1.0",
+  "chain_id": "{chain_id}",
+  "stage": "cross_cutting_analysis",
+  "timestamp": "{ISO-8601}",
+  "concern_analysis": { ... complete JSON below ... }
+}
+"@ | speckitadv write-data effort-success.json --stage=03b3-effort-success --stdin
+```
+
+**Full JSON structure:**
 
 ```json
 {
@@ -287,7 +316,6 @@ BUSINESS (Validation):
     }
   }
 }
-
 ```
 
 ### Save State
@@ -299,7 +327,7 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Step 4: Verify State Saved
 
 ---
-⏸️ **[STOP: VERIFY_STATE_SAVED]**
+[STOP: VERIFY_STATE_SAVED]**
 
 1. Read `{analysis_dir}/state.json`
 2. Validate JSON is parseable
@@ -313,14 +341,14 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Completion Marker
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   STAGE COMPLETE: CROSS_CUTTING_ANALYSIS
 
   Chain ID: {chain_id}
 
   Summary:
     Concern: {concern_type}
-    Migration: {current} → {target}
+    Migration: {current} -> {target}
 
     Abstraction: {level} ({score}/10)
     Blast Radius: {classification} ({percentage}%)
@@ -329,13 +357,15 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
     Effort: {person_days} person-days
 
   Proceeding to Stage 4: Report Generation
-═══════════════════════════════════════════════════════════
+===========================================================
 
 STAGE_COMPLETE:CROSS_CUTTING_ANALYSIS
 
 ```
 
 ---
+
+**[AUTO-CONTINUE]** Immediately proceed to next stage. Do NOT wait for user input.
 
 ## Next Stage
 

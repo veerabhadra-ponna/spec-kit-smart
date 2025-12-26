@@ -24,7 +24,35 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report analysis-report.md --content '<md>' --append` - Append to report
+[!] **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
+
+```bash
+# ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --append --content '<content>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --append --stdin
+```
+
+---
+
+## [!] CRITICAL: File Write Policy
+
+**ALWAYS use CLI commands for file writes. NEVER use:**
+
+- Shell/PowerShell commands (`Out-File`, `Add-Content`, `echo >`, `cat <<`)
+- AI Write tools directly to the analysis folder
+- Any method that bypasses the CLI artifact tracking
+
+**Why:** CLI commands track artifacts in state.json for workflow continuity.
+Any file written outside the CLI will NOT be tracked and may cause issues.
 
 ---
 
@@ -39,7 +67,7 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 ## Chunk 4: Phase 2.3 - Data Layer
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_4]**
+[STOP: GENERATE_CHUNK_4]**
 
 **Append to report:**
 
@@ -79,16 +107,16 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 ```
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_4]**
+[STOP: VERIFY_CHUNK_4]**
 
-Output: `✓ Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
+Output: `[ok] Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 
 ---
 
 ## Chunk 5: Phase 3 - Positive Findings
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_5]**
+[STOP: GENERATE_CHUNK_5]**
 
 **Append to report:**
 
@@ -132,16 +160,16 @@ Output: `✓ Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 ```
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_5]**
+[STOP: VERIFY_CHUNK_5]**
 
-Output: `✓ Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
+Output: `[ok] Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 
 ---
 
 ## Chunk 6: Phase 4 - Technical Debt & Issues
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_6]**
+[STOP: GENERATE_CHUNK_6]**
 
 **Append to report:**
 
@@ -198,32 +226,34 @@ Output: `✓ Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 ```
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_6]**
+[STOP: VERIFY_CHUNK_6]**
 
-Output: `✓ Chunk 6/9: Tech Debt ({debt_count} debt, {sec_count} security, {lines} lines)`
+Output: `[ok] Chunk 6/9: Tech Debt ({debt_count} debt, {sec_count} security, {lines} lines)`
 
 ---
 
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 04b-report-chunks-4-6
 
   Chunks Generated: 6/9
   Cumulative Lines: {count}
 
   Content:
-    Phase 2.3: Data Layer ({entities} entities) ✓
-    Phase 3: Positive Findings ({count}) ✓
-    Phase 4: Tech Debt & Issues ({count}) ✓
+    Phase 2.3: Data Layer ({entities} entities) [ok]
+    Phase 3: Positive Findings ({count}) [ok]
+    Phase 4: Tech Debt & Issues ({count}) [ok]
 
   Proceeding to Chunks 7-9...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
 ---
+
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
 
 ## Next Substage
 

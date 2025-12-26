@@ -6,7 +6,7 @@ Implements the zero-prompt architecture with progressive stage injection.
 """
 
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import typer
 from rich.console import Console
@@ -360,7 +360,7 @@ def orchestrate(
                     console.print(f"Run: speckitadv {prompt}")
                     return
                 else:
-                    console.print(f"[green]✓[/green] Feature {folder_path.name} is complete!")
+                    console.print(f"[green][ok][/green] Feature {folder_path.name} is complete!")
                     return
         except FileNotFoundError:
             if feature_dir:
@@ -419,9 +419,9 @@ def resume(
 
     # Show resume summary
     console.print("")
-    console.print("╔═══════════════════════════════════════════════════╗")
-    console.print("║  RESUME SUMMARY                                   ║")
-    console.print("╚═══════════════════════════════════════════════════╝")
+    console.print("+===================================================+")
+    console.print("|  RESUME SUMMARY                                   |")
+    console.print("+===================================================+")
     console.print("")
     console.print(f"[bold]Feature:[/bold] {state.feature.short_name}")
     console.print(f"[bold]Description:[/bold] {state.feature.description}")
@@ -432,7 +432,7 @@ def resume(
     console.print("[bold]Prompt Status:[/bold]")
     for p in ["specify", "plan", "tasks", "implement"]:
         p_state = getattr(state, p)
-        status_icon = {"pending": "⏳", "in_progress": "🔄", "completed": "✓"}
+        status_icon = {"pending": "[-]", "in_progress": "[~]", "completed": "[ok]"}
         icon = status_icon.get(p_state.status, "?")
         stage_info = f" (stage {p_state.current_stage})" if p_state.current_stage else ""
         console.print(f"  {icon} {p}: {p_state.status}{stage_info}")
@@ -444,7 +444,7 @@ def resume(
         # CLI auto-detects stage and feature-dir from state
         console.print(f"Run: speckitadv {prompt}")
     else:
-        console.print("[green]✓ All prompts completed![/green]")
+        console.print("[green][ok] All prompts completed![/green]")
         console.print("")
         console.print("Next steps:")
         console.print("  1. Review implementation")
@@ -671,7 +671,7 @@ def list_fragments_cmd(
 
     for stage in ordered:
         lines = count_fragment_lines(command, stage)
-        status = "[green]✓[/green]" if lines > 0 else "[red]✗[/red]"
+        status = "[green][ok][/green]" if lines > 0 else "[red][x][/red]"
         console.print(f"  {status} {stage} ({lines} lines)")
 
     console.print(f"\n[dim]Total: {len(fragments)} fragments[/dim]\n")
@@ -783,17 +783,17 @@ def check_artifactory(
     exit_code, message = do_check(url, library, api_key, repos, debug)
 
     if exit_code == 0:
-        console.print(f"[green]✅ {message}[/green]")
+        console.print(f"[green][ok] {message}[/green]")
     elif exit_code == 1:
-        console.print(f"[yellow]❌ {message}[/yellow]")
+        console.print(f"[yellow][x] {message}[/yellow]")
         raise typer.Exit(1)
     elif exit_code == 2:
-        console.print(f"[red]⚠️ {message}[/red]")
+        console.print(f"[red][!] {message}[/red]")
         raise typer.Exit(2)
     elif exit_code == 4:
-        console.print(f"[yellow]⊘ SKIPPED: {message}[/yellow]")
+        console.print(f"[yellow][skip] SKIPPED: {message}[/yellow]")
     else:
-        console.print(f"[red]⚠️ ERROR: {message}[/red]")
+        console.print(f"[red][!] ERROR: {message}[/red]")
         raise typer.Exit(3)
 
 
@@ -845,7 +845,7 @@ def enumerate_project_cmd(
         import json
         print(json.dumps(manifest, indent=2))
     else:
-        console.print(f"[green]✓[/green] Manifest saved to {output}")
+        console.print(f"[green][ok][/green] Manifest saved to {output}")
         console.print(f"  Total files: {manifest['statistics']['total_files']}")
 
 
@@ -929,7 +929,7 @@ def write_data_cmd(
 
     # Write file
     file_path = state_manager.write_data(filename, file_content, stage)
-    console.print(f"[green]✓[/green] Written: {file_path}")
+    console.print(f"[green][ok][/green] Written: {file_path}")
 
 
 @app.command("write-report")
@@ -955,6 +955,23 @@ def write_report_cmd(
     import sys
     from speckit.core.state import find_latest_analysis_folder, AnalysisStateManager
 
+    # Validate filename - must be simple filename, no path separators
+    if "/" in filename or "\\" in filename:
+        console.print(f"[red]Error:[/red] Filename cannot contain path separators: {filename}")
+        console.print("[yellow]Hint:[/yellow] Use just the filename (e.g., 'analysis-report.md'), not a path.")
+        raise typer.Exit(1)
+
+    if not filename.endswith(".md"):
+        console.print(f"[red]Error:[/red] Filename must end with .md: {filename}")
+        raise typer.Exit(1)
+
+    # Detect potential argument parsing issues (filename looks like content)
+    if filename.startswith("#") or filename.startswith("*") or len(filename) > 100:
+        console.print(f"[red]Error:[/red] Invalid filename detected: {filename[:50]}...")
+        console.print("[yellow]Hint:[/yellow] Check shell quoting. The filename should be 'analysis-report.md', not content.")
+        console.print("[yellow]Hint:[/yellow] On PowerShell, use single quotes for --content to avoid escape issues.")
+        raise typer.Exit(1)
+
     # Get analysis folder
     if analysis_dir:
         folder = Path(analysis_dir)
@@ -979,7 +996,7 @@ def write_report_cmd(
     # Write file
     file_path = state_manager.write_report(filename, file_content, append=append, stage=stage)
     mode = "Appended" if append else "Written"
-    console.print(f"[green]✓[/green] {mode}: {file_path}")
+    console.print(f"[green][ok][/green] {mode}: {file_path}")
 
 
 @app.command("update-stage")
@@ -1023,7 +1040,7 @@ def update_stage_cmd(
 
     # Update stage
     state_manager.update_stage(stage_id, status, artifacts=artifact_list if artifact_list else None)
-    console.print(f"[green]✓[/green] Stage {stage_id} → {status}")
+    console.print(f"[green][ok][/green] Stage {stage_id} -> {status}")
     if artifact_list:
         for artifact in artifact_list:
             console.print(f"    + {artifact}")
@@ -1099,7 +1116,7 @@ def update_preferences_cmd(
 
     state_manager = AnalysisStateManager(folder)
     state_manager.update_modernization_preferences(prefs)
-    console.print(f"[green]✓[/green] Modernization preferences updated")
+    console.print(f"[green][ok][/green] Modernization preferences updated")
     for key, value in prefs.items():
         console.print(f"    {key}: {value}")
 
@@ -1206,6 +1223,7 @@ def get_context_cmd(
 
 @app.command("list-files")
 def list_files_cmd(
+    files: Optional[List[str]] = typer.Argument(None, help="Files (shell-expanded paths, used automatically if shell expands glob)"),
     pattern: str = typer.Option("*", "--pattern", "-p", help="Glob pattern (e.g., '*.cs', '**/*Service*.cs')"),
     category: Optional[str] = typer.Option(None, "--category", "-c", help="Filter by category (controllers, services, models, etc.)"),
     project_path: Optional[str] = typer.Option(None, "--project-path", help="Project path (uses analysis project_path if not provided)"),
@@ -1217,6 +1235,9 @@ def list_files_cmd(
     List files matching pattern or category.
 
     Use this instead of AI-generated Get-ChildItem/find scripts.
+
+    Handles shell glob expansion: if your shell expands the pattern before
+    passing it to the CLI, the expanded paths are accepted as arguments.
 
     Examples:
         speckitadv list-files --pattern='*.cs' --limit=20
@@ -1256,35 +1277,50 @@ def list_files_cmd(
         console.print(f"[red]Error:[/red] Project path not found: {proj_path}")
         raise typer.Exit(1)
 
-    # Get patterns to match
-    if category:
-        if category not in CATEGORY_PATTERNS:
-            console.print(f"[red]Error:[/red] Unknown category: {category}")
-            console.print(f"Available: {', '.join(CATEGORY_PATTERNS.keys())}")
-            raise typer.Exit(1)
-        patterns = CATEGORY_PATTERNS[category]
+    # Handle shell-expanded paths (e.g., PowerShell expanded the glob before CLI received it)
+    # DESIGN NOTE: When positional `files` are provided, they take precedence over --pattern
+    # and --category options. This is intentional - shell expansion happens before the CLI
+    # receives arguments, so mixed usage (files + pattern/category) indicates shell expansion
+    # occurred and the expanded paths should be used directly.
+    if files:
+        # Shell already expanded the glob - use those paths directly
+        matches = [f for f in files if Path(f).is_file() or (proj_path / f).is_file()]
     else:
-        patterns = [pattern]
+        # Get patterns to match
+        if category:
+            if category not in CATEGORY_PATTERNS:
+                console.print(f"[red]Error:[/red] Unknown category: {category}")
+                console.print(f"Available: {', '.join(CATEGORY_PATTERNS.keys())}")
+                raise typer.Exit(1)
+            patterns = CATEGORY_PATTERNS[category]
+        else:
+            patterns = [pattern]
 
-    # Find matching files
-    matches = []
-    for file_path in proj_path.rglob("*"):
-        if file_path.is_file():
-            # Match against relative path for directory-aware patterns (e.g., src/*.py, **/*Service*.cs)
-            rel_path = str(file_path.relative_to(proj_path))
-            for pat in patterns:
-                if fnmatch.fnmatch(rel_path, pat):
-                    matches.append(rel_path)
-                    break
+        # Find matching files
+        matches = []
+        for file_path in proj_path.rglob("*"):
+            if file_path.is_file():
+                # Match against relative path for directory-aware patterns (e.g., src/*.py, **/*Service*.cs)
+                rel_path = str(file_path.relative_to(proj_path))
+                for pat in patterns:
+                    if fnmatch.fnmatch(rel_path, pat):
+                        matches.append(rel_path)
+                        break
 
+    # Count total matches BEFORE applying limit (for accurate --count output)
+    total_count = len(matches)
     matches = sorted(matches)[:limit]
 
     if count_only:
-        print(len(matches))
+        print(total_count)
     else:
         for match in matches:
             print(match)
-        console.print(f"\n[dim]Total: {len(matches)} files[/dim]")
+        # Show both displayed count and total if limit was applied
+        if total_count > limit:
+            console.print(f"\n[dim]Showing {len(matches)} of {total_count} files (--limit={limit})[/dim]")
+        else:
+            console.print(f"\n[dim]Total: {total_count} files[/dim]")
 
 
 if __name__ == "__main__":

@@ -56,8 +56,8 @@ class TestFormatBoxLine:
     def test_basic_formatting(self):
         """Should format line with box characters."""
         result = _format_box_line("test", width=64)
-        assert result.startswith("│ ")
-        assert result.endswith(" │")
+        assert result.startswith("| ")
+        assert result.endswith(" |")
         assert "test" in result
 
     def test_padding(self):

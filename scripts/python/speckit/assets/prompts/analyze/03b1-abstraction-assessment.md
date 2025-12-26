@@ -7,6 +7,19 @@ version: 3.4.0
 next: 03b2-migration-strategy.md
 ---
 
+## DO NOT CREATE FILES
+
+**CRITICAL: This substage does NOT create any files.**
+
+- NO `stage10-chunk1.md`
+- NO `stage10.md` or similar
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
+
+**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 5).
+
+---
+
 # Stage 3B-1: Abstraction Assessment & Blast Radius
 
 ## Purpose
@@ -30,7 +43,7 @@ Values available (already substituted by CLI):
 Locate all files related to the specified concern.
 
 ---
-⏸️ **[STOP: IDENTIFY_CONCERN_FILES]**
+[STOP: IDENTIFY_CONCERN_FILES]**
 
 Search for files matching the concern type: **{concern_type}**
 
@@ -74,7 +87,7 @@ Store in: `$CONCERN_FILES`
 Evaluate how well the concern is abstracted from business logic.
 
 ---
-⏸️ **[STOP: ASSESS_ABSTRACTION]**
+[STOP: ASSESS_ABSTRACTION]**
 
 For each concern file, analyze:
 
@@ -123,17 +136,16 @@ Scores:
   Consumer Coupling:   {score}/10
   Configuration:       {score}/10
 
-  ─────────────────────────────────
+  ---------------------------------
   OVERALL SCORE: {average}/10
   LEVEL: {HIGH | MEDIUM | LOW}
-  ─────────────────────────────────
+  ---------------------------------
 
 Abstraction Patterns Found:
-  ✓ {positive patterns}
+  [ok] {positive patterns}
 
 Abstraction Issues:
-  ✗ {negative patterns with file:line}
-
+  [x] {negative patterns with file:line}
 ```
 
 ---
@@ -143,7 +155,7 @@ Abstraction Issues:
 Calculate how many files would be affected by the migration.
 
 ---
-⏸️ **[STOP: CALCULATE_BLAST_RADIUS]**
+[STOP: CALCULATE_BLAST_RADIUS]**
 
 **Count affected files:**
 
@@ -189,7 +201,7 @@ Calculate how many files would be affected by the migration.
 
 ```text
 total_affected = direct + indirect + config + tests
-blast_radius_percentage = (total_affected / total_project_files) × 100
+blast_radius_percentage = (total_affected / total_project_files) x 100
 
 ```
 
@@ -214,11 +226,11 @@ Impact Breakdown:
   Configuration:      {count} files
   Test Impact:        {count} test files
 
-  ─────────────────────────────────
+  ---------------------------------
   TOTAL AFFECTED: {total} / {project_total} files
   BLAST RADIUS: {percentage}%
   CLASSIFICATION: {SMALL|MEDIUM|LARGE|CRITICAL}
-  ─────────────────────────────────
+  ---------------------------------
 
 High-Impact Files (top 10):
   1. {file}: {impact_count} dependents
@@ -267,7 +279,20 @@ High-Impact Files (top 10):
     }
   }
 }
+```
 
+---
+
+## Step 5: Save Assessment Data
+
+Save the assessment data to the data folder using stdin mode:
+
+```powershell
+@"
+{
+  "abstraction_assessment": { ... full JSON from Step 4 ... }
+}
+"@ | speckitadv write-data abstraction-assessment.json --stage=03b1-abstraction-assessment --stdin
 ```
 
 ---
@@ -275,7 +300,7 @@ High-Impact Files (top 10):
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 03b1-abstraction-assessment
 
   Concern: {concern_type}
@@ -286,11 +311,13 @@ High-Impact Files (top 10):
   Blast Radius: {percentage}% ({classification})
 
   Proceeding to Migration Strategy...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
 ---
+
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
 
 ## Next Substage
 

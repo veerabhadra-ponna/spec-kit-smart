@@ -8,6 +8,27 @@
 
 ---
 
+## Template Usage
+
+This template generates BOTH legacy and target functional specifications:
+
+| Output File | Purpose | Focus |
+|-------------|---------|-------|
+| `functional-spec-legacy.md` | Documents WHAT the **existing** system does | Extract from code |
+| `functional-spec-target.md` | Documents WHAT the **new** system will do | Design intent |
+
+**Section Markers**:
+
+- `[LEGACY ONLY]` - Skip this section when generating target spec
+- `[TARGET ONLY]` - Skip this section when generating legacy spec
+- `[LEGACY: extract from code]` / `[TARGET: design intent]` - Different focus for same section
+
+**AI Decision**: When you see conditional markers, determine which applies based on:
+- Which spec you are currently generating (legacy or target)
+- The characteristics of the codebase being analyzed
+
+---
+
 ## Instructions for AI
 
 This template is based on **Section A (Business Analysis)** from the Universal Meta-Prompt.
@@ -32,6 +53,142 @@ It is adapted for **legacy code analysis** to extract WHAT the system does (not 
 - `<<EXTRACT_DATA_MODELS>>` - Parse from DB schemas, migrations, ORMs
 - `<<EXTRACT_CONFIG>>` - List all config files and their purposes
 - `<<EXTRACT_QUIRKS>>` - Find hardcoded values, workarounds, edge cases
+
+### Critical Focus Areas (Extraction Priority)
+
+Extract in this priority order to ensure critical items are not missed:
+
+#### Priority 1: Business Logic (MOST CRITICAL)
+
+- Extract ALL validation rules with exact thresholds
+- Document ALL calculation formulas with precision requirements
+- Capture ALL decision trees and conditional logic
+- Map ALL state transitions and workflows
+
+#### Priority 2: Data Transformations
+
+- Document ALL field mappings (source -> target)
+- Extract ALL data type conversions
+- Capture ALL data enrichment logic
+- Map ALL aggregation and filtering rules
+
+#### Priority 3: Integration Points
+
+- Document ALL external API calls
+- Extract ALL database queries
+- Capture ALL message queue interactions
+- Map ALL file I/O operations
+
+#### Priority 4: Error Handling
+
+- Document ALL exception types and handling
+- Extract ALL retry mechanisms
+- Capture ALL fallback strategies
+- Map ALL error codes and messages
+
+#### Priority 5: Configuration
+
+- Extract ALL configuration parameters
+- Document ALL default values
+- Capture ALL environment-specific settings
+- Map ALL feature flags
+
+### Output Quality Standards
+
+**Completeness** - Verify each section includes:
+
+- [ ] Every public method/function documented
+- [ ] Every configuration parameter extracted
+- [ ] Every validation rule captured
+- [ ] Every integration point mapped
+- [ ] Every error scenario documented
+
+**Accuracy** - Ensure:
+
+- [ ] Algorithm pseudocode matches actual code logic
+- [ ] Data types correctly identified
+- [ ] Thresholds and limits precisely stated
+- [ ] Formulas mathematically correct
+- [ ] Configuration values accurate
+
+**Clarity** - Include:
+
+- [ ] Business context provided for technical details
+- [ ] Jargon explained or avoided
+- [ ] Examples provided for complex logic
+- [ ] Diagrams used for visual clarity
+- [ ] Tables used for comparisons
+
+**Traceability** - Every item must have:
+
+- [ ] Code references included (class.method or file:line)
+- [ ] Configuration file paths specified
+- [ ] Test case references for validation
+
+### Conditional Sections
+
+Include these sections ONLY when the codebase exhibits these characteristics:
+
+| Section | Include IF | Skip IF |
+|---------|------------|---------|
+| Message Formats (16.x) | Event-driven architecture, message queues, Kafka/RabbitMQ | No async messaging |
+| Audit Trail (12.x) | Compliance requirements (GDPR, SOX, HIPAA), audit logging | No compliance needs |
+| Field Mappings (14.x) | Data migration, ETL, multiple data sources | Single data model |
+| Calculation Formulas (6.x) | Financial, scientific, or precision-sensitive calculations | No complex math |
+
+### Example Output Snippets
+
+**Algorithm Documentation Example:**
+
+```text
+ALGORITHM: CalculateOrderTotal
+PURPOSE: Calculate final order amount including taxes and discounts
+INPUT: Order object containing line items, customer, shipping address
+OUTPUT: OrderTotal object with subtotal, tax, discount, total
+
+STEP 1: Calculate Subtotal
+  subtotal = 0
+  FOR each line_item in order.line_items:
+    item_total = line_item.quantity * line_item.unit_price
+    subtotal = subtotal + item_total
+
+STEP 2: Apply Discounts
+  discount_amount = 0
+  IF order.customer.loyalty_tier == "GOLD":
+    discount_amount = subtotal * 0.10  // 10% discount
+  ELSE IF order.customer.loyalty_tier == "SILVER":
+    discount_amount = subtotal * 0.05  // 5% discount
+  discounted_subtotal = subtotal - discount_amount
+
+STEP 3: Calculate Tax
+  tax_rate = get_tax_rate(order.shipping_address.state)
+  tax_amount = discounted_subtotal * tax_rate
+
+STEP 4: Calculate Final Total
+  final_total = discounted_subtotal + tax_amount + order.shipping_cost
+
+STEP 5: Validation
+  IF final_total < 0:
+    THROW InvalidOrderException("Order total cannot be negative")
+
+RETURN OrderTotal(subtotal, discount_amount, tax_amount, order.shipping_cost, final_total)
+```
+
+**Business Rules Table Example:**
+
+| Rule ID | Condition | Action | Threshold | Source |
+|---------|-----------|--------|-----------|--------|
+| BR-001 | Customer loyalty tier = GOLD | Apply 10% discount | N/A | OrderService.calculateDiscount():45 |
+| BR-002 | Order total > $100 | Free shipping | $100.00 | ShippingService.calculateShipping():78 |
+| BR-003 | Payment retry count | Reject transaction | 3 attempts | PaymentProcessor.processPayment():112 |
+
+**Configuration Example:**
+
+| Category | Parameter | Type | Default | Required | Env-Specific | Description |
+|----------|-----------|------|---------|----------|--------------|-------------|
+| Payment Gateway | payment.gateway.url | String | `https://api.payment.com/v1` | Yes | Yes | Base URL for payment API |
+| Payment Gateway | payment.gateway.timeout | Integer (ms) | 30000 | No | No | HTTP timeout for payment calls |
+| Payment Gateway | payment.retry.max-attempts | Integer | 3 | No | No | Maximum retry attempts for failed payments |
 
 ---
 
@@ -228,9 +385,182 @@ Scenario: <<Scenario Name>>
 
 ---
 
-## 6. Business Logic (Pseudocode & Flowcharts)
+## 6. Business Logic (Algorithms, Rules & Calculations)
 
-### BL-001: <<Business Logic Name>>
+[LEGACY: extract from code] / [TARGET: design intent]
+- **Legacy spec**: Extract algorithms, rules, and formulas from existing code with file:line references
+- **Target spec**: Document intended business logic, preserving critical rules from legacy with enhancements
+
+### 6.1 Core Processing Algorithms
+
+For each major processing method/function, document using this structured format:
+
+#### ALG-001: <<Algorithm Name>>
+
+**Evidence**: <<file:line-range>>
+**Category**: <<Validation | Calculation | Authorization | Workflow | Data Processing>>
+**Criticality**: <<CRITICAL | STANDARD>>
+
+```text
+ALGORITHM: <<MethodName or ProcessName>>
+PURPOSE: <<What it does - from comments/method name>>
+INPUT: <<Parameter types and descriptions>>
+OUTPUT: <<Return type and description>>
+
+STEP 1: <<First operation>>
+  <<Detailed logic from code>>
+  IF <<condition>>:
+    <<action>>
+  ELSE:
+    <<alternative action>>
+
+STEP 2: <<Second operation>>
+  FOR each <<item>> in <<collection>>:
+    <<processing logic>>
+
+STEP 3: <<Third operation>>
+  <<Calculation or transformation>>
+
+ERROR HANDLING:
+  IF <<error condition>>:
+    <<error handling logic>>
+    RETURN <<error result>>
+
+RETURN <<success result>>
+```
+
+**Sub-Algorithms**: Document helper methods called within main algorithm:
+
+- `<<helper_method_1>>`: <<brief description>>
+- `<<helper_method_2>>`: <<brief description>>
+
+**Flowchart**:
+
+```mermaid
+flowchart TD
+    A[Start: <<trigger>>] --> B{<<condition check>>}
+    B -->|Yes| C[<<action 1>>]
+    B -->|No| D[<<action 2>>]
+    C --> E{<<validation>>}
+    E -->|Valid| F[<<process>>]
+    E -->|Invalid| G[<<error handling>>]
+    F --> H[<<persist/output>>]
+    G --> I[End: Error]
+    H --> J[End: Success]
+    D --> J
+```
+
+**Edge Cases**:
+
+| Case | Handling | Evidence |
+|------|----------|----------|
+| <<edge case 1>> | <<how handled>> | <<file:line>> |
+| <<edge case 2>> | <<how handled>> | <<file:line>> |
+
+---
+
+#### ALG-002: <<Next Algorithm>>
+
+<<Repeat structure>>
+
+---
+
+### 6.2 Decision Trees
+
+Extract from complex if/else, switch statements. Document the business reasoning.
+
+#### DT-001: <<Decision Name>>
+
+**Evidence**: <<file:line-range>>
+**Decision**: <<What is being decided>>
+
+```text
+DECISION: <<What is being decided>>
+
+IF <<condition 1>>:
+  THEN <<action 1>>
+  BECAUSE <<business reason from comments>>
+
+ELSE IF <<condition 2>>:
+  THEN <<action 2>>
+  BECAUSE <<business reason>>
+
+ELSE:
+  THEN <<default action>>
+  BECAUSE <<why this is the default>>
+```
+
+**Decision Table**:
+
+| Condition | Action | Business Reason | Evidence |
+|-----------|--------|-----------------|----------|
+| <<condition 1>> | <<action 1>> | <<why>> | <<file:line>> |
+| <<condition 2>> | <<action 2>> | <<why>> | <<file:line>> |
+| Default | <<action>> | <<why>> | <<file:line>> |
+
+---
+
+### 6.3 Calculation Formulas
+
+**[CONDITIONAL]** Include this section IF the codebase contains financial, scientific, or precision-sensitive calculations.
+
+Extract from mathematical operations. Document precision requirements.
+
+#### CALC-001: <<Formula Name>>
+
+**Evidence**: <<file:line-range>>
+**Purpose**: <<What it calculates>>
+
+**Formula**:
+
+```text
+FORMULA: <<Formula Name>>
+PURPOSE: <<What it calculates>>
+
+<<variable_1>> = <<expression from code>>
+<<variable_2>> = <<expression from code>>
+<<result>> = <<final calculation>>
+
+PRECISION: <<decimal places, rounding rules>>
+CONSTRAINTS: <<min/max values, domain restrictions>>
+```
+
+**Example Calculation**:
+
+| Input | Value | Output | Expected |
+|-------|-------|--------|----------|
+| <<input 1>> | <<value>> | <<result>> | <<expected>> |
+| <<input 2>> | <<value>> | <<result>> | <<expected>> |
+
+---
+
+### 6.4 Business Constants
+
+Extract from enums, constant classes. Document business meaning.
+
+| Constant Name | Value | Usage Context | Business Meaning | Evidence |
+|---------------|-------|---------------|------------------|----------|
+| <<NAME>> | <<value>> | <<where used>> | <<what it represents>> | <<file:line>> |
+| <<NAME>> | <<value>> | <<where used>> | <<what it represents>> | <<file:line>> |
+
+---
+
+### 6.5 Validation Rules
+
+Extract from validation annotations, custom validators.
+
+| Field | Validation Type | Rule | Error Message | Evidence |
+|-------|-----------------|------|---------------|----------|
+| <<field>> | <<NotNull/Range/Pattern>> | <<constraint>> | <<message>> | <<file:line>> |
+| <<field>> | <<NotNull/Range/Pattern>> | <<constraint>> | <<message>> | <<file:line>> |
+
+---
+
+### BL-LEGACY: Legacy Business Logic (Pseudocode Format)
+
+For simpler logic that doesn't require the structured algorithm format:
+
+#### BL-001: <<Business Logic Name>>
 
 **Evidence**: <<file:line-range>>
 **Category**: <<Validation | Calculation | Authorization | Workflow | Data Processing>>
@@ -270,35 +600,6 @@ FUNCTION <<function_name>>(<<parameters>>):
     RETURN <<result>>
 END FUNCTION
 ```
-
-**Flowchart**:
-
-```mermaid
-flowchart TD
-    A[Start: <<trigger>>] --> B{<<condition check>>}
-    B -->|Yes| C[<<action 1>>]
-    B -->|No| D[<<action 2>>]
-    C --> E{<<validation>>}
-    E -->|Valid| F[<<process>>]
-    E -->|Invalid| G[<<error handling>>]
-    F --> H[<<persist/output>>]
-    G --> I[End: Error]
-    H --> J[End: Success]
-    D --> J
-```
-
-**Edge Cases**:
-
-| Case | Handling | Evidence |
-|------|----------|----------|
-| <<edge case 1>> | <<how handled>> | <<file:line>> |
-| <<edge case 2>> | <<how handled>> | <<file:line>> |
-
----
-
-### BL-002: <<Next Business Logic>>
-
-<<Repeat structure>>
 
 ---
 
@@ -568,9 +869,125 @@ These constraints are derived from code evidence and must be preserved:
 | Privacy | <<PII masking in logs>> | <<logger.js:56>> |
 | I18n | <<EN only / multi-lang>> | <<i18n/locales/>> |
 
+### Audit Trail Requirements
+
+**[CONDITIONAL]** Include this section IF the system has compliance requirements (GDPR, SOX, HIPAA) or audit logging.
+
+Extract from logging statements, audit interceptors.
+
+| Event Type | Audit Fields | Storage | Retention | Evidence |
+|------------|--------------|---------|-----------|----------|
+| <<event>> | <<fields logged>> | <<where stored>> | <<how long>> | <<file:line>> |
+| <<event>> | <<fields logged>> | <<where stored>> | <<how long>> | <<file:line>> |
+
+### Data Quality Checks
+
+**[CONDITIONAL]** Include IF the system has data quality validation.
+
+```text
+ALGORITHM: ValidateDataQuality
+INPUT: <<data object>>
+OUTPUT: <<validation result>>
+
+STEP 1: Completeness Check
+  <<Check for required fields>>
+  <<Verify no null values where not allowed>>
+
+STEP 2: Accuracy Check
+  <<Validate data formats>>
+  <<Check value ranges>>
+  <<Verify checksums/hashes>>
+
+STEP 3: Consistency Check
+  <<Cross-field validations>>
+  <<Referential integrity>>
+
+STEP 4: Timeliness Check
+  <<Check timestamps>>
+  <<Detect stale data>>
+
+RETURN <<validation report>>
+```
+
 ---
 
-## 13. Data Models (Extracted from DB Schemas)
+## 13. Error Handling & Recovery
+
+[LEGACY: extract from code] / [TARGET: design intent]
+- **Legacy spec**: Extract existing error handling patterns, exception types, and recovery logic from code
+- **Target spec**: Design error handling strategy, specifying which legacy patterns to preserve vs. modernize
+- **Note**: For HOW to implement (circuit breakers, retry patterns), see technical-spec Section 7 "Resilience Patterns"
+
+### 13.1 Exception Handling Patterns
+
+[LEGACY] Extract from try/catch blocks, error handlers.
+[TARGET] Define exception hierarchy and handling strategy.
+
+| Exception Type | Handling Strategy | Retry Logic | Fallback Action | Evidence |
+|----------------|-------------------|-------------|-----------------|----------|
+| <<ExceptionClass>> | <<Log/Rethrow/Handle>> | <<retry count, backoff>> | <<alternative action>> | <<file:line>> |
+| <<ExceptionClass>> | <<Log/Rethrow/Handle>> | <<retry count, backoff>> | <<alternative action>> | <<file:line>> |
+
+---
+
+### 13.2 Error Recovery Algorithms
+
+```text
+ALGORITHM: HandleError[<<ErrorType>>]
+INPUT: <<error object, context>>
+OUTPUT: <<recovery result or escalation>>
+
+STEP 1: Error Classification
+  <<Determine error severity and type>>
+
+STEP 2: Retry Strategy
+  IF <<retriable error>>:
+    FOR attempt = 1 to <<max_retries>>:
+      <<Wait with exponential backoff>>
+      <<Retry operation>>
+      IF <<success>>:
+        RETURN <<success result>>
+
+STEP 3: Fallback Mechanism
+  IF <<retry failed>>:
+    <<Execute fallback logic>>
+    RETURN <<degraded result>>
+
+STEP 4: Escalation
+  IF <<critical error>>:
+    <<Log critical error>>
+    <<Notify monitoring system>>
+    THROW <<exception>>
+```
+
+---
+
+### 13.3 Validation Error Handling
+
+Extract from validation logic.
+
+| Validation Failure | Error Code | Error Message | User Action | Evidence |
+|--------------------|------------|---------------|-------------|----------|
+| <<validation type>> | <<code>> | <<message>> | <<what user should do>> | <<file:line>> |
+| <<validation type>> | <<code>> | <<message>> | <<what user should do>> | <<file:line>> |
+
+---
+
+### 13.4 Error Codes Catalog
+
+| Error Code | Category | Description | Severity | Recovery |
+|------------|----------|-------------|----------|----------|
+| <<ERR_001>> | <<Validation/System/Integration>> | <<description>> | <<ERROR/WARN/FATAL>> | <<auto/manual/none>> |
+| <<ERR_002>> | <<Validation/System/Integration>> | <<description>> | <<ERROR/WARN/FATAL>> | <<auto/manual/none>> |
+
+---
+
+## 14. Data Models (Extracted from DB Schemas)
+
+[LEGACY: extract from code] / [TARGET: design intent]
+- **Legacy spec**: Extract data models from existing DB schemas, migrations, ORM mappings
+- **Target spec**: Design target data model, documenting migration strategy from legacy
+- **Note**: For HOW to migrate data, see technical-spec Section 12 "Data & Schema"
 
 ### Core Entities
 
@@ -599,7 +1016,53 @@ These constraints are derived from code evidence and must be preserved:
 
 ---
 
-## 14. Configuration Mapping (All Config Files)
+### 14.2 Field Mappings
+
+**[CONDITIONAL]** Include this section IF the system has data migration, ETL, or multiple data sources.
+
+Extract from mapper classes, transformation logic.
+
+| Source Field | Source Type | Target Field | Target Type | Transformation Rule | Evidence |
+|--------------|-------------|--------------|-------------|---------------------|----------|
+| <<input>> | <<type>> | <<output>> | <<type>> | <<conversion logic>> | <<file:line>> |
+| <<input>> | <<type>> | <<output>> | <<type>> | <<conversion logic>> | <<file:line>> |
+
+### Data Transformation Algorithms
+
+```text
+ALGORITHM: Transform<<SourceType>>To<<TargetType>>
+INPUT: <<source object>>
+OUTPUT: <<target object>>
+
+STEP 1: Field Extraction
+  <<Extract each field with null handling>>
+
+STEP 2: Type Conversion
+  <<Convert types with error handling>>
+
+STEP 3: Validation
+  <<Apply validation rules>>
+
+STEP 4: Enrichment
+  <<Add calculated/derived fields>>
+
+RETURN <<transformed object>>
+```
+
+---
+
+### 14.3 Data Validation Rules
+
+Extract from validation annotations, custom validators.
+
+| Entity | Field | Validation Type | Rule | Error Message | Evidence |
+|--------|-------|-----------------|------|---------------|----------|
+| <<Entity>> | <<field>> | <<NotNull/Range/Pattern>> | <<constraint>> | <<message>> | <<file:line>> |
+| <<Entity>> | <<field>> | <<Custom>> | <<constraint>> | <<message>> | <<file:line>> |
+
+---
+
+## 15. Configuration Mapping (All Config Files)
 
 | Config File | Purpose | Key Settings | Migration Strategy |
 | ------------- | --------- | -------------- | ------------------- |
@@ -613,7 +1076,7 @@ These constraints are derived from code evidence and must be preserved:
 
 ---
 
-## 15. API Contracts (Extracted from Code)
+## 16. API Contracts (Extracted from Code)
 
 ### REST Endpoints
 
@@ -631,7 +1094,7 @@ These constraints are derived from code evidence and must be preserved:
 
 ---
 
-## 16. Integration Points (External Systems)
+## 17. Integration Points (External Systems)
 
 | External System | Purpose | Protocol | Auth Method | Evidence |
 | ---------------- | --------- | ---------- | ------------- | ---------- |
@@ -643,7 +1106,29 @@ These constraints are derived from code evidence and must be preserved:
 
 ---
 
-## 17. Known Quirks & Legacy Behaviors
+### 17.1 Message Formats
+
+**[CONDITIONAL]** Include this section IF the system uses event-driven architecture, message queues (Kafka, RabbitMQ, SQS), or async messaging.
+
+Extract from message producers/consumers.
+
+| Message Type | Format | Schema | Routing Key | Exchange/Topic | Evidence |
+|--------------|--------|--------|-------------|----------------|----------|
+| <<type>> | <<JSON/XML/Avro>> | <<schema>> | <<key>> | <<exchange>> | <<file:line>> |
+| <<type>> | <<JSON/XML/Avro>> | <<schema>> | <<key>> | <<exchange>> | <<file:line>> |
+
+### Database Operations
+
+Extract from repository classes, SQL queries.
+
+| Operation | Query Type | Tables | Indexes Used | Performance Notes | Evidence |
+|-----------|------------|--------|--------------|-------------------|----------|
+| <<operation>> | <<SELECT/INSERT>> | <<tables>> | <<indexes>> | <<notes>> | <<file:line>> |
+| <<operation>> | <<SELECT/INSERT>> | <<tables>> | <<indexes>> | <<notes>> | <<file:line>> |
+
+---
+
+## 18. Known Quirks & Legacy Behaviors
 
 ### Quirk 1: <<Name>>
 
@@ -661,7 +1146,7 @@ These constraints are derived from code evidence and must be preserved:
 
 ---
 
-## 18. Risks, Assumptions, Decisions (RAD)
+## 19. Risks, Assumptions, Decisions (RAD)
 
 ### Risks (Identified from Code Analysis)
 
@@ -685,7 +1170,7 @@ These constraints are derived from code evidence and must be preserved:
 
 ---
 
-## 19. Value / Business Case (Legacy System)
+## 20. Value / Business Case (Legacy System)
 
 ### Current Value Delivered
 
@@ -706,19 +1191,26 @@ Why modernize (inferred from code analysis):
 
 ---
 
-## 20. Traceability Matrix
+## 21. Traceability Matrix
 
 ### Requirements to Evidence
 
-| Requirement | Use Case | User Story | Business Logic | State Machine | Config | Evidence |
-|-------------|----------|------------|----------------|---------------|--------|----------|
-| FR-CRIT-001 | UC-001 | US-CRIT-001 | BL-001 | SM-001 | CFG-001 | <<file:line>> |
-| FR-CRIT-002 | UC-002 | US-CRIT-002 | BL-002 | - | - | <<file:line>> |
-| FR-STD-001 | UC-003 | US-STD-001 | BL-003 | - | CFG-002 | <<file:line>> |
+| Requirement | Use Case | User Story | Business Logic | State Machine | Error Handling | Config | Evidence |
+|-------------|----------|------------|----------------|---------------|----------------|--------|----------|
+| FR-CRIT-001 | UC-001 | US-CRIT-001 | BL-001 | SM-001 | ERR-001 | CFG-001 | <<file:line>> |
+| FR-CRIT-002 | UC-002 | US-CRIT-002 | BL-002 | - | ERR-002 | - | <<file:line>> |
+| FR-STD-001 | UC-003 | US-STD-001 | BL-003 | - | - | CFG-002 | <<file:line>> |
+
+### Validation Checklists Cross-Reference
+
+| Checklist | Purpose | When to Use |
+|-----------|---------|-------------|
+| Section 23 | Business Logic Preservation | Before starting modernization |
+| Section 24 | Output Validation | Before stakeholder handoff |
 
 ---
 
-## 21. Next Steps
+## 22. Next Steps
 
 1. **User Review**: Validate extracted features, use cases, and quirks with stakeholders
 2. **Decision Points**: Resolve all "Decision Needed" items in FR-QUIRK sections
@@ -726,6 +1218,109 @@ Why modernize (inferred from code analysis):
 4. **State Machine Validation**: Confirm state transitions match expected behavior
 5. **Configuration Review**: Verify all config-driven behaviors are documented
 6. **Modernization Planning**: Use this spec as input to technical-spec-target.md
+
+---
+
+## 23. Business Logic Preservation Checklist
+
+[LEGACY ONLY] This section applies when documenting the legacy/existing system.
+When generating functional-spec-target.md, SKIP this section or replace with
+"Business Logic Implementation Verification" to confirm preserved logic was implemented.
+
+[CRITICAL] This checklist ensures ALL business logic is captured before modernization.
+
+### 23.1 Extraction Completeness
+
+| Category | Extracted | Verified | Evidence |
+|----------|-----------|----------|----------|
+| Validation Rules | [ ] All field validations documented | [ ] Cross-checked with UI | Section 6.5 |
+| Calculation Formulas | [ ] All formulas with precision | [ ] Test cases verified | Section 6.3 |
+| Decision Trees | [ ] All branching logic mapped | [ ] Edge cases covered | Section 6.2 |
+| Business Constants | [ ] All magic numbers documented | [ ] Sources identified | Section 6.4 |
+| State Transitions | [ ] All states and transitions | [ ] Invalid paths documented | Section 10 |
+| Error Handling | [ ] All exception patterns | [ ] Recovery logic captured | Section 13 |
+
+### 23.2 Critical Business Rules Verification
+
+For each business rule in Section 6, verify:
+
+- [ ] **Rule ID assigned** (BL-XXX format)
+- [ ] **Source code reference** (file:line)
+- [ ] **Plain English description** (non-technical stakeholder readable)
+- [ ] **Pseudocode/algorithm** (developer implementable)
+- [ ] **Edge cases documented** (boundary conditions)
+- [ ] **Error behavior specified** (what happens on invalid input)
+
+### 23.3 Data Transformation Verification
+
+For each data transformation:
+
+- [ ] **Source format documented** (input structure)
+- [ ] **Target format documented** (output structure)
+- [ ] **Transformation rules captured** (mapping logic)
+- [ ] **Null/empty handling specified**
+- [ ] **Type conversions documented**
+- [ ] **Precision requirements noted** (decimal places, rounding)
+
+### 23.4 Integration Logic Verification
+
+For each integration point:
+
+- [ ] **Protocol documented** (REST, SOAP, file, queue)
+- [ ] **Message format captured** (request/response schemas)
+- [ ] **Error handling documented** (retry, timeout, fallback)
+- [ ] **Authentication method noted**
+- [ ] **Rate limits/throttling documented**
+
+---
+
+## 24. Output Validation Checklist
+
+[LEGACY: verify extraction] / [TARGET: verify design]
+- **Legacy spec**: Verify all business logic was extracted from code with evidence
+- **Target spec**: Verify design covers all preserved logic plus enhancements
+
+Use this checklist to validate specification completeness before handoff.
+
+### 24.1 Document Quality
+
+| Check | Status | Notes |
+|-------|--------|-------|
+| All sections complete (no TODO/TBD) | [ ] | |
+| All placeholders replaced with actual content | [ ] | |
+| All cross-references valid | [ ] | |
+| All code references verified (file:line exists) | [ ] | |
+| All tables properly formatted | [ ] | |
+| All diagrams render correctly | [ ] | |
+
+### 24.2 Content Completeness
+
+| Section | Min Items | Actual | Verified |
+|---------|-----------|--------|----------|
+| Use Cases (Section 4) | 5+ | <<N>> | [ ] |
+| User Stories (Section 5) | 10+ | <<N>> | [ ] |
+| Business Logic Rules (Section 6) | 10+ | <<N>> | [ ] |
+| State Machines (Section 7) | 1+ | <<N>> | [ ] |
+| Configuration Behaviors (Section 8) | 5+ | <<N>> | [ ] |
+| Functional Requirements (Section 10) | 10+ | <<N>> | [ ] |
+| Error Handling Patterns (Section 13) | 5+ | <<N>> | [ ] |
+| Integration Points (Section 17) | 1+ | <<N>> | [ ] |
+
+### 24.3 Traceability Validation
+
+- [ ] Every feature has at least one use case
+- [ ] Every use case has at least one user story
+- [ ] Every business rule has source code evidence
+- [ ] Every state machine has transition evidence
+- [ ] Traceability matrix (Section 21) is complete
+
+### 24.4 Stakeholder Readiness
+
+- [ ] Executive Summary readable by non-technical stakeholders
+- [ ] Business rules understandable by domain experts
+- [ ] Technical details sufficient for developers
+- [ ] Edge cases documented for QA team
+- [ ] Assumptions documented for product owner review
 
 ---
 
@@ -776,6 +1371,6 @@ C4Context
 This document serves as the "WHAT" for the modernization effort.
 <!-- Note: This template is used for BOTH functional-spec-legacy.md and functional-spec-target.md -->
 <!-- The corresponding technical spec depends on context: -->
-<!--   - functional-spec-legacy.md → technical-spec-legacy.md (current architecture) -->
-<!--   - functional-spec-target.md → technical-spec-target.md (target architecture) -->
+<!--   - functional-spec-legacy.md -> technical-spec-legacy.md (current architecture) -->
+<!--   - functional-spec-target.md -> technical-spec-target.md (target architecture) -->
 For "HOW" (architecture, target stack, migration), see the corresponding technical specification.

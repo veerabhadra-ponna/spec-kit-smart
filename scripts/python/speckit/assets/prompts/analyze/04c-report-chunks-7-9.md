@@ -24,7 +24,35 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 
 **CLI Utility Commands:**
 
-- `speckitadv write-report analysis-report.md --content '<md>' --append` - Append to report
+[!] **OS command line length limits apply (~8000 chars on Windows).**
+
+**IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
+
+```bash
+# ALWAYS use --append (creates if not exists, appends if exists)
+speckitadv write-report analysis-report.md --stage=04c-report-chunks-7-9 --append --content '<content>'
+```
+
+**For content > 2000 chars, use stdin mode:**
+
+```powershell
+@"
+<markdown content here>
+"@ | speckitadv write-report analysis-report.md --stage=04c-report-chunks-7-9 --append --stdin
+```
+
+---
+
+## [!] CRITICAL: File Write Policy
+
+**ALWAYS use CLI commands for file writes. NEVER use:**
+
+- Shell/PowerShell commands (`Out-File`, `Add-Content`, `echo >`, `cat <<`)
+- AI Write tools directly to the analysis folder
+- Any method that bypasses the CLI artifact tracking
+
+**Why:** CLI commands track artifacts in state.json for workflow continuity.
+Any file written outside the CLI will NOT be tracked and may cause issues.
 
 ---
 
@@ -39,7 +67,7 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 ## Chunk 7: Phase 5 - Upgrade Path Analysis
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_7]**
+[STOP: GENERATE_CHUNK_7]**
 
 **Append to report:**
 
@@ -86,16 +114,16 @@ Generate final chunks 7-9: Upgrade Paths, Modernization & Feasibility, and Final
 ```
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_7]**
+[STOP: VERIFY_CHUNK_7]**
 
-Output: `✓ Chunk 7/9: Upgrade Paths ({lines} lines)`
+Output: `[ok] Chunk 7/9: Upgrade Paths ({lines} lines)`
 
 ---
 
 ## Chunk 8: Phases 6-7 - Modernization & Feasibility
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_8]**
+[STOP: GENERATE_CHUNK_8]**
 
 **Append to report:**
 
@@ -131,7 +159,7 @@ Output: `✓ Chunk 7/9: Upgrade Paths ({lines} lines)`
 **Formula:**
 
 ```text
-Score = 100 - (Complexity × 10) + Abstraction Bonus
+Score = 100 - (Complexity x 10) + Abstraction Bonus
 
 Components:
   Complexity Factor: {score}/10
@@ -170,7 +198,7 @@ Score = 50 + Abstraction Penalty - (Feature Count / 10)
 
 ### 7.3 Hybrid Approach Feasibility
 
-**Score:** {score}% ⭐
+**Score:** {score}% *
 
 **Formula:**
 
@@ -187,16 +215,16 @@ Score = (Inline + Greenfield) / 2 + 10 (flexibility bonus)
 ```
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_8]**
+[STOP: VERIFY_CHUNK_8]**
 
-Output: `✓ Chunk 8/9: Modernization & Feasibility ({lines} lines)`
+Output: `[ok] Chunk 8/9: Modernization & Feasibility ({lines} lines)`
 
 ---
 
 ## Chunk 9: Phases 8-9 - Decision Matrix & Final Recommendations
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_9]**
+[STOP: GENERATE_CHUNK_9]**
 
 **Append to report:**
 
@@ -292,36 +320,38 @@ Output: `✓ Chunk 8/9: Modernization & Feasibility ({lines} lines)`
 ```
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_9]**
+[STOP: VERIFY_CHUNK_9]**
 
-Output: `✓ Chunk 9/9: Recommendations ({lines} lines)`
+Output: `[ok] Chunk 9/9: Recommendations ({lines} lines)`
 
 ---
 
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 04c-report-chunks-7-9
 
-  All 9 Chunks Generated ✓
+  All 9 Chunks Generated [ok]
   Total Report Lines: {count}
 
   Content:
-    Phase 5: Upgrade Paths ✓
-    Phase 6: Modernization ✓
-    Phase 7: Feasibility Scoring ✓
-    Phase 8: Decision Matrix ✓
-    Phase 9: Final Recommendations ✓
+    Phase 5: Upgrade Paths [ok]
+    Phase 6: Modernization [ok]
+    Phase 7: Feasibility Scoring [ok]
+    Phase 8: Decision Matrix [ok]
+    Phase 9: Final Recommendations [ok]
 
   Report: {reports_dir}/analysis-report.md
 
   Proceeding to Report Verification...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
 ---
+
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
 
 ## Next Substage
 

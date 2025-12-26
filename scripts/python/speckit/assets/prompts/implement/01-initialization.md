@@ -69,7 +69,7 @@ When writing code:
 
 ```text
 
-✓ Initialization complete
+[ok] Initialization complete
   - Role: Senior Engineer
   - Guidelines: [loaded / not found]
   - Profile: [corporate / personal]
