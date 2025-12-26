@@ -268,10 +268,22 @@ STAGE_COMPLETE:COMMON_ARTIFACTS
 
 **[AUTO-CONTINUE]** Immediately proceed to next stage based on scope. Do NOT wait for user input.
 
-## Next Stage (Conditional)
+## Next Stage (MANDATORY - Do NOT skip)
 
-**IF** `analysis_scope = "A"`:
-  Proceed to: **06a-functional-spec-legacy.md**
+**CRITICAL: This is NOT the final stage. You MUST continue to Stage 6.**
 
-**IF** `analysis_scope = "B"`:
-  Proceed to: **06e-cross-cutting-artifacts.md**
+1. Read `{analysis_dir}/state.json`
+2. Check the `analysis_scope` field value
+3. Load and execute the next prompt:
+
+**IF** `analysis_scope = "A"` (Full Application Modernization):
+
+- **Load and execute:** `06a-functional-spec-legacy.md`
+- Stage 6A generates: Functional specs (legacy + target) and Technical specs
+
+**IF** `analysis_scope = "B"` (Cross-Cutting Concern):
+
+- **Load and execute:** `06e-cross-cutting-artifacts.md`
+- Stage 6E generates: Abstraction assessment, migration plan, rollback procedure
+
+**DO NOT** display "Analysis Complete" until Stage 6 is finished.
