@@ -13,7 +13,7 @@
 | **File Edit Fallback** | If inline edit fails: recreate with full content, preserve ALL comments, make ONLY required changes |
 | **Chain mkdir** | Use semicolon: `mkdir folderA; mkdir folderB` |
 | **Doc Updates** | Increment version, add CHANGELOG entry if `__init__.py` or `pyproject.toml` changed |
-| **Large Files** | >1500 lines → chunked generation (300-800 lines/chunk) |
+| **Large Files** | >1500 lines -> chunked generation (300-800 lines/chunk) |
 | **No Backward Compatibility** | System is pre-release; breaking changes are allowed. Do not add legacy mappings or compatibility shims. |
 
 ---
@@ -30,7 +30,7 @@
 |----|-------|
 | Stop & emit `CLARIFICATION NEEDED` when unclear | Commit secrets/API keys/credentials |
 | Follow Constitution at all times | Modify `memory/` during implementation |
-| Run formatters → linters → tests before commit | Add requirements not in specs |
+| Run formatters -> linters -> tests before commit | Add requirements not in specs |
 | Update spec first if issues found | Proceed when spec is unclear |
 
 **RFC 2119:** MUST/MUST NOT (mandatory), SHOULD/SHOULD NOT (recommended), MAY (optional)
@@ -69,6 +69,68 @@
 | `specify`, `plan`, `tasks`, `implement` | `specs/{feature}/.state/state.json` |
 
 **Usage:** After state created (stage 3+), just run `speckitadv <command>` - auto-detects stage/folder.
+
+### Rerunning Specific Stages (analyze-project)
+
+To rerun a specific stage (e.g., after fixing issues or with updated code):
+
+```bash
+# Force a specific stage number
+speckitadv analyze-project --stage=<number> --analysis-dir=<path>
+```
+
+**Stage Reference:**
+
+| Stage | ID | Description | Rerun Command |
+|-------|-----|-------------|---------------|
+| 1 | 01a-initialization | Setup | `--stage=1` |
+| 2 | 01b-input-collection | Input collection | `--stage=2` |
+| 3 | 01c-script-execution | Script execution | `--stage=3` |
+| 4 | 02a-category-scan | Category scan | `--stage=4` |
+| 5 | 02b-deep-dive | Deep dive analysis | `--stage=5` |
+| 6 | 02c-config-analysis | Config analysis | `--stage=6` |
+| 7 | 02d-test-audit | Test audit | `--stage=7` |
+| 8 | 02e-quality-gates | Quality gates | `--stage=8` |
+| 9 | 03a-full-app | Full app analysis (Scope A) | `--stage=9 --chunk=1..4` |
+| 10 | 03b-cross-cutting | Cross-cutting (Scope B) | `--stage=10 --chunk=1..3` |
+| 11 | 04a-report-chunks-1-3 | Report chunks 1-3 | `--stage=11` |
+| 12 | 04b-report-chunks-4-6 | Report chunks 4-6 | `--stage=12` |
+| 13 | 04c-report-chunks-7-9 | Report chunks 7-9 | `--stage=13` |
+| 14 | 04d-report-verification | Report verification | `--stage=14` |
+| 15 | 05a-executive-summary | Scoped artifacts | `--stage=15` |
+| 16 | 06a-06e | Specs generation | `--stage=16 --chunk=1..5` |
+
+**Chunked Stages (Stage 16 - Scope A):**
+
+```bash
+# Functional Spec - Legacy
+speckitadv analyze-project --stage=16 --chunk=1
+
+# Functional Spec - Target
+speckitadv analyze-project --stage=16 --chunk=2
+
+# Technical Spec - Legacy
+speckitadv analyze-project --stage=16 --chunk=3
+
+# Technical Spec - Target
+speckitadv analyze-project --stage=16 --chunk=4
+
+# Stage Prompts
+speckitadv analyze-project --stage=16 --chunk=5
+```
+
+**Chunked Stages (Stage 16 - Scope B):**
+
+```bash
+# Cross-cutting Artifacts
+speckitadv analyze-project --stage=16 --chunk=1
+```
+
+**Example - Rerun Scoped Artifacts Stage:**
+
+```bash
+speckitadv analyze-project --stage=15 --analysis-dir=.analysis/myproject-20251226-123456
+```
 
 ---
 
@@ -304,10 +366,10 @@ Feature-scoped workflows (specify, plan, tasks, implement, checklist) use AI Wri
 
 | Workflow | Chunking Strategy |
 |----------|-------------------|
-| `specify` | Steps 3-6 are pre-chunked (Overview → Stories → Requirements → Technical) |
-| `plan` | Chunks 1-3 (Summary → Architecture → Data) |
-| `tasks` | By phase (Setup → Foundational → User Stories → Polish) |
-| `checklist` | By quality dimension (Completeness → Clarity → Coverage) |
+| `specify` | Steps 3-6 are pre-chunked (Overview -> Stories -> Requirements -> Technical) |
+| `plan` | Chunks 1-3 (Summary -> Architecture -> Data) |
+| `tasks` | By phase (Setup -> Foundational -> User Stories -> Polish) |
+| `checklist` | By quality dimension (Completeness -> Clarity -> Coverage) |
 | `implement` | Write file skeleton, then fill methods incrementally |
 
 **Shell Command Warning:**
@@ -353,13 +415,13 @@ Do NOT stop and ask "should I continue?" between stages. Follow the continuation
 
 ## Document Structure
 
-**Priority (Highest→Lowest):**
+**Priority (Highest->Lowest):**
 1. Constitution - Immutable project principles
 2. Spec - Requirements (WHAT/WHY)
 3. Plan - Architecture (HOW)
 4. Supporting Docs - data-model > contracts > research > quickstart > tasks
 
-**Conflict:** STOP → `CLARIFICATION NEEDED` (cite sections) → WAIT
+**Conflict:** STOP -> `CLARIFICATION NEEDED` (cite sections) -> WAIT
 
 ---
 
@@ -415,7 +477,7 @@ Do NOT stop and ask "should I continue?" between stages. Follow the continuation
 
 ### Pre-Commit (MUST run)
 
-Formatters → Linters → Type checkers → Build verification
+Formatters -> Linters -> Type checkers -> Build verification
 
 ### Testing
 
@@ -433,11 +495,11 @@ Gate fail = BLOCKER. Requires plan.md "Complexity Tracking" justification.
 
 | Trigger | Response | Recovery |
 |---------|----------|----------|
-| Spec ambiguous | STOP, CLARIFICATION NEEDED, WAIT | Human updates spec → resume |
+| Spec ambiguous | STOP, CLARIFICATION NEEDED, WAIT | Human updates spec -> resume |
 | Constitution conflict | STOP, FLAG, WAIT | Human updates spec OR adds justification |
 | Test fail (obvious) | Auto-fix max 2× | Fix + retest |
 | Test fail (logic) | Mark [F], WAIT | Human diagnosis |
-| Missing file | SEARCH similar → CLARIFICATION NEEDED | Human confirms |
+| Missing file | SEARCH similar -> CLARIFICATION NEEDED | Human confirms |
 
 ---
 
@@ -448,7 +510,7 @@ Gate fail = BLOCKER. Requires plan.md "Complexity Tracking" justification.
 - Atomic commits (1 story/scenario)
 - Commit after validation passes
 - Work on feature branch `[###-feature-name]`
-- Merge conflicts: git abort → REPORT → WAIT
+- Merge conflicts: git abort -> REPORT -> WAIT
 
 ### Change Communication
 
