@@ -92,30 +92,100 @@ AGENT_SETTINGS_CONFIG = {
 def load_approve_list() -> list[str]:
     """Load shared approve patterns from approve-list.json."""
     approve_file = get_assets_base() / "templates" / "approve-list.json"
-    if approve_file.exists():
-        try:
-            data = json.loads(approve_file.read_text(encoding="utf-8"))
-            return data.get("patterns", [])
-        except (json.JSONDecodeError, KeyError):
-            pass
-    return []
+    if not approve_file.exists():
+        console.print(f"[yellow]Warning: Approve list not found: {approve_file}[/yellow]")
+        return []
+    try:
+        data = json.loads(approve_file.read_text(encoding="utf-8"))
+        patterns = data.get("patterns", [])
+        if not patterns:
+            console.print(f"[yellow]Warning: No patterns found in {approve_file}[/yellow]")
+        return patterns
+    except json.JSONDecodeError as e:
+        console.print(f"[red]Error: Failed to parse approve list: {e}[/red]")
+        return []
 
 
 def load_agent_specific_permissions(agent: str) -> list[str]:
     """Load agent-specific permissions from template file."""
     template_file = get_assets_base() / "templates" / f"{agent}-settings.json"
-    if template_file.exists():
-        try:
-            data = json.loads(template_file.read_text(encoding="utf-8"))
-            # Claude format: permissions.allow
-            if "permissions" in data and "allow" in data["permissions"]:
-                return data["permissions"]["allow"]
-        except (json.JSONDecodeError, KeyError):
-            pass
-    return []
+    if not template_file.exists():
+        # Not an error - agent-specific templates are optional
+        return []
+    try:
+        data = json.loads(template_file.read_text(encoding="utf-8"))
+        # Claude format: permissions.allow
+        if "permissions" in data and "allow" in data["permissions"]:
+            return data["permissions"]["allow"]
+        return []
+    except json.JSONDecodeError as e:
+        console.print(f"[red]Error: Failed to parse {agent} settings template: {e}[/red]")
+        return []
 
 
-def generate_agent_settings(agent_format: str, patterns: list[str], agent_permissions: list[str]) -> str:
+def extract_command_names(patterns: list[str]) -> set[str]:
+    """Extract unique command names from patterns for wildcard format.
+
+    Examples:
+        "git status" → "git"
+        "git *" → "git"
+        "docker-compose" → "docker-compose"
+        "speckitadv" → "speckitadv"
+    """
+    commands = set()
+    for pattern in patterns:
+        if not pattern or pattern.strip() == "*":
+            continue
+        # Get first word (the command name)
+        cmd = pattern.split()[0].rstrip("*").strip()
+        if cmd:
+            commands.add(cmd)
+    return commands
+
+
+def extract_existing_permissions(content: str, agent_format: str) -> list[str]:
+    """Extract existing permissions from an agent config file.
+
+    Args:
+        content: JSON content of existing config file
+        agent_format: The format identifier (claude, vscode, etc.)
+
+    Returns:
+        List of existing permission patterns
+    """
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError:
+        return []
+
+    if agent_format == "claude":
+        return data.get("permissions", {}).get("allow", [])
+    elif agent_format == "vscode":
+        return list(data.get("chat.tools.terminal.autoApprove", {}).keys())
+    elif agent_format == "cursor":
+        return data.get("terminalCommands", {}).get("allowedCommands", [])
+    elif agent_format == "windsurf":
+        return data.get("cascade.allowedCommands", [])
+    elif agent_format == "gemini":
+        return data.get("allowedShellCommands", [])
+    elif agent_format == "auggie":
+        return data.get("cli", {}).get("approvedCommands", [])
+    elif agent_format == "roo":
+        return data.get("terminal", {}).get("autoApprove", [])
+    elif agent_format == "kilocode":
+        return data.get("commands", {}).get("approved", [])
+    elif agent_format == "amazonq":
+        return data.get("shell", {}).get("approvedCommands", [])
+    else:
+        return data.get("approvedCommands", [])
+
+
+def generate_agent_settings(
+    agent_format: str,
+    patterns: list[str],
+    agent_permissions: list[str],
+    existing_permissions: list[str] | None = None,
+) -> str:
     """
     Generate agent-specific settings JSON with auto-approve patterns.
 
@@ -123,13 +193,18 @@ def generate_agent_settings(agent_format: str, patterns: list[str], agent_permis
         agent_format: The format identifier (claude, vscode, cursor, etc.)
         patterns: Shared approve patterns from approve-list.json
         agent_permissions: Agent-specific permissions (Skills, etc.)
+        existing_permissions: Existing permissions to merge (preserve user customizations)
 
     Returns:
         JSON string with agent-specific structure
     """
+    existing = existing_permissions or []
+
     if agent_format == "vscode":
         # VS Code Copilot: {"chat.tools.terminal.autoApprove": {"cmd": true}}
-        auto_approve = {pattern: True for pattern in patterns}
+        # VS Code does NOT support wildcards - must use exact patterns
+        all_patterns = list(set(patterns + existing))
+        auto_approve = {pattern: True for pattern in sorted(all_patterns)}
         settings = {
             "chat.tools.terminal.autoApprove": auto_approve,
             "terminal.integrated.allowChords": False,
@@ -138,59 +213,77 @@ def generate_agent_settings(agent_format: str, patterns: list[str], agent_permis
 
     elif agent_format == "claude":
         # Claude: {"permissions": {"allow": ["Bash(cmd:*)", "Skill(name)"]}}
+        # Claude supports wildcards - use Bash(cmd:*) format for compact list
         all_permissions = list(agent_permissions)
-        for pattern in patterns:
-            if " " in pattern or "*" in pattern:
-                bash_perm = f"Bash({pattern})"
-            else:
-                bash_perm = f"Bash({pattern}:*)"
+
+        # Add existing permissions (preserve user customizations)
+        for perm in existing:
+            if perm not in all_permissions:
+                all_permissions.append(perm)
+
+        # Extract unique command names and add as Bash(cmd:*) wildcards
+        commands = extract_command_names(patterns)
+        for cmd in sorted(commands):
+            bash_perm = f"Bash({cmd}:*)"
             if bash_perm not in all_permissions:
                 all_permissions.append(bash_perm)
+
         settings = {"permissions": {"allow": all_permissions}}
 
     elif agent_format == "cursor":
         # Cursor: {"terminalCommands": {"allowedCommands": ["cmd"]}}
-        settings = {"terminalCommands": {"allowedCommands": patterns}}
+        all_patterns = list(set(patterns + existing))
+        settings = {"terminalCommands": {"allowedCommands": sorted(all_patterns)}}
 
     elif agent_format == "windsurf":
         # Windsurf: {"cascade.allowedCommands": ["cmd"]}
-        settings = {"cascade.allowedCommands": patterns}
+        all_patterns = list(set(patterns + existing))
+        settings = {"cascade.allowedCommands": sorted(all_patterns)}
 
     elif agent_format == "gemini":
         # Gemini: {"allowedShellCommands": ["cmd"]}
-        settings = {"allowedShellCommands": patterns}
+        all_patterns = list(set(patterns + existing))
+        settings = {"allowedShellCommands": sorted(all_patterns)}
 
     elif agent_format == "auggie":
         # Auggie: {"cli": {"approvedCommands": ["cmd"]}}
-        settings = {"cli": {"approvedCommands": patterns}}
+        all_patterns = list(set(patterns + existing))
+        settings = {"cli": {"approvedCommands": sorted(all_patterns)}}
 
     elif agent_format == "roo":
         # Roo: {"terminal": {"autoApprove": ["cmd"]}}
-        settings = {"terminal": {"autoApprove": patterns}}
+        all_patterns = list(set(patterns + existing))
+        settings = {"terminal": {"autoApprove": sorted(all_patterns)}}
 
     elif agent_format == "kilocode":
         # Kilocode: {"commands": {"approved": ["cmd"]}}
-        settings = {"commands": {"approved": patterns}}
+        all_patterns = list(set(patterns + existing))
+        settings = {"commands": {"approved": sorted(all_patterns)}}
 
     elif agent_format == "amazonq":
         # Amazon Q: {"shell": {"approvedCommands": ["cmd"]}}
-        settings = {"shell": {"approvedCommands": patterns}}
+        all_patterns = list(set(patterns + existing))
+        settings = {"shell": {"approvedCommands": sorted(all_patterns)}}
 
     else:
         # Fallback: simple array format
-        settings = {"approvedCommands": patterns}
+        all_patterns = list(set(patterns + existing))
+        settings = {"approvedCommands": sorted(all_patterns)}
 
     return json.dumps(settings, indent=2)
 
 
 def create_agent_settings(project_path: Path, agent: str, force: bool = False) -> bool:
     """
-    Create agent-specific settings file with auto-approve patterns.
+    Create or update agent-specific settings file with auto-approve patterns.
+
+    If file exists, merges new patterns with existing permissions (preserves user customizations).
+    If file doesn't exist, creates new file with all patterns.
 
     Args:
         project_path: Path to project directory
         agent: AI agent identifier
-        force: Overwrite existing files
+        force: Overwrite existing files completely (don't merge)
 
     Returns:
         True if file was created/updated
@@ -202,22 +295,88 @@ def create_agent_settings(project_path: Path, agent: str, force: bool = False) -
     target_dir = project_path / config["dir"]
     target_file = target_dir / config["file"]
 
-    if target_file.exists() and not force:
-        return False
-
     # Load shared patterns from approve-list.json
     patterns = load_approve_list()
 
     # Load agent-specific permissions (e.g., Claude Skills)
     agent_permissions = load_agent_specific_permissions(agent)
 
-    # Generate settings with agent-specific JSON structure
-    content = generate_agent_settings(config["format"], patterns, agent_permissions)
+    # Check for existing permissions to merge
+    existing_permissions: list[str] = []
+    if target_file.exists() and not force:
+        try:
+            existing_content = target_file.read_text(encoding="utf-8")
+            existing_permissions = extract_existing_permissions(existing_content, config["format"])
+            if existing_permissions:
+                console.print(f"[cyan]Merging with existing {config['dir']}/{config['file']} ({len(existing_permissions)} patterns)[/cyan]")
+        except (OSError, IOError) as e:
+            console.print(f"[yellow]Warning: Could not read existing config: {e}[/yellow]")
+
+    # Generate settings with agent-specific JSON structure (merging existing)
+    content = generate_agent_settings(config["format"], patterns, agent_permissions, existing_permissions)
 
     # Write settings file
     target_dir.mkdir(exist_ok=True)
     target_file.write_text(content, encoding="utf-8")
-    console.print(f"[green]Generated {config['dir']}/{config['file']} with auto-approve patterns[/green]")
+
+    if existing_permissions:
+        console.print(f"[green]Updated {config['dir']}/{config['file']} with merged auto-approve patterns[/green]")
+    else:
+        console.print(f"[green]Generated {config['dir']}/{config['file']} with auto-approve patterns[/green]")
+
+    return True
+
+
+# Gitignore rules for agent-specific settings directories
+AGENT_GITIGNORE_RULES = {
+    "claude": (".claude/*", "!.claude/settings.local.json"),
+    "copilot": (".vscode/*", "!.vscode/settings.json"),
+    "cursor-agent": (".cursor/*", "!.cursor/settings.json"),
+    "windsurf": (".windsurf/*", "!.windsurf/settings.json"),
+    "gemini": (".gemini/*", "!.gemini/settings.json"),
+    "auggie": (".augment/*", "!.augment/settings.json"),
+    "roo": (".roo/*", "!.roo/settings.json"),
+    "kilocode": (".kilocode/*", "!.kilocode/settings.json"),
+    "q": (".amazonq/*", "!.amazonq/settings.json"),
+}
+
+
+def ensure_gitignore_rules(project_path: Path, agent: str) -> bool:
+    """
+    Ensure agent-specific gitignore rules exist in .gitignore.
+
+    If .gitignore exists but lacks the rules, appends them.
+    Does nothing if .gitignore doesn't exist (will be created with full content elsewhere).
+
+    Args:
+        project_path: Path to project directory
+        agent: AI agent identifier
+
+    Returns:
+        True if rules were added
+    """
+    gitignore_file = project_path / ".gitignore"
+    rules = AGENT_GITIGNORE_RULES.get(agent)
+
+    if not rules or not gitignore_file.exists():
+        return False
+
+    try:
+        current = gitignore_file.read_text(encoding="utf-8")
+    except (OSError, IOError):
+        return False
+
+    # Check which rules are missing
+    missing_rules = [r for r in rules if r not in current]
+
+    if not missing_rules:
+        return False
+
+    # Append missing rules
+    addition = f"\n# {agent.title()} agent settings\n" + "\n".join(missing_rules) + "\n"
+    new_content = current.rstrip() + "\n" + addition
+    gitignore_file.write_text(new_content, encoding="utf-8")
+    console.print(f"[yellow]Updated .gitignore with {agent} rules[/yellow]")
     return True
 
 
@@ -445,7 +604,7 @@ def create_project_structure(
     if agent != "copilot":
         create_agent_settings(project_path, "copilot", force)
 
-    # Create basic .gitignore
+    # Create or update .gitignore
     gitignore_file = project_path / ".gitignore"
     if not gitignore_file.exists():
         gitignore_content = """# Spec Kit Smart
@@ -458,13 +617,34 @@ Thumbs.db
 
 # IDE
 .idea/
+*.swp
+
+# Agent settings (ignore all except approved settings files)
 .vscode/*
 !.vscode/settings.json
 .claude/*
 !.claude/settings.local.json
-*.swp
+.cursor/*
+!.cursor/settings.json
+.windsurf/*
+!.windsurf/settings.json
+.gemini/*
+!.gemini/settings.json
+.augment/*
+!.augment/settings.json
+.roo/*
+!.roo/settings.json
+.kilocode/*
+!.kilocode/settings.json
+.amazonq/*
+!.amazonq/settings.json
 """
         gitignore_file.write_text(gitignore_content, encoding="utf-8")
+    else:
+        # .gitignore exists - ensure agent-specific rules are present
+        ensure_gitignore_rules(project_path, agent)
+        if agent != "copilot":
+            ensure_gitignore_rules(project_path, "copilot")
 
     # Initialize git if requested
     if not no_git:

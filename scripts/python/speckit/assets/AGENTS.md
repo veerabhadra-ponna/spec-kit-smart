@@ -157,18 +157,52 @@ speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
 
 ### Shell Quote Escaping
 
-**CRITICAL:** Avoid single quotes in heredoc content that will be passed to bash.
+**CRITICAL:** JSON content with quotes causes shell parsing errors like `unexpected EOF while looking for matching '"'`.
+
+#### JSON in write-data Commands
+
+**WRONG - causes shell quote errors:**
+
+```bash
+# Single quotes around JSON with internal quotes breaks bash
+speckitadv write-data file.json --content '{"key": "value"}'
+# Error: unexpected EOF while looking for matching `"'
+```
+
+**CORRECT - use stdin mode for JSON (recommended):**
+
+```bash
+# Bash - heredoc with stdin
+cat << 'EOF' | speckitadv write-data file.json --stage=02e --stdin
+{"quality_gates": {"file_coverage": true, "execution": "complete"}}
+EOF
+
+# PowerShell - here-string with stdin
+@"
+{"quality_gates": {"file_coverage": true, "execution": "complete"}}
+"@ | speckitadv write-data file.json --stage=02e --stdin
+```
+
+**CORRECT - escape quotes for simple JSON:**
+
+```bash
+# Use backslash escapes for short, simple JSON
+speckitadv write-data file.json --stage=02e --content "{\"key\": \"value\"}"
+```
+
+#### General Quote Rules
 
 | Problem | Solution |
 |---------|----------|
-| Python: `open('file.json')` in heredoc | Use double quotes: `open("file.json")` |
-| JSON with apostrophes | Escape or use stdin mode |
-| Nested quotes | Use `$'...'` syntax or temp file |
+| JSON with quotes | Use stdin mode (heredoc/here-string) |
+| Python: `open('file.json')` | Use double quotes: `open("file.json")` |
+| Complex nested quotes | Always use stdin mode |
+| Content > 2000 chars | Always use stdin mode |
 
-**Example Error:**
+**Example Python heredoc error:**
 
 ```bash
-# WRONG - single quotes cause "unexpected EOF"
+# WRONG - single quotes in Python break bash
 python3 << 'PYEOF'
 with open('file.json', 'w') as f:  # <-- These quotes break bash
 PYEOF
