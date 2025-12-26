@@ -65,7 +65,7 @@ def _display_defaults() -> None:
     for category, principles in DEFAULT_PRINCIPLES.items():
         console.print(f"  [bold yellow]{category}:[/bold yellow]")
         for name, desc in principles:
-            console.print(f"    [green]✓[/green] [bold]{name}[/bold] - {desc}")
+            console.print(f"    [green][ok][/green] [bold]{name}[/bold] - {desc}")
         console.print()
 
 

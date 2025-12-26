@@ -360,7 +360,7 @@ def orchestrate(
                     console.print(f"Run: speckitadv {prompt}")
                     return
                 else:
-                    console.print(f"[green]✓[/green] Feature {folder_path.name} is complete!")
+                    console.print(f"[green][ok][/green] Feature {folder_path.name} is complete!")
                     return
         except FileNotFoundError:
             if feature_dir:
@@ -432,7 +432,7 @@ def resume(
     console.print("[bold]Prompt Status:[/bold]")
     for p in ["specify", "plan", "tasks", "implement"]:
         p_state = getattr(state, p)
-        status_icon = {"pending": "⏳", "in_progress": "🔄", "completed": "✓"}
+        status_icon = {"pending": "[-]", "in_progress": "[~]", "completed": "[ok]"}
         icon = status_icon.get(p_state.status, "?")
         stage_info = f" (stage {p_state.current_stage})" if p_state.current_stage else ""
         console.print(f"  {icon} {p}: {p_state.status}{stage_info}")
@@ -444,7 +444,7 @@ def resume(
         # CLI auto-detects stage and feature-dir from state
         console.print(f"Run: speckitadv {prompt}")
     else:
-        console.print("[green]✓ All prompts completed![/green]")
+        console.print("[green][ok] All prompts completed![/green]")
         console.print("")
         console.print("Next steps:")
         console.print("  1. Review implementation")
@@ -671,7 +671,7 @@ def list_fragments_cmd(
 
     for stage in ordered:
         lines = count_fragment_lines(command, stage)
-        status = "[green]✓[/green]" if lines > 0 else "[red]✗[/red]"
+        status = "[green][ok][/green]" if lines > 0 else "[red][x][/red]"
         console.print(f"  {status} {stage} ({lines} lines)")
 
     console.print(f"\n[dim]Total: {len(fragments)} fragments[/dim]\n")
@@ -845,7 +845,7 @@ def enumerate_project_cmd(
         import json
         print(json.dumps(manifest, indent=2))
     else:
-        console.print(f"[green]✓[/green] Manifest saved to {output}")
+        console.print(f"[green][ok][/green] Manifest saved to {output}")
         console.print(f"  Total files: {manifest['statistics']['total_files']}")
 
 
@@ -929,7 +929,7 @@ def write_data_cmd(
 
     # Write file
     file_path = state_manager.write_data(filename, file_content, stage)
-    console.print(f"[green]✓[/green] Written: {file_path}")
+    console.print(f"[green][ok][/green] Written: {file_path}")
 
 
 @app.command("write-report")
@@ -996,7 +996,7 @@ def write_report_cmd(
     # Write file
     file_path = state_manager.write_report(filename, file_content, append=append, stage=stage)
     mode = "Appended" if append else "Written"
-    console.print(f"[green]✓[/green] {mode}: {file_path}")
+    console.print(f"[green][ok][/green] {mode}: {file_path}")
 
 
 @app.command("update-stage")
@@ -1040,7 +1040,7 @@ def update_stage_cmd(
 
     # Update stage
     state_manager.update_stage(stage_id, status, artifacts=artifact_list if artifact_list else None)
-    console.print(f"[green]✓[/green] Stage {stage_id} → {status}")
+    console.print(f"[green][ok][/green] Stage {stage_id} → {status}")
     if artifact_list:
         for artifact in artifact_list:
             console.print(f"    + {artifact}")
@@ -1116,7 +1116,7 @@ def update_preferences_cmd(
 
     state_manager = AnalysisStateManager(folder)
     state_manager.update_modernization_preferences(prefs)
-    console.print(f"[green]✓[/green] Modernization preferences updated")
+    console.print(f"[green][ok][/green] Modernization preferences updated")
     for key, value in prefs.items():
         console.print(f"    {key}: {value}")
 

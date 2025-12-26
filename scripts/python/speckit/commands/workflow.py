@@ -153,7 +153,7 @@ def run_setup_plan(
                 )
 
             impl_plan.write_text(content, encoding="utf-8")
-            console.print(f"[green]✓[/green] Copied plan template to {impl_plan}")
+            console.print(f"[green][ok][/green] Copied plan template to {impl_plan}")
         except FileNotFoundError:
             console.print("[yellow]Warning:[/yellow] Plan template not found")
             impl_plan.touch()
@@ -302,7 +302,7 @@ def update_agent_file(
             content = content.replace("[LAST 3 FEATURES AND WHAT THEY ADDED]", recent)
 
             target_file.write_text(content, encoding="utf-8")
-            console.print(f"[green]✓[/green] Created new {agent_name} context file")
+            console.print(f"[green][ok][/green] Created new {agent_name} context file")
         else:
             # Create minimal file
             content = f"""# {agent_name} Context
@@ -318,7 +318,7 @@ def update_agent_file(
 - {branch}: Added {tech_stack if tech_stack else 'initial setup'}
 """
             target_file.write_text(content, encoding="utf-8")
-            console.print(f"[green]✓[/green] Created minimal {agent_name} context file")
+            console.print(f"[green][ok][/green] Created minimal {agent_name} context file")
 
         return True
 
@@ -400,7 +400,7 @@ def update_agent_file(
         new_lines.append(line)
 
     target_file.write_text("".join(new_lines), encoding="utf-8")
-    console.print(f"[green]✓[/green] Updated {agent_name} context file")
+    console.print(f"[green][ok][/green] Updated {agent_name} context file")
     return True
 
 
@@ -489,8 +489,8 @@ def run_update_agent_context(agent_type: Optional[str] = None) -> bool:
 
     console.print()
     if success:
-        console.print("[green]✓[/green] Agent context update completed")
+        console.print("[green][ok][/green] Agent context update completed")
     else:
-        console.print("[red]✗[/red] Agent context update completed with errors")
+        console.print("[red][x][/red] Agent context update completed with errors")
 
     return success

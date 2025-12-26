@@ -528,12 +528,12 @@ def run_create_feature(
     if output_json:
         print(json.dumps(result))
     else:
-        console.print(f"[green]✓[/green] Created feature folder: {feature_dir}")
+        console.print(f"[green][ok][/green] Created feature folder: {feature_dir}")
         console.print(f"  Branch: {branch_name}")
         console.print(f"  State: {state_file}")
 
         if branch_created:
-            console.print(f"  [green]✓[/green] {branch_message}")
+            console.print(f"  [green][ok][/green] {branch_message}")
         elif not no_branch and branch_message:
             console.print(f"  [yellow]![/yellow] {branch_message}")
 

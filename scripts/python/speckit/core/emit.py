@@ -13,9 +13,10 @@ from rich.text import Text
 console = Console()
 
 # Box drawing characters for consistent output
-BOX_TOP = "┌" + "─" * 66 + "┐"
-BOX_BOTTOM = "└" + "─" * 66 + "┘"
-BOX_SIDE = "│"
+# Using ASCII characters for Windows compatibility (cp1252 encoding)
+BOX_TOP = "+" + "-" * 66 + "+"
+BOX_BOTTOM = "+" + "-" * 66 + "+"
+BOX_SIDE = "|"
 
 
 def _wrap_content(content: str, width: int = 64) -> list[str]:

@@ -205,7 +205,7 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
             # Write the template content
             dest_path.write_text(template_content, encoding="utf-8")
 
-            return f"✓ Template copied: `{dest_path}`"
+            return f"[ok] Template copied: `{dest_path}`"
         except FileNotFoundError:
             if strict:
                 missing_templates.append(template_path)

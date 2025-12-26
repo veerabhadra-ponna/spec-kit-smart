@@ -34,14 +34,14 @@ def collect_specify_input() -> tuple[Optional[str], Optional[str]]:
     console.print("  FEATURE: <your description> (required)")
 
     console.print("\n[bold]Good feature descriptions:[/bold]")
-    console.print('  [green]✓[/green] "Add user authentication with email/password and OAuth2"')
-    console.print('  [green]✓[/green] "Create analytics dashboard showing user signups and revenue"')
-    console.print('  [green]✓[/green] "Implement CSV export for transaction history"')
+    console.print('  [green][ok][/green] "Add user authentication with email/password and OAuth2"')
+    console.print('  [green][ok][/green] "Create analytics dashboard showing user signups and revenue"')
+    console.print('  [green][ok][/green] "Implement CSV export for transaction history"')
 
     console.print("\n[bold]Bad feature descriptions (too vague):[/bold]")
-    console.print('  [red]✗[/red] "Make it better"')
-    console.print('  [red]✗[/red] "Add security"')
-    console.print('  [red]✗[/red] "Improve UI"\n')
+    console.print('  [red][x][/red] "Make it better"')
+    console.print('  [red][x][/red] "Add security"')
+    console.print('  [red][x][/red] "Improve UI"\n')
 
     # Collect JIRA
     jira = Prompt.ask(
