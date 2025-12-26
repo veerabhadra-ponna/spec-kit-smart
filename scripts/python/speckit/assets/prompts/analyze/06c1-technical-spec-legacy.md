@@ -905,6 +905,9 @@ ARTIFACT_COMPLETE:TECHNICAL_SPEC_LEGACY
 
 ---
 
+**[GATE-CHECK]** If verification PASSES: auto-continue to next stage.
+If verification FAILS: present recovery options and WAIT for user decision.
+
 ## Next Stage
 
 Run: `speckitadv analyze-project`

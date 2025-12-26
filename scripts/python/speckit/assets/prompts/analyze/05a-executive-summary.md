@@ -266,6 +266,8 @@ STAGE_COMPLETE:COMMON_ARTIFACTS
 
 ---
 
+**[AUTO-CONTINUE]** Immediately proceed to next stage based on scope. Do NOT wait for user input.
+
 ## Next Stage (Conditional)
 
 **IF** `analysis_scope = "A"`:

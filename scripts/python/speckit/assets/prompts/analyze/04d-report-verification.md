@@ -160,6 +160,9 @@ STAGE_COMPLETE:REPORT_GENERATION
 
 ---
 
+**[GATE-CHECK]** If verification PASSES: auto-continue to next stage.
+If verification FAILS: present recovery options and WAIT for user decision.
+
 ## Next Stage
 
 Run: `speckitadv analyze-project`

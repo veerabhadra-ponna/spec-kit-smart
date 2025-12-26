@@ -346,6 +346,8 @@ Generate Phase 2.2 content. Document services and business logic.
 
 ---
 
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
+
 ## Next Substage
 
 Run: `speckitadv analyze-project`

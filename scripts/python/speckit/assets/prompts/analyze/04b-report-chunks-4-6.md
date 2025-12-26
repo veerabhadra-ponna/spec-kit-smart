@@ -253,6 +253,8 @@ Output: `[ok] Chunk 6/9: Tech Debt ({debt_count} debt, {sec_count} security, {li
 
 ---
 
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
+
 ## Next Substage
 
 Run: `speckitadv analyze-project`

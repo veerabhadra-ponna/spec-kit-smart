@@ -57,10 +57,15 @@ FOR each sub-prompt in [01a, 01b, 01c, 02a, 02b, 02c, 02d, 02e, 03a1-4/03b1-3, 0
     2. AI runs PRE-CHECK -> Verify previous state exists and status = "complete"
     3. AI reads ENTIRE sub-prompt
     4. AI executes ALL instructions in sequence
-    5. AI STOPS at each [PAUSE] marker and WAITS
+    5. AI STOPS at each [STOP] marker:
+       - USER_INPUT_REQUIRED -> WAIT for user response
+       - Other markers -> Complete action, then AUTO-CONTINUE
     6. AI creates state JSON
     7. AI verifies state (read back, validate JSON)
-    8. AI proceeds to next sub-prompt
+    8. AI checks stage end marker:
+       - [AUTO-CONTINUE] -> Immediately proceed to next sub-prompt
+       - [WAIT-FOR-INPUT] -> Stop and wait for user
+       - [GATE-CHECK] -> If pass: continue. If fail: wait for user
 ENDFOR
 
 ```
@@ -144,6 +149,31 @@ Instructions here. Do NOT proceed until action is complete.
 | `[STOP: state_VERIFY]` | Verify state was saved | No |
 | `[STOP: GENERATE_CHUNK_N]` | Generate and verify chunk | No |
 | `[STOP: QUALITY_GATE]` | Verify quality criteria | No |
+
+### Continuation Behavior
+
+After completing a STOP marker action, the AI must follow the continuation rule:
+
+| Marker Type | Continuation Behavior |
+|-------------|----------------------|
+| `USER_INPUT_REQUIRED` | **WAIT** - Do not proceed until user responds |
+| `state_VERIFY` | **AUTO-CONTINUE** - Proceed immediately after verification |
+| `GENERATE_CHUNK_N` | **AUTO-CONTINUE** - Proceed immediately after generation |
+| `QUALITY_GATE` | **CONDITIONAL** - If PASS: auto-continue. If FAIL: wait for user |
+
+### Stage Completion Markers
+
+At the end of each stage/sub-prompt, use these markers:
+
+| Marker | Meaning | AI Action |
+|--------|---------|-----------|
+| `[AUTO-CONTINUE]` | No user input needed | Immediately load and execute next stage |
+| `[WAIT-FOR-INPUT]` | User must respond | Stop and wait for user response |
+| `[GATE-CHECK]` | Quality verification | If pass: continue. If fail: present options |
+
+**Default behavior:** If no marker specified at stage end, treat as `[AUTO-CONTINUE]`.
+
+**Critical:** Q&A stages (03a1, 03a2, 03a3) and input collection stages MUST use `[WAIT-FOR-INPUT]`.
 
 ### Why Visual Markers Work
 

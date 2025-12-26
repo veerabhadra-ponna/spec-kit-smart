@@ -475,6 +475,9 @@ STAGE_COMPLETE:FILE_ANALYSIS
 
 ---
 
+**[GATE-CHECK]** If ALL quality gates PASS: auto-continue to next stage based on scope.
+If ANY gate FAILS: present recovery options and WAIT for user decision.
+
 ## Next Stage (Conditional)
 
 **IF** `analysis_scope = "A"`:

@@ -347,6 +347,8 @@ STAGE_COMPLETE:FULL_APP_ANALYSIS
 
 ---
 
+**[AUTO-CONTINUE]** Immediately proceed to next stage. Do NOT wait for user input.
+
 ## Next Stage
 
 Run: `speckitadv analyze-project`

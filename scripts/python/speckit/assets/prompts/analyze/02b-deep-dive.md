@@ -491,6 +491,8 @@ speckitadv write-data deep-dive-patterns.json --stage=02b-deep-dive --append --c
 
 ---
 
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
+
 ## Next Substage
 
 Run: `speckitadv analyze-project`

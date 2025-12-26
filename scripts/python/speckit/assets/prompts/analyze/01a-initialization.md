@@ -87,6 +87,10 @@ speckitadv --version
 ===========================================================
 ```
 
+---
+
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
+
 ## Next Substage
 
 Run: `speckitadv analyze-project`

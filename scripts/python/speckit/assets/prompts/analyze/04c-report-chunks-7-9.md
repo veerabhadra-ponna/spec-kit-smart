@@ -351,6 +351,8 @@ Output: `[ok] Chunk 9/9: Recommendations ({lines} lines)`
 
 ---
 
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
+
 ## Next Substage
 
 Run: `speckitadv analyze-project`

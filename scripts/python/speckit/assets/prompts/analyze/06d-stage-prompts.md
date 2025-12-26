@@ -62,6 +62,8 @@ This is the ONLY exception to the CLI file write policy because:
 
 Create: `{analysis_dir}/stage-prompts/`
 
+**[AUTO-CONTINUE]** Generate all 4 prompts sequentially without waiting for user input between prompts.
+
 ---
 
 ## Prompt 1: Constitution Prompt

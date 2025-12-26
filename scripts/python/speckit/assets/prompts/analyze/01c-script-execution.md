@@ -208,6 +208,8 @@ After this stage, the analysis folder structure should be:
 
 ---
 
+**[AUTO-CONTINUE]** Immediately proceed to next stage. Do NOT wait for user input.
+
 ## Next Stage
 
 Run: `speckitadv analyze-project`

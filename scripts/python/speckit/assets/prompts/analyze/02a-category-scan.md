@@ -378,6 +378,8 @@ This saves to `{data_dir}/category-patterns.json` and will be used by subsequent
 
 ---
 
+**[AUTO-CONTINUE]** Immediately proceed to next substage. Do NOT wait for user input.
+
 ## Next Substage
 
 Run: `speckitadv analyze-project`

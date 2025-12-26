@@ -80,6 +80,8 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 ---
 
+**[AUTO-CONTINUE]** Generate all 3 artifacts sequentially without waiting for user input between artifacts.
+
 ## Load Concern Context
 
 From Stage 3B state, extract:
