@@ -106,7 +106,6 @@ Rationale:
 
 Alternative Considered: {alternative}
   Why Not: {reason}
-
 ```
 
 ---
@@ -381,7 +380,6 @@ Risk Assessment:
     }
   }
 }
-
 ```
 
 ---

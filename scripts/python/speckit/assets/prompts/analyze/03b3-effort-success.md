@@ -316,7 +316,6 @@ Save the complete cross-cutting analysis to the data folder using stdin mode:
     }
   }
 }
-
 ```
 
 ### Save State

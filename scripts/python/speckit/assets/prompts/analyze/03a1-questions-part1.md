@@ -98,7 +98,6 @@ Your choice: ___
 TIP: Type the letter (A-H) or specify your preference.
      Type "skip" to use current language.
 ════════════════════════════════════════════════════════════
-
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -117,7 +116,6 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -152,7 +150,6 @@ Your choice: ___
 TIP: Type the letter (A-H) or specify your preference.
      Type "skip" to use current database.
 ════════════════════════════════════════════════════════════
-
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -171,7 +168,6 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -206,7 +202,6 @@ Your choice: ___
 
 TIP: Type "skip" if async is not needed.
 ════════════════════════════════════════════════════════════
-
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -225,7 +220,6 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -271,7 +265,6 @@ Your choice: ___
 
 TIP: Type "skip" to use current build tool.
 ════════════════════════════════════════════════════════════
-
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -290,7 +283,6 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -325,7 +317,6 @@ Your choice: ___
 
 TIP: Type "skip" to use current deployment method.
 ════════════════════════════════════════════════════════════
-
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -344,7 +335,6 @@ Store user's choice in:
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -366,7 +356,6 @@ Store user's choice in:
 
   Proceeding to Questions 6-10...
 ═══════════════════════════════════════════════════════════
-
 ```
 
 ---

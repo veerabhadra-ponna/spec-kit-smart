@@ -115,7 +115,6 @@ TIP: Type "skip" to proceed without IaC.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -164,7 +163,6 @@ TIP: Type "skip" to use current approach.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -235,7 +233,6 @@ TIP: Type "skip" to determine based on deployment target.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -288,7 +285,6 @@ TIP: Type "skip" to keep current auth approach.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -342,7 +338,6 @@ TIP: Type "skip" to use current approach.
     "rationale": "{user's reason if provided}"
   }
 }
-
 ```
 
 ---
@@ -373,7 +368,6 @@ Merge all Q1-Q10 responses into modernization preferences:
     }
   }
 }
-
 ```
 
 ---

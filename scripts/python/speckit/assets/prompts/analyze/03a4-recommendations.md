@@ -149,7 +149,6 @@ ELSE:
     ]
   }
 }
-
 ```
 
 ---
@@ -303,7 +302,6 @@ Merge all Stage 3A data into comprehensive state:
     "success_criteria": ["{list}"]
   }
 }
-
 ```
 
 ### Save State

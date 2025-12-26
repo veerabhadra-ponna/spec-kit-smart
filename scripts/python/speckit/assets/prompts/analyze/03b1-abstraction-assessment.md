@@ -146,7 +146,6 @@ Abstraction Patterns Found:
 
 Abstraction Issues:
   ✗ {negative patterns with file:line}
-
 ```
 
 ---
@@ -280,7 +279,6 @@ High-Impact Files (top 10):
     }
   }
 }
-
 ```
 
 ---
