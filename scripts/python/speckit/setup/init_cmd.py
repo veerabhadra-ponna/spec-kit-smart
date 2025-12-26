@@ -4,6 +4,7 @@ Project initialization command for speckitadv.
 Creates project structure with embedded launchers - no network required.
 """
 
+import json
 import os
 import shutil
 import subprocess
@@ -26,6 +27,198 @@ from speckit.setup.config import (
 )
 
 console = Console()
+
+
+# Agent-specific config file paths and formats
+# Each agent has different settings file location and JSON structure for approve lists
+AGENT_SETTINGS_CONFIG = {
+    "claude": {
+        "dir": ".claude",
+        "file": "settings.local.json",
+        "format": "claude",
+        # Structure: {"permissions": {"allow": ["Bash(cmd:*)", "Skill(name)"]}}
+    },
+    "copilot": {
+        "dir": ".vscode",
+        "file": "settings.json",
+        "format": "vscode",
+        # Structure: {"chat.tools.terminal.autoApprove": {"cmd": true}}
+    },
+    "cursor-agent": {
+        "dir": ".cursor",
+        "file": "settings.json",
+        "format": "cursor",
+        # Structure: {"terminalCommands": {"allowedCommands": ["cmd"]}}
+    },
+    "windsurf": {
+        "dir": ".windsurf",
+        "file": "settings.json",
+        "format": "windsurf",
+        # Structure: {"cascade.allowedCommands": ["cmd"]}
+    },
+    "gemini": {
+        "dir": ".gemini",
+        "file": "settings.json",
+        "format": "gemini",
+        # Structure: {"allowedShellCommands": ["cmd"]}
+    },
+    "auggie": {
+        "dir": ".augment",
+        "file": "settings.json",
+        "format": "auggie",
+        # Structure: {"cli": {"approvedCommands": ["cmd"]}}
+    },
+    "roo": {
+        "dir": ".roo",
+        "file": "settings.json",
+        "format": "roo",
+        # Structure: {"terminal": {"autoApprove": ["cmd"]}}
+    },
+    "kilocode": {
+        "dir": ".kilocode",
+        "file": "settings.json",
+        "format": "kilocode",
+        # Structure: {"commands": {"approved": ["cmd"]}}
+    },
+    "q": {
+        "dir": ".amazonq",
+        "file": "settings.json",
+        "format": "amazonq",
+        # Structure: {"shell": {"approvedCommands": ["cmd"]}}
+    },
+}
+
+
+def load_approve_list() -> list[str]:
+    """Load shared approve patterns from approve-list.json."""
+    approve_file = get_assets_base() / "templates" / "approve-list.json"
+    if approve_file.exists():
+        try:
+            data = json.loads(approve_file.read_text(encoding="utf-8"))
+            return data.get("patterns", [])
+        except (json.JSONDecodeError, KeyError):
+            pass
+    return []
+
+
+def load_agent_specific_permissions(agent: str) -> list[str]:
+    """Load agent-specific permissions from template file."""
+    template_file = get_assets_base() / "templates" / f"{agent}-settings.json"
+    if template_file.exists():
+        try:
+            data = json.loads(template_file.read_text(encoding="utf-8"))
+            # Claude format: permissions.allow
+            if "permissions" in data and "allow" in data["permissions"]:
+                return data["permissions"]["allow"]
+        except (json.JSONDecodeError, KeyError):
+            pass
+    return []
+
+
+def generate_agent_settings(agent_format: str, patterns: list[str], agent_permissions: list[str]) -> str:
+    """
+    Generate agent-specific settings JSON with auto-approve patterns.
+
+    Args:
+        agent_format: The format identifier (claude, vscode, cursor, etc.)
+        patterns: Shared approve patterns from approve-list.json
+        agent_permissions: Agent-specific permissions (Skills, etc.)
+
+    Returns:
+        JSON string with agent-specific structure
+    """
+    if agent_format == "vscode":
+        # VS Code Copilot: {"chat.tools.terminal.autoApprove": {"cmd": true}}
+        auto_approve = {pattern: True for pattern in patterns}
+        settings = {
+            "chat.tools.terminal.autoApprove": auto_approve,
+            "terminal.integrated.allowChords": False,
+            "terminal.integrated.commandsToSkipShell": [],
+        }
+
+    elif agent_format == "claude":
+        # Claude: {"permissions": {"allow": ["Bash(cmd:*)", "Skill(name)"]}}
+        all_permissions = list(agent_permissions)
+        for pattern in patterns:
+            if " " in pattern or "*" in pattern:
+                bash_perm = f"Bash({pattern})"
+            else:
+                bash_perm = f"Bash({pattern}:*)"
+            if bash_perm not in all_permissions:
+                all_permissions.append(bash_perm)
+        settings = {"permissions": {"allow": all_permissions}}
+
+    elif agent_format == "cursor":
+        # Cursor: {"terminalCommands": {"allowedCommands": ["cmd"]}}
+        settings = {"terminalCommands": {"allowedCommands": patterns}}
+
+    elif agent_format == "windsurf":
+        # Windsurf: {"cascade.allowedCommands": ["cmd"]}
+        settings = {"cascade.allowedCommands": patterns}
+
+    elif agent_format == "gemini":
+        # Gemini: {"allowedShellCommands": ["cmd"]}
+        settings = {"allowedShellCommands": patterns}
+
+    elif agent_format == "auggie":
+        # Auggie: {"cli": {"approvedCommands": ["cmd"]}}
+        settings = {"cli": {"approvedCommands": patterns}}
+
+    elif agent_format == "roo":
+        # Roo: {"terminal": {"autoApprove": ["cmd"]}}
+        settings = {"terminal": {"autoApprove": patterns}}
+
+    elif agent_format == "kilocode":
+        # Kilocode: {"commands": {"approved": ["cmd"]}}
+        settings = {"commands": {"approved": patterns}}
+
+    elif agent_format == "amazonq":
+        # Amazon Q: {"shell": {"approvedCommands": ["cmd"]}}
+        settings = {"shell": {"approvedCommands": patterns}}
+
+    else:
+        # Fallback: simple array format
+        settings = {"approvedCommands": patterns}
+
+    return json.dumps(settings, indent=2)
+
+
+def create_agent_settings(project_path: Path, agent: str, force: bool = False) -> bool:
+    """
+    Create agent-specific settings file with auto-approve patterns.
+
+    Args:
+        project_path: Path to project directory
+        agent: AI agent identifier
+        force: Overwrite existing files
+
+    Returns:
+        True if file was created/updated
+    """
+    config = AGENT_SETTINGS_CONFIG.get(agent)
+    if not config:
+        return False
+
+    target_dir = project_path / config["dir"]
+    target_file = target_dir / config["file"]
+
+    if target_file.exists() and not force:
+        return False
+
+    # Load shared patterns from approve-list.json
+    patterns = load_approve_list()
+
+    # Load agent-specific permissions (e.g., Claude Skills)
+    agent_permissions = load_agent_specific_permissions(agent)
+
+    # Generate settings with agent-specific JSON structure
+    content = generate_agent_settings(config["format"], patterns, agent_permissions)
+
+    # Write settings file
+    target_dir.mkdir(exist_ok=True)
+    target_file.write_text(content, encoding="utf-8")
+    console.print(f"[green]Generated {config['dir']}/{config['file']} with auto-approve patterns[/green]")
+    return True
 
 
 def get_default_config() -> str:
@@ -244,14 +437,13 @@ def create_project_structure(
         shutil.copytree(guidelines_src, guidelines_dest)
         console.print("[green]Copied .guidelines/ baseline[/green]")
 
-    # Copy VS Code settings template
-    vscode_dir = project_path / ".vscode"
-    vscode_settings = vscode_dir / "settings.json"
-    vscode_template = get_assets_base() / "templates" / "vscode-settings.json"
-    if vscode_template.exists() and (not vscode_settings.exists() or force):
-        vscode_dir.mkdir(exist_ok=True)
-        shutil.copy2(vscode_template, vscode_settings)
-        console.print("[green]Copied VS Code settings template[/green]")
+    # Generate agent-specific settings with auto-approve patterns
+    # This dynamically creates settings from approve-list.json + agent-specific permissions
+    create_agent_settings(project_path, agent, force)
+
+    # Also create VS Code settings for copilot compatibility (if not already the agent)
+    if agent != "copilot":
+        create_agent_settings(project_path, "copilot", force)
 
     # Create basic .gitignore
     gitignore_file = project_path / ".gitignore"
@@ -268,6 +460,8 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/settings.json
+.claude/*
+!.claude/settings.local.json
 *.swp
 """
         gitignore_file.write_text(gitignore_content, encoding="utf-8")
@@ -306,6 +500,11 @@ def show_success_message(project_path: Path, agent: str, is_current_dir: bool = 
     guidelines_branch.add("stack-mapping.json")
     memory_branch = tree.add("[cyan]memory/[/cyan]")
     memory_branch.add("config.json")
+    # Show agent-specific settings folder (if configured)
+    agent_settings = AGENT_SETTINGS_CONFIG.get(agent)
+    if agent_settings:
+        settings_branch = tree.add(f"[cyan]{agent_settings['dir']}/[/cyan]")
+        settings_branch.add(agent_settings['file'])
     vscode_branch = tree.add("[cyan].vscode/[/cyan]")
     vscode_branch.add("settings.json")
     tree.add("AGENTS.md")
