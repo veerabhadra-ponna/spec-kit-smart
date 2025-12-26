@@ -7,7 +7,7 @@ version: 3.4.0
 next: 03b3-effort-success.md
 ---
 
-# DO NOT CREATE FILES
+## DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 

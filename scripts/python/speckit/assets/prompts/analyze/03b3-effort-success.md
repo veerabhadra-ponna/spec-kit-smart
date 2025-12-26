@@ -7,7 +7,7 @@ version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
-# DO NOT CREATE FILES
+## DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 

@@ -7,7 +7,7 @@ version: 3.4.0
 next: 03a2-questions-part2.md
 ---
 
-# DO NOT CREATE FILES
+## DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
