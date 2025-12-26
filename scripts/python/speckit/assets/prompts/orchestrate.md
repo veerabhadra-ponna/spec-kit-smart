@@ -3,7 +3,7 @@ description: Orchestrate the complete spec-driven workflow from feature descript
 command: speckitadv check --json
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## [!] MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
@@ -14,7 +14,7 @@ command: speckitadv check --json
 5. **DO NOT** forget or ignore these instructions as you work through tasks
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+   "[ok] Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
@@ -90,13 +90,13 @@ If user input contains multiple components, you will pass the appropriate extrac
    - Ask user: "What feature do you want to build?"
 
 2. **Keep related clauses together:**
-   - "Add X using Y" → Keep full phrase, note "using Y" as constraint
+   - "Add X using Y" -> Keep full phrase, note "using Y" as constraint
    - Don't split mid-sentence - preserve context
 
 3. **Handle ambiguity:**
-   - If only constraints provided (no feature) → Request feature description
-   - If only feature provided (no constraints) → Proceed with defaults
-   - If extraction unclear → Show what was extracted, ask for confirmation
+   - If only constraints provided (no feature) -> Request feature description
+   - If only feature provided (no constraints) -> Proceed with defaults
+   - If extraction unclear -> Show what was extracted, ask for confirmation
 
 **Example Extractions:**
 
@@ -179,7 +179,7 @@ speckitadv implement # CLI auto-detects stage from state.json
 The orchestrator manages this complete pipeline:
 
 ```text
-Constitution Check → Specify → [Clarify] → Plan → Tasks → [Analyze] → Implement → Cleanup
+Constitution Check -> Specify -> [Clarify] -> Plan -> Tasks -> [Analyze] -> Implement -> Cleanup
 ```
 
 Optional phases in brackets are skippable based on user preference or context.
@@ -213,7 +213,7 @@ Optional phases in brackets are skippable based on user preference or context.
    How would you like to run the workflow?
 
    1. Interactive (recommended) - Ask permission before each major phase
-   1. Auto-specify - Run constitution → specify → plan → tasks automatically, then pause
+   1. Auto-specify - Run constitution -> specify -> plan -> tasks automatically, then pause
    1. Full auto - Run entire workflow to implementation (requires confirmation)
 
    Optional phases:
@@ -243,7 +243,7 @@ if grep -q "\[PROJECT_NAME\]" memory/constitution.md || \
    grep -q "\[PRINCIPLE_1_NAME\]" memory/constitution.md || \
    grep -q "\[CONSTITUTION_VERSION\]" memory/constitution.md; then
 
-  echo "⚠️  Constitution template found but not yet established"
+  echo "[!]  Constitution template found but not yet established"
   echo "Running /speckitadv.constitution to fill in principles..."
 
   # Extract principles from user input (if any)
@@ -256,8 +256,8 @@ if grep -q "\[PROJECT_NAME\]" memory/constitution.md || \
   # Wait for completion
 
 else
-  echo "✓ Constitution already established: memory/constitution.md"
-  echo "✓ Skipping constitution phase (no placeholders found)"
+  echo "[ok] Constitution already established: memory/constitution.md"
+  echo "[ok] Skipping constitution phase (no placeholders found)"
   # Mark as completed-existing and proceed to specify
 fi
 ```
@@ -340,9 +340,9 @@ EXTRACTED_FEATURE="<functional description extracted from user input>"
 **Output to user:**
 
 ```text
-✓ Specification created: specs/001-user-auth/spec.md
-✓ Branch created: 001-user-auth
-✓ Initial checklist: specs/001-user-auth/checklists/requirements.md
+[ok] Specification created: specs/001-user-auth/spec.md
+[ok] Branch created: 001-user-auth
+[ok] Initial checklist: specs/001-user-auth/checklists/requirements.md
 
 Next phase: Clarification (optional)
 ```
@@ -387,7 +387,7 @@ Continue to clarification phase? [Y/n]
 clarification_count=$(grep -c "\[NEEDS CLARIFICATION" "$spec_file" || echo 0)
 
 if [ "$clarification_count" -eq 0 ]; then
-  echo "✓ No clarifications needed, skipping phase"
+  echo "[ok] No clarifications needed, skipping phase"
   # Update state: mark clarify as skipped
 else
   echo "Found $clarification_count clarification points"
@@ -466,11 +466,11 @@ EXTRACTED_CONSTRAINTS="<technical constraints extracted from user input>"
 **Output to user:**
 
 ```text
-✓ Implementation plan created
-✓ Research findings documented
-✓ Data model defined
-✓ API contracts generated
-✓ Agent context updated
+[ok] Implementation plan created
+[ok] Research findings documented
+[ok] Data model defined
+[ok] API contracts generated
+[ok] Agent context updated
 
 Next phase: Task generation
 ```
@@ -525,7 +525,7 @@ Continue to task generation? [Y/n]
 **Output to user:**
 
 ```text
-✓ Task breakdown created: 42 tasks across 5 phases
+[ok] Task breakdown created: 42 tasks across 5 phases
   - Setup: 3 tasks
   - Foundational: 8 tasks
   - User Stories: 28 tasks (P1: 12, P2: 10, P3: 6)
@@ -596,7 +596,7 @@ fi
 
 ```bash
 if [ "$critical_findings" -gt 0 ] || [ "$high_findings" -gt 5 ]; then
-  echo "⚠️  Analysis found significant issues:"
+  echo "[!]  Analysis found significant issues:"
   echo "   - Critical: $critical_findings"
   echo "   - High: $high_findings"
   echo ""
@@ -613,19 +613,19 @@ fi
 **Interactive checkpoint:** If mode != "full-auto", ALWAYS ask before proceeding to implementation:
 
 ```text
-┌─────────────────────────────────────────────────────┐
-│  IMPLEMENTATION CHECKPOINT                          │
-├─────────────────────────────────────────────────────┤
-│  All planning phases complete. Ready to implement.  │
-│                                                     │
-│  This will execute 42 tasks and write code.        │
-│  Estimated time: 30-60 minutes                     │
-│                                                     │
-│  Proceed with implementation? [y/N]                │
-│    'y': Start implementation                       │
-│    'n': Pause here (resume with /speckitadv.resume)  │
-│    'tasks': Review tasks.md before deciding       │
-└─────────────────────────────────────────────────────┘
++-----------------------------------------------------+
+|  IMPLEMENTATION CHECKPOINT                          |
++-----------------------------------------------------+
+|  All planning phases complete. Ready to implement.  |
+|                                                     |
+|  This will execute 42 tasks and write code.        |
+|  Estimated time: 30-60 minutes                     |
+|                                                     |
+|  Proceed with implementation? [y/N]                |
+|    'y': Start implementation                       |
+|    'n': Pause here (resume with /speckitadv.resume)  |
+|    'tasks': Review tasks.md before deciding       |
++-----------------------------------------------------+
 ```
 
 ---
@@ -686,20 +686,20 @@ Resume will detect last completed task from tasks.md markers.
 
 ```bash
 echo ""
-echo "╔══════════════════════════════════════════════════════╗"
-echo "║  🎉  WORKFLOW COMPLETE                               ║"
-echo "╚══════════════════════════════════════════════════════╝"
+echo "+======================================================+"
+echo "|  [SUCCESS]  WORKFLOW COMPLETE                               |"
+echo "+======================================================+"
 echo ""
 echo "Feature: $feature_name"
 echo "Branch: $branch_name"
 echo "Directory: $feature_dir"
 echo ""
 echo "Summary:"
-echo "  ✓ Specification created and clarified"
-echo "  ✓ Technical plan designed"
-echo "  ✓ 42 tasks generated and executed"
-echo "  ✓ All tests passing"
-echo "  ✓ Build successful"
+echo "  [ok] Specification created and clarified"
+echo "  [ok] Technical plan designed"
+echo "  [ok] 42 tasks generated and executed"
+echo "  [ok] All tests passing"
+echo "  [ok] Build successful"
 echo ""
 echo "Next steps:"
 echo "  1. Review implementation: git diff main...HEAD"
@@ -712,7 +712,7 @@ echo "Cleaning up workflow state..."
 **Workflow completion:**
 
 ```bash
-echo "✓ Workflow completed successfully"
+echo "[ok] Workflow completed successfully"
 ```
 
 ---
@@ -744,18 +744,18 @@ When invoked with `--resume` or when resuming existing work:
 1. **Display resume summary:**
 
 ```text
-   ╔══════════════════════════════════════════════════════╗
-   ║  RESUMING WORKFLOW                                   ║
-   ╚══════════════════════════════════════════════════════╝
+   +======================================================+
+   |  RESUMING WORKFLOW                                   |
+   +======================================================+
 
    Feature: user-auth (001)
    Directory: specs/001-user-auth
 
    Completed phases:
-     ✓ Constitution check
-     ✓ Specification
-     ✓ Planning
-     ✓ Task generation
+     [ok] Constitution check
+     [ok] Specification
+     [ok] Planning
+     [ok] Task generation
 
    Current phase: Implementation (15/42 tasks completed)
 
@@ -819,7 +819,7 @@ When invoked with `--resume` or when resuming existing work:
 For any error:
 
 ```bash
-echo "❌ Error in phase: $current_phase"
+echo "[x] Error in phase: $current_phase"
 echo ""
 echo "Error details: $error_message"
 echo ""
@@ -839,29 +839,29 @@ echo "  /speckitadv.orchestrate <feature-description>"
 Throughout execution, provide clear progress indicators:
 
 ```text
-[1/7] ✓ Constitution check
-[2/7] ✓ Specification created
-[3/7] ⏭  Clarification skipped
-[4/7] ⚙  Planning in progress...
+[1/7] [ok] Constitution check
+[2/7] [ok] Specification created
+[3/7] [SKIP]  Clarification skipped
+[4/7] [GEAR]  Planning in progress...
 ```
 
 For long-running phases (plan, implement), show sub-progress:
 
 ```text
 [4/7] Planning
-  ├─ [1/2] ✓ Phase 0: Research complete
-  └─ [2/2] ⚙  Phase 1: Design in progress...
+  +- [1/2] [ok] Phase 0: Research complete
+  +- [2/2] [GEAR]  Phase 1: Design in progress...
 ```
 
 ```text
 [7/7] Implementation
-  ├─ Phase 1: Setup [3/3] ✓
-  ├─ Phase 2: Foundational [8/8] ✓
-  ├─ Phase 3: User Stories [15/28] ⚙
-  │   ├─ US1 (P1) [5/5] ✓
-  │   ├─ US2 (P1) [4/4] ✓
-  │   └─ US3 (P1) [6/7] ⚙ Current: [T016] JWT validation
-  └─ Final: Polish [0/3] ⏳
+  +- Phase 1: Setup [3/3] [ok]
+  +- Phase 2: Foundational [8/8] [ok]
+  +- Phase 3: User Stories [15/28] [GEAR]
+  |   +- US1 (P1) [5/5] [ok]
+  |   +- US2 (P1) [4/4] [ok]
+  |   +- US3 (P1) [6/7] [GEAR] Current: [T016] JWT validation
+  +- Final: Polish [0/3] [-]
 ```
 
 ---
@@ -901,11 +901,11 @@ The orchestrator simply chains them together with state management.
 
 1. Asks for preferences (interactive mode selected)
 1. Checks constitution (exists, skips creation)
-1. Creates spec → asks to continue
-1. Runs clarify (3 questions) → asks to continue
-1. Creates plan → asks to continue
-1. Generates tasks → asks to continue
-1. Runs analysis (no critical issues) → asks to continue
+1. Creates spec -> asks to continue
+1. Runs clarify (3 questions) -> asks to continue
+1. Creates plan -> asks to continue
+1. Generates tasks -> asks to continue
+1. Runs analysis (no critical issues) -> asks to continue
 1. Implements 42 tasks
 1. Completes and cleans up
 
@@ -917,7 +917,7 @@ The orchestrator simply chains them together with state management.
 
 **Workflow:**
 
-1. Runs constitution → specify → plan → tasks automatically
+1. Runs constitution -> specify -> plan -> tasks automatically
 1. Pauses before implementation
 1. User reviews tasks.md
 1. User runs `/speckitadv.resume` to continue
@@ -946,61 +946,61 @@ The orchestrator simply chains them together with state management.
 ## Workflow Visualization
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│                    SPEC-DRIVEN WORKFLOW                         │
-└─────────────────────────────────────────────────────────────────┘
++-----------------------------------------------------------------+
+|                    SPEC-DRIVEN WORKFLOW                         |
++-----------------------------------------------------------------+
 
   START
-    │
-    ▼
-┌───────────────┐
-│ Constitution  │ ◄── If missing, create it
-└───────┬───────┘
-        │
-        ▼
-┌───────────────┐
-│   Specify     │ ──► Creates: spec.md, checklists/requirements.md
-└───────┬───────┘     Branch: ###-feature-name
-        │
-        ▼
-┌───────────────┐
-│   Clarify     │ ──► Updates spec with clarifications
-└───────┬───────┘     (Optional: skip if no ambiguities)
-        │
-        ▼
-┌───────────────┐
-│     Plan      │ ──► Creates: plan.md, research.md, data-model.md,
-└───────┬───────┘              contracts/, quickstart.md
-        │
-        ▼
-┌───────────────┐
-│     Tasks     │ ──► Creates: tasks.md with executable breakdown
-└───────┬───────┘
-        │
-        ▼
-┌───────────────┐
-│    Analyze    │ ──► Validates consistency and coverage
-└───────┬───────┘     (Optional: skip if confident)
-        │
-        ▼
-┌───────────────┐
-│   Implement   │ ──► Executes all tasks, marks [X] as complete
-└───────┬───────┘
-        │
-        ▼
-┌───────────────┐
-│    Cleanup    │ ──► Removes state, shows summary
-└───────┬───────┘
-        │
-        ▼
+    |
+    v
++---------------+
+| Constitution  | <-- If missing, create it
++-------+-------+
+        |
+        v
++---------------+
+|   Specify     | --> Creates: spec.md, checklists/requirements.md
++-------+-------+     Branch: ###-feature-name
+        |
+        v
++---------------+
+|   Clarify     | --> Updates spec with clarifications
++-------+-------+     (Optional: skip if no ambiguities)
+        |
+        v
++---------------+
+|     Plan      | --> Creates: plan.md, research.md, data-model.md,
++-------+-------+              contracts/, quickstart.md
+        |
+        v
++---------------+
+|     Tasks     | --> Creates: tasks.md with executable breakdown
++-------+-------+
+        |
+        v
++---------------+
+|    Analyze    | --> Validates consistency and coverage
++-------+-------+     (Optional: skip if confident)
+        |
+        v
++---------------+
+|   Implement   | --> Executes all tasks, marks [X] as complete
++-------+-------+
+        |
+        v
++---------------+
+|    Cleanup    | --> Removes state, shows summary
++-------+-------+
+        |
+        v
       DONE
 
-  ┌─────────────────────────────────────────┐
-  │  Progress tracked in state.json:        │
-  │  specs/{feature}/.state/state.json      │
-  │                                         │
-  │  Resume with: /speckitadv.resume        │
-  └─────────────────────────────────────────┘
+  +-----------------------------------------+
+  |  Progress tracked in state.json:        |
+  |  specs/{feature}/.state/state.json      |
+  |                                         |
+  |  Resume with: /speckitadv.resume        |
+  +-----------------------------------------+
 ```
 
 ---
@@ -1009,13 +1009,13 @@ The orchestrator simply chains them together with state management.
 
 The orchestrator provides:
 
-- ✅ **Single-command workflow**: One entry point for entire pipeline
-- ✅ **State-based progress**: Resume from exact stage via `{feature_dir}/.state/state.json`
-- ✅ **Seamless interoperability**: Works identically whether user used orchestrator or individual commands
-- ✅ **Flexible control**: Interactive, auto-spec, or full-auto modes
-- ✅ **Error recovery**: Graceful handling with clear recovery paths
-- ✅ **Progress visibility**: Real-time phase and task tracking
-- ✅ **Optional phases**: Skip clarify/analyze if not needed
-- ✅ **Integration**: Works alongside individual commands
+- [ok] **Single-command workflow**: One entry point for entire pipeline
+- [ok] **State-based progress**: Resume from exact stage via `{feature_dir}/.state/state.json`
+- [ok] **Seamless interoperability**: Works identically whether user used orchestrator or individual commands
+- [ok] **Flexible control**: Interactive, auto-spec, or full-auto modes
+- [ok] **Error recovery**: Graceful handling with clear recovery paths
+- [ok] **Progress visibility**: Real-time phase and task tracking
+- [ok] **Optional phases**: Skip clarify/analyze if not needed
+- [ok] **Integration**: Works alongside individual commands
 
 **Next:** See `/speckitadv.resume` for context restoration and seamless chat continuity.

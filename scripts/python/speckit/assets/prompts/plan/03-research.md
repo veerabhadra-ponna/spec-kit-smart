@@ -110,7 +110,7 @@ Verify all sections are filled:
 ## Output
 
 ```text
-✓ Research complete
+[ok] Research complete
   - Decisions: [N] documented
   - File: {{feature_dir}}/research.md
   - Plan sections filled: Summary, Technical Context, Constitution Check

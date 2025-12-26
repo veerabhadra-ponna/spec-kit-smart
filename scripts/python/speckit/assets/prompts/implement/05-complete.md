@@ -61,7 +61,7 @@ Verify:
 
 ```text
 
-✅ Implementation complete
+[ok] Implementation complete
 
 Tasks: [N]/[N] completed
 Tests: [status]

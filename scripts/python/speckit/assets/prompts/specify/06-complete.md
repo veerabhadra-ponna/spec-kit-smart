@@ -29,7 +29,7 @@ Compile the workflow results:
 Output final summary:
 
 ```text
-✅ Specification created successfully
+[ok] Specification created successfully
 
 Branch: <current git branch>
 Spec: {{feature_dir}}/spec.md

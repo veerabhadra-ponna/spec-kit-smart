@@ -27,8 +27,8 @@ The CLI manages state and provides all context. **Do not read state.json directl
 
 **Branching:** After this stage, CLI auto-routes based on scope:
 
-- Scope A → Stage 3A (Full App Analysis)
-- Scope B → Stage 3B (Cross-Cutting Analysis)
+- Scope A -> Stage 3A (Full App Analysis)
+- Scope B -> Stage 3B (Cross-Cutting Analysis)
 
 ---
 
@@ -55,7 +55,7 @@ cat {analysis_dir}/state.json
 ## Step 2: Quality Gate Verification
 
 ---
-⏸️ **[STOP: QUALITY_GATE_CHECK]**
+[PAUSE] **[STOP: QUALITY_GATE_CHECK]**
 
 Verify each quality gate. All gates MUST pass before proceeding.
 
@@ -67,17 +67,17 @@ Verify each quality gate. All gates MUST pass before proceeding.
 
 ```text
 Important Files = Controllers + Services + Models + Repositories + Security + Configs
-Coverage = (Files Analyzed / Important Files) × 100
+Coverage = (Files Analyzed / Important Files) x 100
 
 ```
 
 **Check:**
-- [ ] Coverage ≥ 70%
+- [ ] Coverage >= 70%
 
 **IF FAILED:**
 
 ```text
-❌ Quality Gate Failed: Minimum File Coverage
+[x] Quality Gate Failed: Minimum File Coverage
 
 Current: {percentage}% (required: 70%)
 Missing categories: {list of under-covered areas}
@@ -85,8 +85,8 @@ Missing categories: {list of under-covered areas}
 Action Required:
   Return to Phase 2 (02b-deep-dive.md) and complete analysis
   of the following areas:
-  - {area1}: {current}% → need {target}%
-  - {area2}: {current}% → need {target}%
+  - {area1}: {current}% -> need {target}%
+  - {area2}: {current}% -> need {target}%
 
 ```
 
@@ -106,7 +106,7 @@ STOP - Do not proceed until gate passes.
 **IF FAILED:**
 
 ```text
-❌ Quality Gate Failed: Configuration Analysis
+[x] Quality Gate Failed: Configuration Analysis
 
 Missing config files:
   - {file1}
@@ -135,13 +135,13 @@ Each feature must have at least one file:line reference
 ```
 
 **Check:**
-- [ ] Feature count ≥ 50
+- [ ] Feature count >= 50
 - [ ] All features have file:line references
 
 **IF FAILED:**
 
 ```text
-❌ Quality Gate Failed: Feature Descriptions
+[x] Quality Gate Failed: Feature Descriptions
 
 Current: {count} features (required: 50)
 Features without references: {count}
@@ -170,13 +170,13 @@ STOP - Do not proceed until gate passes.
 - Deprecated patterns
 
 **Check:**
-- [ ] Tech debt items ≥ 20
+- [ ] Tech debt items >= 20
 - [ ] Categorized by severity (HIGH/MEDIUM/LOW)
 
 **IF FAILED:**
 
 ```text
-❌ Quality Gate Failed: Technical Debt Analysis
+[x] Quality Gate Failed: Technical Debt Analysis
 
 Current: {count} items (required: 20)
 
@@ -206,12 +206,12 @@ STOP - Do not proceed until gate passes.
 - Input validation
 
 **Check:**
-- [ ] Security findings ≥ 10
+- [ ] Security findings >= 10
 
 **IF FAILED:**
 
 ```text
-❌ Quality Gate Failed: Security Analysis
+[x] Quality Gate Failed: Security Analysis
 
 Current: {count} findings (required: 10)
 
@@ -242,7 +242,7 @@ STOP - Do not proceed until gate passes.
 **IF FAILED:**
 
 ```text
-❌ Quality Gate Failed: Dependency Audit
+[x] Quality Gate Failed: Dependency Audit
 
 Missing:
   - {missing audit component}
@@ -411,7 +411,7 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Step 4: Verify State Saved
 
 ---
-⏸️ **[STOP: VERIFY_STATE_SAVED]**
+[PAUSE] **[STOP: VERIFY_STATE_SAVED]**
 
 1. Read `{analysis_dir}/state.json`
 2. Validate JSON is parseable
@@ -421,7 +421,7 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 **IF verification fails:**
 
 ```text
-❌ State verification failed
+[x] State verification failed
 
 Issues:
   - {issue1}
@@ -437,15 +437,15 @@ Action Required:
 ## Completion Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   STAGE COMPLETE: FILE_ANALYSIS
 
   Chain ID: {chain_id}
   Analysis Scope: {A - Full Application | B - Cross-Cutting}
 
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
   ANALYSIS SUMMARY
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
 
   Files Analyzed: {count}/{total} ({percentage}%)
   Features Extracted: {count}
@@ -454,20 +454,20 @@ Action Required:
   Dependency Vulnerabilities: {count} ({critical} critical)
   Test Coverage: ~{percentage}%
 
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
   QUALITY GATES
-  ─────────────────────────────────────────────────────────
+  ---------------------------------------------------------
 
-  ✓ File Coverage: PASS ({percentage}% ≥ 70%)
-  ✓ Config Complete: PASS (100%)
-  ✓ Features: PASS ({count} ≥ 50)
-  ✓ Tech Debt: PASS ({count} ≥ 20)
-  ✓ Security: PASS ({count} ≥ 10)
-  ✓ Dependencies: PASS (audit complete)
+  [ok] File Coverage: PASS ({percentage}% >= 70%)
+  [ok] Config Complete: PASS (100%)
+  [ok] Features: PASS ({count} >= 50)
+  [ok] Tech Debt: PASS ({count} >= 20)
+  [ok] Security: PASS ({count} >= 10)
+  [ok] Dependencies: PASS (audit complete)
 
   State: {analysis_dir}/state.json
 
-═══════════════════════════════════════════════════════════
+===========================================================
 
 STAGE_COMPLETE:FILE_ANALYSIS
 

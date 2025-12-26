@@ -15,15 +15,15 @@ Generate technical specification documenting HOW the LEGACY/EXISTING system is b
 
 ---
 
-## ⚠️ IMPORTANT: "Part" vs CLI "--chunk"
+## [!] IMPORTANT: "Part" vs CLI "--chunk"
 
 This prompt uses **"Part 1-5"** to describe content sections to write incrementally.
 
 **These are NOT CLI `--chunk` parameters!**
 
-- ❌ DO NOT run `speckitadv analyze-project --chunk=4` to continue
-- ✅ DO continue writing content using `write-report --append`
-- ✅ DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
+- [x] DO NOT run `speckitadv analyze-project --chunk=4` to continue
+- [ok] DO continue writing content using `write-report --append`
+- [ok] DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
 
 ---
 
@@ -37,7 +37,7 @@ This prompt uses **"Part 1-5"** to describe content sections to write incrementa
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+[!] **OS command line length limits apply (~8000 chars on Windows).**
 
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
@@ -56,7 +56,7 @@ speckitadv write-report <filename> --stage=06c1-technical-spec-legacy --append -
 
 ---
 
-## ⚠️ CRITICAL: File Write Policy
+## [!] CRITICAL: File Write Policy
 
 **ALWAYS use CLI commands for file writes. NEVER use:**
 
@@ -109,9 +109,9 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 ---
 
-## ⚠️ MANDATORY MULTI-PART WRITING
+## [!] MANDATORY MULTI-PART WRITING
 
-🛑 **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
+[STOP] **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
 
 **DO NOT generate the entire technical spec in one operation.**
 
@@ -130,7 +130,7 @@ Attempting to generate the full spec in one operation WILL result in:
 - Verification failures
 - Wasted time and compute resources
 
-**If you are about to say "I'll create it in one operation" → STOP and read the writing strategy below.**
+**If you are about to say "I'll create it in one operation" -> STOP and read the writing strategy below.**
 
 ---
 
@@ -142,7 +142,7 @@ Attempting to generate the full spec in one operation WILL result in:
 - **Medium projects** (5,000-50,000 LOC): **2,000-5,000 lines**
 - **Large projects** (> 50,000 LOC): **4,000-10,000+ lines**
 
-**⚠️ COMPLETION-BASED WRITING (NOT size-based)**:
+**[!] COMPLETION-BASED WRITING (NOT size-based)**:
 
 Use **completion-based writing**, NOT size-based writing:
 
@@ -183,7 +183,7 @@ fi
 3. Display resume message:
 
    ```text
-   ⚠️ RESUMING INTERRUPTED GENERATION
+   [!] RESUMING INTERRUPTED GENERATION
 
    Last completed: Part 2 (Technology Stack + Data Architecture)
    Resuming from: Part 3 (API Design + Integration Architecture)
@@ -204,7 +204,7 @@ fi
 
 Generate spec in `{reports_dir}/technical-spec-legacy.md`
 
-**⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
+**[!] GENERATION ORDER - STRICTLY ENFORCED**:
 
 1. Generate ONLY Part 1 first
 2. Wait for Part 1 completion
@@ -213,11 +213,11 @@ Generate spec in `{reports_dir}/technical-spec-legacy.md`
 
 **DO NOT**:
 
-- ❌ Generate multiple parts in one response
-- ❌ Generate all sections at once
-- ❌ Skip progress display
+- [x] Generate multiple parts in one response
+- [x] Generate all sections at once
+- [x] Skip progress display
 
-**IF** you find yourself generating more than one part at a time → **STOP IMMEDIATELY**
+**IF** you find yourself generating more than one part at a time -> **STOP IMMEDIATELY**
 
 ---
 
@@ -227,7 +227,7 @@ Generate Sections 1 and 2.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_1]**
+[PAUSE] **[STOP: GENERATE_PART_1]**
 
 #### Section 1: Introduction
 
@@ -268,10 +268,10 @@ Generate Sections 1 and 2.
 
 **Completion Criteria**:
 
-- ✓ C4 diagrams at all 3 levels
-- ✓ Architecture style identified with evidence
-- ✓ Characteristics documented
-- ✓ NO placeholders
+- [ok] C4 diagrams at all 3 levels
+- [ok] Architecture style identified with evidence
+- [ok] Characteristics documented
+- [ok] NO placeholders
 
 **After Part 1 Generation**:
 
@@ -284,7 +284,7 @@ Generate Sections 1 and 2.
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 1/5 complete: Introduction + Architecture
+   [ok] Part 1/5 complete: Introduction + Architecture
      - C4 Diagrams: 3
      - Architecture style: [STYLE]
      - Lines generated: [COUNT]
@@ -299,7 +299,7 @@ Generate Sections 3 and 4.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_2]**
+[PAUSE] **[STOP: GENERATE_PART_2]**
 
 #### Section 3: Technology Stack
 
@@ -369,10 +369,10 @@ Generate Sections 3 and 4.
 
 **Completion Criteria**:
 
-- ✓ All technologies documented with versions
-- ✓ ERD diagram included
-- ✓ Every component has file:line reference
-- ✓ NO placeholders
+- [ok] All technologies documented with versions
+- [ok] ERD diagram included
+- [ok] Every component has file:line reference
+- [ok] NO placeholders
 
 **After Part 2 Generation**:
 
@@ -382,10 +382,10 @@ Generate Sections 3 and 4.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 2/5 complete: Technology Stack + Data Architecture
+   [ok] Part 2/5 complete: Technology Stack + Data Architecture
      - Technologies documented: [COUNT]
      - Entities documented: [COUNT]
-     - ERD diagram: ✓
+     - ERD diagram: [ok]
      - Lines generated: [COUNT]
 
    ```
@@ -398,7 +398,7 @@ Generate Sections 5 and 6.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_3]**
+[PAUSE] **[STOP: GENERATE_PART_3]**
 
 #### Section 5: API Design
 
@@ -469,10 +469,10 @@ Generate Sections 5 and 6.
 
 **Completion Criteria**:
 
-- ✓ All API endpoints documented
-- ✓ Integration sequence diagrams included
-- ✓ Every endpoint has file:line reference
-- ✓ NO placeholders
+- [ok] All API endpoints documented
+- [ok] Integration sequence diagrams included
+- [ok] Every endpoint has file:line reference
+- [ok] NO placeholders
 
 **After Part 3 Generation**:
 
@@ -482,7 +482,7 @@ Generate Sections 5 and 6.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 3/5 complete: API Design + Integration Architecture
+   [ok] Part 3/5 complete: API Design + Integration Architecture
      - Endpoints documented: [COUNT]
      - Integrations documented: [COUNT]
      - Sequence diagrams: [COUNT]
@@ -498,7 +498,7 @@ Generate Sections 7 and 8.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_4]**
+[PAUSE] **[STOP: GENERATE_PART_4]**
 
 #### Section 7: Security Architecture
 
@@ -575,11 +575,11 @@ Generate Sections 7 and 8.
 
 **Completion Criteria**:
 
-- ✓ Security mechanisms documented with evidence
-- ✓ Security issues identified with severity
-- ✓ Deployment diagram included
-- ✓ Every component has file:line reference
-- ✓ NO placeholders
+- [ok] Security mechanisms documented with evidence
+- [ok] Security issues identified with severity
+- [ok] Deployment diagram included
+- [ok] Every component has file:line reference
+- [ok] NO placeholders
 
 **After Part 4 Generation**:
 
@@ -589,10 +589,10 @@ Generate Sections 7 and 8.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 4/5 complete: Security + Deployment
+   [ok] Part 4/5 complete: Security + Deployment
      - Security issues documented: [COUNT]
      - Environments documented: [COUNT]
-     - Deployment diagram: ✓
+     - Deployment diagram: [ok]
      - Lines generated: [COUNT]
 
    ```
@@ -605,7 +605,7 @@ Generate Sections 9, 10, and 11.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_5]**
+[PAUSE] **[STOP: GENERATE_PART_5]**
 
 #### Section 9: Testing Infrastructure
 
@@ -701,11 +701,11 @@ Generate Sections 9, 10, and 11.
 
 **Completion Criteria**:
 
-- ✓ Testing infrastructure documented
-- ✓ Observability stack documented
-- ✓ Technical debt items categorized
-- ✓ All components have file:line references
-- ✓ NO placeholders
+- [ok] Testing infrastructure documented
+- [ok] Observability stack documented
+- [ok] Technical debt items categorized
+- [ok] All components have file:line references
+- [ok] NO placeholders
 
 **After Part 5 Generation**:
 
@@ -721,12 +721,12 @@ Generate Sections 9, 10, and 11.
 3. **MANDATORY - Display progress and final summary**:
 
    ```text
-   ✓ Part 5/5 complete: Testing + Observability + Technical Debt
+   [ok] Part 5/5 complete: Testing + Observability + Technical Debt
      - Test categories documented: [COUNT]
      - Technical debt items: [COUNT]
      - Lines generated: [COUNT]
 
-   ✅ technical-spec-legacy.md GENERATION COMPLETE
+   [ok] technical-spec-legacy.md GENERATION COMPLETE
       Total sections: 11
       Total diagrams: [COUNT]
       Total lines: [COUNT]
@@ -738,7 +738,7 @@ Generate Sections 9, 10, and 11.
 
 ## Verification Gate (HARD STOP)
 
-⚠️ **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
+[!] **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
 
 **BEFORE** proceeding to 06c2-technical-spec-target.md, verify spec quality:
 
@@ -790,7 +790,7 @@ Read technical-spec-legacy.md and verify:
 **IF ANY checkbox is unchecked**:
 
 ```text
-❌ VERIFICATION FAILED
+[x] VERIFICATION FAILED
 
 technical-spec-legacy.md is incomplete. Issues found:
 - [List specific missing items from checklist above]
@@ -829,7 +829,7 @@ List which sections or quality checks failed verification.
 - **Display**:
 
   ```text
-  ⚠️ MULTIPLE CRITICAL ISSUES DETECTED
+  [!] MULTIPLE CRITICAL ISSUES DETECTED
 
   Issues found:
   - Missing sections: [COUNT]
@@ -856,7 +856,7 @@ List which sections or quality checks failed verification.
 - Re-run verification after recovery
 - **DO NOT proceed to 06c2 until verification passes**
 
-⚠️ **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
+[!] **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
 
 ---
 
@@ -865,7 +865,7 @@ List which sections or quality checks failed verification.
 **IF ALL checkboxes are checked**:
 
 ```text
-✅ VERIFICATION PASSED
+[ok] VERIFICATION PASSED
 
 technical-spec-legacy.md is complete and meets quality standards:
 - All 11 sections present and complete
@@ -887,7 +887,7 @@ Proceeding to 06c2-technical-spec-target.md...
 ## Completion Marker
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   ARTIFACT COMPLETE: TECHNICAL-SPEC-LEGACY.md
 
   Chain ID: {chain_id}
@@ -898,7 +898,7 @@ Proceeding to 06c2-technical-spec-target.md...
   This documents the LEGACY system architecture (how it's built today).
 
   NEXT: Generate technical-spec-target.md (how it will be built)
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ARTIFACT_COMPLETE:TECHNICAL_SPEC_LEGACY
 ```

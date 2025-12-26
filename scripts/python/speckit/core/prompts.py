@@ -195,7 +195,7 @@ def render_prompt(fragment: str, context: dict, *, strict: bool = False) -> str:
 
             # Skip if file already exists (avoid overwriting user edits on re-run)
             if dest_path.exists():
-                return f"⚠ Template already exists: `{dest_path}` (not overwritten)"
+                return f"[!] Template already exists: `{dest_path}` (not overwritten)"
 
             template_content = load_template(template_path, workspace_root=workspace_root)
 

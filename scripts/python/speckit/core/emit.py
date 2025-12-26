@@ -235,12 +235,12 @@ def emit_template(
     print(_format_box_line(f"Create file: {output_file}"))
     print(_format_box_line(""))
     print(_format_box_line("Use this template:"))
-    print(_format_box_line("═" * 60))
+    print(_format_box_line("=" * 60))
 
     for line in template_content.split("\n"):
         print(_format_box_line(line[:64]))
 
-    print(_format_box_line("═" * 60))
+    print(_format_box_line("=" * 60))
     print(_format_box_line(""))
     print(_format_box_line("Fill with:"))
 

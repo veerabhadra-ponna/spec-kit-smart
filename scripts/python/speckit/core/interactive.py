@@ -82,11 +82,11 @@ def collect_plan_constraints() -> str:
     ))
 
     console.print("\n[bold]Examples of valid constraints:[/bold]")
-    console.print('  [green]•[/green] Technology: "Must use PostgreSQL", "Prefer Redis for caching"')
-    console.print('  [green]•[/green] Architecture: "Prefer microservices", "Use event-driven architecture"')
-    console.print('  [green]•[/green] Performance: "< 200ms response time", "Support 10,000 concurrent users"')
-    console.print('  [green]•[/green] Integration: "Must integrate with existing auth system"')
-    console.print('  [green]•[/green] Compliance: "Must be GDPR compliant", "PII must be encrypted at rest"')
+    console.print('  [green]*[/green] Technology: "Must use PostgreSQL", "Prefer Redis for caching"')
+    console.print('  [green]*[/green] Architecture: "Prefer microservices", "Use event-driven architecture"')
+    console.print('  [green]*[/green] Performance: "< 200ms response time", "Support 10,000 concurrent users"')
+    console.print('  [green]*[/green] Integration: "Must integrate with existing auth system"')
+    console.print('  [green]*[/green] Compliance: "Must be GDPR compliant", "PII must be encrypted at rest"')
     console.print('\n  Type "none" to proceed without additional constraints.\n')
 
     response = Prompt.ask(
@@ -115,11 +115,11 @@ def collect_tasks_preferences() -> str:
     ))
 
     console.print("\n[bold]Examples of valid preferences:[/bold]")
-    console.print('  [green]•[/green] Task size: "Break into smaller tasks (< 2 hours each)"')
-    console.print('  [green]•[/green] Grouping: "Group by feature area rather than technical layer"')
-    console.print('  [green]•[/green] Priority: "Prioritize backend before frontend", "Focus on P1 and P2 only"')
-    console.print('  [green]•[/green] Scope: "Include database migration tasks separately"')
-    console.print('  [green]•[/green] Detail level: "Include detailed sub-tasks", "Keep high-level only"')
+    console.print('  [green]*[/green] Task size: "Break into smaller tasks (< 2 hours each)"')
+    console.print('  [green]*[/green] Grouping: "Group by feature area rather than technical layer"')
+    console.print('  [green]*[/green] Priority: "Prioritize backend before frontend", "Focus on P1 and P2 only"')
+    console.print('  [green]*[/green] Scope: "Include database migration tasks separately"')
+    console.print('  [green]*[/green] Detail level: "Include detailed sub-tasks", "Keep high-level only"')
     console.print('\n  Type "none" to use standard task breakdown.\n')
 
     response = Prompt.ask(
@@ -148,11 +148,11 @@ def collect_implement_notes() -> str:
     ))
 
     console.print("\n[bold]Examples of valid notes:[/bold]")
-    console.print('  [green]•[/green] Execution order: "Start with database migration first"')
-    console.print('  [green]•[/green] Scope: "Focus on P1 user stories only", "Skip optional features for MVP"')
-    console.print('  [green]•[/green] Testing: "Write tests first", "Skip tests for now (exploratory spike)"')
-    console.print('  [green]•[/green] Priorities: "Prioritize error handling", "Focus on security validation"')
-    console.print('  [green]•[/green] Constraints: "Use existing utility functions where possible"')
+    console.print('  [green]*[/green] Execution order: "Start with database migration first"')
+    console.print('  [green]*[/green] Scope: "Focus on P1 user stories only", "Skip optional features for MVP"')
+    console.print('  [green]*[/green] Testing: "Write tests first", "Skip tests for now (exploratory spike)"')
+    console.print('  [green]*[/green] Priorities: "Prioritize error handling", "Focus on security validation"')
+    console.print('  [green]*[/green] Constraints: "Use existing utility functions where possible"')
     console.print('\n  Type "none" to proceed with standard implementation.\n')
 
     response = Prompt.ask(
@@ -181,11 +181,11 @@ def collect_analyze_focus() -> str:
     ))
 
     console.print("\n[bold]Examples of valid focus areas:[/bold]")
-    console.print('  [green]•[/green] Security: "Focus on security requirements coverage"')
-    console.print('  [green]•[/green] Compliance: "Check constitution compliance carefully"')
-    console.print('  [green]•[/green] Testing: "Verify all user stories have acceptance tests"')
-    console.print('  [green]•[/green] Performance: "Look for performance bottlenecks"')
-    console.print('  [green]•[/green] Data: "Check data model consistency"')
+    console.print('  [green]*[/green] Security: "Focus on security requirements coverage"')
+    console.print('  [green]*[/green] Compliance: "Check constitution compliance carefully"')
+    console.print('  [green]*[/green] Testing: "Verify all user stories have acceptance tests"')
+    console.print('  [green]*[/green] Performance: "Look for performance bottlenecks"')
+    console.print('  [green]*[/green] Data: "Check data model consistency"')
     console.print('\n  Type "none" for comprehensive analysis.\n')
 
     response = Prompt.ask(
@@ -247,10 +247,10 @@ def collect_analyze_project_input() -> dict:
         "Do you want to provide any additional context to help\n"
         "with the analysis?\n\n"
         "[dim]This could include:[/dim]\n"
-        "  • Known pain points or issues\n"
-        "  • Business requirements or constraints\n"
-        "  • Deployment environment details\n"
-        "  • Team preferences or standards\n\n"
+        "  * Known pain points or issues\n"
+        "  * Business requirements or constraints\n"
+        "  * Deployment environment details\n"
+        "  * Team preferences or standards\n\n"
         "Type your context below, or 'none' to skip:",
         title="[cyan]Context[/cyan]",
     ))
@@ -263,13 +263,13 @@ def collect_analyze_project_input() -> dict:
     console.print(Panel.fit(
         "[bold]ANALYSIS SCOPE[/bold]\n\n"
         "[bold][A][/bold] Full Application Modernization\n"
-        "    → Analyze entire codebase comprehensively\n"
-        "    → Generate complete functional/technical specs\n"
-        "    → Suitable for legacy app migration\n\n"
+        "    -> Analyze entire codebase comprehensively\n"
+        "    -> Generate complete functional/technical specs\n"
+        "    -> Suitable for legacy app migration\n\n"
         "[bold][B][/bold] Cross-Cutting Concern Migration\n"
-        "    → Analyze entire application context FIRST\n"
-        "    → THEN deep-dive into specific concern\n"
-        "    → Suitable for: auth migration, database swap,\n"
+        "    -> Analyze entire application context FIRST\n"
+        "    -> THEN deep-dive into specific concern\n"
+        "    -> Suitable for: auth migration, database swap,\n"
         "                    caching layer, observability, etc.",
         title="[cyan]Scope[/cyan]",
     ))
@@ -289,11 +289,11 @@ def collect_analyze_project_input() -> dict:
             "You selected Cross-Cutting Concern Migration.\n"
             "Please provide details about the concern:\n\n"
             "[dim]Examples of concern types:[/dim]\n"
-            "  • Authentication/Authorization\n"
-            "  • Database/ORM Layer\n"
-            "  • Caching Layer\n"
-            "  • Message Bus/Queue\n"
-            "  • Logging/Observability",
+            "  * Authentication/Authorization\n"
+            "  * Database/ORM Layer\n"
+            "  * Caching Layer\n"
+            "  * Message Bus/Queue\n"
+            "  * Logging/Observability",
             title="[cyan]Concern[/cyan]",
         ))
 

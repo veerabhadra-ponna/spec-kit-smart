@@ -5,7 +5,7 @@ outputs: analysis_state
 version: 2.0.0
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## [!] MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
@@ -16,7 +16,7 @@ version: 2.0.0
 5. **DO NOT** forget or ignore these instructions as you work through tasks
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+   "[ok] Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
@@ -159,9 +159,9 @@ For EACH category, scan 15-20% of files and extract:
 
 ```text
 [Phase 1 - Category Scan]
-✓ 10/120 core files scanned (Controllers)
-✓ 20/120 core files scanned (Controllers)
-✓ 30/120 core files scanned (Services)
+[ok] 10/120 core files scanned (Controllers)
+[ok] 20/120 core files scanned (Controllers)
+[ok] 30/120 core files scanned (Services)
 ...
 
 ```
@@ -169,10 +169,10 @@ For EACH category, scan 15-20% of files and extract:
 **Example output after scanning**:
 
 ```text
-✓ Scanned src/controllers/UserController.java
+[ok] Scanned src/controllers/UserController.java
   Found: Auth[JWT], API[REST], Validation[Bean Validation]
 
-✓ Scanned src/services/UserService.java
+[ok] Scanned src/services/UserService.java
   Found: Business Logic[User Management], DB[JPA Repository], Cache[Redis]
 
 ```
@@ -208,7 +208,7 @@ For each priority area, extract **detailed** information:
 #### Authentication/Security Deep Dive
 
 **Extract**:
-- Complete auth flow (registration → login → token → refresh → logout)
+- Complete auth flow (registration -> login -> token -> refresh -> logout)
 - User storage mechanism (database, LDAP, external provider)
 - Password requirements and hashing algorithm
 - Token generation and validation logic
@@ -253,9 +253,9 @@ Database Layer Analysis:
 - ORM: Hibernate/JPA
 - Entities: 12 (User, Order, Product, Category, etc.)
 - Relationships:
-  * User ↔ Order (OneToMany, cascade ALL)
-  * Order ↔ OrderItem (OneToMany, orphanRemoval true)
-  * Product ↔ Category (ManyToOne)
+  * User <-> Order (OneToMany, cascade ALL)
+  * Order <-> OrderItem (OneToMany, orphanRemoval true)
+  * Product <-> Category (ManyToOne)
 - Native Queries: 15 (complexity: MEDIUM)
 - Performance Issues:
   * N+1 queries in OrderService.findAll() (HIGH)
@@ -310,10 +310,10 @@ API Issues:
 
 ```text
 [Phase 2 - Deep Dive]
-✓ 10/45 security files analyzed
-✓ 20/45 security files analyzed
-✓ Auth flow complete: Custom JWT with bcrypt
-✓ 10/25 database files analyzed
+[ok] 10/45 security files analyzed
+[ok] 20/45 security files analyzed
+[ok] Auth flow complete: Custom JWT with bcrypt
+[ok] 10/25 database files analyzed
 ...
 
 ```
@@ -518,16 +518,16 @@ Total: 145 dependencies
 - Transitive: 122
 
 Outdated: 15 packages
-- Spring Boot: 2.3.4 → 2.7.5 (LTS available)
-- React: 16.13.1 → 18.2.0 (major upgrade)
-- PostgreSQL Driver: 42.2.18 → 42.5.0
+- Spring Boot: 2.3.4 -> 2.7.5 (LTS available)
+- React: 16.13.1 -> 18.2.0 (major upgrade)
+- PostgreSQL Driver: 42.2.18 -> 42.5.0
 
 Vulnerable: 5 packages (CRITICAL: 1, HIGH: 2, MEDIUM: 2)
-- Log4j: 2.14.1 → CRITICAL (CVE-2021-44228 - Log4Shell)
-- Spring Security: 5.3.9 → HIGH (CVE-2022-22978)
-- Jackson: 2.11.3 → HIGH (CVE-2020-36518)
-- Lodash: 4.17.19 → MEDIUM (CVE-2020-8203)
-- Axios: 0.19.2 → MEDIUM (CVE-2021-3749)
+- Log4j: 2.14.1 -> CRITICAL (CVE-2021-44228 - Log4Shell)
+- Spring Security: 5.3.9 -> HIGH (CVE-2022-22978)
+- Jackson: 2.11.3 -> HIGH (CVE-2020-36518)
+- Lodash: 4.17.19 -> MEDIUM (CVE-2020-8203)
+- Axios: 0.19.2 -> MEDIUM (CVE-2021-3749)
 
 Deprecated:
 - Moment.js (use date-fns or Luxon)
@@ -751,12 +751,12 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 - Note gaps in final report
 
 **If quality gate fails**:
-- Output: "⚠️ Quality gate failed: {reason}"
+- Output: "[!] Quality gate failed: {reason}"
 - Return to relevant phase
 - Do NOT proceed until gate passes
 
 **If dependency audit fails**:
-- Output: "⚠️ Dependency audit failed: {error}"
+- Output: "[!] Dependency audit failed: {error}"
 - Mark dependencies as "unknown"
 - Continue with file analysis
 
@@ -774,68 +774,68 @@ Starting comprehensive file analysis...
 
 [Phase 1 - Category Scan]
 Categorizing files from manifest...
-✓ Categorized 245 files into 11 categories
+[ok] Categorized 245 files into 11 categories
 
 Scanning controllers...
-✓ 3/15 controllers scanned
-✓ 6/15 controllers scanned
-✓ Found: REST API with JWT auth, 47 endpoints
+[ok] 3/15 controllers scanned
+[ok] 6/15 controllers scanned
+[ok] Found: REST API with JWT auth, 47 endpoints
 
 Scanning services...
-✓ 4/18 services scanned
-✓ 8/18 services scanned
-✓ Found: Business logic with transaction management
+[ok] 4/18 services scanned
+[ok] 8/18 services scanned
+[ok] Found: Business logic with transaction management
 
 Scanning models...
-✓ 3/12 models scanned
-✓ Found: JPA entities with relationships
+[ok] 3/12 models scanned
+[ok] Found: JPA entities with relationships
 
 [Phase 2 - Deep Dive]
 Deep diving into authentication...
-✓ 2/8 security files analyzed
-✓ 4/8 security files analyzed
-✓ 8/8 security files analyzed
-✓ Complete auth flow documented: Custom JWT with bcrypt
+[ok] 2/8 security files analyzed
+[ok] 4/8 security files analyzed
+[ok] 8/8 security files analyzed
+[ok] Complete auth flow documented: Custom JWT with bcrypt
 
 Deep diving into database layer...
-✓ 3/12 repository files analyzed
-✓ 6/12 repository files analyzed
-✓ 12/12 repository files analyzed
-✓ Found: 12 entities, 18 relationships, N+1 query issues
+[ok] 3/12 repository files analyzed
+[ok] 6/12 repository files analyzed
+[ok] 12/12 repository files analyzed
+[ok] Found: 12 entities, 18 relationships, N+1 query issues
 
 Deep diving into API layer...
-✓ 5/15 controller files analyzed
-✓ 10/15 controller files analyzed
-✓ 15/15 controller files analyzed
-✓ Mapped: 47 endpoints, no versioning, auth issues
+[ok] 5/15 controller files analyzed
+[ok] 10/15 controller files analyzed
+[ok] 15/15 controller files analyzed
+[ok] Mapped: 47 endpoints, no versioning, auth issues
 
 [Phase 3 - Configuration Analysis]
 Analyzing all configuration files...
-✓ Application configs: application.yml, SecurityConfig.java
-✓ Build configs: pom.xml, package.json
-✓ Infrastructure: Dockerfile, docker-compose.yml
-✓ CI/CD: .github/workflows/ci.yml
+[ok] Application configs: application.yml, SecurityConfig.java
+[ok] Build configs: pom.xml, package.json
+[ok] Infrastructure: Dockerfile, docker-compose.yml
+[ok] CI/CD: .github/workflows/ci.yml
 
 [Phase 4 - Test Coverage]
 Analyzing test suite...
-✓ Unit tests: 145 files (62% coverage)
-✓ Integration tests: 23 files
-✓ E2E tests: None detected
-✓ Gaps identified: Security testing, E2E coverage
+[ok] Unit tests: 145 files (62% coverage)
+[ok] Integration tests: 23 files
+[ok] E2E tests: None detected
+[ok] Gaps identified: Security testing, E2E coverage
 
 [Dependency Audit]
 Running dependency audit...
-✓ Total dependencies: 145 (23 direct, 122 transitive)
-✓ Outdated: 15 packages
-✓ Vulnerable: 5 packages (2 CRITICAL)
-✓ Critical CVEs: CVE-2021-44228 (Log4Shell), CVE-2022-22978
+[ok] Total dependencies: 145 (23 direct, 122 transitive)
+[ok] Outdated: 15 packages
+[ok] Vulnerable: 5 packages (2 CRITICAL)
+[ok] Critical CVEs: CVE-2021-44228 (Log4Shell), CVE-2022-22978
 
 Verifying quality gates...
-✓ Coverage: 85% of core files analyzed
-✓ Features: 127 extracted with file:line references
-✓ Tech debt: 34 items categorized
-✓ Security: 18 findings documented
-✓ All quality gates passed
+[ok] Coverage: 85% of core files analyzed
+[ok] Features: 127 extracted with file:line references
+[ok] Tech debt: 34 items categorized
+[ok] Security: 18 findings documented
+[ok] All quality gates passed
 
 STAGE_COMPLETE:FILE_ANALYSIS
 

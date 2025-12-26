@@ -414,9 +414,9 @@ class AnalysisStateManager:
 
         Creates:
             {analysis_dir}/
-            ├── state.json          # Workflow state
-            ├── data/               # AI artifacts (JSON)
-            └── reports/            # User deliverables (MD)
+            +-- state.json          # Workflow state
+            +-- data/               # AI artifacts (JSON)
+            +-- reports/            # User deliverables (MD)
         """
         self.folder.mkdir(parents=True, exist_ok=True)
         self.data_folder.mkdir(parents=True, exist_ok=True)

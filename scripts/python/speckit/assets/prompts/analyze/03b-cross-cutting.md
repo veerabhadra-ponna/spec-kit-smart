@@ -33,7 +33,7 @@ The CLI manages state and provides all context. **Do not read state.json directl
 
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## [!] MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
@@ -42,7 +42,7 @@ The CLI manages state and provides all context. **Do not read state.json directl
 3. Follow all AGENTS.md guidelines for the duration of this command execution
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+   "[ok] Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
@@ -106,8 +106,8 @@ Touch Points Identified:
 ...
 
 Abstraction Patterns Found:
-- ✓ {positive pattern}
-- ✗ {negative pattern}
+- [ok] {positive pattern}
+- [x] {negative pattern}
 ...
 
 Migration Complexity: {LOW | MEDIUM | HIGH}

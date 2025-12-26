@@ -34,7 +34,7 @@ The CLI manages state and provides all context. **Do not read state.json directl
 
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## [!] MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
@@ -43,13 +43,13 @@ The CLI manages state and provides all context. **Do not read state.json directl
 3. Follow all AGENTS.md guidelines for the duration of this command execution
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+   "[ok] Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
 ---
 
-## 🎯 CONSISTENCY CHECKPOINT
+## [TARGET] CONSISTENCY CHECKPOINT
 
 **Expected Behavior (MUST be identical across all runs):**
 
@@ -76,7 +76,7 @@ The CLI manages state and provides all context. **Do not read state.json directl
 
 ---
 
-## ⚠️ CRITICAL: Questionnaire Execution Rules
+## [!] CRITICAL: Questionnaire Execution Rules
 
 **YOU MUST FOLLOW ALL RULES BELOW WHEN ASKING THE 10 MODERNIZATION QUESTIONS:**
 
@@ -107,7 +107,7 @@ The CLI manages state and provides all context. **Do not read state.json directl
 **Clarification template:**
 
 ```text
-⚠️ CLARIFICATION NEEDED
+[!] CLARIFICATION NEEDED
 
 Question [N]: [question topic]
 
@@ -131,7 +131,7 @@ Your choice: ___
 
 ## Step 1: 10 Progressive Modernization Questions
 
-**⚠️ CRITICAL - READ BEFORE PROCEEDING:**
+**[!] CRITICAL - READ BEFORE PROCEEDING:**
 
 You MUST ask ALL 10 questions below EXACTLY as written. Do NOT:
 
@@ -186,7 +186,7 @@ Based on detected legacy stack, please answer the following:
 3\. Message Bus/Queue [CONDITIONAL]:
    Current: [detected or "None detected"]
 
-   **⚠️ CRITICAL**: Present this question WITH ALL OPTIONS as written. Do NOT skip, modify, or simplify.
+   **[!] CRITICAL**: Present this question WITH ALL OPTIONS as written. Do NOT skip, modify, or simplify.
 
    **IF** `!HAS_MESSAGE_BUS` (no message queue detected):
       Mark as **[OPTIONAL - Not detected in legacy code]**
@@ -248,12 +248,12 @@ Based on detected legacy stack, please answer the following:
 - Set `IS_TRADITIONAL_DEPLOYMENT = true` if user selects **[A]** (Dedicated server)
 - Set `IS_TRADITIONAL_DEPLOYMENT = false` if user selects **[B], [C], [D], [E], [F]** (any cloud/container platform)
 - If user selects **[G] Other**, ask clarifying question: "Is this a cloud/container platform (Kubernetes, Docker, etc.)?"
-  - If yes → Set `IS_TRADITIONAL_DEPLOYMENT = false`
-  - If no → Set `IS_TRADITIONAL_DEPLOYMENT = true`
+  - If yes -> Set `IS_TRADITIONAL_DEPLOYMENT = false`
+  - If no -> Set `IS_TRADITIONAL_DEPLOYMENT = true`
 
 6\. Infrastructure as Code (IaC) [CONDITIONAL - Based on Q5 Answer]:
 
-   **⚠️ CRITICAL**: Present this question WITH ALL OPTIONS as written (when applicable). Do NOT skip, modify, or simplify.
+   **[!] CRITICAL**: Present this question WITH ALL OPTIONS as written (when applicable). Do NOT skip, modify, or simplify.
 
    **CRITICAL LOGIC: Check the user's answer to Question 5 above.**
 
@@ -292,12 +292,12 @@ Based on detected legacy stack, please answer the following:
       ```
 
    **ELSE IF user selected [G] "Other" in Question 5**:
-      - If they answered "yes" to the clarifying question (is cloud/container platform) → **ASK this question** (same as above)
-      - If they answered "no" → **SKIP to Question 8** (same skip message as [A])
+      - If they answered "yes" to the clarifying question (is cloud/container platform) -> **ASK this question** (same as above)
+      - If they answered "no" -> **SKIP to Question 8** (same skip message as [A])
 
 7\. Containerization Strategy [CONDITIONAL - Based on Q5 Answer]:
 
-   **⚠️ CRITICAL**: Present this question WITH ALL OPTIONS as written (when applicable). Do NOT skip, modify, or simplify.
+   **[!] CRITICAL**: Present this question WITH ALL OPTIONS as written (when applicable). Do NOT skip, modify, or simplify.
 
    **CRITICAL LOGIC: Check the user's answer to Question 5 above.**
 
@@ -333,13 +333,13 @@ Based on detected legacy stack, please answer the following:
       ```
 
    **ELSE IF user selected [G] "Other" in Question 5**:
-      - If they answered "yes" to the clarifying question (is cloud/container platform) → **ASK this question** (same as above)
-      - If they answered "no" → **SKIP to Question 8** (same skip message as [A])
+      - If they answered "yes" to the clarifying question (is cloud/container platform) -> **ASK this question** (same as above)
+      - If they answered "no" -> **SKIP to Question 8** (same skip message as [A])
 
 8\. Observability Stack [CONDITIONAL]:
    Current: [detected or "None detected"]
 
-   **⚠️ CRITICAL**: Present this question WITH ALL OPTIONS as written. Do NOT skip, modify, or simplify.
+   **[!] CRITICAL**: Present this question WITH ALL OPTIONS as written. Do NOT skip, modify, or simplify.
 
    **IF** `!HAS_OBSERVABILITY` (no structured logging/monitoring detected):
       Mark as **[OPTIONAL - Not detected in legacy code]**
@@ -422,21 +422,21 @@ For each of the 10 modernization questions, apply this logic:
 
 ```text
 IF user provided EXPLICIT answer (selected option with specific technology):
-  → Component is IN SCOPE for modernization
-  → Store as explicit target in state
-  → Include in complexity scoring
-  → Include in migration planning
+  -> Component is IN SCOPE for modernization
+  -> Store as explicit target in state
+  -> Include in complexity scoring
+  -> Include in migration planning
 
 IF user pressed Enter / skipped / provided NO answer:
-  → Component is OUT OF SCOPE
-  → Store as "Use existing as-is" in state
-  → EXCLUDE from complexity scoring (no migration cost)
-  → Document as "Out of Scope - Keep existing [component] as-is" in recommendations
+  -> Component is OUT OF SCOPE
+  -> Store as "Use existing as-is" in state
+  -> EXCLUDE from complexity scoring (no migration cost)
+  -> Document as "Out of Scope - Keep existing [component] as-is" in recommendations
 
 IF answer is ambiguous or unclear:
-  → STOP and ask clarifying question
-  → Wait for explicit confirmation
-  → Do NOT assume or guess
+  -> STOP and ask clarifying question
+  -> Wait for explicit confirmation
+  -> Do NOT assume or guess
 
 ```
 
@@ -482,16 +482,16 @@ After validation, display summary:
 === MODERNIZATION SCOPE VALIDATION ===
 
 Components IN SCOPE (explicit targets provided by user):
-  ✓ Language/Framework: [target]
-  ✓ Database: [target]
-  ✓ Deployment: [target]
+  [ok] Language/Framework: [target]
+  [ok] Database: [target]
+  [ok] Deployment: [target]
 
 Components OUT OF SCOPE (no targets, use existing as-is):
-  • Message Bus: Keep existing [current implementation] as-is (user skipped)
-  • Observability: Keep existing logging/monitoring as-is (user skipped)
-  • IaC: Not applicable (traditional deployment)
+  * Message Bus: Keep existing [current implementation] as-is (user skipped)
+  * Observability: Keep existing logging/monitoring as-is (user skipped)
+  * IaC: Not applicable (traditional deployment)
 
-Validation Status: ✓ PASSED
+Validation Status: [ok] PASSED
 Ready to proceed with complexity scoring for IN SCOPE components only.
 
 ```

@@ -14,7 +14,7 @@ Generate "unit tests for requirements" checklist.
 
 ---
 
-## ⚠️ File Write Best Practices
+## [!] File Write Best Practices
 
 **For large checklists:**
 
@@ -26,12 +26,12 @@ Generate "unit tests for requirements" checklist.
 
 ## Item Format
 
-**✅ CORRECT (Testing requirements):**
+**[ok] CORRECT (Testing requirements):**
 - "Are visual hierarchy requirements defined with measurable criteria? [Clarity]"
 - "Are hover state requirements consistent across all elements? [Consistency]"
 - "Is fallback behavior defined when images fail to load? [Edge Case, Gap]"
 
-**❌ WRONG (Testing implementation):**
+**[x] WRONG (Testing implementation):**
 - "Verify button clicks correctly"
 - "Test hover states work"
 - "Confirm API returns 200"
@@ -53,7 +53,7 @@ Organize items by:
 ## Traceability
 
 80%+ items MUST include:
-- `[Spec §X.Y]` - Reference to spec section
+- `[Spec SX.Y]` - Reference to spec section
 - `[Gap]` - Missing requirement
 - `[Ambiguity]` - Unclear requirement
 - `[Conflict]` - Contradicting requirements
@@ -75,7 +75,7 @@ Create: `{{feature_dir}}/checklists/[domain].md`
 - [ ] CHK001 - Are [X] requirements defined? [Gap]
 
 ## Requirement Clarity
-- [ ] CHK002 - Is '[term]' quantified? [Ambiguity, Spec §X]
+- [ ] CHK002 - Is '[term]' quantified? [Ambiguity, Spec SX]
 
 ## Scenario Coverage
 - [ ] CHK003 - Are [edge cases] addressed? [Coverage]
@@ -87,7 +87,7 @@ Create: `{{feature_dir}}/checklists/[domain].md`
 
 ```text
 
-✅ Checklist generated
+[ok] Checklist generated
 
 File: {{feature_dir}}/checklists/[domain].md
 Items: [N] total

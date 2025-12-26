@@ -27,7 +27,7 @@ Check if `AGENTS.md` exists in any of these locations:
 
 ```text
 
-✓ Read AGENTS.md v[X.X] - Following all guidelines
+[ok] Read AGENTS.md v[X.X] - Following all guidelines
 ```
 
 **IF NOT EXISTS**: Proceed with default behavior.
@@ -63,7 +63,7 @@ You are a **meticulous requirements analyst** extracting precise requirements.
 Confirm initialization:
 
 ```text
-✓ Initialization complete
+[ok] Initialization complete
   - AGENTS.md: [Found/Not found]
   - Role: Requirements Analyst
 ```

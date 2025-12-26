@@ -7,14 +7,14 @@ version: 3.4.0
 next: 03a2-questions-part2.md
 ---
 
-# 🚫 DO NOT CREATE FILES
+# [NO] DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- ❌ NO `stage9-chunk1.md`
-- ❌ NO `stage9.md`
-- ❌ NO markdown files in the analysis directory
-- ❌ NO intermediate output files of any kind
+- [x] NO `stage9-chunk1.md`
+- [x] NO `stage9.md`
+- [x] NO markdown files in the analysis directory
+- [x] NO intermediate output files of any kind
 
 **Questions are asked directly in the conversation.** Responses are stored via CLI command at the end.
 
@@ -48,10 +48,10 @@ Values available in this prompt (already substituted by CLI):
 5. Record exact user response
 
 **Response Handling:**
-- If user provides valid option → Record and proceed
-- If user provides invalid response → Re-prompt with clarification
-- If user requests clarification → Provide context, then re-ask
-- If user types "skip" → Record as "skip" (use existing/default)
+- If user provides valid option -> Record and proceed
+- If user provides invalid response -> Re-prompt with clarification
+- If user requests clarification -> Provide context, then re-ask
+- If user types "skip" -> Record as "skip" (use existing/default)
 
 ---
 
@@ -70,12 +70,12 @@ DO NOT store preferences after each question. Collect all 5, then store once at 
 ## Question 1: Target Language/Runtime
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q1]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q1]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 1 of 10: Target Language/Runtime
 
 What language or runtime do you want to use for the
@@ -97,7 +97,7 @@ Your choice: ___
 
 TIP: Type the letter (A-H) or specify your preference.
      Type "skip" to use current language.
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -123,12 +123,12 @@ Store user's choice in:
 ## Question 2: Target Database
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q2]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q2]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 2 of 10: Target Database
 
 What database do you want to use?
@@ -149,7 +149,7 @@ Your choice: ___
 
 TIP: Type the letter (A-H) or specify your preference.
      Type "skip" to use current database.
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -175,12 +175,12 @@ Store user's choice in:
 ## Question 3: Message Bus / Async Communication
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q3]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q3]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 3 of 10: Message Bus / Async Communication
 
 What message bus or async communication do you need?
@@ -201,7 +201,7 @@ Options:
 Your choice: ___
 
 TIP: Type "skip" if async is not needed.
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -227,12 +227,12 @@ Store user's choice in:
 ## Question 4: Package Manager / Build Tool
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q4]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q4]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 4 of 10: Package Manager / Build Tool
 
 What package manager or build tool do you want to use?
@@ -264,7 +264,7 @@ For other languages:
 Your choice: ___
 
 TIP: Type "skip" to use current build tool.
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -290,12 +290,12 @@ Store user's choice in:
 ## Question 5: Deployment Target
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - Q5]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q5]**
 
 Present this question EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 QUESTION 5 of 10: Deployment Target
 
 Where will the modernized application be deployed?
@@ -316,7 +316,7 @@ Options:
 Your choice: ___
 
 TIP: Type "skip" to use current deployment method.
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -342,7 +342,7 @@ Store user's choice in:
 ## Progress Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 03a1-questions-part1
 
   Questions Completed: 5/10
@@ -355,7 +355,7 @@ Store user's choice in:
     Q5 Deployment: {value}
 
   Proceeding to Questions 6-10...
-═══════════════════════════════════════════════════════════
+===========================================================
 ```
 
 ---

@@ -7,14 +7,14 @@ version: 3.4.0
 next: 03a4-recommendations.md
 ---
 
-# 🚫 DO NOT CREATE FILES
+# [NO] DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- ❌ NO `stage9-chunk3.md`
-- ❌ NO `stage11.md` or similar
-- ❌ NO markdown files in the analysis directory
-- ❌ NO intermediate output files of any kind
+- [x] NO `stage9-chunk3.md`
+- [x] NO `stage11.md` or similar
+- [x] NO markdown files in the analysis directory
+- [x] NO intermediate output files of any kind
 
 **Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 5).
 
@@ -43,39 +43,39 @@ Values available (already substituted by CLI):
 Display the scope summary and ask user to confirm what's IN and OUT of scope.
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - SCOPE_VALIDATION]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - SCOPE_VALIDATION]**
 
 Present this confirmation EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 SCOPE VALIDATION
 
 Based on your answers, here's what will be modernized.
 Please confirm what's IN SCOPE and OUT OF SCOPE.
 
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 IN SCOPE (Will be modernized):
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 
-  {IF q1 != skip: ✓ Language: {current} → {target}}
-  {IF q2 != skip: ✓ Database: {current} → {target}}
-  {IF q3 != skip && q3 != none: ✓ Message Bus: {current} → {target}}
-  {IF q4 != skip: ✓ Build Tool: {current} → {target}}
-  {IF q5 != skip: ✓ Deployment: {current} → {target}}
-  {IF q6 != skip && q6 != none: ✓ IaC: {current} → {target}}
-  {IF q7 != skip: ✓ Containerization: {current} → {target}}
-  {IF q8 != skip: ✓ Observability: {current} → {target}}
-  {IF q9 != skip: ✓ Security/Auth: {current} → {target}}
-  {IF q10 != skip: ✓ Testing: {current} → {target}}
+  {IF q1 != skip: [ok] Language: {current} -> {target}}
+  {IF q2 != skip: [ok] Database: {current} -> {target}}
+  {IF q3 != skip && q3 != none: [ok] Message Bus: {current} -> {target}}
+  {IF q4 != skip: [ok] Build Tool: {current} -> {target}}
+  {IF q5 != skip: [ok] Deployment: {current} -> {target}}
+  {IF q6 != skip && q6 != none: [ok] IaC: {current} -> {target}}
+  {IF q7 != skip: [ok] Containerization: {current} -> {target}}
+  {IF q8 != skip: [ok] Observability: {current} -> {target}}
+  {IF q9 != skip: [ok] Security/Auth: {current} -> {target}}
+  {IF q10 != skip: [ok] Testing: {current} -> {target}}
 
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 OUT OF SCOPE (Will keep as-is):
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 
   {List components where user typed "skip" or kept current}
 
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
 
 Is this scope correct?
 
@@ -83,7 +83,7 @@ Is this scope correct?
   [N] No, I need to change something
 
 Your choice [Y/N]: ___
-════════════════════════════════════════════════════════════
+============================================================
 
 ```
 
@@ -157,8 +157,8 @@ IF different paradigm: Score = 10
 IF keeping same DB: Score = 1
 IF same DB type upgrade: Score = 3
 IF same DB type different vendor: Score = 5
-IF different DB type (SQL→SQL): Score = 7
-IF different DB paradigm (SQL→NoSQL): Score = 10
+IF different DB type (SQL->SQL): Score = 7
+IF different DB paradigm (SQL->NoSQL): Score = 10
 
 ```
 
@@ -173,7 +173,7 @@ Score = MIN(10, integration_count)
 
 ```text
 Score = 10 - (current_coverage / 10)
-Example: 40% coverage → Score = 6
+Example: 40% coverage -> Score = 6
 
 ```
 
@@ -191,8 +191,8 @@ IF complete auth overhaul: Score = 9
 ### Calculate Overall Complexity
 
 ```text
-Overall = (Size × 0.15) + (Stack × 0.25) + (DB × 0.20) +
-          (Integration × 0.15) + (Testing × 0.10) + (Security × 0.15)
+Overall = (Size x 0.15) + (Stack x 0.25) + (DB x 0.20) +
+          (Integration x 0.15) + (Testing x 0.10) + (Security x 0.15)
 
 ```
 
@@ -223,7 +223,7 @@ Calculate feasibility for different modernization approaches.
 **Formula:**
 
 ```text
-inline_feasibility = 100 - (complexity_score × 10) + abstraction_bonus
+inline_feasibility = 100 - (complexity_score x 10) + abstraction_bonus
 
 abstraction_bonus:
   HIGH abstraction: +20
@@ -273,35 +273,35 @@ hybrid_feasibility = (inline_feasibility + greenfield_feasibility) / 2 + 10
 ## Step 4: Display Scoring Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
 COMPLEXITY & FEASIBILITY ANALYSIS
-═══════════════════════════════════════════════════════════
+===========================================================
 
 COMPLEXITY BREAKDOWN
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
   Codebase Size:      {score}/10 ({LOC} LOC)
-  Tech Stack Change:  {score}/10 ({current} → {target})
-  Database Migration: {score}/10 ({current} → {target})
+  Tech Stack Change:  {score}/10 ({current} -> {target})
+  Database Migration: {score}/10 ({current} -> {target})
   Integration Count:  {score}/10 ({count} integrations)
   Test Coverage Gap:  {score}/10 ({coverage}% current)
-  Security Changes:   {score}/10 ({current} → {target})
+  Security Changes:   {score}/10 ({current} -> {target})
 
-  ─────────────────────────────────────────────────
+  -------------------------------------------------
   OVERALL COMPLEXITY: {score}/10 ({rating})
-  ─────────────────────────────────────────────────
+  -------------------------------------------------
 
 FEASIBILITY SCORES
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
   Inline Upgrade:     {score}% feasible
   Greenfield Rewrite: {score}% feasible
-  Hybrid/Strangler:   {score}% feasible ⭐ (recommended if > 70%)
+  Hybrid/Strangler:   {score}% feasible * (recommended if > 70%)
 
 RECOMMENDATION PREVIEW
-─────────────────────────────────────────────────────────────
+-------------------------------------------------------------
   {Primary approach based on highest feasibility}
   Confidence: {percentage}%
 
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
@@ -320,11 +320,11 @@ Save the complexity and feasibility scores to the data folder using stdin mode:
   "scope_validated": true,
   "complexity": {
     "codebase_size": {"score": {n}, "details": "{LOC} LOC"},
-    "tech_stack_change": {"score": {n}, "details": "{current} → {target}"},
-    "database_migration": {"score": {n}, "details": "{current} → {target}"},
+    "tech_stack_change": {"score": {n}, "details": "{current} -> {target}"},
+    "database_migration": {"score": {n}, "details": "{current} -> {target}"},
     "integration_count": {"score": {n}, "details": "{count} integrations"},
     "test_coverage_gap": {"score": {n}, "details": "{coverage}% current"},
-    "security_changes": {"score": {n}, "details": "{current} → {target}"},
+    "security_changes": {"score": {n}, "details": "{current} -> {target}"},
     "overall_score": {n},
     "rating": "{LOW|MEDIUM|HIGH|VERY HIGH}"
   },
@@ -344,15 +344,15 @@ Save the complexity and feasibility scores to the data folder using stdin mode:
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 03a3-validation-scoring
 
-  Scope Validated: ✓
+  Scope Validated: [ok]
   Complexity Score: {score}/10 ({rating})
   Top Feasibility: {approach} ({score}%)
 
   Proceeding to Final Recommendations...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 

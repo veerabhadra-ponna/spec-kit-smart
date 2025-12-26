@@ -75,7 +75,7 @@ Note: Not all projects have all documents. Generate tasks from available docs.
 
 ```text
 
-✓ Setup complete
+[ok] Setup complete
   - Feature dir: {{feature_dir}}
   - Docs available: [list]
   - Preferences: [N] loaded

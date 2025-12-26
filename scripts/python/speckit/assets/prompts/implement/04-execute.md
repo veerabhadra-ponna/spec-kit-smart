@@ -14,7 +14,7 @@ Execute implementation following the task plan.
 
 ---
 
-## ⚠️ File Write Best Practices
+## [!] File Write Best Practices
 
 **For large file generation:**
 
@@ -50,7 +50,7 @@ Execute implementation following the task plan.
 ### Phase 3+: User Stories
 
 - One phase per story (P1, P2, P3...)
-- Within each: Tests → Models → Services → Endpoints
+- Within each: Tests -> Models -> Services -> Endpoints
 - Test each story independently
 
 ### Final: Polish
@@ -92,7 +92,7 @@ After each task:
 
 ```text
 
-✓ T012 [US1] Create User model - COMPLETE
+[ok] T012 [US1] Create User model - COMPLETE
   - File: src/models/user.py
 ```
 
@@ -100,7 +100,7 @@ After each phase:
 
 ```text
 
-✓ Phase 3 (US1) Complete
+[ok] Phase 3 (US1) Complete
   - Tasks: 8/8
   - Tests: Passing
 ```

@@ -37,7 +37,7 @@ Check if `AGENTS.md` exists in any of these locations (in order):
 
 ---
 
-⏸️ **[STOP: AGENTS_CHECK]**
+[PAUSE] **[STOP: AGENTS_CHECK]**
 
 Search for AGENTS.md in the locations listed above.
 
@@ -49,12 +49,12 @@ Search for AGENTS.md in the locations listed above.
 4. Output confirmation:
 
    ```text
-   ✓ Read AGENTS.md v[X.X] - Following all guidelines
+   [ok] Read AGENTS.md v[X.X] - Following all guidelines
    ```
 
 **IF AGENTS.md DOES NOT EXIST:**
 
-1. Output: `✓ No AGENTS.md found - Proceeding with default behavior`
+1. Output: `[ok] No AGENTS.md found - Proceeding with default behavior`
 
 ---
 
@@ -68,23 +68,23 @@ speckitadv --version
 
 ---
 
-⏸️ **[STOP: TOOLKIT_CHECK]**
+[PAUSE] **[STOP: TOOLKIT_CHECK]**
 
-**IF CLI works:** Output: `✓ Toolkit verified (vX.X.X)`
-**IF CLI missing:** Output: `❌ Error: speckitadv CLI not found` → STOP workflow
+**IF CLI works:** Output: `[ok] Toolkit verified (vX.X.X)`
+**IF CLI missing:** Output: `[x] Error: speckitadv CLI not found` -> STOP workflow
 
 ---
 
 ## Output
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 01a-initialization
   AGENTS.md: {verified v[X.X] | not found}
   Toolkit: verified
   Analysis folder: {analysis_dir}
   Next: Run speckitadv analyze-project
-═══════════════════════════════════════════════════════════
+===========================================================
 ```
 
 ## Next Substage

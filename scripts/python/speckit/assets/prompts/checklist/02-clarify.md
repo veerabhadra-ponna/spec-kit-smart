@@ -66,7 +66,7 @@ Combine arguments + answers:
 
 ```text
 
-✓ Intent clarified
+[ok] Intent clarified
   - Theme: [domain]
   - Focus areas: [list]
   - Audience: [author/reviewer/QA]

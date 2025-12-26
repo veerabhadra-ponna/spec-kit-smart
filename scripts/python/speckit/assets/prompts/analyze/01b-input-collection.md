@@ -71,12 +71,12 @@ Then skip interactive prompts and use:
 
 ---
 
-⏸️ **[STOP: USER_INPUT_REQUIRED - PROJECT_PATH]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - PROJECT_PATH]**
 
 Present this prompt to user EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 PROJECT PATH
 
 Please provide the absolute path to the existing project
@@ -87,7 +87,7 @@ Examples:
   Windows:   C:\Users\user\my-legacy-app
 
 Your path: ___
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -105,7 +105,7 @@ When user provides path:
 **IF validation fails:**
 
 ```text
-❌ Error: Invalid project path
+[x] Error: Invalid project path
    Reason: {path does not exist | not readable | not a directory}
 
 Please provide a valid path: ___
@@ -121,28 +121,28 @@ Re-prompt until valid path provided.
 
 ---
 
-⏸️ **[STOP: USER_INPUT_REQUIRED - ADDITIONAL_CONTEXT]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - ADDITIONAL_CONTEXT]**
 
 Present this prompt to user EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 ADDITIONAL CONTEXT (Optional)
 
 Do you want to provide any additional context to help
 with the analysis?
 
 This could include:
-  • Known pain points or issues
-  • Business requirements or constraints
-  • Deployment environment details
-  • Team preferences or standards
-  • Timeline or budget constraints
-  • Any other relevant information
+  * Known pain points or issues
+  * Business requirements or constraints
+  * Deployment environment details
+  * Team preferences or standards
+  * Timeline or budget constraints
+  * Any other relevant information
 
 Type your context below, or type "none" to skip:
 ___
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -160,34 +160,34 @@ ___
 
 ---
 
-⏸️ **[STOP: USER_INPUT_REQUIRED - ANALYSIS_SCOPE]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - ANALYSIS_SCOPE]**
 
 Present this prompt to user EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 ANALYSIS SCOPE
 
 What type of analysis do you need?
 
 [A] Full Application Modernization
-    → Analyze entire codebase comprehensively
-    → Generate complete functional/technical specs
-    → Suitable for legacy app migration
-    → Outputs: analysis-report, functional-spec,
+    -> Analyze entire codebase comprehensively
+    -> Generate complete functional/technical specs
+    -> Suitable for legacy app migration
+    -> Outputs: analysis-report, functional-spec,
                technical-spec, stage-prompts
 
 [B] Cross-Cutting Concern Migration
-    → Analyze entire application context FIRST
-    → THEN deep-dive into specific concern
-    → Assess abstraction quality for migration
-    → Suitable for: auth migration, database swap,
+    -> Analyze entire application context FIRST
+    -> THEN deep-dive into specific concern
+    -> Assess abstraction quality for migration
+    -> Suitable for: auth migration, database swap,
                     caching layer, observability, etc.
-    → Outputs: analysis-report, abstraction-assessment,
+    -> Outputs: analysis-report, abstraction-assessment,
                concern-migration-plan, rollback-procedure
 
 Your choice [A/B]: ___
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT for user response. DO NOT proceed until answered.**
@@ -199,7 +199,7 @@ Your choice [A/B]: ___
 **IF** user response is NOT "A" or "B" (case-insensitive):
 
 ```text
-❌ Invalid selection. Please choose [A] or [B].
+[x] Invalid selection. Please choose [A] or [B].
 
 Your choice [A/B]: ___
 ```
@@ -216,12 +216,12 @@ Re-prompt until valid choice received.
 
 ---
 
-⏸️ **[STOP: USER_INPUT_REQUIRED - CONCERN_DETAILS]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - CONCERN_DETAILS]**
 
 Present these prompts to user EXACTLY as written:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 CONCERN DETAILS
 
 You selected Cross-Cutting Concern Migration.
@@ -231,15 +231,15 @@ Please provide details about the concern:
    Which cross-cutting concern do you want to migrate?
 
    Examples:
-     • Authentication/Authorization
-     • Database/ORM Layer
-     • Caching Layer
-     • Message Bus/Queue
-     • Resilience/Fault Tolerance
-     • Logging/Observability
-     • API Gateway/Routing
-     • File Storage/CDN
-     • Deployment/Infrastructure
+     * Authentication/Authorization
+     * Database/ORM Layer
+     * Caching Layer
+     * Message Bus/Queue
+     * Resilience/Fault Tolerance
+     * Logging/Observability
+     * API Gateway/Routing
+     * File Storage/CDN
+     * Deployment/Infrastructure
 
    Your concern type: ___
 
@@ -257,7 +257,7 @@ Please provide details about the concern:
    Examples: "Okta", "PostgreSQL 15 with Prisma", "Redis 7.x", "AWS"
 
    Target implementation: ___
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT for ALL THREE responses. DO NOT proceed until all answered.**
@@ -277,19 +277,19 @@ Please provide details about the concern:
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 01b-input-collection
 
   Collected Inputs:
     Project Path: {$PROJECT_PATH}
     Analysis Scope: {A - Full Application | B - Cross-Cutting}
     Additional Context: {provided | none}
-    {IF scope=B: Concern: {$CONCERN_TYPE} ({$CURRENT_IMPL} → {$TARGET_IMPL})}
+    {IF scope=B: Concern: {$CONCERN_TYPE} ({$CURRENT_IMPL} -> {$TARGET_IMPL})}
 
   Analysis Folder: {analysis_dir}
 
   Next: Run speckitadv analyze-project
-═══════════════════════════════════════════════════════════
+===========================================================
 ```
 
 ## Next Substage

@@ -7,14 +7,14 @@ version: 3.4.0
 next: 03b3-effort-success.md
 ---
 
-# 🚫 DO NOT CREATE FILES
+# [NO] DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- ❌ NO `stage10-chunk2.md`
-- ❌ NO `stage10.md` or similar
-- ❌ NO markdown files in the analysis directory
-- ❌ NO intermediate output files of any kind
+- [x] NO `stage10-chunk2.md`
+- [x] NO `stage10.md` or similar
+- [x] NO markdown files in the analysis directory
+- [x] NO intermediate output files of any kind
 
 **Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 5).
 
@@ -44,7 +44,7 @@ Values available (already substituted by CLI):
 Select migration strategy based on abstraction level and blast radius.
 
 ---
-⏸️ **[STOP: SELECT_STRATEGY]**
+[PAUSE] **[STOP: SELECT_STRATEGY]**
 
 **Decision Matrix:**
 
@@ -115,7 +115,7 @@ Alternative Considered: {alternative}
 Create detailed phase plan using 50/30/15/5 value distribution.
 
 ---
-⏸️ **[STOP: DEFINE_PHASES]**
+[PAUSE] **[STOP: DEFINE_PHASES]**
 
 **Phase Template:**
 
@@ -225,14 +225,14 @@ Phase 4 - Optimization (5%)
 Identify and categorize migration risks.
 
 ---
-⏸️ **[STOP: ASSESS_RISKS]**
+[PAUSE] **[STOP: ASSESS_RISKS]**
 
 **Risk Categories:**
 
 ### Technical Risks
 
 ```text
-For each, rate: Probability (H/M/L) × Impact (H/M/L)
+For each, rate: Probability (H/M/L) x Impact (H/M/L)
 
 1. Breaking Changes
    - New implementation has different behavior
@@ -301,8 +301,8 @@ For each, rate: Probability (H/M/L) × Impact (H/M/L)
 ```text
 Risk Assessment:
 
-🔴 HIGH RISKS (Probability × Impact = HIGH)
-─────────────────────────────────────────────────────────────
+[!] HIGH RISKS (Probability x Impact = HIGH)
+-------------------------------------------------------------
   1. {risk_name}
      Probability: HIGH, Impact: HIGH
      Description: {description}
@@ -312,15 +312,15 @@ Risk Assessment:
   2. {risk_name}
      ...
 
-🟡 MEDIUM RISKS
-─────────────────────────────────────────────────────────────
+[!] MEDIUM RISKS
+-------------------------------------------------------------
   1. {risk_name}
      Probability: {P}, Impact: {I}
      Description: {description}
      Mitigation: {strategy}
 
-🟢 LOW RISKS
-─────────────────────────────────────────────────────────────
+[ok] LOW RISKS
+-------------------------------------------------------------
   1. {risk_name}
      ...
 
@@ -401,7 +401,7 @@ Save the strategy data to the data folder using stdin mode:
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 03b2-migration-strategy
 
   Strategy: {strategy name}
@@ -416,7 +416,7 @@ Save the strategy data to the data folder using stdin mode:
   Risks: {high} HIGH, {medium} MEDIUM, {low} LOW
 
   Proceeding to Effort & Success Criteria...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 

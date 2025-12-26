@@ -31,9 +31,9 @@ From FEATURE_DIR:
 Create/verify ignore files based on tech stack:
 
 **Detection:**
-- `git rev-parse --git-dir` → create .gitignore
-- `Dockerfile*` exists → create .dockerignore
-- `.eslintrc*` exists → create .eslintignore
+- `git rev-parse --git-dir` -> create .gitignore
+- `Dockerfile*` exists -> create .dockerignore
+- `.eslintrc*` exists -> create .eslintignore
 
 **Common Patterns by Stack:**
 - **Node.js**: `node_modules/`, `dist/`, `*.log`, `.env*`
@@ -61,7 +61,7 @@ From tasks.md extract:
 
 ```text
 
-✓ Context loaded
+[ok] Context loaded
   - Tasks: [N] across [N] phases
   - Tech stack: [detected]
   - Ignore files: [verified / created]

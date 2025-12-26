@@ -15,7 +15,7 @@ next: null
 
 ---
 
-## ⚠️ File Write Best Practices
+## [!] File Write Best Practices
 
 **For large artifacts:**
 
@@ -163,7 +163,7 @@ grep -E '\[.*\]|NEEDS CLARIFICATION|ACTION REQUIRED' {{feature_dir}}/plan.md
 ## Output
 
 ```text
-✅ Planning complete
+[ok] Planning complete
 
 Artifacts generated:
   - {{feature_dir}}/plan.md (all sections filled)

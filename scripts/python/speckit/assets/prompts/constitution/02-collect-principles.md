@@ -19,7 +19,7 @@ Structure the collected principles for constitution generation.
 **IF** `{principles}` is empty or shows only "$NONE":
 
 ```text
-⚠️ ERROR: No principles provided
+[!] ERROR: No principles provided
 
 Stage 2 requires either --defaults or --principles flag.
 Re-run with:
@@ -67,7 +67,7 @@ Review and validate the principles above:
 Confirm principles are ready for constitution generation:
 
 ```text
-✓ Principles validated: [N] principles
+[ok] Principles validated: [N] principles
   - Quality coverage: [Complete/Needs additions]
   - Ready for constitution generation
 ```

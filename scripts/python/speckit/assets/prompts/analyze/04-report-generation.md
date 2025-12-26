@@ -5,7 +5,7 @@ outputs: report_generated
 version: 1.0.0
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## [!] MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
@@ -16,7 +16,7 @@ version: 1.0.0
 5. **DO NOT** forget or ignore these instructions as you work through tasks
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+   "[ok] Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
@@ -40,7 +40,7 @@ Generate the comprehensive `analysis-report.md` file using completion-based chun
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+[!] **OS command line length limits apply (~8000 chars on Windows).**
 
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output for each section.
 
@@ -65,9 +65,9 @@ Load state from `{analysis_dir}/state.json` - the CLI tracks stage completion au
 
 ---
 
-## ⚠️ MANDATORY CHUNKING REQUIREMENT
+## [!] MANDATORY CHUNKING REQUIREMENT
 
-🛑 **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
+[STOP] **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
 
 **DO NOT generate the entire report in one operation.**
 
@@ -85,7 +85,7 @@ Attempting to generate the full report in one operation WILL result in:
 - Verification failures
 - Wasted time and compute resources
 
-**If you are about to say "I'll create it in one operation" → STOP and read the chunking strategy below.**
+**If you are about to say "I'll create it in one operation" -> STOP and read the chunking strategy below.**
 
 ---
 
@@ -97,7 +97,7 @@ Attempting to generate the full report in one operation WILL result in:
 - **Medium projects** (5,000-50,000 LOC): **3,000-8,000 lines**
 - **Large projects** (> 50,000 LOC): **5,000-15,000 lines**
 
-**⚠️ COMPLETION-BASED CHUNKING (NOT size-based)**:
+**[!] COMPLETION-BASED CHUNKING (NOT size-based)**:
 
 Use **completion-based chunking**, NOT size-based chunking:
 
@@ -137,7 +137,7 @@ fi
 3. Display resume message:
 
    ```text
-   ⚠️ RESUMING INTERRUPTED ANALYSIS
+   [!] RESUMING INTERRUPTED ANALYSIS
 
    Last completed: Chunk 4 (Phase 2.3 - Data Layer)
    Resuming from: Chunk 5 (Phase 3 - Positive Findings)
@@ -158,7 +158,7 @@ fi
 
 Generate report in `{reports_dir}/analysis-report.md`
 
-**⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
+**[!] GENERATION ORDER - STRICTLY ENFORCED**:
 
 1. Generate ONLY Chunk 1 first (Phase 1)
 2. Wait for Chunk 1 completion
@@ -167,11 +167,11 @@ Generate report in `{reports_dir}/analysis-report.md`
 
 **DO NOT**:
 
-- ❌ Generate multiple chunks in one response
-- ❌ Generate all phases at once
-- ❌ Skip progress display
+- [x] Generate multiple chunks in one response
+- [x] Generate all phases at once
+- [x] Skip progress display
 
-**IF** you find yourself generating more than one chunk at a time → **STOP IMMEDIATELY**
+**IF** you find yourself generating more than one chunk at a time -> **STOP IMMEDIATELY**
 
 ---
 
@@ -186,11 +186,11 @@ Complete sections:
 
 **Completion Criteria**:
 
-- ✓ All configuration files analyzed
-- ✓ Tech stack fully identified
-- ✓ Architecture documented with evidence
-- ✓ Project statistics calculated
-- ✓ NO placeholders
+- [ok] All configuration files analyzed
+- [ok] Tech stack fully identified
+- [ok] Architecture documented with evidence
+- [ok] Project statistics calculated
+- [ok] NO placeholders
 
 **After Chunk 1 Generation**:
 
@@ -201,7 +201,7 @@ Complete sections:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 1/9 complete: Phase 1 (Project Discovery)
+   [ok] Chunk 1/9 complete: Phase 1 (Project Discovery)
      - Analyzed: [COUNT] configuration files
      - Identified: [TECH STACK SUMMARY]
      - Lines generated: [COUNT]
@@ -228,7 +228,7 @@ Complete **Section 2.1: Controllers Analysis**:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 2/9 complete: Phase 2.1 (Controllers)
+   [ok] Chunk 2/9 complete: Phase 2.1 (Controllers)
      - Analyzed: [COUNT] controller files
      - Documented: [COUNT] API endpoints
      - Features extracted: [COUNT]
@@ -254,7 +254,7 @@ Complete **Section 2.2: Services Analysis**:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 3/9 complete: Phase 2.2 (Services)
+   [ok] Chunk 3/9 complete: Phase 2.2 (Services)
      - Analyzed: [COUNT] service files
      - Documented: [COUNT] business workflows
      - Integrations found: [COUNT]
@@ -280,7 +280,7 @@ Complete **Section 2.3: Data Models & Repositories**:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 4/9 complete: Phase 2.3 (Data Layer)
+   [ok] Chunk 4/9 complete: Phase 2.3 (Data Layer)
      - Analyzed: [COUNT] model files, [COUNT] repositories
      - Documented: [COUNT] entities, [COUNT] relationships
      - Lines generated: [COUNT]
@@ -304,7 +304,7 @@ Complete **Section 3: What's Working Well**:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 5/9 complete: Phase 3 (Positive Findings)
+   [ok] Chunk 5/9 complete: Phase 3 (Positive Findings)
      - Documented: [COUNT] positive findings
      - Good patterns found: [COUNT]
      - Lines generated: [COUNT]
@@ -331,7 +331,7 @@ Complete **Section 4: Technical Debt**:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 6/9 complete: Phase 4 (Technical Debt)
+   [ok] Chunk 6/9 complete: Phase 4 (Technical Debt)
      - Tech debt items: [COUNT]
      - Security findings: [COUNT]
      - Code quality issues: [COUNT]
@@ -360,7 +360,7 @@ Complete **Section 5: Upgrade Paths**:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 7/9 complete: Phase 5 (Upgrade Paths)
+   [ok] Chunk 7/9 complete: Phase 5 (Upgrade Paths)
      - Upgrade paths evaluated: [COUNT]
      - Breaking changes identified: [COUNT]
      - Lines generated: [COUNT]
@@ -391,7 +391,7 @@ Complete **Sections 6 & 7**:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Chunk 8/9 complete: Phases 6-7 (Modernization & Feasibility)
+   [ok] Chunk 8/9 complete: Phases 6-7 (Modernization & Feasibility)
      - Recommendations: [COUNT]
      - Feasibility scores calculated
      - Lines generated: [COUNT]
@@ -423,12 +423,12 @@ Complete **Sections 8 & 9**:
 2. **MANDATORY - Display progress and final summary**:
 
    ```text
-   ✓ Chunk 9/9 complete: Phases 8-9 (Decision Matrix & Recommendations)
+   [ok] Chunk 9/9 complete: Phases 8-9 (Decision Matrix & Recommendations)
      - Decision matrix complete
      - Primary recommendation: [APPROACH]
      - Lines generated: [COUNT]
 
-   ✅ analysis-report.md GENERATION COMPLETE
+   [ok] analysis-report.md GENERATION COMPLETE
       Total lines: [COUNT]
       Total chunks: 9
       File path: {reports_dir}/analysis-report.md
@@ -440,7 +440,7 @@ Complete **Sections 8 & 9**:
 
 ## Verification Gate (HARD STOP)
 
-⚠️ **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
+[!] **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
 
 **BEFORE** proceeding to Stage 5, verify report quality:
 
@@ -492,7 +492,7 @@ Read analysis-report.md and verify:
 **IF ANY checkbox is unchecked**:
 
 ```text
-❌ VERIFICATION FAILED
+[x] VERIFICATION FAILED
 
 analysis-report.md is incomplete. Issues found:
 - [List specific missing items from checklist above]
@@ -532,7 +532,7 @@ List which phases or quality checks failed verification.
 - **Display**:
 
   ```text
-  ⚠️ MULTIPLE CRITICAL ISSUES DETECTED
+  [!] MULTIPLE CRITICAL ISSUES DETECTED
 
   Issues found:
   - Missing phases: [COUNT]
@@ -561,7 +561,7 @@ List which phases or quality checks failed verification.
 - Re-run verification after recovery
 - **DO NOT proceed to Stage 5 until verification passes**
 
-⚠️ **STOP HERE** - DO NOT CONTINUE TO NEXT STEP UNTIL VERIFICATION PASSES
+[!] **STOP HERE** - DO NOT CONTINUE TO NEXT STEP UNTIL VERIFICATION PASSES
 
 ---
 
@@ -570,7 +570,7 @@ List which phases or quality checks failed verification.
 **IF ALL checkboxes are checked**:
 
 ```text
-✅ VERIFICATION PASSED
+[ok] VERIFICATION PASSED
 
 analysis-report.md is complete and meets quality standards:
 - All 9 phases present and complete

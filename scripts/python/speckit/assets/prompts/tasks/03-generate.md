@@ -14,7 +14,7 @@ Generate tasks organized by user story.
 
 ---
 
-## ⚠️ File Write Best Practices
+## [!] File Write Best Practices
 
 **For large task lists:**
 
@@ -41,10 +41,10 @@ Components:
 5. **Description**: Clear action with exact file path
 
 **Examples:**
-- ✅ `- [ ] T001 Create project structure per plan`
-- ✅ `- [ ] T005 [P] Implement auth middleware in src/middleware/auth.py`
-- ✅ `- [ ] T012 [P] [US1] Create User model in src/models/user.py`
-- ❌ `- [ ] Create User model` (missing ID, Story)
+- [ok] `- [ ] T001 Create project structure per plan`
+- [ok] `- [ ] T005 [P] Implement auth middleware in src/middleware/auth.py`
+- [ok] `- [ ] T012 [P] [US1] Create User model in src/models/user.py`
+- [x] `- [ ] Create User model` (missing ID, Story)
 
 ---
 
@@ -61,7 +61,7 @@ Components:
 
 **Phase 3+: User Stories** (MUST have Story label)
 - One phase per user story (P1, P2, P3...)
-- Within each: Models → Services → Endpoints
+- Within each: Models -> Services -> Endpoints
 
 **Final Phase: Polish** (no Story label)
 - Cross-cutting concerns
@@ -75,7 +75,7 @@ Components:
 1. **From User Stories** (spec.md): Each story gets its own phase
 2. **From Contracts**: Map endpoints to stories
 3. **From Data Model**: Map entities to stories
-4. **From Setup**: Shared infrastructure → Setup phase
+4. **From Setup**: Shared infrastructure -> Setup phase
 
 ---
 
@@ -104,7 +104,7 @@ Use the **Write tool** to create `{{feature_dir}}/tasks.md` with **complete cont
 ## Output
 
 ```text
-✓ Tasks generated
+[ok] Tasks generated
   - Total: [N] tasks
   - Phases: [N] phases
   - Parallel opportunities: [N]

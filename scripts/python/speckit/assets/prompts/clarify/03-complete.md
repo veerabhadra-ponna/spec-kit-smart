@@ -18,7 +18,7 @@ Finalize clarification and report results.
 
 Verify spec updates:
 - [ ] Clarifications section has one bullet per answer
-- [ ] Total questions ≤ 5
+- [ ] Total questions <= 5
 - [ ] Updated sections have no lingering placeholders
 - [ ] No contradictory statements remain
 - [ ] Terminology consistent across sections
@@ -49,7 +49,7 @@ Verify spec updates:
 
 ```text
 
-✅ Clarification complete
+[ok] Clarification complete
 
 Questions asked: [N]
 Sections updated: [list]

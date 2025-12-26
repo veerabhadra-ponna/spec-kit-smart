@@ -35,7 +35,7 @@ Verify the analysis report meets all quality standards before proceeding to arti
 ## Verification Checklist
 
 ---
-⏸️ **[STOP: VERIFY_REPORT]**
+[PAUSE] **[STOP: VERIFY_REPORT]**
 
 Read the complete report at `{reports_dir}/analysis-report.md` and verify each item:
 
@@ -75,38 +75,38 @@ Read the complete report at `{reports_dir}/analysis-report.md` and verify each i
 **IF ALL checks pass:**
 
 ```text
-═══════════════════════════════════════════════════════════
-  ✅ VERIFICATION PASSED
+===========================================================
+  [ok] VERIFICATION PASSED
 
   analysis-report.md meets quality standards:
-    • All 9 phases present
-    • {count}+ file:line references
-    • Tech debt categorized ({count} items)
-    • Security documented ({count} findings)
-    • Feasibility calculated
-    • Recommendation clear ({confidence}%)
-    • Total lines: {count}
-═══════════════════════════════════════════════════════════
+    * All 9 phases present
+    * {count}+ file:line references
+    * Tech debt categorized ({count} items)
+    * Security documented ({count} findings)
+    * Feasibility calculated
+    * Recommendation clear ({confidence}%)
+    * Total lines: {count}
+===========================================================
 
 ```
 
 **IF ANY check fails:**
 
 ```text
-═══════════════════════════════════════════════════════════
-  ❌ VERIFICATION FAILED
+===========================================================
+  [x] VERIFICATION FAILED
 
   Issues Found:
-    • {list failed checks}
+    * {list failed checks}
 
   Recovery Required:
     Return to appropriate substage to fix issues
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 
 ---
-⏸️ **[STOP: HANDLE_VERIFICATION_RESULT]**
+[PAUSE] **[STOP: HANDLE_VERIFICATION_RESULT]**
 
 **IF PASSED:** Continue to state generation
 **IF FAILED:** Return to fix issues before proceeding
@@ -143,16 +143,16 @@ The CLI automatically updates `{analysis_dir}/state.json` with stage completion.
 ## Completion Marker
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   STAGE COMPLETE: REPORT_GENERATION
 
   Chain ID: {chain_id}
   Report: {reports_dir}/analysis-report.md
   Lines: {count}
-  Verification: PASSED ✓
+  Verification: PASSED [ok]
 
   Proceeding to Stage 5: Artifact Generation
-═══════════════════════════════════════════════════════════
+===========================================================
 
 STAGE_COMPLETE:REPORT_GENERATION
 

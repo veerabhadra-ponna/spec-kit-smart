@@ -8,7 +8,7 @@ total_stages: 3
 
 Create internal representations (do not output raw artifacts):
 
-- **Requirements inventory**: Each requirement with stable key (e.g., "User can upload file" → `user-can-upload-file`)
+- **Requirements inventory**: Each requirement with stable key (e.g., "User can upload file" -> `user-can-upload-file`)
 - **User story/action inventory**: Discrete user actions with acceptance criteria
 - **Task coverage mapping**: Map each task to requirements (by keyword/explicit reference)
 - **Constitution rule set**: Extract principle names and MUST/SHOULD normative statements

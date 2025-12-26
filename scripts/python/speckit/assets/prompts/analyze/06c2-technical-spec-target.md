@@ -15,15 +15,15 @@ Generate technical specification documenting HOW to build the MODERNIZED system.
 
 ---
 
-## ⚠️ IMPORTANT: "Part" vs CLI "--chunk"
+## [!] IMPORTANT: "Part" vs CLI "--chunk"
 
 This prompt uses **"Part 1-5"** to describe content sections to write incrementally.
 
 **These are NOT CLI `--chunk` parameters!**
 
-- ❌ DO NOT run `speckitadv analyze-project --chunk=5` to continue
-- ✅ DO continue writing content using `write-report --append`
-- ✅ DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
+- [x] DO NOT run `speckitadv analyze-project --chunk=5` to continue
+- [ok] DO continue writing content using `write-report --append`
+- [ok] DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
 
 ---
 
@@ -37,7 +37,7 @@ This prompt uses **"Part 1-5"** to describe content sections to write incrementa
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+[!] **OS command line length limits apply (~8000 chars on Windows).**
 
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
@@ -56,7 +56,7 @@ speckitadv write-report <filename> --stage=06c2-technical-spec-target --append -
 
 ---
 
-## ⚠️ CRITICAL: File Write Policy
+## [!] CRITICAL: File Write Policy
 
 **ALWAYS use CLI commands for file writes. NEVER use:**
 
@@ -94,9 +94,9 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 ---
 
-## ⚠️ MANDATORY MULTI-PART WRITING
+## [!] MANDATORY MULTI-PART WRITING
 
-🛑 **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
+[STOP] **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
 
 **DO NOT generate the entire technical spec in one operation.**
 
@@ -115,7 +115,7 @@ Attempting to generate the full spec in one operation WILL result in:
 - Verification failures
 - Wasted time and compute resources
 
-**If you are about to say "I'll create it in one operation" → STOP and read the writing strategy below.**
+**If you are about to say "I'll create it in one operation" -> STOP and read the writing strategy below.**
 
 ---
 
@@ -127,7 +127,7 @@ Attempting to generate the full spec in one operation WILL result in:
 - **Medium projects** (5,000-50,000 LOC): **2,000-5,000 lines**
 - **Large projects** (> 50,000 LOC): **4,000-10,000+ lines**
 
-**⚠️ COMPLETION-BASED WRITING (NOT size-based)**:
+**[!] COMPLETION-BASED WRITING (NOT size-based)**:
 
 Use **completion-based writing**, NOT size-based writing:
 
@@ -168,7 +168,7 @@ fi
 3. Display resume message:
 
    ```text
-   ⚠️ RESUMING INTERRUPTED GENERATION
+   [!] RESUMING INTERRUPTED GENERATION
 
    Last completed: Part 2 (Target Tech Stack + Data Architecture)
    Resuming from: Part 3 (API Design + Integration Architecture)
@@ -189,7 +189,7 @@ fi
 
 Generate spec in `{reports_dir}/technical-spec-target.md`
 
-**⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
+**[!] GENERATION ORDER - STRICTLY ENFORCED**:
 
 1. Generate ONLY Part 1 first
 2. Wait for Part 1 completion
@@ -198,11 +198,11 @@ Generate spec in `{reports_dir}/technical-spec-target.md`
 
 **DO NOT**:
 
-- ❌ Generate multiple parts in one response
-- ❌ Generate all sections at once
-- ❌ Skip progress display
+- [x] Generate multiple parts in one response
+- [x] Generate all sections at once
+- [x] Skip progress display
 
-**IF** you find yourself generating more than one part at a time → **STOP IMMEDIATELY**
+**IF** you find yourself generating more than one part at a time -> **STOP IMMEDIATELY**
 
 ---
 
@@ -212,7 +212,7 @@ Generate Sections 1, 2, and 3.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_1]**
+[PAUSE] **[STOP: GENERATE_PART_1]**
 
 #### Section 1: Introduction
 
@@ -249,10 +249,10 @@ Generate Sections 1, 2, and 3.
 
 **Completion Criteria**:
 
-- ✓ C4 diagrams for target architecture
-- ✓ Legacy vs Target comparison table
-- ✓ User preferences (Q1, Q2, Q5) applied
-- ✓ NO placeholders
+- [ok] C4 diagrams for target architecture
+- [ok] Legacy vs Target comparison table
+- [ok] User preferences (Q1, Q2, Q5) applied
+- [ok] NO placeholders
 
 **After Part 1 Generation**:
 
@@ -265,7 +265,7 @@ Generate Sections 1, 2, and 3.
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 1/5 complete: Architecture + Legacy vs Target Comparison
+   [ok] Part 1/5 complete: Architecture + Legacy vs Target Comparison
      - C4 Diagrams: 2
      - Target Language: {Q1 answer}
      - Target Database: {Q2 answer}
@@ -281,7 +281,7 @@ Generate Sections 4 and 5 using user's Q1-Q4 answers.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_2]**
+[PAUSE] **[STOP: GENERATE_PART_2]**
 
 #### Section 4: Target Technology Stack
 
@@ -335,10 +335,10 @@ Based on user's 10 questions:
 
 **Completion Criteria**:
 
-- ✓ User preferences Q1-Q4 applied correctly
-- ✓ ERD diagram for target data model
-- ✓ Migration plan for each entity
-- ✓ NO placeholders
+- [ok] User preferences Q1-Q4 applied correctly
+- [ok] ERD diagram for target data model
+- [ok] Migration plan for each entity
+- [ok] NO placeholders
 
 **After Part 2 Generation**:
 
@@ -348,7 +348,7 @@ Based on user's 10 questions:
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 2/5 complete: Target Tech Stack + Data Architecture
+   [ok] Part 2/5 complete: Target Tech Stack + Data Architecture
      - Target Language: {Q1}
      - Target Database: {Q2}
      - Target Message Bus: {Q3}
@@ -365,7 +365,7 @@ Generate Sections 6 and 7.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_3]**
+[PAUSE] **[STOP: GENERATE_PART_3]**
 
 #### Section 6: API Design
 
@@ -411,10 +411,10 @@ Generate Sections 6 and 7.
 
 **Completion Criteria**:
 
-- ✓ All API endpoints mapped from legacy
-- ✓ Integration sequence diagrams included
-- ✓ Message queue patterns from Q3 applied
-- ✓ NO placeholders
+- [ok] All API endpoints mapped from legacy
+- [ok] Integration sequence diagrams included
+- [ok] Message queue patterns from Q3 applied
+- [ok] NO placeholders
 
 **After Part 3 Generation**:
 
@@ -424,7 +424,7 @@ Generate Sections 6 and 7.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 3/5 complete: API Design + Integration Architecture
+   [ok] Part 3/5 complete: API Design + Integration Architecture
      - Endpoints mapped: [COUNT]
      - Integrations documented: [COUNT]
      - Message Queue: {Q3 answer}
@@ -440,7 +440,7 @@ Generate Sections 8 and 9 using Q5, Q6, Q7, Q9 answers.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_4]**
+[PAUSE] **[STOP: GENERATE_PART_4]**
 
 #### Section 8: Security Architecture
 
@@ -505,10 +505,10 @@ Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 
 **Completion Criteria**:
 
-- ✓ User preferences Q5, Q6, Q7, Q9 applied
-- ✓ Deployment diagram included
-- ✓ CI/CD pipeline defined
-- ✓ NO placeholders
+- [ok] User preferences Q5, Q6, Q7, Q9 applied
+- [ok] Deployment diagram included
+- [ok] CI/CD pipeline defined
+- [ok] NO placeholders
 
 **After Part 4 Generation**:
 
@@ -518,7 +518,7 @@ Based on Q5 (Deployment), Q6 (IaC), Q7 (Containers):
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 4/5 complete: Security + Deployment
+   [ok] Part 4/5 complete: Security + Deployment
      - Security Approach: {Q9}
      - Deployment Target: {Q5}
      - Container: {Q7}
@@ -535,7 +535,7 @@ Generate Sections 10, 11, and 12 using Q8, Q10 answers.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_5]**
+[PAUSE] **[STOP: GENERATE_PART_5]**
 
 #### Section 10: Testing Strategy
 
@@ -616,10 +616,10 @@ Based on Q8 (Observability stack):
 
 **Completion Criteria**:
 
-- ✓ User preferences Q8, Q10 applied
-- ✓ Migration risks documented
-- ✓ Rollback strategy defined
-- ✓ NO placeholders
+- [ok] User preferences Q8, Q10 applied
+- [ok] Migration risks documented
+- [ok] Rollback strategy defined
+- [ok] NO placeholders
 
 **After Part 5 Generation**:
 
@@ -635,13 +635,13 @@ Based on Q8 (Observability stack):
 3. **MANDATORY - Display progress and final summary**:
 
    ```text
-   ✓ Part 5/5 complete: Testing + Observability + Migration Risks
+   [ok] Part 5/5 complete: Testing + Observability + Migration Risks
      - Testing Strategy: {Q10}
      - Observability Stack: {Q8}
      - Migration risks documented: [COUNT]
      - Lines generated: [COUNT]
 
-   ✅ technical-spec-target.md GENERATION COMPLETE
+   [ok] technical-spec-target.md GENERATION COMPLETE
       Total sections: 12
       Total diagrams: [COUNT]
       Total lines: [COUNT]
@@ -653,7 +653,7 @@ Based on Q8 (Observability stack):
 
 ## Verification Gate (HARD STOP)
 
-⚠️ **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
+[!] **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
 
 **BEFORE** proceeding to 06d-stage-prompts.md, verify spec quality:
 
@@ -705,7 +705,7 @@ Read technical-spec-target.md and verify:
 **IF ANY checkbox is unchecked**:
 
 ```text
-❌ VERIFICATION FAILED
+[x] VERIFICATION FAILED
 
 technical-spec-target.md is incomplete. Issues found:
 - [List specific missing items from checklist above]
@@ -744,7 +744,7 @@ List which sections or quality checks failed verification.
 - **Display**:
 
   ```text
-  ⚠️ MULTIPLE CRITICAL ISSUES DETECTED
+  [!] MULTIPLE CRITICAL ISSUES DETECTED
 
   Issues found:
   - Missing sections: [COUNT]
@@ -771,7 +771,7 @@ List which sections or quality checks failed verification.
 - Re-run verification after recovery
 - **DO NOT proceed to 06d until verification passes**
 
-⚠️ **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
+[!] **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
 
 ---
 
@@ -780,7 +780,7 @@ List which sections or quality checks failed verification.
 **IF ALL checkboxes are checked**:
 
 ```text
-✅ VERIFICATION PASSED
+[ok] VERIFICATION PASSED
 
 technical-spec-target.md is complete and meets quality standards:
 - All 12 sections present and complete
@@ -802,7 +802,7 @@ Proceeding to 06d-stage-prompts.md...
 ## Both Technical Specs Complete
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   BOTH TECHNICAL SPECS COMPLETE
 
   1. technical-spec-legacy.md - LEGACY system (how it's built today)
@@ -823,7 +823,7 @@ Proceeding to 06d-stage-prompts.md...
     Q10 Testing: {answer}
 
   Now proceeding to stage-prompts...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ARTIFACT_COMPLETE:TECHNICAL_SPEC_TARGET
 ```

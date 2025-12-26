@@ -15,15 +15,15 @@ Generate functional specification documenting WHAT the LEGACY/EXISTING system CU
 
 ---
 
-## ⚠️ IMPORTANT: "Part" vs CLI "--chunk"
+## [!] IMPORTANT: "Part" vs CLI "--chunk"
 
 This prompt uses **"Part 1-5"** to describe content sections to write incrementally.
 
 **These are NOT CLI `--chunk` parameters!**
 
-- ❌ DO NOT run `speckitadv analyze-project --chunk=2` to continue
-- ✅ DO continue writing content using `write-report --append`
-- ✅ DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
+- [x] DO NOT run `speckitadv analyze-project --chunk=2` to continue
+- [ok] DO continue writing content using `write-report --append`
+- [ok] DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
 
 ---
 
@@ -37,7 +37,7 @@ This prompt uses **"Part 1-5"** to describe content sections to write incrementa
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+[!] **OS command line length limits apply (~8000 chars on Windows).**
 
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
@@ -56,7 +56,7 @@ speckitadv write-report <filename> --stage=06a-functional-spec-legacy --append -
 
 ---
 
-## ⚠️ CRITICAL: File Write Policy
+## [!] CRITICAL: File Write Policy
 
 **ALWAYS use CLI commands for file writes. NEVER use:**
 
@@ -106,9 +106,9 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 ---
 
-## ⚠️ MANDATORY MULTI-PART WRITING
+## [!] MANDATORY MULTI-PART WRITING
 
-🛑 **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
+[STOP] **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
 
 **DO NOT generate the entire functional spec in one operation.**
 
@@ -126,7 +126,7 @@ Attempting to generate the full spec in one operation WILL result in:
 - Verification failures
 - Wasted time and compute resources
 
-**If you are about to say "I'll create it in one operation" → STOP and read the writing strategy below.**
+**If you are about to say "I'll create it in one operation" -> STOP and read the writing strategy below.**
 
 ---
 
@@ -138,7 +138,7 @@ Attempting to generate the full spec in one operation WILL result in:
 - **Medium projects** (5,000-50,000 LOC): **1,500-3,500 lines**
 - **Large projects** (> 50,000 LOC): **3,000-6,000+ lines**
 
-**⚠️ COMPLETION-BASED WRITING (NOT size-based)**:
+**[!] COMPLETION-BASED WRITING (NOT size-based)**:
 
 Use **completion-based writing**, NOT size-based writing:
 
@@ -178,7 +178,7 @@ fi
 3. Display resume message:
 
    ```text
-   ⚠️ RESUMING INTERRUPTED GENERATION
+   [!] RESUMING INTERRUPTED GENERATION
 
    Last completed: Part 2 (User Stories - CRITICAL)
    Resuming from: Part 3 (User Stories - STANDARD + Business Rules)
@@ -199,7 +199,7 @@ fi
 
 Generate spec in `{reports_dir}/functional-spec-legacy.md`
 
-**⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
+**[!] GENERATION ORDER - STRICTLY ENFORCED**:
 
 1. Generate ONLY Part 1 first
 2. Wait for Part 1 completion
@@ -208,11 +208,11 @@ Generate spec in `{reports_dir}/functional-spec-legacy.md`
 
 **DO NOT**:
 
-- ❌ Generate multiple parts in one response
-- ❌ Generate all sections at once
-- ❌ Skip progress display
+- [x] Generate multiple parts in one response
+- [x] Generate all sections at once
+- [x] Skip progress display
 
-**IF** you find yourself generating more than one part at a time → **STOP IMMEDIATELY**
+**IF** you find yourself generating more than one part at a time -> **STOP IMMEDIATELY**
 
 ---
 
@@ -222,7 +222,7 @@ Generate Sections 1, 2, and 3.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_1]**
+[PAUSE] **[STOP: GENERATE_PART_1]**
 
 Generate the following sections:
 
@@ -246,10 +246,10 @@ Generate the following sections:
 
 **Completion Criteria**:
 
-- ✓ Project context established
-- ✓ System boundaries defined
-- ✓ Assumptions documented
-- ✓ NO placeholders
+- [ok] Project context established
+- [ok] System boundaries defined
+- [ok] Assumptions documented
+- [ok] NO placeholders
 
 **After Part 1 Generation**:
 
@@ -262,7 +262,7 @@ Generate the following sections:
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 1/5 complete: Introduction + Summary + Scope
+   [ok] Part 1/5 complete: Introduction + Summary + Scope
      - Sections completed: 3
      - Lines generated: [COUNT]
 
@@ -276,7 +276,7 @@ Generate Section 4.1 (CRITICAL priority features).
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_2]**
+[PAUSE] **[STOP: GENERATE_PART_2]**
 
 Extract all CRITICAL features from analysis-report.md Phase 2.
 
@@ -303,10 +303,10 @@ Extract all CRITICAL features from analysis-report.md Phase 2.
 
 **Completion Criteria**:
 
-- ✓ ALL CRITICAL features from analysis-report.md documented
-- ✓ Every feature has file:line reference
-- ✓ Acceptance criteria for each feature
-- ✓ NO placeholders
+- [ok] ALL CRITICAL features from analysis-report.md documented
+- [ok] Every feature has file:line reference
+- [ok] Acceptance criteria for each feature
+- [ok] NO placeholders
 
 **After Part 2 Generation**:
 
@@ -318,7 +318,7 @@ Extract all CRITICAL features from analysis-report.md Phase 2.
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 2/5 complete: User Stories (CRITICAL)
+   [ok] Part 2/5 complete: User Stories (CRITICAL)
      - CRITICAL features documented: [COUNT]
      - File:line references: [COUNT]
      - Lines generated: [COUNT]
@@ -333,7 +333,7 @@ Generate Sections 4.2 and 5.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_3]**
+[PAUSE] **[STOP: GENERATE_PART_3]**
 
 #### Section 4.2: STANDARD Features
 
@@ -364,10 +364,10 @@ END IF
 
 **Completion Criteria**:
 
-- ✓ ALL STANDARD features documented
-- ✓ Business rules extracted with pseudocode
-- ✓ Every item has file:line reference
-- ✓ NO placeholders
+- [ok] ALL STANDARD features documented
+- [ok] Business rules extracted with pseudocode
+- [ok] Every item has file:line reference
+- [ok] NO placeholders
 
 **After Part 3 Generation**:
 
@@ -377,7 +377,7 @@ END IF
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 3/5 complete: STANDARD Features + Business Rules
+   [ok] Part 3/5 complete: STANDARD Features + Business Rules
      - STANDARD features documented: [COUNT]
      - Business rules documented: [COUNT]
      - Lines generated: [COUNT]
@@ -392,7 +392,7 @@ Generate Sections 6 and 7.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_4]**
+[PAUSE] **[STOP: GENERATE_PART_4]**
 
 #### Section 6: Non-Functional Requirements
 
@@ -420,11 +420,11 @@ Generate Sections 6 and 7.
 
 **Completion Criteria**:
 
-- ✓ All NFR categories documented with evidence
-- ✓ All data entities documented
-- ✓ Relationships mapped
-- ✓ Every item has file:line reference
-- ✓ NO placeholders
+- [ok] All NFR categories documented with evidence
+- [ok] All data entities documented
+- [ok] Relationships mapped
+- [ok] Every item has file:line reference
+- [ok] NO placeholders
 
 **After Part 4 Generation**:
 
@@ -434,7 +434,7 @@ Generate Sections 6 and 7.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 4/5 complete: NFRs + Data Requirements
+   [ok] Part 4/5 complete: NFRs + Data Requirements
      - NFR categories documented: [COUNT]
      - Data entities documented: [COUNT]
      - Relationships mapped: [COUNT]
@@ -450,7 +450,7 @@ Generate Sections 8, 9, and 10.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_5]**
+[PAUSE] **[STOP: GENERATE_PART_5]**
 
 #### Section 8: Acceptance Criteria
 
@@ -472,10 +472,10 @@ Generate Sections 8, 9, and 10.
 
 **Completion Criteria**:
 
-- ✓ Acceptance criteria defined
-- ✓ All assumptions documented
-- ✓ All constraints identified
-- ✓ NO placeholders
+- [ok] Acceptance criteria defined
+- [ok] All assumptions documented
+- [ok] All constraints identified
+- [ok] NO placeholders
 
 **After Part 5 Generation**:
 
@@ -485,13 +485,13 @@ Generate Sections 8, 9, and 10.
 2. **MANDATORY - Display progress and final summary**:
 
    ```text
-   ✓ Part 5/5 complete: Acceptance + Assumptions + Constraints
+   [ok] Part 5/5 complete: Acceptance + Assumptions + Constraints
      - Acceptance criteria: [COUNT]
      - Assumptions: [COUNT]
      - Constraints: [COUNT]
      - Lines generated: [COUNT]
 
-   ✅ functional-spec-legacy.md GENERATION COMPLETE
+   [ok] functional-spec-legacy.md GENERATION COMPLETE
       Total sections: 10
       Total features: [COUNT]
       Total lines: [COUNT]
@@ -503,7 +503,7 @@ Generate Sections 8, 9, and 10.
 
 ## Verification Gate (HARD STOP)
 
-⚠️ **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
+[!] **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
 
 **BEFORE** proceeding to 06b-functional-spec-target.md, verify spec quality:
 
@@ -552,7 +552,7 @@ Read functional-spec-legacy.md and verify:
 **IF ANY checkbox is unchecked**:
 
 ```text
-❌ VERIFICATION FAILED
+[x] VERIFICATION FAILED
 
 functional-spec-legacy.md is incomplete. Issues found:
 - [List specific missing items from checklist above]
@@ -591,7 +591,7 @@ List which sections or quality checks failed verification.
 - **Display**:
 
   ```text
-  ⚠️ MULTIPLE CRITICAL ISSUES DETECTED
+  [!] MULTIPLE CRITICAL ISSUES DETECTED
 
   Issues found:
   - Missing sections: [COUNT]
@@ -618,7 +618,7 @@ List which sections or quality checks failed verification.
 - Re-run verification after recovery
 - **DO NOT proceed to 06b until verification passes**
 
-⚠️ **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
+[!] **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
 
 ---
 
@@ -627,7 +627,7 @@ List which sections or quality checks failed verification.
 **IF ALL checkboxes are checked**:
 
 ```text
-✅ VERIFICATION PASSED
+[ok] VERIFICATION PASSED
 
 functional-spec-legacy.md is complete and meets quality standards:
 - All 10 sections present and complete
@@ -648,7 +648,7 @@ Proceeding to 06b-functional-spec-target.md...
 ## Completion Marker
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   ARTIFACT COMPLETE: FUNCTIONAL-SPEC-LEGACY.md
 
   Chain ID: {chain_id}
@@ -658,7 +658,7 @@ Proceeding to 06b-functional-spec-target.md...
   This documents the LEGACY system (what exists today).
 
   NEXT: Generate functional-spec-target.md (what will be built)
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ARTIFACT_COMPLETE:FUNCTIONAL_SPEC_LEGACY
 ```

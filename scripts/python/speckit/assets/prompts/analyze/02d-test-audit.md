@@ -39,7 +39,7 @@ Values available in this prompt (already substituted by CLI):
 ## Step 1: Test Framework Detection
 
 ---
-⏸️ **[STOP: DETECT_TEST_FRAMEWORK]**
+[PAUSE] **[STOP: DETECT_TEST_FRAMEWORK]**
 
 Identify the testing frameworks in use:
 
@@ -75,7 +75,7 @@ Additional Frameworks: {list if multiple}
 ## Step 2: Test Coverage Analysis
 
 ---
-⏸️ **[STOP: ANALYZE_TEST_COVERAGE]**
+[PAUSE] **[STOP: ANALYZE_TEST_COVERAGE]**
 
 Analyze test files and estimate coverage:
 
@@ -138,7 +138,7 @@ Test Quality:
 ## Step 3: Coverage Gaps Identification
 
 ---
-⏸️ **[STOP: IDENTIFY_COVERAGE_GAPS]**
+[PAUSE] **[STOP: IDENTIFY_COVERAGE_GAPS]**
 
 Identify files and modules WITHOUT corresponding tests:
 
@@ -162,16 +162,16 @@ Test Coverage Gaps:
 Untested Files: {count}/{total} ({percentage}%)
 
 Critical Gaps (HIGH priority):
-  🔴 {SecurityConfig.java} - No test file
-  🔴 {PaymentService.java} - No test file
-  🔴 {AuthController.java} - Only {n} tests
+  [!] {SecurityConfig.java} - No test file
+  [!] {PaymentService.java} - No test file
+  [!] {AuthController.java} - Only {n} tests
 
 Moderate Gaps (MEDIUM priority):
-  🟡 {UserService.java} - Partial coverage
-  🟡 {OrderRepository.java} - Missing edge cases
+  [!] {UserService.java} - Partial coverage
+  [!] {OrderRepository.java} - Missing edge cases
 
 Low Priority Gaps:
-  🟢 {UtilityHelper.java} - Utility class
+  [ok] {UtilityHelper.java} - Utility class
 
 ```
 
@@ -180,7 +180,7 @@ Low Priority Gaps:
 ## Step 4: Dependency Audit
 
 ---
-⏸️ **[STOP: AUDIT_DEPENDENCIES]**
+[PAUSE] **[STOP: AUDIT_DEPENDENCIES]**
 
 Perform comprehensive dependency security and freshness audit:
 
@@ -220,44 +220,44 @@ Total Dependencies: {count}
   Direct: {count}
   Transitive: {count}
 
-═══════════════════════════════════════════════════════════
+===========================================================
 SECURITY VULNERABILITIES
-═══════════════════════════════════════════════════════════
+===========================================================
 
-🔴 CRITICAL ({count}):
+[!] CRITICAL ({count}):
   {package} v{current}
     CVE: {CVE-YYYY-NNNNN}
     Description: {brief description}
     Fix: Upgrade to v{fixed_version}
 
-🟠 HIGH ({count}):
+[!] HIGH ({count}):
   {package} v{current}
     CVE: {CVE-YYYY-NNNNN}
     Description: {brief description}
     Fix: Upgrade to v{fixed_version}
 
-🟡 MEDIUM ({count}):
+[!] MEDIUM ({count}):
   {package} v{current} - {issue}
 
-🟢 LOW ({count}):
+[ok] LOW ({count}):
   {package} v{current} - {issue}
 
-═══════════════════════════════════════════════════════════
+===========================================================
 OUTDATED DEPENDENCIES
-═══════════════════════════════════════════════════════════
+===========================================================
 
 Major Version Behind ({count}):
-  {package}: v{current} → v{latest} (major update)
+  {package}: v{current} -> v{latest} (major update)
 
 Minor Version Behind ({count}):
-  {package}: v{current} → v{latest} (minor update)
+  {package}: v{current} -> v{latest} (minor update)
 
 Patch Behind ({count}):
-  {package}: v{current} → v{latest} (patch update)
+  {package}: v{current} -> v{latest} (patch update)
 
-═══════════════════════════════════════════════════════════
+===========================================================
 DEPRECATED PACKAGES
-═══════════════════════════════════════════════════════════
+===========================================================
 
 {package} - Deprecated, use {replacement}
 
@@ -333,7 +333,7 @@ Create comprehensive audit summary:
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 02d-test-audit (Phase 4)
 
   Time Used: 20% allocation
@@ -350,7 +350,7 @@ Create comprehensive audit summary:
     Outdated: {count}
 
   Proceeding to Quality Gates
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 

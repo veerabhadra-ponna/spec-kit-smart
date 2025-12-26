@@ -24,7 +24,7 @@ Generate chunks 4-6: Data Layer, Positive Findings, and Technical Debt & Issues.
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+[!] **OS command line length limits apply (~8000 chars on Windows).**
 
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
@@ -43,7 +43,7 @@ speckitadv write-report analysis-report.md --stage=04b-report-chunks-4-6 --appen
 
 ---
 
-## ⚠️ CRITICAL: File Write Policy
+## [!] CRITICAL: File Write Policy
 
 **ALWAYS use CLI commands for file writes. NEVER use:**
 
@@ -67,7 +67,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 ## Chunk 4: Phase 2.3 - Data Layer
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_4]**
+[PAUSE] **[STOP: GENERATE_CHUNK_4]**
 
 **Append to report:**
 
@@ -107,16 +107,16 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 ```
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_4]**
+[PAUSE] **[STOP: VERIFY_CHUNK_4]**
 
-Output: `✓ Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
+Output: `[ok] Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 
 ---
 
 ## Chunk 5: Phase 3 - Positive Findings
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_5]**
+[PAUSE] **[STOP: GENERATE_CHUNK_5]**
 
 **Append to report:**
 
@@ -160,16 +160,16 @@ Output: `✓ Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 ```
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_5]**
+[PAUSE] **[STOP: VERIFY_CHUNK_5]**
 
-Output: `✓ Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
+Output: `[ok] Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 
 ---
 
 ## Chunk 6: Phase 4 - Technical Debt & Issues
 
 ---
-⏸️ **[STOP: GENERATE_CHUNK_6]**
+[PAUSE] **[STOP: GENERATE_CHUNK_6]**
 
 **Append to report:**
 
@@ -226,28 +226,28 @@ Output: `✓ Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 ```
 
 ---
-⏸️ **[STOP: VERIFY_CHUNK_6]**
+[PAUSE] **[STOP: VERIFY_CHUNK_6]**
 
-Output: `✓ Chunk 6/9: Tech Debt ({debt_count} debt, {sec_count} security, {lines} lines)`
+Output: `[ok] Chunk 6/9: Tech Debt ({debt_count} debt, {sec_count} security, {lines} lines)`
 
 ---
 
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 04b-report-chunks-4-6
 
   Chunks Generated: 6/9
   Cumulative Lines: {count}
 
   Content:
-    Phase 2.3: Data Layer ({entities} entities) ✓
-    Phase 3: Positive Findings ({count}) ✓
-    Phase 4: Tech Debt & Issues ({count}) ✓
+    Phase 2.3: Data Layer ({entities} entities) [ok]
+    Phase 3: Positive Findings ({count}) [ok]
+    Phase 4: Tech Debt & Issues ({count}) [ok]
 
   Proceeding to Chunks 7-9...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 

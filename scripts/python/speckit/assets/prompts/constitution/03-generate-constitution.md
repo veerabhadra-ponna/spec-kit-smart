@@ -46,10 +46,10 @@ If template doesn't exist, use this structure:
 ## Step 2: Fill Template
 
 Replace all placeholders with concrete values:
-- `[PROJECT_NAME]` → Actual project name
-- `[PRINCIPLES]` → Formatted list of collected principles
-- `[VERSION]` → Semantic version (start at 1.0.0 for new)
-- `[DATE]` → ISO format YYYY-MM-DD
+- `[PROJECT_NAME]` -> Actual project name
+- `[PRINCIPLES]` -> Formatted list of collected principles
+- `[VERSION]` -> Semantic version (start at 1.0.0 for new)
+- `[DATE]` -> ISO format YYYY-MM-DD
 
 **Formatting rules:**
 - Each principle: "**Name**: MUST/SHOULD/MAY description"
@@ -77,7 +77,7 @@ Output completion summary:
 
 ```text
 
-✅ Constitution created successfully
+[ok] Constitution created successfully
 
 Version: 1.0.0
 Location: memory/constitution.md

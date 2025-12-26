@@ -19,11 +19,11 @@ This directory contains the **chained prompt workflow** for the `analyze-project
 ### v3.1 Sub-Prompt Architecture
 
 ```text
-[SETUP] → [STRUCTURE] → [ANALYZE] → [BRANCH] → [REPORT] → [ARTIFACTS]
-   ↓          ↓             ↓           ↓          ↓           ↓
+[SETUP] -> [STRUCTURE] -> [ANALYZE] -> [BRANCH] -> [REPORT] -> [ARTIFACTS]
+   v          v             v           v          v           v
  3 sub     5 sub         4 sub       3 sub      4 sub       5 sub
 prompts   prompts       prompts     prompts    prompts     prompts
-   ↓          ↓             ↓           ↓          ↓           ↓
+   v          v             v           v          v           v
  State      State         State       State      State      Complete
 
 ```
@@ -33,13 +33,13 @@ prompts   prompts       prompts     prompts    prompts     prompts
 Original staged prompts (400-890 lines each) suffered from:
 1. **Instruction Density Overload** - Too many instructions competed for AI attention
 2. **Missing STOP Enforcement** - AI would skip past wait points
-3. **No state Verification** - No write → read → verify pattern
+3. **No state Verification** - No write -> read -> verify pattern
 4. **CRITICAL Keyword Overuse** - 47 uses diluted importance
 5. **Inconsistent Instruction Hierarchy** - No RFC 2119 keyword usage
 
 Sub-prompts (~100-200 lines each) solve these issues with:
 - **Focused Context** - Each sub-prompt has one clear purpose
-- **Visual STOP Markers** - `⏸️ [STOP: ACTION_NAME]` forces waits
+- **Visual STOP Markers** - `[PAUSE] [STOP: ACTION_NAME]` forces waits
 - **state Verification** - Write, read, validate pattern
 - **RFC 2119 Keywords** - MUST/SHOULD/MAY hierarchy
 - **Consistent Structure** - Pre-check, execute, state, next
@@ -142,28 +142,28 @@ Each sub-prompt:
 
 ```text
 .analysis/{project}-{timestamp}/          # Analysis workspace (= {analysis_dir})
-├── state.json                            # Single state file (CLI managed)
-├── data/                                 # JSON data files (= {data_dir})
-│   ├── file-manifest.json                # Script-generated
-│   ├── tech-stack.json                   # AI-generated
-│   ├── category-patterns.json            # AI-generated
-│   ├── deep-dive-patterns.json           # AI-generated
-│   ├── config-analysis.json              # AI-generated
-│   ├── test-audit.json                   # AI-generated
-│   ├── dependency-audit.json             # AI-generated
-│   └── metrics-summary.json              # AI-generated
-├── reports/                              # MD report files (= {reports_dir})
-│   ├── analysis-report.md                # AI-generated (Stage 4)
-│   ├── EXECUTIVE-SUMMARY.md              # AI-generated (Stage 5)
-│   ├── functional-spec-legacy.md         # AI-generated (Stage 6, Scope A)
-│   ├── functional-spec-target.md         # AI-generated (Stage 6, Scope A)
-│   ├── technical-spec-legacy.md          # AI-generated (Stage 6, Scope A)
-│   └── technical-spec-target.md          # AI-generated (Stage 6, Scope A)
-└── stage-prompts/                        # Spec Kit stage prompts (= {analysis_dir}/stage-prompts)
-    ├── constitution-prompt.md            # AI-generated (Stage 6, Scope A)
-    ├── clarify-prompt.md                 # AI-generated (Stage 6, Scope A)
-    ├── tasks-prompt.md                   # AI-generated (Stage 6, Scope A)
-    └── implement-prompt.md               # AI-generated (Stage 6, Scope A)
++-- state.json                            # Single state file (CLI managed)
++-- data/                                 # JSON data files (= {data_dir})
+|   +-- file-manifest.json                # Script-generated
+|   +-- tech-stack.json                   # AI-generated
+|   +-- category-patterns.json            # AI-generated
+|   +-- deep-dive-patterns.json           # AI-generated
+|   +-- config-analysis.json              # AI-generated
+|   +-- test-audit.json                   # AI-generated
+|   +-- dependency-audit.json             # AI-generated
+|   +-- metrics-summary.json              # AI-generated
++-- reports/                              # MD report files (= {reports_dir})
+|   +-- analysis-report.md                # AI-generated (Stage 4)
+|   +-- EXECUTIVE-SUMMARY.md              # AI-generated (Stage 5)
+|   +-- functional-spec-legacy.md         # AI-generated (Stage 6, Scope A)
+|   +-- functional-spec-target.md         # AI-generated (Stage 6, Scope A)
+|   +-- technical-spec-legacy.md          # AI-generated (Stage 6, Scope A)
+|   +-- technical-spec-target.md          # AI-generated (Stage 6, Scope A)
++-- stage-prompts/                        # Spec Kit stage prompts (= {analysis_dir}/stage-prompts)
+    +-- constitution-prompt.md            # AI-generated (Stage 6, Scope A)
+    +-- clarify-prompt.md                 # AI-generated (Stage 6, Scope A)
+    +-- tasks-prompt.md                   # AI-generated (Stage 6, Scope A)
+    +-- implement-prompt.md               # AI-generated (Stage 6, Scope A)
 ```
 
 ### Template Variables
@@ -192,11 +192,11 @@ Each sub-prompt:
 
 ```text
 FOR each sub-prompt in stage order:
-    1. AI uses Read tool → Load `.specify/prompts/analyze/{sub-prompt}.md`
+    1. AI uses Read tool -> Load `.specify/prompts/analyze/{sub-prompt}.md`
     2. AI reads ENTIRE sub-prompt
     3. AI runs PRE-CHECK (verify previous state)
     4. AI executes ALL instructions in sequence
-    5. AI STOPS at each ⏸️ marker and waits
+    5. AI STOPS at each [PAUSE] marker and waits
     6. AI creates state file
     7. AI verifies state (read back)
     8. AI proceeds to next sub-prompt
@@ -210,7 +210,7 @@ When AI encounters:
 
 ```markdown
 ---
-⏸️ **[STOP: ACTION_NAME]**
+[PAUSE] **[STOP: ACTION_NAME]**
 
 Instructions here.
 
@@ -285,7 +285,7 @@ Templates are loaded from `assets/templates/` by the CLI and injected into promp
 
 ```markdown
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED]**
 
 Present prompt above. Do NOT proceed until user provides response.
 
@@ -304,7 +304,7 @@ Every sub-prompt ends with:
 2. Validate JSON is parseable
 3. Confirm `status` = "complete"
 
-⏸️ **[STOP: state_VERIFY]**
+[PAUSE] **[STOP: state_VERIFY]**
 
 ```
 
@@ -338,7 +338,7 @@ next: {next_sub_prompt}
 
 {Single focused task}
 
-⏸️ **[STOP: ACTION]**
+[PAUSE] **[STOP: ACTION]**
 
 ## state
 
@@ -361,11 +361,11 @@ Each sub-prompt has ~100-200 lines vs 400-890 lines, giving AI:
 
 ### 2. STOP Enforcement
 
-Visual markers `⏸️` are highly salient to AI models, improving wait compliance from 50% to 98%.
+Visual markers `[PAUSE]` are highly salient to AI models, improving wait compliance from 50% to 98%.
 
 ### 3. state Recovery
 
-Write → Read → Verify pattern ensures:
+Write -> Read -> Verify pattern ensures:
 - State is actually persisted
 - Recovery is reliable
 - Corruption is detected immediately

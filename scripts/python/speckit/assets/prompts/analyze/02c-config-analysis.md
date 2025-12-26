@@ -64,7 +64,7 @@ appsettings*         # .NET config files
 ## Step 2: Application Configuration
 
 ---
-⏸️ **[STOP: ANALYZE_APP_CONFIG]**
+[PAUSE] **[STOP: ANALYZE_APP_CONFIG]**
 
 Analyze all application configuration files (100% coverage):
 
@@ -118,7 +118,7 @@ External Services:
   {Service2}: {url} (timeout: {ms})
 
 Security:
-  JWT Secret: {env var | ⚠️ HARDCODED}
+  JWT Secret: {env var | [!] HARDCODED}
   Token Expiry: {duration}
   CORS Origins: {list or pattern}
 
@@ -134,7 +134,7 @@ Performance:
 ## Step 3: Build Configuration
 
 ---
-⏸️ **[STOP: ANALYZE_BUILD_CONFIG]**
+[PAUSE] **[STOP: ANALYZE_BUILD_CONFIG]**
 
 Analyze all build configuration files:
 
@@ -197,7 +197,7 @@ Scripts/Tasks:
 ## Step 4: Infrastructure Configuration
 
 ---
-⏸️ **[STOP: ANALYZE_INFRA_CONFIG]**
+[PAUSE] **[STOP: ANALYZE_INFRA_CONFIG]**
 
 Analyze all infrastructure/deployment configuration:
 
@@ -319,7 +319,7 @@ Create comprehensive settings inventory:
 ## Output Summary
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   SUBSTAGE COMPLETE: 02c-config-analysis (Phase 3)
 
   Time Used: 15% allocation
@@ -336,7 +336,7 @@ Create comprehensive settings inventory:
   Security Issues in Config: {count}
 
   Proceeding to Phase 4: Test & Dependency Audit
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ```
 

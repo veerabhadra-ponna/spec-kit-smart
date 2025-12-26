@@ -27,7 +27,7 @@ Check if `AGENTS.md` exists in any of these locations (in order):
 
 ```text
 
-✓ Read AGENTS.md v[X.X] - Following all guidelines
+[ok] Read AGENTS.md v[X.X] - Following all guidelines
 ```
 
 **IF NOT EXISTS**: Proceed with default behavior.
@@ -58,7 +58,7 @@ Confirm initialization complete:
 
 ```text
 
-✓ Initialization complete
+[ok] Initialization complete
   - AGENTS.md: [Found/Not found]
   - Role: Technical Governance Architect
   - Ready for principle collection
@@ -83,12 +83,12 @@ speckitadv constitution --stage=2 --principles="<user's principles>"
 ### ELSE: Ask User About Principles
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - PRINCIPLES_CHOICE]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - PRINCIPLES_CHOICE]**
 
 Present this prompt to user EXACTLY:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 CONSTITUTION PRINCIPLES
 
 Do you want to use the default engineering principles?
@@ -98,7 +98,7 @@ Do you want to use the default engineering principles?
 [N] No - I'll provide custom principles
 
 Your choice [Y/N]: ___
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT FOR USER RESPONSE. DO NOT proceed until answered.**
@@ -116,24 +116,24 @@ speckitadv constitution --stage=2 --defaults
 **IF user chooses N (custom):**
 
 ---
-⏸️ **[STOP: USER_INPUT_REQUIRED - CUSTOM_PRINCIPLES]**
+[PAUSE] **[STOP: USER_INPUT_REQUIRED - CUSTOM_PRINCIPLES]**
 
 Ask user for their principles:
 
 ```text
-════════════════════════════════════════════════════════════
+============================================================
 CUSTOM PRINCIPLES
 
 Please provide your project principles.
 Format: One principle per line, or a comma-separated list.
 
 Examples:
-  • "No Tests, No TDD"
-  • "Focus on simplicity over abstraction"
-  • "Code readability first, performance second"
+  * "No Tests, No TDD"
+  * "Focus on simplicity over abstraction"
+  * "Code readability first, performance second"
 
 Your principles: ___
-════════════════════════════════════════════════════════════
+============================================================
 ```
 
 **WAIT FOR USER RESPONSE. DO NOT proceed until answered.**

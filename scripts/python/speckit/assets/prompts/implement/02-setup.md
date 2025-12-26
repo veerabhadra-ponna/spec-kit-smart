@@ -68,8 +68,8 @@ Scan `{{feature_dir}}/checklists/`:
 
 | Checklist | Total | Complete | Incomplete | Status |
 |-----------|-------|----------|------------|--------|
-| ux.md     | 12    | 12       | 0          | ✓ PASS |
-| test.md   | 8     | 5        | 3          | ✗ FAIL |
+| ux.md     | 12    | 12       | 0          | [ok] PASS |
+| test.md   | 8     | 5        | 3          | [x] FAIL |
 ```
 
 **If any incomplete:**
@@ -87,7 +87,7 @@ Scan `{{feature_dir}}/checklists/`:
 
 ```text
 
-✓ Setup complete
+[ok] Setup complete
   - Feature: {{feature_dir}}
   - Checklists: [PASS / user approved]
 ```

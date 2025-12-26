@@ -419,9 +419,9 @@ def resume(
 
     # Show resume summary
     console.print("")
-    console.print("╔═══════════════════════════════════════════════════╗")
-    console.print("║  RESUME SUMMARY                                   ║")
-    console.print("╚═══════════════════════════════════════════════════╝")
+    console.print("+===================================================+")
+    console.print("|  RESUME SUMMARY                                   |")
+    console.print("+===================================================+")
     console.print("")
     console.print(f"[bold]Feature:[/bold] {state.feature.short_name}")
     console.print(f"[bold]Description:[/bold] {state.feature.description}")
@@ -783,17 +783,17 @@ def check_artifactory(
     exit_code, message = do_check(url, library, api_key, repos, debug)
 
     if exit_code == 0:
-        console.print(f"[green]✅ {message}[/green]")
+        console.print(f"[green][ok] {message}[/green]")
     elif exit_code == 1:
-        console.print(f"[yellow]❌ {message}[/yellow]")
+        console.print(f"[yellow][x] {message}[/yellow]")
         raise typer.Exit(1)
     elif exit_code == 2:
-        console.print(f"[red]⚠️ {message}[/red]")
+        console.print(f"[red][!] {message}[/red]")
         raise typer.Exit(2)
     elif exit_code == 4:
-        console.print(f"[yellow]⊘ SKIPPED: {message}[/yellow]")
+        console.print(f"[yellow][skip] SKIPPED: {message}[/yellow]")
     else:
-        console.print(f"[red]⚠️ ERROR: {message}[/red]")
+        console.print(f"[red][!] ERROR: {message}[/red]")
         raise typer.Exit(3)
 
 

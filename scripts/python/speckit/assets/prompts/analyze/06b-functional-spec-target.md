@@ -15,15 +15,15 @@ Generate functional specification documenting WHAT the MODERNIZED system WILL do
 
 ---
 
-## ⚠️ IMPORTANT: "Part" vs CLI "--chunk"
+## [!] IMPORTANT: "Part" vs CLI "--chunk"
 
 This prompt uses **"Part 1-5"** to describe content sections to write incrementally.
 
 **These are NOT CLI `--chunk` parameters!**
 
-- ❌ DO NOT run `speckitadv analyze-project --chunk=3` to continue
-- ✅ DO continue writing content using `write-report --append`
-- ✅ DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
+- [x] DO NOT run `speckitadv analyze-project --chunk=3` to continue
+- [ok] DO continue writing content using `write-report --append`
+- [ok] DO run `speckitadv analyze-project` (no --chunk) when this stage is complete
 
 ---
 
@@ -37,7 +37,7 @@ This prompt uses **"Part 1-5"** to describe content sections to write incrementa
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+[!] **OS command line length limits apply (~8000 chars on Windows).**
 
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
@@ -56,7 +56,7 @@ speckitadv write-report <filename> --stage=06b-functional-spec-target --append -
 
 ---
 
-## ⚠️ CRITICAL: File Write Policy
+## [!] CRITICAL: File Write Policy
 
 **ALWAYS use CLI commands for file writes. NEVER use:**
 
@@ -119,9 +119,9 @@ Review user's answers from Stage 3A:
 
 ---
 
-## ⚠️ MANDATORY MULTI-PART WRITING
+## [!] MANDATORY MULTI-PART WRITING
 
-🛑 **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
+[STOP] **STOP - READ THIS FIRST BEFORE GENERATING ANYTHING**
 
 **DO NOT generate the entire functional spec in one operation.**
 
@@ -139,7 +139,7 @@ Attempting to generate the full spec in one operation WILL result in:
 - Verification failures
 - Wasted time and compute resources
 
-**If you are about to say "I'll create it in one operation" → STOP and read the writing strategy below.**
+**If you are about to say "I'll create it in one operation" -> STOP and read the writing strategy below.**
 
 ---
 
@@ -151,7 +151,7 @@ Attempting to generate the full spec in one operation WILL result in:
 - **Medium projects** (5,000-50,000 LOC): **1,500-3,500 lines**
 - **Large projects** (> 50,000 LOC): **3,000-6,000+ lines**
 
-**⚠️ COMPLETION-BASED WRITING (NOT size-based)**:
+**[!] COMPLETION-BASED WRITING (NOT size-based)**:
 
 Use **completion-based writing**, NOT size-based writing:
 
@@ -191,7 +191,7 @@ fi
 3. Display resume message:
 
    ```text
-   ⚠️ RESUMING INTERRUPTED GENERATION
+   [!] RESUMING INTERRUPTED GENERATION
 
    Last completed: Part 2 (User Stories - CRITICAL Modernized)
    Resuming from: Part 3 (User Stories - STANDARD + Business Rules)
@@ -212,7 +212,7 @@ fi
 
 Generate spec in `{reports_dir}/functional-spec-target.md`
 
-**⚠️ GENERATION ORDER - STRICTLY ENFORCED**:
+**[!] GENERATION ORDER - STRICTLY ENFORCED**:
 
 1. Generate ONLY Part 1 first
 2. Wait for Part 1 completion
@@ -221,11 +221,11 @@ Generate spec in `{reports_dir}/functional-spec-target.md`
 
 **DO NOT**:
 
-- ❌ Generate multiple parts in one response
-- ❌ Generate all sections at once
-- ❌ Skip progress display
+- [x] Generate multiple parts in one response
+- [x] Generate all sections at once
+- [x] Skip progress display
 
-**IF** you find yourself generating more than one part at a time → **STOP IMMEDIATELY**
+**IF** you find yourself generating more than one part at a time -> **STOP IMMEDIATELY**
 
 ---
 
@@ -235,7 +235,7 @@ Generate Sections 1, 2, and 3 for TARGET system.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_1]**
+[PAUSE] **[STOP: GENERATE_PART_1]**
 
 #### Section 1: Introduction
 
@@ -257,10 +257,10 @@ Generate Sections 1, 2, and 3 for TARGET system.
 
 **Completion Criteria**:
 
-- ✓ Modernization goals documented
-- ✓ Scope boundaries match user's answers
-- ✓ IN/OUT scope clearly defined
-- ✓ NO placeholders
+- [ok] Modernization goals documented
+- [ok] Scope boundaries match user's answers
+- [ok] IN/OUT scope clearly defined
+- [ok] NO placeholders
 
 **After Part 1 Generation**:
 
@@ -273,7 +273,7 @@ Generate Sections 1, 2, and 3 for TARGET system.
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 1/5 complete: Introduction + Summary + Scope
+   [ok] Part 1/5 complete: Introduction + Summary + Scope
      - In Scope Components: [COUNT]
      - Out of Scope Components: [COUNT]
      - Lines generated: [COUNT]
@@ -288,7 +288,7 @@ Generate Section 4.1 with modernization enhancements.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_2]**
+[PAUSE] **[STOP: GENERATE_PART_2]**
 
 For each CRITICAL feature from legacy spec:
 
@@ -317,10 +317,10 @@ For each CRITICAL feature from legacy spec:
 
 **Completion Criteria**:
 
-- ✓ ALL CRITICAL features from legacy spec mapped
-- ✓ Every feature shows Legacy → Target mapping
-- ✓ User preferences correctly applied
-- ✓ NO placeholders
+- [ok] ALL CRITICAL features from legacy spec mapped
+- [ok] Every feature shows Legacy -> Target mapping
+- [ok] User preferences correctly applied
+- [ok] NO placeholders
 
 **After Part 2 Generation**:
 
@@ -332,7 +332,7 @@ For each CRITICAL feature from legacy spec:
 3. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 2/5 complete: User Stories (CRITICAL Modernized)
+   [ok] Part 2/5 complete: User Stories (CRITICAL Modernized)
      - CRITICAL features modernized: [COUNT]
      - New capabilities added: [COUNT]
      - Lines generated: [COUNT]
@@ -347,7 +347,7 @@ Generate Sections 4.2 and 5 with target stack considerations.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_3]**
+[PAUSE] **[STOP: GENERATE_PART_3]**
 
 #### Section 4.2: STANDARD Features (Modernized)
 
@@ -379,10 +379,10 @@ Generate Sections 4.2 and 5 with target stack considerations.
 
 **Completion Criteria**:
 
-- ✓ ALL STANDARD features mapped with modernization status
-- ✓ Business rules marked as EXACT/ENHANCED/REPLACED
-- ✓ Rationale provided for each rule decision
-- ✓ NO placeholders
+- [ok] ALL STANDARD features mapped with modernization status
+- [ok] Business rules marked as EXACT/ENHANCED/REPLACED
+- [ok] Rationale provided for each rule decision
+- [ok] NO placeholders
 
 **After Part 3 Generation**:
 
@@ -392,7 +392,7 @@ Generate Sections 4.2 and 5 with target stack considerations.
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 3/5 complete: STANDARD Features + Business Rules (Modernized)
+   [ok] Part 3/5 complete: STANDARD Features + Business Rules (Modernized)
      - STANDARD features modernized: [COUNT]
      - Rules Preserved (EXACT): [COUNT]
      - Rules Enhanced: [COUNT]
@@ -408,7 +408,7 @@ Generate Sections 6 and 7 using user's target preferences.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_4]**
+[PAUSE] **[STOP: GENERATE_PART_4]**
 
 #### Section 6: Non-Functional Requirements (Target)
 
@@ -444,10 +444,10 @@ Use user's answer from Q2 (Database):
 
 **Completion Criteria**:
 
-- ✓ NFRs reflect user's Q5-Q10 preferences
-- ✓ Data migration approach documented
-- ✓ Target database from Q2 applied
-- ✓ NO placeholders
+- [ok] NFRs reflect user's Q5-Q10 preferences
+- [ok] Data migration approach documented
+- [ok] Target database from Q2 applied
+- [ok] NO placeholders
 
 **After Part 4 Generation**:
 
@@ -457,7 +457,7 @@ Use user's answer from Q2 (Database):
 2. **MANDATORY - Display progress**:
 
    ```text
-   ✓ Part 4/5 complete: NFRs + Data Requirements (Target)
+   [ok] Part 4/5 complete: NFRs + Data Requirements (Target)
      - Target Database: {Q2 answer}
      - Target Deployment: {Q5 answer}
      - Entities with migration plan: [COUNT]
@@ -473,7 +473,7 @@ Generate Sections 8, 9, and 10.
 
 ---
 
-⏸️ **[STOP: GENERATE_PART_5]**
+[PAUSE] **[STOP: GENERATE_PART_5]**
 
 #### Section 8: Acceptance Criteria (Target)
 
@@ -495,10 +495,10 @@ Generate Sections 8, 9, and 10.
 
 **Completion Criteria**:
 
-- ✓ Migration success criteria defined
-- ✓ All assumptions documented
-- ✓ Constraints from user preferences captured
-- ✓ NO placeholders
+- [ok] Migration success criteria defined
+- [ok] All assumptions documented
+- [ok] Constraints from user preferences captured
+- [ok] NO placeholders
 
 **After Part 5 Generation**:
 
@@ -514,13 +514,13 @@ Generate Sections 8, 9, and 10.
 3. **MANDATORY - Display progress and final summary**:
 
    ```text
-   ✓ Part 5/5 complete: Acceptance + Assumptions + Constraints (Target)
+   [ok] Part 5/5 complete: Acceptance + Assumptions + Constraints (Target)
      - Migration criteria: [COUNT]
      - Assumptions: [COUNT]
      - Constraints: [COUNT]
      - Lines generated: [COUNT]
 
-   ✅ functional-spec-target.md GENERATION COMPLETE
+   [ok] functional-spec-target.md GENERATION COMPLETE
       Total sections: 10
       Total features modernized: [COUNT]
       Total lines: [COUNT]
@@ -532,7 +532,7 @@ Generate Sections 8, 9, and 10.
 
 ## Verification Gate (HARD STOP)
 
-⚠️ **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
+[!] **VERIFICATION GATE - CANNOT PROCEED WITHOUT PASSING**
 
 **BEFORE** proceeding to 06c1-technical-spec-legacy.md, verify spec quality:
 
@@ -554,7 +554,7 @@ Read functional-spec-target.md and verify:
       - [ ] Section 10: Constraints (Target)
 - [ ] Quality checks:
       - [ ] User preferences (Q1-Q10) correctly applied
-      - [ ] All features show Legacy → Target mapping
+      - [ ] All features show Legacy -> Target mapping
       - [ ] Business rules marked EXACT/ENHANCED/REPLACED
       - [ ] NFRs reference user's technology choices
       - [ ] Data migration approach documented
@@ -581,7 +581,7 @@ Read functional-spec-target.md and verify:
 **IF ANY checkbox is unchecked**:
 
 ```text
-❌ VERIFICATION FAILED
+[x] VERIFICATION FAILED
 
 functional-spec-target.md is incomplete. Issues found:
 - [List specific missing items from checklist above]
@@ -620,7 +620,7 @@ List which sections or quality checks failed verification.
 - **Display**:
 
   ```text
-  ⚠️ MULTIPLE CRITICAL ISSUES DETECTED
+  [!] MULTIPLE CRITICAL ISSUES DETECTED
 
   Issues found:
   - Missing sections: [COUNT]
@@ -647,7 +647,7 @@ List which sections or quality checks failed verification.
 - Re-run verification after recovery
 - **DO NOT proceed to 06c1 until verification passes**
 
-⚠️ **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
+[!] **STOP HERE** - DO NOT CONTINUE TO NEXT STAGE UNTIL VERIFICATION PASSES
 
 ---
 
@@ -656,12 +656,12 @@ List which sections or quality checks failed verification.
 **IF ALL checkboxes are checked**:
 
 ```text
-✅ VERIFICATION PASSED
+[ok] VERIFICATION PASSED
 
 functional-spec-target.md is complete and meets quality standards:
 - All 10 sections present and complete
 - User preferences (Q1-Q10) correctly applied
-- All features show Legacy → Target mapping
+- All features show Legacy -> Target mapping
 - Business rules have preservation status
 - NFRs reflect target technology choices
 - No placeholders or incomplete sections
@@ -677,7 +677,7 @@ Proceeding to 06c1-technical-spec-legacy.md...
 ## Both Functional Specs Complete
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   BOTH FUNCTIONAL SPECS COMPLETE
 
   1. functional-spec-legacy.md - LEGACY system (what exists today)
@@ -686,7 +686,7 @@ Proceeding to 06c1-technical-spec-legacy.md...
   Chain ID: {chain_id}
 
   Now proceeding to technical specs (legacy + target)...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 ARTIFACT_COMPLETE:FUNCTIONAL_SPEC_TARGET
 ```

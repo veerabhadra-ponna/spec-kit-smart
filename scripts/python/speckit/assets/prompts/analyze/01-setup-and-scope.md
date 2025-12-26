@@ -15,7 +15,7 @@ This stage collects all necessary inputs from the user and runs the analyze-proj
 
 ---
 
-## ⚠️ MANDATORY: Read Agent Instructions First
+## [!] MANDATORY: Read Agent Instructions First
 
 **BEFORE PROCEEDING:**
 
@@ -26,7 +26,7 @@ This stage collects all necessary inputs from the user and runs the analyze-proj
 5. **DO NOT** forget or ignore these instructions as you work through tasks
 
 **Verification:** After reading AGENTS.md (if it exists), acknowledge with:
-   "✓ Read AGENTS.md v[X.X] - Following all guidelines"
+   "[ok] Read AGENTS.md v[X.X] - Following all guidelines"
 
 **If AGENTS.md does not exist:** Proceed with default behavior.
 
@@ -59,7 +59,7 @@ Your path: ___
 
 **IF** path validation fails:
 
-- Display error: "❌ Error: Invalid project path. Path must exist and be readable."
+- Display error: "[x] Error: Invalid project path. Path must exist and be readable."
 - Re-prompt for PROJECT_PATH
 - DO NOT proceed until valid path provided
 
@@ -108,16 +108,16 @@ ANALYSIS_SCOPE:
 What type of analysis do you need?
 
 - [A] Full Application Modernization (entire codebase)
-      → Analyze entire application for comprehensive modernization
-      → Generate complete functional/technical specs
-      → Suitable for legacy app migration
+      -> Analyze entire application for comprehensive modernization
+      -> Generate complete functional/technical specs
+      -> Suitable for legacy app migration
 
 - [B] Cross-Cutting Concern Migration (specific area)
-      → Analyze entire application context FIRST (for informed decisions)
-      → THEN deep-dive into specific cross-cutting concern
-      → Assess abstraction quality for migration
-      → Recommend migration strategy without rewriting entire app
-      → Suitable for: auth migration, database swap, caching layer, etc.
+      -> Analyze entire application context FIRST (for informed decisions)
+      -> THEN deep-dive into specific cross-cutting concern
+      -> Assess abstraction quality for migration
+      -> Recommend migration strategy without rewriting entire app
+      -> Suitable for: auth migration, database swap, caching layer, etc.
 
 Your choice: ___
 
@@ -128,7 +128,7 @@ Your choice: ___
 **Validation:**
 
 - **IF** user choice is **not** [A] or [B]:
-  - Display error: "❌ Invalid selection. Please choose [A] for Full Application or [B] for Cross-Cutting Concern."
+  - Display error: "[x] Invalid selection. Please choose [A] for Full Application or [B] for Cross-Cutting Concern."
   - Re-prompt for ANALYSIS_SCOPE
   - DO NOT proceed until valid choice received
 
@@ -300,13 +300,13 @@ File Analysis:
 - Test Files: {test_count}
 
 Analysis Scope: {scope_description}
-{IF scope=B: Concern: {concern_type} ({current_impl} → {target_impl})}
+{IF scope=B: Concern: {concern_type} ({current_impl} -> {target_impl})}
 {IF context provided: Additional Context: Provided}
 
 Workspace: {analysis_dir}
 
-✓ All data generated successfully
-✓ Ready for Stage 2: Deep File Analysis
+[ok] All data generated successfully
+[ok] Ready for Stage 2: Deep File Analysis
 
 ```
 
@@ -407,13 +407,13 @@ NEXT_STAGE: 02-file-analysis.md
 
 **If project path doesn't exist:**
 
-- Output: "❌ Error: Project path does not exist: {path}"
+- Output: "[x] Error: Project path does not exist: {path}"
 - Re-prompt for PROJECT_PATH
 - Do not proceed until valid path provided
 
 **If script execution fails:**
 
-- Output: "❌ Error: Analysis setup script failed"
+- Output: "[x] Error: Analysis setup script failed"
 - Display script error output
 - Exit with error
 

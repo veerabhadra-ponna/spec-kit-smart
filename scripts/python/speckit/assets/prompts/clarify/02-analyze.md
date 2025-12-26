@@ -48,7 +48,7 @@ Check each category - mark: Clear / Partial / Missing
 ## Step 2: Generate Questions (Max 5)
 
 For Partial/Missing categories, create questions that:
-- Are answerable with short answer (≤5 words) OR multiple-choice
+- Are answerable with short answer (<=5 words) OR multiple-choice
 - Materially impact architecture, data, or testing
 - Reduce downstream rework risk
 
@@ -98,7 +98,7 @@ After each answer:
 
 ```text
 
-✓ Analysis complete
+[ok] Analysis complete
   - Questions asked: [N]/5
   - Categories resolved: [list]
 ```

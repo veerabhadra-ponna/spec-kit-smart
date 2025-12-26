@@ -62,7 +62,7 @@ Read `FEATURE_SPEC` for ambiguity scanning.
 
 ```text
 
-✓ Initialization complete
+[ok] Initialization complete
   - Spec loaded: {{feature_spec}}
   - Ready for ambiguity scan
 ```

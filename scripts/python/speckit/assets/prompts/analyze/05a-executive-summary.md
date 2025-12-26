@@ -24,7 +24,7 @@ Generate artifacts common to both analysis scopes: EXECUTIVE-SUMMARY.md, depende
 
 **CLI Utility Commands:**
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).**
+[!] **OS command line length limits apply (~8000 chars on Windows).**
 
 **IMPORTANT:** Chunking means MULTIPLE write operations, NOT reduced content. Generate FULL comprehensive output.
 
@@ -46,7 +46,7 @@ speckitadv write-report <filename> --stage=<stage-id> --append --content '<conte
 
 ---
 
-## ⚠️ CRITICAL: File Write Policy
+## [!] CRITICAL: File Write Policy
 
 **ALWAYS use CLI commands for file writes. NEVER use:**
 
@@ -70,7 +70,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 ## Artifact 1: EXECUTIVE-SUMMARY.md
 
 ---
-⏸️ **[STOP: GENERATE_EXECUTIVE_SUMMARY]**
+[PAUSE] **[STOP: GENERATE_EXECUTIVE_SUMMARY]**
 
 Generate C-level summary using CLI: `speckitadv write-report EXECUTIVE-SUMMARY.md --stage=05a-executive-summary --content '<md>' --analysis-dir "{analysis_dir}"`
 
@@ -127,14 +127,14 @@ This saves to: `{reports_dir}/EXECUTIVE-SUMMARY.md`
 ```
 
 **Verify:** Read file, confirm no placeholders
-**Output:** `✓ Generated: EXECUTIVE-SUMMARY.md`
+**Output:** `[ok] Generated: EXECUTIVE-SUMMARY.md`
 
 ---
 
 ## Artifact 2: dependency-audit.json
 
 ---
-⏸️ **[STOP: GENERATE_DEPENDENCY_AUDIT]**
+[PAUSE] **[STOP: GENERATE_DEPENDENCY_AUDIT]**
 
 Generate machine-readable dependency audit using CLI: `speckitadv write-data dependency-audit.json --stage=05a-executive-summary --content '<json>' --analysis-dir "{analysis_dir}"`
 
@@ -168,14 +168,14 @@ This saves to: `{data_dir}/dependency-audit.json`
 ```
 
 **Verify:** Validate JSON parseable
-**Output:** `✓ Generated: dependency-audit.json`
+**Output:** `[ok] Generated: dependency-audit.json`
 
 ---
 
 ## Artifact 3: metrics-summary.json
 
 ---
-⏸️ **[STOP: GENERATE_METRICS_SUMMARY]**
+[PAUSE] **[STOP: GENERATE_METRICS_SUMMARY]**
 
 Generate metrics for tracking using CLI: `speckitadv write-data metrics-summary.json --stage=05a-executive-summary --content '<json>' --analysis-dir "{analysis_dir}"`
 
@@ -219,7 +219,7 @@ This saves to: `{data_dir}/metrics-summary.json`
 ```
 
 **Verify:** Validate JSON parseable
-**Output:** `✓ Generated: metrics-summary.json`
+**Output:** `[ok] Generated: metrics-summary.json`
 
 ---
 
@@ -249,16 +249,16 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Completion Marker
 
 ```text
-═══════════════════════════════════════════════════════════
+===========================================================
   STAGE COMPLETE: COMMON_ARTIFACTS
 
   Generated:
-    ✓ EXECUTIVE-SUMMARY.md
-    ✓ dependency-audit.json
-    ✓ metrics-summary.json
+    [ok] EXECUTIVE-SUMMARY.md
+    [ok] dependency-audit.json
+    [ok] metrics-summary.json
 
   Proceeding to Scope-Specific Artifacts...
-═══════════════════════════════════════════════════════════
+===========================================================
 
 STAGE_COMPLETE:COMMON_ARTIFACTS
 

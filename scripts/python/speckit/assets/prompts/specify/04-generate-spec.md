@@ -14,7 +14,7 @@ Create spec.md using a chunked approach to handle large specifications.
 
 ---
 
-## ⚠️ File Write Best Practices
+## [!] File Write Best Practices
 
 **For large specifications:**
 
@@ -159,7 +159,7 @@ grep -E '\[.*\]' {{feature_dir}}/spec.md | grep -v 'NEEDS CLARIFICATION'
 After completing all chunks:
 
 ```text
-✓ Specification generated
+[ok] Specification generated
   - File: {{feature_dir}}/spec.md
   - User stories: [N]
   - Requirements: [N]
