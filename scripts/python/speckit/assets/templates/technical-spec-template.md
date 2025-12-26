@@ -1,7 +1,7 @@
 # Technical Specification - Modernization Architecture
 
 **Project**: <<PROJECT_NAME>>
-**Legacy Version**: <<LEGACY_VERSION>> → **Target Version**: <<TARGET_VERSION>>
+**Legacy Version**: <<LEGACY_VERSION>> -> **Target Version**: <<TARGET_VERSION>>
 **Architecture Date**: <<ANALYSIS_DATE>>
 **Architect**: AI Agent
 **Status**: Draft (Modernization Plan)
@@ -56,15 +56,15 @@ From analysis of the legacy codebase:
 
 **Preserve from Legacy**:
 
-- ✅ <<Good pattern to keep>> (Evidence: <<file:line>>)
+- [ok] <<Good pattern to keep>> (Evidence: <<file:line>>)
 
 **Add for Modernization**:
 
-- ✨ **Simplicity**: Reduce complexity (current: <<N>> layers → target: <<M>> layers)
-- ✨ **Evolvability**: Use latest LTS for long-term support
-- ✨ **Operability**: Cloud-native observability and automation
-- ✨ **Security**: Modern auth (OAuth 2.0), encryption at rest/transit
-- ✨ **Cost Awareness**: Right-size resources, use managed services
+- [new] **Simplicity**: Reduce complexity (current: <<N>> layers -> target: <<M>> layers)
+- [new] **Evolvability**: Use latest LTS for long-term support
+- [new] **Operability**: Cloud-native observability and automation
+- [new] **Security**: Modern auth (OAuth 2.0), encryption at rest/transit
+- [new] **Cost Awareness**: Right-size resources, use managed services
 
 ---
 
@@ -580,13 +580,13 @@ flowchart TB
     end
 
     subgraph Transform
-        MAP[DTO → Domain]
+        MAP[DTO -> Domain]
         ENRICH[Data Enrichment]
         RULES[Business Rules]
     end
 
     subgraph Persist
-        ENTITY[Domain → Entity]
+        ENTITY[Domain -> Entity]
         DB_WRITE[Database Write]
         EVENT[Event Publish]
     end
@@ -689,7 +689,7 @@ flowchart TB
 
 ---
 
-## 8. Why This Pattern (Legacy → Target)
+## 8. Why This Pattern (Legacy -> Target)
 
 ### Legacy Architecture Pattern
 
@@ -711,11 +711,11 @@ flowchart TB
 
 **Chosen Pattern**: <<Based on user's deployment choice + best practices>>
 
-**Mapping BA Needs → Pattern**:
+**Mapping BA Needs -> Pattern**:
 
-- **Need**: <<from functional-spec-legacy.md>> → **Pattern**: <<How target pattern addresses it>>
-- **Need**: <<Scalability>> → **Pattern**: <<Microservices with K8s autoscaling>>
-- **Need**: <<Faster releases>> → **Pattern**: <<Independent service deployments>>
+- **Need**: <<from functional-spec-legacy.md>> -> **Pattern**: <<How target pattern addresses it>>
+- **Need**: <<Scalability>> -> **Pattern**: <<Microservices with K8s autoscaling>>
+- **Need**: <<Faster releases>> -> **Pattern**: <<Independent service deployments>>
 
 **Rationale**:
 
@@ -738,31 +738,31 @@ Map legacy features (from functional-spec-legacy.md) to modernization phases:
 
 **P1 Minimum Viable Migration (50% value)**:
 
-- ✅ <<Feature 1 from functional-spec>> (CRITICAL)
-- ✅ <<Feature 2 from functional-spec>> (CRITICAL)
-- ✅ <<Feature 3 from functional-spec>> (CRITICAL)
-- ✅ Data migration for <<core entities>>
-- ✅ Auth/security parity with legacy
+- [ok] <<Feature 1 from functional-spec>> (CRITICAL)
+- [ok] <<Feature 2 from functional-spec>> (CRITICAL)
+- [ok] <<Feature 3 from functional-spec>> (CRITICAL)
+- [ok] Data migration for <<core entities>>
+- [ok] Auth/security parity with legacy
 - **Exit Criteria**: Can replace legacy for <<core workflow>>
 
 **P2 Feature Parity (30% value)**:
 
-- ✅ <<Feature 4-6 from functional-spec>> (STANDARD)
-- ✅ Complete data migration
-- ✅ <<Integration X>>
+- [ok] <<Feature 4-6 from functional-spec>> (STANDARD)
+- [ok] Complete data migration
+- [ok] <<Integration X>>
 - **Exit Criteria**: Full functional parity with legacy
 
 **P3 Modernization Benefits (15% value)**:
 
-- ✨ <<New capability enabled by modern stack>>
-- ✨ <<Performance improvements>>
-- ✨ <<Observability enhancements>>
+- [new] <<New capability enabled by modern stack>>
+- [new] <<Performance improvements>>
+- [new] <<Observability enhancements>>
 - **Exit Criteria**: Demonstrates ROI of modernization
 
 **P4 Future Enhancements (5% value)**:
 
-- 🚀 <<Future feature>>
-- 🚀 <<Experimental feature>>
+- [+] <<Future feature>>
+- [+] <<Experimental feature>>
 - **Exit Criteria**: Foundation for future growth
 
 ---
@@ -780,8 +780,8 @@ Map legacy code to modernized components:
 
 **Migrates From** (Legacy):
 
-- <<legacy/src/auth/>> → <<new/services/auth-service/>>
-- <<legacy/src/session/>> → (Replaced by JWT tokens)
+- <<legacy/src/auth/>> -> <<new/services/auth-service/>>
+- <<legacy/src/session/>> -> (Replaced by JWT tokens)
 
 **Technology Stack**:
 
@@ -838,7 +838,7 @@ Map legacy code to modernized components:
 
 ---
 
-## 12. Data & Schema (Legacy → Target)
+## 12. Data & Schema (Legacy -> Target)
 
 ### Database Migration
 
@@ -880,9 +880,9 @@ CREATE TYPE user_role AS ENUM ('admin', 'user', 'guest');
 
 **Migration Notes**:
 
-- ID: NUMBER → UUID (generate mapping table)
+- ID: NUMBER -> UUID (generate mapping table)
 - Timestamps: Add timezone awareness
-- Role: VARCHAR → ENUM for type safety
+- Role: VARCHAR -> ENUM for type safety
 - Add `updated_at` for audit trail
 
 **Migration Tool**: <<pgloader / custom script>>
@@ -974,7 +974,7 @@ Convert legacy NFRs (from functional-spec-legacy.md §12) to measurable targets:
 **Deployment Strategy**: <<Canary / Blue-Green / Rolling>>
 
 - **P1**: Blue-Green (safe, instant rollback)
-- **P2+**: Canary (5% → 25% → 50% → 100%)
+- **P2+**: Canary (5% -> 25% -> 50% -> 100%)
 
 **Rollback Triggers**:
 
@@ -1027,10 +1027,10 @@ From legacy analysis (functional-spec-legacy.md §11):
 
 **Exit Criteria**:
 
-- ✅ Core workflow functional
-- ✅ Performance meets SLO
-- ✅ Zero data loss in dual-write
-- ✅ Rollback tested
+- [ok] Core workflow functional
+- [ok] Performance meets SLO
+- [ok] Zero data loss in dual-write
+- [ok] Rollback tested
 
 ### P2: Feature Parity
 
@@ -1042,9 +1042,9 @@ From legacy analysis (functional-spec-legacy.md §11):
 
 **Exit Criteria**:
 
-- ✅ All features migrated
-- ✅ Performance better than legacy
-- ✅ User acceptance testing passed
+- [ok] All features migrated
+- [ok] Performance better than legacy
+- [ok] User acceptance testing passed
 
 ### P3: Modernization Benefits
 
@@ -1056,9 +1056,9 @@ From legacy analysis (functional-spec-legacy.md §11):
 
 **Exit Criteria**:
 
-- ✅ Legacy system decommissioned
-- ✅ Observability dashboards live
-- ✅ Cost savings achieved
+- [ok] Legacy system decommissioned
+- [ok] Observability dashboards live
+- [ok] Cost savings achieved
 
 ---
 
@@ -1084,9 +1084,9 @@ From legacy analysis (functional-spec-legacy.md §11):
 
 ---
 
-## 19. R→C→T Traceability
+## 19. R->C->T Traceability
 
-Map Requirements (from functional-spec-legacy.md) → Components → Tests:
+Map Requirements (from functional-spec-legacy.md) -> Components -> Tests:
 
 | Requirement ID | Requirement | Component | Test ID | Test Type |
 | ---------------- | ------------- | ----------- | --------- | ----------- |

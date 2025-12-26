@@ -50,7 +50,7 @@ COMPONENT DESIGN: See technical-spec-target.md §5
 
 DATA MIGRATION: See technical-spec-target.md §7
 - Strategy: <<dual-write | backfill | <<other>>>>
-- Schema mapping: Legacy → Target
+- Schema mapping: Legacy -> Target
 
 For detailed architecture, see analysis/technical-spec-target.md.
 Use phase-colored Mermaid diagram from technical-spec-target.md §4.

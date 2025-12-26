@@ -42,7 +42,7 @@ Use legacy code analysis to estimate task complexity accurately.
 These tasks are specific to modernization (not greenfield):
 
 1. **Data Migration Tasks**
-   - Schema conversion (<<legacy DB>> → <<target DB>>)
+   - Schema conversion (<<legacy DB>> -> <<target DB>>)
    - Data backfill (historical data)
    - Reconciliation verification
    - Effort: <<estimate based on table count, row count>>

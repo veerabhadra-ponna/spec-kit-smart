@@ -776,6 +776,6 @@ C4Context
 This document serves as the "WHAT" for the modernization effort.
 <!-- Note: This template is used for BOTH functional-spec-legacy.md and functional-spec-target.md -->
 <!-- The corresponding technical spec depends on context: -->
-<!--   - functional-spec-legacy.md → technical-spec-legacy.md (current architecture) -->
-<!--   - functional-spec-target.md → technical-spec-target.md (target architecture) -->
+<!--   - functional-spec-legacy.md -> technical-spec-legacy.md (current architecture) -->
+<!--   - functional-spec-target.md -> technical-spec-target.md (target architecture) -->
 For "HOW" (architecture, target stack, migration), see the corresponding technical specification.

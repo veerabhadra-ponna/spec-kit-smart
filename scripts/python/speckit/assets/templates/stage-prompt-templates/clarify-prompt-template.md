@@ -7,7 +7,7 @@
 
 ## Source of Truth Guidance
 
-⚠️ **IMPORTANT**: When clarifying ambiguous requirements, specifications that are
+[!] **IMPORTANT**: When clarifying ambiguous requirements, specifications that are
 underspecified, or situations requiring further clarification:
 
 ### CONSULT THE LEGACY APPLICATION CODE AS THE SOURCE OF TRUTH
@@ -50,20 +50,20 @@ Do not guess or assume. Check the actual implementation first.
 
 **Step 1**: User asks clarifying question
 **Step 2**: Check if answer exists in legacy code references above
-**Step 3a**: If found → Use legacy implementation as answer
-**Step 3b**: If NOT found or still unclear → ASK USER (don't assume)
+**Step 3a**: If found -> Use legacy implementation as answer
+**Step 3b**: If NOT found or still unclear -> ASK USER (don't assume)
 
 **Example**:
 
-❓ Question: "How should we handle session timeout?"
+? Question: "How should we handle session timeout?"
 
-✅ Answer from legacy code:
+[ok] Answer from legacy code:
 
 - Check: `src/auth/session.js:56`
 - Finding: Hardcoded 30 minutes
 - Decision: Preserve 30min timeout (or ask user if should make configurable)
 
-❌ DON'T: Assume 15min or 60min without checking code
+[x] DON'T: Assume 15min or 60min without checking code
 
 ---
 

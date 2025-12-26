@@ -75,7 +75,7 @@
 
 ---
 
-## 2. What's Good ✅
+## 2. What's Good [ok]
 
 ### 2.1 Architecture & Design
 
@@ -133,7 +133,7 @@
 
 ---
 
-## 3. What's Bad ❌
+## 3. What's Bad [x]
 
 ### 3.1 Technical Debt
 
@@ -160,12 +160,12 @@
 
 ### 3.3 Security Issues
 
-**Severity Levels**: 🔴 CRITICAL | 🟠 HIGH | 🟡 MEDIUM | 🟢 LOW
+**Severity Levels**: [CRITICAL] CRITICAL | [HIGH] HIGH | [MEDIUM] MEDIUM | [LOW] LOW
 
 | Issue | Severity | Description | Remediation |
 | ------- | ---------- | ------------- | ------------- |
-| [Issue 1] | 🔴 | [Description] | [Fix steps] |
-| [Issue 2] | 🟠 | [Description] | [Fix steps] |
+| [Issue 1] | [CRITICAL] | [Description] | [Fix steps] |
+| [Issue 2] | [HIGH] | [Description] | [Fix steps] |
 
 ### 3.4 Performance Issues
 
@@ -202,8 +202,8 @@
 
 | Package | Current Version | Latest LTS | Latest Stable | Security Issues | Breaking Changes |
 | --------- | ---------------- | ------------ | --------------- | ----------------- | ------------------ |
-| [package-1] | [x.y.z] | [x.y.z] | [x.y.z] | 🔴 YES / 🟢 NO | 🔴 YES / 🟢 NO |
-| [package-2] | [x.y.z] | [x.y.z] | [x.y.z] | 🔴 YES / 🟢 NO | 🔴 YES / 🟢 NO |
+| [package-1] | [x.y.z] | [x.y.z] | [x.y.z] | [CRITICAL] YES / [LOW] NO | [CRITICAL] YES / [LOW] NO |
+| [package-2] | [x.y.z] | [x.y.z] | [x.y.z] | [CRITICAL] YES / [LOW] NO | [CRITICAL] YES / [LOW] NO |
 
 ### 4.2 Vulnerable Dependencies
 
@@ -224,7 +224,7 @@
 
 **License Compatibility**:
 
-- [package]: [LICENSE] - ⚠️ [Issue if any]
+- [package]: [LICENSE] - [!] [Issue if any]
 
 ---
 
@@ -254,11 +254,11 @@
 
 ```text
 Current: Node.js 14.x (EOL: 2023-04-30)
-  ↓
+  v
 Step 1: Node.js 16.x (LTS until 2023-09-11)
-  ↓
+  v
 Step 2: Node.js 18.x (LTS until 2025-04-30)
-  ↓
+  v
 Target: Node.js 20.x (LTS until 2026-04-30)
 ```text
 
@@ -270,7 +270,7 @@ Target: Node.js 20.x (LTS until 2026-04-30)
 
 ```text
 Current: [version]
-  ↓
+  v
 Target: [version]
 ```text
 
@@ -287,8 +287,8 @@ Target: [version]
 
 | Priority | Package | Action | Effort |
 | ---------- | --------- | -------- | -------- |
-| 🔴 CRITICAL | [package] | Upgrade to [version] | [HOURS] |
-| 🟠 HIGH | [package] | Upgrade to [version] | [HOURS] |
+| [CRITICAL] CRITICAL | [package] | Upgrade to [version] | [HOURS] |
+| [HIGH] HIGH | [package] | Upgrade to [version] | [HOURS] |
 
 ---
 
@@ -515,7 +515,7 @@ Based on:
 
 ### 10.1 Primary Recommendation
 
-**🎯 RECOMMENDATION: [INLINE_UPGRADE | GREENFIELD_REWRITE | HYBRID_APPROACH]**
+**[*] RECOMMENDATION: [INLINE_UPGRADE | GREENFIELD_REWRITE | HYBRID_APPROACH]**
 
 **Rationale**:
 [Detailed explanation of why this approach is recommended based on the analysis]
@@ -525,12 +525,12 @@ Based on:
 ### 10.2 Immediate Actions (Next 2 Weeks)
 
 1. **[Action 1]**
-   - Priority: 🔴 CRITICAL | 🟠 HIGH | 🟡 MEDIUM
+   - Priority: [CRITICAL] CRITICAL | [HIGH] HIGH | [MEDIUM] MEDIUM
    - Effort: [HOURS/DAYS]
    - Impact: [Description]
 
 2. **[Action 2]**
-   - Priority: 🔴 CRITICAL | 🟠 HIGH | 🟡 MEDIUM
+   - Priority: [CRITICAL] CRITICAL | [HIGH] HIGH | [MEDIUM] MEDIUM
    - Effort: [HOURS/DAYS]
    - Impact: [Description]
 

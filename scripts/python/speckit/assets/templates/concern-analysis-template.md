@@ -105,22 +105,22 @@ Analysis of where and how this concern is used throughout the codebase:
 **Abstraction Quality Indicators**:
 
 <<IF HIGH ABSTRACTION>>:
-✅ **HIGH Abstraction Indicators Detected**:
+[ok] **HIGH Abstraction Indicators Detected**:
 - Single interface/contract serving all consumers
 - Dependency injection used throughout
 - No direct implementation imports in consumers
 - Configuration-driven behavior
-- Clear separation: Interface → Implementation → Consumers
+- Clear separation: Interface -> Implementation -> Consumers
 
 <<ELSE IF MEDIUM ABSTRACTION>>:
-⚠️ **MEDIUM Abstraction Indicators Detected**:
+[!] **MEDIUM Abstraction Indicators Detected**:
 - Multiple entry points with consistent patterns
 - Some direct dependencies, but localized
 - Partial use of interfaces
 - Mix of dependency injection and direct instantiation
 
 <<ELSE IF LOW ABSTRACTION>>:
-❌ **LOW Abstraction Indicators Detected**:
+[x] **LOW Abstraction Indicators Detected**:
 - Scattered across codebase with no clear pattern
 - Direct imports of implementation everywhere
 - No interfaces or contracts
@@ -172,29 +172,29 @@ Mapping concern usage to business capabilities:
 
 ### 3.1 Dependency Graph
 
-**Concern → External Dependencies**:
+**Concern -> External Dependencies**:
 - <<Package name + version>> - <<Purpose, e.g., "JWT token generation">>
 - ... (list all external packages)
 
-**Concern → Business Logic**:
+**Concern -> Business Logic**:
 <<IF imports from business domain>>:
-⚠️ Concern has dependencies on business logic:
+[!] Concern has dependencies on business logic:
 - <<Import statement>> from <<file:line>> - <<e.g., "User entity import">>
 - ... (list all business logic imports)
 <<ELSE>>:
-✅ Concern is isolated - no imports from business logic
+[ok] Concern is isolated - no imports from business logic
 
-**Business Logic → Concern**:
+**Business Logic -> Concern**:
 - <<Import statement>> from <<file:line>> - <<e.g., "IAuthService interface import">>
 - ... (list all consumers)
 
 **Circular Dependencies**:
 <<IF circular deps exist>>:
-❌ **CRITICAL**: Circular dependencies detected:
-- <<file1>> → <<file2>> → <<file1>> (<<Evidence>>)
+[x] **CRITICAL**: Circular dependencies detected:
+- <<file1>> -> <<file2>> -> <<file1>> (<<Evidence>>)
 - ... (list all cycles)
 <<ELSE>>:
-✅ No circular dependencies detected
+[ok] No circular dependencies detected
 
 ### 3.2 Isolation Score
 
@@ -209,20 +209,20 @@ Mapping concern usage to business capabilities:
 **Coupling Quality Indicators**:
 
 <<IF LOOSE COUPLING>>:
-✅ **LOOSE Coupling Indicators Detected**:
+[ok] **LOOSE Coupling Indicators Detected**:
 - Concern isolated in dedicated module/package
 - Well-defined boundaries with clear contracts
-- Unidirectional dependencies (business logic → concern)
+- Unidirectional dependencies (business logic -> concern)
 - Can be tested independently
 
 <<ELSE IF MODERATE COUPLING>>:
-⚠️ **MODERATE Coupling Indicators Detected**:
+[!] **MODERATE Coupling Indicators Detected**:
 - Some separation but with leaks
 - Unidirectional dependencies overall
 - Shared models/DTOs with business logic
 
 <<ELSE IF TIGHT COUPLING>>:
-❌ **TIGHT Coupling Indicators Detected**:
+[x] **TIGHT Coupling Indicators Detected**:
 - Bidirectional dependencies
 - Shared state or global variables
 - Circular dependencies
@@ -336,7 +336,7 @@ Mapping concern usage to business capabilities:
 
 | Dependency | Purpose | Version | License | Security Scan |
 | ------------ | --------- | --------- | --------- | --------------- |
-| <<package-name>> | <<Purpose>> | <<Version>> | <<License>> | ✅ PASS / ⚠️ REVIEW / ❌ FAIL |
+| <<package-name>> | <<Purpose>> | <<Version>> | <<License>> | [ok] PASS / [!] REVIEW / [x] FAIL |
 | ... | ... | ... | ... | ... |
 
 ---
@@ -345,21 +345,21 @@ Mapping concern usage to business capabilities:
 
 ### 8.1 Strengths (What's Good)
 
-✅ **Positive Findings**:
+[ok] **Positive Findings**:
 - <<Strength 1 with evidence>>
 - <<Strength 2 with evidence>>
 - ... (things that will make migration easier)
 
 ### 8.2 Concerns (What Needs Attention)
 
-⚠️ **Areas of Concern**:
+[!] **Areas of Concern**:
 - <<Concern 1 with evidence>>
 - <<Concern 2 with evidence>>
 - ... (things that will make migration harder)
 
 ### 8.3 Critical Issues (Must Address)
 
-❌ **Critical Issues**:
+[x] **Critical Issues**:
 - <<Issue 1 with evidence>> - **Must be resolved before migration**
 - <<Issue 2 with evidence>> - **Must be resolved before migration**
 - ... (blockers)
@@ -374,9 +374,9 @@ Mapping concern usage to business capabilities:
 
 **Rationale**:
 
-- **Abstraction Level**: <<HIGH/MEDIUM/LOW>> → <<Implication for migration>>
-- **Blast Radius**: <<X% of codebase>> → <<Risk level and phasing needs>>
-- **Coupling Degree**: <<LOOSE/MODERATE/TIGHT>> → <<Isolation capability>>
+- **Abstraction Level**: <<HIGH/MEDIUM/LOW>> -> <<Implication for migration>>
+- **Blast Radius**: <<X% of codebase>> -> <<Risk level and phasing needs>>
+- **Coupling Degree**: <<LOOSE/MODERATE/TIGHT>> -> <<Isolation capability>>
 - **Conclusion**: <<Why this strategy is the best fit>>
 
 **Detailed Strategy Description**:

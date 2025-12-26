@@ -1,7 +1,7 @@
 # Migration Plan: <<CONCERN_TYPE>>
 
 **Project**: <<PROJECT_NAME>>
-**Migration**: <<CURRENT_IMPLEMENTATION>> → <<TARGET_IMPLEMENTATION>>
+**Migration**: <<CURRENT_IMPLEMENTATION>> -> <<TARGET_IMPLEMENTATION>>
 **Strategy**: <<STRANGLER_FIG / ADAPTER_PATTERN / REFACTOR_FIRST / BIG_BANG_WITH_FEATURE_FLAGS>>
 **Plan Date**: <<DATE>>
 **Estimated Timeline**: <<Total weeks, e.g., "8-12 weeks">>
@@ -40,10 +40,10 @@
 **Description**: Gradually replace the old implementation with the new one by running both side-by-side and incrementally migrating consumers.
 
 **Why This Strategy**:
-- ✅ High abstraction level detected - easy to swap implementations
-- ✅ Loose coupling - minimal impact on consumers
-- ✅ Low risk - can roll back individual consumers if issues arise
-- ✅ Business continuity - no downtime required
+- [ok] High abstraction level detected - easy to swap implementations
+- [ok] Loose coupling - minimal impact on consumers
+- [ok] Low risk - can roll back individual consumers if issues arise
+- [ok] Business continuity - no downtime required
 
 **How It Works**:
 1. Implement new <<TARGET_IMPLEMENTATION>> provider alongside existing <<CURRENT_IMPLEMENTATION>>
@@ -69,9 +69,9 @@
 **Description**: Create an adapter layer that wraps the new implementation behind the existing interface, allowing gradual internal migration without changing consumers.
 
 **Why This Strategy**:
-- ⚠️ Medium abstraction level - some refactoring needed
-- ⚠️ Moderate coupling - adapter isolates impact
-- ⚠️ Medium risk - adapter tested independently before rollout
+- [!] Medium abstraction level - some refactoring needed
+- [!] Moderate coupling - adapter isolates impact
+- [!] Medium risk - adapter tested independently before rollout
 
 **How It Works**:
 1. Create adapter interface matching current API
@@ -97,9 +97,9 @@
 **Description**: First refactor to introduce proper abstractions, then migrate using STRANGLER_FIG or ADAPTER_PATTERN.
 
 **Why This Strategy**:
-- ❌ Low abstraction level detected - direct migration too risky
-- ❌ High coupling - must decouple before migrating
-- ⚠️ Small blast radius (<20% codebase) - refactoring feasible
+- [x] Low abstraction level detected - direct migration too risky
+- [x] High coupling - must decouple before migrating
+- [!] Small blast radius (<20% codebase) - refactoring feasible
 
 **How It Works**:
 1. **Phase 1 (Weeks 1-4)**: Refactoring
@@ -128,9 +128,9 @@
 **Description**: Complete migration in one large change, but use feature flags for gradual rollout to mitigate risk.
 
 **Why This Strategy**:
-- ❌ Low abstraction + large blast radius (>25% codebase)
-- ❌ Tight coupling - piecemeal migration not feasible
-- ⚠️ High risk - requires extensive testing and careful rollout
+- [x] Low abstraction + large blast radius (>25% codebase)
+- [x] Tight coupling - piecemeal migration not feasible
+- [!] High risk - requires extensive testing and careful rollout
 
 **How It Works**:
 1. **Phase 1 (Weeks 1-8)**: Implementation
@@ -191,13 +191,13 @@
    - [ ] Feature flag: <<flagName>> = true for internal users
 
 **Success Criteria**:
-- ✅ Core functionality working in staging
-- ✅ All tests passing
-- ✅ Performance benchmarks met or exceeded
-- ✅ Zero critical bugs in staging for 1 week
+- [ok] Core functionality working in staging
+- [ok] All tests passing
+- [ok] Performance benchmarks met or exceeded
+- [ok] Zero critical bugs in staging for 1 week
 
 **Validation**:
-- [ ] <<Metric 1, e.g., "Login success rate ≥ 99.9%">>
+- [ ] <<Metric 1, e.g., "Login success rate >= 99.9%">>
 - [ ] <<Metric 2, e.g., "Auth latency < 100ms p95">>
 - [ ] <<Metric 3>>
 
@@ -237,15 +237,15 @@
    - [ ] Monitoring dashboards active
 
 **Success Criteria**:
-- ✅ Extended features working in production (beta)
-- ✅ No increase in error rates
-- ✅ Beta user feedback positive
-- ✅ Performance stable under load
+- [ok] Extended features working in production (beta)
+- [ok] No increase in error rates
+- [ok] Beta user feedback positive
+- [ok] Performance stable under load
 
 **Validation**:
 - [ ] <<Metric 1>>
 - [ ] <<Metric 2>>
-- [ ] User feedback score ≥ <<threshold>>
+- [ ] User feedback score >= <<threshold>>
 
 **Business Value Delivered**: <<Describe Phase 2 value>>
 
@@ -282,9 +282,9 @@
    - [ ] Feature flag: <<flagName>> = true for expanded cohort
 
 **Success Criteria**:
-- ✅ All features migrated
-- ✅ Production metrics stable
-- ✅ No critical bugs for 2 weeks
+- [ok] All features migrated
+- [ok] Production metrics stable
+- [ok] No critical bugs for 2 weeks
 
 **Validation**:
 - [ ] <<All metrics from Phase 1 & 2 still met>>
@@ -333,15 +333,15 @@
    - [ ] Support team aware of changes
 
 **Success Criteria**:
-- ✅ 100% traffic migrated
-- ✅ Old implementation removed
-- ✅ Team trained and confident
-- ✅ Documentation complete
+- [ok] 100% traffic migrated
+- [ok] Old implementation removed
+- [ok] Team trained and confident
+- [ok] Documentation complete
 
 **Validation**:
 - [ ] Cost savings achieved: <<$ or % reduction>>
 - [ ] Performance improvement: <<X% faster / more reliable>>
-- [ ] Team satisfaction survey ≥ <<threshold>>
+- [ ] Team satisfaction survey >= <<threshold>>
 
 **Business Value Delivered**: <<Describe Phase 4 value - usually long-term maintainability>>
 
@@ -515,7 +515,7 @@
 **Integration Tests**:
 - **Target Coverage**: All critical integration points
 - **Focus Areas**:
-  - [ ] New provider ↔ Business logic integration
+  - [ ] New provider <-> Business logic integration
   - [ ] Configuration loading and validation
   - [ ] External service communication (<<TARGET_IMPLEMENTATION>>)
 - **Tools**: <<Testing framework + test containers/mocks>>
@@ -624,15 +624,15 @@
 ### Rollback Triggers
 
 **Immediate Rollback** (within minutes):
-- ❌ Error rate > <<X%>> for <<Y>> minutes
-- ❌ Critical functionality broken
-- ❌ Data integrity issues detected
-- ❌ Security vulnerability discovered
+- [x] Error rate > <<X%>> for <<Y>> minutes
+- [x] Critical functionality broken
+- [x] Data integrity issues detected
+- [x] Security vulnerability discovered
 
 **Planned Rollback** (within hours/days):
-- ⚠️ Performance degradation > <<X%>>
-- ⚠️ Cost overruns > <<$$ or %>>
-- ⚠️ User complaints > <<threshold>>
+- [!] Performance degradation > <<X%>>
+- [!] Cost overruns > <<$$ or %>>
+- [!] User complaints > <<threshold>>
 
 ### Rollback Procedures
 
@@ -683,8 +683,8 @@
 
 - [ ] Core functionality (50% value) migrated and stable
 - [ ] All Phase 1 tests passing
-- [ ] Performance ≥ baseline
-- [ ] Error rate ≤ baseline
+- [ ] Performance >= baseline
+- [ ] Error rate <= baseline
 - [ ] Staging environment stable for 1 week
 - [ ] Internal users validated in production
 
@@ -716,12 +716,12 @@
 ### Overall Migration Success
 
 **The migration is considered successful when**:
-- ✅ 100% of functionality migrated to <<TARGET_IMPLEMENTATION>>
-- ✅ Old <<CURRENT_IMPLEMENTATION>> decommissioned
-- ✅ All success criteria met (performance, cost, reliability)
-- ✅ Team confident in operating new implementation
-- ✅ No critical bugs for 30 days post-migration
-- ✅ Business value realized (<<describe>>)
+- [ok] 100% of functionality migrated to <<TARGET_IMPLEMENTATION>>
+- [ok] Old <<CURRENT_IMPLEMENTATION>> decommissioned
+- [ok] All success criteria met (performance, cost, reliability)
+- [ok] Team confident in operating new implementation
+- [ok] No critical bugs for 30 days post-migration
+- [ok] Business value realized (<<describe>>)
 
 ---
 
@@ -818,7 +818,7 @@
 - [ ] Schedule post-mortem meeting
 - [ ] Document lessons learned
 - [ ] Update migration playbook for future migrations
-- [ ] Celebrate success with team! 🎉
+- [ ] Celebrate success with team! [+]
 
 ---
 
@@ -852,8 +852,8 @@
 ### Estimated Costs
 
 **Development Effort**:
-- Developers: <<X>> FTE × <<Y>> weeks = <<Total person-weeks>>
-- QA/Testing: <<Z>> FTE × <<W>> weeks = <<Total person-weeks>>
+- Developers: <<X>> FTE [x] <<Y>> weeks = <<Total person-weeks>>
+- QA/Testing: <<Z>> FTE [x] <<W>> weeks = <<Total person-weeks>>
 - Total Labor Cost: <<$$>> (if tracking)
 
 **Infrastructure Costs**:

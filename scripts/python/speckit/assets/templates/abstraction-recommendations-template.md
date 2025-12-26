@@ -21,18 +21,18 @@
 
 <<IF ABSTRACTION_LEVEL = HIGH>>
 
-## ✅ Current Abstractions: HIGH Quality
+## [ok] Current Abstractions: HIGH Quality
 
 **Congratulations!** Your <<CONCERN_TYPE>> concern is well-abstracted and ready for migration.
 
 ### What's Working Well
 
 **Strong Abstraction Indicators Found**:
-- ✅ Single interface/contract serving all consumers
-- ✅ Dependency injection used throughout
-- ✅ No direct implementation imports in consumers
-- ✅ Configuration-driven behavior
-- ✅ Clear separation: Interface → Implementation → Consumers
+- [ok] Single interface/contract serving all consumers
+- [ok] Dependency injection used throughout
+- [ok] No direct implementation imports in consumers
+- [ok] Configuration-driven behavior
+- [ok] Clear separation: Interface -> Implementation -> Consumers
 
 **Evidence**:
 <<List specific examples with file:line references>>:
@@ -68,10 +68,10 @@ While your abstractions are excellent, consider these best practices for maintai
 ### Migration Impact: LOW RISK
 
 **With HIGH abstraction, migration will be straightforward**:
-- ✅ Implement new provider class (e.g., <<NewProviderName>>)
-- ✅ Register in DI container
-- ✅ Use feature flags to gradually switch consumers
-- ✅ No changes needed in consumer code
+- [ok] Implement new provider class (e.g., <<NewProviderName>>)
+- [ok] Register in DI container
+- [ok] Use feature flags to gradually switch consumers
+- [ok] No changes needed in consumer code
 
 **Recommended Strategy**: STRANGLER_FIG pattern
 **Estimated Effort**: 2-4 weeks
@@ -81,16 +81,16 @@ While your abstractions are excellent, consider these best practices for maintai
 
 <<ELSE IF ABSTRACTION_LEVEL = MEDIUM>>
 
-## ⚠️ Current Abstractions: MEDIUM Quality
+## [!] Current Abstractions: MEDIUM Quality
 
 Your <<CONCERN_TYPE>> concern has partial abstractions. Some improvements will reduce migration risk.
 
 ### What's Working
 
 **Positive Indicators Found**:
-- ✅ Multiple entry points with consistent patterns
-- ✅ Some use of interfaces (partial coverage)
-- ✅ Dependency injection used in some areas
+- [ok] Multiple entry points with consistent patterns
+- [ok] Some use of interfaces (partial coverage)
+- [ok] Dependency injection used in some areas
 
 **Evidence**:
 <<List what's working well with file:line references>>:
@@ -101,9 +101,9 @@ Your <<CONCERN_TYPE>> concern has partial abstractions. Some improvements will r
 ### What Needs Improvement
 
 **Areas of Concern**:
-- ⚠️ Some direct dependencies on concrete implementations
-- ⚠️ Mix of DI and manual instantiation
-- ⚠️ Partial interface usage (<<X%>> of consumers)
+- [!] Some direct dependencies on concrete implementations
+- [!] Mix of DI and manual instantiation
+- [!] Partial interface usage (<<X%>> of consumers)
 
 **Evidence**:
 <<List problems with file:line references>>:
@@ -120,7 +120,7 @@ Your <<CONCERN_TYPE>> concern has partial abstractions. Some improvements will r
 **Steps**:
 1. **Audit Current Consumers**
    - Files using interface: <<List>>
-   - Files using concrete class: <<List>> ← THESE need refactoring
+   - Files using concrete class: <<List>> <- THESE need refactoring
 
 2. **Refactor Direct Dependencies**
    - Change imports from `import { ConcreteClass }` to `import { IInterface }`
@@ -137,7 +137,7 @@ Your <<CONCERN_TYPE>> concern has partial abstractions. Some improvements will r
 
 **Current State**:
 - DI coverage: <<X%>> of consumers
-- Manual instantiation: <<Y%>> of consumers ← THESE need refactoring
+- Manual instantiation: <<Y%>> of consumers <- THESE need refactoring
 
 **Steps**:
 1. **Identify Manual Instantiation**
@@ -167,9 +167,9 @@ If config values are hardcoded:
 ### Migration Impact: MEDIUM RISK
 
 **With MEDIUM abstraction, migration requires moderate care**:
-- ⚠️ Some refactoring needed before migration
-- ⚠️ Test all consumers after switching implementation
-- ⚠️ Gradual rollout recommended
+- [!] Some refactoring needed before migration
+- [!] Test all consumers after switching implementation
+- [!] Gradual rollout recommended
 
 **Recommended Strategy**: ADAPTER_PATTERN
 **Estimated Effort**: 4-8 weeks (2-3 weeks refactoring + 2-5 weeks migration)
@@ -184,18 +184,18 @@ If config values are hardcoded:
 
 <<ELSE IF ABSTRACTION_LEVEL = LOW>>
 
-## ❌ Current Abstractions: LOW Quality
+## [x] Current Abstractions: LOW Quality
 
 **CRITICAL**: Your <<CONCERN_TYPE>> concern lacks proper abstractions. Migration will be difficult and risky without refactoring.
 
 ### Problems Identified
 
 **Low Abstraction Indicators Found**:
-- ❌ No interface/contract definitions
-- ❌ Direct imports of implementation everywhere (tight coupling)
-- ❌ Hardcoded dependencies (`new ConcreteClass()` throughout)
-- ❌ Implementation details leak into business logic
-- ❌ No dependency injection
+- [x] No interface/contract definitions
+- [x] Direct imports of implementation everywhere (tight coupling)
+- [x] Hardcoded dependencies (`new ConcreteClass()` throughout)
+- [x] Implementation details leak into business logic
+- [x] No dependency injection
 
 **Evidence**:
 <<List all problems with file:line references>>:
@@ -205,10 +205,10 @@ If config values are hardcoded:
 - ... (comprehensive list)
 
 **Impact**:
-- 😞 Migration will require touching <<X%>> of codebase
-- 😞 High risk of breaking existing functionality
-- 😞 Difficult to test in isolation
-- 😞 Cannot run old and new implementations side-by-side
+- : Migration will require touching <<X%>> of codebase
+- : High risk of breaking existing functionality
+- : Difficult to test in isolation
+- : Cannot run old and new implementations side-by-side
 
 ### Recommended Abstractions to Introduce
 
@@ -242,10 +242,10 @@ interface I<<ConcernName>>Service {
 - ... (comprehensive list)
 
 **Design Principles**:
-- ✅ Interface should define WHAT, not HOW
-- ✅ Use dependency inversion: depend on interface, not concrete class
-- ✅ Keep interface stable (breaking changes are expensive)
-- ✅ Document contracts (preconditions, postconditions, exceptions)
+- [ok] Interface should define WHAT, not HOW
+- [ok] Use dependency inversion: depend on interface, not concrete class
+- [ok] Keep interface stable (breaking changes are expensive)
+- [ok] Document contracts (preconditions, postconditions, exceptions)
 
 ---
 
@@ -305,7 +305,7 @@ container.register(I<<ConcernName>>Service, <<Current>>Provider);
 ```typescript
 class UserController {
   authenticate() {
-    const service = new ConcreteClass(); // ❌ Tight coupling
+    const service = new ConcreteClass(); // [x] Tight coupling
     service.doSomething();
   }
 }
@@ -315,7 +315,7 @@ class UserController {
 
 ```typescript
 class UserController {
-  constructor(private service: I<<ConcernName>>Service) {} // ✅ Depends on interface
+  constructor(private service: I<<ConcernName>>Service) {} // [ok] Depends on interface
 
   authenticate() {
     this.service.doSomething();
@@ -359,9 +359,9 @@ class UserController {
 - `config/<<concern>>.prod.yml` - Production
 
 **Benefits**:
-- ✅ Easy to change provider without code changes
-- ✅ Different configs per environment
-- ✅ Secrets in environment variables (not code)
+- [ok] Easy to change provider without code changes
+- [ok] Different configs per environment
+- [ok] Secrets in environment variables (not code)
 
 ---
 
@@ -387,7 +387,7 @@ class UserController {
 
 **Week 3-4**: DI Setup
 - [ ] Choose and configure DI framework
-- [ ] Register `I<<ConcernName>>Service` → `<<Current>>Provider`
+- [ ] Register `I<<ConcernName>>Service` -> `<<Current>>Provider`
 - [ ] Create integration tests
 
 **Week 4-5**: Consumer Refactoring
@@ -412,10 +412,10 @@ class UserController {
 **Phase 4: Ready for Migration** (Week 8+)
 
 At this point:
-- ✅ Interface defined and used by all consumers
-- ✅ DI setup complete
-- ✅ Configuration externalized
-- ✅ **Ready to implement <<Target>>Provider**
+- [ok] Interface defined and used by all consumers
+- [ok] DI setup complete
+- [ok] Configuration externalized
+- [ok] **Ready to implement <<Target>>Provider**
 
 **Future Migration Steps**:
 1. Implement `<<Target>>Provider` (implements same `I<<ConcernName>>Service` interface)
@@ -428,19 +428,19 @@ At this point:
 ### Migration Impact After Refactoring
 
 **Current State (LOW abstraction)**:
-- ❌ Direct migration: 3-6 months, HIGH risk
-- ❌ Would require touching <<X%>> of codebase
+- [x] Direct migration: 3-6 months, HIGH risk
+- [x] Would require touching <<X%>> of codebase
 
 **After Refactoring (HIGH abstraction)**:
-- ✅ Migration: 2-4 weeks, LOW risk
-- ✅ Only need to implement new provider
-- ✅ Consumers unchanged (depend on interface)
+- [ok] Migration: 2-4 weeks, LOW risk
+- [ok] Only need to implement new provider
+- [ok] Consumers unchanged (depend on interface)
 
 **ROI Analysis**:
 - **Refactoring Investment**: 6-8 weeks
-- **Migration Savings**: 3-6 months → 2-4 weeks (saves 2-5 months)
+- **Migration Savings**: 3-6 months -> 2-4 weeks (saves 2-5 months)
 - **Long-term Benefit**: Future migrations become trivial
-- **Risk Reduction**: HIGH → LOW risk
+- **Risk Reduction**: HIGH -> LOW risk
 
 ---
 
@@ -448,18 +448,18 @@ At this point:
 
 #### Option A: Direct Migration (Not Recommended)
 
-- ⏱️ **Time**: 3-6 months
-- ⚠️ **Risk**: HIGH (likely bugs, breaking changes)
-- 💰 **Cost**: High (team time + bug fixes + rollbacks)
-- 📉 **Technical Debt**: Increases (still tightly coupled after migration)
+- [time] **Time**: 3-6 months
+- [!] **Risk**: HIGH (likely bugs, breaking changes)
+- [$] **Cost**: High (team time + bug fixes + rollbacks)
+- [-] **Technical Debt**: Increases (still tightly coupled after migration)
 
 #### Option B: Refactor First, Then Migrate (Recommended)
 
-- ⏱️ **Time**: 10-16 weeks total (6-8 refactor + 4-8 migrate)
-- ✅ **Risk**: LOW (clean separation of concerns)
-- 💰 **Cost**: Moderate upfront, low long-term
-- 📈 **Technical Debt**: Decreases (better architecture)
-- 🎁 **Bonus**: Future migrations become easy
+- [time] **Time**: 10-16 weeks total (6-8 refactor + 4-8 migrate)
+- [ok] **Risk**: LOW (clean separation of concerns)
+- [$] **Cost**: Moderate upfront, low long-term
+- [+] **Technical Debt**: Decreases (better architecture)
+- [bonus] **Bonus**: Future migrations become easy
 
 **Recommendation**: **Option B** - The refactoring investment pays off immediately and provides long-term benefits.
 
@@ -474,20 +474,20 @@ At this point:
 **Current Abstraction Level**: <<HIGH / MEDIUM / LOW>>
 
 <<IF HIGH>>:
-- ✅ Your abstractions are excellent - ready for migration
-- ✅ Follow maintenance best practices
-- ✅ Proceed with STRANGLER_FIG migration strategy
+- [ok] Your abstractions are excellent - ready for migration
+- [ok] Follow maintenance best practices
+- [ok] Proceed with STRANGLER_FIG migration strategy
 
 <<ELSE IF MEDIUM>>:
-- ⚠️ Some refactoring recommended before migration
-- ⚠️ Focus on completing interface coverage and standardizing DI
-- ⚠️ 2-3 weeks refactoring reduces migration risk significantly
+- [!] Some refactoring recommended before migration
+- [!] Focus on completing interface coverage and standardizing DI
+- [!] 2-3 weeks refactoring reduces migration risk significantly
 
 <<ELSE IF LOW>>:
-- ❌ **CRITICAL**: Refactoring required before migration
-- ❌ 6-8 weeks refactoring investment
-- ❌ Without refactoring, migration is HIGH risk and will take 3-6 months
-- ✅ WITH refactoring, migration becomes LOW risk and takes 2-4 weeks
+- [x] **CRITICAL**: Refactoring required before migration
+- [x] 6-8 weeks refactoring investment
+- [x] Without refactoring, migration is HIGH risk and will take 3-6 months
+- [ok] WITH refactoring, migration becomes LOW risk and takes 2-4 weeks
 
 ### Immediate Actions
 
