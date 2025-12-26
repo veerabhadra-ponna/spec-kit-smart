@@ -134,10 +134,13 @@ def extract_command_names(patterns: list[str]) -> set[str]:
     """
     commands = set()
     for pattern in patterns:
-        if not pattern or pattern.strip() == "*":
+        if not pattern:
+            continue
+        parts = pattern.split()
+        if not parts or parts[0] == "*":
             continue
         # Get first word (the command name)
-        cmd = pattern.split()[0].rstrip("*").strip()
+        cmd = parts[0].rstrip("*").strip()
         if cmd:
             commands.add(cmd)
     return commands
