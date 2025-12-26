@@ -7,6 +7,19 @@ version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
+# 🚫 DO NOT CREATE FILES
+
+**CRITICAL: This substage does NOT create any files.**
+
+- ❌ NO `stage9-chunk4.md`
+- ❌ NO `stage12.md` or similar
+- ❌ NO markdown files in the analysis directory
+- ❌ NO intermediate output files of any kind
+
+**Recommendations are shown directly in the conversation.** Final data is saved using the CLI command.
+
+---
+
 # Stage 3A-4: Recommendations & State Completion
 
 ## Purpose

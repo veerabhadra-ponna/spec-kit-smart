@@ -93,7 +93,7 @@ def emit_chunk(
     total_chunks: int,
     title: str,
     content: str,
-    file_path: str,
+    file_path: Optional[str],
     mode: str,
     line_range: tuple[int, int],
     next_cmd: str,
@@ -110,7 +110,8 @@ def emit_chunk(
         total_chunks: Total number of chunks
         title: Chunk title (e.g., "Executive Summary")
         content: Instructions for this chunk
-        file_path: Suggested file path (displayed as guidance, not written)
+        file_path: Suggested file path (displayed as guidance, not written).
+                   If None, no file output section is displayed (for Q&A stages).
         mode: CREATE or APPEND (guidance for AI)
         line_range: (min_lines, max_lines) expected
         next_cmd: Command to run after completing this chunk
@@ -127,9 +128,10 @@ def emit_chunk(
         print(_format_box_line(line))
 
     print(_format_box_line(""))
-    print(_format_box_line(f"Write to: {file_path}"))
-    print(_format_box_line(f"Mode: {mode}"))
-    print(_format_box_line(""))
+    if file_path:
+        print(_format_box_line(f"Write to: {file_path}"))
+        print(_format_box_line(f"Mode: {mode}"))
+        print(_format_box_line(""))
     print(_format_box_line(f"NEXT: {next_cmd}"))
     print(BOX_BOTTOM)
 

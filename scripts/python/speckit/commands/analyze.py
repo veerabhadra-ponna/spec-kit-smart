@@ -333,20 +333,31 @@ def run_analyze_project(
     else:
         next_cmd = None
 
-    # Check if this stage has chunks (report generation)
+    # Check if this stage has chunks (multi-part stages)
     # Stage 16 uses scope-specific chunk map
     has_chunks = stage in CHUNK_MAP or stage == 16
     if has_chunks:
         # This stage requires chunking - redirect to chunk 1
         # Need --chunk since auto-detection doesn't handle chunks
         next_cmd = f"speckitadv analyze-project --chunk=1"
+
+        # Customize message based on stage type
+        if stage in (9, 10):
+            # Q&A stages - no file output
+            chunk_desc = "multi-part interaction"
+            chunk_detail = "Each part will collect specific inputs through Q&A."
+        else:
+            # Report generation stages
+            chunk_desc = "chunked output"
+            chunk_detail = "Each chunk will contain a focused section."
+
         emit_stage(
             stage_num=stage,
             total_stages=total_stages,
             title=_get_stage_title(stage),
-            content=f"""This stage requires chunked report generation.
+            content=f"""This stage requires {chunk_desc}.
 
-Starting chunked output mode. Each chunk will contain a focused section.
+Starting {chunk_desc} mode. {chunk_detail}
 
 Run the following command to begin:""",
             next_cmd=next_cmd,
@@ -458,13 +469,13 @@ def _emit_chunk_stage(
         )
         return
 
-    # Stage 16 uses per-chunk fragments that are already complete prompts
-    # Other stages use a single fragment that needs to be subdivided
-    if stage == 16:
+    # Stages 9, 10, and 16 use per-chunk fragments that are already complete prompts
+    # Each sub-prompt (03a1, 03a2, etc.) is a complete prompt, not a section to subdivide
+    if stage in (9, 10, 16):
         # Per-chunk fragments are complete - emit as-is without subdividing
         chunk_content = fragment
     else:
-        # Subdivide the fragment into chunks
+        # Subdivide the fragment into chunks (for future chunked stages if any)
         chunk_content = _extract_chunk(fragment, chunk, total_chunks)
     rendered = render_prompt(chunk_content, context)
 
@@ -572,13 +583,20 @@ def _emit_chunk_stage(
             }
         chunk_file = stage_16_file_map.get(chunk, f"stage{stage}-chunk{chunk}.md")
         file_path = f"{analysis_dir}/{chunk_file}"
+    elif stage in (9, 10):
+        # Stages 9 and 10 are Q&A stages that don't create files
+        # They use CLI commands (update-preferences, write-data) to store data
+        file_path = None
     else:
         file_path = f"{analysis_dir}/stage{stage}-chunk{chunk}.md"
 
     # Stage 16 chunks each write to different files, so always use "create" mode.
     # Other stages append chunks to a single file.
+    # Stages 9/10 don't create files, so mode is irrelevant.
     if stage == 16:
         chunk_mode = "create"
+    elif stage in (9, 10):
+        chunk_mode = ""  # No file output for Q&A stages
     else:
         chunk_mode = "append" if chunk > 1 else "create"
 

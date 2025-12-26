@@ -7,6 +7,19 @@ version: 3.4.0
 next: 03a2-questions-part2.md
 ---
 
+# 🚫 DO NOT CREATE FILES
+
+**CRITICAL: This substage does NOT create any files.**
+
+- ❌ NO `stage9-chunk1.md`
+- ❌ NO `stage9.md`
+- ❌ NO markdown files in the analysis directory
+- ❌ NO intermediate output files of any kind
+
+**Questions are asked directly in the conversation.** Responses are stored via CLI command at the end.
+
+---
+
 # Stage 3A-1: Modernization Questions (Part 1)
 
 ## Purpose
@@ -39,18 +52,6 @@ Values available in this prompt (already substituted by CLI):
 - If user provides invalid response → Re-prompt with clarification
 - If user requests clarification → Provide context, then re-ask
 - If user types "skip" → Record as "skip" (use existing/default)
-
----
-
-## ⚠️ CRITICAL: No File Creation
-
-**DO NOT create any files during this stage.** This includes:
-
-- ❌ NO `stage9-chunk1.md` or similar files
-- ❌ NO markdown files to record Q&A
-- ❌ NO intermediate files in the analysis directory
-
-**Questions are asked directly in the conversation.** Preferences are stored using the CLI command at the end of this substage.
 
 ---
 

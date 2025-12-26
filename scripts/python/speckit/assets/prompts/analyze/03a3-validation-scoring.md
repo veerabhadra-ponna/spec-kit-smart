@@ -7,6 +7,19 @@ version: 3.4.0
 next: 03a4-recommendations.md
 ---
 
+# 🚫 DO NOT CREATE FILES
+
+**CRITICAL: This substage does NOT create any files.**
+
+- ❌ NO `stage9-chunk3.md`
+- ❌ NO `stage11.md` or similar
+- ❌ NO markdown files in the analysis directory
+- ❌ NO intermediate output files of any kind
+
+**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 5).
+
+---
+
 # Stage 3A-3: Scope Validation & Feasibility Scoring
 
 ## Purpose
@@ -22,14 +35,6 @@ The CLI manages state and provides all context. **Do not read state.json directl
 Values available (already substituted by CLI):
 - Project path, analysis directory, scope, context
 - Q1-Q10 responses from previous stages are in artifacts
-
----
-
-## ⚠️ CRITICAL: No Intermediate Files
-
-**DO NOT create intermediate files** like `stage11-chunk1.md` or similar.
-
-**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 5).
 
 ---
 

@@ -7,6 +7,19 @@ version: 3.4.0
 next: 03a3-validation-scoring.md
 ---
 
+# 🚫 DO NOT CREATE FILES
+
+**CRITICAL: This substage does NOT create any files.**
+
+- ❌ NO `stage9-chunk2.md`
+- ❌ NO `stage9.md`
+- ❌ NO markdown files in the analysis directory
+- ❌ NO intermediate output files of any kind
+
+**Questions are asked directly in the conversation.** Responses are stored via CLI command at the end.
+
+---
+
 # Stage 3A-2: Modernization Questions (Part 2)
 
 ## Purpose
@@ -22,18 +35,6 @@ The CLI manages state and provides all context. **Do not read state.json directl
 Values available (already substituted by CLI):
 - Project path, analysis directory, scope, context
 - Q1-Q5 responses are in artifacts from previous stage
-
----
-
-## ⚠️ CRITICAL: No File Creation
-
-**DO NOT create any files during this stage.** This includes:
-
-- ❌ NO `stage9-chunk2.md` or similar files
-- ❌ NO markdown files to record Q&A
-- ❌ NO intermediate files in the analysis directory
-
-**Questions are asked directly in the conversation.** Preferences are stored using the CLI command at the end of this substage.
 
 ---
 

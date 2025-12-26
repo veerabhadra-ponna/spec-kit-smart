@@ -7,6 +7,19 @@ version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
+# 🚫 DO NOT CREATE FILES
+
+**CRITICAL: This substage does NOT create any files.**
+
+- ❌ NO `stage10-chunk3.md`
+- ❌ NO `stage10.md` or similar
+- ❌ NO markdown files in the analysis directory
+- ❌ NO intermediate output files of any kind
+
+**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 3).
+
+---
+
 # Stage 3B-3: Effort Estimation & Success Criteria
 
 ## Purpose
@@ -23,14 +36,6 @@ Values available (already substituted by CLI):
 - Project path, analysis directory, scope (must be "B"), context
 - Concern type, current implementation, target implementation
 - Strategy and risk analysis from previous stages are in artifacts
-
----
-
-## ⚠️ CRITICAL: No Intermediate Files
-
-**DO NOT create intermediate files** like `stage10-chunk3.md` or similar.
-
-**Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 3).
 
 ---
 
