@@ -314,6 +314,14 @@ Create comprehensive settings inventory:
 
 ```
 
+Save configuration analysis to `{data_dir}/config-analysis.json`:
+
+```powershell
+@"
+<full config_analysis json here>
+"@ | speckitadv write-data config-analysis.json --stage=02c-config-analysis --stdin
+```
+
 ---
 
 ## Output Summary

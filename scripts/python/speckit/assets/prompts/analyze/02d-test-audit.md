@@ -328,6 +328,14 @@ Create comprehensive audit summary:
 
 ```
 
+Save test and dependency audit to `{data_dir}/test-audit.json`:
+
+```powershell
+@"
+<full test_audit and dependency_audit json here>
+"@ | speckitadv write-data test-audit.json --stage=02d-test-audit --stdin
+```
+
 ---
 
 ## Output Summary

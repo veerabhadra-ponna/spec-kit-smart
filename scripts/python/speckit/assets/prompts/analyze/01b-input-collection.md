@@ -311,3 +311,7 @@ speckitadv analyze-project --path="$PROJECT_PATH" --scope=B --context="$ADDITION
 Run: `speckitadv analyze-project`
 
 The CLI will auto-detect the current stage and emit the next prompt.
+
+---
+
+**[AUTO-CONTINUE]** After all inputs collected and CLI command executed, immediately proceed to next substage (01c). Do NOT wait for additional user input.
