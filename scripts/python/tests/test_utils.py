@@ -216,6 +216,53 @@ class TestAtomicWrite:
         temp_file = test_file.with_suffix(".txt.tmp")
         assert not temp_file.exists()
 
+    def test_preserves_original_on_failure(self, tmp_path):
+        """Should preserve original file and clean up temp when write fails."""
+        test_file = tmp_path / "test.txt"
+        original_content = "original content"
+        test_file.write_text(original_content)
+
+        # Create temp file path for verification
+        temp_file = test_file.with_suffix(".txt.tmp")
+
+        # Simulate write failure by making temp file location a directory
+        temp_file.mkdir()
+
+        with pytest.raises(Exception):
+            atomic_write(test_file, "new content")
+
+        # Original file should be unchanged
+        assert test_file.read_text() == original_content
+
+    def test_cleans_up_temp_on_rename_failure(self, tmp_path, monkeypatch):
+        """Should clean up temp file when rename fails."""
+        test_file = tmp_path / "test.txt"
+        test_file.write_text("original")
+        temp_file = test_file.with_suffix(".txt.tmp")
+
+        # Track if temp file existed after write but before rename
+        temp_existed = []
+
+        original_replace = Path.replace
+
+        def failing_replace(self, target):
+            if self == temp_file:
+                temp_existed.append(self.exists())
+                raise OSError("Simulated rename failure")
+            return original_replace(self, target)
+
+        monkeypatch.setattr(Path, "replace", failing_replace)
+
+        with pytest.raises(OSError, match="Simulated rename failure"):
+            atomic_write(test_file, "new content")
+
+        # Temp file should be created before rename
+        assert temp_existed == [True]
+        # Temp file should be cleaned up after failure
+        assert not temp_file.exists()
+        # Original should be preserved
+        assert test_file.read_text() == "original"
+
 
 class TestGetRelativePath:
     """Tests for get_relative_path function."""
