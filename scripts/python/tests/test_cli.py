@@ -329,6 +329,59 @@ class TestListFilesCommand:
         assert "UserController.py" in result.stdout
         assert "service.py" not in result.stdout
 
+    def test_shell_expanded_paths(self, tmp_path):
+        """Should accept shell-expanded file paths as positional arguments."""
+        # Simulate shell expansion: shell expands glob before CLI receives it
+        # e.g., PowerShell: list-files --pattern "*.py" → list-files --pattern "*.py" file1.py file2.py
+        (tmp_path / "file1.py").write_text("# test")
+        (tmp_path / "file2.py").write_text("# test")
+        (tmp_path / "other.txt").write_text("text")
+
+        # Pass files as positional arguments (simulating shell expansion)
+        result = runner.invoke(app, [
+            "list-files",
+            str(tmp_path / "file1.py"),
+            str(tmp_path / "file2.py"),
+        ])
+        assert result.exit_code == 0
+        assert "file1.py" in result.stdout
+        assert "file2.py" in result.stdout
+        assert "other.txt" not in result.stdout
+
+    def test_shell_expanded_paths_with_limit(self, tmp_path):
+        """Shell-expanded paths should respect --limit."""
+        files = []
+        for i in range(10):
+            f = tmp_path / f"file{i}.py"
+            f.write_text("# test")
+            files.append(str(f))
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--limit", "3",
+            *files,
+        ])
+        assert result.exit_code == 0
+        output = strip_ansi(result.stdout)
+        # Should show limit info
+        assert "3 of 10" in output
+
+    def test_shell_expanded_paths_with_count(self, tmp_path):
+        """Shell-expanded paths should work with --count."""
+        files = []
+        for i in range(5):
+            f = tmp_path / f"file{i}.py"
+            f.write_text("# test")
+            files.append(str(f))
+
+        result = runner.invoke(app, [
+            "list-files",
+            "--count",
+            *files,
+        ])
+        assert result.exit_code == 0
+        assert result.stdout.strip() == "5"
+
 
 class TestUpdatePreferencesCommand:
     """Tests for update-preferences command."""

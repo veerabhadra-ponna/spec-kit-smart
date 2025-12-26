@@ -6,7 +6,7 @@ Implements the zero-prompt architecture with progressive stage injection.
 """
 
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import typer
 from rich.console import Console
@@ -1223,6 +1223,7 @@ def get_context_cmd(
 
 @app.command("list-files")
 def list_files_cmd(
+    files: Optional[List[str]] = typer.Argument(None, help="Files (shell-expanded paths, used automatically if shell expands glob)"),
     pattern: str = typer.Option("*", "--pattern", "-p", help="Glob pattern (e.g., '*.cs', '**/*Service*.cs')"),
     category: Optional[str] = typer.Option(None, "--category", "-c", help="Filter by category (controllers, services, models, etc.)"),
     project_path: Optional[str] = typer.Option(None, "--project-path", help="Project path (uses analysis project_path if not provided)"),
@@ -1234,6 +1235,9 @@ def list_files_cmd(
     List files matching pattern or category.
 
     Use this instead of AI-generated Get-ChildItem/find scripts.
+
+    Handles shell glob expansion: if your shell expands the pattern before
+    passing it to the CLI, the expanded paths are accepted as arguments.
 
     Examples:
         speckitadv list-files --pattern='*.cs' --limit=20
@@ -1273,26 +1277,31 @@ def list_files_cmd(
         console.print(f"[red]Error:[/red] Project path not found: {proj_path}")
         raise typer.Exit(1)
 
-    # Get patterns to match
-    if category:
-        if category not in CATEGORY_PATTERNS:
-            console.print(f"[red]Error:[/red] Unknown category: {category}")
-            console.print(f"Available: {', '.join(CATEGORY_PATTERNS.keys())}")
-            raise typer.Exit(1)
-        patterns = CATEGORY_PATTERNS[category]
+    # Handle shell-expanded paths (e.g., PowerShell expanded the glob before CLI received it)
+    if files:
+        # Shell already expanded the glob - use those paths directly
+        matches = [f for f in files if Path(f).is_file() or (proj_path / f).is_file()]
     else:
-        patterns = [pattern]
+        # Get patterns to match
+        if category:
+            if category not in CATEGORY_PATTERNS:
+                console.print(f"[red]Error:[/red] Unknown category: {category}")
+                console.print(f"Available: {', '.join(CATEGORY_PATTERNS.keys())}")
+                raise typer.Exit(1)
+            patterns = CATEGORY_PATTERNS[category]
+        else:
+            patterns = [pattern]
 
-    # Find matching files
-    matches = []
-    for file_path in proj_path.rglob("*"):
-        if file_path.is_file():
-            # Match against relative path for directory-aware patterns (e.g., src/*.py, **/*Service*.cs)
-            rel_path = str(file_path.relative_to(proj_path))
-            for pat in patterns:
-                if fnmatch.fnmatch(rel_path, pat):
-                    matches.append(rel_path)
-                    break
+        # Find matching files
+        matches = []
+        for file_path in proj_path.rglob("*"):
+            if file_path.is_file():
+                # Match against relative path for directory-aware patterns (e.g., src/*.py, **/*Service*.cs)
+                rel_path = str(file_path.relative_to(proj_path))
+                for pat in patterns:
+                    if fnmatch.fnmatch(rel_path, pat):
+                        matches.append(rel_path)
+                        break
 
     # Count total matches BEFORE applying limit (for accurate --count output)
     total_count = len(matches)
