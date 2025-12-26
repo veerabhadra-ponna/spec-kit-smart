@@ -93,6 +93,13 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 {{include:technical-spec-template.md}}
 
+**Note on Template Sections**: The template includes [TARGET ONLY] sections that should be SKIPPED for legacy specs:
+- Section 20: Architecture Decision Records (ADR) - Skip for legacy
+- Section 21: Infrastructure as Code (IaC) - Skip for legacy
+- Section 22: CI/CD Pipeline Architecture - Skip for legacy
+
+For legacy systems, document observed patterns and current state only.
+
 ---
 
 ## Content Rules
