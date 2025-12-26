@@ -91,14 +91,14 @@ speckitadv analyze-project --stage=<number> --analysis-dir=<path>
 | 6 | 02c-config-analysis | Config analysis | `--stage=6` |
 | 7 | 02d-test-audit | Test audit | `--stage=7` |
 | 8 | 02e-quality-gates | Quality gates | `--stage=8` |
-| 9 | 03a-full-app | Full app analysis (Scope A) | `--stage=9 --chunk=1..4` |
-| 10 | 03b-cross-cutting | Cross-cutting (Scope B) | `--stage=10 --chunk=1..3` |
+| 9 | 03a-full-app | Full app analysis (Scope A) | `--stage=9 --chunk=1` (1-4) |
+| 10 | 03b-cross-cutting | Cross-cutting (Scope B) | `--stage=10 --chunk=1` (1-3) |
 | 11 | 04a-report-chunks-1-3 | Report chunks 1-3 | `--stage=11` |
 | 12 | 04b-report-chunks-4-6 | Report chunks 4-6 | `--stage=12` |
 | 13 | 04c-report-chunks-7-9 | Report chunks 7-9 | `--stage=13` |
 | 14 | 04d-report-verification | Report verification | `--stage=14` |
 | 15 | 05a-executive-summary | Scoped artifacts | `--stage=15` |
-| 16 | 06a-06e | Specs generation | `--stage=16 --chunk=1..5` |
+| 16 | 06a-06e | Specs generation | `--stage=16 --chunk=1` (1-5) |
 
 **Chunked Stages (Stage 16 - Scope A):**
 
