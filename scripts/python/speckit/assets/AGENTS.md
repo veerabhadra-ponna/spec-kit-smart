@@ -306,7 +306,7 @@ The analyze-project workflow supports fully agentic execution through continuati
 |------------|--------------|----------|
 | Analysis/Generation | AUTO-CONTINUE | 02a-02d, 04a-04c, 05a |
 | Q&A (multi-question) | AUTO-CONTINUE after all answered | 03a1, 03a2 |
-| Verification gates | GATE-CHECK (pass/fail) | 02e, 04d, 06a-06c |
+| Verification gates | GATE-CHECK (pass/fail) | 02e, 04d, 06a-06c2 |
 | User decisions | Wait for explicit input | 01b (if interactive) |
 
 ### Best Practice
