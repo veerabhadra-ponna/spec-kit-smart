@@ -1,6 +1,6 @@
 # AI Agent Guidelines
 
-**Version:** 3.4
+**Version:** 3.5
 
 ---
 
@@ -91,7 +91,10 @@ These deterministic commands allow AI agents to write artifacts and query contex
 |---------|---------|---------|
 | `get-context` | Get render context for prompts | `speckitadv get-context --field scope` |
 | `file-stats` | Get file info (lines, size, patterns) | `speckitadv file-stats reports/analysis-report.md --pattern "^##"` |
-| `list-files` | Find files by pattern or category | `speckitadv list-files --pattern "**/*Service*.cs" --limit 50` |
+| `list-files` | Find files by pattern or category | `speckitadv list-files --pattern "**/*.cs" --limit 50` |
+
+**Note:** `list-files` also accepts shell-expanded paths as positional arguments when the shell
+pre-expands glob patterns (e.g., PowerShell may expand `*.cs` before passing to CLI).
 
 ### Valid Preference Keys (Q1-Q10)
 
@@ -108,7 +111,7 @@ controllers, services, models, repositories, handlers, middleware,
 config, tests, views, utilities, migrations
 ```
 
-### ⚠️ CRITICAL: File Write Policy
+### CRITICAL: File Write Policy
 
 **ALWAYS use CLI commands for file writes. NEVER use:**
 
@@ -120,7 +123,7 @@ config, tests, views, utilities, migrations
 
 ### CLI Command Best Practices
 
-⚠️ **OS command line length limits apply (~8000 chars on Windows).** Break large content into smaller chunks.
+**Note:** OS command line length limits apply (~8000 chars on Windows). Break large content into smaller chunks.
 
 ```bash
 # Write report (put --append EARLY before --content)
@@ -174,23 +177,24 @@ cat "$tempFile" | speckitadv write-report analysis-report.md --stage=X --append 
 ```
 
 **Rules:**
-- ❌ NEVER create temp files in the analysis directory
-- ✅ ALWAYS use system temp folder (`$env:TEMP` or `/tmp`)
-- ✅ Use unique random names to avoid conflicts
-- ✅ No explicit cleanup needed - OS handles it
+
+- NEVER create temp files in the analysis directory
+- ALWAYS use system temp folder (`$env:TEMP` or `/tmp`)
+- Use unique random names to avoid conflicts
+- No explicit cleanup needed - OS handles it
 
 ---
 
 ## File Write Best Practices (All Workflows)
 
-### ⚠️ CRITICAL: Never Reduce Content Quality
+### CRITICAL: Never Reduce Content Quality
 
 **Chunking means MULTIPLE WRITE OPERATIONS, NOT reduced output.**
 
-- ❌ WRONG: "I'll generate a smaller JSON to fit the limit"
-- ❌ WRONG: "Given the limit, I'll create a reduced version"
-- ✅ CORRECT: "I'll write the full content using multiple --append operations"
-- ✅ CORRECT: "I'll use stdin mode for this large content block"
+- WRONG: "I'll generate a smaller JSON to fit the limit"
+- WRONG: "Given the limit, I'll create a reduced version"
+- CORRECT: "I'll write the full content using multiple --append operations"
+- CORRECT: "I'll use stdin mode for this large content block"
 
 **The content quality and completeness must be IDENTICAL** regardless of how it's written.
 
@@ -246,7 +250,7 @@ Feature-scoped workflows (specify, plan, tasks, implement, checklist) use AI Wri
 
 **Shell Command Warning:**
 
-⚠️ If using shell commands with content arguments, OS limits apply (~8000 chars on Windows). Prefer AI tools or stdin piping for large content.
+**Note:** If using shell commands with content arguments, OS limits apply (~8000 chars on Windows). Prefer AI tools or stdin piping for large content.
 
 ---
 

@@ -107,7 +107,7 @@ For EACH category, scan 15-20% of files (minimum 3 files per category if availab
 ### 3.1 Controllers/Routes Scan
 
 ---
-[PAUSE] **[STOP: SCAN_CONTROLLERS]**
+[STOP: SCAN_CONTROLLERS]**
 
 Scan files in Controllers/Routes category:
 
@@ -137,7 +137,7 @@ Scanning Controllers/Routes...
 ### 3.2 Services/Business Logic Scan
 
 ---
-[PAUSE] **[STOP: SCAN_SERVICES]**
+[STOP: SCAN_SERVICES]**
 
 Scan files in Services/Business Logic category:
 
@@ -166,7 +166,7 @@ Scanning Services/Business Logic...
 ### 3.3 Models/Entities Scan
 
 ---
-[PAUSE] **[STOP: SCAN_MODELS]**
+[STOP: SCAN_MODELS]**
 
 Scan files in Models/Entities category:
 
@@ -194,7 +194,7 @@ Scanning Models/Entities...
 ### 3.4 Repositories/DAOs Scan
 
 ---
-[PAUSE] **[STOP: SCAN_REPOSITORIES]**
+[STOP: SCAN_REPOSITORIES]**
 
 Scan files in Repositories/DAOs category:
 
@@ -223,7 +223,7 @@ Scanning Repositories/DAOs...
 ### 3.5 Remaining Categories Quick Scan
 
 ---
-[PAUSE] **[STOP: SCAN_REMAINING]**
+[STOP: SCAN_REMAINING]**
 
 Quick scan of remaining categories (Security, Middleware, Utilities):
 

@@ -7,14 +7,14 @@ version: 3.4.0
 next: 03a2-questions-part2.md
 ---
 
-# [NO] DO NOT CREATE FILES
+# DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- [x] NO `stage9-chunk1.md`
-- [x] NO `stage9.md`
-- [x] NO markdown files in the analysis directory
-- [x] NO intermediate output files of any kind
+- NO `stage9-chunk1.md`
+- NO `stage9.md`
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
 
 **Questions are asked directly in the conversation.** Responses are stored via CLI command at the end.
 
@@ -70,7 +70,7 @@ DO NOT store preferences after each question. Collect all 5, then store once at 
 ## Question 1: Target Language/Runtime
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q1]**
+[STOP: USER_INPUT_REQUIRED - Q1]**
 
 Present this question EXACTLY as written:
 
@@ -123,7 +123,7 @@ Store user's choice in:
 ## Question 2: Target Database
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q2]**
+[STOP: USER_INPUT_REQUIRED - Q2]**
 
 Present this question EXACTLY as written:
 
@@ -175,7 +175,7 @@ Store user's choice in:
 ## Question 3: Message Bus / Async Communication
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q3]**
+[STOP: USER_INPUT_REQUIRED - Q3]**
 
 Present this question EXACTLY as written:
 
@@ -227,7 +227,7 @@ Store user's choice in:
 ## Question 4: Package Manager / Build Tool
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q4]**
+[STOP: USER_INPUT_REQUIRED - Q4]**
 
 Present this question EXACTLY as written:
 
@@ -290,7 +290,7 @@ Store user's choice in:
 ## Question 5: Deployment Target
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q5]**
+[STOP: USER_INPUT_REQUIRED - Q5]**
 
 Present this question EXACTLY as written:
 

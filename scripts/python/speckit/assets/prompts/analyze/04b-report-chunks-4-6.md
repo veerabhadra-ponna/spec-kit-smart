@@ -67,7 +67,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 ## Chunk 4: Phase 2.3 - Data Layer
 
 ---
-[PAUSE] **[STOP: GENERATE_CHUNK_4]**
+[STOP: GENERATE_CHUNK_4]**
 
 **Append to report:**
 
@@ -107,7 +107,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 ```
 
 ---
-[PAUSE] **[STOP: VERIFY_CHUNK_4]**
+[STOP: VERIFY_CHUNK_4]**
 
 Output: `[ok] Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 
@@ -116,7 +116,7 @@ Output: `[ok] Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 ## Chunk 5: Phase 3 - Positive Findings
 
 ---
-[PAUSE] **[STOP: GENERATE_CHUNK_5]**
+[STOP: GENERATE_CHUNK_5]**
 
 **Append to report:**
 
@@ -160,7 +160,7 @@ Output: `[ok] Chunk 4/9: Data Layer ({entities} entities, {lines} lines)`
 ```
 
 ---
-[PAUSE] **[STOP: VERIFY_CHUNK_5]**
+[STOP: VERIFY_CHUNK_5]**
 
 Output: `[ok] Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 
@@ -169,7 +169,7 @@ Output: `[ok] Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 ## Chunk 6: Phase 4 - Technical Debt & Issues
 
 ---
-[PAUSE] **[STOP: GENERATE_CHUNK_6]**
+[STOP: GENERATE_CHUNK_6]**
 
 **Append to report:**
 
@@ -226,7 +226,7 @@ Output: `[ok] Chunk 5/9: Positive Findings ({count} findings, {lines} lines)`
 ```
 
 ---
-[PAUSE] **[STOP: VERIFY_CHUNK_6]**
+[STOP: VERIFY_CHUNK_6]**
 
 Output: `[ok] Chunk 6/9: Tech Debt ({debt_count} debt, {sec_count} security, {lines} lines)`
 

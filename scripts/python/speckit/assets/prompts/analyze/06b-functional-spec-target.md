@@ -235,7 +235,7 @@ Generate Sections 1, 2, and 3 for TARGET system.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_1]**
+[STOP: GENERATE_PART_1]**
 
 #### Section 1: Introduction
 
@@ -288,7 +288,7 @@ Generate Section 4.1 with modernization enhancements.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_2]**
+[STOP: GENERATE_PART_2]**
 
 For each CRITICAL feature from legacy spec:
 
@@ -347,7 +347,7 @@ Generate Sections 4.2 and 5 with target stack considerations.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_3]**
+[STOP: GENERATE_PART_3]**
 
 #### Section 4.2: STANDARD Features (Modernized)
 
@@ -408,7 +408,7 @@ Generate Sections 6 and 7 using user's target preferences.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_4]**
+[STOP: GENERATE_PART_4]**
 
 #### Section 6: Non-Functional Requirements (Target)
 
@@ -473,7 +473,7 @@ Generate Sections 8, 9, and 10.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_5]**
+[STOP: GENERATE_PART_5]**
 
 #### Section 8: Acceptance Criteria (Target)
 

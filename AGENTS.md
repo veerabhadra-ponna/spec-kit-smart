@@ -95,6 +95,15 @@ See [.guidelines/README.md](.guidelines/README.md) for complete documentation.
 
 Run `npx markdownlint-cli2 '**/*.md'` before commit (must return 0 errors). Uses `.markdownlint.json` config.
 
+## Windows Compatibility
+
+**ASCII-Only Output**: All CLI output and prompts use ASCII characters only for Windows compatibility
+(cp1252 encoding). Unicode box drawing characters and emojis are replaced with ASCII equivalents:
+
+- Box chars: `+`, `-`, `|` instead of `┌`, `─`, `│`
+- Checkmarks: `[ok]`, `[x]` instead of `✓`, `✗`
+- Warnings: `[!]` instead of `⚠️`
+
 ---
 
 ## Documentation Structure

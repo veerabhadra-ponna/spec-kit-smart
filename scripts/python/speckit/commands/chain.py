@@ -194,12 +194,12 @@ def load_state(
             return json.load(f)
     except json.JSONDecodeError as e:
         # Corrupted state file - warn user so they can recover
-        console.print(f"[yellow]⚠ Warning:[/yellow] Corrupted state file: {state_file}")
+        console.print(f"[yellow][!] Warning:[/yellow] Corrupted state file: {state_file}")
         console.print(f"[dim]  JSON error: {e}[/dim]")
         console.print("[dim]  Delete file to re-initialize or fix manually.[/dim]")
         return None
     except (OSError, IOError) as e:
-        console.print(f"[yellow]⚠ Warning:[/yellow] Cannot read state file: {state_file}")
+        console.print(f"[yellow][!] Warning:[/yellow] Cannot read state file: {state_file}")
         console.print(f"[dim]  Error: {e}[/dim]")
         return None
 

@@ -1040,7 +1040,7 @@ def update_stage_cmd(
 
     # Update stage
     state_manager.update_stage(stage_id, status, artifacts=artifact_list if artifact_list else None)
-    console.print(f"[green][ok][/green] Stage {stage_id} → {status}")
+    console.print(f"[green][ok][/green] Stage {stage_id} -> {status}")
     if artifact_list:
         for artifact in artifact_list:
             console.print(f"    + {artifact}")

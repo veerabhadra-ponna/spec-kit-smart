@@ -39,7 +39,7 @@ Values available in this prompt (already substituted by CLI):
 ## Step 1: Test Framework Detection
 
 ---
-[PAUSE] **[STOP: DETECT_TEST_FRAMEWORK]**
+[STOP: DETECT_TEST_FRAMEWORK]**
 
 Identify the testing frameworks in use:
 
@@ -75,7 +75,7 @@ Additional Frameworks: {list if multiple}
 ## Step 2: Test Coverage Analysis
 
 ---
-[PAUSE] **[STOP: ANALYZE_TEST_COVERAGE]**
+[STOP: ANALYZE_TEST_COVERAGE]**
 
 Analyze test files and estimate coverage:
 
@@ -138,7 +138,7 @@ Test Quality:
 ## Step 3: Coverage Gaps Identification
 
 ---
-[PAUSE] **[STOP: IDENTIFY_COVERAGE_GAPS]**
+[STOP: IDENTIFY_COVERAGE_GAPS]**
 
 Identify files and modules WITHOUT corresponding tests:
 
@@ -180,7 +180,7 @@ Low Priority Gaps:
 ## Step 4: Dependency Audit
 
 ---
-[PAUSE] **[STOP: AUDIT_DEPENDENCIES]**
+[STOP: AUDIT_DEPENDENCIES]**
 
 Perform comprehensive dependency security and freshness audit:
 

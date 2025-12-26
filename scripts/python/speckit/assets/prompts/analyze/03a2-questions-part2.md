@@ -7,14 +7,14 @@ version: 3.4.0
 next: 03a3-validation-scoring.md
 ---
 
-# [NO] DO NOT CREATE FILES
+# DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- [x] NO `stage9-chunk2.md`
-- [x] NO `stage9.md`
-- [x] NO markdown files in the analysis directory
-- [x] NO intermediate output files of any kind
+- NO `stage9-chunk2.md`
+- NO `stage9.md`
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
 
 **Questions are asked directly in the conversation.** Responses are stored via CLI command at the end.
 
@@ -53,7 +53,7 @@ DO NOT store preferences after each question. Collect all 5, then store once at 
 ## Question 6: Infrastructure as Code
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q6]**
+[STOP: USER_INPUT_REQUIRED - Q6]**
 
 Present this question EXACTLY as written:
 
@@ -122,7 +122,7 @@ TIP: Type "skip" to proceed without IaC.
 ## Question 7: Containerization Strategy
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q7]**
+[STOP: USER_INPUT_REQUIRED - Q7]**
 
 Present this question EXACTLY as written:
 
@@ -170,7 +170,7 @@ TIP: Type "skip" to use current approach.
 ## Question 8: Observability Stack
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q8]**
+[STOP: USER_INPUT_REQUIRED - Q8]**
 
 Present this question EXACTLY as written:
 
@@ -240,7 +240,7 @@ TIP: Type "skip" to determine based on deployment target.
 ## Question 9: Security & Authentication
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q9]**
+[STOP: USER_INPUT_REQUIRED - Q9]**
 
 Present this question EXACTLY as written:
 
@@ -292,7 +292,7 @@ TIP: Type "skip" to keep current auth approach.
 ## Question 10: Testing Strategy
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - Q10]**
+[STOP: USER_INPUT_REQUIRED - Q10]**
 
 Present this question EXACTLY as written:
 

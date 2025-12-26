@@ -227,7 +227,7 @@ Generate Sections 1 and 2.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_1]**
+[STOP: GENERATE_PART_1]**
 
 #### Section 1: Introduction
 
@@ -299,7 +299,7 @@ Generate Sections 3 and 4.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_2]**
+[STOP: GENERATE_PART_2]**
 
 #### Section 3: Technology Stack
 
@@ -398,7 +398,7 @@ Generate Sections 5 and 6.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_3]**
+[STOP: GENERATE_PART_3]**
 
 #### Section 5: API Design
 
@@ -498,7 +498,7 @@ Generate Sections 7 and 8.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_4]**
+[STOP: GENERATE_PART_4]**
 
 #### Section 7: Security Architecture
 
@@ -605,7 +605,7 @@ Generate Sections 9, 10, and 11.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_5]**
+[STOP: GENERATE_PART_5]**
 
 #### Section 9: Testing Infrastructure
 

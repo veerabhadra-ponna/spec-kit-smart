@@ -96,7 +96,7 @@ fi
 ## Chunk 1: Phase 1 - Project Discovery
 
 ---
-[PAUSE] **[STOP: GENERATE_CHUNK_1]**
+[STOP: GENERATE_CHUNK_1]**
 
 Generate Phase 1 content. This section documents the project's technology stack and architecture.
 
@@ -193,7 +193,7 @@ This saves to: `{reports_dir}/analysis-report.md`
 3. Confirm no placeholders
 
 ---
-[PAUSE] **[STOP: VERIFY_CHUNK_1]**
+[STOP: VERIFY_CHUNK_1]**
 
 **IF verified:** Output: `[ok] Chunk 1/9: Project Discovery ({lines} lines)`
 **IF failed:** Retry generation
@@ -203,7 +203,7 @@ This saves to: `{reports_dir}/analysis-report.md`
 ## Chunk 2: Phase 2.1 - Controllers & API Endpoints
 
 ---
-[PAUSE] **[STOP: GENERATE_CHUNK_2]**
+[STOP: GENERATE_CHUNK_2]**
 
 Generate Phase 2.1 content. Document every controller and API endpoint.
 
@@ -250,7 +250,7 @@ Generate Phase 2.1 content. Document every controller and API endpoint.
 3. Count endpoints documented
 
 ---
-[PAUSE] **[STOP: VERIFY_CHUNK_2]**
+[STOP: VERIFY_CHUNK_2]**
 
 **IF verified:** Output: `[ok] Chunk 2/9: Controllers ({count} endpoints, {lines} lines)`
 **IF failed:** Retry generation
@@ -260,7 +260,7 @@ Generate Phase 2.1 content. Document every controller and API endpoint.
 ## Chunk 3: Phase 2.2 - Services & Business Logic
 
 ---
-[PAUSE] **[STOP: GENERATE_CHUNK_3]**
+[STOP: GENERATE_CHUNK_3]**
 
 Generate Phase 2.2 content. Document services and business logic.
 
@@ -318,7 +318,7 @@ Generate Phase 2.2 content. Document services and business logic.
 3. Count services documented
 
 ---
-[PAUSE] **[STOP: VERIFY_CHUNK_3]**
+[STOP: VERIFY_CHUNK_3]**
 
 **IF verified:** Output: `[ok] Chunk 3/9: Services ({count} services, {lines} lines)`
 **IF failed:** Retry generation

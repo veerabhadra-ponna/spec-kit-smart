@@ -135,7 +135,7 @@ def run_setup_plan(
     # Skip if plan already exists (avoid overwriting user edits on re-run)
     if impl_plan.exists():
         console.print(
-            f"[yellow]⚠[/yellow] Plan already exists at {impl_plan} (not overwritten)"
+            f"[yellow][!][/yellow] Plan already exists at {impl_plan} (not overwritten)"
         )
     else:
         # Load template using centralized function (handles frozen builds + project overrides)

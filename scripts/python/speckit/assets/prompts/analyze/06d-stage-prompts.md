@@ -67,7 +67,7 @@ Create: `{analysis_dir}/stage-prompts/`
 ## Prompt 1: Constitution Prompt
 
 ---
-[PAUSE] **[STOP: GENERATE_CONSTITUTION_PROMPT]**
+[STOP: GENERATE_CONSTITUTION_PROMPT]**
 
 **Purpose:** Extract project principles from legacy code for `/speckitadv.constitution` command
 
@@ -117,7 +117,7 @@ Write to: `{analysis_dir}/stage-prompts/constitution-prompt.md`
 ## Prompt 2: Clarify Prompt
 
 ---
-[PAUSE] **[STOP: GENERATE_CLARIFY_PROMPT]**
+[STOP: GENERATE_CLARIFY_PROMPT]**
 
 **Purpose:** Use legacy code as source of truth for clarifications with `/speckitadv.clarify` command
 
@@ -173,7 +173,7 @@ Write to: `{analysis_dir}/stage-prompts/clarify-prompt.md`
 ## Prompt 3: Tasks Prompt
 
 ---
-[PAUSE] **[STOP: GENERATE_TASKS_PROMPT]**
+[STOP: GENERATE_TASKS_PROMPT]**
 
 **Purpose:** Break down implementation with legacy complexity awareness for `/speckitadv.tasks` command
 
@@ -234,7 +234,7 @@ Write to: `{analysis_dir}/stage-prompts/tasks-prompt.md`
 ## Prompt 4: Implement Prompt
 
 ---
-[PAUSE] **[STOP: GENERATE_IMPLEMENT_PROMPT]**
+[STOP: GENERATE_IMPLEMENT_PROMPT]**
 
 **Purpose:** Reference legacy code during implementation for `/speckitadv.implement` command
 

@@ -35,7 +35,7 @@ Verify the analysis report meets all quality standards before proceeding to arti
 ## Verification Checklist
 
 ---
-[PAUSE] **[STOP: VERIFY_REPORT]**
+[STOP: VERIFY_REPORT]**
 
 Read the complete report at `{reports_dir}/analysis-report.md` and verify each item:
 
@@ -106,7 +106,7 @@ Read the complete report at `{reports_dir}/analysis-report.md` and verify each i
 ```
 
 ---
-[PAUSE] **[STOP: HANDLE_VERIFICATION_RESULT]**
+[STOP: HANDLE_VERIFICATION_RESULT]**
 
 **IF PASSED:** Continue to state generation
 **IF FAILED:** Return to fix issues before proceeding

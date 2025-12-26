@@ -7,14 +7,14 @@ version: 3.4.0
 next: 03b2-migration-strategy.md
 ---
 
-# [NO] DO NOT CREATE FILES
+# DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- [x] NO `stage10-chunk1.md`
-- [x] NO `stage10.md` or similar
-- [x] NO markdown files in the analysis directory
-- [x] NO intermediate output files of any kind
+- NO `stage10-chunk1.md`
+- NO `stage10.md` or similar
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
 
 **Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 5).
 
@@ -43,7 +43,7 @@ Values available (already substituted by CLI):
 Locate all files related to the specified concern.
 
 ---
-[PAUSE] **[STOP: IDENTIFY_CONCERN_FILES]**
+[STOP: IDENTIFY_CONCERN_FILES]**
 
 Search for files matching the concern type: **{concern_type}**
 
@@ -87,7 +87,7 @@ Store in: `$CONCERN_FILES`
 Evaluate how well the concern is abstracted from business logic.
 
 ---
-[PAUSE] **[STOP: ASSESS_ABSTRACTION]**
+[STOP: ASSESS_ABSTRACTION]**
 
 For each concern file, analyze:
 
@@ -155,7 +155,7 @@ Abstraction Issues:
 Calculate how many files would be affected by the migration.
 
 ---
-[PAUSE] **[STOP: CALCULATE_BLAST_RADIUS]**
+[STOP: CALCULATE_BLAST_RADIUS]**
 
 **Count affected files:**
 

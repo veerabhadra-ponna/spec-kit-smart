@@ -72,7 +72,7 @@ speckitadv write-data <filename> --stage=<stage-id> --content '<json>'
 ## Step 1: Authentication/Security Deep Dive (P1)
 
 ---
-[PAUSE] **[STOP: DEEP_DIVE_AUTH]**
+[STOP: DEEP_DIVE_AUTH]**
 
 Analyze ALL security-related files (80% coverage minimum):
 
@@ -156,7 +156,7 @@ Coverage: {analyzed}/{total} files ({percentage}%)
 ## Step 2: Database Layer Deep Dive (P2)
 
 ---
-[PAUSE] **[STOP: DEEP_DIVE_DATABASE]**
+[STOP: DEEP_DIVE_DATABASE]**
 
 Analyze ALL database-related files (80% coverage minimum):
 
@@ -238,7 +238,7 @@ Coverage: {analyzed}/{total} files ({percentage}%)
 ## Step 3: API Endpoints Deep Dive (P3)
 
 ---
-[PAUSE] **[STOP: DEEP_DIVE_API]**
+[STOP: DEEP_DIVE_API]**
 
 Analyze ALL API endpoint files (70% coverage minimum):
 
@@ -321,7 +321,7 @@ Coverage: {analyzed}/{total} files ({percentage}%)
 ## Step 4: Core Business Logic Deep Dive (P4)
 
 ---
-[PAUSE] **[STOP: DEEP_DIVE_BUSINESS]**
+[STOP: DEEP_DIVE_BUSINESS]**
 
 Analyze key business logic files (60% coverage minimum):
 

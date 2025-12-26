@@ -70,7 +70,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 ## Artifact 1: EXECUTIVE-SUMMARY.md
 
 ---
-[PAUSE] **[STOP: GENERATE_EXECUTIVE_SUMMARY]**
+[STOP: GENERATE_EXECUTIVE_SUMMARY]**
 
 Generate C-level summary using CLI: `speckitadv write-report EXECUTIVE-SUMMARY.md --stage=05a-executive-summary --content '<md>' --analysis-dir "{analysis_dir}"`
 
@@ -134,7 +134,7 @@ This saves to: `{reports_dir}/EXECUTIVE-SUMMARY.md`
 ## Artifact 2: dependency-audit.json
 
 ---
-[PAUSE] **[STOP: GENERATE_DEPENDENCY_AUDIT]**
+[STOP: GENERATE_DEPENDENCY_AUDIT]**
 
 Generate machine-readable dependency audit using CLI: `speckitadv write-data dependency-audit.json --stage=05a-executive-summary --content '<json>' --analysis-dir "{analysis_dir}"`
 
@@ -175,7 +175,7 @@ This saves to: `{data_dir}/dependency-audit.json`
 ## Artifact 3: metrics-summary.json
 
 ---
-[PAUSE] **[STOP: GENERATE_METRICS_SUMMARY]**
+[STOP: GENERATE_METRICS_SUMMARY]**
 
 Generate metrics for tracking using CLI: `speckitadv write-data metrics-summary.json --stage=05a-executive-summary --content '<json>' --analysis-dir "{analysis_dir}"`
 

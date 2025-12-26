@@ -71,7 +71,7 @@ Then skip interactive prompts and use:
 
 ---
 
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - PROJECT_PATH]**
+[STOP: USER_INPUT_REQUIRED - PROJECT_PATH]**
 
 Present this prompt to user EXACTLY as written:
 
@@ -121,7 +121,7 @@ Re-prompt until valid path provided.
 
 ---
 
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - ADDITIONAL_CONTEXT]**
+[STOP: USER_INPUT_REQUIRED - ADDITIONAL_CONTEXT]**
 
 Present this prompt to user EXACTLY as written:
 
@@ -160,7 +160,7 @@ ___
 
 ---
 
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - ANALYSIS_SCOPE]**
+[STOP: USER_INPUT_REQUIRED - ANALYSIS_SCOPE]**
 
 Present this prompt to user EXACTLY as written:
 
@@ -216,7 +216,7 @@ Re-prompt until valid choice received.
 
 ---
 
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - CONCERN_DETAILS]**
+[STOP: USER_INPUT_REQUIRED - CONCERN_DETAILS]**
 
 Present these prompts to user EXACTLY as written:
 

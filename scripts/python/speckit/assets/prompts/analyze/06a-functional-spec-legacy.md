@@ -222,7 +222,7 @@ Generate Sections 1, 2, and 3.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_1]**
+[STOP: GENERATE_PART_1]**
 
 Generate the following sections:
 
@@ -276,7 +276,7 @@ Generate Section 4.1 (CRITICAL priority features).
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_2]**
+[STOP: GENERATE_PART_2]**
 
 Extract all CRITICAL features from analysis-report.md Phase 2.
 
@@ -333,7 +333,7 @@ Generate Sections 4.2 and 5.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_3]**
+[STOP: GENERATE_PART_3]**
 
 #### Section 4.2: STANDARD Features
 
@@ -392,7 +392,7 @@ Generate Sections 6 and 7.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_4]**
+[STOP: GENERATE_PART_4]**
 
 #### Section 6: Non-Functional Requirements
 
@@ -450,7 +450,7 @@ Generate Sections 8, 9, and 10.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_5]**
+[STOP: GENERATE_PART_5]**
 
 #### Section 8: Acceptance Criteria
 

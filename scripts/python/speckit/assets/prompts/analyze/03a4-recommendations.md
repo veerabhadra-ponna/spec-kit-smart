@@ -7,14 +7,14 @@ version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
-# [NO] DO NOT CREATE FILES
+# DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- [x] NO `stage9-chunk4.md`
-- [x] NO `stage12.md` or similar
-- [x] NO markdown files in the analysis directory
-- [x] NO intermediate output files of any kind
+- NO `stage9-chunk4.md`
+- NO `stage12.md` or similar
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
 
 **Recommendations are shown directly in the conversation.** Final data is saved using the CLI command.
 
@@ -313,7 +313,7 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Step 4: Verify State Saved
 
 ---
-[PAUSE] **[STOP: VERIFY_STATE_SAVED]**
+[STOP: VERIFY_STATE_SAVED]**
 
 1. Read `{analysis_dir}/state.json`
 2. Validate JSON is parseable

@@ -55,7 +55,7 @@ cat {analysis_dir}/state.json
 ## Step 2: Quality Gate Verification
 
 ---
-[PAUSE] **[STOP: QUALITY_GATE_CHECK]**
+[STOP: QUALITY_GATE_CHECK]**
 
 Verify each quality gate. All gates MUST pass before proceeding.
 
@@ -411,7 +411,7 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Step 4: Verify State Saved
 
 ---
-[PAUSE] **[STOP: VERIFY_STATE_SAVED]**
+[STOP: VERIFY_STATE_SAVED]**
 
 1. Read `{analysis_dir}/state.json`
 2. Validate JSON is parseable

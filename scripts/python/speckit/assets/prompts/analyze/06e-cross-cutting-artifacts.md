@@ -96,7 +96,7 @@ From Stage 3B state, extract:
 ## Artifact 1: Abstraction Assessment
 
 ---
-[PAUSE] **[STOP: GENERATE_ABSTRACTION_ASSESSMENT]**
+[STOP: GENERATE_ABSTRACTION_ASSESSMENT]**
 
 **Purpose:** Detailed abstraction analysis for the concern
 
@@ -218,7 +218,7 @@ speckitadv write-report abstraction-assessment.md --content '<generated-content>
 ### Part 1: Strategy + Phasing
 
 ---
-[PAUSE] **[STOP: GENERATE_MIGRATION_PLAN_PART_1]**
+[STOP: GENERATE_MIGRATION_PLAN_PART_1]**
 
 **Template:**
 
@@ -312,7 +312,7 @@ concern-migration-plan.md Part 1/3 complete: Strategy + Phasing
 ### Part 2: Implementation + Testing
 
 ---
-[PAUSE] **[STOP: GENERATE_MIGRATION_PLAN_PART_2]**
+[STOP: GENERATE_MIGRATION_PLAN_PART_2]**
 
 ```markdown
 ## 4. Environment Setup
@@ -399,7 +399,7 @@ concern-migration-plan.md Part 2/3 complete: Implementation + Testing
 ### Part 3: Deployment + Operations + Success
 
 ---
-[PAUSE] **[STOP: GENERATE_MIGRATION_PLAN_PART_3]**
+[STOP: GENERATE_MIGRATION_PLAN_PART_3]**
 
 ```markdown
 ## 7. Deployment Strategy
@@ -505,7 +505,7 @@ concern-migration-plan.md COMPLETE (3/3 parts)
 ## Artifact 3: Rollback Procedure
 
 ---
-[PAUSE] **[STOP: GENERATE_ROLLBACK_PROCEDURE]**
+[STOP: GENERATE_ROLLBACK_PROCEDURE]**
 
 Generate detailed rollback procedure:
 

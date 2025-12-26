@@ -37,7 +37,7 @@ Check if `AGENTS.md` exists in any of these locations (in order):
 
 ---
 
-[PAUSE] **[STOP: AGENTS_CHECK]**
+[STOP: AGENTS_CHECK]**
 
 Search for AGENTS.md in the locations listed above.
 
@@ -68,7 +68,7 @@ speckitadv --version
 
 ---
 
-[PAUSE] **[STOP: TOOLKIT_CHECK]**
+[STOP: TOOLKIT_CHECK]**
 
 **IF CLI works:** Output: `[ok] Toolkit verified (vX.X.X)`
 **IF CLI missing:** Output: `[x] Error: speckitadv CLI not found` -> STOP workflow

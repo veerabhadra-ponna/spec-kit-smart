@@ -67,7 +67,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 ## Chunk 7: Phase 5 - Upgrade Path Analysis
 
 ---
-[PAUSE] **[STOP: GENERATE_CHUNK_7]**
+[STOP: GENERATE_CHUNK_7]**
 
 **Append to report:**
 
@@ -114,7 +114,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 ```
 
 ---
-[PAUSE] **[STOP: VERIFY_CHUNK_7]**
+[STOP: VERIFY_CHUNK_7]**
 
 Output: `[ok] Chunk 7/9: Upgrade Paths ({lines} lines)`
 
@@ -123,7 +123,7 @@ Output: `[ok] Chunk 7/9: Upgrade Paths ({lines} lines)`
 ## Chunk 8: Phases 6-7 - Modernization & Feasibility
 
 ---
-[PAUSE] **[STOP: GENERATE_CHUNK_8]**
+[STOP: GENERATE_CHUNK_8]**
 
 **Append to report:**
 
@@ -215,7 +215,7 @@ Score = (Inline + Greenfield) / 2 + 10 (flexibility bonus)
 ```
 
 ---
-[PAUSE] **[STOP: VERIFY_CHUNK_8]**
+[STOP: VERIFY_CHUNK_8]**
 
 Output: `[ok] Chunk 8/9: Modernization & Feasibility ({lines} lines)`
 
@@ -224,7 +224,7 @@ Output: `[ok] Chunk 8/9: Modernization & Feasibility ({lines} lines)`
 ## Chunk 9: Phases 8-9 - Decision Matrix & Final Recommendations
 
 ---
-[PAUSE] **[STOP: GENERATE_CHUNK_9]**
+[STOP: GENERATE_CHUNK_9]**
 
 **Append to report:**
 
@@ -320,7 +320,7 @@ Output: `[ok] Chunk 8/9: Modernization & Feasibility ({lines} lines)`
 ```
 
 ---
-[PAUSE] **[STOP: VERIFY_CHUNK_9]**
+[STOP: VERIFY_CHUNK_9]**
 
 Output: `[ok] Chunk 9/9: Recommendations ({lines} lines)`
 

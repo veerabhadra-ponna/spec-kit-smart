@@ -210,7 +210,7 @@ When AI encounters:
 
 ```markdown
 ---
-[PAUSE] **[STOP: ACTION_NAME]**
+[STOP: ACTION_NAME]**
 
 Instructions here.
 
@@ -285,7 +285,7 @@ Templates are loaded from `assets/templates/` by the CLI and injected into promp
 
 ```markdown
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED]**
+[STOP: USER_INPUT_REQUIRED]**
 
 Present prompt above. Do NOT proceed until user provides response.
 
@@ -304,7 +304,7 @@ Every sub-prompt ends with:
 2. Validate JSON is parseable
 3. Confirm `status` = "complete"
 
-[PAUSE] **[STOP: state_VERIFY]**
+[STOP: state_VERIFY]**
 
 ```
 
@@ -338,7 +338,7 @@ next: {next_sub_prompt}
 
 {Single focused task}
 
-[PAUSE] **[STOP: ACTION]**
+[STOP: ACTION]**
 
 ## state
 

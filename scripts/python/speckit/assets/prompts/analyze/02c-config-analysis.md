@@ -64,7 +64,7 @@ appsettings*         # .NET config files
 ## Step 2: Application Configuration
 
 ---
-[PAUSE] **[STOP: ANALYZE_APP_CONFIG]**
+[STOP: ANALYZE_APP_CONFIG]**
 
 Analyze all application configuration files (100% coverage):
 
@@ -134,7 +134,7 @@ Performance:
 ## Step 3: Build Configuration
 
 ---
-[PAUSE] **[STOP: ANALYZE_BUILD_CONFIG]**
+[STOP: ANALYZE_BUILD_CONFIG]**
 
 Analyze all build configuration files:
 
@@ -197,7 +197,7 @@ Scripts/Tasks:
 ## Step 4: Infrastructure Configuration
 
 ---
-[PAUSE] **[STOP: ANALYZE_INFRA_CONFIG]**
+[STOP: ANALYZE_INFRA_CONFIG]**
 
 Analyze all infrastructure/deployment configuration:
 

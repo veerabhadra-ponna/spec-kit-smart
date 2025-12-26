@@ -71,7 +71,7 @@ This generates a JSON manifest with:
 
 ---
 
-[PAUSE] **[STOP: ENUMERATION]**
+[STOP: ENUMERATION]**
 
 Execute the command and verify output.
 

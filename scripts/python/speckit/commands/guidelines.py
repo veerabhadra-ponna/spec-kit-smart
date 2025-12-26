@@ -136,7 +136,7 @@ def run_generate_guidelines(sources_path: str) -> bool:
     if documents:
         console.print(f"[green][ok][/green] Found {len(documents)} documents")
     else:
-        console.print("[yellow]⚠[/yellow] No documents found")
+        console.print("[yellow][!][/yellow] No documents found")
 
     # Enumerate reference projects
     console.print("\n[bold]Enumerating Reference Projects...[/bold]")
@@ -304,12 +304,12 @@ def run_check_artifactory_cli(
     exit_code, message = check_artifactory(url, library, api_key, repos, debug)
 
     if exit_code == 0:
-        console.print(f"[green]✅ {message}[/green]")
+        console.print(f"[green][ok] {message}[/green]")
     elif exit_code == 1:
-        console.print(f"[yellow]❌ {message}[/yellow]")
+        console.print(f"[yellow][x] {message}[/yellow]")
     elif exit_code == 2:
-        console.print(f"[red]⚠️ {message}[/red]")
+        console.print(f"[red][!] {message}[/red]")
     elif exit_code == 4:
-        console.print(f"[yellow]⊘ SKIPPED: {message}[/yellow]")
+        console.print(f"[yellow][-] SKIPPED: {message}[/yellow]")
     else:
-        console.print(f"[red]⚠️ ERROR: {message}[/red]")
+        console.print(f"[red][!] ERROR: {message}[/red]")

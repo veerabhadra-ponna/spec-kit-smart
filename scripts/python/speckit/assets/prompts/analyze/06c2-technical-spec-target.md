@@ -212,7 +212,7 @@ Generate Sections 1, 2, and 3.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_1]**
+[STOP: GENERATE_PART_1]**
 
 #### Section 1: Introduction
 
@@ -281,7 +281,7 @@ Generate Sections 4 and 5 using user's Q1-Q4 answers.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_2]**
+[STOP: GENERATE_PART_2]**
 
 #### Section 4: Target Technology Stack
 
@@ -365,7 +365,7 @@ Generate Sections 6 and 7.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_3]**
+[STOP: GENERATE_PART_3]**
 
 #### Section 6: API Design
 
@@ -440,7 +440,7 @@ Generate Sections 8 and 9 using Q5, Q6, Q7, Q9 answers.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_4]**
+[STOP: GENERATE_PART_4]**
 
 #### Section 8: Security Architecture
 
@@ -535,7 +535,7 @@ Generate Sections 10, 11, and 12 using Q8, Q10 answers.
 
 ---
 
-[PAUSE] **[STOP: GENERATE_PART_5]**
+[STOP: GENERATE_PART_5]**
 
 #### Section 10: Testing Strategy
 

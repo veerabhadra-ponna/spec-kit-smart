@@ -7,14 +7,14 @@ version: 3.4.0
 next: 04a-report-chunks-1-3.md
 ---
 
-# [NO] DO NOT CREATE FILES
+# DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- [x] NO `stage10-chunk3.md`
-- [x] NO `stage10.md` or similar
-- [x] NO markdown files in the analysis directory
-- [x] NO intermediate output files of any kind
+- NO `stage10-chunk3.md`
+- NO `stage10.md` or similar
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
 
 **Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 3).
 
@@ -44,7 +44,7 @@ Values available (already substituted by CLI):
 Calculate effort based on abstraction level, blast radius, and strategy.
 
 ---
-[PAUSE] **[STOP: ESTIMATE_EFFORT]**
+[STOP: ESTIMATE_EFFORT]**
 
 **Effort Components:**
 
@@ -149,7 +149,7 @@ Calendar Duration: {months} months
 Define measurable criteria for migration success.
 
 ---
-[PAUSE] **[STOP: DEFINE_SUCCESS_CRITERIA]**
+[STOP: DEFINE_SUCCESS_CRITERIA]**
 
 **Functional Criteria:**
 
@@ -327,7 +327,7 @@ The CLI automatically updates `{analysis_dir}/state.json` when stages complete.
 ## Step 4: Verify State Saved
 
 ---
-[PAUSE] **[STOP: VERIFY_STATE_SAVED]**
+[STOP: VERIFY_STATE_SAVED]**
 
 1. Read `{analysis_dir}/state.json`
 2. Validate JSON is parseable

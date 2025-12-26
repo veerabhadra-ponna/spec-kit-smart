@@ -7,14 +7,14 @@ version: 3.4.0
 next: 03a4-recommendations.md
 ---
 
-# [NO] DO NOT CREATE FILES
+# DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- [x] NO `stage9-chunk3.md`
-- [x] NO `stage11.md` or similar
-- [x] NO markdown files in the analysis directory
-- [x] NO intermediate output files of any kind
+- NO `stage9-chunk3.md`
+- NO `stage11.md` or similar
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
 
 **Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 5).
 
@@ -43,7 +43,7 @@ Values available (already substituted by CLI):
 Display the scope summary and ask user to confirm what's IN and OUT of scope.
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - SCOPE_VALIDATION]**
+[STOP: USER_INPUT_REQUIRED - SCOPE_VALIDATION]**
 
 Present this confirmation EXACTLY as written:
 

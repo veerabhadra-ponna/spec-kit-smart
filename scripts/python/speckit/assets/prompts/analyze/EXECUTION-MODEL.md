@@ -128,7 +128,7 @@ COMPLETE
 
 ```markdown
 ---
-[PAUSE] **[STOP: ACTION_NAME]**
+[STOP: ACTION_NAME]**
 
 Instructions here. Do NOT proceed until action is complete.
 
@@ -182,7 +182,7 @@ Write: `{analysis_dir}/{name}-complete.json`
 3. Confirm `status` = "complete"
 
 ---
-[PAUSE] **[STOP: state_VERIFY]**
+[STOP: state_VERIFY]**
 
 **IF verified:** Output: `[ok] state verified: {name}`
 **IF failed:** Retry once, then STOP and report error

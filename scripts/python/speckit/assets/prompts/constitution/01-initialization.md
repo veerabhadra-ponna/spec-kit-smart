@@ -83,7 +83,7 @@ speckitadv constitution --stage=2 --principles="<user's principles>"
 ### ELSE: Ask User About Principles
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - PRINCIPLES_CHOICE]**
+[STOP: USER_INPUT_REQUIRED - PRINCIPLES_CHOICE]**
 
 Present this prompt to user EXACTLY:
 
@@ -116,7 +116,7 @@ speckitadv constitution --stage=2 --defaults
 **IF user chooses N (custom):**
 
 ---
-[PAUSE] **[STOP: USER_INPUT_REQUIRED - CUSTOM_PRINCIPLES]**
+[STOP: USER_INPUT_REQUIRED - CUSTOM_PRINCIPLES]**
 
 Ask user for their principles:
 

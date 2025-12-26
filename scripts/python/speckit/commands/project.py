@@ -483,7 +483,7 @@ def run_analyze_project_setup(
     if tech_stack["languages"]:
         console.print(f"[green][ok][/green] Detected: {', '.join(tech_stack['languages'])}")
     else:
-        console.print("[yellow]⚠[/yellow] No languages detected")
+        console.print("[yellow][!][/yellow] No languages detected")
 
     # Step 3: Analyze file structure
     console.print("\n[bold]Step 3: Analyzing file structure...[/bold]")
@@ -619,7 +619,7 @@ def verify_analysis_report(report_file: str) -> bool:
     if ref_count >= 50:
         console.print(f"[green][ok][/green] File:line references: {ref_count} (minimum: 50)")
     else:
-        console.print(f"[yellow]⚠[/yellow] Few file:line references: {ref_count} (recommended: 50+)")
+        console.print(f"[yellow][!][/yellow] Few file:line references: {ref_count} (recommended: 50+)")
 
     # Check 4: No placeholders
     console.print()
@@ -636,13 +636,13 @@ def verify_analysis_report(report_file: str) -> bool:
     if severity_count >= 20:
         console.print(f"[green][ok][/green] Severity ratings: {severity_count} (minimum: 20)")
     else:
-        console.print(f"[yellow]⚠[/yellow] Few severity ratings: {severity_count} (recommended: 20+)")
+        console.print(f"[yellow][!][/yellow] Few severity ratings: {severity_count} (recommended: 20+)")
 
     # Final verdict
     console.print()
     console.print("=" * 40)
     if not failed:
-        console.print("[bold green]✅ VERIFICATION PASSED[/bold green]")
+        console.print("[bold green][ok] VERIFICATION PASSED[/bold green]")
         console.print("Report meets all quality gates.")
         return True
     else:

@@ -7,14 +7,14 @@ version: 3.4.0
 next: 03b3-effort-success.md
 ---
 
-# [NO] DO NOT CREATE FILES
+# DO NOT CREATE FILES
 
 **CRITICAL: This substage does NOT create any files.**
 
-- [x] NO `stage10-chunk2.md`
-- [x] NO `stage10.md` or similar
-- [x] NO markdown files in the analysis directory
-- [x] NO intermediate output files of any kind
+- NO `stage10-chunk2.md`
+- NO `stage10.md` or similar
+- NO markdown files in the analysis directory
+- NO intermediate output files of any kind
 
 **Analysis output is shown directly in the conversation.** Final data is saved using the CLI command (see Step 5).
 
@@ -44,7 +44,7 @@ Values available (already substituted by CLI):
 Select migration strategy based on abstraction level and blast radius.
 
 ---
-[PAUSE] **[STOP: SELECT_STRATEGY]**
+[STOP: SELECT_STRATEGY]**
 
 **Decision Matrix:**
 
@@ -115,7 +115,7 @@ Alternative Considered: {alternative}
 Create detailed phase plan using 50/30/15/5 value distribution.
 
 ---
-[PAUSE] **[STOP: DEFINE_PHASES]**
+[STOP: DEFINE_PHASES]**
 
 **Phase Template:**
 
@@ -225,7 +225,7 @@ Phase 4 - Optimization (5%)
 Identify and categorize migration risks.
 
 ---
-[PAUSE] **[STOP: ASSESS_RISKS]**
+[STOP: ASSESS_RISKS]**
 
 **Risk Categories:**
 
