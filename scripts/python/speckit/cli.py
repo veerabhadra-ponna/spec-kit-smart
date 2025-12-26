@@ -1278,6 +1278,10 @@ def list_files_cmd(
         raise typer.Exit(1)
 
     # Handle shell-expanded paths (e.g., PowerShell expanded the glob before CLI received it)
+    # DESIGN NOTE: When positional `files` are provided, they take precedence over --pattern
+    # and --category options. This is intentional - shell expansion happens before the CLI
+    # receives arguments, so mixed usage (files + pattern/category) indicates shell expansion
+    # occurred and the expanded paths should be used directly.
     if files:
         # Shell already expanded the glob - use those paths directly
         matches = [f for f in files if Path(f).is_file() or (proj_path / f).is_file()]

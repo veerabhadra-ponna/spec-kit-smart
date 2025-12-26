@@ -758,6 +758,9 @@ class AnalysisStateManager:
         }
 
         # Load scoring data from data folder if available
+        # DESIGN NOTE: Silent fallback to empty dict on read errors is intentional.
+        # Prompts should work even when scoring data is unavailable (e.g., permissions,
+        # corrupted file). The scoring fields will simply be empty strings in context.
         scoring_file = self.data_folder / "validation-scoring.json"
         if scoring_file.exists():
             try:

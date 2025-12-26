@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Simplified NEXT commands in prompts - stages 3+ no longer show --stage or --feature-dir
 - Resume and orchestrate commands now output simplified `speckitadv <command>` suggestions
-- AGENTS.md updated to v3.2 with auto-detection documentation
+- AGENTS.md updated to v3.5 with auto-detection and Windows compatibility documentation
 - Historical planning documents consolidated into primary docs; deprecated `docs/archived/` folder removed
 
 ### Fixed
