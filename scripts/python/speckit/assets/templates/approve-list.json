@@ -67,6 +67,17 @@
     "find *",
     "which",
     "which *",
+    "test",
+    "test *",
+
+    "Test-Path",
+    "Test-Path *",
+    "Get-ChildItem",
+    "Get-ChildItem *",
+    "Get-Content",
+    "Get-Content *",
+    "Set-Location",
+    "Set-Location *",
 
     "pip",
     "pip *",
