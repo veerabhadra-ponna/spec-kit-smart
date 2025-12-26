@@ -285,6 +285,13 @@ def run_analyze_project(
 
     # Handle chunked stages
     if chunk is not None:
+        if stage is None:
+            emit_error(
+                "Stage required for chunking",
+                "Cannot use --chunk without a valid stage. The workflow may be complete.",
+                recovery_cmd=f"speckitadv analyze-project --analysis-dir={analysis_dir_path}",
+            )
+            return
         _emit_chunk_stage(stage, chunk, analysis_dir_path, render_context, state_manager)
         return
 
