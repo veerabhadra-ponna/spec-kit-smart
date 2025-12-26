@@ -82,10 +82,10 @@ Stage 1: Setup and Scope
 
 Stage 2: File Analysis
     v  02a-category-scan.md -> updates state.json, writes data/category-patterns.json
-    v  02b-deep-dive.md -> updates state.json, writes data/deep-dive.json
-    v  02c-config-analysis.md -> updates state.json, writes data/config-analysis.json
-    v  02d-test-audit.md -> updates state.json, writes data/test-audit.json
-    v  02e-quality-gates.md -> updates state.json
+    v  02b-deep-dive.md -> updates state.json, writes data/deep-dive-patterns.json
+    v  02c-config-analysis.md -> updates state.json (no separate data file)
+    v  02d-test-audit.md -> updates state.json (no separate data file)
+    v  02e-quality-gates.md -> updates state.json (no separate data file)
 
 Stage 3: Branch (based on analysis_scope)
     v  IF scope=A: 03a1-4 sub-prompts -> updates state.json

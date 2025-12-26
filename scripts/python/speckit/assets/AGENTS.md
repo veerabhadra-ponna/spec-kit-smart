@@ -155,6 +155,34 @@ speckitadv write-data <filename> --stage=<stage-id> --content '<small-json>'
 3. Use stdin mode for large content blocks (JSON or markdown)
 4. Never use shell file write commands for analysis artifacts
 
+### Shell Quote Escaping
+
+**CRITICAL:** Avoid single quotes in heredoc content that will be passed to bash.
+
+| Problem | Solution |
+|---------|----------|
+| Python: `open('file.json')` in heredoc | Use double quotes: `open("file.json")` |
+| JSON with apostrophes | Escape or use stdin mode |
+| Nested quotes | Use `$'...'` syntax or temp file |
+
+**Example Error:**
+
+```bash
+# WRONG - single quotes cause "unexpected EOF"
+python3 << 'PYEOF'
+with open('file.json', 'w') as f:  # <-- These quotes break bash
+PYEOF
+```
+
+**Fix:**
+
+```bash
+# CORRECT - use double quotes in Python
+python3 << 'PYEOF'
+with open("file.json", "w") as f:  # <-- Works
+PYEOF
+```
+
 ### Temporary File Fallback
 
 If stdin mode fails due to parsing issues (special characters, encoding, etc.) and you **absolutely must** create a temp file:
