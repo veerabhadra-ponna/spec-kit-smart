@@ -92,6 +92,13 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 {{include:technical-spec-template.md}}
 
+**Note on New Template Sections**: The template includes new [TARGET ONLY] sections:
+- Section 20: Architecture Decision Records (ADR) - Document key architectural decisions
+- Section 21: Infrastructure as Code (IaC) - Document IaC patterns
+- Section 22: CI/CD Pipeline Architecture - Document build/deploy pipelines
+
+Include these sections when generating the target technical spec.
+
 ---
 
 ## [!] MANDATORY MULTI-PART WRITING

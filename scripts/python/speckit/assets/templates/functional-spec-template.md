@@ -8,6 +8,27 @@
 
 ---
 
+## Template Usage
+
+This template generates BOTH legacy and target functional specifications:
+
+| Output File | Purpose | Focus |
+|-------------|---------|-------|
+| `functional-spec-legacy.md` | Documents WHAT the **existing** system does | Extract from code |
+| `functional-spec-target.md` | Documents WHAT the **new** system will do | Design intent |
+
+**Section Markers**:
+
+- `[LEGACY ONLY]` - Skip this section when generating target spec
+- `[TARGET ONLY]` - Skip this section when generating legacy spec
+- `[LEGACY: extract from code]` / `[TARGET: design intent]` - Different focus for same section
+
+**AI Decision**: When you see conditional markers, determine which applies based on:
+- Which spec you are currently generating (legacy or target)
+- The characteristics of the codebase being analyzed
+
+---
+
 ## Instructions for AI
 
 This template is based on **Section A (Business Analysis)** from the Universal Meta-Prompt.
@@ -365,6 +386,10 @@ Scenario: <<Scenario Name>>
 ---
 
 ## 6. Business Logic (Algorithms, Rules & Calculations)
+
+[LEGACY: extract from code] / [TARGET: design intent]
+- **Legacy spec**: Extract algorithms, rules, and formulas from existing code with file:line references
+- **Target spec**: Document intended business logic, preserving critical rules from legacy with enhancements
 
 ### 6.1 Core Processing Algorithms
 
@@ -888,9 +913,15 @@ RETURN <<validation report>>
 
 ## 13. Error Handling & Recovery
 
+[LEGACY: extract from code] / [TARGET: design intent]
+- **Legacy spec**: Extract existing error handling patterns, exception types, and recovery logic from code
+- **Target spec**: Design error handling strategy, specifying which legacy patterns to preserve vs. modernize
+- **Note**: For HOW to implement (circuit breakers, retry patterns), see technical-spec Section 7 "Resilience Patterns"
+
 ### 13.1 Exception Handling Patterns
 
-Extract from try/catch blocks, error handlers.
+[LEGACY] Extract from try/catch blocks, error handlers.
+[TARGET] Define exception hierarchy and handling strategy.
 
 | Exception Type | Handling Strategy | Retry Logic | Fallback Action | Evidence |
 |----------------|-------------------|-------------|-----------------|----------|
@@ -952,6 +983,11 @@ Extract from validation logic.
 ---
 
 ## 14. Data Models (Extracted from DB Schemas)
+
+[LEGACY: extract from code] / [TARGET: design intent]
+- **Legacy spec**: Extract data models from existing DB schemas, migrations, ORM mappings
+- **Target spec**: Design target data model, documenting migration strategy from legacy
+- **Note**: For HOW to migrate data, see technical-spec Section 12 "Data & Schema"
 
 ### Core Entities
 
@@ -1187,6 +1223,10 @@ Why modernize (inferred from code analysis):
 
 ## 23. Business Logic Preservation Checklist
 
+[LEGACY ONLY] This section applies when documenting the legacy/existing system.
+When generating functional-spec-target.md, SKIP this section or replace with
+"Business Logic Implementation Verification" to confirm preserved logic was implemented.
+
 [CRITICAL] This checklist ensures ALL business logic is captured before modernization.
 
 ### 23.1 Extraction Completeness
@@ -1235,6 +1275,10 @@ For each integration point:
 ---
 
 ## 24. Output Validation Checklist
+
+[LEGACY: verify extraction] / [TARGET: verify design]
+- **Legacy spec**: Verify all business logic was extracted from code with evidence
+- **Target spec**: Verify design covers all preserved logic plus enhancements
 
 Use this checklist to validate specification completeness before handoff.
 

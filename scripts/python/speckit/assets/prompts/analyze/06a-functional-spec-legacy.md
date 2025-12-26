@@ -116,7 +116,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 **DO NOT skip the writing strategy below.**
 
-**YOU MUST generate the spec in 5 separate parts as specified below.**
+**YOU MUST generate the spec in 7 separate parts as specified below.**
 
 Attempting to generate the full spec in one operation WILL result in:
 

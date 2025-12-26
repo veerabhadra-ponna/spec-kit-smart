@@ -8,6 +8,29 @@
 
 ---
 
+## Template Usage
+
+This template generates BOTH legacy and target technical specifications:
+
+| Output File | Purpose | Focus |
+|-------------|---------|-------|
+| `technical-spec-legacy.md` | Documents HOW the **existing** system is built | Current architecture |
+| `technical-spec-target.md` | Documents HOW the **new** system will be built | Target architecture |
+
+**Section Markers**:
+
+- `[LEGACY ONLY]` - Skip this section when generating target spec
+- `[TARGET ONLY]` - Skip this section when generating legacy spec
+- `[LEGACY: current state]` / `[TARGET: target state]` - Different focus for same section
+
+**Cross-Reference**:
+
+- Technical specs reference both functional specs for complete context
+- `functional-spec-legacy.md` - WHAT the legacy system does
+- `functional-spec-target.md` - WHAT the target system will do
+
+---
+
 ## Instructions for AI
 
 This template is based on **Section B (Architecture)** from the Universal Meta-Prompt.
@@ -40,9 +63,37 @@ It is adapted for **legacy code modernization** to define HOW to build the new s
 - `<<LEGACY_PAIN_POINTS>>` - Extract from functional-spec-legacy.md
 - `<<LTS_VERSIONS>>` - Query AI knowledge base for latest LTS
 
+### Output Quality Standards
+
+**Technical Accuracy** - Verify each section includes:
+
+- [ ] All architecture decisions justified with rationale
+- [ ] All diagrams consistent with text descriptions
+- [ ] All technology choices match user preferences (Q1-Q10)
+- [ ] All LTS versions verified against current sources
+- [ ] All migration paths have rollback strategies
+
+**Completeness** - Verify coverage:
+
+- [ ] Every component from functional spec has corresponding architecture
+- [ ] Every NFR from functional spec has SLO/SLI target
+- [ ] Every integration point has sequence diagram
+- [ ] Every data entity has migration strategy
+- [ ] Every risk has mitigation plan
+
+**Consistency** - Verify alignment:
+
+- [ ] Component names match across all diagrams
+- [ ] Technology stack consistent throughout
+- [ ] Phase assignments (P1-P4) align with functional spec priorities
+
 ---
 
 ## 1. Architectural Principles
+
+[LEGACY: document current state] / [TARGET: document target state]
+- **Legacy spec**: Document principles observed in existing codebase
+- **Target spec**: Document principles for the modernized system
 
 ### Legacy System Principles (Extracted)
 
@@ -691,6 +742,10 @@ flowchart TB
 
 ## 8. Why This Pattern (Legacy -> Target)
 
+[LEGACY: document current architecture] / [TARGET: document target architecture with rationale]
+- **Legacy spec**: Document current architecture patterns and pain points
+- **Target spec**: Document chosen patterns and justify decisions with ADRs (Section 20)
+
 ### Legacy Architecture Pattern
 
 **Current Pattern**: <<e.g., Monolithic 3-tier>>
@@ -839,6 +894,11 @@ Map legacy code to modernized components:
 ---
 
 ## 12. Data & Schema (Legacy -> Target)
+
+[LEGACY: document current schema] / [TARGET: document migration strategy]
+- **Legacy spec**: Document current database schema, data types, constraints
+- **Target spec**: Document target schema with migration scripts and rollback plan
+- **Note**: For WHAT data models exist, see functional-spec Section 14 "Data Models"
 
 ### Database Migration
 
@@ -1105,7 +1165,155 @@ Map Requirements (from functional-spec-legacy.md) -> Components -> Tests:
 
 ---
 
-## 20. Open Questions & Next Steps
+## 20. Architecture Decision Records (ADR)
+
+[TARGET ONLY] Document key architectural decisions for the modernization.
+For legacy systems, document observed patterns without formal ADRs.
+
+### ADR-001: <<Decision Title>>
+
+**Status**: Proposed | Accepted | Deprecated | Superseded
+
+**Context**:
+<<What is the issue that we're seeing that is motivating this decision or change?>>
+
+**Decision**:
+<<What is the change that we're proposing and/or doing?>>
+
+**Consequences**:
+- **Positive**: <<Benefits>>
+- **Negative**: <<Trade-offs>>
+- **Risks**: <<Potential issues>>
+
+**Alternatives Considered**:
+
+| Option | Pros | Cons | Why Not Chosen |
+|--------|------|------|----------------|
+| <<Option A>> | <<pros>> | <<cons>> | <<reason>> |
+| <<Option B>> | <<pros>> | <<cons>> | <<reason>> |
+
+### ADR Template for Additional Decisions
+
+Repeat the above format for each major decision:
+- Database technology choice
+- Authentication strategy
+- Message queue selection
+- Deployment platform
+- Microservices vs modular monolith
+
+---
+
+## 21. Infrastructure as Code (IaC)
+
+[TARGET ONLY] Document IaC patterns and configurations for the target system.
+
+### 21.1 IaC Tool Stack
+
+| Component | Tool | Version | Purpose |
+|-----------|------|---------|---------|
+| Container Orchestration | <<USER_CHOICE_CONTAINERIZATION>> | <<version>> | Container management |
+| Infrastructure | <<USER_CHOICE_IAC>> | <<version>> | Resource provisioning |
+| Configuration | <<ConfigMgmt tool>> | <<version>> | App configuration |
+| Secrets | <<Secrets manager>> | <<version>> | Sensitive data |
+
+### 21.2 Directory Structure
+
+```text
+infrastructure/
+|-- terraform/           # or pulumi/, cloudformation/
+|   |-- modules/
+|   |   |-- networking/
+|   |   |-- compute/
+|   |   |-- database/
+|   |   |-- security/
+|   |-- environments/
+|       |-- dev/
+|       |-- staging/
+|       |-- production/
+|-- kubernetes/          # or helm/
+|   |-- base/
+|   |-- overlays/
+|       |-- dev/
+|       |-- staging/
+|       |-- production/
+|-- scripts/
+    |-- deploy.sh
+    |-- rollback.sh
+```
+
+### 21.3 Environment Parity
+
+| Config | Dev | Staging | Production |
+|--------|-----|---------|------------|
+| Replicas | 1 | 2 | 3+ (HPA) |
+| Resources | Minimal | Reduced | Full |
+| Database | Local/Docker | Managed (small) | Managed (HA) |
+| Secrets | Local file | Secret Manager | Secret Manager |
+
+---
+
+## 22. CI/CD Pipeline Architecture
+
+[TARGET ONLY] Document the continuous integration and deployment pipelines.
+
+### 22.1 Pipeline Overview
+
+```mermaid
+flowchart LR
+    subgraph Build
+        CHECKOUT[Checkout] --> DEPS[Install Deps]
+        DEPS --> LINT[Lint]
+        LINT --> TEST[Unit Tests]
+        TEST --> BUILD[Build]
+        BUILD --> SCAN[Security Scan]
+    end
+
+    subgraph Publish
+        SCAN --> IMAGE[Build Image]
+        IMAGE --> PUSH[Push Registry]
+    end
+
+    subgraph Deploy
+        PUSH --> DEV[Deploy Dev]
+        DEV --> INT_TEST[Integration Tests]
+        INT_TEST --> STAGING[Deploy Staging]
+        STAGING --> E2E[E2E Tests]
+        E2E --> PROD[Deploy Prod]
+    end
+
+    PROD --> MONITOR[Monitor]
+```
+
+### 22.2 Pipeline Stages
+
+| Stage | Trigger | Actions | Failure Action |
+|-------|---------|---------|----------------|
+| Build | Push to any branch | Lint, Test, Build | Block merge |
+| Security | Push to main | SAST, Dependency scan | Block deploy |
+| Deploy Dev | Merge to main | Deploy to dev | Rollback |
+| Deploy Staging | Manual / Schedule | Deploy to staging | Rollback |
+| Deploy Prod | Manual approval | Canary deploy | Auto-rollback |
+
+### 22.3 Quality Gates
+
+| Gate | Threshold | Action if Failed |
+|------|-----------|------------------|
+| Unit Test Coverage | >= 80% | Block merge |
+| Integration Tests | 100% pass | Block deploy |
+| Security Vulnerabilities | 0 Critical, 0 High | Block deploy |
+| Performance Regression | < 10% degradation | Alert + review |
+
+### 22.4 Deployment Strategies
+
+| Environment | Strategy | Rollback Time |
+|-------------|----------|---------------|
+| Dev | Direct deploy | N/A |
+| Staging | Blue-Green | Instant |
+| Production | Canary (5% -> 25% -> 100%) | < 2 min |
+
+---
+
+## 23. Open Questions & Next Steps
 
 ### Open Questions
 
