@@ -102,6 +102,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 | Tense | Future tense ("The system will...", "Users will be able to...") |
 | Enhancements | Include new capabilities enabled by modernization |
 | Scope Boundaries | Respect IN SCOPE vs OUT OF SCOPE from user answers |
+| Diagrams | Use Mermaid syntax for all diagrams (flowcharts, state machines, journeys) |
 
 ---
 

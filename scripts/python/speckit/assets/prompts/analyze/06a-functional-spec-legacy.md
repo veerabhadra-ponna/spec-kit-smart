@@ -101,6 +101,7 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 | Technology | Describe as-implemented (current state) |
 | Tense | Present tense ("The system validates...") |
 | Scope | Document what EXISTS, not what's missing |
+| Diagrams | Use Mermaid syntax for all diagrams (flowcharts, state machines, journeys) |
 
 **Forbidden:** Do NOT include modernization preferences, target stack, or future state.
 

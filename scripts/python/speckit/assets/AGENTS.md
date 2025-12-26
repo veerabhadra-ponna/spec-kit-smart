@@ -309,6 +309,24 @@ cat "$tempFile" | speckitadv write-report analysis-report.md --stage=X --append 
 
 ---
 
+## ASCII-Only Output (Windows Compatibility)
+
+All generated content MUST use ASCII characters only for Windows cp1252 compatibility:
+
+| Unicode | ASCII Replacement |
+|---------|-------------------|
+| `->` (arrow) | `->` |
+| `[ok]` (checkmark) | `[ok]` |
+| `[x]` (cross) | `[x]` |
+| `[!]` (warning) | `[!]` |
+| `---` (line) | `---` |
+
+**Forbidden characters:** Do NOT use Unicode symbols like arrows, checkmarks, warning signs, or box-drawing characters. These will cause encoding errors on Windows console.
+
+**Diagrams:** Use Mermaid syntax for all diagrams (flowcharts, state machines, sequences). Do NOT use text-based ASCII art diagrams.
+
+---
+
 ## File Write Best Practices (All Workflows)
 
 ### CRITICAL: Never Reduce Content Quality
