@@ -93,12 +93,24 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 {{include:technical-spec-template.md}}
 
-**Note on Template Sections**: The template includes [TARGET ONLY] sections that should be SKIPPED for legacy specs:
-- Section 20: Architecture Decision Records (ADR) - Skip for legacy
-- Section 21: Infrastructure as Code (IaC) - Skip for legacy
-- Section 22: CI/CD Pipeline Architecture - Skip for legacy
+**Note on Template vs Prompt Sections**: This prompt uses a condensed 11-section structure that
+maps to the full 23-section template as follows:
 
-For legacy systems, document observed patterns and current state only.
+| Prompt Section | Template Sections | Content |
+|----------------|-------------------|---------|
+| 1. Introduction | Header + Intro | Purpose, scope, audience |
+| 2. Architecture Overview | 1, 2, 3, 8 | Principles, C4 diagrams, patterns |
+| 3. Technology Stack | 13 | Runtime, database, dependencies |
+| 4. Data Architecture | 12 | Schema, entities, access patterns |
+| 5. API Design | 4, 11 | Endpoints, contracts, sequences |
+| 6. Integration Architecture | 6 | External systems, message queues |
+| 7. Security Architecture | 16 | Auth, authorization, data protection |
+| 8. Deployment Architecture | 5, 15 | Topology, CI/CD, environments |
+| 9. Testing Infrastructure | 19 | Test framework, coverage, patterns |
+| 10. Observability | 14, 15 | Logging, metrics, health checks |
+| 11. Technical Debt | 18 | Issues, outdated deps, concerns |
+
+**Skip for Legacy**: Sections 20-22 (ADR, IaC, CI/CD) are [TARGET ONLY].
 
 ---
 

@@ -92,12 +92,25 @@ Any file written outside the CLI will NOT be tracked and may cause issues.
 
 {{include:technical-spec-template.md}}
 
-**Note on New Template Sections**: The template includes new [TARGET ONLY] sections:
-- Section 20: Architecture Decision Records (ADR) - Document key architectural decisions
-- Section 21: Infrastructure as Code (IaC) - Document IaC patterns
-- Section 22: CI/CD Pipeline Architecture - Document build/deploy pipelines
+**Note on Template vs Prompt Sections**: This prompt uses a condensed 12-section structure that
+maps to the full 23-section template as follows:
 
-Include these sections when generating the target technical spec.
+| Prompt Section | Template Sections | Content |
+|----------------|-------------------|---------|
+| 1. Introduction | Header + Intro | Purpose, scope, audience |
+| 2. Architecture Overview | 1, 2, 8 | Principles, C4 diagrams, patterns |
+| 3. Legacy vs Target | 3 | Comparison table, migration impact |
+| 4. Target Tech Stack | 13 | Q1-Q4 preferences, versions |
+| 5. Data Architecture | 12 | Schema, migration plan, ERD |
+| 6. API Design | 4, 11 | Endpoints, contracts, versioning |
+| 7. Integration Architecture | 6 | External systems, Q3 message bus |
+| 8. Security Architecture | 16 | Q9 approach, auth, data protection |
+| 9. Deployment Architecture | 5, 15, 20-22 | Q5-Q7, ADR, IaC, CI/CD |
+| 10. Testing Strategy | 19 | Q10 approach, test pyramid |
+| 11. Observability | 14, 15 | Q8 stack, metrics, dashboards |
+| 12. Migration Risks | 17, 18 | Risk matrix, rollback, success criteria |
+
+**[TARGET ONLY] Sections**: Include ADR (20), IaC (21), CI/CD (22) for target spec.
 
 ---
 
