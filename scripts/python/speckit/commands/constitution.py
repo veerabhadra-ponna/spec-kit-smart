@@ -105,7 +105,7 @@ def _interactive_collect() -> tuple[str, bool]:
     )
 
     if use_defaults:
-        console.print("\n[dim]ℹ️  Using default principles. Run with --principles to customize later.[/dim]\n")
+        console.print("\n[dim][i] Using default principles. Run with --principles to customize later.[/dim]\n")
         return _format_principles_for_prompt(DEFAULT_PRINCIPLES), True
 
     # Custom principles mode
@@ -213,7 +213,7 @@ def run_constitution(
         elif defaults:
             # Defaults explicitly requested
             _display_defaults()
-            console.print("[dim]ℹ️  Applied default constitution principles.[/dim]\n")
+            console.print("[dim][i] Applied default constitution principles.[/dim]\n")
             context["principles"] = _format_principles_for_prompt(DEFAULT_PRINCIPLES)
             context["source"] = "Defaults (--defaults flag)"
         else:

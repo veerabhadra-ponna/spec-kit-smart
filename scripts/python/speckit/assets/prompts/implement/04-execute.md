@@ -63,17 +63,34 @@ Execute implementation following the task plan.
 
 ## Task Completion Tracking
 
-**CRITICAL: Mark [X] immediately after EACH task**
+**CRITICAL: EDIT tasks.md to mark [X] immediately after EACH task**
+
+**Required action after completing any task:**
+
+1. **STOP** before moving to next task
+2. **EDIT** the tasks.md file directly
+3. **CHANGE** `- [ ]` to `- [X]` for the completed task
+4. **VERIFY** the edit saved successfully
+5. **REPORT** progress to user
 
 ```markdown
 Before: - [ ] T012 [US1] Create User model
 After:  - [X] T012 [US1] Create User model
 ```
 
-- Do NOT batch completions
-- Report progress: "Completed T012 - Created User model"
-- Update tasks.md after EVERY task
-- Verify previous task marked before moving on
+**Rules:**
+
+- Do NOT batch completions - mark each task immediately
+- Do NOT just report completion - you MUST edit tasks.md
+- Verify previous task is marked [X] before starting next task
+- If you cannot edit the file, STOP and report the issue
+
+**After each phase completes:**
+
+1. Verify ALL tasks in that phase show `[X]`
+2. Count and report: "Phase N: X/Y tasks complete"
+3. Run relevant tests to validate phase
+4. Commit changes before proceeding to next phase
 
 ---
 

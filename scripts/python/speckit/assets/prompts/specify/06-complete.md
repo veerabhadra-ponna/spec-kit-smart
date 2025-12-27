@@ -38,8 +38,8 @@ Quality Checklist: [All passed / N items pending]
 
 Next steps:
   1. Review spec.md for accuracy
-  2. Run speckitadv clarify if clarifications remain
-  3. Run speckitadv plan to create implementation plan
+  2. Run /speckitadv.clarify if clarifications remain
+  3. Run /speckitadv.plan to create implementation plan
 
 Suggested commit:
   git add . && git commit -m "docs: create spec for <feature name>"

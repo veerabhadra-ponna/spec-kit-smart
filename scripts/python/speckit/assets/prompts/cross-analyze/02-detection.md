@@ -68,4 +68,4 @@ Report violations as:
 
 ---
 
-**Next**: Run `speckitadv analyze --stage 3` to generate the analysis report.
+**Next:** `speckitadv analyze --stage 3`

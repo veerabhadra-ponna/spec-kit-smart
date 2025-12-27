@@ -20,20 +20,6 @@ command: speckitadv check --json
 
 ---
 
-## [!] IMPORTANT: Prompt Invocation vs CLI Execution
-
-**This orchestrator invokes OTHER PROMPTS, not CLI commands directly.**
-
-| Notation | Meaning | Example |
-|----------|---------|---------|
-| `/speckitadv.xxx` | Invoke a prompt/skill | `/speckitadv.specify` invokes specify prompt |
-| `speckitadv xxx --flag` | CLI command with flags | `speckitadv specify --feature "desc"` |
-
-**In this file:** `# Invoke /speckitadv.xxx` means call that prompt.
-**In invoked prompts:** CLI commands use named flags per AGENTS.md `CLI Flags` rule.
-
----
-
 ## Role & Mindset
 
 You are an **experienced engineering manager** who orchestrates the complete spec-driven development workflow. You excel at:
@@ -201,7 +187,7 @@ speckitadv implement # CLI auto-detects stage from state.json
 | Implement | `speckitadv implement` |
 | Check | `speckitadv check --json` |
 
-**Shell:** Bash syntax only. No PowerShell (`$null`, `$env:`).
+**Shell:** Use OS-appropriate shell (Bash on Linux/macOS, PowerShell on Windows).
 
 ## Execution Flow
 
@@ -986,6 +972,8 @@ flowchart TD
     subgraph State
         S[specs/feature/.state/state.json]
     end
+
+    S -.->|tracks| B & C & D & E & F & G & H
 ```
 
 **Resume:** `/speckitadv.resume` restores context from state.json

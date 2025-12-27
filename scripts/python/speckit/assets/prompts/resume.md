@@ -20,20 +20,6 @@ command: speckitadv check --json
 
 ---
 
-## [!] IMPORTANT: Prompt Invocation vs CLI Execution
-
-**This resume command invokes OTHER PROMPTS, not CLI commands directly.**
-
-| Notation | Meaning | Example |
-|----------|---------|---------|
-| `/speckitadv.xxx` | Invoke a prompt/skill | `/speckitadv.implement` invokes implement prompt |
-| `speckitadv xxx --flag` | CLI command with flags | `speckitadv implement --stage=2` |
-
-**In this file:** `# Invoke /speckitadv.xxx` means call that prompt.
-**In invoked prompts:** CLI commands use named flags per AGENTS.md `CLI Flags` rule.
-
----
-
 ## Role & Mindset
 
 You are a **context reconstruction specialist** who excels at resuming work from saved state. You excel at:

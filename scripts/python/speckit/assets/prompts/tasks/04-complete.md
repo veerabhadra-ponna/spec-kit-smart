@@ -72,9 +72,6 @@ Tasks: [N] total across [N] phases
 
 Format validation: PASSED
 Organization: PASSED
-
-Next command:
-  speckitadv implement
 ```
 
 ---

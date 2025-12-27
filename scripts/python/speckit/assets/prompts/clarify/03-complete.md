@@ -59,8 +59,8 @@ Outstanding items: [list or "None"]
 
 Next steps:
   - Review updated spec
-  - Run speckitadv plan to create implementation plan
-  - Run speckitadv clarify again if new ambiguities emerge
+  - Run /speckitadv.plan to create implementation plan
+  - Run /speckitadv.clarify again if new ambiguities emerge
 ```
 
 ---
@@ -76,10 +76,3 @@ Next steps:
 ## WORKFLOW COMPLETE
 
 Spec is clarified. Proceed to planning.
-
-**Next command:**
-
-```text
-
-speckitadv plan
-```
