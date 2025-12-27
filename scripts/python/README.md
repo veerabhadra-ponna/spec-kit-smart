@@ -128,6 +128,18 @@ speckitadv show-fragment constitution 01-initialization
 4. **Feature folder persists state** between invocations
 5. **Repeat until workflow complete**
 
+### CLI vs Slash Commands
+
+| Context | Audience | Format | Example |
+|---------|----------|--------|---------|
+| AI agent instructions | AI Agent | CLI | `speckitadv plan` |
+| User-facing output | User | Slash | `/speckitadv.plan` |
+
+**When to use each:**
+
+- **CLI commands** (`speckitadv xxx`): Used by AI coding agents to execute workflows. Prompts instruct the AI to run these commands.
+- **Slash commands** (`/speckitadv.xxx`): Used by end users in their IDE/chat interface to invoke workflows. Displayed in `## WORKFLOW COMPLETE` sections.
+
 ## Architecture
 
 ```text
