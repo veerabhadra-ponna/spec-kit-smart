@@ -40,9 +40,9 @@ Output a Markdown report with the following structure:
 
 ## Provide Next Actions
 
-- If CRITICAL issues exist: Recommend resolving before `/speckitadv.implement`
+- If CRITICAL issues exist: Recommend resolving before `speckitadv implement`
 - If only LOW/MEDIUM: User may proceed, provide improvement suggestions
-- Suggest commands: "Run /speckitadv.specify with refinement", "Run /speckitadv.plan to adjust architecture"
+- Suggest commands: `speckitadv specify --feature "refined"`, `speckitadv plan --constraints "new"`
 
 ## Offer Remediation
 

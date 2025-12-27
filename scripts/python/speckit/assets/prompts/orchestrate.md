@@ -172,6 +172,21 @@ speckitadv tasks     # CLI auto-detects stage from state.json
 speckitadv implement # CLI auto-detects stage from state.json
 ```
 
+### CLI Command Syntax
+
+**CRITICAL:** Use named flags, NOT positional arguments.
+
+| Command | Syntax |
+|---------|--------|
+| Constitution | `speckitadv constitution --principles "principles"` |
+| Specify | `speckitadv specify --feature "description"` |
+| Plan | `speckitadv plan --constraints "constraints"` |
+| Tasks | `speckitadv tasks` |
+| Analyze | `speckitadv analyze` |
+| Implement | `speckitadv implement` |
+
+**Shell:** Bash syntax only. No PowerShell (`$null`, `$env:`).
+
 ## Execution Flow
 
 ### Overview
@@ -319,9 +334,7 @@ EXTRACTED_FEATURE="<functional description extracted from user input>"
 **Execution:**
 
 ```bash
-# Invoke /speckitadv.specify with extracted feature description
-# Pass: EXTRACTED_FEATURE (the WHAT and WHY)
-
+# Run: speckitadv specify --feature "$EXTRACTED_FEATURE"
 # The specify command will:
 # - Generate branch and feature number
 # - Create specs/[###-name]/ directory
@@ -440,10 +453,8 @@ EXTRACTED_CONSTRAINTS="<technical constraints extracted from user input>"
 **Execution:**
 
 ```bash
-# Invoke /speckitadv.plan with extracted constraints (if any)
-# Pass: EXTRACTED_CONSTRAINTS as arguments
-# If no constraints extracted, plan enters INTERACTIVE MODE automatically
-
+# Run: speckitadv plan --constraints "$EXTRACTED_CONSTRAINTS"
+# If no constraints, plan enters INTERACTIVE MODE automatically
 # This will create:
 # - plan.md
 # - research.md (Phase 0)
@@ -508,7 +519,7 @@ Continue to task generation? [Y/n]
 **Execution:**
 
 ```bash
-# Invoke /speckitadv.tasks
+# Run: speckitadv tasks
 # This will create tasks.md with:
 # - Phase 1: Setup
 # - Phase 2: Foundational
@@ -562,7 +573,7 @@ git commit -m "docs: generate task breakdown for $feature_name
 **Execution if not skipped:**
 
 ```bash
-# Invoke /speckitadv.analyze
+# Run: speckitadv analyze
 # This performs read-only validation:
 # - Duplication detection
 # - Ambiguity detection
@@ -637,7 +648,7 @@ fi
 **Execution:**
 
 ```bash
-# Invoke /speckitadv.implement
+# Run: speckitadv implement
 # This will:
 # 1. Check prerequisite checklists
 # 2. Load all design documents

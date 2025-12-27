@@ -326,7 +326,7 @@ else
   echo "[x] ERROR: Specification file not found: $spec_file"
   echo ""
   echo "Cannot resume without specification."
-  echo "Please run: /speckitadv.specify <feature-description>"
+  echo "Please run: speckitadv specify --feature '<description>'"
   exit 1
 fi
 ```
@@ -726,28 +726,27 @@ Based on the phase, invoke the appropriate workflow:
 case "$phase" in
   "specify")
     echo "> Resuming specification creation..."
-    # Continue /speckitadv.specify workflow
-    # (The actual implementation would invoke the specify command)
+    # Run: speckitadv specify --feature-dir "$feature_dir"
     ;;
 
   "clarify")
     echo "> Resuming clarification..."
-    # Continue /speckitadv.clarify workflow
+    # Run: speckitadv clarify
     ;;
 
   "plan")
     echo "> Resuming planning..."
-    # Continue /speckitadv.plan workflow
+    # Run: speckitadv plan
     ;;
 
   "tasks")
     echo "> Resuming task generation..."
-    # Continue /speckitadv.tasks workflow
+    # Run: speckitadv tasks
     ;;
 
   "analyze")
     echo "> Resuming analysis..."
-    # Continue /speckitadv.analyze workflow
+    # Run: speckitadv analyze
     ;;
 
   "implement")
@@ -792,7 +791,7 @@ case "$phase" in
     echo "[ok] All design artifacts loaded"
     echo ""
 
-    # Continue /speckitadv.implement workflow from next task
+    # Run: speckitadv implement
     # The implement command will:
     # - See tasks.md with some [X] completed
     # - Pick up from first [ ] uncompleted task

@@ -9,6 +9,8 @@
 | Rule | Description |
 |------|-------------|
 | **CLI First** | Use `speckitadv` CLI for all workflow operations |
+| **CLI Flags** | Use named flags (`--flag value`), NOT positional args |
+| **Bash Only** | No PowerShell syntax (`$null`, `$env:`). Use bash heredocs |
 | **ASCII-Only** | No Unicode (arrows, checkmarks). Use `->`, `[ok]`, `[x]`, `[!]` |
 | **Mermaid Diagrams** | Use Mermaid syntax for all diagrams. No text-based ASCII art |
 | **State Auto-Detection** | After stage 2, CLI auto-detects stage from state.json |
