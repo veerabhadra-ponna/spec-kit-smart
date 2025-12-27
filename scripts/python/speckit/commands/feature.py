@@ -409,7 +409,7 @@ def create_spec_directory(
     state_manager.initialize(metadata)
 
     # Mark specify as in_progress at stage 3 so auto-detect advances past stages 1-2
-    # (create-feature is called during stage 2, so next stage is 3)
+    # (create-feature is called during stage 3, which is branch-setup)
     state_manager.update_prompt("specify", "03-branch-setup", "in_progress")
 
     state_file = feature_dir / ".state" / "state.json"

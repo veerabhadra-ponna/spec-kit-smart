@@ -16,8 +16,18 @@ Validate implementation and report completion.
 
 ## Step 1: Completion Validation
 
-Verify:
-- [ ] All required tasks marked [X]
+**CRITICAL: Verify tasks.md is fully updated before proceeding**
+
+**Task Verification:**
+
+1. Read `{feature_dir}/tasks.md`
+2. Count tasks: `grep -c '\- \[ \]' tasks.md` should return 0
+3. If ANY tasks show `- [ ]`, they are incomplete - go back to Stage 4
+4. Verify task count matches expected total
+
+**Checklist:**
+
+- [ ] ALL tasks in tasks.md show `[X]` (no `[ ]` remaining)
 - [ ] Implementation matches specification
 - [ ] Tests pass and coverage meets requirements
 - [ ] Implementation follows technical plan

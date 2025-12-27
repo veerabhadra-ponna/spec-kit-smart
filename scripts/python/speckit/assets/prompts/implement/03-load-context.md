@@ -45,6 +45,8 @@ Create/verify ignore files based on tech stack:
 **If file exists**: Append missing critical patterns only
 **If missing**: Create with full pattern set
 
+**Error handling**: If file write fails (permission denied, read-only), log warning and continue. Ignore file failures are non-blocking.
+
 ---
 
 ## Step 3: Parse Task Structure
