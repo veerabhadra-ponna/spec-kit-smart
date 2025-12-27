@@ -76,5 +76,3 @@ Next steps:
 ## WORKFLOW COMPLETE
 
 Spec is clarified. Proceed to planning.
-
-**Next:** /speckitadv.plan

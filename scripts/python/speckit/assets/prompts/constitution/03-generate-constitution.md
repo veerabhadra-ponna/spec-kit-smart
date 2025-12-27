@@ -88,8 +88,6 @@ Suggested commit message:
 
 Next steps:
   - Review memory/constitution.md
-
-**Next:** /speckitadv.specify
 ```
 
 ---

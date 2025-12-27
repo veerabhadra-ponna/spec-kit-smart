@@ -70,5 +70,3 @@ Suggested commit:
 ## WORKFLOW COMPLETE
 
 The specification has been created. No further stages.
-
-**Next:** /speckitadv.clarify (if clarifications remain) or /speckitadv.plan
