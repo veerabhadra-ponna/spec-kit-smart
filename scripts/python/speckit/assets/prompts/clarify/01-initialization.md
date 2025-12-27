@@ -54,7 +54,7 @@ Parse: `FEATURE_DIR`, `FEATURE_SPEC`
 
 Read `FEATURE_SPEC` for ambiguity scanning.
 
-**Note**: Run BEFORE `/speckitadv.plan`. Skipping increases rework risk.
+**Note**: Run BEFORE `speckitadv plan`. Skipping increases rework risk.
 
 ---
 

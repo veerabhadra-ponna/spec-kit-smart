@@ -386,7 +386,7 @@ Generated Artifacts:
 Next Steps:
   1. Review generated artifacts in {analysis_dir}
   2. Use stage-prompts/ with Spec Kit commands
-  3. Begin implementation using /speckitadv.implement
+  3. Begin implementation using `speckitadv implement`
 
 ===========================================================
 
