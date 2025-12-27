@@ -74,10 +74,4 @@ Check `/.guidelines/` directory:
   - Guidelines: [loaded / not found]
 ```
 
----
-
-## NEXT
-
-```text
-speckitadv plan --stage=2
-```
+Then run the next command shown below.
