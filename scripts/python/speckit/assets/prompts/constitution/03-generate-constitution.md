@@ -88,7 +88,8 @@ Suggested commit message:
 
 Next steps:
   - Review memory/constitution.md
-  - Run `speckitadv specify` to create feature specifications
+
+**Next:** /speckitadv.specify
 ```
 
 ---

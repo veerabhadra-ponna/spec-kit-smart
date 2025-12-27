@@ -81,4 +81,4 @@ Check for guideline files in `/.guidelines/` directory:
 
 ---
 
-**Next**: Run `speckitadv analyze --stage 2` to execute detection passes.
+**Next:** `speckitadv analyze --stage 2`

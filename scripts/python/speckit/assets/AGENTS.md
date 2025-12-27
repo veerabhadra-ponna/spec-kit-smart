@@ -1,6 +1,6 @@
 # AI Agent Guidelines
 
-**Version:** 3.7
+**Version:** 3.8
 
 ---
 
@@ -10,7 +10,7 @@
 |------|-------------|
 | **CLI First** | Use `speckitadv` CLI for all workflow operations |
 | **CLI Flags** | Use named flags (`--flag value`), NOT positional args |
-| **Bash Only** | No PowerShell syntax (`$null`, `$env:`). Use bash heredocs |
+| **OS Shell** | Use OS-appropriate shell: Bash (Linux/macOS), PowerShell (Windows) |
 | **ASCII-Only** | No Unicode (arrows, checkmarks). Use `->`, `[ok]`, `[x]`, `[!]` |
 | **Mermaid Diagrams** | Use Mermaid syntax for all diagrams. No text-based ASCII art |
 | **State Auto-Detection** | After stage 2, CLI auto-detects stage from state.json |
@@ -94,9 +94,17 @@ speckitadv write-report <file.md> --stage=<id> --append --content '<content>'
 speckitadv write-data <file.json> --stage=<id> --content '<json>'
 ```
 
-**For content >2000 chars, use stdin:**
+**For content >2000 chars, use stdin (OS-appropriate):**
+
+```bash
+# Linux/macOS
+cat << 'EOF' | speckitadv write-report <file.md> --stage=<id> --append --stdin
+<content>
+EOF
+```
 
 ```powershell
+# Windows
 @"
 <content>
 "@ | speckitadv write-report <file.md> --stage=<id> --append --stdin
@@ -144,7 +152,7 @@ EOF
 
 ### Temp File Fallback
 
-If stdin fails, use system temp folder (`$env:TEMP` or `/tmp`) with random names. Never create temp files in analysis directory.
+If stdin fails, use system temp folder (Windows: `$env:TEMP`, Linux/macOS: `/tmp`) with random names. Never create temp files in analysis directory.
 
 ---
 

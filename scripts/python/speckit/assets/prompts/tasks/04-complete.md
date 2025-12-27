@@ -73,8 +73,7 @@ Tasks: [N] total across [N] phases
 Format validation: PASSED
 Organization: PASSED
 
-Next command:
-  speckitadv implement
+**Next:** /speckitadv.implement
 ```
 
 ---
@@ -82,5 +81,7 @@ Next command:
 ## WORKFLOW COMPLETE
 
 Tasks are ready. Proceed to implementation.
+
+**Next:** /speckitadv.implement
 
 **Recovery note**: Task generation is repeatable. Delete tasks.md and re-run if needed.
