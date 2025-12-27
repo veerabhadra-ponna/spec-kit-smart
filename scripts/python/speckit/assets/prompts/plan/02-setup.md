@@ -92,4 +92,10 @@ Now edit `{{feature_dir}}/plan.md` with these initial replacements:
   - Constraints: [N] loaded
 ```
 
-Then run the next command shown below.
+---
+
+## NEXT
+
+```text
+speckitadv plan
+```

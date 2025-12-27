@@ -116,4 +116,10 @@ Verify all sections are filled:
   - Plan sections filled: Summary, Technical Context, Constitution Check
 ```
 
-Then run the next command shown below.
+---
+
+## NEXT
+
+```text
+speckitadv plan
+```
