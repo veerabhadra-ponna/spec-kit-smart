@@ -16,7 +16,7 @@ Validate implementation and report completion.
 
 ## Step 1: Completion Validation
 
-**CRITICAL: Verify tasks.md is fully updated before proceeding**
+### [!] Verify tasks.md is fully updated before proceeding
 
 **Task Verification:**
 
