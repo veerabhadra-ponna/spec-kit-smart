@@ -180,4 +180,6 @@ Next command:
 
 ## WORKFLOW COMPLETE
 
-Planning is done. Proceed to task generation with `speckitadv tasks`.
+Planning is done. Proceed to task generation.
+
+**Next:** /speckitadv.tasks

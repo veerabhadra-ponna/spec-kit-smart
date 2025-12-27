@@ -187,7 +187,7 @@ speckitadv implement # CLI auto-detects stage from state.json
 | Implement | `speckitadv implement` |
 | Check | `speckitadv check --json` |
 
-**Shell:** Bash syntax only. No PowerShell (`$null`, `$env:`).
+**Shell:** Use OS-appropriate shell (Bash on Linux/macOS, PowerShell on Windows).
 
 ## Execution Flow
 
