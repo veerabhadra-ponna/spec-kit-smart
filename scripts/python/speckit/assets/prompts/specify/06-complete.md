@@ -62,8 +62,8 @@ Suggested commit:
 
 **If clarifications abandoned:**
 
-- Run /speckitadv.clarify to resume
-- Or proceed to /speckitadv.plan if critical items resolved
+- Run `speckitadv clarify` to resume
+- Or proceed to `speckitadv plan` if critical items resolved
 
 ---
 

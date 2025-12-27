@@ -54,6 +54,13 @@
 | `tasks` | Generate actionable tasks |
 | `implement` | Execute implementation |
 
+**CLI vs Slash Commands:**
+
+| Context | Audience | Format | Example |
+|---------|----------|--------|---------|
+| Prompt instructions (AI guidance) | AI Agent | CLI | `speckitadv plan` |
+| User-facing output (`## WORKFLOW COMPLETE`) | User | Slash | `/speckitadv.plan` |
+
 **State Locations:**
 
 | Command | State Location |

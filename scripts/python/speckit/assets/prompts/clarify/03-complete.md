@@ -68,8 +68,8 @@ Next steps:
 ## Behavior Notes
 
 - **If no ambiguities found**: Report "No critical ambiguities detected" and suggest proceeding
-- **If spec missing**: Instruct user to run /speckitadv.specify first
-- **Multiple sessions supported**: Can run /speckitadv.clarify again later
+- **If spec missing**: Instruct user to run `speckitadv specify --feature "<desc>"` first
+- **Multiple sessions supported**: Can run `speckitadv clarify` again later
 
 ---
 
