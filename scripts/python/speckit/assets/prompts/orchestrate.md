@@ -180,10 +180,12 @@ speckitadv implement # CLI auto-detects stage from state.json
 |---------|--------|
 | Constitution | `speckitadv constitution --principles "principles"` |
 | Specify | `speckitadv specify --feature "description"` |
+| Clarify | `speckitadv clarify` |
 | Plan | `speckitadv plan --constraints "constraints"` |
 | Tasks | `speckitadv tasks` |
 | Analyze | `speckitadv analyze` |
 | Implement | `speckitadv implement` |
+| Check | `speckitadv check --json` |
 
 **Shell:** Bash syntax only. No PowerShell (`$null`, `$env:`).
 
@@ -334,8 +336,8 @@ EXTRACTED_FEATURE="<functional description extracted from user input>"
 **Execution:**
 
 ```bash
-# Run: speckitadv specify --feature "$EXTRACTED_FEATURE"
-# The specify command will:
+# Invoke /speckitadv.specify with EXTRACTED_FEATURE
+# The specify prompt will:
 # - Generate branch and feature number
 # - Create specs/[###-name]/ directory
 # - Generate spec.md
@@ -453,7 +455,7 @@ EXTRACTED_CONSTRAINTS="<technical constraints extracted from user input>"
 **Execution:**
 
 ```bash
-# Run: speckitadv plan --constraints "$EXTRACTED_CONSTRAINTS"
+# Invoke /speckitadv.plan with EXTRACTED_CONSTRAINTS
 # If no constraints, plan enters INTERACTIVE MODE automatically
 # This will create:
 # - plan.md
@@ -519,7 +521,7 @@ Continue to task generation? [Y/n]
 **Execution:**
 
 ```bash
-# Run: speckitadv tasks
+# Invoke /speckitadv.tasks
 # This will create tasks.md with:
 # - Phase 1: Setup
 # - Phase 2: Foundational
@@ -573,7 +575,7 @@ git commit -m "docs: generate task breakdown for $feature_name
 **Execution if not skipped:**
 
 ```bash
-# Run: speckitadv analyze
+# Invoke /speckitadv.analyze
 # This performs read-only validation:
 # - Duplication detection
 # - Ambiguity detection
@@ -648,7 +650,7 @@ fi
 **Execution:**
 
 ```bash
-# Run: speckitadv implement
+# Invoke /speckitadv.implement
 # This will:
 # 1. Check prerequisite checklists
 # 2. Load all design documents
@@ -956,63 +958,23 @@ The orchestrator simply chains them together with state management.
 
 ## Workflow Visualization
 
-```text
-+-----------------------------------------------------------------+
-|                    SPEC-DRIVEN WORKFLOW                         |
-+-----------------------------------------------------------------+
+```mermaid
+flowchart TD
+    A[Constitution] -->|if missing, create| B[Specify]
+    B -->|spec.md, branch| C[Clarify]
+    C -->|optional| D[Plan]
+    D -->|plan.md, research.md| E[Tasks]
+    E -->|tasks.md| F[Analyze]
+    F -->|optional| G[Implement]
+    G -->|execute tasks| H[Cleanup]
+    H --> I((Done))
 
-  START
-    |
-    v
-+---------------+
-| Constitution  | <-- If missing, create it
-+-------+-------+
-        |
-        v
-+---------------+
-|   Specify     | --> Creates: spec.md, checklists/requirements.md
-+-------+-------+     Branch: ###-feature-name
-        |
-        v
-+---------------+
-|   Clarify     | --> Updates spec with clarifications
-+-------+-------+     (Optional: skip if no ambiguities)
-        |
-        v
-+---------------+
-|     Plan      | --> Creates: plan.md, research.md, data-model.md,
-+-------+-------+              contracts/, quickstart.md
-        |
-        v
-+---------------+
-|     Tasks     | --> Creates: tasks.md with executable breakdown
-+-------+-------+
-        |
-        v
-+---------------+
-|    Analyze    | --> Validates consistency and coverage
-+-------+-------+     (Optional: skip if confident)
-        |
-        v
-+---------------+
-|   Implement   | --> Executes all tasks, marks [X] as complete
-+-------+-------+
-        |
-        v
-+---------------+
-|    Cleanup    | --> Removes state, shows summary
-+-------+-------+
-        |
-        v
-      DONE
-
-  +-----------------------------------------+
-  |  Progress tracked in state.json:        |
-  |  specs/{feature}/.state/state.json      |
-  |                                         |
-  |  Resume with: /speckitadv.resume        |
-  +-----------------------------------------+
+    subgraph State
+        S[specs/feature/.state/state.json]
+    end
 ```
+
+**Resume:** `/speckitadv.resume` restores context from state.json
 
 ---
 

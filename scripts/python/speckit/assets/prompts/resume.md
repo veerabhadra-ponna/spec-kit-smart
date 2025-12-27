@@ -166,7 +166,7 @@ else
   echo ""
   echo "Options:"
   echo "  1. Switch to feature branch: git checkout <feature-branch>"
-  echo "  2. Specify feature explicitly: /speckitadv.resume <feature-identifier>"
+  echo "  2. Specify feature explicitly: speckitadv resume <feature-identifier>"
   echo ""
   echo "Available features:"
   ls -1 specs/ | grep -E '^[0-9]+-' | sed 's/^/  - /'
@@ -726,27 +726,27 @@ Based on the phase, invoke the appropriate workflow:
 case "$phase" in
   "specify")
     echo "> Resuming specification creation..."
-    # Run: speckitadv specify --feature-dir "$feature_dir"
+    # Invoke /speckitadv.specify
     ;;
 
   "clarify")
     echo "> Resuming clarification..."
-    # Run: speckitadv clarify
+    # Invoke /speckitadv.clarify
     ;;
 
   "plan")
     echo "> Resuming planning..."
-    # Run: speckitadv plan
+    # Invoke /speckitadv.plan
     ;;
 
   "tasks")
     echo "> Resuming task generation..."
-    # Run: speckitadv tasks
+    # Invoke /speckitadv.tasks
     ;;
 
   "analyze")
     echo "> Resuming analysis..."
-    # Run: speckitadv analyze
+    # Invoke /speckitadv.analyze
     ;;
 
   "implement")
@@ -791,8 +791,8 @@ case "$phase" in
     echo "[ok] All design artifacts loaded"
     echo ""
 
-    # Run: speckitadv implement
-    # The implement command will:
+    # Invoke /speckitadv.implement
+    # The implement prompt will:
     # - See tasks.md with some [X] completed
     # - Pick up from first [ ] uncompleted task
     # - Continue marking [X] as each completes
@@ -819,107 +819,15 @@ esac
 
 ## Special Scenarios
 
-### **Scenario 1: Mid-Implementation Resume (Most Common)**
+| Scenario | Situation | Behavior |
+|----------|-----------|----------|
+| **Mid-Implementation** | Token limit at task T023 | Auto-detect branch, load all artifacts, identify next task, confirm and continue |
+| **Cross-Day** | Fresh chat next day | Same as above - seamless multi-day workflow |
+| **Manual Edits** | User edited spec.md | Detect changes, warn user, ask to confirm modified spec |
+| **Different Machine** | Cloned repo elsewhere | `git checkout branch` then `/speckitadv.resume` - location-independent |
+| **After Error** | Task T030 failed | Fix dependency, resume offers retry or skip, then continue |
 
-**Situation:** Chat hit token limit while implementing task T023 of 47
-
-**Resume flow:**
-
-1. `/speckitadv.resume` with no args
-2. Auto-detects from git branch: `001-user-auth`
-3. Loads:
-
-   - Constitution
-   - Spec (2500 lines)
-   - Plan (800 lines)
-   - Research (300 lines)
-   - Data model (400 lines)
-   - Tasks (22 completed [X], 25 pending [ ])
-
-4. Identifies next task: [T023] Implement password hashing middleware
-5. Shows context:
-
-   - Last 3 completed tasks
-   - Next 5 pending tasks
-
-6. Asks: "Resume at task T023? [Y/n]"
-7. Continues implementation exactly where left off
-
-**Result:** Zero duplicate work, zero missed work, full context restored.
-
----
-
-### **Scenario 2: Cross-Day Resume**
-
-**Situation:** User worked on feature yesterday, resuming today in fresh chat
-
-**Resume flow:**
-
-1. `/speckitadv.resume`
-2. Auto-detects from branch
-3. Loads all artifacts
-4. Shows yesterday's progress summary
-5. User reviews next tasks
-6. Confirms and continues
-
-**Result:** Seamless multi-day workflow.
-
----
-
-### **Scenario 3: Resume After Manual Edits**
-
-**Situation:** User paused orchestration, manually edited spec.md, wants to continue
-
-**Resume flow:**
-
-1. `/speckitadv.resume`
-2. Loads edited spec.md (detects changes via timestamp or git diff)
-3. Warns: "Spec has been modified since last run"
-4. Shows diff or change summary
-5. Asks: "Continue with modified spec? [Y/n/review]"
-6. If Yes: Proceeds with updated context
-7. If Review: Shows recent changes before confirming
-
-**Result:** Manual edits are incorporated into resumed context.
-
----
-
-### **Scenario 4: Resume from Different Machine**
-
-**Situation:** User pushed branch, cloned on different machine, wants to resume
-
-**Requirements:**
-
-- Feature branch pushed to remote
-- All artifacts (spec, plan, tasks) committed
-
-**Resume flow:**
-
-1. `git clone <repo> && cd <repo>`
-2. `git checkout 001-user-auth`
-3. `/speckitadv.resume`
-4. Loads from filesystem (no state file needed)
-5. Auto-detects phase from tasks.md checkboxes
-6. Continues work
-
-**Result:** Location-independent resumption.
-
----
-
-### **Scenario 5: Resume After Error/Failure**
-
-**Situation:** Implementation failed at task T030 due to dependency error
-
-**Resume flow:**
-
-1. User fixes dependency (e.g., installs missing package)
-2. `/speckitadv.resume`
-3. Loads context, sees T030 still pending [ ]
-4. Asks: "Retry task T030? [Y/n/skip]"
-5. If Retry: Attempts T030 again
-6. If Skip: Marks T030 as skipped, continues to T031
-
-**Result:** Graceful error recovery.
+**All scenarios:** Zero duplicate work, full context restored from state.json and artifacts.
 
 ---
 
