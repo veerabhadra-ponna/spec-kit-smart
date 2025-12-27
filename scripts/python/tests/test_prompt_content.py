@@ -25,6 +25,7 @@ class TestPromptContent:
     def test_no_shell_cross_contamination(self):
         """Test that bash blocks don't contain PowerShell and vice versa."""
         powershell_patterns = [
+            r'\$env:',  # PowerShell environment variable
             r'\$null\b',
             r'\$LASTEXITCODE\b',
             r'@"[\s\S]*?"@',  # PowerShell here-string
