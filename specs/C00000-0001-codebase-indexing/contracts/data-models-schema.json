@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://spec-kit-smart.dev/schemas/index/data-models.json",
+  "title": "Data Models Schema",
+  "description": "Schema for data-models.json containing database schemas and ORM entities",
+  "type": "object",
+  "required": ["version", "timestamp"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Data models format version"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when data models were extracted"
+    },
+    "database_schemas": {
+      "type": "array",
+      "description": "Database table schemas (Prisma, SQL, etc.)",
+      "items": {
+        "type": "object",
+        "required": ["table", "file", "columns"],
+        "properties": {
+          "table": {
+            "type": "string",
+            "pattern": "^[a-z_]+$",
+            "description": "Database table name"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Schema definition file path"
+          },
+          "columns": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["name", "type", "nullable"],
+              "properties": {
+                "name": {"type": "string"},
+                "type": {"type": "string"},
+                "nullable": {"type": "boolean"},
+                "unique": {"type": "boolean"},
+                "primary_key": {"type": "boolean"},
+                "default": {"type": ["string", "number", "null"]}
+              }
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "target"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["hasMany", "belongsTo", "hasOne", "manyToMany"]
+                },
+                "target": {"type": "string"},
+                "foreign_key": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "orm_entities": {
+      "type": "array",
+      "description": "ORM entity definitions (TypeORM, Sequelize, Django, Hibernate)",
+      "items": {
+        "type": "object",
+        "required": ["entity", "table", "file", "fields"],
+        "properties": {
+          "entity": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Entity class name"
+          },
+          "table": {
+            "type": "string",
+            "description": "Mapped database table name"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Entity file path"
+          },
+          "fields": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": {"type": "string"},
+                "type": {"type": "string"},
+                "nullable": {"type": "boolean"}
+              }
+            }
+          },
+          "decorators": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "ORM decorators (@Entity, @Column, etc.)"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "target", "field"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["OneToMany", "ManyToOne", "OneToOne", "ManyToMany"]
+                },
+                "target": {"type": "string"},
+                "field": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "type_definitions": {
+      "type": "array",
+      "description": "TypeScript/type system definitions used as data models",
+      "items": {
+        "type": "object",
+        "required": ["name", "file", "fields"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Type/interface name"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Type definition file path"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": {"type": "string"},
+                "type": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

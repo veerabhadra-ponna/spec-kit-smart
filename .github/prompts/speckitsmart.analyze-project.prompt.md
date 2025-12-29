@@ -8,7 +8,7 @@ version: 3.0.0-scriptfirst
 
 **BEFORE PROCEEDING:**
 
-1. Check if `AGENTS.md` exists in repository root, `.specify/memory/`, or `templates/` directory
+1. Check if `AGENTS.md` exists in repository root, `.specify.specify/memory/`, or `.specify/templates/` directory
 2. **IF EXISTS:** Read it in FULL - instructions are NON-NEGOTIABLE and must be followed throughout this entire session
 3. Follow all AGENTS.md guidelines for the duration of this command execution
 4. These instructions override any conflicting default behaviors
@@ -119,83 +119,6 @@ This unified stage handles:
 - File analysis estimation
 
 **Then proceed through remaining stages in sequence.**
-
----
-
-## Optional: Codebase Index Integration
-
-**IF codebase index exists** (`.analysis/index/metadata.json`), the analysis can be significantly accelerated:
-
-### Checking for Index (Soft Prerequisite)
-
-```bash
-# Platform detection
-PLATFORM=$(bash scripts/bash/detect-os.sh 2>/dev/null || echo "unix")
-
-# Check for optional index (soft check - warning only, not failure)
-if [[ "$PLATFORM" == "windows" ]]; then
-    INDEX_STATUS=$(powershell.exe -ExecutionPolicy Bypass -File scripts/powershell/Check-IndexPrerequisite.ps1 2>/dev/null || echo '{"index_exists":false}')
-else
-    INDEX_STATUS=$(bash scripts/bash/check-index-prerequisite.sh 2>/dev/null || echo '{"index_exists":false}')
-fi
-
-INDEX_EXISTS=$(echo "$INDEX_STATUS" | jq -r '.index_exists // false')
-```
-
-### Benefits When Index Exists
-
-- **10x faster** initial structure extraction (pre-computed classes/functions/endpoints)
-- **80% token reduction** in Stage 2 (file analysis uses index data instead of reading every file)
-- **Immediate API/data model discovery** (no regex parsing needed)
-- **Accurate dependency graph** (already computed in index)
-
-### Integration Points
-
-**Stage 1 (Setup)**:
-- Check for index availability
-- If exists and fresh (<7 days): Show success message with file count
-- If exists but stale (>7 days): Show warning with age and recommend refresh
-- If missing: Show info message about building index for future speed improvements
-
-```bash
-if [[ "$INDEX_EXISTS" == "true" ]]; then
-    AGE_DAYS=$(echo "$INDEX_STATUS" | jq -r '.age_days // 0')
-    FILES_INDEXED=$(echo "$INDEX_STATUS" | jq -r '.files_indexed // 0')
-    IS_STALE=$(echo "$INDEX_STATUS" | jq -r '.is_stale // false')
-
-    if [[ "$IS_STALE" == "true" ]]; then
-        echo "⚠️  Codebase index found but is $AGE_DAYS days old (stale)"
-        echo "   Consider refreshing: /speckitsmart.index --incremental"
-        echo "   Analysis will proceed with available data"
-    else
-        echo "✓ Codebase index found ($FILES_INDEXED files indexed, $AGE_DAYS days old)"
-        echo "  Analysis will use pre-extracted structure data for faster processing"
-    fi
-    echo ""
-fi
-```
-
-**Stage 2 (File Analysis)**:
-- If index exists: Load structure.json, data-models.json, api-endpoints.json from `.analysis/index/`
-- Merge index data into analysis state
-- Skip redundant file scanning for already-indexed data
-- Focus AI analysis on patterns and relationships (not extraction)
-
-**Stage 3+ (Analysis & Artifacts)**:
-- Use index data for API documentation generation
-- Reference data models from index for schema documentation
-- Include external service list from index in technical specs
-
-### Recommendation Message
-
-If index does not exist, show at end of Stage 1:
-
-```text
-💡 Tip: Build a codebase index for 10x faster future analysis
-   Run: /speckitsmart.index
-   Time: ~30-60 seconds for typical projects
-   Benefits: Faster analysis, instant codebase queries, auto-documentation
-```
 
 ---
 

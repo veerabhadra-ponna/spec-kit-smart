@@ -55,6 +55,7 @@ sdd-*/
 /.vs
 .analysis/
 .guidelines-analysis/
+.deepwiki/
 
 # Node.js
 node_modules/

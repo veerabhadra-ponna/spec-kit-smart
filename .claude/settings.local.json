@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)",
+      "Bash(git fetch:*)",
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(powershell.exe:*)",
+      "Bash($null)",
+      "Bash(test:*)",
+      "Bash(chmod +x \"D:\\Work\\spec-kit-smart\\.specify\\scripts\\bash\\detect-os.sh\")",
+      "Bash(chmod +x \"D:\\Work\\spec-kit-smart\\scripts\\bash\\check-index-prerequisite.sh\")",
+      "Bash(chmod:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

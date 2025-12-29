@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://spec-kit-smart.dev/schemas/index/api-endpoints.json",
+  "title": "API Endpoints Schema",
+  "description": "Schema for api-endpoints.json containing REST, GraphQL, and WebSocket endpoints",
+  "type": "object",
+  "required": ["version", "timestamp"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "API endpoints format version"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when endpoints were extracted"
+    },
+    "rest_endpoints": {
+      "type": "array",
+      "description": "REST API endpoints",
+      "items": {
+        "type": "object",
+        "required": ["method", "path", "handler", "file"],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
+            "description": "HTTP method"
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^/",
+            "description": "URL path (e.g., /api/users/:id)"
+          },
+          "handler": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Handler function name"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Route definition file path"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number of route definition"
+          },
+          "middleware": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Middleware function names"
+          },
+          "request_schema": {
+            "type": "object",
+            "description": "Request body schema (key: field, value: type)"
+          },
+          "response_schema": {
+            "type": "object",
+            "description": "Response body schema (key: field, value: type)"
+          },
+          "authentication": {
+            "type": "string",
+            "enum": ["none", "jwt", "session", "api_key", "oauth2"],
+            "description": "Authentication method"
+          }
+        }
+      }
+    },
+    "graphql_resolvers": {
+      "type": "array",
+      "description": "GraphQL Query/Mutation/Subscription resolvers",
+      "items": {
+        "type": "object",
+        "required": ["type", "field", "file"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["Query", "Mutation", "Subscription"],
+            "description": "Resolver type"
+          },
+          "field": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Resolver field name"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Resolver file path"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number"
+          },
+          "arguments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "type"],
+              "properties": {
+                "name": {"type": "string"},
+                "type": {"type": "string", "description": "GraphQL type (e.g., ID!, String, [User])"}
+              }
+            },
+            "description": "Resolver arguments"
+          },
+          "return_type": {
+            "type": "string",
+            "description": "GraphQL return type"
+          }
+        }
+      }
+    },
+    "websocket_handlers": {
+      "type": "array",
+      "description": "WebSocket event handlers (Socket.io, native WebSocket, ws library)",
+      "items": {
+        "type": "object",
+        "required": ["event", "handler", "file"],
+        "properties": {
+          "event": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Socket event name (e.g., message:send, connection)"
+          },
+          "handler": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Handler function name"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Handler file path"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number"
+          },
+          "library": {
+            "type": "string",
+            "enum": ["socket.io", "native", "ws"],
+            "description": "WebSocket library used"
+          }
+        }
+      }
+    }
+  }
+}

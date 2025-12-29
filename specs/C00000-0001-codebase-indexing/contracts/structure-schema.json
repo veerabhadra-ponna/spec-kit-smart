@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "https://spec-kit-smart.dev/schemas/index/structure.json",
+  "title": "Code Structure Schema",
+  "description": "Schema for structure.json containing classes, functions, and interfaces",
+  "type": "object",
+  "required": ["version", "timestamp"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "Structure format version"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when structure was extracted"
+    },
+    "classes": {
+      "type": "array",
+      "description": "Extracted class definitions",
+      "items": {
+        "type": "object",
+        "required": ["name", "file"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Class name"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Relative path from repository root"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number where class is defined"
+          },
+          "methods": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Method names in the class"
+          },
+          "extends": {
+            "type": "string",
+            "description": "Parent class name (if applicable)"
+          },
+          "implements": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Interface names implemented by this class"
+          }
+        }
+      }
+    },
+    "functions": {
+      "type": "array",
+      "description": "Extracted function definitions",
+      "items": {
+        "type": "object",
+        "required": ["name", "file"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Function name"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Relative path from repository root"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number where function is defined"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Parameter names"
+          },
+          "return_type": {
+            "type": "string",
+            "description": "Return type (if determinable)"
+          }
+        }
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "description": "Extracted interface/type definitions",
+      "items": {
+        "type": "object",
+        "required": ["name", "file"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Interface or type name"
+          },
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Relative path from repository root"
+          },
+          "line": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Line number where interface is defined"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {"type": "string"},
+                "type": {"type": "string"},
+                "optional": {"type": "boolean"}
+              }
+            },
+            "description": "Interface fields"
+          }
+        }
+      }
+    }
+  }
+}
